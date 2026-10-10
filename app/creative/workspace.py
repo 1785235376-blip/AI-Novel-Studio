@@ -162,7 +162,8 @@ class IndependentWorkspaceService:
         with self._asset_scope(nid, scope):
             rows = self.assets.list(nid, branch_id=scope.get("branch_id"), include_deleted=True)
             retry = any(row.get("idempotency_key") == body.idempotency_key for row in rows)
-            if not retry and (len(rows) >= self.MAX_ASSETS or sum(row["size"] for row in rows) + len(data) > self.MAX_PROJECT_BYTES):
+            usage = self.assets.project_usage(nid, branch_id=scope.get("branch_id"))
+            if not retry and (usage["count"] >= self.MAX_ASSETS or usage["bytes"] + len(data) > self.MAX_PROJECT_BYTES):
                 raise ValueError("CREATIVE_PROJECT_ASSET_QUOTA")
             guard()
             if not retry:

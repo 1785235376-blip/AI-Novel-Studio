@@ -1,0 +1,17 @@
+TARGETED TEXTASSET NOTICE REGRESSION GREEN; conditional copy only, legacy notice unchanged
+Sat Oct 10 10:57:01 UTC 2026
+09883fb7fe35b241f97ea7fe0a3e292178441935
+99f560db5142814193abb02244379d3f6eb67be82f84b3050c16153bcb3cddfa  frontend/src/creative/GraphRunPanel.tsx
+4325545493cab79c9526889ba52ba25e265e22f81e3149ddb5b8f639c5d550e3  frontend/src/creative/GraphTextAssetPanel.test.tsx
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/creative/GraphRunPanel.test.tsx (19 tests) 906ms
+ ✓ src/creative/GraphTextAssetPanel.test.tsx (13 tests) 1013ms
+   ✓ same-confirmation automatic private TextAsset archival > discloses archival beside the original confirmation and submits one dispatch without another step 307ms
+
+ Test Files  2 passed (2)
+      Tests  32 passed (32)
+   Start at  03:57:01
+   Duration  2.43s (transform 401ms, setup 0ms, collect 897ms, tests 1.92s, environment 1.19s, prepare 205ms)
+

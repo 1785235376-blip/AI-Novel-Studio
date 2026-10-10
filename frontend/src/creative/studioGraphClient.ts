@@ -9,6 +9,8 @@ import type {
   StudioGraphModelCapabilities, StudioGraphModelPreviewInput, StudioGraphModelDispatchInput, StudioGraphModelRefreshInput,
 } from './studioGraphTypes';
 import { graphModelCapabilities, graphModelRuntime } from './studioGraphModelContract';
+import { graphTextAssetOutput } from './studioGraphTextAssetContract';
+import { createStudioProviderClient, type StudioProviderClient } from './studioProviderClient';
 
 /** Inject the existing Studio transport; graph operations never look up credentials. */
 export type StudioGraphTransport = {
@@ -378,6 +380,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       created_at: text(row.created_at, 64), updated_at: text(row.updated_at, 64), model_called: modelCalled, external_calls: 0,
       ...(model ? { model_runtime: model } : {}),
       applied: false, stale, reviewed: bool(row.reviewed), timeout_seconds: 3600, deadline_at: deadline(row.deadline_at) };
+    if (row.asset_output !== undefined) result.asset_output = graphTextAssetOutput(row.asset_output, result, observedGraphs.get(graphId));
     if (observedRuns.has(runId) && observedRuns.get(runId) !== graphId) mismatch();
     observedRuns.set(runId, graphId);
     return result;
@@ -389,6 +392,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   }
 
   return {
+    ...createStudioProviderClient(base, transport, owner),
     catalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog`, 'GET', undefined, signal).then(catalog),
     modelCapabilities: (signal?: AbortSignal): Promise<StudioGraphModelCapabilities> => transport.json(`${base}/graphs/model-capabilities`, 'GET', undefined, signal).then(value => graphModelCapabilities(value, owner)),
     list: (signal?: AbortSignal): Promise<{ items: StudioGraphRecord[] }> => transport.json(`${base}/graphs`, 'GET', undefined, signal).then(value => {
@@ -442,10 +446,10 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     dispatchModel: (runId: string, value: StudioGraphModelDispatchInput): Promise<StudioGraphRun> => {
       const url = runUrl(runId), row = record(value, true);
       const payload: StudioGraphModelDispatchInput = { expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, true),
-        reviewed_preview_digest: digest(row.reviewed_preview_digest, true) };
+        reviewed_preview_digest: digest(row.reviewed_preview_digest, true), ...(row.archive_result === undefined ? {} : { archive_result: row.archive_result === true ? true as const : invalid(true) }) };
       return transport.json(`${url}/model/dispatch`, 'POST', payload).then(value => {
         const result = checkedModelRun(value, runId);
-        if (!result.model_runtime!.execution) invalid();
+        if (!result.model_runtime!.execution || payload.archive_result && !result.asset_output) invalid();
         return result;
       });
     },
@@ -472,4 +476,5 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   };
 }
 
-export type StudioGraphClient = ReturnType<typeof createStudioGraphClient>;
+// Older embedded clients can omit the advisory extension; execution stays unchanged.
+export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient> & Partial<StudioProviderClient>;

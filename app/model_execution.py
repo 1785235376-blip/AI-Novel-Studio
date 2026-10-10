@@ -16,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from .model_runtime import (GenerationEvent, LegacyTextProviderAdapter, Modality,
     ModelRuntimeError, RuntimeErrorCode, TextGenerationRequest, TextModelNodeInput)
+from .model_provider_contracts import ReservedAPIProvider
 
 Digest = Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
 Identifier = Annotated[str, Field(min_length=1, max_length=240)]
@@ -39,7 +40,7 @@ class ModelProviderAdapter(Protocol):
     def stream_text(self, request: TextGenerationRequest) -> Iterable[GenerationEvent]: ...
 
 
-class APIProvider:
+class APIProvider(ReservedAPIProvider):
     """Reserved interface only; existing paid/API adapters are not activated."""
     available = False
     reason = "GRAPH_API_PROVIDER_RESERVED"

@@ -294,18 +294,31 @@ class CreativeGraphService:
         state = self.store.read(nid, scope)
         rows = [row for row in state["collections"].get(RUNS, {}).values()
                 if row.get("created_by") == actor and row.get("graph_id") == rid]
-        result = {"items": [self.executor.view(nid, scope, actor, row, current, state) for row in rows]}
+        result = {"items": [self.get_run(nid, scope, actor, row["id"], current, reconcile=False)
+            if self.model_runtime and self.model_runtime.text_assets.enabled(row)
+            else self.executor.view(nid, scope, actor, row, current, state) for row in rows]}
         current(); return result
 
-    def get_run(self, nid, scope, actor, rid, guard=lambda: None):
+    def get_run(self, nid, scope, actor, rid, guard=lambda: None, *, reconcile=True):
         _, current = self._context(nid, scope, actor, guard)
         row = self._owned(nid, scope, actor, RUNS, rid)
+        if self.model_runtime and self.model_runtime.text_assets.enabled(row):
+            return self.model_runtime.text_assets.read(nid, scope, actor, rid, current, reconcile=reconcile)
         result = self.executor.view(nid, scope, actor, row, current)
         current(); return result
 
     def action(self, nid, scope, actor, rid, action, value, guard=lambda: None):
-        result = self.executor.action(nid, scope, actor, rid, action, value, guard)
+        row = self._owned(nid, scope, actor, RUNS, rid)
+        archival = self.model_runtime is not None and self.model_runtime.text_assets.enabled(row)
+        if archival and action in {"approve", "reject"}:
+            with self.model_runtime.text_assets.phase(nid, scope, actor, rid, guard, create=False):
+                result = self.executor.action(nid, scope, actor, rid, action, value, guard)
+            result = self.model_runtime.text_assets.decorate(nid, scope, actor, rid, guard, result)
+        else:
+            result = self.executor.action(nid, scope, actor, rid, action, value, guard)
         if action == "cancel" and self.model_runtime is not None:
             # Cancel the original worker only after the durable workflow fence.
             self.model_runtime.cancel(self._owned(nid, scope, actor, RUNS, rid))
+        if archival and action == "cancel":
+            result["asset_output"] = self.model_runtime.text_assets.pending("NO_ACCEPTED_RESULT")
         return result

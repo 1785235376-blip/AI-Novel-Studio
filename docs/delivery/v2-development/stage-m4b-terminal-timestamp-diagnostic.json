@@ -1,0 +1,10 @@
+{
+  "kind": "isolated diagnostic, not execution of the named original test body",
+  "command_receipt": "stage-m4b-terminal-timestamp-red1.json",
+  "script": "stage-m4b-terminal-timestamp-diagnostic.py",
+  "script_sha256": "e66e31f02afb5fe8b4fb575f797459e150f57d62b92681385d687f69b99aaa1e",
+  "fixture_reuse": "pytest plugin substitutes one collected case body in memory to reuse its unchanged real File/JobManager fixtures. No test source or assertion is edited. The displayed node name identifies fixture selection, not an original-suite failure.",
+  "observed": "Original JobManager._emit advances updated_at; second read incorrectly becomes INCOMPLETE after an existing DRAFT asset.",
+  "correction_regressions": "New explicit DRAFT and APPROVED test cases call the same original method and require identical asset receipts; no model replay.",
+  "first_correction_result": "21 passed / 21 opposite-profile skips; final source full selections pending"
+}

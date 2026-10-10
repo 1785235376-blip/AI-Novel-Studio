@@ -1,4 +1,5 @@
 import { ApiError } from '../api';
+import { graphTextResultStorage } from './studioGraphTextAssetContract';
 import type { StudioGraphModelCapabilities, StudioGraphModelExecution, StudioGraphModelPreview, StudioGraphModelRuntime, StudioGraphOwner } from './studioGraphTypes';
 
 /** Code-owned, versioned projections. Provider metadata never grants execution authority. */
@@ -38,6 +39,7 @@ export function graphModelCapabilities(value: unknown, owner: (value: Record<str
   if (routes.some(item => item.available && item.reasons.length)) invalid();
   return { ...ownership, schema_version: 1, contract: 'creative-graph-model/1', adapter_owner: 'TextModelNode', router_owner: 'ModelBroker',
     scheduler_owner: 'JobManager+WorkflowRun', local_only: true, automatic_fallback: false, quality_verification: 'NOT_RUN', routes,
+    ...(row.result_storage === undefined ? {} : { result_storage: graphTextResultStorage(row.result_storage) }),
     api_provider: { status: 'RESERVED', execution_available: false, reason: 'API_PROVIDER_EXECUTION_NOT_ENABLED' },
     limits: { model_nodes: 1, max_output_tokens: 2048, timeout_seconds: 180 } };
 }

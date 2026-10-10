@@ -860,3 +860,23 @@ These bounded changes do not complete the broader MODEL/API/install/hardware
 rows, Image/Video execution, or GATE-M3. Real local inference/quality and actual
 user Windows/GPU acceptance remain **NOT_RUN / LOCAL_REQUIRED**. M3-C's inherited
 **PARTIAL_PR_CI_CAPACITY** and historical independent review **BLOCKED** persist.
+
+## 38. Append-only M4-B provider and text-asset delta
+
+[M4-B report](MILESTONE_M4B_REPORT.md) records this separate checkpoint and its
+source-bound results. Original owners and historical feature rows are preserved.
+
+- Uniform provider capability/availability/execution/result contracts and scoped
+  task matching are **PARTIAL**: Ollama/llama.cpp reuse authorized local routes;
+  LM Studio has tested codecs but trusted locality is unverified. ComfyUI,
+  image/video and API remain declared/reserved, without automatic fallback.
+- Hardware matching is advisory total RAM/VRAM filtering, not measured free
+  capacity, model-fit validation or a global scheduler.
+- Current TextNode UI execution archives every accepted result through original
+  AssetLibraryService as a private DRAFT v1 before original human review. Review
+  projects APPROVED/REJECTED v2; original reads/refresh recover bounded storage
+  gaps without inference replay or added steps. This does not migrate historical
+  clients or implement edited text-content versions, manuscript or Canon apply.
+- Real local inference/quality remains NOT_RUN; actual user Windows/GPU remains
+  LOCAL_REQUIRED. Historical PARTIAL_PR_CI_CAPACITY and independent review BLOCKED
+  remain. Full M4 and broader MODEL/API/install/image/video gates are not promoted.

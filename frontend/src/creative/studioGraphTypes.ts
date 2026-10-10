@@ -1,3 +1,4 @@
+import type { StudioGraphResultStorage, StudioGraphTextAssetOutput } from './studioGraphTextAssetTypes';
 /** Finite, code-owned contracts. A catalog entry cannot register executable code. */
 export type StudioGraphDefinitionId = 'text_input' | 'text_reference' | 'draft_prepare'
   | 'manual_transform' | 'director_note' | 'human_review' | 'asset_reference' | 'text_generate';
@@ -161,6 +162,7 @@ export type StudioGraphRun = StudioGraphOwner & {
   updated_at: string;
   model_called: boolean;
   model_runtime?: StudioGraphModelRuntime;
+  asset_output?: StudioGraphTextAssetOutput;
   external_calls: 0;
   applied: false;
   stale: boolean;
@@ -178,6 +180,7 @@ export type StudioGraphModelCapabilities = StudioGraphOwner & {
   scheduler_owner: 'JobManager+WorkflowRun'; local_only: true; automatic_fallback: false;
   api_provider: { status: 'RESERVED'; execution_available: false; reason: 'API_PROVIDER_EXECUTION_NOT_ENABLED' };
   limits: { model_nodes: 1; max_output_tokens: 2048; timeout_seconds: 180 };
+  result_storage?: StudioGraphResultStorage;
   routes: StudioGraphModelRoute[]; quality_verification: 'NOT_RUN';
 };
 export type StudioGraphModelPreview = {
@@ -198,5 +201,5 @@ export type StudioGraphModelRuntime = {
   quality_verification: 'NOT_RUN'; automatic_retry: false; applied: false;
 };
 export type StudioGraphModelPreviewInput = { expected_version: number; route_id: string; allow_synthetic: boolean };
-export type StudioGraphModelDispatchInput = { expected_version: number; reviewed_preview_digest: string };
+export type StudioGraphModelDispatchInput = { expected_version: number; reviewed_preview_digest: string; archive_result?: true };
 export type StudioGraphModelRefreshInput = { expected_version: number };

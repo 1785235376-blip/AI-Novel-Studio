@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import type { StudioGraphClient } from './studioGraphClient';
+import { ProviderTaskMatchPanel } from './ProviderTaskMatchPanel';
+import { GraphTextAssetSummary } from './GraphTextAssetSummary';
 import type { StudioGraphModelCapabilities, StudioGraphRun } from './studioGraphTypes';
 
 export type GraphModelAction = 'preview' | 'dispatch' | 'refresh';
-export type GraphModelActionEvidence = { route_id?: string; allow_synthetic?: boolean; reviewed_preview_digest?: string };
+export type GraphModelActionEvidence = { route_id?: string; allow_synthetic?: boolean; reviewed_preview_digest?: string; archive_result?: true };
 type Props = {
   client: StudioGraphClient; run?: StudioGraphRun; locked: boolean; canMutate: boolean; uncertain: boolean;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>;
@@ -45,7 +47,7 @@ export function GraphModelExecutionPanel({ client, run, locked, canMutate, uncer
     if (kind === 'refresh' && !execution) return;
     pending.current = true; setLoading(true); setReviewed(false);
     try { await perform(kind, kind === 'preview' ? { route_id: route!.route_id, allow_synthetic: allowSynthetic }
-      : kind === 'dispatch' ? { reviewed_preview_digest: preview!.preview_digest } : undefined); }
+      : kind === 'dispatch' ? { reviewed_preview_digest: preview!.preview_digest, ...(capabilities?.result_storage ? { archive_result: true as const } : {}) } : undefined); }
     finally { pending.current = false; if (current()) setLoading(false); }
   }
 
@@ -59,12 +61,14 @@ export function GraphModelExecutionPanel({ client, run, locked, canMutate, uncer
       <label>本地文字模型路由<select aria-label="本地文字模型路由" value={routeId} disabled={disabled || !!execution || uncertain} onChange={event => { setRouteId(event.target.value); setAllowSynthetic(false); setReviewed(false); }}><option value="">明确选择本地路由</option>{capabilities.routes.map(item => <option key={item.route_id} value={item.route_id} disabled={!item.available}>{item.display_name} · {item.provider_id} / {item.model_id}{item.synthetic ? ' · 测试适配器' : ''}{item.available ? '' : ' · 不可用'}</option>)}</select></label>
       {route && <><p>验证状态：{route.verification} · 上下文窗口：{route.context_window ?? '未知'}</p>{route.reasons.map(reason => <StatusMessage key={reason} tone="warning">{reason}</StatusMessage>)}{route.synthetic && <label><input type="checkbox" checked={allowSynthetic} disabled={disabled || !!execution || uncertain} onChange={event => setAllowSynthetic(event.target.checked)} />明确使用测试适配器；不代表真实本地模型推理</label>}</>}
     </>}
+    {client.providerContracts && client.modelMatch && <ProviderTaskMatchPanel client={client as Required<Pick<StudioGraphClient, 'providerContracts' | 'modelMatch'>>} routes={capabilities?.routes} locked={locked || loading} isCurrent={isCurrent} read={read} onUnavailable={onUnavailable} />}
+    {run?.asset_output && <GraphTextAssetSummary output={run.asset_output} />}
     {!run && <p>先保存图并创建运行；保存和创建都不会调用模型。</p>}
     {run && !model && <p>当前运行没有模型节点，保持原本地处理边界。</p>}
     {model && <><Badge>{model.status}</Badge>{model.status === 'PENDING' && <p>先明确执行前置本地节点，到达模型边界后再预览。</p>}
       {previewReady && <Button disabled={disabled || uncertain || !route?.available || route.synthetic && !allowSynthetic} onClick={() => void action('preview')}>预览图节点模型输入</Button>}
       {preview && !terminal && <section aria-label="图节点模型输入预览"><Badge tone="info">预览尚未调用模型</Badge><p>节点：{preview.node_id} · 路由：{preview.route?.provider_id || '未选定'} / {preview.route?.model_id || '未选定'}</p><p>最多 {preview.limits.max_output_tokens} 输出 token · 最长 {preview.limits.timeout_seconds} 秒 · 最高费用 0 USD</p><details><summary>核对完整模型输入</summary><pre>{preview.prompt}</pre></details>{preview.reasons.map(reason => <StatusMessage key={reason} tone="warning">{reason}</StatusMessage>)}
-        {!execution && <><label><input type="checkbox" checked={reviewed} disabled={disabled || uncertain || !preview.execution_available || !exactRoute || !route?.available || route.synthetic && !allowSynthetic} onChange={event => setReviewed(event.target.checked)} />已核对当前节点、完整输入和本地路由，允许调用一次</label><Button variant="primary" disabled={!canDispatch} onClick={() => void action('dispatch')}>确认调用图节点本地模型</Button></>}
+        {!execution && <>{capabilities?.result_storage && <p>成功结果会保存为私有待审核文字资产，审核不会写入正文。</p>}<label><input type="checkbox" checked={reviewed} disabled={disabled || uncertain || !preview.execution_available || !exactRoute || !route?.available || route.synthetic && !allowSynthetic} onChange={event => setReviewed(event.target.checked)} />已核对当前节点、完整输入和本地路由，允许调用一次</label><Button variant="primary" disabled={!canDispatch} onClick={() => void action('dispatch')}>确认调用图节点本地模型</Button></>}
       </section>}
       {execution && <section aria-label="图节点模型执行回执"><p>任务：{execution.job_id} · {execution.status}</p><p>模型调用：{execution.model_called ? '已调用' : '调用记录尚待核对'} · {execution.synthetic ? '测试适配器任务' : '本地模型任务'}</p><p>回执：{execution.receipt_state} · 用量：{execution.usage_state}</p>{execution.failure_code && <StatusMessage tone="warning">{execution.failure_code}</StatusMessage>}{!terminal && <Button disabled={disabled} onClick={() => void action('refresh')}>核对图节点模型结果</Button>}<p>等待中的模型任务只能核对或取消，不能暂停后重复调度。</p></section>}
       {(uncertain || model.status === 'UNKNOWN') && <StatusMessage tone="warning">调用回执不确定。请重新读取当前运行或核对结果；不会自动重放。</StatusMessage>}

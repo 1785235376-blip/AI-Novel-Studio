@@ -46,6 +46,7 @@ class ModelPreview(Strict):
 class ModelDispatch(Strict):
     expected_version: int = Field(ge=1)
     reviewed_preview_digest: Digest
+    archive_result: bool = False
 
 
 class ModelRefresh(Strict):
@@ -90,6 +91,42 @@ class ModelRouter:
             guard, route_guard=lambda route: self.guard_route(route, synthetic_allowed=synthetic_allowed),
             local_text_only=True, owner_lease=owner_lease)
 
+    def match(self, nid, scope, requirement):
+        """Explain additional requirements; never choose or authorize a route.
+
+        Only original local TEXT candidates are inspected. In particular this
+        does not resolve cloud credentials or initialize unrelated modalities.
+        IMAGE/VIDEO and API families remain explicit reserved contracts.
+        """
+        from ..model_provider_contracts import TaskRequirement, match_task_requirement
+        requirement = TaskRequirement.model_validate(requirement)
+        # API availability is a host fact, not a client claim. This execution
+        # layer has no API dispatch owner, regardless of legacy configuration.
+        requirement = requirement.model_copy(update={"api_available": False})
+        prices = self.broker.store.read(nid, scope)["collections"].get(self.broker.PRICES, {})
+        hardware = self.broker.hardware_capacity()
+        routes = self.broker.candidates(local_text_only=True)
+        if len(routes) > 128:
+            raise ValueError("CREATIVE_MODEL_ROUTE_CAPACITY")
+        matches = []
+        for route in routes:
+            reasons = list(route["reasons"])
+            try:
+                self.guard_route(route, synthetic_allowed=requirement.allow_synthetic)
+            except Exception:
+                reasons.append("LOCAL_MODEL_ADAPTER_UNAVAILABLE")
+            if not known_zero(self.broker._price(route, prices)):
+                reasons.append("KNOWN_ZERO_PRICE_REQUIRED")
+            if not route["synthetic"] and not route.get("identity", {}).get("license_confirmed"):
+                reasons.append("LICENSE_CONFIRMATION_REQUIRED")
+            candidate = {**route, "reasons": list(dict.fromkeys(reasons)), "available": not reasons}
+            match = match_task_requirement(requirement, candidate, hardware)
+            matches.append({key: deepcopy(route[key]) for key in
+                ("route_id", "provider_id", "model_id", "display_name", "synthetic")})
+            matches[-1].update(match.model_dump(mode="json"))
+        return {"requirement": requirement.model_dump(mode="json"), "matches": matches,
+            "hardware": hardware, "api_provider": {"status": "RESERVED", "execution_available": False}}
+
 
 class CreativeGraphNodeRuntime:
     """Stateless composition. All durable fields belong to the existing graph run."""
@@ -97,6 +134,8 @@ class CreativeGraphNodeRuntime:
     def __init__(self, service, broker, manager):
         self.service, self.broker, self.manager = service, broker, manager
         self.router = ModelRouter(broker)
+        from .text_assets import GraphTextAssets
+        self.text_assets = GraphTextAssets(self)
 
     def catalog(self, nid, scope, actor, guard):
         require_execution()
@@ -108,6 +147,32 @@ class CreativeGraphNodeRuntime:
                 "reason": "API_PROVIDER_EXECUTION_NOT_ENABLED"},
             "limits": {"model_nodes": 1, "max_output_tokens": 2048, "timeout_seconds": NODE_SECONDS},
             "routes": self.router.catalog(nid, scope), "quality_verification": "NOT_RUN"}
+        result["result_storage"] = {"contract": "creative-graph-text-asset/1", "available": True,
+            "owner": "AssetLibraryService", "actor_private": True, "automatic_model_retry": False}
+        current(); require_execution()
+        return result
+
+    @staticmethod
+    def _provider_envelope(nid, scope):
+        return {"schema_version": 1, "contract": "creative-model-provider/1",
+            "project_id": nid, "scope": deepcopy(scope), "advisory_only": True,
+            "dispatch_authorized": False, "automatic_fallback": False,
+            "quality_verification": "NOT_RUN"}
+
+    def providers(self, nid, scope, actor, guard):
+        from ..model_provider_contracts import provider_catalog
+        require_execution()
+        _, current = self.service._context(nid, scope, actor, guard)
+        result = {**self._provider_envelope(nid, scope),
+            "task_types": ["TEXT_GENERATION", "IMAGE_GENERATION", "VIDEO_GENERATION"],
+            "providers": provider_catalog(self.broker.runtime)}
+        current(); require_execution()
+        return result
+
+    def match_task(self, nid, scope, actor, value, guard):
+        require_execution()
+        _, current = self.service._context(nid, scope, actor, guard)
+        result = {**self._provider_envelope(nid, scope), **self.router.match(nid, scope, value)}
         current(); require_execution()
         return result
 
@@ -136,6 +201,7 @@ class CreativeGraphNodeRuntime:
         return row
 
     def validate_snapshot(self, row):
+        self.text_assets.validate_intent(row)
         node = self.node(row)
         preview = row.get("model_preview")
         execution = row.get("model_execution")
@@ -268,6 +334,8 @@ class CreativeGraphNodeRuntime:
         deadline = min(datetime.now(timezone.utc) + timedelta(seconds=NODE_SECONDS),
                        datetime.fromisoformat(self.service.executor._timing(row))).isoformat()
         incarnation = row[BINDING]
+        asset_intent = {"contract": "creative-graph-text-asset/1", "job_id": None,
+            "source_run_version": body.expected_version + 1, "preview_digest": preview["preview_digest"]} if body.archive_result else None
         binding = {"graph_id": row["graph_id"], "graph_version": row["graph_version"], "run_id": rid,
             "node_id": node["id"], "project_incarnation": incarnation, "input_digest": input_digest,
             "reviewed_preview_digest": body.reviewed_preview_digest, "route_fingerprint": route["fingerprint"]}
@@ -281,6 +349,8 @@ class CreativeGraphNodeRuntime:
                     or not execution or execution["job_id"] != job.id or live.get("model_preview") != preview
                     or live[BINDING] != incarnation or self.inputs(live)[2] != input_digest):
                 raise StaleSourceError("CREATIVE_MODEL_EXECUTION_AUTHORITY_CHANGED")
+            if live.get("model_asset_intent") != asset_intent:
+                raise StaleSourceError("CREATIVE_TEXT_ASSET_CONSENT_CHANGED")
             self.policy(nid, scope, actor, preview)
         def preparation_authority():
             live = self.row(nid, scope, actor, rid, current)
@@ -294,6 +364,8 @@ class CreativeGraphNodeRuntime:
             deadline=deadline, synthetic_allowed=preview["allow_synthetic"],
             max_output_tokens=node["parameters"]["max_output_tokens"])
         job.request_authorization = live_authority
+        if asset_intent is not None:
+            asset_intent["job_id"] = job.id
         execution = {"job_id": job.id, "node_id": node["id"], "reservation_id": None,
             "status": "ADMISSION_PENDING", "receipt_state": "UNKNOWN_NO_AUTOMATIC_REPLAY",
             "model_called": False, "synthetic": route["synthetic"], "usage_state": "UNKNOWN",
@@ -306,7 +378,8 @@ class CreativeGraphNodeRuntime:
             host = _ScopedOriginalWorkflowHost(stored, current)
             host.trigger_agent_node(rid, node["id"], actor)
             host.claim_agent_task(rid, node["id"], actor)
-            self.commit_host(stored, actor, host, model_execution=deepcopy(execution))
+            self.commit_host(stored, actor, host, model_execution=deepcopy(execution),
+                **({"model_asset_intent": deepcopy(asset_intent)} if asset_intent is not None else {}))
             self.service._capacity(state); current()
         # There is no provider work, worker launch or runtime start inside the
         # scope transaction. A lost admission cannot be turned into another job.
@@ -342,9 +415,31 @@ class CreativeGraphNodeRuntime:
                     change_row(stored, actor, stored["version"], lambda item: item.update(model_execution=deepcopy(execution)))
                     self.service._capacity(state)
             raise
-        return self.service.get_run(nid, scope, actor, rid, current)
+        return self.service.get_run(nid, scope, actor, rid, current, reconcile=False)
 
     def refresh(self, nid, scope, actor, rid, value, guard):
+        row = self.row(nid, scope, actor, rid, guard)
+        body = ModelRefresh.model_validate(value)
+        check_version(row, body.expected_version)
+        if self.text_assets.enabled(row) and row["status"] not in {"FAILED", "CANCELLED"}:
+            try:
+                job = self.bound_job(row)
+            except KeyError:
+                job = None
+            if job and job.status == "COMPLETED" and job.terminal_hook_status != "COMPLETED":
+                return self.text_assets.masked(self.service.executor.view(nid, scope, actor, row, guard),
+                    "TERMINAL_ACCOUNTING_RECONCILIATION_REQUIRED")
+            if job and job.status == "COMPLETED" and job.terminal_hook_status == "COMPLETED":
+                with self.text_assets.phase(nid, scope, actor, rid, guard, create=row["status"] == "RUNNING"):
+                    result = self._refresh(nid, scope, actor, rid, value, guard)
+                return self.text_assets.decorate(nid, scope, actor, rid, guard, result)
+        result = self._refresh(nid, scope, actor, rid, value, guard)
+        if self.text_assets.enabled(row):
+            result["asset_output"] = self.text_assets.pending("NO_ACCEPTED_RESULT"
+                if result["status"] in {"FAILED", "CANCELLED"} else "PENDING")
+        return result
+
+    def _refresh(self, nid, scope, actor, rid, value, guard):
         body = ModelRefresh.model_validate(value)
         _, current = self.service._context(nid, scope, actor, guard)
         row = self.row(nid, scope, actor, rid, current)
@@ -362,7 +457,8 @@ class CreativeGraphNodeRuntime:
         public = job.public() if job else None
         settled = bool(ledger and ledger["status"] == "SETTLED" and ledger["actual_microusd"] == 0)
         accounted = bool(ledger and ledger["status"] in {"SETTLED", "RELEASED"} and ledger["actual_microusd"] == 0)
-        restored = job is None or not callable(job.request_authorization)
+        archive_authority = self.text_assets.enabled(row) and self.text_assets.has_authority(row)
+        restored = job is None or not callable(job.request_authorization) and not archive_authority
         execution.update(status=public["status"] if public else "UNKNOWN",
             receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY" if restored or (job.status in self.manager.terminal and (job.terminal_hook_status != "COMPLETED" or not accounted)) else "RECORDED",
             model_called=bool(ledger and ledger["dispatched"]), usage_state=job.usage_status if job else "UNKNOWN",
@@ -378,7 +474,10 @@ class CreativeGraphNodeRuntime:
                 success = not restored and public["status"] == "COMPLETED" and job.terminal_hook_status == "COMPLETED" and bool(ledger and ledger["dispatched"]) and settled
                 output = None
                 if success:
-                    job.request_authorization()
+                    if archive_authority:
+                        self.text_assets.output_authority(stored)
+                    else:
+                        job.request_authorization()
                     ports, _, _ = self.inputs(stored)
                     output = {"draft": {"text": job.output, "origin": "MODEL_PROPOSAL"}}
                     if "direction" in ports:
@@ -421,6 +520,8 @@ class CreativeGraphNodeRuntime:
         node = self.node(row)
         if row["node_states"][node["id"]]["status"] != "SUCCEEDED":
             return
+        if self.text_assets.enabled(row):
+            return self.text_assets.output_authority(row)
         execution = row.get("model_execution")
         if not execution:
             raise StaleSourceError("CREATIVE_MODEL_OUTPUT_RECEIPT_REQUIRED")

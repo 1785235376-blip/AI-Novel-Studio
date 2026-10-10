@@ -1,0 +1,10 @@
+.sFs                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_completed_restart_reconciles_without_rebuilding_execution_authority[file] _
+tests/test_v2_graph_text_assets.py:74: in test_completed_restart_reconciles_without_rebuilding_execution_authority
+    assert not recovered["stale"] and recovered["asset_output"]["state"] == "DRAFT", recovered
+E   AssertionError: {'applied': False, 'asset_output': {'actor_private': True, 'applied': False, 'asset_id': None, 'automatic_model_retry'... 'misses': 1, 'mode': 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY'}, 'created_at': '2026-10-10T10:42:00.075097+00:00', ...}
+E   assert (not True)
+=========================== short test summary info ============================
+FAILED tests/test_v2_graph_text_assets.py::test_completed_restart_reconciles_without_rebuilding_execution_authority[file]
+1 failed, 1 passed, 2 skipped in 7.54s

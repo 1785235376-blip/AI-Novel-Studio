@@ -1,0 +1,164 @@
+On branch feature/v2-narrative-platform
+Your branch is up to date with 'origin/feature/v2-narrative-platform'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   .github/ci/coverage_manifest_v2.json.gz
+	modified:   AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md
+	modified:   API_CATALOG.json
+	modified:   API_CATALOG.md
+	modified:   API_CATALOG_DETAIL.json.gz
+	modified:   API_OPENAPI.json.gz
+	new file:   MILESTONE_M4B_REPORT.md
+	modified:   app/creative/ai_execution.py
+	modified:   app/creative/graph.py
+	modified:   app/creative/graph_api.py
+	modified:   app/creative/project_store.py
+	new file:   app/creative/text_assets.py
+	modified:   app/creative/workspace.py
+	modified:   app/creative/workspace_api.py
+	modified:   app/model_execution.py
+	new file:   app/model_provider_contracts.py
+	modified:   app/services/asset_library_service.py
+	new file:   docs/delivery/v2-development/catalog-54e3c13812b7.json
+	new file:   docs/delivery/v2-development/catalog-dcbc4fd8b6ac.json
+	new file:   docs/delivery/v2-development/stage-m4b-adjacent-file-dev1.json
+	new file:   docs/delivery/v2-development/stage-m4b-adjacent-file-dev1.log
+	new file:   docs/delivery/v2-development/stage-m4b-adjacent-file-dev2.json
+	new file:   docs/delivery/v2-development/stage-m4b-adjacent-file-dev2.log
+	new file:   docs/delivery/v2-development/stage-m4b-archive-guards-green1.json
+	new file:   docs/delivery/v2-development/stage-m4b-archive-guards-green1.log
+	new file:   docs/delivery/v2-development/stage-m4b-browser-collection-additive-final1.json
+	new file:   docs/delivery/v2-development/stage-m4b-browser-collection-additive-final1.log
+	new file:   docs/delivery/v2-development/stage-m4b-browser-collection-additive-final2.json
+	new file:   docs/delivery/v2-development/stage-m4b-browser-collection-additive-final2.log
+	new file:   docs/delivery/v2-development/stage-m4b-browser-collection-original-final1.json
+	new file:   docs/delivery/v2-development/stage-m4b-browser-collection-original-final1.log
+	new file:   docs/delivery/v2-development/stage-m4b-browser-collection-original-final2.json
+	new file:   docs/delivery/v2-development/stage-m4b-browser-collection-original-final2.log
+	new file:   docs/delivery/v2-development/stage-m4b-browser-collection.log
+	new file:   docs/delivery/v2-development/stage-m4b-browser-fixtures.log
+	new file:   docs/delivery/v2-development/stage-m4b-browser-inventory-additive/junit.xml
+	new file:   docs/delivery/v2-development/stage-m4b-browser-inventory-additive/results.json
+	new file:   docs/delivery/v2-development/stage-m4b-browser-inventory-additive2/junit.xml
+	new file:   docs/delivery/v2-development/stage-m4b-browser-inventory-additive2/results.json
+	new file:   docs/delivery/v2-development/stage-m4b-browser-inventory-original/junit.xml
+	new file:   docs/delivery/v2-development/stage-m4b-browser-inventory-original/results.json
+	new file:   docs/delivery/v2-development/stage-m4b-browser-inventory-original2/junit.xml
+	new file:   docs/delivery/v2-development/stage-m4b-browser-inventory-original2/results.json
+	new file:   docs/delivery/v2-development/stage-m4b-browser-preparation.json
+	new file:   docs/delivery/v2-development/stage-m4b-browser-self-check-wire.json
+	new file:   docs/delivery/v2-development/stage-m4b-build-final1.json
+	new file:   docs/delivery/v2-development/stage-m4b-build-final1.log
+	new file:   docs/delivery/v2-development/stage-m4b-build-final2.json
+	new file:   docs/delivery/v2-development/stage-m4b-build-final2.log
+	new file:   docs/delivery/v2-development/stage-m4b-final-edge-file1.json
+	new file:   docs/delivery/v2-development/stage-m4b-final-edge-file1.log
+	new file:   docs/delivery/v2-development/stage-m4b-frontend-final1.json
+	new file:   docs/delivery/v2-development/stage-m4b-frontend-final1.log
+	new file:   docs/delivery/v2-development/stage-m4b-frontend-final2.json
+	new file:   docs/delivery/v2-development/stage-m4b-frontend-final2.log
+	new file:   docs/delivery/v2-development/stage-m4b-graph-assets-api-dev1.json
+	new file:   docs/delivery/v2-development/stage-m4b-graph-assets-api-dev1.log
+	new file:   docs/delivery/v2-development/stage-m4b-graph-assets-dev1.json
+	new file:   docs/delivery/v2-development/stage-m4b-graph-assets-dev1.log
+	new file:   docs/delivery/v2-development/stage-m4b-graph-assets-dev2.json
+	new file:   docs/delivery/v2-development/stage-m4b-graph-assets-dev2.log
+	new file:   docs/delivery/v2-development/stage-m4b-graph-assets-dev3.json
+	new file:   docs/delivery/v2-development/stage-m4b-graph-assets-dev3.log
+	new file:   docs/delivery/v2-development/stage-m4b-host-observation.json
+	new file:   docs/delivery/v2-development/stage-m4b-infrastructure-final1.json
+	new file:   docs/delivery/v2-development/stage-m4b-infrastructure-final1.log
+	new file:   docs/delivery/v2-development/stage-m4b-infrastructure-final1.xml
+	new file:   docs/delivery/v2-development/stage-m4b-infrastructure-final2.json
+	new file:   docs/delivery/v2-development/stage-m4b-infrastructure-final2.log
+	new file:   docs/delivery/v2-development/stage-m4b-infrastructure-final2.xml
+	new file:   docs/delivery/v2-development/stage-m4b-late-registration-red1.json
+	new file:   docs/delivery/v2-development/stage-m4b-late-registration-red1.log
+	new file:   docs/delivery/v2-development/stage-m4b-manifest-extension1.json
+	new file:   docs/delivery/v2-development/stage-m4b-manifest-extension2.json
+	new file:   docs/delivery/v2-development/stage-m4b-manifest-extension3.json
+	new file:   docs/delivery/v2-development/stage-m4b-playwright-collection.json
+	new file:   docs/delivery/v2-development/stage-m4b-playwright-collection.xml
+	new file:   docs/delivery/v2-development/stage-m4b-postgres-final1-initdb.log
+	new file:   docs/delivery/v2-development/stage-m4b-postgres-final2-initdb.log
+	new file:   docs/delivery/v2-development/stage-m4b-precommit-status.txt
+	new file:   docs/delivery/v2-development/stage-m4b-preservation-final1.json
+	new file:   docs/delivery/v2-development/stage-m4b-preservation-final2.json
+	new file:   docs/delivery/v2-development/stage-m4b-provider-contracts-dev1.json
+	new file:   docs/delivery/v2-development/stage-m4b-provider-contracts-dev1.log
+	new file:   docs/delivery/v2-development/stage-m4b-publish-verification.json
+	new file:   docs/delivery/v2-development/stage-m4b-requirements-api-dev1.json
+	new file:   docs/delivery/v2-development/stage-m4b-requirements-api-dev1.log
+	new file:   docs/delivery/v2-development/stage-m4b-requirements-api-dev2.json
+	new file:   docs/delivery/v2-development/stage-m4b-requirements-api-dev2.log
+	new file:   docs/delivery/v2-development/stage-m4b-restart-diagnostic1.json
+	new file:   docs/delivery/v2-development/stage-m4b-restart-diagnostic1.log
+	new file:   docs/delivery/v2-development/stage-m4b-restart-diagnostic2.json
+	new file:   docs/delivery/v2-development/stage-m4b-restart-diagnostic2.log
+	new file:   docs/delivery/v2-development/stage-m4b-selected-file-final1.json
+	new file:   docs/delivery/v2-development/stage-m4b-selected-file-final1.log
+	new file:   docs/delivery/v2-development/stage-m4b-selected-file-final1.xml
+	new file:   docs/delivery/v2-development/stage-m4b-selected-file-final2.json
+	new file:   docs/delivery/v2-development/stage-m4b-selected-file-final2.log
+	new file:   docs/delivery/v2-development/stage-m4b-selected-file-final2.xml
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final1-postgres-runtime.json
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final1.json
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final1.log
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final1.xml
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final2-postgres-runtime.json
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final2.json
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final2.log
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final2.xml
+	new file:   docs/delivery/v2-development/stage-m4b-terminal-timestamp-diagnostic.json
+	new file:   docs/delivery/v2-development/stage-m4b-terminal-timestamp-diagnostic.py
+	new file:   docs/delivery/v2-development/stage-m4b-terminal-timestamp-green1.json
+	new file:   docs/delivery/v2-development/stage-m4b-terminal-timestamp-green1.log
+	new file:   docs/delivery/v2-development/stage-m4b-terminal-timestamp-red1.json
+	new file:   docs/delivery/v2-development/stage-m4b-terminal-timestamp-red1.log
+	new file:   docs/delivery/v2-development/stage-m4b-text-owner-dev1.json
+	new file:   docs/delivery/v2-development/stage-m4b-text-owner-dev1.log
+	new file:   docs/delivery/v2-development/stage-m4b-text-owner-final.json
+	new file:   docs/delivery/v2-development/stage-m4b-text-owner-final.log
+	new file:   docs/delivery/v2-development/stage-m4b-text-owner-regression1.json
+	new file:   docs/delivery/v2-development/stage-m4b-text-owner-regression1.log
+	new file:   docs/delivery/v2-development/stage-m4b-ui-asset-notice-evidence.json
+	new file:   docs/delivery/v2-development/stage-m4b-ui-asset-notice-green.log
+	new file:   docs/delivery/v2-development/stage-m4b-ui-asset-notice-red.log
+	new file:   docs/delivery/v2-development/stage-m4b-ui-browser-blocked.log
+	new file:   docs/delivery/v2-development/stage-m4b-ui-evidence.json
+	new file:   docs/delivery/v2-development/stage-m4b-ui-focused-270.log
+	new file:   docs/delivery/v2-development/stage-m4b-ui-provider-78.log
+	new file:   docs/delivery/v2-development/stage-m4b-ui-typecheck.log
+	new file:   docs/delivery/v2-development/stage-m4b-ui-wire-input.json
+	new file:   docs/delivery/v2-development/stage-m4b-ui-wire-replay-green.log
+	new file:   docs/delivery/v2-development/stage-m4b-ui-wire-replay-red.log
+	new file:   docs/v2/model-provider-contracts.md
+	new file:   docs/v2/text-result-assets.md
+	modified:   frontend/playwright.independent-live.config.ts
+	modified:   frontend/src/creative/GraphModelExecutionPanel.tsx
+	modified:   frontend/src/creative/GraphRunPanel.tsx
+	new file:   frontend/src/creative/GraphTextAssetPanel.test.tsx
+	new file:   frontend/src/creative/GraphTextAssetSummary.tsx
+	new file:   frontend/src/creative/ProviderTaskMatchPanel.test.tsx
+	new file:   frontend/src/creative/ProviderTaskMatchPanel.tsx
+	modified:   frontend/src/creative/studioGraphClient.ts
+	modified:   frontend/src/creative/studioGraphModelContract.ts
+	new file:   frontend/src/creative/studioGraphTextAsset.testFixtures.ts
+	new file:   frontend/src/creative/studioGraphTextAssetClient.test.ts
+	new file:   frontend/src/creative/studioGraphTextAssetContract.ts
+	new file:   frontend/src/creative/studioGraphTextAssetTypes.ts
+	modified:   frontend/src/creative/studioGraphTypes.ts
+	new file:   frontend/src/creative/studioProvider.testFixtures.ts
+	new file:   frontend/src/creative/studioProviderClient.test.ts
+	new file:   frontend/src/creative/studioProviderClient.ts
+	new file:   frontend/src/creative/studioProviderTypes.ts
+	new file:   frontend/tests/e2e/v2-model-assets-live.spec.ts
+	new file:   tests/test_v2_graph_text_assets.py
+	new file:   tests/test_v2_graph_text_assets_api.py
+	new file:   tests/test_v2_model_assets_browser_fixture.py
+	new file:   tests/test_v2_model_provider_contracts.py
+	new file:   tests/test_v2_model_requirements_api.py
+	new file:   tests/test_v2_text_asset_owner.py
+	new file:   tests/v2_model_assets_browser_server.py
+

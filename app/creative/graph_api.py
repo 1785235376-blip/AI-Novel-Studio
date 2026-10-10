@@ -13,6 +13,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     router = APIRouter(tags=["Creative Graph V2"], route_class=PrivateProductionRoute)
 
     from .ai_execution import ModelPreview, ModelDispatch, ModelRefresh, require_execution
+    from ..model_provider_contracts import TaskRequirement
 
     def capture_host(request, token):
         if model_host_authority is None:
@@ -88,6 +89,14 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     @router.get("/projects/{nid}/studio/graphs/model-capabilities")
     def models(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return model_call(request, nid, x_session_token, x_branch_id, "domain.read", "catalog")
+
+    @router.get("/projects/{nid}/studio/graphs/provider-contracts")
+    def provider_contracts(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_call(request, nid, x_session_token, x_branch_id, "domain.read", "providers")
+
+    @router.post("/projects/{nid}/studio/graphs/model-match")
+    def model_match(nid: str, request: Request, body: TaskRequirement, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_call(request, nid, x_session_token, x_branch_id, "domain.read", "match_task", body)
 
     @router.post("/projects/{nid}/studio/graph-runs/{rid}/model/preview")
     def model_preview(nid: str, rid: str, request: Request, body: ModelPreview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

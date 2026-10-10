@@ -12,6 +12,7 @@ import tempfile
 import threading
 import uuid
 from contextlib import contextmanager
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from ..repository import atomic_write, now
@@ -36,6 +37,10 @@ class AssetLibraryService:
     """
 
     MAX_BYTES = 25 * 1024 * 1024
+    TEXT_RESULT_MAX_BYTES = 32_000
+    TEXT_RESULT_CONTRACT = "creative-graph-text-asset/1"
+    TEXT_RESULT_FEATURES = frozenset(("ai_execution_v2", "narrative_production_v2",
+                                    "model_broker_v2", "author_context_inspector_v2"))
 
     @staticmethod
     def public(value):
@@ -50,7 +55,8 @@ class AssetLibraryService:
         lineage_enabled = "asset_lineage_v2" in enabled_flags()
         def redact(item):
             if isinstance(item, dict):
-                for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding"):
+                for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
+                            "_text_result_origin", "_text_result_review"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -156,7 +162,8 @@ class AssetLibraryService:
     def create(self, novel_id: str, filename: str, content_base64: str,
                media_type: str | None = None, kind: str = "image",
                idempotency_key: str | None = None, *, branch_id: str | None = None,
-               required_features: tuple[str, ...] = (), owner_actor_id: str | None = None, guard=None):
+               required_features: tuple[str, ...] = (), owner_actor_id: str | None = None, guard=None,
+               _initial_text_result: dict | None = None):
         from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
         if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
@@ -198,6 +205,18 @@ class AssetLibraryService:
             identity["_project_binding"] = copy.deepcopy(binding)
         if required_features or owner_actor_id:
             identity.update(_required_features=sorted(set(required_features)), _owner_actor_id=owner_actor_id)
+        initial_review = None
+        if _initial_text_result is not None:
+            # Server-only entry: no HTTP input model exposes this argument.
+            # All immutable provenance participates in idempotency, while its
+            # later review projection must not change the creation identity.
+            initial = self._text_initial(_initial_text_result, data)
+            if (binding is None or not owner_actor_id or not callable(guard)
+                    or not self.TEXT_RESULT_FEATURES.issubset(required_features)
+                    or kind != "text" or media_type != "text/plain"):
+                raise ValueError("TEXT_RESULT_AUTHORITY_REQUIRED")
+            identity.update(initial)
+            initial_review = {"status": "DRAFT", "receipt": None, "history": []}
         with self._lock, workspace_mutation(self.root, "asset-library"):
             if idempotency_key:
                 for existing in self.list(novel_id, branch_id=branch_id, include_deleted=True, actor_id=owner_actor_id):
@@ -214,6 +233,8 @@ class AssetLibraryService:
             asset_id = str(uuid.uuid4())
             meta = {"id": asset_id, "novel_id": novel_id, **identity, "created_at": now(), "updated_at": now(),
                     "version": 1, "deleted_at": None, "idempotency_key": idempotency_key}
+            if initial_review is not None:
+                meta["_text_result_review"] = initial_review
             target = self._bin_path(asset_id)
             fd, temporary = tempfile.mkstemp(dir=self.root, prefix=asset_id + ".", suffix=".tmp")
             try:
@@ -238,6 +259,153 @@ class AssetLibraryService:
                     os.unlink(temporary)
             return meta
 
+    @staticmethod
+    def _text_stamp(value):
+        if not isinstance(value, str) or not 1 <= len(value) <= 64:
+            raise ValueError("TEXT_RESULT_TIMESTAMP_INVALID")
+        try:
+            stamp = datetime.fromisoformat(value)
+            if stamp.tzinfo is None or stamp.utcoffset() != timedelta(0):
+                raise ValueError("UTC required")
+        except (ValueError, OverflowError):
+            raise ValueError("TEXT_RESULT_TIMESTAMP_INVALID") from None
+
+    @staticmethod
+    def _text_digest(value):
+        if not isinstance(value, str) or not re.fullmatch(r"[a-f0-9]{64}", value):
+            raise ValueError("TEXT_RESULT_DIGEST_INVALID")
+
+    @classmethod
+    def _text_source(cls, receipt):
+        expected = {"schema_version", "contract", "graph_id", "graph_version", "graph_digest", "run_id",
+                    "source_run_version", "model_node_id", "job_id", "input_digest", "output_digest",
+                    "preview_digest", "produced_at"}
+        if (not isinstance(receipt, dict) or set(receipt) != expected
+                or type(receipt.get("schema_version")) is not int or receipt["schema_version"] != 1
+                or receipt.get("contract") != cls.TEXT_RESULT_CONTRACT):
+            raise ValueError("TEXT_RESULT_SOURCE_RECEIPT_INVALID")
+        for key in ("graph_id", "run_id", "model_node_id", "job_id"):
+            cls._identifier(receipt[key], key)
+        for key in ("graph_version", "source_run_version"):
+            if type(receipt[key]) is not int or not 1 <= receipt[key] <= 2**53 - 1:
+                raise ValueError("TEXT_RESULT_SOURCE_VERSION_INVALID")
+        for key in ("graph_digest", "input_digest", "output_digest", "preview_digest"):
+            cls._text_digest(receipt[key])
+        cls._text_stamp(receipt["produced_at"])
+        return copy.deepcopy(receipt)
+
+    @classmethod
+    def _text_initial(cls, initial, data):
+        expected = {"_text_result_origin", "source_job_id", "provider_id", "model_id", "parameters"}
+        if not isinstance(initial, dict) or set(initial) != expected:
+            raise ValueError("TEXT_RESULT_METADATA_INVALID")
+        origin = cls._text_source(initial["_text_result_origin"])
+        if (not 0 < len(data) <= cls.TEXT_RESULT_MAX_BYTES
+                or origin["output_digest"] != hashlib.sha256(data).hexdigest()):
+            raise ValueError("TEXT_RESULT_CONTENT_INVALID")
+        try:
+            if not data.decode("utf-8").strip() or b"\x00" in data:
+                raise ValueError("invalid text")
+        except (UnicodeError, ValueError):
+            raise ValueError("TEXT_RESULT_CONTENT_INVALID") from None
+        if initial["source_job_id"] != origin["job_id"]:
+            raise ValueError("TEXT_RESULT_JOB_BINDING_INVALID")
+        for key in ("provider_id", "model_id"):
+            value = initial[key]
+            if (not isinstance(value, str) or not value.strip() or len(value) > 240
+                    or any(ord(char) < 32 or ord(char) == 127 for char in value)):
+                raise ValueError("TEXT_RESULT_MODEL_IDENTITY_INVALID")
+        parameters = initial["parameters"]
+        if not isinstance(parameters, dict) or set(parameters).intersection(
+                {"asset_lineage_v2", "asset_relationships_v2", "experimental_media_lineage"}):
+            raise ValueError("TEXT_RESULT_PARAMETERS_INVALID")
+        try:
+            encoded = json.dumps(initial, ensure_ascii=False, allow_nan=False).encode("utf-8")
+        except (TypeError, ValueError, UnicodeError):
+            raise ValueError("TEXT_RESULT_METADATA_INVALID") from None
+        if len(encoded) > 16_000:
+            raise ValueError("TEXT_RESULT_METADATA_LIMIT")
+        return copy.deepcopy(initial)
+
+    def create_text_result(self, novel_id, filename, text, *, source_receipt, provider_id, model_id,
+                           source_job_id, parameters, idempotency_key, branch_id, owner_actor_id,
+                           required_features, guard):
+        """Archive one server-validated result in the existing asset owner.
+
+        The caller owns source/runtime authorization. Its guard is required and
+        is called at the original owner's commit boundary, including retries.
+        This helper neither runs a model nor grants a review decision.
+        """
+        if not isinstance(text, str) or len(text) > self.TEXT_RESULT_MAX_BYTES:
+            raise ValueError("TEXT_RESULT_CONTENT_INVALID")
+        try:
+            data = text.encode("utf-8")
+        except UnicodeError:
+            raise ValueError("TEXT_RESULT_CONTENT_INVALID") from None
+        if not idempotency_key:
+            raise ValueError("TEXT_RESULT_IDEMPOTENCY_REQUIRED")
+        return self.create(novel_id, filename, base64.b64encode(data).decode("ascii"), "text/plain", "text",
+            idempotency_key, branch_id=branch_id, owner_actor_id=owner_actor_id,
+            required_features=required_features, guard=guard,
+            _initial_text_result={"_text_result_origin": source_receipt, "source_job_id": source_job_id,
+                "provider_id": provider_id, "model_id": model_id, "parameters": parameters})
+
+    def review_text_result(self, asset_id, *, actor_id, branch_id, expected_version, output_digest,
+                           status, review_receipt, guard):
+        """Project an original WorkflowRun decision without publishing ownership."""
+        if (type(expected_version) is not int or expected_version < 1
+                or status not in {"APPROVED", "REJECTED"} or not callable(guard)):
+            raise ValueError("TEXT_RESULT_REVIEW_INVALID")
+        self._text_digest(output_digest)
+        expected = {"run_id", "run_version", "review_node_id", "output_digest", "reviewed_output_digest",
+                    "reviewed_by", "reviewed_at"}
+        if not isinstance(review_receipt, dict) or set(review_receipt) != expected:
+            raise ValueError("TEXT_RESULT_REVIEW_RECEIPT_INVALID")
+        receipt = copy.deepcopy(review_receipt)
+        for key in ("run_id", "review_node_id"):
+            self._identifier(receipt[key], key)
+        if (type(receipt["run_version"]) is not int or not 1 <= receipt["run_version"] <= 2**53 - 1
+                or receipt["reviewed_by"] != actor_id or receipt["output_digest"] != output_digest):
+            raise ValueError("TEXT_RESULT_REVIEW_BINDING_INVALID")
+        self._text_digest(receipt["reviewed_output_digest"])
+        self._text_stamp(receipt["reviewed_at"])
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+            meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+            if meta.get("_owner_actor_id") != actor_id or not actor_id:
+                raise FileNotFoundError(asset_id)
+            if type(meta.get("version")) is not int or meta["version"] < 1:
+                raise ValueError("TEXT_RESULT_VERSION_INVALID")
+            origin = self._text_source(meta.get("_text_result_origin"))
+            if (meta.get("kind") != "text" or meta.get("media_type") != "text/plain"
+                    or not self.TEXT_RESULT_FEATURES.issubset(meta.get("_required_features", []))
+                    or not meta.get("_project_binding") or origin["output_digest"] != output_digest
+                    or meta["sha256"] != output_digest or receipt["run_id"] != origin["run_id"]
+                    or receipt["run_version"] <= origin["source_run_version"]):
+                raise ValueError("TEXT_RESULT_REVIEW_BINDING_INVALID")
+            review = meta.get("_text_result_review")
+            if (not isinstance(review, dict) or set(review) != {"status", "receipt", "history"}
+                    or review.get("status") not in {"DRAFT", "APPROVED", "REJECTED"}
+                    or not isinstance(review.get("history"), list)):
+                raise ValueError("TEXT_RESULT_REVIEW_STATE_INVALID")
+            self._verified_content(meta)
+            if (review["status"] == status and review["receipt"] == receipt
+                    and expected_version in {meta["version"], meta["version"] - 1}):
+                guard()
+                return meta
+            if meta["version"] != expected_version:
+                from .v1_capability_service import CapabilityVersionConflict
+                raise CapabilityVersionConflict(self.public(meta))
+            if review != {"status": "DRAFT", "receipt": None, "history": []}:
+                raise ValueError("TEXT_RESULT_REVIEW_ALREADY_FINAL")
+            guard()
+            meta.update(_text_result_review={"status": status, "receipt": receipt,
+                "history": [{"status": "DRAFT", "asset_version": meta["version"]}]},
+                updated_at=now(), version=meta["version"] + 1)
+            if status == "APPROVED":
+                meta["approved_at"] = receipt["reviewed_at"]
+            self._write_meta(meta)
+            return meta
+
     def list(self, novel_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
         self._identifier(novel_id, "novel_id")
         if branch_id is not None:
@@ -253,6 +421,34 @@ class AssetLibraryService:
                     and (include_deleted or not meta.get("deleted_at"))):
                 items.append(meta)
         return sorted(items, key=lambda item: (item.get("created_at", ""), item["id"]))
+
+    def project_usage(self, novel_id: str, *, branch_id: str | None = None):
+        """Server-only aggregate quota accounting, never private asset discovery.
+
+        Actor visibility and feature flags cannot make retained bytes disappear
+        from admission. The caller must already hold this exact project scope;
+        old incarnations, other branches and legacy unbound assets stay separate.
+        Deleted assets still occupy their original bytes and count toward quota.
+        """
+        self._identifier(novel_id, "novel_id")
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+            binding = getattr(self._scope, "binding", None)
+            if (binding is None or binding.get("novel_id") != novel_id
+                    or binding.get("branch_id") != branch_id):
+                raise ValueError("ASSET_PROJECT_BINDING_REQUIRED")
+            count = size = 0
+            for path in self.root.glob("*.json"):
+                try:
+                    row = self._load(path.stem)
+                except (ValueError, FileNotFoundError):
+                    continue
+                if (row.get("novel_id") == novel_id and row.get("branch_id") == branch_id
+                        and row.get("_project_binding") == binding):
+                    count += 1
+                    size += row["size"]
+            return {"count": count, "bytes": size}
 
     def get(self, asset_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
         if branch_id is not None:
@@ -303,6 +499,10 @@ class AssetLibraryService:
             if expected_version is not None and meta["version"] != expected_version:
                 from .v1_capability_service import CapabilityVersionConflict
                 raise CapabilityVersionConflict(self.public(meta))
+            if meta.get("_text_result_origin") is not None and any(
+                    key in fields and fields[key] != meta.get(key)
+                    for key in ("source_job_id", "provider_id", "model_id", "parameters", "approved_at", "source_asset_ids")):
+                raise ValueError("TEXT_RESULT_PROVENANCE_IMMUTABLE")
             if "parameters" in fields:
                 # Legacy generation parameters are caller-controlled. They
                 # cannot manufacture or erase the gated provenance authority.
@@ -354,6 +554,8 @@ class AssetLibraryService:
         """Server-only explicit review: retain origin, identity and bytes."""
         with self._lock, workspace_mutation(self.root, "asset-library"):
             meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+            if meta.get("_text_result_origin") is not None:
+                raise ValueError("TEXT_RESULT_PRIVATE_OWNER_REQUIRED")
             saved_provenance = {**copy.deepcopy(provenance), "review_actor": actor_id}
             if meta.get("_owner_actor_id") is None and meta.get("_origin_provenance") == saved_provenance and expected_version in {meta["version"], meta["version"] - 1}:
                 if guard: guard()

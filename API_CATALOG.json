@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "edb12da252d2257142e0523507f9c256dff0bde63a729b0866b934246fea58c8",
+  "application_source_fingerprint_sha256": "f850d18ec8b88da444d1be2f110ed6eae41037974fef530756ba10dac57831a4",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -47,20 +47,21 @@
     "app/context_policy.py": "057d0c4663189101e8ee44bbe7f2b3ecb3a93f437f25e7e0317fa06a3d0d3cb9",
     "app/creation_workbench_api.py": "28d4cb80ef1f45374ceda4bb0d5513be3fc0aea471d3ca8f0738ac8543429879",
     "app/creative/__init__.py": "22e9cdc335f433a18299dd63f82c0b68ca05af9e9cd0570b20baecac2624d0c4",
-    "app/creative/ai_execution.py": "2e64ac84882340638825481bffa1aeb546dc3566b36cb939b84960915cf9cc47",
+    "app/creative/ai_execution.py": "56ab220576f7fa7442eb9be56e23df4d7cd22c02e83f98fec7f17a2e0e5368b9",
     "app/creative/api.py": "d5e5543031cf86771f34f048bf3eed42dee5b86c95a43370406ae785a7c71623",
     "app/creative/generation.py": "e34616fbfd7b686615f3b0eab674e7f2f988650471850ef7fc5285774a0a2d61",
-    "app/creative/graph.py": "0944b1a31ae98f40eea6062576111fd4790dd3c479c2d8312e092f6ed57d0d5a",
-    "app/creative/graph_api.py": "7df9c9fe3f236758da6038c2d88aaef9450cc23ddd947d1f29def0824c536bac",
+    "app/creative/graph.py": "81256acae939e87ed5893c58af58eeca2d36a69966cdd71ff83e0da17c891781",
+    "app/creative/graph_api.py": "242e2407af3a18ad5746f78f02ec84bdfa82aa33401729f26d94274cd7393019",
     "app/creative/graph_execution.py": "0c5b48f3f51d6bc624a2bc73068e4656d000c8ba1c14de3f75823472d3713d49",
     "app/creative/graph_models.py": "8fe7e9c62b88e149c597331b069f5ad121a25ce546ada19c6085d79437b451fd",
     "app/creative/models.py": "4b27d20080c6d8c6f141e9cfe8d3381f6ed4b3ef1d8009e08fcc30a5464723d6",
-    "app/creative/project_store.py": "2d928a2e440c60f7badc8aebe1bdf635c3b4464b43ed34231bd465c7b72ad1c8",
+    "app/creative/project_store.py": "09837edb952accb066f9e656d4b2b1ab05d727b27c5e27aca443d28d36848198",
     "app/creative/proposals.py": "4e8b93d2408b214165b01beda496b9dfbfee2b0bd400c414b2794da20262fd96",
     "app/creative/service.py": "5ce1d0f12b44b934dfc347dc68fb7d067f4702522f0a9190a84f5efb6320e29b",
     "app/creative/storage_admission.py": "055cc172c00063f9dad333e7d4815174bd3c3e6b8f3af742a548c4427f0acf86",
-    "app/creative/workspace.py": "cd5eb340e6d4835ac1dfa51f46d6c5ac40fe485b7c026e01c1fc1834c016af15",
-    "app/creative/workspace_api.py": "686bb53805b652801df0235af614bbd6079959835019495be6f506b7f59b17fb",
+    "app/creative/text_assets.py": "73567f6bbea2f9596ff667209daf3025b310b98f7eecc5654cee4a71dd05565a",
+    "app/creative/workspace.py": "0f1607c70a88a6f8e4a6ee4e8bba4c3f6f72834800e42ad1c25569d7516b5a82",
+    "app/creative/workspace_api.py": "a2e90f2229ba3f30861b3bf2637397e62a44931c4f29a62ed39dabaddff8f3a1",
     "app/creative/workspace_models.py": "95d8652d9492613876eb39ab06b07e48eb7a0436f967e248261a976e5f5c01e9",
     "app/creative/workspace_relationships.py": "e33cd0076d2e6aec5685b8007992ce298664cf035edf9ca4bb87d319407de310",
     "app/credential_vault.py": "986bbc6fe63a7658a0bd22e0223677a63448e1b6ab46603bb11cdc530558ab26",
@@ -230,7 +231,8 @@
     "app/model_center/domain.py": "5d413844f4282ede2c212abe9938d97bbf378956e158011f7bef308896176fc9",
     "app/model_center/runtime_profiles.py": "e47f7bc7f05f025563bf4a35fda8311b2d3509a4d1e73e3dbd4c8026f3ce61f8",
     "app/model_center/service.py": "1aaf758a05f8188759371919aad7dd2ed1bd95c0d1f7d4cff5c98388cb124362",
-    "app/model_execution.py": "2a3547e5f323e697e18bf3e133aeced61c610408b24aaab1e99be8e340ba1a5d",
+    "app/model_execution.py": "d405f2a18e6ea0d945693d64ddcec3bcc929ada95523c074029dc2eb77f4dc36",
+    "app/model_provider_contracts.py": "f334ad095b101c3a67fd84a098d434dcd6a4564d244b5df58b2334393765d860",
     "app/model_runtime.py": "037d5b42117959f1c5e85b43807a7b7e9fe7f699ddc9b3452cc0b482f6e5e20b",
     "app/models/__init__.py": "4999e1bb65bd43fff8566a6584dbce069450cc3669b845d51681a9757bff6f11",
     "app/models/lore.py": "a0a24be904e1f9bb030bdd9b680bbcbd08231a2a5cb3db6a956504e526e4445b",
@@ -340,7 +342,7 @@
     "app/services/agent_context_service.py": "647b09c44bf8b54f1545cd1d0ac2e2a7afb9183f54103140d6ef4d2332c4c297",
     "app/services/agent_job_service.py": "894983ea8de02effb5e6bd05b1ab4daccbeb41404b6abea1b06b18ccafa780e7",
     "app/services/ai_planning_service.py": "1b7f2b06bd62ae4d378ca1809a6003b6db1e1b5b3d449f88b2b929c8dad8c9fa",
-    "app/services/asset_library_service.py": "039f5e204c41e152a7a7da1dbd99e2e0c68ca3fbeacd10f438f7c3c5027ee7c8",
+    "app/services/asset_library_service.py": "55a4f2fe9590defb5d1bad2bc28ba1638196d749431a8b0b6cb22cd850f473a0",
     "app/services/asset_task_worker.py": "8f0f6a64af0bfb0a6d1e50dfd42511cfb5262b7dde530153237d18ee270bfd3c",
     "app/services/audiobook_service.py": "dec4c65ecd28b2d72859fb2b98bdf7cba3a61ed96396e2b323bb809a22499aea",
     "app/services/authorization_service.py": "b115f9b906bb7d09d0ec0dbdf5d8f10637e7ec77447de4ff7b90daed97a759ef",
@@ -390,9 +392,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 286,
+    "added": 290,
     "changed_contract": 24,
-    "current_method_paths": 2119,
+    "current_method_paths": 2123,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -409,7 +411,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "73e03d337f4acc12ac9efaac88d763ce12b40d651565a80bbb5544a4e7b25635",
+    "sha256": "d0fe15fbbe03042f3e30a60d89c18eaef4747c81ac46ba9dedb33f77603d44bb",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -5501,9 +5503,21 @@
       "operation_id": "models_api_projects__nid__studio_graphs_model_capabilities_get",
       "owner_ref": "75896ada809d263e3e55cc4d1f7f6f96a85a85b2440e0fe6c7cfdf71e5df7622",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "b405acbeaf1b009cb93c9a5d946b7a51744b0596e69047e4dac63654fb47ee7d",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/graphs/provider-contracts",
+      "operation_id": "provider_contracts_api_projects__nid__studio_graphs_provider_contracts_get",
+      "owner_ref": "53e4e6ff88fe206f31a5ca3f05dc3fc2fc7db7383642aeab36709bbe30cf2179",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "9869778f517b09160ca20c6e87abd893d9cdc301c072cea7a02d993bbd06a7f7",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -10445,9 +10459,21 @@
       "operation_id": "models_api_v1_projects__nid__studio_graphs_model_capabilities_get",
       "owner_ref": "75896ada809d263e3e55cc4d1f7f6f96a85a85b2440e0fe6c7cfdf71e5df7622",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ed1cc4c7b5cdc39cf3f2b0b2234cb4496aee1b88505124393c6d9e6e2fc76f7b",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/graphs/provider-contracts",
+      "operation_id": "provider_contracts_api_v1_projects__nid__studio_graphs_provider_contracts_get",
+      "owner_ref": "53e4e6ff88fe206f31a5ca3f05dc3fc2fc7db7383642aeab36709bbe30cf2179",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "ac7cf6bff2653d5995fef6c69c879bb41378e04373c4c2e86a863e8734fabd1d",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -16909,10 +16935,11 @@
       "operation_id": "model_dispatch_api_projects__nid__studio_graph_runs__rid__model_dispatch_post",
       "owner_ref": "010a0f7f21c3ebee7a6705486f372045852dcd7563f4d44dbc407d0ff1badc90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0e0bb60354256e5551b5aee287122ccfc6517d298ac001fca5d2c912a2ecfc3a",
-      "schema_graph_sha256": "4c2de50ba0a060b890e2eb745ef3a1ddcd5411c14c645c97754a6d22880b0295"
+      "schema_graph_sha256": "766c55351e047480a16ae2a7a61f263fb1ce9ec8ba911f3fb25f39992c980c0e"
     },
     {
       "method": "POST",
@@ -16920,7 +16947,8 @@
       "operation_id": "model_preview_api_projects__nid__studio_graph_runs__rid__model_preview_post",
       "owner_ref": "044ddd3c1637e17151c6fbfe43c608648f16566e70040de8cd59b38578588b66",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "e8d2bc83da2fe51fc57f235a7f880cada05c0976f9079bd47cd404beea815cde",
       "schema_graph_sha256": "9b88159b8c900210409253f0c577b1011b2068548d3b3191e20bc3d5336d536a"
@@ -16931,7 +16959,8 @@
       "operation_id": "model_refresh_api_projects__nid__studio_graph_runs__rid__model_refresh_post",
       "owner_ref": "5225fbf96febbd9b27f517c012f19b7f241cd24d5aad3903aadf61ccd85f26b6",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f12802a71d86315cf44ad3f246a508651af7f93f014439cfb65ed3084ca22308",
       "schema_graph_sha256": "8890756a412585f19225f191af8fa22c073e8e90ae69d5acb828e0193e9ba504"
@@ -16983,6 +17012,17 @@
       ],
       "operation_sha256": "a72e76d1aee067c74267cc0803858593e6fb164b9fe4b601b575499551e2cf42",
       "schema_graph_sha256": "1ce2231177399d670b8016da563d4d2ed52c55386ed1e90e75f9d0555066e087"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graphs/model-match",
+      "operation_id": "model_match_api_projects__nid__studio_graphs_model_match_post",
+      "owner_ref": "e59b0702d9c762f7cfe172599e7c49d746fae157c93733d94c66862220fd4b00",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7ab6093576e954ed1efbcc91e0c8e6613941e1c48ae485e7188baddad080a5ca",
+      "schema_graph_sha256": "e9f6b55c1f8970b6ef1409c6a56857a10e6bb899da66a9e2bebeec4237d44fe4"
     },
     {
       "method": "POST",
@@ -22999,10 +23039,11 @@
       "operation_id": "model_dispatch_api_v1_projects__nid__studio_graph_runs__rid__model_dispatch_post",
       "owner_ref": "010a0f7f21c3ebee7a6705486f372045852dcd7563f4d44dbc407d0ff1badc90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "78ef8acbbc0e89f2f22e849dd7cd11d2dc0d353a2ff3cacea8c0ddcf1e2a2c4e",
-      "schema_graph_sha256": "4c2de50ba0a060b890e2eb745ef3a1ddcd5411c14c645c97754a6d22880b0295"
+      "schema_graph_sha256": "766c55351e047480a16ae2a7a61f263fb1ce9ec8ba911f3fb25f39992c980c0e"
     },
     {
       "method": "POST",
@@ -23010,7 +23051,8 @@
       "operation_id": "model_preview_api_v1_projects__nid__studio_graph_runs__rid__model_preview_post",
       "owner_ref": "044ddd3c1637e17151c6fbfe43c608648f16566e70040de8cd59b38578588b66",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "531f943d110d21afe34b7e99dfd838975329fd850872145bd174167324f1fea5",
       "schema_graph_sha256": "9b88159b8c900210409253f0c577b1011b2068548d3b3191e20bc3d5336d536a"
@@ -23021,7 +23063,8 @@
       "operation_id": "model_refresh_api_v1_projects__nid__studio_graph_runs__rid__model_refresh_post",
       "owner_ref": "5225fbf96febbd9b27f517c012f19b7f241cd24d5aad3903aadf61ccd85f26b6",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "776ce0edeb2f558df900b090b227619f4734a59726b38156bbb5b5da957c1cfc",
       "schema_graph_sha256": "8890756a412585f19225f191af8fa22c073e8e90ae69d5acb828e0193e9ba504"
@@ -23073,6 +23116,17 @@
       ],
       "operation_sha256": "a68b8c0a92f97a6d10c4cc9f1af553af506d3454bd61438932ec0a002bd40bce",
       "schema_graph_sha256": "1ce2231177399d670b8016da563d4d2ed52c55386ed1e90e75f9d0555066e087"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graphs/model-match",
+      "operation_id": "model_match_api_v1_projects__nid__studio_graphs_model_match_post",
+      "owner_ref": "e59b0702d9c762f7cfe172599e7c49d746fae157c93733d94c66862220fd4b00",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "5ed8f7dba0edccdd45a29b43bf67de152de742f4055373ab7a59aa4d6e41ebb0",
+      "schema_graph_sha256": "e9f6b55c1f8970b6ef1409c6a56857a10e6bb899da66a9e2bebeec4237d44fe4"
     },
     {
       "method": "POST",

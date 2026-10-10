@@ -70,7 +70,7 @@ function ScopedGraphRunPanel({ client, graph, targetNodeIds, dirty, busy, canMut
     pending.current = true; setError(''); const epoch = selectionEpoch.current, source = selected;
     try {
       const value = await mutate(() => client.action(source.id, action, { expected_version: source.version, ...(reviewing ? { node_id: source.review!.node_id, reviewed_output_digest: source.review!.output_digest } : {}), note }));
-      if (current() && epoch === selectionEpoch.current) { listEpoch.current++; setLoading(false); setSelected(value); setRuns(rows => [...rows.filter(row => row.id !== value.id), value]); setOutputReviewed(false); setUncertain(false); setNotice('原工作流运行记录已更新；正文和资产未被写入。'); }
+      if (current() && epoch === selectionEpoch.current) { listEpoch.current++; setLoading(false); setSelected(value); setRuns(rows => [...rows.filter(row => row.id !== value.id), value]); setOutputReviewed(false); setUncertain(false); setNotice(value.asset_output ? '原工作流运行记录已更新；私有文字资产状态见下方回执，正文未被写入。' : '原工作流运行记录已更新；正文和资产未被写入。'); }
     } catch (value) { if (current() && epoch === selectionEpoch.current) { failure(value); if (!(value instanceof ApiError) || value.status === 0 || value.status >= 500 || value.status === 409) setUncertain(true); } }
     finally { pending.current = false; }
   }
@@ -89,7 +89,7 @@ function ScopedGraphRunPanel({ client, graph, targetNodeIds, dirty, busy, canMut
     pending.current = true; setModelBusy(true); setError(''); const epoch = selectionEpoch.current;
     try {
       const value = await mutate(() => kind === 'preview' ? client.previewModel(source.id, { expected_version: source.version, route_id: evidence.route_id!, allow_synthetic: evidence.allow_synthetic! })
-        : kind === 'dispatch' ? client.dispatchModel(source.id, { expected_version: source.version, reviewed_preview_digest: evidence.reviewed_preview_digest! })
+        : kind === 'dispatch' ? client.dispatchModel(source.id, { expected_version: source.version, reviewed_preview_digest: evidence.reviewed_preview_digest!, ...(evidence.archive_result ? { archive_result: true as const } : {}) })
           : client.refreshModel(source.id, { expected_version: source.version }));
       if (current() && epoch === selectionEpoch.current && value.id === source.id && value.graph_id === graph?.id) {
         listEpoch.current++; setLoading(false); setSelected(value); setRuns(rows => [...rows.filter(row => row.id !== value.id), value]); setOutputReviewed(false); setUncertain(false);

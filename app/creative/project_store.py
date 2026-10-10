@@ -130,6 +130,34 @@ class CreativeProjectStore:
             return self._view(document, identity)
 
     @contextmanager
+    def source_lease(self, nid, scope):
+        """Lease an unchanged source before acquiring asset -> project locks.
+
+        This deliberately enters the raw scope owner, not ``transaction``:
+        holding a creative transaction's project lease while acquiring assets
+        would reverse the established asset -> project ordering. Reads by the
+        same raw store instance see its active snapshot without another lock.
+        The caller must recheck incarnation under its later asset/project lease.
+        No scope writes, including changes to the detached view, are admitted.
+        """
+        from ..experimental.store import canonical
+        key = self.store.key(nid, scope)
+        if (key in getattr(self._local, "active", {})
+                or key in getattr(self.store._local, "active", {})
+                or nid in getattr(self._local, "owners", {})):
+            raise ValueError("CREATIVE_SOURCE_LEASE_NESTED_OR_ORDER_INVALID")
+        with self.store.transaction(nid, scope) as document:
+            before = canonical(document)
+            # Resolve only briefly here; no project lock is held at yield.
+            view = self._view(document, self.incarnation(nid))
+            snapshot = canonical(view)
+            try:
+                yield view
+            finally:
+                if canonical(document) != before or canonical(view) != snapshot:
+                    raise ValueError("CREATIVE_SOURCE_LEASE_MUTATION_DENIED")
+
+    @contextmanager
     def transaction(self, nid, scope):
         key = self.store.key(nid, scope)
         if not hasattr(self._local, "active"):
