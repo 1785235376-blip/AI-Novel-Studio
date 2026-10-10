@@ -1,0 +1,35 @@
+{
+  "sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+  "node_id": "C_kwDOUEnaNNoAKDNhMjM0ZWQyNDJhMmQxNTY5ODU2MDc1MmQ2YWMzYTk4MmRhN2MzNTA",
+  "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/3a234ed242a2d15698560752d6ac3a982da7c350",
+  "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/3a234ed242a2d15698560752d6ac3a982da7c350",
+  "author": {
+    "name": "1785235376-blip",
+    "email": "1785235376@qq.com",
+    "date": "2026-10-10T22:30:10Z"
+  },
+  "committer": {
+    "name": "1785235376-blip",
+    "email": "1785235376@qq.com",
+    "date": "2026-10-10T22:30:10Z"
+  },
+  "tree": {
+    "sha": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/trees/9b2e3e304f3ca603f1a18681194df1ddf4528de9"
+  },
+  "message": "feat(v2): archive adaptation output privately with restart-safe review projection",
+  "parents": [
+    {
+      "sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

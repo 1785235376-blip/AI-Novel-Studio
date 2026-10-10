@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="1.786">
+    <testsuite name="src/creative/CreativeStarterLabel.test.tsx" timestamp="2026-10-10T22:47:26.128Z" hostname="7abb01f187ba" tests="1" failures="1" errors="0" skipped="0" time="0.132446548">
+        <testcase classname="src/creative/CreativeStarterLabel.test.tsx" name="keeps a nonempty starter action label independent of the initial textarea text node" time="0.13145723">
+            <failure message="expected null to be &apos;动作与叙事&apos; // Object.is equality" type="AssertionError">
+AssertionError: expected null to be &apos;动作与叙事&apos; // Object.is equality
+
+- Expected: 
+&quot;动作与叙事&quot;
+
++ Received: 
+null
+
+ ❯ src/creative/CreativeStarterLabel.test.tsx:12:45
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

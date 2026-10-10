@@ -1,0 +1,2914 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-10-10T23:28:16.792393+00:00",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "feature/v2-narrative-platform",
+  "draft_pr": 47,
+  "published_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+  "published_parent": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+  "published_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+  "pr_actual_checkout_event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+  "pr_merge_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+  "full_source_acceptance": false,
+  "independent_audit": "BLOCKED_HISTORICAL_NOT_PERFORMED_BY_COLLECTOR",
+  "mutations": {
+    "source": false,
+    "index": false,
+    "workflow": false,
+    "rerun": false,
+    "cancel": false,
+    "push": false,
+    "pr": false
+  },
+  "runs": [
+    {
+      "id": 38091679679,
+      "name": "Local Interop V1",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T22:30:29Z",
+      "updated_at": "2026-10-10T22:40:14Z",
+      "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679679",
+      "expected_workflow_checkout_event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+      "jobs": [
+        {
+          "id": 114329211722,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679679/job/114329211722",
+          "started_at": "2026-10-10T22:30:31Z",
+          "completed_at": "2026-10-10T22:31:25Z",
+          "wall_seconds": 54.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329211722.log",
+            "bytes": 24584,
+            "sha256": "078d7dcc3f41274c53d41cccb9e1e10f17aa3fa076b99aacd876704954594e8d"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": []
+        },
+        {
+          "id": 114329211856,
+          "name": "Protocol and local transport / file",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679679/job/114329211856",
+          "started_at": "2026-10-10T22:30:31Z",
+          "completed_at": "2026-10-10T22:31:34Z",
+          "wall_seconds": 63.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [
+            "Initialize disposable PostgreSQL contracts"
+          ],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329211856.log",
+            "bytes": 79453,
+            "sha256": "86f2c3e80d2b277c9bf534d47bdd8d65573f7a0a77eae3de536dc129a655f7e9"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:44.1486383Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        },
+        {
+          "id": 114329211858,
+          "name": "Protocol and local transport / postgres",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679679/job/114329211858",
+          "started_at": "2026-10-10T22:30:31Z",
+          "completed_at": "2026-10-10T22:40:13Z",
+          "wall_seconds": 582.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329211858.log",
+            "bytes": 96337,
+            "sha256": "ad5adc3b2fc3a73081d244d2e94fade00e02871db7cf5f1d4d4a211e569f410d"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:53.8316887Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11684627253,
+          "name": "local-interop-postgres-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 41531,
+          "digest": "sha256:af119dbae75ddd84e45be3c7c60e38f02bbcb599e1601e0ca5aec3df5aec8ae6",
+          "expired": false,
+          "created_at": "2026-10-10T22:40:10Z",
+          "updated_at": "2026-10-10T22:40:10Z",
+          "expires_at": "2026-10-24T22:40:09Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684627253",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684627253/zip",
+          "workflow_run": {
+            "id": 38091679679,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679679/artifacts/11684627253",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "local-interop.xml": {
+              "tests": 413,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 68,
+              "passed": 345,
+              "seconds": 531.543,
+              "report_sha256": "ee3b9cc9e174f736be9c52f2fddae742f7db1925ae59029f4f915f13a61e6810"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "interop",
+            "identity": {
+              "checked_out_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "run_id": "38091679679",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "postgres",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f568d79a6dddc66a51350e0d575e62e46e1baab861e90f8df91343a1ea478632",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "local-interop.xml",
+            "inventory_count": 413,
+            "assigned_count": 413,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": true,
+            "coverage_path": "extracted/11684627253/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/passed": 345,
+              "call/passed": 345,
+              "teardown/passed": 413,
+              "setup/skipped": 68
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_local_interop_tcp.py::test_real_diagnostics_rejects_missing_capsule_and_source_content",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "COMPLETE_SHARD_PASS",
+            "additional_classification": null
+          }
+        },
+        {
+          "id": 11684271854,
+          "name": "named-pipe-reference-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 1764,
+          "digest": "sha256:5b1c9961e6d0f69ae38b9cd3e303b5888645965efd4783a08aa6e87b07df2013",
+          "expired": false,
+          "created_at": "2026-10-10T22:31:22Z",
+          "updated_at": "2026-10-10T22:31:22Z",
+          "expires_at": "2026-10-24T22:31:22Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684271854",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684271854/zip",
+          "workflow_run": {
+            "id": 38091679679,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679679/artifacts/11684271854",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {},
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11684097385,
+          "name": "local-interop-file-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 41501,
+          "digest": "sha256:b830e34c85073ffd76a8996b6b296fd97d51d95bb471b9eb660055f59a1d5bba",
+          "expired": false,
+          "created_at": "2026-10-10T22:31:31Z",
+          "updated_at": "2026-10-10T22:31:31Z",
+          "expires_at": "2026-10-24T22:31:30Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684097385",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684097385/zip",
+          "workflow_run": {
+            "id": 38091679679,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679679/artifacts/11684097385",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "local-interop.xml": {
+              "tests": 413,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 68,
+              "passed": 345,
+              "seconds": 22.157,
+              "report_sha256": "286c601058b965796f81f38f99756b198bedc9ed91bb20138bbb0921d3a1b8c3"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "interop",
+            "identity": {
+              "checked_out_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "run_id": "38091679679",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "file",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f568d79a6dddc66a51350e0d575e62e46e1baab861e90f8df91343a1ea478632",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "local-interop.xml",
+            "inventory_count": 413,
+            "assigned_count": 413,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": true,
+            "coverage_path": "extracted/11684097385/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/passed": 345,
+              "call/passed": 345,
+              "teardown/passed": 413,
+              "setup/skipped": 68
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_local_interop_tcp.py::test_real_diagnostics_rejects_missing_capsule_and_source_content",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "COMPLETE_SHARD_PASS",
+            "additional_classification": null
+          }
+        }
+      ]
+    },
+    {
+      "id": 38091679852,
+      "name": "Shared R123 evidence",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T22:30:29Z",
+      "updated_at": "2026-10-10T22:31:31Z",
+      "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679852",
+      "expected_workflow_checkout_event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+      "jobs": [
+        {
+          "id": 114329212071,
+          "name": "Original c6f2126 RED / Python 3.12.9",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679852/job/114329212071",
+          "started_at": "2026-10-10T22:30:32Z",
+          "completed_at": "2026-10-10T22:31:30Z",
+          "wall_seconds": 58.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329212071.log",
+            "bytes": 50153,
+            "sha256": "c201ad57f0b76ff749d20a90b6b84ca3bf8dc1e3818911a1e685d7507bee0309"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:44.6988730Z 0d9d647c05da23582bbdd09c09e38c176f85b152",
+            "2026-10-10T22:30:46.3866751Z c6f2126115b52e17839d48efea091dc21ec08c61"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11683799261,
+          "name": "shared-r123-baseline-red-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 4964,
+          "digest": "sha256:42156084d6d7e30a90e1282a5b12987101d2e03cefda15128c77aac90e46a079",
+          "expired": false,
+          "created_at": "2026-10-10T22:31:27Z",
+          "updated_at": "2026-10-10T22:31:27Z",
+          "expires_at": "2026-10-24T22:31:26Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683799261",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683799261/zip",
+          "workflow_run": {
+            "id": 38091679852,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679852/artifacts/11683799261",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {},
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        }
+      ]
+    },
+    {
+      "id": 38091679805,
+      "name": "Cloud CI",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T22:30:29Z",
+      "updated_at": "2026-10-10T23:24:18Z",
+      "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805",
+      "expected_workflow_checkout_event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+      "jobs": [
+        {
+          "id": 114329212123,
+          "name": "Frontend / unit-type-build-tokens",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114329212123",
+          "started_at": "2026-10-10T22:30:31Z",
+          "completed_at": "2026-10-10T22:51:14Z",
+          "wall_seconds": 1243.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [
+            "Upload source-labelled PNG evidence part 3",
+            "Upload source-labelled PNG evidence part 4"
+          ],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329212123.log",
+            "bytes": 309919,
+            "sha256": "902bf7e80153515e89fdfd38de7a2d261248837664e60fe0b1fe41d84284b8bc"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:43.6396978Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        },
+        {
+          "id": 114329212238,
+          "name": "Backend execution / postgres / shard 1",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114329212238",
+          "started_at": "2026-10-10T22:30:32Z",
+          "completed_at": "2026-10-10T23:17:12Z",
+          "wall_seconds": 2800.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329212238.log",
+            "bytes": 241469,
+            "sha256": "f718c80ed3859510339e05ad8288cfb3f90201ee8f395935d62ca875077656e2"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:55.7024234Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        },
+        {
+          "id": 114329212264,
+          "name": "Backend execution / original File TCP",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114329212264",
+          "started_at": "2026-10-10T22:30:31Z",
+          "completed_at": "2026-10-10T22:32:13Z",
+          "wall_seconds": 102.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329212264.log",
+            "bytes": 56988,
+            "sha256": "4503c6f4372eacef0033eb6b2652f0a2adc02b7ad9e393c5941b955922404649"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:43.3559042Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        },
+        {
+          "id": 114329212280,
+          "name": "V2 / Creative live workflows and geometry",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114329212280",
+          "started_at": "2026-10-10T22:30:32Z",
+          "completed_at": "2026-10-10T22:33:15Z",
+          "wall_seconds": 163.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329212280.log",
+            "bytes": 92258,
+            "sha256": "7a3a6f4219029b51892161a137816d229b0cc092a9aa33011b1a6e019f731f72"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:44.4325209Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        },
+        {
+          "id": 114329212285,
+          "name": "Backend execution / postgres / shard 0",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114329212285",
+          "started_at": "2026-10-10T22:32:14Z",
+          "completed_at": "2026-10-10T23:23:46Z",
+          "wall_seconds": 3092.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329212285.log",
+            "bytes": 239372,
+            "sha256": "2b3c277aaf0dd3d925ef33c28e52789d526781b353b91068cf523ff1930edfaa"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:32:36.3805703Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        },
+        {
+          "id": 114329212332,
+          "name": "Backend execution / file / shard 0",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "cancelled",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114329212332",
+          "started_at": "2026-10-10T22:31:27Z",
+          "completed_at": "2026-10-10T22:51:51Z",
+          "wall_seconds": 1224.0,
+          "failed_or_cancelled_steps": [
+            "Complete backend collection / assigned shard execution"
+          ],
+          "skipped_steps": [
+            "Install matching PostgreSQL recovery tools",
+            "Initialize disposable PostgreSQL",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "classification": "INCOMPLETE_HOSTED_CI",
+          "log": {
+            "present": true,
+            "path": "job-114329212332.log",
+            "bytes": 141820,
+            "sha256": "1aa56cab3a34c58a729f0f1f692d830e3511a74725b42d88ab6935c3ff9a4392"
+          },
+          "error_lines": [
+            "2026-10-10T22:51:40.0193750Z ##[error]The operation was canceled."
+          ],
+          "checkout_sha_lines": [
+            "2026-10-10T22:31:39.3116549Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        },
+        {
+          "id": 114329212337,
+          "name": "Windows / Fresh base and acceptance package",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114329212337",
+          "started_at": "2026-10-10T22:31:32Z",
+          "completed_at": "2026-10-10T22:36:02Z",
+          "wall_seconds": 270.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329212337.log",
+            "bytes": 91614,
+            "sha256": "a91f122b5b4ab9f740d21fc22ccaec97ee01cab73e9d36651df8aab5b0930404"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": []
+        },
+        {
+          "id": 114329212341,
+          "name": "Windows / Host compile and native contracts",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114329212341",
+          "started_at": "2026-10-10T22:31:36Z",
+          "completed_at": "2026-10-10T22:34:19Z",
+          "wall_seconds": 163.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329212341.log",
+            "bytes": 66504,
+            "sha256": "770dc8e854ab2f62146b5131a1021cd228733a85095e5df7a881af09fc0c4657"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": []
+        },
+        {
+          "id": 114329212391,
+          "name": "V2 / Independent studio live media",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114329212391",
+          "started_at": "2026-10-10T22:31:37Z",
+          "completed_at": "2026-10-10T22:35:02Z",
+          "wall_seconds": 205.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329212391.log",
+            "bytes": 141785,
+            "sha256": "39ecba0821e50a6ce85c592e3a2dd0ba3f3ad3735cef2ea69292f3c2b493df1a"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:31:49.9815618Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        },
+        {
+          "id": 114338623499,
+          "name": "Backend / postgres",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114338623499",
+          "started_at": "2026-10-10T23:23:48Z",
+          "completed_at": "2026-10-10T23:24:18Z",
+          "wall_seconds": 30.0,
+          "failed_or_cancelled_steps": [
+            "Require every execution job including original File TCP gate"
+          ],
+          "skipped_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "classification": "FAILED_OBSERVED",
+          "log": {
+            "present": true,
+            "path": "job-114338623499.log",
+            "bytes": 17064,
+            "sha256": "9348171f9cb7b8a9ab5cee14aa72905edbd72215b7ddafd8933c96526135c26d"
+          },
+          "error_lines": [
+            "2026-10-10T23:24:15.3620707Z ##[error]Process completed with exit code 1."
+          ],
+          "checkout_sha_lines": [
+            "2026-10-10T23:24:05.2561225Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        },
+        {
+          "id": 114338623509,
+          "name": "Backend / file",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/job/114338623509",
+          "started_at": "2026-10-10T23:23:49Z",
+          "completed_at": "2026-10-10T23:24:17Z",
+          "wall_seconds": 28.0,
+          "failed_or_cancelled_steps": [
+            "Require every execution job including original File TCP gate"
+          ],
+          "skipped_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "classification": "FAILED_OBSERVED",
+          "log": {
+            "present": true,
+            "path": "job-114338623509.log",
+            "bytes": 17060,
+            "sha256": "773c7634b0ccd507d659a907f3730751b65732232a0b514b66244f558e131ec3"
+          },
+          "error_lines": [
+            "2026-10-10T23:24:14.5546883Z ##[error]Process completed with exit code 1."
+          ],
+          "checkout_sha_lines": [
+            "2026-10-10T23:24:05.0950365Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11685302834,
+          "name": "backend-postgres-shard-0-0d9d647c05da23582bbdd09c09e38c176f85b152-attempt-1",
+          "size_in_bytes": 688681,
+          "digest": "sha256:30369d3a4f61221fe6d3d97b82e05444a18648a9a1c8b38be1930e865fcd6099",
+          "expired": false,
+          "created_at": "2026-10-10T23:23:42Z",
+          "updated_at": "2026-10-10T23:23:42Z",
+          "expires_at": "2026-10-24T23:23:41Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685302834",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685302834/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11685302834",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "backend.xml": {
+              "tests": 5949,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 1981,
+              "passed": 3968,
+              "seconds": 2964.528,
+              "report_sha256": "47f16a7951b9bb8e6ec47e704c6b928651462a472524c77fc4e07dc437bb85a2"
+            },
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174,
+              "seconds": 10.824,
+              "report_sha256": "b62e10fb3e61604e4130c6a3bd43cd70f731db2f01d23524d5a668d3d571d907"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "identity": {
+              "checked_out_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "run_id": "38091679805",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "postgres",
+            "shard": {
+              "index": 0,
+              "count": 2
+            },
+            "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11901,
+            "assigned_count": 5949,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": true,
+            "coverage_path": "extracted/11685302834/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/skipped": 1981,
+              "teardown/passed": 5949,
+              "setup/passed": 3968,
+              "call/passed": 3968
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api/v1]",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "COMPLETE_SHARD_PASS",
+            "additional_classification": null
+          }
+        },
+        {
+          "id": 11684910001,
+          "name": "windows-native-receipts-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 583334,
+          "digest": "sha256:08e19549c00bb446edac695e8dfccf17fdbeb959d3e70b1d18dfb59346bdc7dd",
+          "expired": false,
+          "created_at": "2026-10-10T22:35:51Z",
+          "updated_at": "2026-10-10T22:35:51Z",
+          "expires_at": "2026-10-24T22:35:50Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684910001",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684910001/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684910001",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {},
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11684872891,
+          "name": "backend-postgres-shard-1-0d9d647c05da23582bbdd09c09e38c176f85b152-attempt-1",
+          "size_in_bytes": 730731,
+          "digest": "sha256:c57eddd4fd9cc0bf89387ad81eb7a2f63c99804a15ef057f313bee58cbded605",
+          "expired": false,
+          "created_at": "2026-10-10T23:17:07Z",
+          "updated_at": "2026-10-10T23:17:07Z",
+          "expires_at": "2026-10-24T23:17:06Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684872891",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684872891/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684872891",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "backend.xml": {
+              "tests": 5952,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 2054,
+              "passed": 3898,
+              "seconds": 2677.694,
+              "report_sha256": "81c4325505d5bd2be9c743a1e1abcf07a4f717ffed9a9fbcd93c818ab978ebcd"
+            },
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174,
+              "seconds": 10.357,
+              "report_sha256": "1fd87882b3cd6df92e4938f9998b9d1bc67e826d62ff03eb91472909591caac6"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "identity": {
+              "checked_out_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "run_id": "38091679805",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "postgres",
+            "shard": {
+              "index": 1,
+              "count": 2
+            },
+            "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11901,
+            "assigned_count": 5952,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": true,
+            "coverage_path": "extracted/11684872891/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/passed": 3898,
+              "call/passed": 3898,
+              "teardown/passed": 5952,
+              "setup/skipped": 2054
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api]",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "COMPLETE_SHARD_PASS",
+            "additional_classification": null
+          }
+        },
+        {
+          "id": 11684845106,
+          "name": "windows-acceptance-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 163811836,
+          "digest": "sha256:5ad5fac3c3d1936e591f33a6c55dace1a62443dc86b6532ab38d123cfb4fae7e",
+          "expired": false,
+          "created_at": "2026-10-10T22:35:58Z",
+          "updated_at": "2026-10-10T22:35:58Z",
+          "expires_at": "2026-10-24T22:35:52Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684845106",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684845106/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684845106",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "WINDOWS_BINARY_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11684641594,
+          "name": "v2-creative-browser-0d9d647c05da23582bbdd09c09e38c176f85b152-attempt-1",
+          "size_in_bytes": 7447086,
+          "digest": "sha256:6a1fb5313c04236f5dd5f035c101616b36e2e075bcea2d05b5f64e751ee155ac",
+          "expired": false,
+          "created_at": "2026-10-10T22:33:11Z",
+          "updated_at": "2026-10-10T22:33:11Z",
+          "expires_at": "2026-10-24T22:33:09Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684641594",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684641594/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684641594",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "receipts/v2-creative-workbench.xml": {
+              "tests": 8,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 8,
+              "seconds": 17.5,
+              "report_sha256": "5ecfa1c0527993336d5ea50f421d565fde27c9736789809b120acf07bafd7236"
+            },
+            "receipts/v2-creative-live.xml": {
+              "tests": 12,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 12,
+              "seconds": 37.077,
+              "report_sha256": "8eb38e4f0db3ef5c3f82649ee9aae713cbfddb74093ef61d537c93d7024b3dfa"
+            },
+            "receipts/v2-creative-live/junit.xml": {
+              "tests": 12,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 12,
+              "seconds": 37.077,
+              "report_sha256": "8eb38e4f0db3ef5c3f82649ee9aae713cbfddb74093ef61d537c93d7024b3dfa"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11684483654,
+          "name": "frontend-compact-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 788345,
+          "digest": "sha256:1b71ebd0f235622b33411ec29528b04f91a772a86639b076b328000e2d28a2ff",
+          "expired": false,
+          "created_at": "2026-10-10T22:51:08Z",
+          "updated_at": "2026-10-10T22:51:08Z",
+          "expires_at": "2026-10-24T22:51:07Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684483654",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684483654/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684483654",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "receipts/export-browser.xml": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 1,
+              "seconds": 1.5,
+              "report_sha256": "5b4adb2d934e7787e244ea99d0b08ffddbe6ffd074a908035a09cc0ed0b8d724"
+            },
+            "receipts/functional-surface-browser.xml": {
+              "tests": 9,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 9,
+              "seconds": 51.677,
+              "report_sha256": "275f25e2f4c2c9e2fe88520e7728d61995df98bca0432c557f670087086bc4dd"
+            },
+            "receipts/geometry.xml": {
+              "tests": 9,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 9,
+              "seconds": 11.557,
+              "report_sha256": "12ea51f3e3a1e11f26809ca80a8fc657675f1d619c393332e7a635fd9bbb9cf2"
+            },
+            "receipts/frontend.xml": {
+              "tests": 2450,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 8,
+              "passed": 2442,
+              "seconds": 203.189685139,
+              "report_sha256": "e1646987cf06009e2c3e3813272edc7cbe6bcfd03524cb5351e2820175c5e317"
+            },
+            "receipts/business.xml": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 2,
+              "seconds": 10.891,
+              "report_sha256": "86b481e3d82582aa3fb0b12e84aa53e4fba996e67222d47daebdc423616566eb"
+            },
+            "receipts/r4-ux.xml": {
+              "tests": 63,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 63,
+              "seconds": 629.807,
+              "report_sha256": "9ba60b1b50ac4a64b8dc8be70210ab675391d99e2883369f0bb8a7fa83d6d15e"
+            },
+            "receipts/experimental.xml": {
+              "tests": 7,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 7,
+              "seconds": 39.145,
+              "report_sha256": "c3dc85bdf9daf2344447e1e5adb72539b578e03d233d07b990735491e31825d5"
+            },
+            "receipts/branch-surface-browser.xml": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 1,
+              "seconds": 12.249,
+              "report_sha256": "f895ab6b80722b4caf6c355318584d12007a52306a87cf10b78e83f6f52ba954"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11684483649,
+          "name": "frontend-png-2-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 15751873,
+          "digest": "sha256:90ae4fe369668c227e746f071148ad6604e31b2e8c7245b8c01b0751b679f125",
+          "expired": false,
+          "created_at": "2026-10-10T22:51:07Z",
+          "updated_at": "2026-10-10T22:51:07Z",
+          "expires_at": "2026-10-24T22:51:06Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684483649",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684483649/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684483649",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "LARGE_PNG_LEFT_REMOTE"
+        },
+        {
+          "id": 11684431864,
+          "name": "windows-host-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 700002,
+          "digest": "sha256:7daf5963947ceee65b09fa988c8a40389e45319395b952e9c7c47427be92e4a4",
+          "expired": false,
+          "created_at": "2026-10-10T22:34:16Z",
+          "updated_at": "2026-10-10T22:34:16Z",
+          "expires_at": "2026-10-24T22:34:15Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684431864",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684431864/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684431864",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "WINDOWS_BINARY_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11684411713,
+          "name": "backend-tcp-0d9d647c05da23582bbdd09c09e38c176f85b152-attempt-1",
+          "size_in_bytes": 176978,
+          "digest": "sha256:88559847579e162d757c3d11e2048c004e1079d1d2bf4eb3c65fe7cd5002f33f",
+          "expired": false,
+          "created_at": "2026-10-10T22:32:11Z",
+          "updated_at": "2026-10-10T22:32:11Z",
+          "expires_at": "2026-10-24T22:32:11Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684411713",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684411713/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684411713",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "tcp-harness.xml": {
+              "tests": 110,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 110,
+              "seconds": 6.449,
+              "report_sha256": "cfd7b42c05521b1e74104f2024049bc892ed940ff7a597f199cd1eaa07465285"
+            },
+            "sync-tcp.xml": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 2,
+              "seconds": 45.361,
+              "report_sha256": "8c1882b8837c5a0b3676237c315200da3ee6715904da626a92567cf25d622f78"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11684388924,
+          "name": "backend-file-shard-0-0d9d647c05da23582bbdd09c09e38c176f85b152-attempt-1",
+          "size_in_bytes": 537187,
+          "digest": "sha256:20684592221b9d241f2cdf0fe1847875700de5aca35a49e142beabcae41c1775",
+          "expired": false,
+          "created_at": "2026-10-10T22:51:41Z",
+          "updated_at": "2026-10-10T22:51:41Z",
+          "expires_at": "2026-10-24T22:51:40Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684388924",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684388924/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684388924",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174,
+              "seconds": 12.837,
+              "report_sha256": "50bba542b79a9065f902317947c7072f7a1f3cd029613ee304bb3d2e91635cae"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "identity": {
+              "checked_out_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+              "run_id": "38091679805",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "file",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+            "pytest_exitstatus": null,
+            "complete": false,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11901,
+            "assigned_count": 11901,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": false,
+            "coverage_path": "extracted/11684388924/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/passed": 6028,
+              "call/passed": 6027,
+              "teardown/passed": 9188,
+              "setup/skipped": 3161
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_v2_adaptation_archive.py::test_changed_durable_execution_never_archives[file-/api-expected_request_digest]",
+              "when": "setup",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "INCOMPLETE_HOSTED_CI",
+            "additional_classification": null
+          }
+        },
+        {
+          "id": 11684238951,
+          "name": "frontend-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 40877001,
+          "digest": "sha256:e5dc7794c3d6d9a0ce6834b1c4479797015c2ec4894704e0478e7cffe01190d9",
+          "expired": false,
+          "created_at": "2026-10-10T22:51:10Z",
+          "updated_at": "2026-10-10T22:51:10Z",
+          "expires_at": "2026-10-24T22:51:08Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684238951",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684238951/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684238951",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "FULL_FRONTEND_DUPLICATE_OR_LARGE_PAYLOAD_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11684238942,
+          "name": "frontend-png-1-0d9d647c05da23582bbdd09c09e38c176f85b152",
+          "size_in_bytes": 24279517,
+          "digest": "sha256:255ffcb500b87613d33dca23bfcce52ae5f89a23caf0eb3449656046636cef43",
+          "expired": false,
+          "created_at": "2026-10-10T22:51:05Z",
+          "updated_at": "2026-10-10T22:51:05Z",
+          "expires_at": "2026-10-24T22:51:04Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684238942",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684238942/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684238942",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "LARGE_PNG_LEFT_REMOTE"
+        },
+        {
+          "id": 11684063708,
+          "name": "v2-independent-media-0d9d647c05da23582bbdd09c09e38c176f85b152-attempt-1",
+          "size_in_bytes": 8896565,
+          "digest": "sha256:619b514783eed40d33cb29c6934c5fb9bfac1c97a72df5714a288040c8f03c4e",
+          "expired": false,
+          "created_at": "2026-10-10T22:34:58Z",
+          "updated_at": "2026-10-10T22:34:58Z",
+          "expires_at": "2026-10-24T22:34:57Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684063708",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684063708/zip",
+          "workflow_run": {
+            "id": 38091679805,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805/artifacts/11684063708",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "v2-independent-live.xml": {
+              "tests": 18,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 18,
+              "seconds": 83.545,
+              "report_sha256": "7d788af87e81652d5e0242f9986f8173602f77a6bf32762d33ce1288426e8dc7"
+            },
+            "v2-independent-live/junit.xml": {
+              "tests": 18,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 18,
+              "seconds": 83.545,
+              "report_sha256": "7d788af87e81652d5e0242f9986f8173602f77a6bf32762d33ce1288426e8dc7"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        }
+      ]
+    },
+    {
+      "id": 38091673128,
+      "name": "Local Interop V1",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T22:30:24Z",
+      "updated_at": "2026-10-10T22:43:35Z",
+      "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673128",
+      "expected_workflow_checkout_event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+      "jobs": [
+        {
+          "id": 114329195176,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673128/job/114329195176",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T22:32:45Z",
+          "wall_seconds": 138.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195176.log",
+            "bytes": 24696,
+            "sha256": "286a989831e0afb8a6c68aea2e4b38ccf5c0260eeb195fccec40c5257cbb5c0f"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": []
+        },
+        {
+          "id": 114329195317,
+          "name": "Protocol and local transport / file",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673128/job/114329195317",
+          "started_at": "2026-10-10T22:30:26Z",
+          "completed_at": "2026-10-10T22:31:35Z",
+          "wall_seconds": 69.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [
+            "Initialize disposable PostgreSQL contracts"
+          ],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195317.log",
+            "bytes": 78572,
+            "sha256": "42a64522875a6e84f896375d005dadb347673525d68549cdf1c3152967e62f57"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:38.6106951Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        },
+        {
+          "id": 114329195402,
+          "name": "Protocol and local transport / postgres",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673128/job/114329195402",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T22:43:34Z",
+          "wall_seconds": 787.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195402.log",
+            "bytes": 95869,
+            "sha256": "4e0b99a758c34c6b699ad0b6b5f009cfb6e7fb46c85dba88a5a33c664a97cf72"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:52.5693537Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11684940501,
+          "name": "local-interop-postgres-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 41549,
+          "digest": "sha256:f8f92431a5f15cf2cc936f9807f12d8dc1abe3f47b48d79bf9ad859a6887a54b",
+          "expired": false,
+          "created_at": "2026-10-10T22:43:30Z",
+          "updated_at": "2026-10-10T22:43:30Z",
+          "expires_at": "2026-10-24T22:43:29Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684940501",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684940501/zip",
+          "workflow_run": {
+            "id": 38091673128,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673128/artifacts/11684940501",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "local-interop.xml": {
+              "tests": 413,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 68,
+              "passed": 345,
+              "seconds": 728.022,
+              "report_sha256": "0921484125ad182ac7d572563fc27a53897aec79f4cbbebe4a589327bb712b61"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "interop",
+            "identity": {
+              "checked_out_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "run_id": "38091673128",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "postgres",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f568d79a6dddc66a51350e0d575e62e46e1baab861e90f8df91343a1ea478632",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "local-interop.xml",
+            "inventory_count": 413,
+            "assigned_count": 413,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": true,
+            "coverage_path": "extracted/11684940501/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/passed": 345,
+              "call/passed": 345,
+              "teardown/passed": 413,
+              "setup/skipped": 68
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_local_interop_tcp.py::test_real_diagnostics_rejects_missing_capsule_and_source_content",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "COMPLETE_SHARD_PASS",
+            "additional_classification": null
+          }
+        },
+        {
+          "id": 11684631474,
+          "name": "named-pipe-reference-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 1763,
+          "digest": "sha256:8cee15db7a470c445448bdff990687b42f1f00c5e4b3acfd9876d26242f82493",
+          "expired": false,
+          "created_at": "2026-10-10T22:32:43Z",
+          "updated_at": "2026-10-10T22:32:43Z",
+          "expires_at": "2026-10-24T22:32:42Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684631474",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684631474/zip",
+          "workflow_run": {
+            "id": 38091673128,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673128/artifacts/11684631474",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {},
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11683669245,
+          "name": "local-interop-file-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 41510,
+          "digest": "sha256:2b29fc34814ac1fa244309c42111fb1c374fcb91ef310de683f15fc82b3d4d3e",
+          "expired": false,
+          "created_at": "2026-10-10T22:31:32Z",
+          "updated_at": "2026-10-10T22:31:32Z",
+          "expires_at": "2026-10-24T22:31:31Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683669245",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683669245/zip",
+          "workflow_run": {
+            "id": 38091673128,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673128/artifacts/11683669245",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "local-interop.xml": {
+              "tests": 413,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 68,
+              "passed": 345,
+              "seconds": 28.68,
+              "report_sha256": "88cb577fba3679c8eb7454fcf5fabcf73db392f19587561122e7c13d538ed72a"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "interop",
+            "identity": {
+              "checked_out_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "run_id": "38091673128",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "file",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f568d79a6dddc66a51350e0d575e62e46e1baab861e90f8df91343a1ea478632",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "local-interop.xml",
+            "inventory_count": 413,
+            "assigned_count": 413,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": true,
+            "coverage_path": "extracted/11683669245/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/passed": 345,
+              "call/passed": 345,
+              "teardown/passed": 413,
+              "setup/skipped": 68
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_local_interop_tcp.py::test_real_diagnostics_rejects_missing_capsule_and_source_content",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "COMPLETE_SHARD_PASS",
+            "additional_classification": null
+          }
+        }
+      ]
+    },
+    {
+      "id": 38091673135,
+      "name": "Cloud CI",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T22:30:24Z",
+      "updated_at": "2026-10-10T23:26:12Z",
+      "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135",
+      "expected_workflow_checkout_event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+      "jobs": [
+        {
+          "id": 114329195244,
+          "name": "V2 / Independent studio live media",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114329195244",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T22:34:42Z",
+          "wall_seconds": 255.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195244.log",
+            "bytes": 140892,
+            "sha256": "d4d0da665c9c437fa1c06d57d7f00cf9f5f1dcd53bb15f3166ec4c8c9c8008c9"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:39.4219606Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        },
+        {
+          "id": 114329195452,
+          "name": "Windows / Fresh base and acceptance package",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114329195452",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T22:33:55Z",
+          "wall_seconds": 208.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195452.log",
+            "bytes": 88442,
+            "sha256": "ae8e3aa22b521a84d66e192a041710c74c47b8cc1d13c24a2e16daa7e36925c8"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": []
+        },
+        {
+          "id": 114329195457,
+          "name": "Backend execution / file / shard 0",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "cancelled",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114329195457",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T22:50:57Z",
+          "wall_seconds": 1230.0,
+          "failed_or_cancelled_steps": [
+            "Complete backend collection / assigned shard execution"
+          ],
+          "skipped_steps": [
+            "Install matching PostgreSQL recovery tools",
+            "Initialize disposable PostgreSQL",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "classification": "INCOMPLETE_HOSTED_CI",
+          "log": {
+            "present": true,
+            "path": "job-114329195457.log",
+            "bytes": 140998,
+            "sha256": "0be6a0671295198a6202ca4f2ee6bc955acfc770c6828f4d3c844748c2a23490"
+          },
+          "error_lines": [
+            "2026-10-10T22:50:40.0318906Z ##[error]The operation was canceled."
+          ],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:39.4091187Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        },
+        {
+          "id": 114329195460,
+          "name": "Backend execution / original File TCP",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114329195460",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T22:32:12Z",
+          "wall_seconds": 105.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195460.log",
+            "bytes": 56102,
+            "sha256": "5d6de80e8a6227140525a441423ca7036bfaeb835bef247c68e005c76c3304af"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:38.9885893Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        },
+        {
+          "id": 114329195478,
+          "name": "Backend execution / postgres / shard 0",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114329195478",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T23:22:49Z",
+          "wall_seconds": 3142.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195478.log",
+            "bytes": 238855,
+            "sha256": "be9ea0c3d525c914b7285f130a284a0cf7a7339d43314d68f4d42cf08b990ff5"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:51.2304984Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        },
+        {
+          "id": 114329195491,
+          "name": "V2 / Creative live workflows and geometry",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114329195491",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T22:33:08Z",
+          "wall_seconds": 161.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195491.log",
+            "bytes": 91363,
+            "sha256": "bd122a098babfcd786598c2b4c1df0c102a01b74cd0c5b5ca771dc570ffa5efe"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:38.9103915Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        },
+        {
+          "id": 114329195520,
+          "name": "Windows / Host compile and native contracts",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114329195520",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T22:33:17Z",
+          "wall_seconds": 170.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195520.log",
+            "bytes": 65252,
+            "sha256": "d1e42b5b127cf7283157006ef3a432c0059248fea9a16c3bb286ba488a46c032"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": []
+        },
+        {
+          "id": 114329195605,
+          "name": "Backend execution / postgres / shard 1",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "cancelled",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114329195605",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T23:25:43Z",
+          "wall_seconds": 3316.0,
+          "failed_or_cancelled_steps": [
+            "Complete backend collection / assigned shard execution"
+          ],
+          "skipped_steps": [
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "classification": "INCOMPLETE_HOSTED_CI",
+          "log": {
+            "present": true,
+            "path": "job-114329195605.log",
+            "bytes": 168422,
+            "sha256": "d711aa3809a2481d64240ff4de2613c31b58719f415aabe1ad92eb5b53afb838"
+          },
+          "error_lines": [
+            "2026-10-10T23:25:39.8322667Z ##[error]The operation was canceled."
+          ],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:41.7976087Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        },
+        {
+          "id": 114329195933,
+          "name": "Frontend / unit-type-build-tokens",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114329195933",
+          "started_at": "2026-10-10T22:30:27Z",
+          "completed_at": "2026-10-10T22:51:09Z",
+          "wall_seconds": 1242.0,
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [
+            "Upload source-labelled PNG evidence part 3",
+            "Upload source-labelled PNG evidence part 4"
+          ],
+          "classification": "PASSED_WITH_RECORDED_SCOPE",
+          "log": {
+            "present": true,
+            "path": "job-114329195933.log",
+            "bytes": 309327,
+            "sha256": "44dfcac16af343eebc5872b5bdcec7e98a6ea1b5ffde1235d3d80d569289ee00"
+          },
+          "error_lines": [],
+          "checkout_sha_lines": [
+            "2026-10-10T22:30:39.3384642Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        },
+        {
+          "id": 114338954272,
+          "name": "Backend / postgres",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114338954272",
+          "started_at": "2026-10-10T23:25:46Z",
+          "completed_at": "2026-10-10T23:26:11Z",
+          "wall_seconds": 25.0,
+          "failed_or_cancelled_steps": [
+            "Require every execution job including original File TCP gate"
+          ],
+          "skipped_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "classification": "FAILED_OBSERVED",
+          "log": {
+            "present": true,
+            "path": "job-114338954272.log",
+            "bytes": 16175,
+            "sha256": "2627183e1f9ba0b83d38773bcd9f6e72720e794363bbbc2e18c4e7536163e876"
+          },
+          "error_lines": [
+            "2026-10-10T23:26:08.6611591Z ##[error]Process completed with exit code 1."
+          ],
+          "checkout_sha_lines": [
+            "2026-10-10T23:25:58.7449833Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        },
+        {
+          "id": 114338954274,
+          "name": "Backend / file",
+          "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/job/114338954274",
+          "started_at": "2026-10-10T23:25:46Z",
+          "completed_at": "2026-10-10T23:26:11Z",
+          "wall_seconds": 25.0,
+          "failed_or_cancelled_steps": [
+            "Require every execution job including original File TCP gate"
+          ],
+          "skipped_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "classification": "FAILED_OBSERVED",
+          "log": {
+            "present": true,
+            "path": "job-114338954274.log",
+            "bytes": 16169,
+            "sha256": "3a0a5b2be40c45ae822c14cd95a9932df3b14273f87883916594e8b10e555f98"
+          },
+          "error_lines": [
+            "2026-10-10T23:26:08.7243151Z ##[error]Process completed with exit code 1."
+          ],
+          "checkout_sha_lines": [
+            "2026-10-10T23:25:59.6570529Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11685846540,
+          "name": "backend-postgres-shard-0-3a234ed242a2d15698560752d6ac3a982da7c350-attempt-1",
+          "size_in_bytes": 688544,
+          "digest": "sha256:c01672fdcdafbba595b0ab46b29561655ff88e61e5343667c8cfaa7ac478fda1",
+          "expired": false,
+          "created_at": "2026-10-10T23:22:44Z",
+          "updated_at": "2026-10-10T23:22:44Z",
+          "expires_at": "2026-10-24T23:22:42Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685846540",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685846540/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11685846540",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "backend.xml": {
+              "tests": 5949,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 1981,
+              "passed": 3968,
+              "seconds": 3007.229,
+              "report_sha256": "71f55385793ed8fa0d2cf570edfec2a2e4cac8830b3406ceb84737588aa7202d"
+            },
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174,
+              "seconds": 10.396,
+              "report_sha256": "95cf54d6e24d82ff3badc7071b07385847b7dc5a160a638cdca2cb707671546c"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "identity": {
+              "checked_out_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "run_id": "38091673135",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "postgres",
+            "shard": {
+              "index": 0,
+              "count": 2
+            },
+            "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11901,
+            "assigned_count": 5949,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": true,
+            "coverage_path": "extracted/11685846540/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/skipped": 1981,
+              "teardown/passed": 5949,
+              "setup/passed": 3968,
+              "call/passed": 3968
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api/v1]",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "COMPLETE_SHARD_PASS",
+            "additional_classification": null
+          }
+        },
+        {
+          "id": 11685592221,
+          "name": "backend-postgres-shard-1-3a234ed242a2d15698560752d6ac3a982da7c350-attempt-1",
+          "size_in_bytes": 433986,
+          "digest": "sha256:8aa555874fa3d5f5beacadb530e53e739f356b11ab0c37f8b8817856a2a55a8c",
+          "expired": false,
+          "created_at": "2026-10-10T23:25:40Z",
+          "updated_at": "2026-10-10T23:25:40Z",
+          "expires_at": "2026-10-24T23:25:40Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685592221",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685592221/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11685592221",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174,
+              "seconds": 12.933,
+              "report_sha256": "f1cc80920725c634711c754fff286d93b85a0c4247505376ea135e4d9b5e040d"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "identity": {
+              "checked_out_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "run_id": "38091673135",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "postgres",
+            "shard": {
+              "index": 1,
+              "count": 2
+            },
+            "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+            "pytest_exitstatus": null,
+            "complete": false,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11901,
+            "assigned_count": 5952,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": false,
+            "coverage_path": "extracted/11685592221/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/passed": 3812,
+              "call/passed": 3811,
+              "teardown/passed": 5803,
+              "setup/skipped": 1992
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_v2_source_adaptation.py::test_durable_output_disagreement_prevents_adoption[postgres-/api/v1]",
+              "when": "setup",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "INCOMPLETE_HOSTED_CI",
+            "additional_classification": null
+          }
+        },
+        {
+          "id": 11685270210,
+          "name": "frontend-compact-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 792886,
+          "digest": "sha256:cd3dab82a7268e0b08522f83dd22a22d367595acb4a6ea7ef005b2b8090d425b",
+          "expired": false,
+          "created_at": "2026-10-10T22:51:02Z",
+          "updated_at": "2026-10-10T22:51:02Z",
+          "expires_at": "2026-10-24T22:51:02Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685270210",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685270210/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11685270210",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "receipts/export-browser.xml": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 1,
+              "seconds": 1.498,
+              "report_sha256": "941f4308de6efcaf7fd2ce2c2142c0cef107906077938289948e07a93289b9e2"
+            },
+            "receipts/functional-surface-browser.xml": {
+              "tests": 9,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 9,
+              "seconds": 51.631,
+              "report_sha256": "d5796810d85456a1d894b2dcfb47874f974f732823b9334144e539167e66f8cb"
+            },
+            "receipts/geometry.xml": {
+              "tests": 9,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 9,
+              "seconds": 11.667000000000002,
+              "report_sha256": "7e2c0b9b05353def85543c36ae3a420dbe290564717703483b0af02bbbe14bb6"
+            },
+            "receipts/frontend.xml": {
+              "tests": 2450,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 8,
+              "passed": 2442,
+              "seconds": 205.588914877,
+              "report_sha256": "82cf13d49a24e862f3e4335c5697d9291d55d321a80af6d904c81af994d05a58"
+            },
+            "receipts/business.xml": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 2,
+              "seconds": 10.173,
+              "report_sha256": "2e15963d86a11347d210d65705b4cbbaf417a47f45947792e1f263bd9f687279"
+            },
+            "receipts/r4-ux.xml": {
+              "tests": 63,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 63,
+              "seconds": 634.865,
+              "report_sha256": "397503d5a9b90d6891eb47761bdacfdbeec3f9c554f22e88238079e1325beaec"
+            },
+            "receipts/experimental.xml": {
+              "tests": 7,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 7,
+              "seconds": 38.248,
+              "report_sha256": "12467e6346eb698484ff6fa2064badfa56178ebe8e1b7ec1bd462d4d1da1544c"
+            },
+            "receipts/branch-surface-browser.xml": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 1,
+              "seconds": 12.315,
+              "report_sha256": "fe65def2aedd63670a7f6658d95f40e709e74ebeadb877c4aae7659a58606501"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11685045788,
+          "name": "frontend-png-2-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 15730135,
+          "digest": "sha256:a11111450039e1ed96f3ebe07ad66801bed77dced4ca1b087edf5ac4f3faa268",
+          "expired": false,
+          "created_at": "2026-10-10T22:51:01Z",
+          "updated_at": "2026-10-10T22:51:01Z",
+          "expires_at": "2026-10-24T22:51:00Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685045788",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685045788/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11685045788",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "LARGE_PNG_LEFT_REMOTE"
+        },
+        {
+          "id": 11685030755,
+          "name": "frontend-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 40834569,
+          "digest": "sha256:e03e03d1ee732286496545c5c762f29c3d5c903ebfb4091bdbedfa2d3d472aae",
+          "expired": false,
+          "created_at": "2026-10-10T22:51:05Z",
+          "updated_at": "2026-10-10T22:51:05Z",
+          "expires_at": "2026-10-24T22:51:03Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685030755",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11685030755/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11685030755",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "FULL_FRONTEND_DUPLICATE_OR_LARGE_PAYLOAD_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11684915974,
+          "name": "frontend-png-1-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 24254295,
+          "digest": "sha256:6a3026c3a3d1329bac7feeea6c67befb89efbed9decf58e24bfcaa2a9c7e8e3e",
+          "expired": false,
+          "created_at": "2026-10-10T22:51:00Z",
+          "updated_at": "2026-10-10T22:51:00Z",
+          "expires_at": "2026-10-24T22:50:58Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684915974",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684915974/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11684915974",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "LARGE_PNG_LEFT_REMOTE"
+        },
+        {
+          "id": 11684906027,
+          "name": "backend-file-shard-0-3a234ed242a2d15698560752d6ac3a982da7c350-attempt-1",
+          "size_in_bytes": 537203,
+          "digest": "sha256:6520b81467b6bbe344a4336cd03e610b1fc7491eb0a5aa7de98a4f4b2d3e05f9",
+          "expired": false,
+          "created_at": "2026-10-10T22:50:41Z",
+          "updated_at": "2026-10-10T22:50:41Z",
+          "expires_at": "2026-10-24T22:50:40Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684906027",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684906027/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11684906027",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174,
+              "seconds": 10.443,
+              "report_sha256": "bf07eb9ce731bd1f5db8c285957314c05bf24442ebb19ee372b980d75be9eaf8"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true,
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "identity": {
+              "checked_out_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+              "event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+              "run_id": "38091673135",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "backend": "file",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+            "pytest_exitstatus": null,
+            "complete": false,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11901,
+            "assigned_count": 11901,
+            "collection_errors": [],
+            "validation_errors": [],
+            "junit_present": false,
+            "coverage_path": "extracted/11684906027/coverage.json",
+            "raw_phase_outcomes": {
+              "setup/passed": 6030,
+              "call/passed": 6029,
+              "teardown/passed": 9190,
+              "setup/skipped": 3161
+            },
+            "raw_failed_events": [],
+            "last_event": {
+              "nodeid": "tests/test_v2_adaptation_archive.py::test_changed_durable_execution_never_archives[file-/api-generation_max_output_bytes]",
+              "when": "setup",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "raw_events_are_not_final_test_counts": true,
+            "classification": "INCOMPLETE_HOSTED_CI",
+            "additional_classification": null
+          }
+        },
+        {
+          "id": 11684731390,
+          "name": "windows-acceptance-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 163811806,
+          "digest": "sha256:2638b911061e12bbe61310194b2f7e031481a74d8cf05bee43aae1f5a43e2b60",
+          "expired": false,
+          "created_at": "2026-10-10T22:33:51Z",
+          "updated_at": "2026-10-10T22:33:51Z",
+          "expires_at": "2026-10-24T22:33:45Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684731390",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684731390/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11684731390",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "WINDOWS_BINARY_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11684676365,
+          "name": "backend-tcp-3a234ed242a2d15698560752d6ac3a982da7c350-attempt-1",
+          "size_in_bytes": 176978,
+          "digest": "sha256:240473d5f52b5eaec238a100abbf3bf8377bcad08f4a73d7542268921c313cd9",
+          "expired": false,
+          "created_at": "2026-10-10T22:32:09Z",
+          "updated_at": "2026-10-10T22:32:09Z",
+          "expires_at": "2026-10-24T22:32:08Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684676365",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684676365/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11684676365",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "tcp-harness.xml": {
+              "tests": 110,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 110,
+              "seconds": 6.454,
+              "report_sha256": "c7282eebef4e0715005d7b60890de817893e36ed23c5da4bffe71c6e3f2a08cf"
+            },
+            "sync-tcp.xml": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 2,
+              "seconds": 45.542,
+              "report_sha256": "8d037add1e997085aaa8a825fb4acc1ce6b0f8296a24b5bbd1e6db4a271f3b96"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11684152468,
+          "name": "v2-independent-media-3a234ed242a2d15698560752d6ac3a982da7c350-attempt-1",
+          "size_in_bytes": 8893240,
+          "digest": "sha256:332c1cd29af9d6ab21cabee3b0e7fd7f5421bb2396bc5ccdc87c2d2a3bb5328d",
+          "expired": false,
+          "created_at": "2026-10-10T22:34:36Z",
+          "updated_at": "2026-10-10T22:34:36Z",
+          "expires_at": "2026-10-24T22:34:35Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684152468",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11684152468/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11684152468",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "v2-independent-live.xml": {
+              "tests": 18,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 18,
+              "seconds": 103.872,
+              "report_sha256": "0eae63ecc853081e24ad2f7b67ce5150dae614619dafeedff0828d9090509bac"
+            },
+            "v2-independent-live/junit.xml": {
+              "tests": 18,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 18,
+              "seconds": 103.872,
+              "report_sha256": "0eae63ecc853081e24ad2f7b67ce5150dae614619dafeedff0828d9090509bac"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11683689509,
+          "name": "windows-native-receipts-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 583357,
+          "digest": "sha256:9b6588d66823efe1c79658280abda6eeca3dd773d57647086e4ba656de9c5a74",
+          "expired": false,
+          "created_at": "2026-10-10T22:33:45Z",
+          "updated_at": "2026-10-10T22:33:45Z",
+          "expires_at": "2026-10-24T22:33:44Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683689509",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683689509/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11683689509",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {},
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11683209629,
+          "name": "v2-creative-browser-3a234ed242a2d15698560752d6ac3a982da7c350-attempt-1",
+          "size_in_bytes": 7447816,
+          "digest": "sha256:771916dac16ebb059e8f3c83d9b4d4204c6c8e7e86c14f0de29a0416a295a69b",
+          "expired": false,
+          "created_at": "2026-10-10T22:33:06Z",
+          "updated_at": "2026-10-10T22:33:06Z",
+          "expires_at": "2026-10-24T22:33:05Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683209629",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683209629/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11683209629",
+          "downloaded": true,
+          "integrity_boundary": "DOWNLOADED_SIZE_SHA256_AND_ZIP_CRC_VERIFIED",
+          "junit": {
+            "receipts/v2-creative-workbench.xml": {
+              "tests": 8,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 8,
+              "seconds": 19.234,
+              "report_sha256": "e8756a3b41b3504a340499c85343733b28283530c7e5c74ccae49ce3e3713a5f"
+            },
+            "receipts/v2-creative-live.xml": {
+              "tests": 12,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 12,
+              "seconds": 38.711999999999996,
+              "report_sha256": "51f0688f05c1d9cfecb4968181f15170aa05ce5d66db37a1daca8bbf44e98d7d"
+            },
+            "receipts/v2-creative-live/junit.xml": {
+              "tests": 12,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 12,
+              "seconds": 38.711999999999996,
+              "report_sha256": "51f0688f05c1d9cfecb4968181f15170aa05ce5d66db37a1daca8bbf44e98d7d"
+            }
+          },
+          "junit_counts_are_per_report_not_summed_across_duplicate_copies": true
+        },
+        {
+          "id": 11682999898,
+          "name": "windows-host-3a234ed242a2d15698560752d6ac3a982da7c350",
+          "size_in_bytes": 699987,
+          "digest": "sha256:93486f712e91c76a413c111569ae00727462a74e431e7eb4da4b89d746748833",
+          "expired": false,
+          "created_at": "2026-10-10T22:33:13Z",
+          "updated_at": "2026-10-10T22:33:13Z",
+          "expires_at": "2026-10-24T22:33:12Z",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11682999898",
+          "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11682999898/zip",
+          "workflow_run": {
+            "id": 38091673135,
+            "repository_id": 1347017268,
+            "head_repository_id": 1347017268,
+            "head_branch": "feature/v2-narrative-platform",
+            "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+          },
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135/artifacts/11682999898",
+          "downloaded": false,
+          "integrity_boundary": "REMOTE_METADATA_ONLY_NOT_PAYLOAD_VERIFIED",
+          "retention_reason": "WINDOWS_BINARY_NOT_DOWNLOADED"
+        }
+      ]
+    }
+  ],
+  "all_original_runs_terminal": true,
+  "status": "TERMINAL_FAILED_OBSERVED_OR_INCOMPLETE",
+  "backend_execution_observations": [
+    {
+      "run_id": 38091679805,
+      "event": "pull_request",
+      "artifact_id": 11685302834,
+      "schema_version": 1,
+      "scope": "backend",
+      "identity": {
+        "checked_out_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+        "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+        "event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+        "run_id": "38091679805",
+        "run_attempt": "1",
+        "repository": "1785235376-blip/AI-Novel-Studio",
+        "python_version": "3.12.9",
+        "platform": "linux",
+        "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+        "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+      },
+      "backend": "postgres",
+      "shard": {
+        "index": 0,
+        "count": 2
+      },
+      "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+      "pytest_exitstatus": 0,
+      "complete": true,
+      "junit_filename": "backend.xml",
+      "inventory_count": 11901,
+      "assigned_count": 5949,
+      "collection_errors": [],
+      "validation_errors": [],
+      "junit_present": true,
+      "coverage_path": "extracted/11685302834/coverage.json",
+      "raw_phase_outcomes": {
+        "setup/skipped": 1981,
+        "teardown/passed": 5949,
+        "setup/passed": 3968,
+        "call/passed": 3968
+      },
+      "raw_failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api/v1]",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "raw_events_are_not_final_test_counts": true,
+      "classification": "COMPLETE_SHARD_PASS",
+      "additional_classification": null
+    },
+    {
+      "run_id": 38091679805,
+      "event": "pull_request",
+      "artifact_id": 11684872891,
+      "schema_version": 1,
+      "scope": "backend",
+      "identity": {
+        "checked_out_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+        "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+        "event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+        "run_id": "38091679805",
+        "run_attempt": "1",
+        "repository": "1785235376-blip/AI-Novel-Studio",
+        "python_version": "3.12.9",
+        "platform": "linux",
+        "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+        "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+      },
+      "backend": "postgres",
+      "shard": {
+        "index": 1,
+        "count": 2
+      },
+      "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+      "pytest_exitstatus": 0,
+      "complete": true,
+      "junit_filename": "backend.xml",
+      "inventory_count": 11901,
+      "assigned_count": 5952,
+      "collection_errors": [],
+      "validation_errors": [],
+      "junit_present": true,
+      "coverage_path": "extracted/11684872891/coverage.json",
+      "raw_phase_outcomes": {
+        "setup/passed": 3898,
+        "call/passed": 3898,
+        "teardown/passed": 5952,
+        "setup/skipped": 2054
+      },
+      "raw_failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api]",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "raw_events_are_not_final_test_counts": true,
+      "classification": "COMPLETE_SHARD_PASS",
+      "additional_classification": null
+    },
+    {
+      "run_id": 38091679805,
+      "event": "pull_request",
+      "artifact_id": 11684388924,
+      "schema_version": 1,
+      "scope": "backend",
+      "identity": {
+        "checked_out_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+        "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+        "event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+        "run_id": "38091679805",
+        "run_attempt": "1",
+        "repository": "1785235376-blip/AI-Novel-Studio",
+        "python_version": "3.12.9",
+        "platform": "linux",
+        "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+        "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+      },
+      "backend": "file",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+      "pytest_exitstatus": null,
+      "complete": false,
+      "junit_filename": "backend.xml",
+      "inventory_count": 11901,
+      "assigned_count": 11901,
+      "collection_errors": [],
+      "validation_errors": [],
+      "junit_present": false,
+      "coverage_path": "extracted/11684388924/coverage.json",
+      "raw_phase_outcomes": {
+        "setup/passed": 6028,
+        "call/passed": 6027,
+        "teardown/passed": 9188,
+        "setup/skipped": 3161
+      },
+      "raw_failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_v2_adaptation_archive.py::test_changed_durable_execution_never_archives[file-/api-expected_request_digest]",
+        "when": "setup",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "raw_events_are_not_final_test_counts": true,
+      "classification": "INCOMPLETE_HOSTED_CI",
+      "additional_classification": null
+    },
+    {
+      "run_id": 38091673135,
+      "event": "push",
+      "artifact_id": 11685846540,
+      "schema_version": 1,
+      "scope": "backend",
+      "identity": {
+        "checked_out_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+        "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+        "event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+        "run_id": "38091673135",
+        "run_attempt": "1",
+        "repository": "1785235376-blip/AI-Novel-Studio",
+        "python_version": "3.12.9",
+        "platform": "linux",
+        "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+        "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+      },
+      "backend": "postgres",
+      "shard": {
+        "index": 0,
+        "count": 2
+      },
+      "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+      "pytest_exitstatus": 0,
+      "complete": true,
+      "junit_filename": "backend.xml",
+      "inventory_count": 11901,
+      "assigned_count": 5949,
+      "collection_errors": [],
+      "validation_errors": [],
+      "junit_present": true,
+      "coverage_path": "extracted/11685846540/coverage.json",
+      "raw_phase_outcomes": {
+        "setup/skipped": 1981,
+        "teardown/passed": 5949,
+        "setup/passed": 3968,
+        "call/passed": 3968
+      },
+      "raw_failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api/v1]",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "raw_events_are_not_final_test_counts": true,
+      "classification": "COMPLETE_SHARD_PASS",
+      "additional_classification": null
+    },
+    {
+      "run_id": 38091673135,
+      "event": "push",
+      "artifact_id": 11685592221,
+      "schema_version": 1,
+      "scope": "backend",
+      "identity": {
+        "checked_out_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+        "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+        "event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+        "run_id": "38091673135",
+        "run_attempt": "1",
+        "repository": "1785235376-blip/AI-Novel-Studio",
+        "python_version": "3.12.9",
+        "platform": "linux",
+        "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+        "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+      },
+      "backend": "postgres",
+      "shard": {
+        "index": 1,
+        "count": 2
+      },
+      "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+      "pytest_exitstatus": null,
+      "complete": false,
+      "junit_filename": "backend.xml",
+      "inventory_count": 11901,
+      "assigned_count": 5952,
+      "collection_errors": [],
+      "validation_errors": [],
+      "junit_present": false,
+      "coverage_path": "extracted/11685592221/coverage.json",
+      "raw_phase_outcomes": {
+        "setup/passed": 3812,
+        "call/passed": 3811,
+        "teardown/passed": 5803,
+        "setup/skipped": 1992
+      },
+      "raw_failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_v2_source_adaptation.py::test_durable_output_disagreement_prevents_adoption[postgres-/api/v1]",
+        "when": "setup",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "raw_events_are_not_final_test_counts": true,
+      "classification": "INCOMPLETE_HOSTED_CI",
+      "additional_classification": null
+    },
+    {
+      "run_id": 38091673135,
+      "event": "push",
+      "artifact_id": 11684906027,
+      "schema_version": 1,
+      "scope": "backend",
+      "identity": {
+        "checked_out_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+        "source_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+        "event_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+        "run_id": "38091673135",
+        "run_attempt": "1",
+        "repository": "1785235376-blip/AI-Novel-Studio",
+        "python_version": "3.12.9",
+        "platform": "linux",
+        "source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+        "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+      },
+      "backend": "file",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory_digest": "f2e461eeb02aaf3bc25f7d4f49242a97ddf493a4570856ed1a2a18a408f3be05",
+      "pytest_exitstatus": null,
+      "complete": false,
+      "junit_filename": "backend.xml",
+      "inventory_count": 11901,
+      "assigned_count": 11901,
+      "collection_errors": [],
+      "validation_errors": [],
+      "junit_present": false,
+      "coverage_path": "extracted/11684906027/coverage.json",
+      "raw_phase_outcomes": {
+        "setup/passed": 6030,
+        "call/passed": 6029,
+        "teardown/passed": 9190,
+        "setup/skipped": 3161
+      },
+      "raw_failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_v2_adaptation_archive.py::test_changed_durable_execution_never_archives[file-/api-generation_max_output_bytes]",
+        "when": "setup",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "raw_events_are_not_final_test_counts": true,
+      "classification": "INCOMPLETE_HOSTED_CI",
+      "additional_classification": null
+    }
+  ],
+  "evidence_integrity": {
+    "downloaded_artifacts": 23,
+    "zip_bytes": 39577499,
+    "member_count": 622,
+    "all_sizes_and_digests_match": true,
+    "all_zip_crc_pass": true,
+    "windows_binaries_downloaded": false,
+    "job_log_count": 29,
+    "nested_trace_count": 0
+  },
+  "boundaries": [
+    "All results belong to the original 3a234ed attempt-1 runs; historical runs remain unchanged and later edits/runs cannot replace these.",
+    "Original File one shard / PostgreSQL two shards, 20/55 minute execution budgets and strict joins unchanged.",
+    "Cancelled or timed-out suites remain incomplete; any observed failed phase is preserved, never relabeled capacity-only.",
+    "Raw phase counts are partial observations, not final JUnit counts or proof that unseen tests passed.",
+    "R123 workflow success reproduces historical c6f2126 defects RED, not current-source independent security acceptance.",
+    "Hosted bounded Windows smoke is not user Windows/GPU acceptance, interactive desktop, installer, signing, release or real-model acceptance.",
+    "Selected local File/PG/UI checks and malformed real-CPU raw DRAFT rejection are separate from hosted CI; the real-CPU acceptance harness FAIL remains.",
+    "Historical independent audit BLOCKED remains; this collector is evidence archival, not a separate audit.",
+    "Cache HIT/restore and actual install/check are reported separately; no causal performance improvement is claimed.",
+    "Historical denied artifacts 11615127270/11618169199 were never downloaded or rerouted.",
+    "No check-suite annotation endpoint or alternate credential route was accessed. Timeout cause is not guessed beyond logs and frozen budgets.",
+    "Canonical per-report JUnit results must not be summed with duplicate copies in the same artifact."
+  ],
+  "discovery": {
+    "run_count": 5,
+    "all_attempts": 1,
+    "collection": "runs-terminal.json"
+  },
+  "collector_crosscheck": "collector-crosscheck.json",
+  "original_job_count": 29,
+  "job_conclusions": {
+    "success": 22,
+    "cancelled": 3,
+    "failure": 4
+  },
+  "failed_phase_event_count": 0
+}

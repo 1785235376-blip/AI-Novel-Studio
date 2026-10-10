@@ -1002,3 +1002,54 @@ private raw DRAFT v1; its malformed structured response was correctly rejected,
 and the original acceptance harness FAIL is retained. Multi-chapter adaptation, literary quality, hosted strict completion and
 historical independent security review remain open. Exact stage results and
 source identities belong to [the archive report](MILESTONE_M4_ADAPTATION_ARCHIVE_REPORT.md).
+
+
+## 45. Saved screenplay EPUB reading export (TEXT-16)
+
+Following the published private-archive checkpoint 3a234ed, the existing saved
+SCREENPLAY export owner now supports an EPUB3 reflowable reading projection,
+with one navigable scene section per saved scene. The existing API aliases,
+version/source/privacy and before/after permission checks, verified byte receipt
+and original selector are reused. Generic Script formats and existing Fountain,
+DOCX, Markdown behavior are unchanged. XML-unrepresentable text is rejected
+before encoding instead of silently removed.
+
+File and new-empty-PostgreSQL selected five-module checks each pass **238 / 88
+profile skips**; targeted client/panel checks pass **23**; complete frontend
+passes **2,451 / 8 original skips**. Build/token guard, 352 infrastructure tests
+and actionlint pass. Two complete inventories agree on **12,072 ordered nodes**;
+collection is not execution. New-SHA hosted results remain pending. Original PDF rejection
+assertions remain unchanged; PDF, external reader certification and professional
+pagination are not claimed. See [the EPUB report](MILESTONE_M4_EPUB_REPORT.md) and
+[contract](docs/v2/creative-screenplay-epub.md). Overall Text/M4 remains PARTIAL.
+
+
+## 46. Explicit independent screenplay starter guides (TEXT-11)
+
+Four fixed v1 linear writing-guide catalogs (feature film, short film, animation,
+advertisement) are read through the original gated Creative API. Preview never
+writes. Explicit use creates a new unsaved independent screenplay with fresh
+scene IDs, then original create/save/history/reopen/export persist user edits.
+No chapter or model is consulted; no schema/store/queue is added. Dirty, blocked,
+busy, revoked, repeated and stale-response guards preserve existing drafts.
+
+The isolated slice passed pure16, focused File25/9, UI48 and type checking, with
+its preparation error and label red retained. Combined EPUB+starter final-source
+verification passes File/new-PG **263 / 97 profile skips**, complete UI
+**2,470 / 8 original skips**, build/token guard, infrastructure352 and actionlint.
+Two full inventories agree on **12,106 ordered nodes**; no full strict acceptance
+is implied. Evidence is recorded in [the final Text report](MILESTONE_M4_TEXT_READING_AND_STARTERS_REPORT.md).
+Overall status remains **PARTIAL**: linear guides are not a game branching engine,
+professional-format acceptance or completion of the whole Text milestone.
+
+### Text publication checkpoint: preceding 3a hosted terminal
+
+The original 3a234ed attempt-1 runs are terminal: 29 jobs = 22 success, 3 cancelled,
+4 failure; both Cloud workflows report cancelled. Creative each 12/12 and geometry
+8/8 passed; PR PG0/PG1 and push PG0 completed, push PG1 and both File profiles
+remain incomplete. All four strict prerequisites failed, so no full joined proof.
+Six backend records have no failed phase observed on that source; historical
+e6ff/899 FAILED_OBSERVED remains. See the exact
+`docs/delivery/v2-development/ci-3a-private-archive/handoff-summary.json`.
+The EPUB/starter final source has separate selected verification and pending hosted
+CI; this baseline result is not its full-source acceptance.

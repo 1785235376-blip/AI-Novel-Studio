@@ -1,0 +1,28 @@
+{
+  "staged_tree": "469c3d29eabce9e7da1975eb9603b08183c5c9b7",
+  "utc": "2026-10-10T22:41:13.189069+00:00",
+  "command": [
+    "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/bin/python",
+    "-B",
+    "-c",
+    "import json, os, runpy, sys\nfrom pathlib import Path\nroot = Path.cwd().resolve()\nomitted = root / 'docs' / 'delivery'\ndef reject_omitted_reads(event, args):\n    if event == 'open' and isinstance(args[0], (str, bytes, os.PathLike)):\n        path = Path(os.fsdecode(args[0])).resolve()\n        if path == omitted or path.is_relative_to(omitted):\n            raise RuntimeError('Compact catalog accessed excluded delivery evidence')\nsys.addaudithook(reject_omitted_reads)\nrunpy.run_path(str(root / 'scripts/refresh_product_api_catalog.py'), run_name='__main__')\norigins = {}\nfor name, module in list(sys.modules.items()):\n    if name.split('.')[0] in {'app', 'local_interop_protocol', 'local_interop_desktop'}:\n        for origin in [getattr(module, '__file__', None), *getattr(module, '__path__', [])]:\n            if origin and not Path(origin).resolve().is_relative_to(root):\n                raise RuntimeError('Project import escaped compact snapshot: ' + name)\n        if getattr(module, '__file__', None):\n            origins[name] = str(Path(module.__file__).resolve().relative_to(root))\n(root / '.profile/catalog-import-origins.json').write_text(json.dumps(origins, sort_keys=True) + '\\n')\n"
+  ],
+  "cwd": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-staged/d86b0e22a0494a91b5a99e80fb20824f",
+  "exit_code": 0,
+  "snapshot": {
+    "mode": "compact",
+    "excluded_prefix": "docs/delivery/",
+    "retained_files": 2301,
+    "retained_blob_bytes": 31349587,
+    "excluded_files": 2829,
+    "excluded_blob_bytes": 426908264,
+    "retained_inventory_sha256": "967c232cf7102eb44b9d24dd5fd45bc4c056b78e13619113046b3e0cc7e410e7",
+    "project_import_origins_sha256": "90c048cb1f6a42c0fe8143708b727086f1711080a3598902adb457a27ddf9a90"
+  },
+  "sha256": {
+    "API_CATALOG.json": "90dec917fe5528849b53d26bde6229d364662e8d39de8f7fd1989bc419ec1e26",
+    "API_CATALOG.md": "8d59e51644c5c1ace4062d0a46c8625f9cfcd27b15d39d1af781e95cb35b25a2",
+    "API_CATALOG_DETAIL.json.gz": "3d9d2bc7f331807eca724f6a2118016f9212ea730403593c28248e4bc7477ff7",
+    "API_OPENAPI.json.gz": "4f4faa6583f8e9dc66cea589ed42627912b7f7f5016bc8d1c6ebabf877ba4af6"
+  }
+}

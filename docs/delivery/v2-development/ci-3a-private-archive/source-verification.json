@@ -1,0 +1,218 @@
+{
+  "verified_at_utc": "2026-10-10T22:33:02.193531+00:00",
+  "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+  "head_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+  "pr_merge_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+  "pr_merge_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+  "trees_equal": true,
+  "parent_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+  "local_HEAD": "3a234ed242a2d15698560752d6ac3a982da7c350",
+  "working_tree_is_not_claimed_identical_to_published_commit": true,
+  "workflow_and_requirements": [
+    {
+      "path": ".github/workflows/cloud-ci.yml",
+      "head_sha256": "32a07a303603e477bc036d8b874c604c912225c0d2fd17574ec8be2f231c8077",
+      "parent_sha256": "32a07a303603e477bc036d8b874c604c912225c0d2fd17574ec8be2f231c8077",
+      "unchanged_from_parent": true
+    },
+    {
+      "path": ".github/workflows/local-interop.yml",
+      "head_sha256": "a00ff5f6f03971e3fcd8490dd2a8bc19a3b4a27db5ed1b2105aeca0fd9532fb4",
+      "parent_sha256": "a00ff5f6f03971e3fcd8490dd2a8bc19a3b4a27db5ed1b2105aeca0fd9532fb4",
+      "unchanged_from_parent": true
+    },
+    {
+      "path": ".github/workflows/shared-r123-evidence.yml",
+      "head_sha256": "e13fc2b28091da76efea206c5c0d609e5c742ad4f17ab9d2880b1a541317bc64",
+      "parent_sha256": "e13fc2b28091da76efea206c5c0d609e5c742ad4f17ab9d2880b1a541317bc64",
+      "unchanged_from_parent": true
+    },
+    {
+      "path": ".github/ci/python-constraints.txt",
+      "head_sha256": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e",
+      "parent_sha256": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e",
+      "unchanged_from_parent": true
+    },
+    {
+      "path": "pyproject.toml",
+      "head_sha256": "fba6dd9b9a7971156118ab488274cd0ff611250200e666f91a9c2b9d51bd0a9f",
+      "parent_sha256": "fba6dd9b9a7971156118ab488274cd0ff611250200e666f91a9c2b9d51bd0a9f",
+      "unchanged_from_parent": true
+    }
+  ],
+  "checkout_logs": [
+    {
+      "job_id": 114329211722,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114329211856,
+      "sha_output_lines": [
+        "2026-10-10T22:30:44.1486383Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114329211858,
+      "sha_output_lines": [
+        "2026-10-10T22:30:53.8316887Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114329212071,
+      "sha_output_lines": [
+        "2026-10-10T22:30:44.6988730Z 0d9d647c05da23582bbdd09c09e38c176f85b152",
+        "2026-10-10T22:30:46.3866751Z c6f2126115b52e17839d48efea091dc21ec08c61"
+      ]
+    },
+    {
+      "job_id": 114329212123,
+      "sha_output_lines": [
+        "2026-10-10T22:30:43.6396978Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114329212238,
+      "sha_output_lines": [
+        "2026-10-10T22:30:55.7024234Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114329212264,
+      "sha_output_lines": [
+        "2026-10-10T22:30:43.3559042Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114329212280,
+      "sha_output_lines": [
+        "2026-10-10T22:30:44.4325209Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114329212285,
+      "sha_output_lines": [
+        "2026-10-10T22:32:36.3805703Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114329212332,
+      "sha_output_lines": [
+        "2026-10-10T22:31:39.3116549Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114329212337,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114329212341,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114329212391,
+      "sha_output_lines": [
+        "2026-10-10T22:31:49.9815618Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114338623499,
+      "sha_output_lines": [
+        "2026-10-10T23:24:05.2561225Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114338623509,
+      "sha_output_lines": [
+        "2026-10-10T23:24:05.0950365Z 0d9d647c05da23582bbdd09c09e38c176f85b152"
+      ]
+    },
+    {
+      "job_id": 114329195176,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114329195317,
+      "sha_output_lines": [
+        "2026-10-10T22:30:38.6106951Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114329195402,
+      "sha_output_lines": [
+        "2026-10-10T22:30:52.5693537Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114329195244,
+      "sha_output_lines": [
+        "2026-10-10T22:30:39.4219606Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114329195452,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114329195457,
+      "sha_output_lines": [
+        "2026-10-10T22:30:39.4091187Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114329195460,
+      "sha_output_lines": [
+        "2026-10-10T22:30:38.9885893Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114329195478,
+      "sha_output_lines": [
+        "2026-10-10T22:30:51.2304984Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114329195491,
+      "sha_output_lines": [
+        "2026-10-10T22:30:38.9103915Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114329195520,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114329195605,
+      "sha_output_lines": [
+        "2026-10-10T22:30:41.7976087Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114329195933,
+      "sha_output_lines": [
+        "2026-10-10T22:30:39.3384642Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114338954272,
+      "sha_output_lines": [
+        "2026-10-10T23:25:58.7449833Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    },
+    {
+      "job_id": 114338954274,
+      "sha_output_lines": [
+        "2026-10-10T23:25:59.6570529Z 3a234ed242a2d15698560752d6ac3a982da7c350"
+      ]
+    }
+  ],
+  "final_verification_utc": "2026-10-10T23:28:51.916450+00:00",
+  "all_six_backend_receipts_bind_expected_event_checkout_and_source_tree": true,
+  "all_six_backend_source_manifest_sha256": "48eafb74c7027ad8cdee62768d1869ade6d7f4297969e98e398ed19855d64fe0",
+  "current_PR_state": {
+    "number": 47,
+    "state": "open",
+    "draft": true,
+    "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+    "merge_commit_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152"
+  }
+}

@@ -529,3 +529,69 @@ test('ordinary Creative without trusted Host keeps manual screenplay usable and 
   await capture(page, info, 'source-adaptation-host-required');
   await info.attach('source-adaptation-host-gate', { body: JSON.stringify({ private_api_status: 401, manual_editor_available: true, model_called: false }), contentType: 'application/json' });
 });
+
+test('real File saved screenplay EPUB downloads verified reflowable bytes through the existing selector', async ({ page, request }, info) => {
+  const { novel, chapter, base } = await fixture(page, request);
+  const row = await screenplay(page, base);
+  const panel = page.getByRole('region', { name: '剧本文本格式导出', exact: true });
+  await panel.getByLabel('剧本导出格式', { exact: true }).selectOption('epub');
+  await expect(panel).toContainText('EPUB 是可导航的重排阅读版，不保证专业分页。');
+  const responseEvent = page.waitForResponse(response => new URL(response.url()).pathname === `${base}/documents/${row.id}/screenplay-export`);
+  const downloadEvent = page.waitForEvent('download');
+  await panel.getByRole('button', { name: '导出剧本文本', exact: true }).click();
+  const [response, download] = await Promise.all([responseEvent, downloadEvent]);
+  expect(response.status()).toBe(200); expect(response.headers()['content-type']).toBe('application/epub+zip');
+  expect(download.suggestedFilename()).toBe(`creative-screenplay-v${row.version}.epub`);
+  const path = info.outputPath('saved-screenplay.epub'); await download.saveAs(path);
+  const bytes = await readFile(path), sha256 = createHash('sha256').update(bytes).digest('hex');
+  expect(sha256).toBe(response.headers()['x-content-sha256']);
+  expect(response.headers()['x-creative-document-version']).toBe(String(row.version));
+  expect(response.headers()['cache-control']).toBe('no-store');
+  expect(bytes.subarray(0, 4)).toEqual(Buffer.from([0x50, 0x4b, 3, 4]));
+  expect(bytes.readUInt16LE(8)).toBe(0); // EPUB's first mimetype member is uncompressed.
+  const filenameLength = bytes.readUInt16LE(26), extraLength = bytes.readUInt16LE(28);
+  expect(bytes.subarray(30, 30 + filenameLength).toString()).toBe('mimetype');
+  expect(bytes.subarray(30 + filenameLength + extraLength, 30 + filenameLength + extraLength + 20).toString()).toBe('application/epub+zip');
+  expect(await read(request, `${base}/documents/${row.id}`)).toEqual(row);
+  expect((await read(request, `/api/chapters/${chapter.id}`)).content).toBe(chapter.content);
+  await capture(page, info, 'screenplay-epub-selector');
+  await info.attach('saved-screenplay-epub', { path, contentType: 'application/epub+zip' });
+  await info.attach('epub-download-receipt', { body: JSON.stringify({ novel_id: novel.id, document_id: row.id, version: row.version, sha256, bytes: bytes.length, model_called: false, layout: 'reflowable_scene_sections', external_reader_acceptance: 'NOT_RUN' }), contentType: 'application/json' });
+});
+
+test('real File screenplay starter creates an explicit unsaved independent draft then uses original save and export', async ({ page, request }, info) => {
+  ownedPages.set(request, page); await page.goto('/');
+  await page.getByPlaceholder('小说名称').fill('独立剧本起稿合成验收');
+  const creating = page.waitForResponse(response => response.url().endsWith('/api/novels') && response.request().method() === 'POST');
+  await page.getByRole('button', { name: '创建小说', exact: true }).click(); const created = await creating; expect(created.status()).toBe(201);
+  const novel = await created.json(); rememberNovel(request, novel); const base = creative(novel.id);
+  await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click(); await stage(page, '剧本').click();
+  const panel = page.getByRole('region', { name: '独立剧本起稿模板', exact: true });
+  await panel.getByRole('button', { name: '浏览起稿模板', exact: true }).click();
+  await expect(panel.getByLabel('起稿类型', { exact: true }).getByRole('option')).toHaveCount(4);
+  await panel.getByLabel('起稿类型', { exact: true }).selectOption('SHORT_FILM');
+  await expect(panel).toContainText('模板 v1'); expect((await read(request, `${base}/documents`)).items).toEqual([]);
+  await clickTwice(panel.getByRole('button', { name: '从模板新建未保存剧本', exact: true }));
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue('短片剧本');
+  await expect(panel.getByRole('button', { name: '从模板新建未保存剧本', exact: true })).toBeDisabled();
+  expect((await read(request, `${base}/documents`)).items).toEqual([]);
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('作者编辑的独立短片');
+  await canvas(page).getByLabel('动作与叙事', { exact: true }).fill('作者替换提示后的第一场动作。');
+  const first = await save(page, base); expect(first.version).toBe(1); expect(first.source_independent).toBe(true);
+  expect(first.source_chapter_ids).toEqual([]); expect(first.source_evidence).toEqual({}); expect(first.scenes).toHaveLength(4);
+  expect(new Set(first.scenes.map((scene: Row) => scene.id)).size).toBe(4); expect(first.scenes.every((scene: Row) => scene.source_chapter_id === null && !scene.id.startsWith('starter-'))).toBe(true);
+  await page.reload(); await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click(); await stage(page, '剧本').click();
+  await expect(canvas(page).getByLabel('动作与叙事', { exact: true })).toHaveValue('作者替换提示后的第一场动作。');
+  await canvas(page).getByLabel('动作与叙事', { exact: true }).fill('第二稿，仍由作者明确保存。'); const second = await save(page, base, first); expect(second.version).toBe(2);
+  const exportPanel = page.getByRole('region', { name: '剧本文本格式导出', exact: true });
+  await exportPanel.getByLabel('剧本导出格式', { exact: true }).selectOption('markdown');
+  const received = page.waitForResponse(response => new URL(response.url()).pathname === `${base}/documents/${first.id}/screenplay-export`), downloaded = page.waitForEvent('download');
+  await exportPanel.getByRole('button', { name: '导出剧本文本', exact: true }).click(); const [response, download] = await Promise.all([received, downloaded]);
+  const path = info.outputPath('starter-screenplay.md'); await download.saveAs(path); const bytes = await readFile(path), hash = createHash('sha256').update(bytes).digest('hex');
+  expect(response.status()).toBe(200); expect(hash).toBe(response.headers()['x-content-sha256']); expect(bytes.toString('utf8')).toContain('第二稿，仍由作者明确保存。');
+  expect((await read(request, `${base}/documents/${first.id}/history`)).items.map((row: Row) => row.version)).toEqual([1, 2]);
+  expect(await read(request, `/api/novels/${novel.id}/chapters`)).toEqual([]); expect((await read(request, `${base}/documents`)).items).toEqual([second]);
+  await panel.getByRole('button', { name: '浏览起稿模板', exact: true }).click(); await expect(panel.getByLabel('起稿类型', { exact: true })).toBeVisible();
+  for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) { await page.setViewportSize({ width, height }); const size = await page.locator('.creative-workspace').evaluate(el => ({ client: el.clientWidth, scroll: el.scrollWidth, body: document.documentElement.scrollWidth, viewport: innerWidth })); expect(size.scroll).toBeLessThanOrEqual(size.client + 1); expect(size.body).toBeLessThanOrEqual(size.viewport + 1); await capture(page, info, `starter-screenplay-${width}x${height}`); }
+  await info.attach('starter-screenplay-receipt', { body: JSON.stringify({ novel_id: novel.id, document_id: first.id, template: 'SHORT_FILM', template_version: 1, versions: [1, 2], sha256: hash, chapterless: true, model_called: false, layout: 'linear_editable_writing_guide' }), contentType: 'application/json' });
+});

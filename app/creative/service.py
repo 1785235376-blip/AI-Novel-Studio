@@ -198,6 +198,13 @@ class CreativeService(DomainService):
             result.append(copy.deepcopy(row))
         return sorted(result, key=lambda row: (row["created_at"], row["id"]))
 
+    def screenplay_presets(self, nid, scope):
+        """Read fixed local guides without creating project content or a model job."""
+        self.novels.get(nid)
+        self.store.key(nid, scope)
+        from .screenplay_presets import catalog
+        return catalog()
+
     def create(self, nid, scope, actor, value, *, reauthorize=lambda: None, source_documents=None):
         with self.store.transaction(nid, scope) as state:
             reauthorize()

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="47" failures="0" errors="0" time="6.988">
+    <testsuite name="src/creative/CreativeWorkspace.test.tsx" timestamp="2026-10-10T22:45:26.637Z" hostname="7abb01f187ba" tests="29" failures="0" errors="0" skipped="0" time="4.740634028">
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; performs no reads or writes while the client feature is disabled" time="0.029358399">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; stops at capability discovery when the server feature is disabled" time="0.127313934">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; recovers saved SCREENPLAY when its stage is selected before the initial reads finish" time="0.416185772">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; recovers saved PRODUCTION when its stage is selected before the initial reads finish" time="0.218509585">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; recovers saved VIDEO_PLANNING when its stage is selected before the initial reads finish" time="0.265195627">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; initializes only the latest selected stage after a delayed successful empty list" time="0.132398141">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; keeps an explicit new document, including an untouched draft, across stage and source changes" time="0.177000684">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; does not treat a failed list read as an empty project and recovers on explicit retry" time="0.152994808">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; reloads saved content after confirmed discard and immediate workbench reopen" time="0.246486443">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; does not replace a blocked dirty draft when a recovery reread discovers its uncertain creation" time="0.180332247">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; initializes the new scope only when its list succeeds and ignores the old pending list" time="0.089953376">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; does not initialize a delayed list after access is revoked during bootstrap" time="0.058174204">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; exposes all five keyboard-accessible modes while the manuscript stays mounted" time="0.205929769">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; creates once, saves again with the returned version, and preserves captured identity" time="0.204650835">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; coalesces repeated save clicks while a mutation is pending" time="0.125521818">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; preserves and locks the local draft after uncertain status 409" time="0.164959392">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; preserves and locks the local draft after uncertain status 500" time="0.172733569">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; locks the workspace and removes creative contents after authorization is denied" time="0.119281389">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; keeps read-only document fields disabled and never writes" time="0.08263574">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; cancels navigation without losing edits and requires explicit discard before exiting" time="0.172405742">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; ignores a late mutation receipt from the previous scope and captures the new branch" time="0.162178408">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; does not expose late history from a document after switching modes" time="0.110252362">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; does not leak a late document list from a prior scope" time="0.078907435">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; requires explicit server-version adoption and preserves the draft when adoption is cancelled" time="0.353795466">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; does not repopulate denied content from a pending successful mutation" time="0.102081471">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; copies only saved chapter content into a local screenplay scaffold without writing the manuscript" time="0.080221042">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; derives a storyboard from the saved version and never overwrites the screenplay" time="0.13675277">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; restores history only after explicit review and creates a new current version" time="0.192883697">
+        </testcase>
+        <testcase classname="src/creative/CreativeWorkspace.test.tsx" name="creative workspace protected manuscript and request boundaries &gt; reorders storyboard shots without replacing their identities and saves their new sequence" time="0.179266492">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/creative/screenplayPresets.test.tsx" timestamp="2026-10-10T22:45:26.645Z" hostname="7abb01f187ba" tests="18" failures="0" errors="0" skipped="0" time="0.86001424">
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="parses detached guides and creates distinct independent local drafts only on explicit use" time="0.003601288">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide schema" time="0.003789545">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide version" time="0.00025104">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide order" time="0.000184843">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide source" time="0.000260083">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide independent" time="0.000292672">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide scene_source" time="0.000173025">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide sequence" time="0.000150202">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide director" time="0.000330206">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide extra" time="0.000284309">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide mode" time="0.000193225">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide empty" time="0.000110533">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="rejects incompatible or source-bearing guide script" time="0.000099457">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="uses the original captured session and branch for a read-only catalog request" time="0.004583906">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="loads only on opening, shows guide content and never performs a persistence request" time="0.115310283">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="aborts a closed catalog and ignores its late response before a new read" time="0.022805241">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="gates dirty/read-only use and reports revoked catalog authority to the original owner" time="0.04325424">
+        </testcase>
+        <testcase classname="src/creative/screenplayPresets.test.tsx" name="creates a fresh unsaved draft once, preserves the saved document and uses original POST then versioned PUT" time="0.663118053">
+        </testcase>
+    </testsuite>
+</testsuites>

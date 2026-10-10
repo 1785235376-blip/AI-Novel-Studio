@@ -1,0 +1,40 @@
+{
+  "sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+  "node_id": "C_kwDOUEnaNNoAKDBkOWQ2NDdjMDVkYTIzNTgyYmJkZDA5YzA5ZTM4YzE3NmY4NWIxNTI",
+  "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/0d9d647c05da23582bbdd09c09e38c176f85b152",
+  "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/0d9d647c05da23582bbdd09c09e38c176f85b152",
+  "author": {
+    "name": "1785235376-blip",
+    "email": "1785235376@qq.com",
+    "date": "2026-10-10T22:30:27Z"
+  },
+  "committer": {
+    "name": "GitHub",
+    "email": "noreply@github.com",
+    "date": "2026-10-10T22:30:27Z"
+  },
+  "tree": {
+    "sha": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/trees/9b2e3e304f3ca603f1a18681194df1ddf4528de9"
+  },
+  "message": "Merge 3a234ed242a2d15698560752d6ac3a982da7c350 into fed2404c8e30b44061b7139dced45b7f3301601c",
+  "parents": [
+    {
+      "sha": "fed2404c8e30b44061b7139dced45b7f3301601c",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/fed2404c8e30b44061b7139dced45b7f3301601c",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/fed2404c8e30b44061b7139dced45b7f3301601c"
+    },
+    {
+      "sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/3a234ed242a2d15698560752d6ac3a982da7c350",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/3a234ed242a2d15698560752d6ac3a982da7c350"
+    }
+  ],
+  "verification": {
+    "verified": true,
+    "reason": "valid",
+    "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqyryDCRC1aQ7uu5UhlAAAahwQAA+apjFbuVPP/fZVNN8w73Hq\nHuYETshDalXyxi7uRybvPotHoe2gGzaBSy5XERHT0i4MLNeVIHGkawIfFiIL0kRR\nSj7TZBeL+aqc+t1I8poO01G3gxMgeHyd/dvgVT0pKuOrGWw55NEyE5NYtPWVkwKm\nYmRxq4qgFQ65C0Xd0V92sicGlgsvmu9tExqv7Mgy1dHO65+bveKFqqVOcn6WgfPQ\nK6uwWDNvq3F3TrHj2EqFIMhrw5lqKYHlf/kSPYMMGvEat0gyCno2eZzVeiz/1WRx\n5wvNFV5EMRyUflZFgOIzQ3FkjLt5Zwmy/vnwDbt6QXGvz3bWYuMcYTeXDGKJc8Wq\nu79xKYY8uuzcPCK/saXE3iXHZDe7DknIyJsbIZ2iskM1Z0e/WdpBFtG9Ec3UO0M3\n+p6d3Dk/Y38hOiS/SNkck5oH8Ppd/NYOEpCpwnFZSM3V1wzKwBtYvqpapx8ax9It\nmy7AdOHX4B69epF5Bj9MQAbn+fMKmTFZikJ30XsW5IKce39hIJ9tDHWXYZTVtKsj\nfFmmGJpIaXrqKmi32AeRbiR0FM5ZrPCZ1qkTTUIOkGKJm1yn11O4wTZCack+7eZ+\nNZTQfIGqU+J4T7eQskpcF+Rz/52tCkGC/RwHgeKOQ4ltGYohycq/YPDl0iun1VyJ\nA1ay3+RErLFaW/xWAm8i\n=+07t\n-----END PGP SIGNATURE-----\n",
+    "payload": "tree 9b2e3e304f3ca603f1a18681194df1ddf4528de9\nparent fed2404c8e30b44061b7139dced45b7f3301601c\nparent 3a234ed242a2d15698560752d6ac3a982da7c350\nauthor 1785235376-blip <1785235376@qq.com> 1791671427 +0000\ncommitter GitHub <noreply@github.com> 1791671427 +0000\n\nMerge 3a234ed242a2d15698560752d6ac3a982da7c350 into fed2404c8e30b44061b7139dced45b7f3301601c\n",
+    "verified_at": "2026-10-10T22:30:28Z"
+  }
+}

@@ -1,3 +1,4 @@
+import { parseScreenplayPresets, type ScreenplayPresetCatalog } from './screenplayPresets';
 import { ApiError, type CollaborationContext } from '../api';
 import { useLocalHostSession } from '../localHostSession';
 import { isPackagedDesktopHost } from '../packagedHost';
@@ -11,7 +12,7 @@ export type AdaptationOutput = { scenes: import('./types').CreativeScene[]; repo
 export type AdaptationAssetOutput = { contract: string; state: string; asset_id: string | null; version: number | null; sha256?: string; size?: number; reason?: string; execution_receipt?: Record<string, unknown> };
 export type AdaptationProposal = { asset_output?: AdaptationAssetOutput; id: string; version: number; status: string; title: string; chapter_id: string; source_version: number; source_digest: string; selection_digest: string; selected_text: string; output: AdaptationOutput | null; output_digest: string | null; model_preview: DirectorModelPreview | null; model_execution: DirectorProposal['model_execution']; provenance: Record<string, unknown> | null; document_id: string | null };
 export type CreativeHistory = { document_id: string; current_version: number; items: CreativeDocument[] };
-export type ScreenplayExportFormat = 'fountain' | 'docx' | 'markdown';
+export type ScreenplayExportFormat = 'fountain' | 'docx' | 'markdown' | 'epub';
 export type ScriptExportFormat = 'txt' | 'docx' | 'markdown';
 export type ScreenplayDownload = { blob: Blob; filename: string; documentVersion: number; documentDigest: string; sha256: string };
 export function creativeClient(novelId: string, context: CollaborationContext) {
@@ -38,7 +39,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
     return (await responseFor(url, method, body, signal)).json() as Promise<T>;
   }
   async function verifiedTextExport(source: CreativeDocument, format: string, kind: 'SCREENPLAY' | 'SCRIPT', signal?: AbortSignal): Promise<ScreenplayDownload> {
-    const formats: Record<string, [string, string]> = { ...(kind === 'SCREENPLAY' ? { fountain: ['text/x-fountain', 'fountain'] as [string, string] } : { txt: ['text/plain', 'txt'] as [string, string] }), docx: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'], markdown: ['text/markdown', 'md'] };
+    const formats: Record<string, [string, string]> = { ...(kind === 'SCREENPLAY' ? { fountain: ['text/x-fountain', 'fountain'] as [string, string], epub: ['application/epub+zip', 'epub'] as [string, string] } : { txt: ['text/plain', 'txt'] as [string, string] }), docx: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'], markdown: ['text/markdown', 'md'] };
     const invalid = () => new ApiError({ status: 502, code: 'CREATIVE_EXPORT_RECEIPT_INVALID', message: '导出文件与当前版本不一致或校验失败。未下载文件，请重新核对已保存版本。' });
     if (source.mode !== kind || !formats[format] || !Number.isSafeInteger(source.version) || source.version < 1) throw invalid();
     const response = await responseFor(`${base}/documents/${encodeURIComponent(source.id)}/${kind === 'SCRIPT' ? 'script' : 'screenplay'}-export?format=${format}&expected_version=${source.version}`, 'GET', undefined, signal);
@@ -56,6 +57,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
   }
   return {
     capabilities: (signal?: AbortSignal) => request<CreativeCapabilities>(`${base}/capabilities`, 'GET', undefined, signal),
+    screenplayPresets: async (signal?: AbortSignal): Promise<ScreenplayPresetCatalog> => parseScreenplayPresets(await request<unknown>(`${base}/screenplay-presets`, 'GET', undefined, signal)),
     list: (signal?: AbortSignal) => request<{ items: CreativeDocument[] }>(`${base}/documents`, 'GET', undefined, signal),
     get: (id: string, signal?: AbortSignal) => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(id)}`, 'GET', undefined, signal),
     create: (body: CreativeInput) => request<CreativeDocument>(`${base}/documents`, 'POST', body),

@@ -1,0 +1,34 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/frontend
+
+ ❯ src/creative/CreativeStarterLabel.test.tsx (1 test | 1 failed) 132ms
+   × keeps a nonempty starter action label independent of the initial textarea text node 131ms
+     → expected null to be '动作与叙事' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  15:47:24
+   Duration  1.76s (transform 150ms, setup 0ms, collect 482ms, tests 132ms, environment 706ms, prepare 109ms)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/docs/delivery/v2-development/stage-text11-presets-label-red.xml
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/CreativeStarterLabel.test.tsx > keeps a nonempty starter action label independent of the initial textarea text node
+AssertionError: expected null to be '动作与叙事' // Object.is equality
+
+- Expected: 
+"动作与叙事"
+
++ Received: 
+null
+
+ ❯ src/creative/CreativeStarterLabel.test.tsx:12:45
+     10|   const editor = screen.getByRole('textbox', { name: '动作与叙事' }) a…
+     11|   expect(editor.value).toBe(action); expect(editor.textContent).toBe(a…
+     12|   expect(editor.getAttribute('aria-label')).toBe('动作与叙事');
+       |                                             ^
+     13| });
+     14| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,371 @@
+{
+  "observed_at_utc": "2026-10-10T23:28:51.916450+00:00",
+  "published_sha": "3a234ed242a2d15698560752d6ac3a982da7c350",
+  "published_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+  "pr_actual_checkout_event_sha": "0d9d647c05da23582bbdd09c09e38c176f85b152",
+  "pr_merge_tree": "9b2e3e304f3ca603f1a18681194df1ddf4528de9",
+  "all_original_runs_terminal": true,
+  "full_source_acceptance": false,
+  "independent_audit": "BLOCKED_HISTORICAL_NOT_PERFORMED_BY_COLLECTOR",
+  "original_job_count": 29,
+  "job_conclusions": {
+    "success": 22,
+    "cancelled": 3,
+    "failure": 4
+  },
+  "failed_phase_event_count": 0,
+  "runs": [
+    {
+      "id": 38091679679,
+      "name": "Local Interop V1",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679679"
+    },
+    {
+      "id": 38091679852,
+      "name": "Shared R123 evidence",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679852"
+    },
+    {
+      "id": 38091679805,
+      "name": "Cloud CI",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_attempt": 1,
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091679805"
+    },
+    {
+      "id": 38091673128,
+      "name": "Local Interop V1",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673128"
+    },
+    {
+      "id": 38091673135,
+      "name": "Cloud CI",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_attempt": 1,
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38091673135"
+    }
+  ],
+  "backend": [
+    {
+      "run_id": 38091679805,
+      "event": "pull_request",
+      "artifact_id": 11685302834,
+      "backend": "postgres",
+      "shard": {
+        "index": 0,
+        "count": 2
+      },
+      "inventory_count": 11901,
+      "assigned_count": 5949,
+      "complete": true,
+      "pytest_exitstatus": 0,
+      "junit_present": true,
+      "raw_phase_outcomes": {
+        "setup/skipped": 1981,
+        "teardown/passed": 5949,
+        "setup/passed": 3968,
+        "call/passed": 3968
+      },
+      "raw_failed_events": [],
+      "classification": "COMPLETE_SHARD_PASS",
+      "canonical_backend_junit": {
+        "tests": 5949,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1981,
+        "passed": 3968,
+        "seconds": 2964.528,
+        "failed_testcases": [],
+        "report_sha256": "47f16a7951b9bb8e6ec47e704c6b928651462a472524c77fc4e07dc437bb85a2"
+      }
+    },
+    {
+      "run_id": 38091679805,
+      "event": "pull_request",
+      "artifact_id": 11684872891,
+      "backend": "postgres",
+      "shard": {
+        "index": 1,
+        "count": 2
+      },
+      "inventory_count": 11901,
+      "assigned_count": 5952,
+      "complete": true,
+      "pytest_exitstatus": 0,
+      "junit_present": true,
+      "raw_phase_outcomes": {
+        "setup/passed": 3898,
+        "call/passed": 3898,
+        "teardown/passed": 5952,
+        "setup/skipped": 2054
+      },
+      "raw_failed_events": [],
+      "classification": "COMPLETE_SHARD_PASS",
+      "canonical_backend_junit": {
+        "tests": 5952,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 2054,
+        "passed": 3898,
+        "seconds": 2677.694,
+        "failed_testcases": [],
+        "report_sha256": "81c4325505d5bd2be9c743a1e1abcf07a4f717ffed9a9fbcd93c818ab978ebcd"
+      }
+    },
+    {
+      "run_id": 38091679805,
+      "event": "pull_request",
+      "artifact_id": 11684388924,
+      "backend": "file",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory_count": 11901,
+      "assigned_count": 11901,
+      "complete": false,
+      "pytest_exitstatus": null,
+      "junit_present": false,
+      "raw_phase_outcomes": {
+        "setup/passed": 6028,
+        "call/passed": 6027,
+        "teardown/passed": 9188,
+        "setup/skipped": 3161
+      },
+      "raw_failed_events": [],
+      "classification": "INCOMPLETE_HOSTED_CI",
+      "canonical_backend_junit": null
+    },
+    {
+      "run_id": 38091673135,
+      "event": "push",
+      "artifact_id": 11685846540,
+      "backend": "postgres",
+      "shard": {
+        "index": 0,
+        "count": 2
+      },
+      "inventory_count": 11901,
+      "assigned_count": 5949,
+      "complete": true,
+      "pytest_exitstatus": 0,
+      "junit_present": true,
+      "raw_phase_outcomes": {
+        "setup/skipped": 1981,
+        "teardown/passed": 5949,
+        "setup/passed": 3968,
+        "call/passed": 3968
+      },
+      "raw_failed_events": [],
+      "classification": "COMPLETE_SHARD_PASS",
+      "canonical_backend_junit": {
+        "tests": 5949,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1981,
+        "passed": 3968,
+        "seconds": 3007.229,
+        "failed_testcases": [],
+        "report_sha256": "71f55385793ed8fa0d2cf570edfec2a2e4cac8830b3406ceb84737588aa7202d"
+      }
+    },
+    {
+      "run_id": 38091673135,
+      "event": "push",
+      "artifact_id": 11685592221,
+      "backend": "postgres",
+      "shard": {
+        "index": 1,
+        "count": 2
+      },
+      "inventory_count": 11901,
+      "assigned_count": 5952,
+      "complete": false,
+      "pytest_exitstatus": null,
+      "junit_present": false,
+      "raw_phase_outcomes": {
+        "setup/passed": 3812,
+        "call/passed": 3811,
+        "teardown/passed": 5803,
+        "setup/skipped": 1992
+      },
+      "raw_failed_events": [],
+      "classification": "INCOMPLETE_HOSTED_CI",
+      "canonical_backend_junit": null
+    },
+    {
+      "run_id": 38091673135,
+      "event": "push",
+      "artifact_id": 11684906027,
+      "backend": "file",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory_count": 11901,
+      "assigned_count": 11901,
+      "complete": false,
+      "pytest_exitstatus": null,
+      "junit_present": false,
+      "raw_phase_outcomes": {
+        "setup/passed": 6030,
+        "call/passed": 6029,
+        "teardown/passed": 9190,
+        "setup/skipped": 3161
+      },
+      "raw_failed_events": [],
+      "classification": "INCOMPLETE_HOSTED_CI",
+      "canonical_backend_junit": null
+    }
+  ],
+  "integrity": {
+    "downloaded_artifacts": 23,
+    "zip_bytes": 39577499,
+    "member_count": 622,
+    "all_sizes_and_digests_match": true,
+    "all_zip_crc_pass": true,
+    "windows_binaries_downloaded": false,
+    "job_log_count": 29,
+    "nested_trace_count": 0
+  },
+  "strict_join_jobs": [
+    {
+      "run_id": 38091679805,
+      "event": "pull_request",
+      "job_id": 114338623499,
+      "name": "Backend / postgres",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Require every execution job including original File TCP gate"
+      ],
+      "skipped_steps": [
+        "Download this attempt's exact backend shard receipts",
+        "Download this attempt's exact original TCP receipts",
+        "Validate provenance and create byte-identical aggregation copies",
+        "Require exact complete collection and successful outcomes in both profiles",
+        "Upload complete collected-coverage proof",
+        "Post Run actions/setup-python@v5.6.0"
+      ],
+      "execution_result_lines": [
+        "2026-10-10T23:24:15.2412112Z ##[group]Run test \"$EXECUTION_RESULT\" = success",
+        "2026-10-10T23:24:15.2412541Z \u001b[36;1mtest \"$EXECUTION_RESULT\" = success\u001b[0m",
+        "2026-10-10T23:24:15.2412855Z \u001b[36;1mtest \"$TCP_RESULT\" = success\u001b[0m",
+        "2026-10-10T23:24:15.3494064Z   EXECUTION_RESULT: cancelled",
+        "2026-10-10T23:24:15.3494367Z   TCP_RESULT: success",
+        "2026-10-10T23:24:15.3620707Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "run_id": 38091679805,
+      "event": "pull_request",
+      "job_id": 114338623509,
+      "name": "Backend / file",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Require every execution job including original File TCP gate"
+      ],
+      "skipped_steps": [
+        "Download this attempt's exact backend shard receipts",
+        "Download this attempt's exact original TCP receipts",
+        "Validate provenance and create byte-identical aggregation copies",
+        "Require exact complete collection and successful outcomes in both profiles",
+        "Upload complete collected-coverage proof",
+        "Post Run actions/setup-python@v5.6.0"
+      ],
+      "execution_result_lines": [
+        "2026-10-10T23:24:14.5023234Z ##[group]Run test \"$EXECUTION_RESULT\" = success",
+        "2026-10-10T23:24:14.5023678Z \u001b[36;1mtest \"$EXECUTION_RESULT\" = success\u001b[0m",
+        "2026-10-10T23:24:14.5024003Z \u001b[36;1mtest \"$TCP_RESULT\" = success\u001b[0m",
+        "2026-10-10T23:24:14.5421361Z   EXECUTION_RESULT: cancelled",
+        "2026-10-10T23:24:14.5421604Z   TCP_RESULT: success",
+        "2026-10-10T23:24:14.5546883Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "run_id": 38091673135,
+      "event": "push",
+      "job_id": 114338954272,
+      "name": "Backend / postgres",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Require every execution job including original File TCP gate"
+      ],
+      "skipped_steps": [
+        "Download this attempt's exact backend shard receipts",
+        "Download this attempt's exact original TCP receipts",
+        "Validate provenance and create byte-identical aggregation copies",
+        "Require exact complete collection and successful outcomes in both profiles",
+        "Upload complete collected-coverage proof",
+        "Post Run actions/setup-python@v5.6.0"
+      ],
+      "execution_result_lines": [
+        "2026-10-10T23:26:08.6196779Z ##[group]Run test \"$EXECUTION_RESULT\" = success",
+        "2026-10-10T23:26:08.6197587Z \u001b[36;1mtest \"$EXECUTION_RESULT\" = success\u001b[0m",
+        "2026-10-10T23:26:08.6197914Z \u001b[36;1mtest \"$TCP_RESULT\" = success\u001b[0m",
+        "2026-10-10T23:26:08.6488025Z   EXECUTION_RESULT: cancelled",
+        "2026-10-10T23:26:08.6488264Z   TCP_RESULT: success",
+        "2026-10-10T23:26:08.6611591Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "run_id": 38091673135,
+      "event": "push",
+      "job_id": 114338954274,
+      "name": "Backend / file",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Require every execution job including original File TCP gate"
+      ],
+      "skipped_steps": [
+        "Download this attempt's exact backend shard receipts",
+        "Download this attempt's exact original TCP receipts",
+        "Validate provenance and create byte-identical aggregation copies",
+        "Require exact complete collection and successful outcomes in both profiles",
+        "Upload complete collected-coverage proof",
+        "Post Run actions/setup-python@v5.6.0"
+      ],
+      "execution_result_lines": [
+        "2026-10-10T23:26:08.6836722Z ##[group]Run test \"$EXECUTION_RESULT\" = success",
+        "2026-10-10T23:26:08.6837172Z \u001b[36;1mtest \"$EXECUTION_RESULT\" = success\u001b[0m",
+        "2026-10-10T23:26:08.6837488Z \u001b[36;1mtest \"$TCP_RESULT\" = success\u001b[0m",
+        "2026-10-10T23:26:08.7123623Z   EXECUTION_RESULT: cancelled",
+        "2026-10-10T23:26:08.7123859Z   TCP_RESULT: success",
+        "2026-10-10T23:26:08.7243151Z ##[error]Process completed with exit code 1."
+      ]
+    }
+  ],
+  "scope_boundaries": [
+    "All results belong to the original 3a234ed attempt-1 runs; historical runs remain unchanged and later edits/runs cannot replace these.",
+    "Original File one shard / PostgreSQL two shards, 20/55 minute execution budgets and strict joins unchanged.",
+    "Cancelled or timed-out suites remain incomplete; any observed failed phase is preserved, never relabeled capacity-only.",
+    "Raw phase counts are partial observations, not final JUnit counts or proof that unseen tests passed.",
+    "R123 workflow success reproduces historical c6f2126 defects RED, not current-source independent security acceptance.",
+    "Hosted bounded Windows smoke is not user Windows/GPU acceptance, interactive desktop, installer, signing, release or real-model acceptance.",
+    "Selected local File/PG/UI checks and malformed real-CPU raw DRAFT rejection are separate from hosted CI; the real-CPU acceptance harness FAIL remains.",
+    "Historical independent audit BLOCKED remains; this collector is evidence archival, not a separate audit.",
+    "Cache HIT/restore and actual install/check are reported separately; no causal performance improvement is claimed.",
+    "Historical denied artifacts 11615127270/11618169199 were never downloaded or rerouted.",
+    "No check-suite annotation endpoint or alternate credential route was accessed. Timeout cause is not guessed beyond logs and frozen budgets.",
+    "Canonical per-report JUnit results must not be summed with duplicate copies in the same artifact."
+  ]
+}
