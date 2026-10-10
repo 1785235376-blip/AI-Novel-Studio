@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "bc5ad15439655741beaff74448bc74235c04785f7bebb09cef353c6d33a1d7fa",
+  "application_source_fingerprint_sha256": "27c509461de13a928b149e6c28f50b9aa9e8abbb7b94cb0464e751b2974536f1",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -48,7 +48,7 @@
     "app/creation_workbench_api.py": "28d4cb80ef1f45374ceda4bb0d5513be3fc0aea471d3ca8f0738ac8543429879",
     "app/creative/__init__.py": "22e9cdc335f433a18299dd63f82c0b68ca05af9e9cd0570b20baecac2624d0c4",
     "app/creative/ai_execution.py": "72aa5cef0c096d79ba36b39d34905c71af17ba3fbba2a6aebc60bfdc5e8b25dc",
-    "app/creative/api.py": "d5e5543031cf86771f34f048bf3eed42dee5b86c95a43370406ae785a7c71623",
+    "app/creative/api.py": "2236d395fc43ab4699a3c26811ac297075bfe395da41b8d5c792ec20213cb670",
     "app/creative/generation.py": "e34616fbfd7b686615f3b0eab674e7f2f988650471850ef7fc5285774a0a2d61",
     "app/creative/graph.py": "81256acae939e87ed5893c58af58eeca2d36a69966cdd71ff83e0da17c891781",
     "app/creative/graph_api.py": "242e2407af3a18ad5746f78f02ec84bdfa82aa33401729f26d94274cd7393019",
@@ -57,7 +57,8 @@
     "app/creative/models.py": "4b27d20080c6d8c6f141e9cfe8d3381f6ed4b3ef1d8009e08fcc30a5464723d6",
     "app/creative/project_store.py": "09837edb952accb066f9e656d4b2b1ab05d727b27c5e27aca443d28d36848198",
     "app/creative/proposals.py": "4e8b93d2408b214165b01beda496b9dfbfee2b0bd400c414b2794da20262fd96",
-    "app/creative/service.py": "5ce1d0f12b44b934dfc347dc68fb7d067f4702522f0a9190a84f5efb6320e29b",
+    "app/creative/screenplay_export.py": "87b8d460cbdd111756e64900aefffff271f7463bd6d5811bd6720d70fda0a384",
+    "app/creative/service.py": "abcf878e162d1ef596e140e1e5999aa8d754fec18eefcd172070ccb3d51e2c8a",
     "app/creative/storage_admission.py": "055cc172c00063f9dad333e7d4815174bd3c3e6b8f3af742a548c4427f0acf86",
     "app/creative/text_assets.py": "e486476bf435ed23da619818ca523d59b6cd77271e09d1abd101cbd5f815897b",
     "app/creative/text_execution_receipt.py": "3797c24bfec8d499558bb0f2a1fc6d5ff78911d06b8ee6a6c46c4b20a582df65",
@@ -393,9 +394,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 290,
+    "added": 292,
     "changed_contract": 24,
-    "current_method_paths": 2123,
+    "current_method_paths": 2125,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -412,7 +413,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "3f36c423b0a17c0696755480217e1b862096f1484c3dbe3189d887f0b57ed3a7",
+    "sha256": "22ec92a91e186239470b836637c41354f8ae456380b61058ee6749ad89bd765a",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -2544,6 +2545,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "60556aa3b92a7b7d3ea5525f28bc540ca5b48f6f99b7c4e617ef12f75a738017",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}/screenplay-export",
+      "operation_id": "screenplay_export_api_novels__nid__experimental_creative_documents__rid__screenplay_export_get",
+      "owner_ref": "6cd00ee665a5b49304fd6889b8bdacb7beea6e6f8f616cbdd585b90b1c7f06c5",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "47739b145c53caaf36da63cca77a652385de7a9f71f37db58dfdfdfbe109fe82",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -7501,6 +7513,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "bf77a9894170af6b607f0c3416451498cf0d09a5637f245f1a65e43fd18d0550",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}/screenplay-export",
+      "operation_id": "screenplay_export_api_v1_novels__nid__experimental_creative_documents__rid__screenplay_export_get",
+      "owner_ref": "6cd00ee665a5b49304fd6889b8bdacb7beea6e6f8f616cbdd585b90b1c7f06c5",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "a4462537e0b76ed02dad02e9e0893a78fe002fca473246dd721909a837d5a31e",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {

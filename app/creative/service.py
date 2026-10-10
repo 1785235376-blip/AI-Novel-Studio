@@ -328,3 +328,21 @@ class CreativeService(DomainService):
         return {"format": "ai-novel-creative-document", "format_version": 1,
                 "document_digest": document_digest(row), "document": snapshot,
                 "boundary": "Structured draft/planning JSON; accepted proposals retain generation provenance. No media rendering."}
+
+    def export_screenplay(self, nid, scope, rid, expected_version, format, *, reauthorize=lambda: None):
+        """Encode outside store transactions, then recheck the original snapshot."""
+        from ..experimental.common import check_version
+        from . import screenplay_export
+        self._expected(expected_version)
+        reauthorize()
+        row = self.get(nid, scope, rid)
+        check_version(row, expected_version)
+        digest = document_digest(row)
+        result = screenplay_export.render(copy.deepcopy(row), digest, format)
+        reauthorize()
+        current = self.get(nid, scope, rid)
+        check_version(current, expected_version)
+        if document_digest(current) != digest:
+            raise StaleSourceError("CREATIVE_EXPORT_SOURCE_CHANGED")
+        reauthorize()
+        return result

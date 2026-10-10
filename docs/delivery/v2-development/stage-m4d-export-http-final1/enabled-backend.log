@@ -1,0 +1,19 @@
+INFO:     Started server process [19]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+INFO:     127.0.0.1:42100 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46186 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46188 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:46190 - "POST /api/novels/m4-d-http-synthetic-export/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:46198 - "GET /api/novels/m4-d-http-synthetic-export/experimental/creative/documents/374feb71-1bb7-4644-bea0-4132cbfadf8d/screenplay-export?format=fountain&expected_version=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46204 - "GET /api/novels/m4-d-http-synthetic-export/experimental/creative/documents/374feb71-1bb7-4644-bea0-4132cbfadf8d/screenplay-export?format=fountain&expected_version=2 HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:46216 - "GET /api/novels/m4-d-http-synthetic-export/experimental/creative/documents/374feb71-1bb7-4644-bea0-4132cbfadf8d/screenplay-export?format=docx&expected_version=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46222 - "GET /api/novels/m4-d-http-synthetic-export/experimental/creative/documents/374feb71-1bb7-4644-bea0-4132cbfadf8d/screenplay-export?format=docx&expected_version=2 HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:46232 - "GET /api/novels/m4-d-http-synthetic-export/experimental/creative/documents/374feb71-1bb7-4644-bea0-4132cbfadf8d/screenplay-export?format=markdown&expected_version=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46242 - "GET /api/novels/m4-d-http-synthetic-export/experimental/creative/documents/374feb71-1bb7-4644-bea0-4132cbfadf8d/screenplay-export?format=markdown&expected_version=2 HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:46254 - "GET /api/novels/m4-d-http-synthetic-export/experimental/creative/documents/374feb71-1bb7-4644-bea0-4132cbfadf8d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46256 - "GET /api/novels/m4-d-http-synthetic-export/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46258 - "GET /api/novels/m4-d-http-synthetic-export/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46260 - "DELETE /api/novels/m4-d-http-synthetic-export HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46264 - "GET /api/novels HTTP/1.1" 200 OK

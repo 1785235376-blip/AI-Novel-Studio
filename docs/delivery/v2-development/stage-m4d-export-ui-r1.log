@@ -1,0 +1,19 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/creative/client.test.ts (11 tests) 22ms
+ ✓ src/creative/screenplayExportClient.test.ts (7 tests) 27ms
+ ✓ src/creative/ScreenplayExportPanel.test.tsx (7 tests) 298ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 5828ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved SCREENPLAY when its stage is selected before the initial reads finish 331ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved PRODUCTION when its stage is selected before the initial reads finish 422ms
+   ✓ creative workspace protected manuscript and request boundaries > reloads saved content after confirmed discard and immediate workbench reopen 426ms
+   ✓ creative workspace protected manuscript and request boundaries > exposes all five keyboard-accessible modes while the manuscript stays mounted 305ms
+   ✓ creative workspace protected manuscript and request boundaries > creates once, saves again with the returned version, and preserves captured identity 436ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 472ms
+
+ Test Files  4 passed (4)
+      Tests  54 passed (54)
+   Start at  11:40:25
+   Duration  8.16s (transform 798ms, setup 0ms, collect 1.98s, tests 6.17s, environment 2.00s, prepare 600ms)
+

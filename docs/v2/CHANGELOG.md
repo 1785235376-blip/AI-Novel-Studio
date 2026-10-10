@@ -2,6 +2,17 @@
 
 These are development stages on `feature/v2-narrative-platform`, not releases.
 
+## M4-D — Creative screenplay export
+
+- Reuse existing industry encoders directly from the Creative document owner:
+  Fountain, DOCX and Markdown with saved-version and source/privacy fences.
+- Add private byte receipts and a verified-download UI; keep complete JSON
+  metadata exports, chapterless independent creation and original human edits.
+- Integrate isolated backend dependency caching and read-only CI capacity
+  diagnostics without changing frozen execution/coverage contracts.
+- Exact checks, initial failures and outstanding acceptance remain in the
+  [M4-D checkpoint report](../../MILESTONE_M4D_REPORT.md).
+
 ## Phase 1 — Creative Expansion Layer foundation
 
 - Separate strict screenplay, storyboard and video-planning records reuse the existing scope-atomic File/PostgreSQL store.

@@ -27,6 +27,10 @@ jobs:
   backend-execution:
     name: Backend execution / ${{ matrix.backend }} / shard ${{ matrix.shard_index }}
     runs-on: ubuntu-24.04
+    # Cache downloaded packages only, outside the isolated application HOME.
+    # Reinstall and validate dependencies on every run, including cache hits.
+    env:
+      PIP_CACHE_DIR: ${{ runner.temp }}/novel-pip-download-cache
     # File retains one original-order process. PostgreSQL uses two explicit
     # deterministic node-ID shards; complete unfiltered collection, outcomes,
     # JUnit identities and the unchanged strict PG gate are reconciled below.
@@ -64,6 +68,10 @@ jobs:
       - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12.9'
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            .github/ci/python-constraints.txt
       - name: Prepare isolated checkout and receipt
         run: bash .github/ci/prepare.sh backend-${{ matrix.backend }}-shard-${{ matrix.shard_index }}
       - name: Keep V2 backend state inside its owned checkout
@@ -94,6 +102,7 @@ jobs:
           python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
           python -m pip check
           python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+          python -m pip cache info > "$CI_RECEIPTS/pip-cache-info.txt"
       - name: Install real media decoding and assembly tools
         run: |
           sudo apt-get update
@@ -164,6 +173,10 @@ jobs:
   backend-tcp:
     name: Backend execution / original File TCP
     runs-on: ubuntu-24.04
+    # Cache downloaded packages only, outside the isolated application HOME.
+    # Reinstall and validate dependencies on every run, including cache hits.
+    env:
+      PIP_CACHE_DIR: ${{ runner.temp }}/novel-pip-download-cache
     # Independent finite budget: do not consume File's original 20-minute cap.
     timeout-minutes: 10
     steps:
@@ -173,6 +186,10 @@ jobs:
       - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12.9'
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            .github/ci/python-constraints.txt
       - name: Prepare isolated checkout and receipt
         run: bash .github/ci/prepare.sh backend-tcp
       - name: Install identical pinned backend dependencies
@@ -181,10 +198,11 @@ jobs:
           python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
           python -m pip check
           python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+          python -m pip cache info > "$CI_RECEIPTS/pip-cache-info.txt"
       - name: Fail-closed TCP evidence and joiner self-tests
         working-directory: ${{ env.CI_PROJECT }}
         run: |
-          python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/tcp-selftest" -q .github/ci/test_tcp_evidence.py --junitxml="$CI_RECEIPTS/tcp-harness.xml"
+          python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/tcp-selftest" -q .github/ci/test_tcp_evidence.py .github/ci/test_backend_dependency_cache.py --junitxml="$CI_RECEIPTS/tcp-harness.xml"
       - name: Original two-process loopback tests and fail-closed provenance
         working-directory: ${{ env.CI_PROJECT }}
         env:

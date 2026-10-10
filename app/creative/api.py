@@ -1,4 +1,5 @@
 """Explicit opt-in Creative Layer routes over the existing authority resolver."""
+from typing import Literal
 from fastapi import APIRouter, Header, HTTPException, Query, Response
 
 from ..experimental.flags import enabled_flags
@@ -114,6 +115,20 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
         # The filename uses the server-created document identifier, not a title.
         return Response(canonical(result).encode("utf-8"), media_type="application/json",
                         headers={"Content-Disposition": f'attachment; filename="creative-{result["document"]["id"]}.json"'})
+
+    @router.get("/documents/{rid}/screenplay-export")
+    def screenplay_export(nid: str, rid: str, format: Literal["fountain", "docx", "markdown"],
+                          expected_version: int = Query(ge=1),
+                          x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        result = invoke(nid, x_session_token, x_branch_id, "domain.read",
+                        lambda actor, scope, guard: service.export_screenplay(nid, scope, rid,
+                            expected_version, format, reauthorize=guard))
+        return Response(result["content"], media_type=result["media_type"], headers={
+            "Content-Disposition": f'attachment; filename="{result["filename"]}"',
+            "X-Creative-Document-Version": str(result["document_version"]),
+            "X-Creative-Document-Digest": result["document_digest"],
+            "X-Content-SHA256": result["sha256"],
+        })
 
     @router.get("/director-proposals")
     def proposals(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

@@ -910,3 +910,21 @@ a separate owned llama.cpp/Qwen CPU recheck again yields one private asset v1→
 without manuscript apply. These results do not substitute for full exact-SHA CI
 or broaden the prior case into quality/all-model/Windows/GPU certification.
 Historical capacity failures and independent-review BLOCKED remain distinct.
+
+## 41. Append-only M4-D Creative screenplay export delta
+
+Roadmap TEXT-15 now has a Creative-owned Fountain/DOCX/Markdown projection,
+private exact-version API, verified-download UI and additive tests. No second
+screenplay owner or manuscript mutation is introduced. Original JSON preserves
+complete structured metadata; text formats retain their explicit projection and
+Fountain syntax limits. Chapterless save/reopen/export is covered separately
+from chapter-bound source/version/privacy fences.
+
+The [M4-D report](MILESTONE_M4D_REPORT.md) records final verification and retained
+failed attempts. Local browser launch was blocked before page execution; hosted
+browser/geometry acceptance is pending publication. TEXT-15 is therefore
+IMPLEMENTED_WITH_ACCEPTANCE_PARTIAL at this checkpoint, not a full V2 gate pass.
+TEXT-17 generic Script and TEXT-13 real structured adaptation remain subsequent
+roadmap work. Historical M4-C hosted failed call and incomplete File execution
+remain INCOMPLETE_HOSTED_CI + FAILED_OBSERVED; B's bounded cache/diagnostic work
+cannot reclassify them as only capacity or completed coverage.

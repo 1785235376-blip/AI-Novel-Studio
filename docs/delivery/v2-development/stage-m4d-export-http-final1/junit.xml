@@ -1,0 +1,6 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="15.886055">
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-10T18:47:45.894Z" hostname="v2-live-chromium" tests="1" failures="0" skipped="0" time="1.877" errors="0">
+<testcase name="real HTTP chapterless screenplay format bytes preserve the saved owner and version fences" classname="v2-creative-live.spec.ts" time="1.877">
+</testcase>
+</testsuite>
+</testsuites>

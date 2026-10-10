@@ -1,0 +1,101 @@
+EEEsssEEEsssEEEsssEEEEssssEEEsssEEss                                     [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_independent_saved_screenplay_reopens_exports_without_other_owner_write[file-fountain] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_independent_saved_screenplay_reopens_exports_without_other_owner_write[file-docx] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_independent_saved_screenplay_reopens_exports_without_other_owner_write[file-markdown] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_source_bound_export_pins_exact_saved_revision_and_source[file-fountain] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_source_bound_export_pins_exact_saved_revision_and_source[file-docx] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_source_bound_export_pins_exact_saved_revision_and_source[file-markdown] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_rechecks_after_encoding_and_never_returns_stale_or_revoked_bytes[file-document] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_rechecks_after_encoding_and_never_returns_stale_or_revoked_bytes[file-chapter] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_rechecks_after_encoding_and_never_returns_stale_or_revoked_bytes[file-permission] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_format_limits_are_explicit_without_mutating_or_truncating_document[file-mode] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_format_limits_are_explicit_without_mutating_or_truncating_document[file-empty] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_format_limits_are_explicit_without_mutating_or_truncating_document[file-format] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_format_limits_are_explicit_without_mutating_or_truncating_document[file-literal] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_private_readonly_api_returns_real_format_receipts_and_unchanged_json[file-fountain] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_private_readonly_api_returns_real_format_receipts_and_unchanged_json[file-docx] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_private_readonly_api_returns_real_format_receipts_and_unchanged_json[file-markdown] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_new_export_stays_default_off_and_v1_acceptance_off[file-False] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+_ ERROR at setup of test_new_export_stays_default_off_and_v1_acceptance_off[file-True] _
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4d/export-file-r1'
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4d-export-file-r1.xml -
+=========================== short test summary info ============================
+ERROR tests/test_v2_screenplay_export.py::test_independent_saved_screenplay_reopens_exports_without_other_owner_write[file-fountain]
+ERROR tests/test_v2_screenplay_export.py::test_independent_saved_screenplay_reopens_exports_without_other_owner_write[file-docx]
+ERROR tests/test_v2_screenplay_export.py::test_independent_saved_screenplay_reopens_exports_without_other_owner_write[file-markdown]
+ERROR tests/test_v2_screenplay_export.py::test_source_bound_export_pins_exact_saved_revision_and_source[file-fountain]
+ERROR tests/test_v2_screenplay_export.py::test_source_bound_export_pins_exact_saved_revision_and_source[file-docx]
+ERROR tests/test_v2_screenplay_export.py::test_source_bound_export_pins_exact_saved_revision_and_source[file-markdown]
+ERROR tests/test_v2_screenplay_export.py::test_rechecks_after_encoding_and_never_returns_stale_or_revoked_bytes[file-document]
+ERROR tests/test_v2_screenplay_export.py::test_rechecks_after_encoding_and_never_returns_stale_or_revoked_bytes[file-chapter]
+ERROR tests/test_v2_screenplay_export.py::test_rechecks_after_encoding_and_never_returns_stale_or_revoked_bytes[file-permission]
+ERROR tests/test_v2_screenplay_export.py::test_format_limits_are_explicit_without_mutating_or_truncating_document[file-mode]
+ERROR tests/test_v2_screenplay_export.py::test_format_limits_are_explicit_without_mutating_or_truncating_document[file-empty]
+ERROR tests/test_v2_screenplay_export.py::test_format_limits_are_explicit_without_mutating_or_truncating_document[file-format]
+ERROR tests/test_v2_screenplay_export.py::test_format_limits_are_explicit_without_mutating_or_truncating_document[file-literal]
+ERROR tests/test_v2_screenplay_export.py::test_private_readonly_api_returns_real_format_receipts_and_unchanged_json[file-fountain]
+ERROR tests/test_v2_screenplay_export.py::test_private_readonly_api_returns_real_format_receipts_and_unchanged_json[file-docx]
+ERROR tests/test_v2_screenplay_export.py::test_private_readonly_api_returns_real_format_receipts_and_unchanged_json[file-markdown]
+ERROR tests/test_v2_screenplay_export.py::test_new_export_stays_default_off_and_v1_acceptance_off[file-False]
+ERROR tests/test_v2_screenplay_export.py::test_new_export_stays_default_off_and_v1_acceptance_off[file-True]
+18 skipped, 1 warning, 18 errors in 5.20s

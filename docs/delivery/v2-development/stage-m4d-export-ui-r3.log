@@ -1,0 +1,20 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/creative/screenplayFountainParser.test.ts (1 test) 150ms
+ ✓ src/creative/client.test.ts (11 tests) 13ms
+ ✓ src/creative/screenplayExportClient.test.ts (7 tests) 21ms
+ ✓ src/creative/ScreenplayExportPanel.test.tsx (7 tests) 231ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 6052ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved SCREENPLAY when its stage is selected before the initial reads finish 314ms
+   ✓ creative workspace protected manuscript and request boundaries > reloads saved content after confirmed discard and immediate workbench reopen 362ms
+   ✓ creative workspace protected manuscript and request boundaries > does not replace a blocked dirty draft when a recovery reread discovers its uncertain creation 307ms
+   ✓ creative workspace protected manuscript and request boundaries > exposes all five keyboard-accessible modes while the manuscript stays mounted 347ms
+   ✓ creative workspace protected manuscript and request boundaries > creates once, saves again with the returned version, and preserves captured identity 310ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 449ms
+
+ Test Files  5 passed (5)
+      Tests  55 passed (55)
+   Start at  11:47:29
+   Duration  8.31s (transform 879ms, setup 0ms, collect 2.14s, tests 6.47s, environment 1.61s, prepare 790ms)
+

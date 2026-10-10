@@ -1,4 +1,6 @@
 import { test, expect, type APIRequestContext, type Locator, type Page, type TestInfo } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 
 type Row = Record<string, any>;
 // The enabled tests share one real File server. Own only IDs returned by this
@@ -385,4 +387,92 @@ test('real HTTP default-off gate advertises disabled capabilities and rejects cr
   expect((await request.get(`${base}/documents`)).status()).toBe(404);
   expect((await request.post(`${base}/documents`, { data: { mode: 'SCREENPLAY', title: 'Blocked', source_independent: true } })).status()).toBe(404);
   await info.attach('http-default-off-receipt', { body: JSON.stringify(capabilities), contentType: 'application/json' });
+});
+
+test('real File chapterless screenplay saves, reopens and downloads pinned text formats', async ({ page, request }, info) => {
+  ownedPages.set(request, page);
+  await page.goto('/');
+  await page.getByPlaceholder('小说名称').fill('M4-D 独立剧本合成验收');
+  const creating = page.waitForResponse(response => response.url().endsWith('/api/novels') && response.request().method() === 'POST');
+  await page.getByRole('button', { name: '创建小说', exact: true }).click();
+  const created = await creating;
+  expect(created.status()).toBe(201);
+  const novel = await created.json(); rememberNovel(request, novel);
+  const base = creative(novel.id);
+  expect(await read(request, `/api/novels/${novel.id}/chapters`)).toEqual([]);
+  await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+  await stage(page, '剧本').click();
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('无需小说章节的剧本');
+  await canvas(page).getByRole('checkbox', { name: '这是独立创作', exact: true }).check();
+  await canvas(page).getByRole('button', { name: '添加场景', exact: true }).click();
+  await canvas(page).getByLabel('场景标题', { exact: true }).fill('EXT. 独立海港 - NIGHT');
+  await canvas(page).getByLabel('动作与叙事', { exact: true }).fill('旅人独自走过港口。');
+  await canvas(page).getByRole('button', { name: '添加对白', exact: true }).click();
+  await canvas(page).getByLabel('对白 1 人物', { exact: true }).fill('旅人');
+  await canvas(page).getByLabel('对白 1 内容', { exact: true }).fill('下一幕由我们自己决定。');
+  const row = await save(page, base);
+  expect(row.source_independent).toBe(true); expect(row.source_chapter_ids).toEqual([]);
+  await page.reload();
+  await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+  await stage(page, '剧本').click();
+  await expect(canvas(page)).toContainText('已保存 · v1');
+  const panel = page.getByRole('region', { name: '剧本文本格式导出', exact: true });
+  const receipts: Row[] = [];
+  for (const [format, extension] of [['fountain', 'fountain'], ['docx', 'docx'], ['markdown', 'md']]) {
+    await panel.getByLabel('剧本导出格式', { exact: true }).selectOption(format);
+    const responseEvent = page.waitForResponse(response => new URL(response.url()).pathname === `${base}/documents/${row.id}/screenplay-export`);
+    const downloadEvent = page.waitForEvent('download');
+    await panel.getByRole('button', { name: '导出剧本文本', exact: true }).click();
+    const [response, download] = await Promise.all([responseEvent, downloadEvent]);
+    expect(response.status()).toBe(200);
+    expect(download.suggestedFilename()).toBe(`creative-screenplay-v1.${extension}`);
+    const path = info.outputPath(`independent-screenplay.${extension}`);
+    await download.saveAs(path);
+    const bytes = await readFile(path), sha256 = createHash('sha256').update(bytes).digest('hex');
+    expect(sha256).toBe(response.headers()['x-content-sha256']);
+    expect(response.headers()['x-creative-document-version']).toBe('1');
+    expect(response.headers()['cache-control']).toBe('no-store');
+    if (format !== 'docx') expect(bytes.toString('utf8')).toContain('下一幕由我们自己决定。');
+    else expect(bytes.subarray(0, 2).toString()).toBe('PK');
+    await info.attach(`independent-${format}`, { path, contentType: response.headers()['content-type'].split(';')[0] });
+    receipts.push({ format, version: 1, sha256, bytes: bytes.length });
+  }
+  for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) {
+    await page.setViewportSize({ width, height });
+    const geometry = await page.locator('.creative-workspace').evaluate(element => ({ client: element.clientWidth, scroll: element.scrollWidth, body: document.documentElement.scrollWidth, viewport: innerWidth }));
+    expect(geometry.scroll).toBeLessThanOrEqual(geometry.client + 1);
+    expect(geometry.body).toBeLessThanOrEqual(geometry.viewport + 1);
+    await capture(page, info, `screenplay-export-${width}x${height}`);
+  }
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('尚未保存的本地改动');
+  await expect(panel.getByRole('button', { name: '导出剧本文本', exact: true })).toBeDisabled();
+  expect(await read(request, `${base}/documents/${row.id}`)).toEqual(row);
+  expect(await read(request, `/api/novels/${novel.id}/chapters`)).toEqual([]);
+  await info.attach('independent-export-receipts', { body: JSON.stringify({ novel_id: novel.id, document_id: row.id, receipts, chapterless: true, model_called: false }), contentType: 'application/json' });
+});
+
+test('real HTTP chapterless screenplay format bytes preserve the saved owner and version fences', async ({ request }, info) => {
+  const novel = await write(request, '/api/novels', { title: 'M4-D HTTP synthetic export' });
+  const base = creative(novel.id);
+  const row = await write(request, `${base}/documents`, { mode: 'SCREENPLAY', title: '独立海港', source_independent: true,
+    scenes: [{ id: 'independent-scene', sequence: 1, heading: 'EXT. 港口 - NIGHT', action: '旅人独自走过港口。',
+      dialogue: [{ speaker: '旅人', text: '下一幕由我们自己决定。', delivery: '轻声' }] }] });
+  const receipts: Row[] = [];
+  for (const format of ['fountain', 'docx', 'markdown']) {
+    const response = await request.get(`${base}/documents/${row.id}/screenplay-export`, { params: { format, expected_version: 1 } });
+    expect(response.status()).toBe(200);
+    const bytes = await response.body(), sha256 = createHash('sha256').update(bytes).digest('hex');
+    expect(response.headers()['x-content-sha256']).toBe(sha256);
+    expect(response.headers()['x-creative-document-version']).toBe('1');
+    expect(response.headers()['cache-control']).toBe('no-store');
+    expect(response.headers()['x-content-type-options']).toBe('nosniff');
+    if (format !== 'docx') expect(bytes.toString('utf8')).toContain('下一幕由我们自己决定。');
+    else expect(bytes.subarray(0, 2).toString()).toBe('PK');
+    expect((await request.get(`${base}/documents/${row.id}/screenplay-export`, { params: { format, expected_version: 2 } })).status()).toBe(409);
+    receipts.push({ format, sha256, bytes: bytes.length });
+  }
+  expect(await read(request, `${base}/documents/${row.id}`)).toEqual(row);
+  expect(await read(request, `/api/novels/${novel.id}/chapters`)).toEqual([]);
+  expect((await read(request, `${base}/documents`)).items).toEqual([row]);
+  await info.attach('http-export-receipts', { body: JSON.stringify({ verification: 'Real HTTP/File; browser launch is separate', receipts, model_called: false }), contentType: 'application/json' });
 });

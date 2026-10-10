@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-8.4.2, pluggy-1.6.0 -- /workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.venv/bin/python
+rootdir: /workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collecting ... collected 1 item
+
+tests/test_stable_identity_foundation.py::test_real_multiprocess_cold_start_stress_50_iterations PASSED [100%]
+
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/cold-start-diagnostic.xml -
+============================= slowest 10 durations =============================
+85.64s call     tests/test_stable_identity_foundation.py::test_real_multiprocess_cold_start_stress_50_iterations
+4.80s setup    tests/test_stable_identity_foundation.py::test_real_multiprocess_cold_start_stress_50_iterations
+0.00s teardown tests/test_stable_identity_foundation.py::test_real_multiprocess_cold_start_stress_50_iterations
+========================= 1 passed in 90.81s (0:01:30) =========================

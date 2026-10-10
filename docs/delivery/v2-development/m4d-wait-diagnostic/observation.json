@@ -1,0 +1,90 @@
+{
+  "nodeid": "tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-not json]",
+  "elapsed_seconds": 6.90787305100821,
+  "failed": false,
+  "reads": [
+    {
+      "started_seconds": 3.236141134999343,
+      "elapsed_seconds": 0.3389391430100659,
+      "http_status": 200,
+      "ledger_status": "RESERVED",
+      "job_status": "GENERATING",
+      "job_terminal_hook_status": null
+    },
+    {
+      "started_seconds": 3.586077511004987,
+      "elapsed_seconds": 0.3925960549968295,
+      "http_status": 200,
+      "ledger_status": "RESERVED",
+      "job_status": "GENERATING",
+      "job_terminal_hook_status": null
+    },
+    {
+      "started_seconds": 3.988940362003632,
+      "elapsed_seconds": 0.3791366600053152,
+      "http_status": 200,
+      "ledger_status": "RESERVED",
+      "job_status": "GENERATING",
+      "job_terminal_hook_status": null
+    },
+    {
+      "started_seconds": 4.379807056000573,
+      "elapsed_seconds": 0.3908176910044858,
+      "http_status": 200,
+      "ledger_status": "RESERVED",
+      "job_status": "GENERATING",
+      "job_terminal_hook_status": null
+    },
+    {
+      "started_seconds": 4.780798927007709,
+      "elapsed_seconds": 0.4085341219906695,
+      "http_status": 200,
+      "ledger_status": "RESERVED",
+      "job_status": "GENERATING",
+      "job_terminal_hook_status": null
+    },
+    {
+      "started_seconds": 5.1995995590114035,
+      "elapsed_seconds": 0.4267495069943834,
+      "http_status": 200,
+      "ledger_status": "RESERVED",
+      "job_status": "GENERATING",
+      "job_terminal_hook_status": null
+    },
+    {
+      "started_seconds": 5.636523856999702,
+      "elapsed_seconds": 0.3734135880076792,
+      "http_status": 200,
+      "ledger_status": "DISPATCHED",
+      "job_status": "GENERATING",
+      "job_terminal_hook_status": null
+    },
+    {
+      "started_seconds": 6.02008589199977,
+      "elapsed_seconds": 0.2553165080025792,
+      "http_status": 200,
+      "ledger_status": "DISPATCHED",
+      "job_status": "COMPLETED",
+      "job_terminal_hook_status": "COMPLETED"
+    },
+    {
+      "started_seconds": 6.285571162006818,
+      "elapsed_seconds": 0.2571266909944825,
+      "http_status": 200,
+      "ledger_status": "SETTLED",
+      "job_status": "COMPLETED",
+      "job_terminal_hook_status": "COMPLETED"
+    }
+  ],
+  "job_states": [
+    {
+      "id": "f57cf021-66af-4b17-8841-17e1bcaf1a01",
+      "status": "COMPLETED",
+      "terminal_hook_status": "COMPLETED"
+    }
+  ],
+  "original_test_sha256": "76673d65b8c46df00729ab44c55656a30107af3498a7846650c721607b89d0bb",
+  "original_test_unchanged": true,
+  "diagnostic_only": true,
+  "changed_waits_assertions_or_product": false
+}
