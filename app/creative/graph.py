@@ -15,7 +15,7 @@ from .project_store import CreativeProjectStore, BINDING
 from .graph_models import (
     DEFINITIONS, GraphInput, GraphCreate, GraphSave, GraphPreflight, GraphRunCreate,
     MAX_NODES, MAX_EDGES, MAX_DEFINITION_BYTES, MAX_OUTPUT_BYTES, MAX_GRAPHS,
-    MAX_RUNS, MAX_HISTORY, MAX_RECORD_BYTES, MAX_SCOPE_BYTES, catalog_definitions,
+    MAX_RUNS, MAX_HISTORY, MAX_RECORD_BYTES, MAX_SCOPE_BYTES, catalog_definitions, parse_graph,
     RUN_TIMEOUT_SECONDS, NODE_TIMEOUT_SECONDS,
 )
 
@@ -42,6 +42,17 @@ class CreativeGraphService:
         self.workspace = workspace
         from .graph_execution import CreativeGraphExecutor
         self.executor = CreativeGraphExecutor(self)
+        self.model_runtime = None
+
+    def configure_models(self, broker, manager):
+        from .ai_execution import CreativeGraphNodeRuntime
+        self.model_runtime = CreativeGraphNodeRuntime(self, broker, manager)
+
+    @staticmethod
+    def _model_authority(definition):
+        if definition.get("schema_version") == 2 or any(node["definition_id"] == "text_generate" for node in definition["nodes"]):
+            from .ai_execution import require_execution
+            require_execution()
 
     def _context(self, nid, scope, actor, guard):
         self.store.key(nid, scope)
@@ -68,10 +79,14 @@ class CreativeGraphService:
         if type(row.get("version")) is not int or row["version"] < 1 or not isinstance(row.get("history"), list):
             raise ValueError("CREATIVE_GRAPH_RECORD_CORRUPT")
         if name == GRAPHS:
-            value = GraphInput.model_validate(row.get("definition")).model_dump()
+            value = parse_graph(row.get("definition")).model_dump()
+            self._model_authority(value)
             if (value != row["definition"] or digest(value) != row.get("definition_digest")
                     or digest(execution_definition(value)) != row.get("execution_digest")):
                 raise ValueError("CREATIVE_GRAPH_RECORD_CORRUPT")
+        if name == RUNS and any(node.get("definition_id") == "text_generate" for node in row.get("typed_nodes", [])):
+            from .ai_execution import require_execution
+            require_execution()
         return row
 
     @staticmethod
@@ -132,7 +147,9 @@ class CreativeGraphService:
 
     def catalog(self, nid, scope, actor, guard=lambda: None):
         _, current = self._context(nid, scope, actor, guard)
-        result = {"definitions": catalog_definitions(), "limits": {"nodes": MAX_NODES, "edges": MAX_EDGES,
+        from .ai_execution import execution_enabled, CONTRACT
+        models = self.model_runtime is not None and execution_enabled()
+        result = {"definitions": catalog_definitions(include_model=models), "limits": {"nodes": MAX_NODES, "edges": MAX_EDGES,
             "definition_bytes": MAX_DEFINITION_BYTES, "output_bytes": MAX_OUTPUT_BYTES,
             "graphs": MAX_GRAPHS, "runs": MAX_RUNS, "history": MAX_HISTORY,
             "runtime_timeout_seconds": RUN_TIMEOUT_SECONDS, "node_timeout_seconds": NODE_TIMEOUT_SECONDS},
@@ -140,6 +157,8 @@ class CreativeGraphService:
                 "external_reference_execution": False, "external_reference_detach": False,
                 "binary_cache": False, "parallel_execution": False, "automatic_retry": False,
                 "actor_private": True, "cache_mode": "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"}}
+        if models:
+            result["capabilities"].update(model_execution=True, model_execution_contract=CONTRACT)
         current(); return result
 
     def list(self, nid, scope, actor, guard=lambda: None):
@@ -160,6 +179,7 @@ class CreativeGraphService:
         body = GraphCreate.model_validate(value)
         incarnation, current = self._context(nid, scope, actor, guard)
         definition = body.definition.model_dump()
+        self._model_authority(definition)
         if any(row["state"] != "CURRENT" for row in self._reference_states(nid, scope, definition, current)):
             raise StaleSourceError("CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED")
         request_digest = digest(body.model_dump())
@@ -187,6 +207,7 @@ class CreativeGraphService:
         if any(row["state"] == "UNAVAILABLE" for row in self._reference_states(nid, scope, old["definition"], current)):
             raise ValueError("CREATIVE_GRAPH_EXTERNAL_BINDING_READ_ONLY")
         definition = body.definition.model_dump()
+        self._model_authority(definition)
         previous, replacement = self._asset_bindings(old["definition"]), self._asset_bindings(definition)
         if any(replacement.get(node_id) != binding for node_id, binding in previous.items()):
             raise ValueError("CREATIVE_GRAPH_EXTERNAL_DETACH_UNAVAILABLE")
@@ -236,6 +257,18 @@ class CreativeGraphService:
                 key = "text" if node["definition_id"] == "text_input" else "result"
                 if not node["parameters"][key].strip():
                     issues.append({"code": "CREATIVE_GRAPH_TEXT_REQUIRED", "node_id": node_id})
+        models = [key for key in order if nodes[key]["definition_id"] == "text_generate"]
+        if models:
+            self._model_authority(definition)
+            if self.model_runtime is None:
+                issues.append({"code": "CREATIVE_MODEL_RUNTIME_UNAVAILABLE"})
+            if len(models) != 1:
+                issues.append({"code": "CREATIVE_MODEL_SINGLE_NODE_REQUIRED"})
+            for model in models:
+                downstream = [edge for edge in definition["edges"] if edge["source_node_id"] == model]
+                if not downstream or any(edge["target_node_id"] not in closure or
+                        nodes[edge["target_node_id"]]["definition_id"] != "human_review" for edge in downstream):
+                    issues.append({"code": "CREATIVE_MODEL_HUMAN_REVIEW_REQUIRED", "node_id": model})
         result = {"project_id": row["novel_id"], "scope": deepcopy(row["scope"]), "graph_id": row["id"],
             "valid": True, "executable": not issues, "issues": issues, "execution_order": order,
             "selected_closure": order, "definition_digest": row["definition_digest"],
@@ -271,4 +304,8 @@ class CreativeGraphService:
         current(); return result
 
     def action(self, nid, scope, actor, rid, action, value, guard=lambda: None):
-        return self.executor.action(nid, scope, actor, rid, action, value, guard)
+        result = self.executor.action(nid, scope, actor, rid, action, value, guard)
+        if action == "cancel" and self.model_runtime is not None:
+            # Cancel the original worker only after the durable workflow fence.
+            self.model_runtime.cancel(self._owned(nid, scope, actor, RUNS, rid))
+        return result

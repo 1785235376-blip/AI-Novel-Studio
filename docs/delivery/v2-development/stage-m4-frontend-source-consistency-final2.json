@@ -1,0 +1,85 @@
+{
+  "status": "PASS",
+  "scope": "Four final2 frontend/build/inventory checks only; earlier receipts, browser launch and backend receipts are not promoted by this comparison.",
+  "canonicalization": "SHA256 of json.dumps(source_map,sort_keys=True,separators=(comma,colon)).encode UTF-8",
+  "source_count": 1711,
+  "current_source_map_sha256": "c20c47525472e842c1c25b8e49b0b8659b6712e9d7cf3df52cdbd8f6b40afafe",
+  "checks": [
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-frontend-final2.json",
+      "status": "PASS",
+      "source_count": 1711,
+      "before_sha256": "c20c47525472e842c1c25b8e49b0b8659b6712e9d7cf3df52cdbd8f6b40afafe",
+      "after_sha256": "c20c47525472e842c1c25b8e49b0b8659b6712e9d7cf3df52cdbd8f6b40afafe",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-build-final2.json",
+      "status": "PASS",
+      "source_count": 1711,
+      "before_sha256": "c20c47525472e842c1c25b8e49b0b8659b6712e9d7cf3df52cdbd8f6b40afafe",
+      "after_sha256": "c20c47525472e842c1c25b8e49b0b8659b6712e9d7cf3df52cdbd8f6b40afafe",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-browser-collection-final2-independent.json",
+      "status": "PASS",
+      "source_count": 1711,
+      "before_sha256": "c20c47525472e842c1c25b8e49b0b8659b6712e9d7cf3df52cdbd8f6b40afafe",
+      "after_sha256": "c20c47525472e842c1c25b8e49b0b8659b6712e9d7cf3df52cdbd8f6b40afafe",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-browser-collection-final2-original.json",
+      "status": "PASS",
+      "source_count": 1711,
+      "before_sha256": "c20c47525472e842c1c25b8e49b0b8659b6712e9d7cf3df52cdbd8f6b40afafe",
+      "after_sha256": "c20c47525472e842c1c25b8e49b0b8659b6712e9d7cf3df52cdbd8f6b40afafe",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    }
+  ],
+  "backend_receipts_observed_separately": [
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-owner-file-final1.json",
+      "status": "FAIL",
+      "recorded_sources_changed": true,
+      "before_after_differences": [
+        "frontend/src/creative/GraphModelExecutionPanel.test.tsx",
+        "frontend/src/creative/GraphRunPanel.tsx"
+      ],
+      "after_current_differences": [
+        "app/api.py",
+        "tests/test_v2_ai_execution_api.py"
+      ],
+      "log_sha256_verified": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-owner-file-final2.json",
+      "status": "FAIL",
+      "recorded_sources_changed": false,
+      "before_after_differences": [],
+      "after_current_differences": [
+        "app/api.py",
+        "tests/test_v2_ai_execution_api.py"
+      ],
+      "log_sha256_verified": true
+    }
+  ],
+  "source_edits_performed": false
+}

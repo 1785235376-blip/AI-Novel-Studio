@@ -133,7 +133,7 @@ describe('stable exact names for Studio selects with populated options', () => {
 
   it('keeps the saved-run name stable after loading and selecting different records', async () => {
     const client = graphClient();
-    render(<GraphRunPanel client={client} graph={record('graph_one')} targetNodeIds={[]} dirty={false} busy={false} canMutate canReview isCurrent={isCurrent} read={perform} mutate={perform} />);
+    render(<GraphRunPanel client={{ ...client, modelCapabilities: vi.fn(), previewModel: vi.fn(), dispatchModel: vi.fn(), refreshModel: vi.fn() }} graph={record('graph_one')} targetNodeIds={[]} dirty={false} busy={false} canMutate canReview isCurrent={isCurrent} read={perform} mutate={perform} />);
     click('读取运行记录');
     await screen.findByRole('option', { name: 'run_one · 待执行 · v2' });
     expect(namedSelect('已保存运行').options).toHaveLength(3);

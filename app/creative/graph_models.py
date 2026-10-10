@@ -55,6 +55,17 @@ class DirectorParameters(Strict):
     note: str = Field(default="", max_length=4_000)
 
 
+class ModelTextParameters(Strict):
+    instruction: str = Field(default="", max_length=4_000)
+    max_output_tokens: int = Field(default=512, ge=1, le=2048)
+
+
+class ModelDraftPort(Strict):
+    text: str = Field(min_length=1, max_length=8_000)
+    origin: Literal["MODEL_PROPOSAL"]
+    direction: DirectorParameters | None = None
+
+
 class AssetParameters(Strict):
     asset_id: str = Field(min_length=1, max_length=240)
     version: int = Field(ge=1)
@@ -87,6 +98,10 @@ DEFINITIONS = {
     "human_review": {"inputs": [port("draft", "DRAFT", True)], "outputs": [], "parameters": EmptyParameters},
     "asset_reference": {"inputs": [], "outputs": [port("asset", "ASSET_REF")], "parameters": AssetParameters},
 }
+# Additive versioned model execution; the default seven-item catalog stays frozen.
+DEFINITIONS["text_generate"] = {"inputs": [port("text", "TEXT", True), port("direction", "DIRECTOR_NOTES")],
+    "outputs": [port("draft", "DRAFT")], "parameters": ModelTextParameters}
+
 DefinitionId = Literal["text_input", "text_reference", "draft_prepare", "manual_transform", "director_note", "human_review", "asset_reference"]
 
 
@@ -111,6 +126,11 @@ class NodeInstance(Strict):
             raise ValueError("CREATIVE_GRAPH_DEFINITION_VERSION_INVALID")
         self.parameters = DEFINITIONS[self.definition_id]["parameters"].model_validate(self.parameters).model_dump()
         return self
+
+
+class ModelNodeInstance(NodeInstance):
+    definition_id: Literal["text_input", "text_reference", "draft_prepare", "manual_transform",
+        "director_note", "human_review", "asset_reference", "text_generate"]
 
 
 class TypedEdge(Strict):
@@ -167,10 +187,21 @@ class GraphInput(Strict):
         return self
 
 
+class GraphModelInput(GraphInput):
+    # Explicit new schema: the original seven-definition GraphInput is frozen.
+    schema_version: Literal[2]
+    nodes: list[ModelNodeInstance] = Field(default_factory=list, max_length=MAX_NODES)
+
+
+def parse_graph(value):
+    schema = value.get("schema_version", 1) if isinstance(value, dict) else value.schema_version
+    return (GraphModelInput if schema == 2 else GraphInput).model_validate(value)
+
+
 class GraphCreate(Strict):
     request_id: RequestId
     expected_version: Literal[0] = 0
-    definition: GraphInput
+    definition: GraphInput | GraphModelInput
 
     @field_validator("expected_version", mode="before")
     @classmethod
@@ -188,7 +219,7 @@ class GraphCreate(Strict):
 
 class GraphSave(Strict):
     expected_version: int = Field(ge=1)
-    definition: GraphInput
+    definition: GraphInput | GraphModelInput
 
 
 class GraphPreflight(Strict):
@@ -210,13 +241,13 @@ class GraphAction(Strict):
     note: str = Field(default="", max_length=1_000)
 
 
-def catalog_definitions():
+def catalog_definitions(*, include_model=False):
     return [{"id": key, "version": 1, "inputs": deepcopy(value["inputs"]),
         "outputs": deepcopy(value["outputs"]), "parameters_schema": value["parameters"].model_json_schema(),
         "default_parameters": value["parameters"]().model_dump() if key != "asset_reference" else None,
         "executable": key != "asset_reference", "model_called": False,
         "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" else []}
-        for key, value in DEFINITIONS.items()]
+        for key, value in DEFINITIONS.items() if include_model or key != "text_generate"]
 
 
 def validate_output_ports(definition_id, value):
@@ -234,7 +265,7 @@ def validate_output_ports(definition_id, value):
         elif port["type"] == "DIRECTOR_NOTES":
             result[port["id"]] = DirectorParameters.model_validate(item).model_dump()
         elif port["type"] == "DRAFT":
-            draft = DraftPort.model_validate(item)
+            draft = (ModelDraftPort if definition_id == "text_generate" else DraftPort).model_validate(item)
             if ((definition_id == "draft_prepare" and (draft.origin != "USER_SUPPLIED" or draft.plan is None))
                     or (definition_id == "manual_transform" and (draft.origin != "MANUAL" or draft.plan is not None))):
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")

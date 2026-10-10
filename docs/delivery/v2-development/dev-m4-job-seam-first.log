@@ -1,0 +1,335 @@
+EEEEEEEEEEEEEEEEEEEEEE                                                   [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_original_job_manager_runs_exact_text_without_chapter_and_persists _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_generic_review_and_diff_cannot_apply_or_reject_graph_output _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_default_off_and_acceptance_have_no_registration_or_dispatch[False] _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_default_off_and_acceptance_have_no_registration_or_dispatch[True] _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_synthetic_requires_explicit_permission_and_api_is_reserved _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_missing_hooks_and_changed_request_are_denied_before_admission _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[actor] ______
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[scope] ______
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[prompt] _____
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[route] ______
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[deadline] ____
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[origin] _____
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_late_source_revocation_suppresses_every_chunk_and_settles_once _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_cancel_during_synthetic_transport_discards_late_completion _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_restarted_completed_job_cannot_reconstruct_authority_or_replay _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_output_and_deadline_bounds_use_original_worker_failure_path _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_adapter_replacement_after_preparation_has_no_provider_call _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_local_label_cannot_enable_arbitrary_or_legacy_ollama_provider _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_managed_runtime_is_rejected_without_launch_or_probe[MANAGED] _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_managed_runtime_is_rejected_without_launch_or_probe[REMOTE] _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_managed_runtime_is_rejected_without_launch_or_probe[None] _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+_ ERROR at setup of test_digest_and_binding_contract_are_strict_and_deterministic _
+
+self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-first'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/dev-m4-job-seam-first.xml -
+=========================== short test summary info ============================
+ERROR tests/test_v2_model_execution.py::test_original_job_manager_runs_exact_text_without_chapter_and_persists
+ERROR tests/test_v2_model_execution.py::test_generic_review_and_diff_cannot_apply_or_reject_graph_output
+ERROR tests/test_v2_model_execution.py::test_default_off_and_acceptance_have_no_registration_or_dispatch[False]
+ERROR tests/test_v2_model_execution.py::test_default_off_and_acceptance_have_no_registration_or_dispatch[True]
+ERROR tests/test_v2_model_execution.py::test_synthetic_requires_explicit_permission_and_api_is_reserved
+ERROR tests/test_v2_model_execution.py::test_missing_hooks_and_changed_request_are_denied_before_admission
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[actor]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[scope]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[prompt]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[route]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[deadline]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[origin]
+ERROR tests/test_v2_model_execution.py::test_late_source_revocation_suppresses_every_chunk_and_settles_once
+ERROR tests/test_v2_model_execution.py::test_cancel_during_synthetic_transport_discards_late_completion
+ERROR tests/test_v2_model_execution.py::test_restarted_completed_job_cannot_reconstruct_authority_or_replay
+ERROR tests/test_v2_model_execution.py::test_output_and_deadline_bounds_use_original_worker_failure_path
+ERROR tests/test_v2_model_execution.py::test_adapter_replacement_after_preparation_has_no_provider_call
+ERROR tests/test_v2_model_execution.py::test_local_label_cannot_enable_arbitrary_or_legacy_ollama_provider
+ERROR tests/test_v2_model_execution.py::test_managed_runtime_is_rejected_without_launch_or_probe[MANAGED]
+ERROR tests/test_v2_model_execution.py::test_managed_runtime_is_rejected_without_launch_or_probe[REMOTE]
+ERROR tests/test_v2_model_execution.py::test_managed_runtime_is_rejected_without_launch_or_probe[None]
+ERROR tests/test_v2_model_execution.py::test_digest_and_binding_contract_are_strict_and_deterministic
+22 errors in 5.78s

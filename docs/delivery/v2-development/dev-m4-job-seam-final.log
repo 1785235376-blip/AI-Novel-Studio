@@ -1,0 +1,24 @@
+.............................F...............................            [100%]
+=================================== FAILURES ===================================
+____ test_settlement_failure_keeps_accounting_blocker_and_hides_graph_text _____
+
+env = namespace(runtime=<app.runtime.Runtime object at 0x7f1d983be630>, manager=<app.jobs.JobManager object at 0x7f1d97a0a09...id='47ebb83a-147e-4750-8885-c668038dc07c'))], guards=26, authorize=<function env.<locals>.authorize at 0x7f1d979f1120>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f1d983bf050>
+
+    def test_settlement_failure_keeps_accounting_blocker_and_hides_graph_text(env, monkeypatch):
+        e = env; transport(e, monkeypatch)
+        job = hooks(e, prepare(e))
+        def failed(): raise OSError("private accounting fixture error")
+        job.on_terminal = failed
+        e.manager.start_prepared(job); wait(e, job)
+>       assert job.status == "FAILED" and not job.output
+E       AssertionError: assert ('FAILED' == 'FAILED'
+E         
+E           FAILED and not 'Synthetic proposed text')
+E        +  where 'Synthetic proposed text' = Job(id='47ebb83a-147e-4750-8885-c668038dc07c', operation='graph_text', novel_id='blank-project', chapter_id=None, inst...ference_id=None, route_decisions=[{'provider': 'mock', 'model': 'mock-writer', 'cloud': False, 'status': 'COMPLETED'}]).output
+
+tests/test_v2_model_execution.py:327: AssertionError
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/dev-m4-job-seam-final.xml -
+=========================== short test summary info ============================
+FAILED tests/test_v2_model_execution.py::test_settlement_failure_keeps_accounting_blocker_and_hides_graph_text
+1 failed, 60 passed in 6.17s

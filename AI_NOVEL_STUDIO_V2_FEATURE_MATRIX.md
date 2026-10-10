@@ -837,3 +837,26 @@ workflows and GATE-M3 remain partial. Actual Windows/inference remain NOT_RUN.
 Cloud FAIL outcomes, incomplete File execution and failed strict joins, plus
 11-pass/3-fail independent media. Its new fixture correction has separate
 source-contract evidence; neither old CI nor collection validates M3-C.
+
+## 37. Append-only M4 AI Execution Layer delta
+
+The current user-defined M4 scope is AI Execution Layer; historical feature rows
+and the former M4 roadmap label remain unchanged as history. The six-module
+owner/API/UI map is in [the execution contract](docs/v2/ai-execution.md), and
+actual verification/remaining acceptance is in [M4 report](MILESTONE_M4_REPORT.md).
+
+- Model Provider Adapter and local invocation reuse original TextModelNode,
+  provider/model registries and enabled external Ollama/llama.cpp routes.
+- Model Router is a thin original ModelBroker facade, with explicit exact route,
+  capabilities/license/zero-price checks and no fallback.
+- Creative Graph Node Runtime bridges one schema-2 text node to original
+  WorkflowRun and JobManager. No chapter, second queue or second model registry
+  is created. Human review exposes a proposal and never applies manuscript/Canon.
+- APIProvider is **RESERVED**, not executable. Scheduling remains **PARTIAL**:
+  existing project admission and dependency ordering, without global fairness,
+  hardware allocation or measured inference performance.
+
+These bounded changes do not complete the broader MODEL/API/install/hardware
+rows, Image/Video execution, or GATE-M3. Real local inference/quality and actual
+user Windows/GPU acceptance remain **NOT_RUN / LOCAL_REQUIRED**. M3-C's inherited
+**PARTIAL_PR_CI_CAPACITY** and historical independent review **BLOCKED** persist.

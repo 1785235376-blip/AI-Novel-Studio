@@ -1,0 +1,21 @@
+{
+  "scope": "Current-tree complete M4 and adjacent-owner regression; not the earlier 79-file range or full product suite",
+  "files": [
+    "tests/test_r2_workflow_execution.py",
+    "tests/test_v2_creative_workflows.py",
+    "tests/test_v2_ai_execution_runtime.py",
+    "tests/test_v2_ai_execution_api.py",
+    "tests/test_v2_ai_execution_contracts.py",
+    "tests/test_v2_ai_execution_browser_fixture.py",
+    "tests/test_v2_generation_incarnation.py",
+    "tests/test_v2_model_execution.py",
+    "tests/test_generation_variants_phase3.py",
+    "tests/test_model_runtime_v070.py",
+    "tests/test_r4_author_dispatch_hooks.py",
+    "tests/test_shared_generation_stream_authority.py",
+    "tests/test_shared_generation_terminal_protocol.py"
+  ],
+  "source_map_sha256": "4bdd24881be53dec5454739eb29de28369260f66574bab853b83d44dbcc444d4",
+  "earlier_full_selection_receipt": "stage-m4-owner-selection.json",
+  "original_timeouts_assertions_and_skip_policy_unchanged": true
+}

@@ -9,6 +9,7 @@ import { IndependentStudioWorkspace } from './IndependentStudioWorkspace';
 import { studioClient, type StudioClient, type StudioOverview } from './studioClient';
 import type { StudioGraphCatalog, StudioGraphDefinitionId, StudioGraphRecord, StudioGraphCreateInput, StudioGraphSaveInput } from './studioGraphTypes';
 import { blankGraph } from './graphDraft';
+import { modelCatalog } from './studioGraphModel.testFixtures';
 
 vi.mock('./studioClient', async importOriginal => ({ ...await importOriginal<typeof import('./studioClient')>(), studioClient: vi.fn() }));
 const id = 'graph-ui-project', digest = 'a'.repeat(64);
@@ -63,6 +64,17 @@ async function open() { fireEvent.change(screen.getByLabelText('已保存创作�
 function add(kind: StudioGraphDefinitionId) { fireEvent.change(screen.getByLabelText('节点类型'), { target: { value: kind } }); click('添加节点'); }
 
 describe('independent studio graph content integration', () => {
+  it('promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing', async () => {
+    vi.mocked(client.graphs.catalog).mockResolvedValue(modelCatalog());
+    client.graphs.modelCapabilities = vi.fn(); client.graphs.previewModel = vi.fn(); client.graphs.dispatchModel = vi.fn();
+    mount(); await enter(); add('text_input'); click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
+    expect(saved.definition.schema_version).toBe(1);
+    add('text_generate'); fireEvent.change(screen.getByLabelText('本地模型写作指令'), { target: { value: '只生成待审核文本' } });
+    fireEvent.change(screen.getByLabelText('最大输出 token'), { target: { value: '256' } }); click('保存创作图');
+    await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    expect(saved.definition.schema_version).toBe(2); expect(saved.definition.nodes.at(-1)?.parameters).toEqual({ instruction: '只生成待审核文本', max_output_tokens: 256 });
+    expect(client.graphs.modelCapabilities).not.toHaveBeenCalled(); expect(client.graphs.previewModel).not.toHaveBeenCalled(); expect(client.graphs.dispatchModel).not.toHaveBeenCalled();
+  });
   it('keeps graphs lazy until an explicit content choice, with unchanged eight shell modules', async () => {
     mount(); await screen.findByRole('button', { name: '上传资产' });
     expect(client.graphs.catalog).not.toHaveBeenCalled(); expect(screen.getAllByRole('tab')).toHaveLength(8);

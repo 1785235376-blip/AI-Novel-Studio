@@ -27,14 +27,14 @@ def is_independent_studio_route(method, normalized_path):
     # Unknown actions/methods never gain collaboration middleware admission.
     graph_patterns = {
         "GET": root + r"/(?:graphs(?:/[^/]+(?:/runs)?)?|graph-runs/[^/]+)",
-        "POST": root + r"/(?:graphs(?:/[^/]+/(?:preflight|runs))?|graph-runs/[^/]+/(?:execute|approve|reject|cancel|pause|resume))",
+        "POST": root + r"/(?:graphs(?:/[^/]+/(?:preflight|runs))?|graph-runs/[^/]+/(?:execute|approve|reject|cancel|pause|resume|model/(?:preview|dispatch|refresh)))",
         "PUT": root + r"/graphs/[^/]+",
     }
     return method in graph_patterns and re.fullmatch(graph_patterns[method], normalized_path) is not None
 
 
 def create_independent_workspace_router(service, authorize, require_flag, *, create_project, workspace_writer,
-                                        graph_service=None):
+                                        graph_service=None, require_host_session=None, model_host_authority=None):
     router = APIRouter(tags=["Independent Studios V2"], route_class=PrivateProductionRoute)
 
     def access(nid, token, branch, permission):
@@ -191,5 +191,6 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
 
     if graph_service is not None:
         from .graph_api import create_creative_graph_router
-        router.include_router(create_creative_graph_router(graph_service, invoke))
+        router.include_router(create_creative_graph_router(graph_service, invoke, require_host_session=require_host_session,
+            model_host_authority=model_host_authority))
     return router

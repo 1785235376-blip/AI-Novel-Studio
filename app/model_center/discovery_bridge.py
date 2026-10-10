@@ -75,6 +75,20 @@ class LocalTextAdapter:
     def generate_text(self, request):
         with self.execution_lock:
             candidate = self.bridge.guard(self.candidate['id'])
+            if request.preparation_guard is not None:
+                # Reauthorize after waiting for the execution lock and before
+                # preparation can launch a managed runtime. Keep this guarded
+                # branch on a snapshot: later in-place mutation cannot upgrade
+                # an external-only invocation into managed process startup.
+                from copy import deepcopy
+                candidate = deepcopy(candidate)
+                request.preparation_guard()
+                # Prepared requests currently authorize external services only.
+                # Also check the captured config: the callback may observe a
+                # newer registry candidate than this adapter's initial read.
+                if candidate.get('runtime_config', {}).get('management') != 'EXTERNAL':
+                    raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION,
+                                            '已准备的任务仅允许已验证的外部本地服务')
             config = candidate['runtime_config']
             if request.structured_output_schema is not None and config['type'] != 'LLAMA_CPP':
                 raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, '当前本地接口不支持结构化输出')

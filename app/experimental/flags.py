@@ -19,7 +19,7 @@ NEW_FLAGS = ("local_tutor_interop_v1", "writing_recovery_v2", "workspace_tools_v
 # Keep the published forty-package opt-in list stable for older clients.
 # New product surfaces require their own explicit opt-in; discovery reports all.
 FLAGS = LEGACY_FLAGS + NEW_FLAGS
-SURFACE_FLAGS = ('branch_manuscript_v1', 'realtime_collaboration_v1', 'production_sync_v1', 'workspace_interaction_v1', 'finding_review_v1', 'story_record_versions_v1', 'adaptation_lifecycle_v1', 'narrative_production_v2')
+SURFACE_FLAGS = ('branch_manuscript_v1', 'realtime_collaboration_v1', 'production_sync_v1', 'workspace_interaction_v1', 'finding_review_v1', 'story_record_versions_v1', 'adaptation_lifecycle_v1', 'narrative_production_v2', 'ai_execution_v2')
 RUNTIME_FLAGS = FLAGS + SURFACE_FLAGS
 FLAG_DEPENDENCIES: dict[str, tuple[str, ...]] = {name: () for name in FLAGS}
 FLAG_DEPENDENCIES.update(temporal_story_graph_v2=('world_character_engines_v2',),
@@ -52,6 +52,7 @@ SURFACE_FLAG_DEPENDENCIES = {
     'story_record_versions_v1': (),
     'adaptation_lifecycle_v1': (),
     'narrative_production_v2': (),
+    'ai_execution_v2': ('narrative_production_v2', 'model_broker_v2', 'author_context_inspector_v2'),
 }
 
 

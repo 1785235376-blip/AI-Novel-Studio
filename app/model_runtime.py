@@ -76,6 +76,7 @@ class TextGenerationRequest:
     job_id: str | None = None
     cancellation: Event | None = field(default=None, repr=False, compare=False)
     dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
+    preparation_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if not self.provider_id or not self.model_id or not self.prompt.strip():
@@ -323,8 +324,9 @@ class TextModelNode:
             raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, "当前模型不支持结构化输出")
         if request.cancellation is not None and request.cancellation.is_set():
             raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
-        if request.dispatch_guard is not None:
-            request.dispatch_guard()
+        guard = request.preparation_guard or request.dispatch_guard
+        if guard is not None:
+            guard()
         if request.cancellation is not None and request.cancellation.is_set():
             raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
         response = provider.generate_text(request)
@@ -344,8 +346,12 @@ class TextModelNode:
         try:
             if request.cancellation is not None and request.cancellation.is_set():
                 raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
-            if request.dispatch_guard is not None:
-                request.dispatch_guard()
+            # A guarded preparation phase may wait or inspect an existing
+            # runtime. Its adapter retains the actual final-hop dispatch guard.
+            # Existing requests without this opt-in retain their old boundary.
+            guard = request.preparation_guard or request.dispatch_guard
+            if guard is not None:
+                guard()
             if request.cancellation is not None and request.cancellation.is_set():
                 raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
             for event in provider.stream_text(request):

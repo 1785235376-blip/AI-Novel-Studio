@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "scope": "Four final3 frontend/build/inventory checks only; earlier receipts, browser launch and backend receipts are not promoted by this comparison.",
+  "canonicalization": "SHA256 of json.dumps(source_map,sort_keys=True,separators=(comma,colon)).encode UTF-8",
+  "source_count": 1711,
+  "current_source_map_sha256": "27cbca78c09c0818b04097cc1e99cf135e0f60eb3d355959bb9d4597065817c7",
+  "checks": [
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-frontend-final3.json",
+      "status": "PASS",
+      "source_count": 1711,
+      "before_sha256": "27cbca78c09c0818b04097cc1e99cf135e0f60eb3d355959bb9d4597065817c7",
+      "after_sha256": "27cbca78c09c0818b04097cc1e99cf135e0f60eb3d355959bb9d4597065817c7",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-build-final3.json",
+      "status": "PASS",
+      "source_count": 1711,
+      "before_sha256": "27cbca78c09c0818b04097cc1e99cf135e0f60eb3d355959bb9d4597065817c7",
+      "after_sha256": "27cbca78c09c0818b04097cc1e99cf135e0f60eb3d355959bb9d4597065817c7",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-browser-collection-final3-independent.json",
+      "status": "PASS",
+      "source_count": 1711,
+      "before_sha256": "27cbca78c09c0818b04097cc1e99cf135e0f60eb3d355959bb9d4597065817c7",
+      "after_sha256": "27cbca78c09c0818b04097cc1e99cf135e0f60eb3d355959bb9d4597065817c7",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-browser-collection-final3-original.json",
+      "status": "PASS",
+      "source_count": 1711,
+      "before_sha256": "27cbca78c09c0818b04097cc1e99cf135e0f60eb3d355959bb9d4597065817c7",
+      "after_sha256": "27cbca78c09c0818b04097cc1e99cf135e0f60eb3d355959bb9d4597065817c7",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    }
+  ],
+  "source_edits_performed": false
+}

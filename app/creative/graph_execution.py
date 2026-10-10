@@ -15,7 +15,7 @@ from ..experimental.declarative_agents import _ScopedOriginalWorkflowHost
 from ..experimental.declarative_adapter_sdk import AdapterCapabilities, AdapterRequest, run_trusted_local
 from ..experimental.store import canonical
 from ..workflow_recipes import execute_local_recipe_node
-from .graph_models import (GraphAction, GraphPreflight, MAX_OUTPUT_BYTES, MAX_NODES,
+from .graph_models import (GraphAction, GraphPreflight, MAX_OUTPUT_BYTES, MAX_NODES, MAX_HISTORY,
                           RUN_TIMEOUT_SECONDS, NODE_TIMEOUT_SECONDS, validate_output_ports)
 from .project_store import BINDING
 
@@ -114,6 +114,10 @@ class CreativeGraphExecutor:
             if (engine_output.get("ports") != output or receipt.get("output_digest") != digest(output)
                     or receipt.get("key") != self._key(row, actor, by_id[node_id], self._inputs(row, node_id, row["typed_outputs"]))):
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_RECEIPT_INVALID")
+        if any(node["definition_id"] == "text_generate" for node in expected):
+            if self.service.model_runtime is None:
+                raise StaleSourceError("CREATIVE_MODEL_RUNTIME_UNAVAILABLE")
+            self.service.model_runtime.validate_snapshot(row)
         guard()
         return graph
 
@@ -161,6 +165,9 @@ class CreativeGraphExecutor:
                 "steps_completed": 0, "attempt": 1, "retry_of": None, "trace": [], "dispatch_trace": [],
                 "reviewed": False, "reviewed_nodes": [], "external_ai_calls": False, "external_calls": 0, "model_called": False,
                 "applied": False, "execution_mode": "ORIGINAL_WORKFLOW_LOCAL_RULES"}
+            if any(node["definition_id"] == "text_generate" for node in typed_nodes):
+                from .ai_execution import CONTRACT
+                payload.update(model_execution_contract=CONTRACT, model_preview=None, model_execution=None)
             row = new_row(nid, scope, actor, payload)
             rows[row["id"]] = row
             self.service._capacity(state); current()
@@ -193,6 +200,10 @@ class CreativeGraphExecutor:
         try:
             self._current(nid, scope, actor, row, guard, state)
             stale = False
+            if row.get("model_execution_contract"):
+                if self.service.model_runtime is None:
+                    raise StaleSourceError("CREATIVE_MODEL_RUNTIME_UNAVAILABLE")
+                self.service.model_runtime.output_authority(row)
         except (StaleSourceError, FileNotFoundError):
             guard(); stale = True
         result = {key: deepcopy(row[key]) for key in ("id", "version", "graph_id", "graph_version", "status",
@@ -205,6 +216,20 @@ class CreativeGraphExecutor:
                 "error": {"code": "CREATIVE_GRAPH_NODE_FAILED"} if value.get("error") else None}
                 for node_id, value in row["node_states"].items()},
             review=None if stale else self._review(row), model_called=False, external_calls=0, applied=False)
+        if any(node["definition_id"] == "text_generate" for node in row["typed_nodes"]):
+            if self.service.model_runtime is None:
+                raise ValueError("CREATIVE_MODEL_RUNTIME_UNAVAILABLE")
+            result["model_runtime"] = self.service.model_runtime.public(row, stale=stale)
+            result["model_called"] = bool(row.get("model_execution", {}).get("model_called")) if row.get("model_execution") else False
+            if not stale:
+                try:
+                    self.service.model_runtime.output_authority(row)
+                except (StaleSourceError, FileNotFoundError):
+                    result["stale"] = True
+                    result["review"] = None
+                    result["model_runtime"]["preview"] = None
+                    for value in result["node_states"].values():
+                        value["output"] = None
         guard(); return result
 
     def _key(self, row, actor, node, inputs):
@@ -213,6 +238,8 @@ class CreativeGraphExecutor:
             node["definition_version"], node["parameters"], inputs])
 
     def _cached(self, row, actor, node_id, key, state):
+        if any(item["id"] == node_id and item["definition_id"] == "text_generate" for item in row["typed_nodes"]):
+            return None
         for source in state["collections"].get(self.service.RUNS, {}).values():
             if (source["id"] == row["id"] or source.get("created_by") != actor or source.get("scope") != row["scope"]
                     or source.get(BINDING) != row[BINDING] or source.get("graph_id") != row["graph_id"]
@@ -237,7 +264,7 @@ class CreativeGraphExecutor:
             if current["status"] != "WAITING_APPROVAL" or node_id is None:
                 break
             node = nodes[node_id]
-            if node["definition_id"] == "human_review":
+            if node["definition_id"] in {"human_review", "text_generate"}:
                 break
             guard()
             host.trigger_agent_node(row["id"], node_id, actor)
@@ -295,10 +322,16 @@ class CreativeGraphExecutor:
             row = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
             check_version(row, body.expected_version)
             self._timing(row)
+            if row.get("model_execution_contract") and action not in {"cancel", "reject"} and len(row["history"]) >= MAX_HISTORY - 2:
+                raise ValueError("CREATIVE_MODEL_ACTION_HISTORY_CAPACITY")
+            if action in {"pause", "resume"} and row.get("model_execution") and row["node_states"][row["model_execution"]["node_id"]]["status"] == "WORKING":
+                raise ValueError("CREATIVE_MODEL_INFLIGHT_PAUSE_UNAVAILABLE")
             def fresh():
                 current()
                 if action not in {"cancel", "reject"}:
                     self._current(nid, scope, actor, row, current, state)
+                if action == "approve" and row.get("model_execution_contract"):
+                    self.service.model_runtime.output_authority(row)
             fresh()
             engine_row = deepcopy(row)
             if action == "execute":
@@ -310,6 +343,8 @@ class CreativeGraphExecutor:
                 result = timed
             else:
                 if action in {"approve", "reject"}:
+                    if action == "approve" and row.get("model_execution_contract"):
+                        self.service.model_runtime.output_authority(row)
                     review = self._review(row)
                     if (not review or body.node_id != review["node_id"]
                             or body.reviewed_output_digest != review["output_digest"]):

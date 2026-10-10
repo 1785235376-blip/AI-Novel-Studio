@@ -71,7 +71,10 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
     def public_job(current):
         if current is None: return None
         from ..jobs import generation_content_available
-        if content_enabled() and generation_content_available(current): return current.public()
+        if (getattr(current, 'experimental_origin', None) != 'creative_graph_model'
+                and getattr(current, 'graph_binding', None) is None
+                and content_enabled() and generation_content_available(current)):
+            return current.public()
         return {'id': current.id, 'status': current.public()['status'], 'content_available': False}
 
     def guard(nid, token, branch, authority, permission='domain.write'):

@@ -33,6 +33,7 @@ const perform = <T,>(work: () => Promise<T>): Promise<T> => work();
 type Props = ComponentProps<typeof GraphRunPanel>;
 function setup(options: Partial<Omit<Props, 'client'>> = {}) {
   const client = { catalog: vi.fn(), list: vi.fn(), create: vi.fn(), get: vi.fn(), save: vi.fn(),
+    modelCapabilities: vi.fn(), previewModel: vi.fn(), dispatchModel: vi.fn(), refreshModel: vi.fn(),
     preflight: vi.fn().mockResolvedValue(preflight()), runs: vi.fn().mockResolvedValue({ items: [run()] }),
     createRun: vi.fn().mockResolvedValue(run()), getRun: vi.fn().mockResolvedValue(run()), action: vi.fn().mockResolvedValue(run({ version: 8 })) };
   const props: Props = { client, graph: graph(), targetNodeIds: ['review'], dirty: false, busy: false, canMutate: true, canReview: true,

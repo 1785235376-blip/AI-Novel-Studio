@@ -1,0 +1,95 @@
+.........................................................FF............. [ 78%]
+....................                                                     [100%]
+=================================== FAILURES ===================================
+_ test_upgrading_schema_one_to_model_graph_requires_host_before_save[file-/api] _
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7f850c7a4b00>, prefix='/api', base='/api/novels/r3-mount...st='m4-host-4e0f5bde4d6241c8841e4215eba5bc7f', headers={'X-Session-Token': 'm4-host-4e0f5bde4d6241c8841e4215eba5bc7f'})
+
+    def test_upgrading_schema_one_to_model_graph_requires_host_before_save(ai_client):
+        from test_v2_creative_graph_api import definition as original_definition
+        e = ai_client
+        graph = create(e, value=original_definition())
+        response = e.client.put(e.graph_base + "/" + graph["id"], json={
+            "expected_version": graph["version"], "definition": definition(text="Unauthorized model graph upgrade")})
+        assert response.status_code == 401
+>       assert checked(e.client.get(e.graph_base + "/" + graph["id"], headers=e.headers)) == graph
+E       AssertionError: assert {'can_edit': ...a9a2aa5', ...} == {'can_edit': ...4cbe131', ...}
+E         
+E         Omitting 6 identical items, use -vv to show
+E         Differing items:
+E         {'updated_at': '2026-10-10T05:54:49.602618+00:00'} != {'updated_at': '2026-10-10T05:54:49.574487+00:00'}
+E         {'definition_digest': 'fcf218ce5ca2847d033159143891a762b779dcf0d58e9752982a5645ba9a2aa5'} != {'definition_digest': 'd76fc651d840bfe0a945e1fbcd21725361c8206644b5da8ba43d9e75f4cbe131'}
+E         {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera...inition_version': 1, 'enabled': True, 'id': 'Review', ...}], 'schema_version': 2, 'title': 'Bounded model grap...
+E         
+E         ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/test_v2_ai_execution_api.py:203: AssertionError
+_ test_upgrading_schema_one_to_model_graph_requires_host_before_save[file-/api/v1] _
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7f850c654830>, prefix='/api/v1', base='/api/v1/novels/r3...st='m4-host-61de03611cf9485684d49a11ab2aa72d', headers={'X-Session-Token': 'm4-host-61de03611cf9485684d49a11ab2aa72d'})
+
+    def test_upgrading_schema_one_to_model_graph_requires_host_before_save(ai_client):
+        from test_v2_creative_graph_api import definition as original_definition
+        e = ai_client
+        graph = create(e, value=original_definition())
+        response = e.client.put(e.graph_base + "/" + graph["id"], json={
+            "expected_version": graph["version"], "definition": definition(text="Unauthorized model graph upgrade")})
+        assert response.status_code == 401
+>       assert checked(e.client.get(e.graph_base + "/" + graph["id"], headers=e.headers)) == graph
+E       AssertionError: assert {'can_edit': ...a9a2aa5', ...} == {'can_edit': ...4cbe131', ...}
+E         
+E         Omitting 6 identical items, use -vv to show
+E         Differing items:
+E         {'updated_at': '2026-10-10T05:54:49.752378+00:00'} != {'updated_at': '2026-10-10T05:54:49.726284+00:00'}
+E         {'definition_digest': 'fcf218ce5ca2847d033159143891a762b779dcf0d58e9752982a5645ba9a2aa5'} != {'definition_digest': 'd76fc651d840bfe0a945e1fbcd21725361c8206644b5da8ba43d9e75f4cbe131'}
+E         {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera...inition_version': 1, 'enabled': True, 'id': 'Review', ...}], 'schema_version': 2, 'title': 'Bounded model grap...
+E         
+E         ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/test_v2_ai_execution_api.py:203: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_ai_execution_runtime.py::test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-replace_project]
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-8 (_run)
+  
+  Traceback (most recent call last):
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/jobs.py", line 736, in _run
+      self._emit(job);return
+      ^^^^^^^^^^^^^^^
+    File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/jobs.py", line 467, in _emit
+      self._persist(job)
+    File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/jobs.py", line 288, in _persist
+      def _persist(self,job):self.persistence.save(job.public())
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/services/generation_service.py", line 4, in save
+      def save(self,item):return self.repository.save(item)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/runtime_events.py", line 70, in call
+      result = method(*args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/repositories/generation_repository.py", line 71, in save
+      with self._graph_owner(item, binding):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+      return next(self.gen)
+             ^^^^^^^^^^^^^^
+    File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/repositories/generation_repository.py", line 63, in _graph_owner
+      raise GenerationProjectIdentityError("GENERATION_GRAPH_PROJECT_OWNER_CHANGED") from None
+  app.repositories.generation_repository.GenerationProjectIdentityError: GENERATION_GRAPH_PROJECT_OWNER_CHANGED
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_ai_execution_api.py::test_upgrading_schema_one_to_model_graph_requires_host_before_save[file-/api]
+FAILED tests/test_v2_ai_execution_api.py::test_upgrading_schema_one_to_model_graph_requires_host_before_save[file-/api/v1]
+2 failed, 90 passed, 72 deselected, 2 warnings in 60.23s (0:01:00)

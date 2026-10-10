@@ -1447,6 +1447,16 @@ def generate_variants(operation:str,body:GenerateVariantsIn,x_session_token:str|
     return {"operation":operation,"group_id":group_id,"count":len(created),"variants":created}
 
 
+def _require_original_generation_route(job):
+    # Graph proposals have a separate scoped, host-bound projection and review.
+    # Legacy dev-mode generation URLs must not become an unguarded side door.
+    if (getattr(job, "experimental_origin", None) == "creative_graph_model"
+            or getattr(job, "graph_binding", None) is not None
+            or getattr(job, "operation", None) == "graph_text"):
+        raise HTTPException(404, {"code": "GENERATION_NOT_FOUND"})
+    return job
+
+
 @router.get("/generation-groups/{group_id}")
 def generation_group(group_id:str,x_session_token:str|None=Header(None)):
     variants = jobs.variants(group_id)
@@ -1454,11 +1464,13 @@ def generation_group(group_id:str,x_session_token:str|None=Header(None)):
         raise HTTPException(404,"Generation variant group not found")
     from .jobs import require_generation_content
     for job in variants:
+        _require_original_generation_route(job)
         if settings.enable_collaboration_runtime: _generation_content_context(job.id, x_session_token)
         require_generation_content(job)
     return {"group_id":group_id,"count":len(variants),"variants":[job.public() for job in variants]}
 @router.get("/generation/{jid}")
 def generation(jid:str,x_session_token:str|None=Header(None)):
+    _require_original_generation_route(guard(jobs.get,jid))
     if settings.enable_collaboration_runtime:_generation_content_context(jid,x_session_token)
     job=guard(jobs.get,jid)
     from .jobs import require_generation_content
@@ -1466,6 +1478,7 @@ def generation(jid:str,x_session_token:str|None=Header(None)):
     return {**job.public(),"diff":guard(jobs.diff,jid) if job.output else ""}
 @router.get("/generation/{jid}/events")
 def events(jid:str,x_session_token:str|None=Header(None)):
+    _require_original_generation_route(guard(jobs.get,jid))
     from .jobs import require_generation_content
     from .generation_stream import AuthorizedGenerationResponse
     from .dependencies import packaged_bootstrap_registry
@@ -1508,14 +1521,20 @@ def events(jid:str,x_session_token:str|None=Header(None)):
         authorize=authorize_observer,stop_event=stopped,media_type="text/event-stream",headers={"Cache-Control":"no-cache"})
 @router.post("/generation/{jid}/cancel")
 def cancel(jid:str,x_session_token:str|None=Header(None)):
-    if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
-    job = guard(jobs.cancel,jid)
+    # Keep the original cancel owner contract. Its existing registration lock
+    # makes the optional projection check and cancellation one admission step:
+    # an absent ID cannot become a newly registered graph job between them.
+    with jobs.lock:
+        _require_original_generation_route(jobs.jobs.get(jid))
+        if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
+        job = guard(jobs.cancel,jid)
     from .jobs import generation_content_available
     if not generation_content_available(job):
         return {"id": job.id, "status": job.public()["status"], "cancellation_requested": True, "content_available": False}
     return job.public()
 @router.post("/generation/{jid}/retry",status_code=202)
 def retry_generation(jid:str,x_session_token:str|None=Header(None)):
+    _require_original_generation_route(guard(jobs.get,jid))
     actor=scope=None
     if settings.enable_collaboration_runtime:
         actor,scope,job=_generation_content_context(jid,x_session_token)
@@ -1542,6 +1561,7 @@ def retry_generation(jid:str,x_session_token:str|None=Header(None)):
     return {"job_id":retried.id,"status":retried.status,"events_url":f"/api/generation/{retried.id}/events","base_chapter_version":retried.base_chapter_version,"retry_of":jid}
 @router.post("/generation/{jid}/accept")
 def accept(jid:str,body:AcceptIn|None=None,x_session_token:str|None=Header(None)):
+    _require_original_generation_route(guard(jobs.get,jid))
     from .jobs import require_generation_content
     require_generation_content(guard(jobs.get,jid))
     if settings.enable_collaboration_runtime:
@@ -1553,6 +1573,7 @@ def accept(jid:str,body:AcceptIn|None=None,x_session_token:str|None=Header(None)
     return guard(jobs.accept,jid,body.content if body else None,None,None,body.expected_version if body else None)
 @router.post("/generation/{jid}/reject")
 def reject(jid:str,x_session_token:str|None=Header(None)):
+    _require_original_generation_route(guard(jobs.get,jid))
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
     from .jobs import require_generation_content
     require_generation_content(guard(jobs.get,jid))

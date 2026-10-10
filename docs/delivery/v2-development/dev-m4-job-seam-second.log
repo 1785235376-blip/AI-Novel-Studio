@@ -1,0 +1,2117 @@
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                             [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_original_job_manager_runs_exact_text_without_chapter_and_persists _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_original_job_manager_runs0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1bcb01c40>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_original_job_manager_runs_exact_text_without_chapter_and_persists _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba370900>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_generic_review_and_diff_cannot_apply_or_reject_graph_output _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_generic_review_and_diff_c0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba542810>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_generic_review_and_diff_cannot_apply_or_reject_graph_output _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba371e40>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_default_off_and_acceptance_have_no_registration_or_dispatch[False] _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_default_off_and_acceptanc0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3c8710>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_default_off_and_acceptance_have_no_registration_or_dispatch[False] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba3709a0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_default_off_and_acceptance_have_no_registration_or_dispatch[True] _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_default_off_and_acceptanc1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3ca570>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_default_off_and_acceptance_have_no_registration_or_dispatch[True] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba370860>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_synthetic_requires_explicit_permission_and_api_is_reserved _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_synthetic_requires_explic0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3c89e0>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_synthetic_requires_explicit_permission_and_api_is_reserved _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba371120>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_missing_hooks_and_changed_request_are_denied_before_admission _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_missing_hooks_and_changed0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba38c620>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_missing_hooks_and_changed_request_are_denied_before_admission _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba373600>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[actor] ______
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_exact_host_binding_cannot0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba38e540>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+____ ERROR at teardown of test_exact_host_binding_cannot_be_replaced[actor] ____
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba371080>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[scope] ______
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_exact_host_binding_cannot1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba38fe90>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+____ ERROR at teardown of test_exact_host_binding_cannot_be_replaced[scope] ____
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba3720c0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[prompt] _____
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_exact_host_binding_cannot2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3cafc0>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+___ ERROR at teardown of test_exact_host_binding_cannot_be_replaced[prompt] ____
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba3739c0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[route] ______
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_exact_host_binding_cannot3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba38d010>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+____ ERROR at teardown of test_exact_host_binding_cannot_be_replaced[route] ____
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba3718a0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[deadline] ____
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_exact_host_binding_cannot4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3cb020>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+__ ERROR at teardown of test_exact_host_binding_cannot_be_replaced[deadline] ___
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba372fc0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_____ ERROR at setup of test_exact_host_binding_cannot_be_replaced[origin] _____
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_exact_host_binding_cannot5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba41bb00>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+___ ERROR at teardown of test_exact_host_binding_cannot_be_replaced[origin] ____
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba372480>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_late_source_revocation_suppresses_every_chunk_and_settles_once _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_late_source_revocation_su0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba40a030>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_late_source_revocation_suppresses_every_chunk_and_settles_once _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba370ae0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_cancel_during_synthetic_transport_discards_late_completion _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_cancel_during_synthetic_t0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba40a9c0>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_cancel_during_synthetic_transport_discards_late_completion _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba4100e0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_restarted_completed_job_cannot_reconstruct_authority_or_replay _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_restarted_completed_job_c0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba40a270>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_restarted_completed_job_cannot_reconstruct_authority_or_replay _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba410fe0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_output_and_deadline_bounds_use_original_worker_failure_path _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_output_and_deadline_bound0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3ae2a0>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_output_and_deadline_bounds_use_original_worker_failure_path _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba411260>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_adapter_replacement_after_preparation_has_no_provider_call _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_adapter_replacement_after0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3ae810>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_adapter_replacement_after_preparation_has_no_provider_call _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba411940>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_local_label_cannot_enable_arbitrary_or_legacy_ollama_provider _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_local_label_cannot_enable0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3ae630>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_local_label_cannot_enable_arbitrary_or_legacy_ollama_provider _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba411e40>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_managed_runtime_is_rejected_without_launch_or_probe[MANAGED] _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_managed_runtime_is_reject0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba4222a0>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_managed_runtime_is_rejected_without_launch_or_probe[MANAGED] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba412340>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_managed_runtime_is_rejected_without_launch_or_probe[REMOTE] _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_managed_runtime_is_reject1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba421310>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_managed_runtime_is_rejected_without_launch_or_probe[REMOTE] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba4125c0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_managed_runtime_is_rejected_without_launch_or_probe[None] _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_managed_runtime_is_reject2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3a5fd0>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_managed_runtime_is_rejected_without_launch_or_probe[None] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba412ac0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_digest_and_binding_contract_are_strict_and_deterministic _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-test/m4-job-seam-second/test_digest_and_binding_contra0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd1ba3a4680>
+
+    @pytest.fixture
+    def env(tmp_path, monkeypatch):
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS)
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        from app.config import settings
+>       monkeypatch.setattr(settings, "enable_packaged_runtime", False)
+
+tests/test_v2_model_execution.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_digest_and_binding_contract_are_strict_and_deterministic _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7fd1ba412fc0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud'), novel_data=PosixPath('/workspace/scr...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_packaged_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_packaged_runtime'
+
+<string>:4: FrozenInstanceError
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/dev-m4-job-seam-second.xml -
+=========================== short test summary info ============================
+ERROR tests/test_v2_model_execution.py::test_original_job_manager_runs_exact_text_without_chapter_and_persists
+ERROR tests/test_v2_model_execution.py::test_original_job_manager_runs_exact_text_without_chapter_and_persists
+ERROR tests/test_v2_model_execution.py::test_generic_review_and_diff_cannot_apply_or_reject_graph_output
+ERROR tests/test_v2_model_execution.py::test_generic_review_and_diff_cannot_apply_or_reject_graph_output
+ERROR tests/test_v2_model_execution.py::test_default_off_and_acceptance_have_no_registration_or_dispatch[False]
+ERROR tests/test_v2_model_execution.py::test_default_off_and_acceptance_have_no_registration_or_dispatch[False]
+ERROR tests/test_v2_model_execution.py::test_default_off_and_acceptance_have_no_registration_or_dispatch[True]
+ERROR tests/test_v2_model_execution.py::test_default_off_and_acceptance_have_no_registration_or_dispatch[True]
+ERROR tests/test_v2_model_execution.py::test_synthetic_requires_explicit_permission_and_api_is_reserved
+ERROR tests/test_v2_model_execution.py::test_synthetic_requires_explicit_permission_and_api_is_reserved
+ERROR tests/test_v2_model_execution.py::test_missing_hooks_and_changed_request_are_denied_before_admission
+ERROR tests/test_v2_model_execution.py::test_missing_hooks_and_changed_request_are_denied_before_admission
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[actor]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[actor]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[scope]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[scope]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[prompt]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[prompt]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[route]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[route]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[deadline]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[deadline]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[origin]
+ERROR tests/test_v2_model_execution.py::test_exact_host_binding_cannot_be_replaced[origin]
+ERROR tests/test_v2_model_execution.py::test_late_source_revocation_suppresses_every_chunk_and_settles_once
+ERROR tests/test_v2_model_execution.py::test_late_source_revocation_suppresses_every_chunk_and_settles_once
+ERROR tests/test_v2_model_execution.py::test_cancel_during_synthetic_transport_discards_late_completion
+ERROR tests/test_v2_model_execution.py::test_cancel_during_synthetic_transport_discards_late_completion
+ERROR tests/test_v2_model_execution.py::test_restarted_completed_job_cannot_reconstruct_authority_or_replay
+ERROR tests/test_v2_model_execution.py::test_restarted_completed_job_cannot_reconstruct_authority_or_replay
+ERROR tests/test_v2_model_execution.py::test_output_and_deadline_bounds_use_original_worker_failure_path
+ERROR tests/test_v2_model_execution.py::test_output_and_deadline_bounds_use_original_worker_failure_path
+ERROR tests/test_v2_model_execution.py::test_adapter_replacement_after_preparation_has_no_provider_call
+ERROR tests/test_v2_model_execution.py::test_adapter_replacement_after_preparation_has_no_provider_call
+ERROR tests/test_v2_model_execution.py::test_local_label_cannot_enable_arbitrary_or_legacy_ollama_provider
+ERROR tests/test_v2_model_execution.py::test_local_label_cannot_enable_arbitrary_or_legacy_ollama_provider
+ERROR tests/test_v2_model_execution.py::test_managed_runtime_is_rejected_without_launch_or_probe[MANAGED]
+ERROR tests/test_v2_model_execution.py::test_managed_runtime_is_rejected_without_launch_or_probe[MANAGED]
+ERROR tests/test_v2_model_execution.py::test_managed_runtime_is_rejected_without_launch_or_probe[REMOTE]
+ERROR tests/test_v2_model_execution.py::test_managed_runtime_is_rejected_without_launch_or_probe[REMOTE]
+ERROR tests/test_v2_model_execution.py::test_managed_runtime_is_rejected_without_launch_or_probe[None]
+ERROR tests/test_v2_model_execution.py::test_managed_runtime_is_rejected_without_launch_or_probe[None]
+ERROR tests/test_v2_model_execution.py::test_digest_and_binding_contract_are_strict_and_deterministic
+ERROR tests/test_v2_model_execution.py::test_digest_and_binding_contract_are_strict_and_deterministic
+44 errors in 8.88s

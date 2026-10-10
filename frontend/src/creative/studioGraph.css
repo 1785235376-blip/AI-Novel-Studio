@@ -1,4 +1,4 @@
-.studio-graph-editor,.studio-graph-inspector,.studio-graph-run{display:flex;flex-direction:column;gap:var(--space-3);min-width:0;overflow-wrap:anywhere}
+.studio-graph-editor,.studio-graph-inspector,.studio-graph-run,.studio-graph-model{display:flex;flex-direction:column;gap:var(--space-3);min-width:0;overflow-wrap:anywhere}
 .studio-graph-editor{padding:var(--space-3)}
 .studio-graph-editor label,.studio-graph-inspector label,.studio-graph-run label{display:flex;flex-direction:column;gap:var(--space-1);min-width:0}
 .studio-graph-editor input:not([type=checkbox]),.studio-graph-editor select,.studio-graph-editor textarea,.studio-graph-inspector input:not([type=checkbox]),.studio-graph-inspector textarea{max-width:100%;min-width:0;box-sizing:border-box}

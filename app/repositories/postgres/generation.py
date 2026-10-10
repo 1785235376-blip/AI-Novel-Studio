@@ -3,7 +3,9 @@ from ...runtime_events import committed_change
 from datetime import datetime,timezone
 from sqlalchemy import select, text
 from .common import chapter_or_raise,external_uuid,novel_or_raise
-from .models import GenerationJobModel
+from .models import GenerationJobModel, NovelModel
+from ..generation_repository import (GenerationProjectIdentityError, graph_job_binding,
+                                     check_graph_job_update)
 
 class PostgresGenerationRepository:
     def __init__(self,database):self.database=database
@@ -15,11 +17,33 @@ class PostgresGenerationRepository:
         if row.error_code is not None:saved["error_code"]=row.error_code
         if row.error_message is not None:saved["error"]=row.error_message
         return saved
+    @staticmethod
+    def _graph_owner(session, item, binding):
+        try:
+            # Lock the original project row through the same save transaction.
+            # DELETE cannot pass validation and then replace this slug midway.
+            # KEY SHARE also composes with a CreativeProjectStore owner lease
+            # on a different connection; UPDATE would deadlock that caller.
+            owner = session.scalar(select(NovelModel).where(
+                NovelModel.slug == item["novel_id"]).with_for_update(read=True, key_share=True))
+            if owner is None: raise FileNotFoundError(item["novel_id"])
+            if binding["project_incarnation"] != "postgres:" + str(owner.id):
+                raise ValueError("different project owner")
+            return owner.id
+        except (FileNotFoundError, ValueError, KeyError, TypeError):
+            raise GenerationProjectIdentityError("GENERATION_GRAPH_PROJECT_OWNER_CHANGED") from None
+
     @committed_change("TASK")
     def save(self,item):
         with self.database.session() as session:
-            iid=external_uuid(item["id"]);row=session.get(GenerationJobModel,iid);novel_uuid=chapter_uuid=None
-            if item.get("novel_id"):novel_uuid=novel_or_raise(session,item["novel_id"]).id
+            binding = graph_job_binding(item)
+            novel_uuid = self._graph_owner(session, item, binding) if binding is not None else None
+            iid=external_uuid(item["id"]);row=session.get(GenerationJobModel,iid);chapter_uuid=None
+            if binding is None and item.get("novel_id"):novel_uuid=novel_or_raise(session,item["novel_id"]).id
+            if binding is not None and row is not None:
+                check_graph_job_update(self._payload(row), item)
+                if row.novel_id != novel_uuid:
+                    raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
             from ..branch_manuscript import is_branch_chapter_id
             branch_owned = is_branch_chapter_id(item.get('novel_id'), item.get('chapter_id'))
             if branch_owned:
@@ -58,6 +82,24 @@ class PostgresGenerationRepository:
         with self.database.session() as session:
             row=session.get(GenerationJobModel,external_uuid(jid))
             if row is None:raise KeyError(jid)
-            return self._payload(row)
+            item = self._payload(row)
+            binding = graph_job_binding(item)
+            if binding is not None:
+                try:
+                    owner_id = self._graph_owner(session, item, binding)
+                    if row.novel_id != owner_id: raise GenerationProjectIdentityError("GENERATION_GRAPH_PROJECT_OWNER_CHANGED")
+                except GenerationProjectIdentityError: raise KeyError(jid) from None
+            return item
     def load_all(self):
-        with self.database.session() as session:return [self._payload(x) for x in session.scalars(select(GenerationJobModel).order_by(GenerationJobModel.created_at)).all()]
+        with self.database.session() as session:
+            result = []
+            for row in session.scalars(select(GenerationJobModel).order_by(GenerationJobModel.created_at)).all():
+                item = self._payload(row)
+                try:
+                    binding = graph_job_binding(item)
+                    if binding is not None and row.novel_id != self._graph_owner(session, item, binding):
+                        continue
+                except GenerationProjectIdentityError:
+                    continue
+                result.append(item)
+            return result

@@ -669,8 +669,15 @@ from ..creative.graph import CreativeGraphService
 
 independent_workspace_service = IndependentWorkspaceService(creative_service,
     legacy_api.asset_library_service, production_lineage_service)
+def creative_model_host_authority(request, token):
+    from ..main import _local_discovery_host_authority
+    return _local_discovery_host_authority(request, token)
+
+
 creative_graph_service = CreativeGraphService(creative_service.store, independent_workspace_service)
+creative_graph_service.configure_models(model_broker_service, legacy_api.jobs)
 router.include_router(create_independent_workspace_router(independent_workspace_service, authorize, require_flag,
     create_project=lambda body, token: legacy_api.create_novel(
         legacy_api.NovelIn(**body.model_dump(exclude_none=True)), token),
-    workspace_writer=legacy_api._shared_workspace_writer, graph_service=creative_graph_service))
+    workspace_writer=legacy_api._shared_workspace_writer, graph_service=creative_graph_service,
+    require_host_session=require_inspection_host_session, model_host_authority=creative_model_host_authority))

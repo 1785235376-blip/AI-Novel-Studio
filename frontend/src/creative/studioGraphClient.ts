@@ -6,14 +6,17 @@ import type {
   StudioGraphPreflightInput, StudioGraphCreateInput, StudioGraphSaveInput, StudioGraphRunCreateInput,
   StudioGraphRecord, StudioGraphReferenceState, StudioGraphRun, StudioGraphRunStatus, StudioGraphCatalog,
   StudioGraphScope, StudioGraphOwner, StudioGraphNodeState, StudioGraphNodeStatus,
+  StudioGraphModelCapabilities, StudioGraphModelPreviewInput, StudioGraphModelDispatchInput, StudioGraphModelRefreshInput,
 } from './studioGraphTypes';
+import { graphModelCapabilities, graphModelRuntime } from './studioGraphModelContract';
 
 /** Inject the existing Studio transport; graph operations never look up credentials. */
 export type StudioGraphTransport = {
   json<T>(url: string, method?: string, body?: unknown, signal?: AbortSignal, idempotencyKey?: string): Promise<T>;
 };
 
-const definitionIds: readonly StudioGraphDefinitionId[] = ['text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review', 'asset_reference'];
+const localDefinitionIds: readonly StudioGraphDefinitionId[] = ['text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review', 'asset_reference'];
+const definitionIds: readonly StudioGraphDefinitionId[] = [...localDefinitionIds, 'text_generate'];
 const statuses: readonly StudioGraphRunStatus[] = ['QUEUED', 'RUNNING', 'WAITING_APPROVAL', 'PAUSED', 'SUCCEEDED', 'FAILED', 'CANCELLED', 'REJECTED'];
 const nodeStatuses: readonly StudioGraphNodeStatus[] = ['PENDING', 'WAITING_APPROVAL', 'QUEUED', 'WORKING', 'SUCCEEDED', 'FAILED', 'SKIPPED', 'REJECTED'];
 const actions: readonly StudioGraphAction[] = ['execute', 'approve', 'reject', 'cancel', 'pause', 'resume'];
@@ -21,6 +24,7 @@ const portKinds = ['TEXT', 'DIRECTOR_NOTES', 'DRAFT', 'ASSET_REF'] as const;
 const parameterKeys: Record<StudioGraphDefinitionId, readonly string[]> = {
   text_input: ['text'], text_reference: [], draft_prepare: [], manual_transform: ['result'],
   director_note: ['note'], human_review: [], asset_reference: ['asset_id', 'version', 'digest', 'kind'],
+  text_generate: ['instruction', 'max_output_tokens'],
 };
 const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; outputs: Record<string, string> }> = {
   text_input: { inputs: {}, outputs: { text: 'TEXT' } },
@@ -30,6 +34,7 @@ const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; o
   director_note: { inputs: {}, outputs: { direction: 'DIRECTOR_NOTES' } },
   human_review: { inputs: { draft: 'DRAFT' }, outputs: {} },
   asset_reference: { inputs: {}, outputs: { asset: 'ASSET_REF' } },
+  text_generate: { inputs: { text: 'TEXT', direction: 'DIRECTOR_NOTES' }, outputs: { draft: 'DRAFT' } },
 };
 
 function invalid(input = false): never {
@@ -110,6 +115,7 @@ function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false
   if (kind === 'text_input') return { text: text(row.text, 8_000, input, true) };
   if (kind === 'manual_transform') return { result: text(row.result, 8_000, input, true) };
   if (kind === 'director_note') return { note: text(row.note, 4_000, input, true) };
+  if (kind === 'text_generate') return { instruction: text(row.instruction, 4_000, input, true), max_output_tokens: integer(row.max_output_tokens, 1, 2_048, input) };
   if (kind === 'asset_reference') {
     if (!['image', 'video', 'audio'].includes(row.kind as string)) invalid(input);
     return { asset_id: resourceId(row.asset_id, input), version: integer(row.version, 1, Number.MAX_SAFE_INTEGER, input),
@@ -119,9 +125,10 @@ function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false
 }
 function definition(value: unknown, input = false, unavailable = new Set<string>()): StudioGraphDefinition {
   const row = record(value, input);
-  if (row.schema_version !== 1) invalid(input);
+  if (row.schema_version !== 1 && row.schema_version !== 2) invalid(input);
   const nodes: StudioGraphNode[] = list(row.nodes, 16, input).map(item => {
     const node = record(item, input), nodeId = id(node.id, input), kind = definitionId(node.definition_id, input);
+    if (kind === 'text_generate' && row.schema_version !== 2) invalid(input);
     if (node.definition_version !== 1) invalid(input);
     return { id: nodeId, definition_id: kind, definition_version: 1, enabled: bool(node.enabled, input),
       position: position(node.position, input), parameters: parameters(node.parameters, kind, input, unavailable.has(nodeId)) };
@@ -155,7 +162,7 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
   }
   nodes.forEach(node => visit(node.id));
   const viewport = record(row.viewport, input);
-  const result: StudioGraphDefinition = { schema_version: 1, title: text(row.title, 160, input), nodes, edges,
+  const result: StudioGraphDefinition = { schema_version: row.schema_version, title: text(row.title, 160, input), nodes, edges,
     viewport: { ...position(viewport, input), zoom: number(viewport.zoom, 0.35, 2.5, input) } };
   if (new TextEncoder().encode(JSON.stringify(result)).length > 96_000) invalid(input);
   return result;
@@ -170,10 +177,11 @@ function schema(value: unknown, kind: StudioGraphDefinitionId): StudioGraphParam
     if (field.type !== 'string' && field.type !== 'integer') invalid();
     const safe: StudioGraphParameterSchema['properties'][string] = { type: field.type };
     if (field.title !== undefined) safe.title = text(field.title, 160);
-    if (field.default !== undefined) safe.default = text(field.default, 8_000, false, true);
+    if (field.default !== undefined) safe.default = field.type === 'integer' ? integer(field.default, 1, 2_048) : text(field.default, 8_000, false, true);
     if (field.minLength !== undefined) safe.minLength = integer(field.minLength, 0, 8_000);
     if (field.maxLength !== undefined) safe.maxLength = integer(field.maxLength, 0, 8_000);
     if (field.minimum !== undefined) safe.minimum = integer(field.minimum);
+    if (field.maximum !== undefined) safe.maximum = integer(field.maximum);
     if (field.pattern !== undefined) safe.pattern = text(field.pattern, 240);
     if (field.enum !== undefined) safe.enum = list(field.enum, 8).map(item => text(item, 64));
     result.properties[key] = safe;
@@ -209,10 +217,11 @@ function catalogDefinition(value: unknown): StudioGraphCatalogDefinition {
     executable: kind !== 'asset_reference', model_called: false, blockers: list(row.blockers, 16).map(code) };
 }
 
-function draft(value: unknown): StudioGraphDraft {
+function draft(value: unknown, allowModel = false): StudioGraphDraft {
   const row = record(value);
-  if (row.origin !== 'USER_SUPPLIED' && row.origin !== 'MANUAL') invalid();
+  if (row.origin !== 'USER_SUPPLIED' && row.origin !== 'MANUAL' && !(allowModel && row.origin === 'MODEL_PROPOSAL')) invalid();
   const result: StudioGraphDraft = { text: text(row.text, 8_000, false, true), origin: row.origin };
+  if (row.origin === 'MODEL_PROPOSAL' && row.plan !== undefined) invalid();
   if (row.plan !== undefined) result.plan = list(row.plan, 1_000).map(item => {
     const beat = record(item);
     return { sequence: integer(beat.sequence, 1, 1_000), beat: text(beat.beat, 8_000, false, true) };
@@ -220,12 +229,12 @@ function draft(value: unknown): StudioGraphDraft {
   if (row.direction !== undefined) result.direction = { note: text(record(row.direction).note, 4_000, false, true) };
   return result;
 }
-function output(value: unknown): StudioGraphOutput | null {
+function output(value: unknown, allowModel = false): StudioGraphOutput | null {
   if (value === null) return null;
   const row = record(value), result: StudioGraphOutput = {};
   if (row.text !== undefined) result.text = text(row.text, 8_000, false, true);
   if (row.direction !== undefined) result.direction = { note: text(record(row.direction).note, 4_000, false, true) };
-  if (row.draft !== undefined) result.draft = draft(row.draft);
+  if (row.draft !== undefined) result.draft = draft(row.draft, allowModel);
   if (new TextEncoder().encode(JSON.stringify(result)).length > 64_000) invalid();
   return result;
 }
@@ -242,10 +251,18 @@ function catalog(value: unknown): StudioGraphCatalog {
     external_reference_detach: false, binary_cache: false, parallel_execution: false, automatic_retry: false,
     actor_private: true, cache_mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY',
   };
+  const modelEnabled = capabilities.model_execution === true;
+  if (modelEnabled) {
+    if (capabilities.model_execution_contract !== 'creative-graph-model/1') invalid();
+    expectedCapabilities.model_execution = true;
+    expectedCapabilities.model_execution_contract = 'creative-graph-model/1';
+  } else if (capabilities.model_execution_contract !== undefined) invalid();
   if (Object.entries(expectedLimits).some(([key, value]) => limits[key] !== value)
     || Object.entries(expectedCapabilities).some(([key, value]) => capabilities[key] !== value)) invalid();
   const definitions = list(row.definitions, definitionIds.length).map(catalogDefinition);
-  if (definitions.length !== definitionIds.length || new Set(definitions.map(item => item.id)).size !== definitions.length) invalid();
+  const expectedDefinitions = modelEnabled ? definitionIds : localDefinitionIds;
+  if (definitions.length !== expectedDefinitions.length || new Set(definitions.map(item => item.id)).size !== definitions.length
+    || definitions.some(item => !expectedDefinitions.includes(item.id))) invalid();
   return { definitions, limits: expectedLimits, capabilities: expectedCapabilities };
 }
 
@@ -255,6 +272,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   const graphUrl = (value: unknown) => `${base}/graphs/${encodeURIComponent(resourceId(value, true))}`;
   const runUrl = (value: unknown) => `${base}/graph-runs/${encodeURIComponent(resourceId(value, true))}`;
   const observedGraphs = new Map<string, { version: number; can_edit: boolean; enabledIds: string[]; definition_digest: string }>();
+  const observedRuns = new Map<string, string>();
 
   function owner(row: Record<string, unknown>): StudioGraphOwner {
     if (row.project_id !== projectId) mismatch();
@@ -328,36 +346,51 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   function checkedRun(value: unknown, expectedId?: string, expectedGraphId?: string): StudioGraphRun {
     const row = record(value), ownership = owner(row), runId = resourceId(row.id), graphId = resourceId(row.graph_id);
     if ((expectedId !== undefined && expectedId !== runId) || (expectedGraphId !== undefined && expectedGraphId !== graphId)) mismatch();
-    if (row.model_called !== false || row.external_calls !== 0 || row.applied !== false || row.timeout_seconds !== 3600) invalid();
+    if (row.external_calls !== 0 || row.applied !== false || row.timeout_seconds !== 3600) invalid();
     const stale = bool(row.stale), status = runStatus(row.status), hideOutputs = stale || ['CANCELLED', 'REJECTED', 'FAILED'].includes(status);
+    const model = row.model_runtime === undefined ? undefined : graphModelRuntime(row.model_runtime, hideOutputs);
+    const modelCalled = bool(row.model_called);
+    if (model ? modelCalled !== (model.execution?.model_called ?? false) : modelCalled) invalid();
+    const modelOutput = modelCalled && !!model && ['RESULT_REVIEW', 'TERMINAL'].includes(model.status);
     const rawStates = record(row.node_states), stateIds = Object.keys(rawStates);
     if (stateIds.length > 16) invalid();
     const nodeStates = Object.fromEntries(stateIds.map(nodeId => {
       const state = record(rawStates[nodeId]);
       if (!nodeStatuses.includes(state.status as StudioGraphNodeStatus)) invalid();
       const nodeState: StudioGraphNodeState = { status: state.status as StudioGraphNodeStatus,
-        output: hideOutputs ? null : output(state.output), error: state.error === null ? null : { code: code(record(state.error).code) } };
+        output: hideOutputs ? null : output(state.output, modelOutput), error: state.error === null ? null : { code: code(record(state.error).code) } };
       return [id(nodeId), nodeState];
     }));
     const currentNodeId = row.current_node_id === null ? null : id(row.current_node_id);
     if (currentNodeId !== null && !Object.hasOwn(nodeStates, currentNodeId)) invalid();
+    if (model && !Object.hasOwn(nodeStates, model.node_id)) invalid();
     let review: StudioGraphRun['review'] = null;
     if (!hideOutputs && row.review !== null) {
       const source = record(row.review), nodeId = id(source.node_id);
       if (!Object.hasOwn(nodeStates, nodeId)) invalid();
-      review = { node_id: nodeId, output_digest: digest(source.output_digest), draft: draft(source.draft) };
+      review = { node_id: nodeId, output_digest: digest(source.output_digest), draft: draft(source.draft, modelOutput) };
     }
     const cache = record(row.cache);
     if (cache.mode !== 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY') invalid();
-    return { ...ownership, id: runId, version: integer(row.version, 1), graph_id: graphId, graph_version: integer(row.graph_version, 1),
+    const result: StudioGraphRun = { ...ownership, id: runId, version: integer(row.version, 1), graph_id: graphId, graph_version: integer(row.graph_version, 1),
       status, current_node_id: currentNodeId, node_states: nodeStates, review,
       cache: { hits: integer(cache.hits, 0, 16), misses: integer(cache.misses, 0, 16), mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' },
-      created_at: text(row.created_at, 64), updated_at: text(row.updated_at, 64), model_called: false, external_calls: 0,
+      created_at: text(row.created_at, 64), updated_at: text(row.updated_at, 64), model_called: modelCalled, external_calls: 0,
+      ...(model ? { model_runtime: model } : {}),
       applied: false, stale, reviewed: bool(row.reviewed), timeout_seconds: 3600, deadline_at: deadline(row.deadline_at) };
+    if (observedRuns.has(runId) && observedRuns.get(runId) !== graphId) mismatch();
+    observedRuns.set(runId, graphId);
+    return result;
+  }
+  function checkedModelRun(value: unknown, runId: string): StudioGraphRun {
+    const result = checkedRun(value, runId, observedRuns.get(runId));
+    if (!result.model_runtime) invalid();
+    return result;
   }
 
   return {
     catalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog`, 'GET', undefined, signal).then(catalog),
+    modelCapabilities: (signal?: AbortSignal): Promise<StudioGraphModelCapabilities> => transport.json(`${base}/graphs/model-capabilities`, 'GET', undefined, signal).then(value => graphModelCapabilities(value, owner)),
     list: (signal?: AbortSignal): Promise<{ items: StudioGraphRecord[] }> => transport.json(`${base}/graphs`, 'GET', undefined, signal).then(value => {
       const items = list(record(value).items, 25).map(item => checkedGraph(item));
       if (new Set(items.map(item => item.id)).size !== items.length) invalid();
@@ -396,6 +429,35 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       return transport.json(`${url}/runs`, 'POST', payload, undefined, payload.request_id).then(value => checkedRun(value, undefined, graphId));
     },
     getRun: (runId: string, signal?: AbortSignal): Promise<StudioGraphRun> => transport.json(runUrl(runId), 'GET', undefined, signal).then(value => checkedRun(value, runId)),
+    previewModel: (runId: string, value: StudioGraphModelPreviewInput): Promise<StudioGraphRun> => {
+      const url = runUrl(runId), row = record(value, true);
+      const payload: StudioGraphModelPreviewInput = { expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, true),
+        route_id: digest(row.route_id, true), allow_synthetic: bool(row.allow_synthetic, true) };
+      return transport.json(`${url}/model/preview`, 'POST', payload).then(value => {
+        const result = checkedModelRun(value, runId), preview = result.model_runtime!.preview;
+        if (!preview || preview.route && (preview.route.route_id !== payload.route_id || preview.route.synthetic && !payload.allow_synthetic)) invalid();
+        return result;
+      });
+    },
+    dispatchModel: (runId: string, value: StudioGraphModelDispatchInput): Promise<StudioGraphRun> => {
+      const url = runUrl(runId), row = record(value, true);
+      const payload: StudioGraphModelDispatchInput = { expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, true),
+        reviewed_preview_digest: digest(row.reviewed_preview_digest, true) };
+      return transport.json(`${url}/model/dispatch`, 'POST', payload).then(value => {
+        const result = checkedModelRun(value, runId);
+        if (!result.model_runtime!.execution) invalid();
+        return result;
+      });
+    },
+    refreshModel: (runId: string, value: StudioGraphModelRefreshInput): Promise<StudioGraphRun> => {
+      const url = runUrl(runId), row = record(value, true);
+      const payload: StudioGraphModelRefreshInput = { expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, true) };
+      return transport.json(`${url}/model/refresh`, 'POST', payload).then(value => {
+        const result = checkedModelRun(value, runId);
+        if (!result.model_runtime!.execution) invalid();
+        return result;
+      });
+    },
     action: (runId: string, action: StudioGraphAction, value: StudioGraphActionInput): Promise<StudioGraphRun> => {
       const url = runUrl(runId), row = record(value, true);
       if (!actions.includes(action)) invalid(true);

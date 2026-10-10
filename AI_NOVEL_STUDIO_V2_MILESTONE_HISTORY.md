@@ -524,3 +524,33 @@ databases, runtime receipts and logs are preserved. See the
 These selected checks are not full-product hosted CI or browser acceptance.
 The separately generated 10,469-node V2 inventory retains all 10,380 prior nodes
 and adds 89; original frozen manifests and strict CI gates are unchanged.
+
+## 12. M4 AI Execution Layer — 2026-10-10
+
+The user's current six-module AI Execution Layer instruction supersedes the
+older M4 Text/Screenplay/Agents label for this milestone. Published M3-C
+`0bf79fb2d3b8be3ff7c3034371c4bc7642500d44` is the verified parent.
+[M4 report](MILESTONE_M4_REPORT.md) and [execution contract](docs/v2/ai-execution.md)
+record the bounded schema-2 local-text node, original ModelBroker/WorkflowRun/
+JobManager/TextModelNode composition, actionable explicit API/UI journey and
+proposal-only review. Model Center and Creative Core remain the original owners.
+
+The APIProvider interface is reserved and nonexecuting. No paid API, automatic
+runtime installation/start, cloud fallback, large Image/Video feature or real
+model benchmark is included. Mock/contract and real-thread results are not real
+inference quality. Final source-bound checks and exact publication identity are
+recorded only when available in the M4 report and PR 47.
+
+M3-C's push Cloud passed complete strict joins, while its PR Cloud hit the
+original File capacity cap and both joins rejected incomplete prerequisites.
+That inherited **PARTIAL_PR_CI_CAPACITY**, full-M3 PARTIAL, earlier failed receipts
+and historical independent-audit **BLOCKED** remain unchanged. This round's code
+checks are engineering verification, not a replacement independent audit.
+
+The final bounded M4 checkpoint source `4bdd2488…44d4` has a complete 13-file
+M4/adjacent-owner File result of 485 pass / 368 existing skips and fresh real-PG
+result of 484 pass / 369 existing skips, normal shutdown. Full frontend is
+2,164 pass / 8 existing skips; build/token and 279 infrastructure checks pass.
+Earlier 79-file results and failures retain their own source identity and are
+not promoted to final-tree aggregate acceptance. Browser collection is inventory
+only; actual hosted CI is pending the new publication SHA. Full M4 is PARTIAL.

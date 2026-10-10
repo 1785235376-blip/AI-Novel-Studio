@@ -16,6 +16,7 @@ import hmac
 import secrets
 import threading
 from dataclasses import asdict
+from contextlib import contextmanager, ExitStack
 from datetime import datetime, timezone
 from typing import Literal
 
@@ -165,6 +166,16 @@ class ModelBrokerService(DomainService):
         self._credential_bindings = {}
         self._credential_lock = threading.Lock()
 
+    @contextmanager
+    def _owned_transaction(self, nid, scope, owner_lease=None):
+        # Optional trusted-origin lease is acquired in original scope->project
+        # order and retained until the underlying commit, including exceptions.
+        with ExitStack() as leases:
+            with self.store.transaction(nid, scope) as doc:
+                if owner_lease is not None:
+                    leases.enter_context(owner_lease())
+                yield doc
+
     def _credential_binding(self, provider_id, secret):
         # In-memory equality detector only. No secret or secret-derived digest is
         # persisted/returned. Rotation mints an opaque receipt fence; restart
@@ -234,13 +245,15 @@ class ModelBrokerService(DomainService):
             facts['hardware_hash'] = digest([asdict(profiles[pid]) for pid in center_model.hardware_profiles if pid in profiles]) if isinstance(profiles, dict) and center_model.hardware_profiles else None
         return facts, reasons
 
-    def candidates(self):
+    def candidates(self, *, local_text_only=False):
         providers = {row.provider_id: row for row in self.runtime.provider_registry.descriptors()}
         items = []
         for model in self.runtime.model_registry.descriptors():
             provider = providers.get(model.provider_id)
             reasons, facts = [], {}
             if model.modality is not Modality.TEXT: continue
+            # M4 callers cannot inspect cloud credentials or initialize unrelated modalities.
+            if local_text_only and self.runtime.is_remote_text_provider(model.provider_id): continue
             if not model.enabled: reasons.append('MODEL_DISABLED')
             if not provider or not provider.configured: reasons.append('PROVIDER_NOT_CONFIGURED')
             if not provider or not provider.available: reasons.append('PROVIDER_UNAVAILABLE')
@@ -270,6 +283,8 @@ class ModelBrokerService(DomainService):
                           'binding_hash': digest([id(adapter), digest(identity)]), 'identity': identity,
                           'available': not reasons, 'reasons': list(dict.fromkeys(reasons)),
                           'verification': 'SYNTHETIC_PROTOCOL_ONLY' if facts.get('synthetic') else 'ADAPTER_CONTRACT_ONLY'})
+        if local_text_only:
+            return items
         if self.media_registry is not None:
             from .media import MockImageWorkflowAdapter, RegisteredLocalImageWorkflowAdapter, production_environment
             for definition in self.media_registry.definitions()['items']:
@@ -386,8 +401,9 @@ class ModelBrokerService(DomainService):
         except Exception:
             return {'state': 'UNAVAILABLE', 'ram_mib': None, 'vram_mib': None, 'free_memory': None}
 
-    def current_route(self, route_id):
-        route = next((r for r in self.candidates() if r['route_id'] == route_id), None)
+    def current_route(self, route_id, *, local_text_only=False):
+        candidates = self.candidates(local_text_only=True) if local_text_only else self.candidates()
+        route = next((r for r in candidates if r['route_id'] == route_id), None)
         if not route: raise ValueError('BROKER_ROUTE_NOT_REGISTERED')
         return route
 
@@ -459,7 +475,7 @@ class ModelBrokerService(DomainService):
                            'privacy_level': effective_source_privacy(chapter, scope.get('branch_id'))}
         return result
 
-    def preview(self, nid, scope, actor, value, guard=lambda: None, route_guard=None):
+    def preview(self, nid, scope, actor, value, guard=lambda: None, route_guard=None, *, local_text_only=False, owner_lease=None):
         body = BrokerRequest.model_validate(value)
         self.novels.get(nid)
         guard()
@@ -467,7 +483,9 @@ class ModelBrokerService(DomainService):
         budget = self.budget(nid, scope)
         doc = self.store.read(nid, scope)
         prices = doc['collections'].get(self.PRICES, {})
-        candidates = self.candidates()
+        if local_text_only and (body.capability != 'TEXT' or body.profile != 'LOCAL_ONLY' or body.allow_cloud_fallback):
+            raise ValueError('BROKER_LOCAL_TEXT_PROFILE_REQUIRED')
+        candidates = self.candidates(local_text_only=True) if local_text_only else self.candidates()
         hardware = self.hardware_capacity() if body.min_host_ram_mib or body.min_host_vram_mib else {'state': 'NOT_REQUESTED', 'free_memory': None}
         evidence = self.evidence_reader(nid, scope) if callable(self.evidence_reader) else []
         for route in candidates:
@@ -552,7 +570,9 @@ class ModelBrokerService(DomainService):
                        'balanced_factors': ['CURRENT_COST_RANK', 'CURRENT_LATENCY_RANK', 'CLOUD_PENALTY'] if body.policy == 'BALANCED' else [],
                        'unknown_metrics': 'RANK_LAST', 'cloud_fallback_preapproved': body.allow_cloud_fallback,
                        'license_confirmation_required': body.require_confirmed_license}}
-        with self.store.transaction(nid, scope) as doc:
+        if local_text_only:
+            payload['candidate_profile'] = 'LOCAL_TEXT_ONLY_V1'
+        with self._owned_transaction(nid, scope, owner_lease) as doc:
             guard()
             row = new_row(nid, scope, actor, payload)
             doc['collections'].setdefault(self.DECISIONS, {})[row['id']] = row
@@ -565,7 +585,7 @@ class ModelBrokerService(DomainService):
         if row['created_by'] != actor: raise ValueError('BROKER_ACTOR_MISMATCH')
         if row['status'] != 'PREVIEW' or not row.get('chosen'): raise ValueError('BROKER_LEGAL_PREVIEW_REQUIRED')
         if row['sources'] != self._sources(nid, scope, row['request']['chapter_ids']): raise StaleSourceError('BROKER_SOURCES_CHANGED')
-        current = self.current_route(row['chosen']['route_id'])
+        current = self.current_route(row['chosen']['route_id'], local_text_only=True) if row.get('candidate_profile') == 'LOCAL_TEXT_ONLY_V1' else self.current_route(row['chosen']['route_id'])
         if not current['available'] or current['fingerprint'] != row['chosen']['fingerprint'] or current['binding_hash'] != row['chosen']['binding_hash']:
             raise StaleSourceError('BROKER_ROUTE_CHANGED')
         constraints = row['request']
@@ -583,14 +603,14 @@ class ModelBrokerService(DomainService):
                 assert_current_manuscript_egress(self.chapters_for(scope), self.novels, nid, self.chapters_for(scope).get(cid), scope.get('branch_id'))
         return current
 
-    def reserve(self, nid, scope, actor, preview_id, expected_version, idempotency_key, job_id, guard=lambda: None, authorization_digest=None):
+    def reserve(self, nid, scope, actor, preview_id, expected_version, idempotency_key, job_id, guard=lambda: None, authorization_digest=None, *, owner_lease=None):
         if not idempotency_key or len(idempotency_key) > 160 or not job_id or len(job_id) > 160: raise ValueError('BROKER_RESERVATION_ID_REQUIRED')
         row = self.get(nid, scope, self.DECISIONS, preview_id)
         check_version(row, expected_version)
         self._assert_preview(nid, scope, actor, row)
         guard()
         key = digest([actor, idempotency_key])
-        with self.store.transaction(nid, scope) as doc:
+        with self._owned_transaction(nid, scope, owner_lease) as doc:
             guard()
             ledger = doc['collections'].setdefault(self.LEDGER, {})
             old = ledger.get(key)
@@ -616,12 +636,12 @@ class ModelBrokerService(DomainService):
             ledger[key] = entry
             return copy.deepcopy(entry)
 
-    def guard_dispatch(self, nid, scope, actor, reservation_id, job_id, guard=lambda: None):
+    def guard_dispatch(self, nid, scope, actor, reservation_id, job_id, guard=lambda: None, *, owner_lease=None):
         entry = self.get(nid, scope, self.LEDGER, reservation_id)
         if entry['job_id'] != job_id or entry['created_by'] != actor: raise ValueError('BROKER_RESERVATION_AUTHORITY_MISMATCH')
         row = self.get(nid, scope, self.DECISIONS, entry['preview_id'])
         self._assert_preview(nid, scope, actor, row)
-        with self.store.transaction(nid, scope) as doc:
+        with self._owned_transaction(nid, scope, owner_lease) as doc:
             guard()
             entry = doc['collections'][self.LEDGER][reservation_id]
             if entry['status'] not in {'RESERVED', 'DISPATCHED'}: raise ValueError('BROKER_RESERVATION_TERMINAL')
@@ -631,14 +651,14 @@ class ModelBrokerService(DomainService):
                 change_row(entry, actor, entry['version'], lambda r: r.update(status='DISPATCHED', dispatched=True, dispatched_at=now()))
             return copy.deepcopy(entry)
 
-    def finalize(self, nid, scope, actor, reservation_id, job_id, status, usage=None):
+    def finalize(self, nid, scope, actor, reservation_id, job_id, status, usage=None, *, owner_lease=None):
         """Host job-completion seam. Never exposed as a caller-supplied bill API.
 
         May finish accounting after permission/feature revocation, but cannot
         dispatch or release an ambiguous upstream hold under that exception.
         """
         if status not in {'COMPLETED', 'CANCELLED', 'FAILED', 'UNKNOWN'}: raise ValueError('BROKER_FINAL_STATUS_INVALID')
-        with self.store.transaction(nid, scope) as doc:
+        with self._owned_transaction(nid, scope, owner_lease) as doc:
             entry = doc['collections'].get(self.LEDGER, {}).get(reservation_id)
             if not entry or entry['job_id'] != job_id or entry['created_by'] != actor: raise ValueError('BROKER_RESERVATION_AUTHORITY_MISMATCH')
             if entry['status'] not in {'RESERVED', 'DISPATCHED'}: return copy.deepcopy(entry)

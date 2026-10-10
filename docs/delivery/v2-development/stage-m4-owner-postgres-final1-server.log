@@ -1,0 +1,21 @@
+2026-10-10 06:01:58.517 UTC [11] LOG:  starting PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-10-10 06:01:58.517 UTC [11] LOG:  listening on IPv4 address "127.0.0.1", port 55436
+2026-10-10 06:01:58.518 UTC [14] LOG:  database system was shut down at 2026-10-10 06:01:35 UTC
+2026-10-10 06:01:58.522 UTC [11] LOG:  database system is ready to accept connections
+2026-10-10 06:06:58.617 UTC [12] LOG:  checkpoint starting: time
+2026-10-10 06:09:56.493 UTC [12] LOG:  checkpoint complete: wrote 1779 buffers (43.4%); 0 WAL file(s) added, 0 removed, 1 recycled; write=177.874 s, sync=0.002 s, total=177.877 s; sync files=607, longest=0.001 s, average=0.001 s; distance=14181 kB, estimate=14181 kB; lsn=0/27B0058, redo lsn=0/22E41B0
+2026-10-10 06:11:58.593 UTC [12] LOG:  checkpoint starting: time
+2026-10-10 06:12:57.760 UTC [12] LOG:  checkpoint complete: wrote 591 buffers (14.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=59.167 s, sync=0.001 s, total=59.168 s; sync files=80, longest=0.001 s, average=0.001 s; distance=6372 kB, estimate=13400 kB; lsn=0/2D822E0, redo lsn=0/291D218
+2026-10-10 06:16:58.857 UTC [12] LOG:  checkpoint starting: time
+2026-10-10 06:19:01.457 UTC [12] LOG:  checkpoint complete: wrote 1216 buffers (29.7%); 0 WAL file(s) added, 0 removed, 1 recycled; write=122.591 s, sync=0.001 s, total=122.601 s; sync files=108, longest=0.001 s, average=0.001 s; distance=14706 kB, estimate=14706 kB; lsn=0/3DA5E60, redo lsn=0/3779D58
+2026-10-10 06:21:58.561 UTC [12] LOG:  checkpoint starting: time
+2026-10-10 06:22:43.426 UTC [12] LOG:  checkpoint complete: wrote 447 buffers (10.9%); 0 WAL file(s) added, 0 removed, 1 recycled; write=44.839 s, sync=0.001 s, total=44.866 s; sync files=97, longest=0.001 s, average=0.001 s; distance=9869 kB, estimate=14223 kB; lsn=0/4723090, redo lsn=0/411D230
+2026-10-10 06:26:58.490 UTC [12] LOG:  checkpoint starting: time
+2026-10-10 06:27:54.440 UTC [12] LOG:  checkpoint complete: wrote 564 buffers (13.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=55.950 s, sync=0.001 s, total=55.950 s; sync files=93, longest=0.001 s, average=0.000 s; distance=9879 kB, estimate=13788 kB; lsn=0/4CF7090, redo lsn=0/4AC2E70
+2026-10-10 06:31:45.295 UTC [11] LOG:  received fast shutdown request
+2026-10-10 06:31:45.295 UTC [11] LOG:  aborting any active transactions
+2026-10-10 06:31:45.304 UTC [11] LOG:  background worker "logical replication launcher" (PID 17) exited with exit code 1
+2026-10-10 06:31:45.304 UTC [12] LOG:  shutting down
+2026-10-10 06:31:45.304 UTC [12] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 06:31:45.308 UTC [12] LOG:  checkpoint complete: wrote 390 buffers (9.5%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.003 s, sync=0.001 s, total=0.004 s; sync files=94, longest=0.001 s, average=0.000 s; distance=12682 kB, estimate=13677 kB; lsn=0/5725690, redo lsn=0/5725690
+2026-10-10 06:31:45.316 UTC [11] LOG:  database system is shut down
