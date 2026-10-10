@@ -1,0 +1,26 @@
+/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+{"status": "FAIL", "started_utc": "2026-10-10T21:53:33.279990+00:00", "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db", "server_sha256": "5faf410bbbc00a1b94b09ee01623699f255365628dfa73b1ee552d9e52a2231d", "scenario": "adaptation", "real_inference": "PASS", "paid_api": false, "gpu": false, "private_credentials_used": false, "automatic_model_download": false, "runtime_version_output": "version: 0.6.0-dev (build 11429, commit d81235049)\nbuilt with GNU 11.4.0 for Linux x86_64\n", "ready_seconds": 1.2335663129924797, "error_type": "ValueError", "error": "experimental scope must identify its project", "runtime_returncode": 0, "owned_runtime_stopped": true, "source_stable": true, "elapsed_seconds": 20.909924773994135, "finished_utc": "2026-10-10T21:53:54.190365+00:00"}
+Traceback (most recent call last):
+  File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/scripts/run_v2_real_text_check.py", line 411, in <module>
+    main()
+  File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/scripts/run_v2_real_text_check.py", line 375, in main
+    execute(root, args.server, args.model, args.model_sha256, args.port, scenario=args.scenario)
+  File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/scripts/run_v2_real_text_check.py", line 323, in execute
+    receipt["mounted_acceptance"] = mounted_acceptance(root, server, model, port, receipt)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/scripts/run_v2_real_text_check.py", line 205, in mounted_acceptance
+    return run(root, api, client, headers, nid, priced_route, outcome)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/scripts/run_v2_real_adaptation_scenario.py", line 56, in run
+    with independent_workspace_service._asset_scope(nid, job.scope):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/creative/workspace.py", line 112, in _asset_scope
+    key = self.store.key(nid, scope)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/experimental/store.py", line 42, in key
+    raise ValueError("experimental scope must identify its project")
+ValueError: experimental scope must identify its project

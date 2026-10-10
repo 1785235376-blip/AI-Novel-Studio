@@ -98,9 +98,11 @@ def validate_isolated_environment(root):
         raise ValueError("OWNED_CHILD_DIRECTORIES_REQUIRED")
 
 
-def runtime_argv(server, model, port):
+def runtime_argv(server, model, port, *, scenario="graph"):
+    if scenario not in {"graph", "adaptation"}:
+        raise ValueError("UNKNOWN_OWNED_ACCEPTANCE_SCENARIO")
     return [str(server), "-m", str(model), "--alias", ALIAS, "--host", "127.0.0.1",
-        "--port", str(port), "--device", "none", "--n-gpu-layers", "0", "--ctx-size", "2048",
+        "--port", str(port), "--device", "none", "--n-gpu-layers", "0", "--ctx-size", "8192" if scenario == "adaptation" else "2048",
         "--parallel", "1", "--threads", "2", "--threads-batch", "2", "--batch-size", "128",
         "--ubatch-size", "128", "--cache-ram", "0", "--offline", "--no-ui", "--no-agent",
         "--no-ui-mcp-proxy", "--cors-origins", f"http://127.0.0.1:{port}", "--no-cors-credentials"]
@@ -163,7 +165,7 @@ def mounted_acceptance(root, server, model, port, outcome):
         configured = api("POST", discovery + "/runtimes", {"name": "Owned CPU acceptance", "type": "LLAMA_CPP",
             "endpoint": f"http://127.0.0.1:{port}", "model_id": ALIAS, "modality": "TEXT", "health_endpoint": "/v1/models",
             "credential_required": False, "management": "EXTERNAL", "executable": str(server), "model_path": str(model),
-            "context_size": 2048, "gpu_layers": 0, "threads": 2, "batch_size": 128})
+            "context_size": 8192 if outcome.get("scenario") == "adaptation" else 2048, "gpu_layers": 0, "threads": 2, "batch_size": 128})
         scope = api("GET", discovery + "/onboarding/scan-scope?include_common_model_dirs=false")
         scan = api("POST", discovery + "/onboarding/scan", {"scope_digest": scope["scope_digest"], "confirmed": True}, 202)
         deadline = time.monotonic() + 50
@@ -198,6 +200,9 @@ def mounted_acceptance(root, server, model, port, outcome):
             "source": "Owned offline CPU acceptance: no provider invoice; excludes electricity and hardware",
             "as_of": stamp.isoformat(), "expires_at": (stamp + timedelta(minutes=30)).isoformat(),
             "applicability": "per_request", "expected_version": 0})
+        if outcome.get("scenario") == "adaptation":
+            from scripts.run_v2_real_adaptation_scenario import run
+            return run(root, api, client, headers, nid, priced_route, outcome)
         capabilities = api("GET", base + "/graphs/model-capabilities")
         routes = [route for route in capabilities["routes"] if route["available"] and not route["synthetic"]]
         assert len(routes) == 1, capabilities
@@ -281,12 +286,13 @@ def mounted_acceptance(root, server, model, port, outcome):
             "asset_bytes_verification": "ORIGINAL_ASSET_OWNER_SCOPE", "project_data_retained": True}
 
 
-def execute(root, server, model, expected_sha, port):
+def execute(root, server, model, expected_sha, port, *, scenario="graph"):
     validated_inputs(server, model, expected_sha, port)
     before = source_identity()
     write_json(root / "source-before.json", before)
     receipt = {"status": "STARTING", "started_utc": datetime.now(timezone.utc).isoformat(), "model_sha256": expected_sha,
-        "server_sha256": sha256_file(server), "argv": runtime_argv(server, model, port), "real_inference": "NOT_RUN",
+        "server_sha256": sha256_file(server), "argv": runtime_argv(server, model, port, scenario=scenario),
+        "scenario": scenario, "real_inference": "NOT_RUN",
         "paid_api": False, "gpu": False, "private_credentials_used": False, "automatic_model_download": False}
     endpoint = f"http://127.0.0.1:{port}"
     process = None
@@ -357,12 +363,16 @@ def main():
     parser.add_argument("--workspace", required=True, type=Path)
     parser.add_argument("--port", type=int, default=18080)
     parser.add_argument("--confirm-owned-cpu-runtime", action="store_true", required=True)
+    parser.add_argument("--scenario", choices=("graph", "adaptation"), default="graph")
     parser.add_argument("--isolated-child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     root = args.workspace.absolute()
     if args.isolated_child:
         validate_isolated_environment(root)
-        execute(root, args.server, args.model, args.model_sha256, args.port)
+        if args.scenario == "graph":
+            execute(root, args.server, args.model, args.model_sha256, args.port)
+        else:
+            execute(root, args.server, args.model, args.model_sha256, args.port, scenario=args.scenario)
     else:
         validated_inputs(args.server, args.model, args.model_sha256, args.port)
         root.mkdir(parents=True, exist_ok=False)

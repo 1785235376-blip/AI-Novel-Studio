@@ -982,3 +982,23 @@ Host-less UI remains usable and unsupported collaboration-only model access
 fails closed. New real adaptation inference/Asset archival are not claimed.
 899d push PG0 also retains an observed original settling failed call without
 final traceback, in addition to its cancellation; this is not only capacity.
+
+## 44. Source adaptation private archive and recovery (TEXT-13 follow-on)
+
+The preceding section describes the published e29 first slice. The new bounded
+contract adds mandatory exact-output private TextAsset v1 through the existing
+AssetLibrary before scenes/report become reviewable. Existing reads/refresh
+converge incomplete archival without model replay or another user step. Original
+human adoption creates one separate screenplay, then projects the same asset to
+APPROVED v2; raw model bytes are immutable. Prompt, nullable parameters, source,
+route/model, settled reservation revision and final Job publication are retained.
+
+Selected source verification is complete: File and fresh PostgreSQL each
+**564 passed / 305 profile skips**, complete UI **2,442 passed / 8 original skips**,
+build/token guard, 352 infrastructure tests and actionlint pass. Two original
+collection inventories each contain 11,901 identical nodes. Status stays **PARTIAL**
+pending new-SHA hosted acceptance. A genuine CPU inference produced an exact
+private raw DRAFT v1; its malformed structured response was correctly rejected,
+and the original acceptance harness FAIL is retained. Multi-chapter adaptation, literary quality, hosted strict completion and
+historical independent security review remain open. Exact stage results and
+source identities belong to [the archive report](MILESTONE_M4_ADAPTATION_ARCHIVE_REPORT.md).

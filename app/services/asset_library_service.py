@@ -140,6 +140,22 @@ class AssetLibraryService:
 
     def _in_scope(self, meta: dict, branch_id: str | None, actor_id: str | None = None) -> bool:
         binding, active = meta.get("_project_binding"), getattr(self._scope, "binding", None)
+        from ..creative import adaptation_receipt as adaptation_contract
+        origin, receipt = meta.get("_text_result_origin"), meta.get(adaptation_contract.PRIVATE_FIELD)
+        if ((isinstance(origin, dict) and origin.get("contract") == adaptation_contract.ASSET_CONTRACT)
+                or (isinstance(receipt, dict) and receipt.get("contract") == adaptation_contract.CONTRACT)):
+            # A damaged private adaptation must never fall back to legacy public
+            # asset visibility. This admission is intrinsic to all owner reads.
+            owner, features = meta.get("_owner_actor_id"), meta.get("_required_features")
+            if (not isinstance(owner, str) or not owner.strip() or len(owner) > 240
+                    or any(ord(char) < 32 or ord(char) == 127 for char in owner)
+                    or not isinstance(features, list) or any(not isinstance(item, str) for item in features)
+                    or set(features) != adaptation_contract.FEATURES
+                    or not isinstance(binding, dict) or type(meta.get("version")) is not int
+                    or meta["version"] not in (1, 2)
+                    or not isinstance(origin, dict) or origin.get("contract") != adaptation_contract.ASSET_CONTRACT
+                    or not isinstance(receipt, dict) or receipt.get("contract") != adaptation_contract.CONTRACT):
+                return False
         if "narrative_production_v2" in meta.get("_required_features", []) and binding is None:
             # A missing new binding is corruption, not permission to fall back
             # to the historical unbound contract or adopt a recreated owner.
@@ -211,9 +227,12 @@ class AssetLibraryService:
             # All immutable provenance participates in idempotency, while its
             # later review projection must not change the creation identity.
             initial = self._text_initial(_initial_text_result, data)
+            from ..creative.adaptation_receipt import ASSET_CONTRACT, FEATURES
+            adaptation = initial["_text_result_origin"]["contract"] == ASSET_CONTRACT
+            features_valid = (set(required_features) == FEATURES if adaptation
+                              else self.TEXT_RESULT_FEATURES.issubset(required_features))
             if (binding is None or not owner_actor_id or not callable(guard)
-                    or not self.TEXT_RESULT_FEATURES.issubset(required_features)
-                    or kind != "text" or media_type != "text/plain"):
+                    or not features_valid or kind != "text" or media_type != "text/plain"):
                 raise ValueError("TEXT_RESULT_AUTHORITY_REQUIRED")
             identity.update(initial)
             initial_review = {"status": "DRAFT", "receipt": None, "history": []}
@@ -277,6 +296,9 @@ class AssetLibraryService:
 
     @classmethod
     def _text_source(cls, receipt):
+        from ..creative.adaptation_receipt import ASSET_CONTRACT, validate_source
+        if isinstance(receipt, dict) and receipt.get("contract") == ASSET_CONTRACT:
+            return validate_source(receipt)
         expected = {"schema_version", "contract", "graph_id", "graph_version", "graph_digest", "run_id",
                     "source_run_version", "model_node_id", "job_id", "input_digest", "output_digest",
                     "preview_digest", "produced_at"}
@@ -296,6 +318,11 @@ class AssetLibraryService:
 
     @classmethod
     def _text_initial(cls, initial, data):
+        from ..creative.adaptation_receipt import ASSET_CONTRACT, validate_initial
+        if (isinstance(initial, dict) and isinstance(initial.get("_text_result_origin"), dict)
+                and initial["_text_result_origin"].get("contract") == ASSET_CONTRACT):
+            return validate_initial(initial, data, source_validator=cls._text_source,
+                metadata_encoder=cls.text_result_metadata_bytes)
         expected = {"_text_result_origin", "source_job_id", "provider_id", "model_id", "parameters"}
         from ..creative.text_execution_receipt import PRIVATE_FIELD, MAX_BYTES, validate_receipt
         if isinstance(initial, dict) and PRIVATE_FIELD in initial:
@@ -334,6 +361,14 @@ class AssetLibraryService:
         return copy.deepcopy(initial)
 
     @staticmethod
+    def text_result_metadata_bytes(initial):
+        """Exact logical metadata encoder shared by admission and persistence validation."""
+        try:
+            return json.dumps(initial, ensure_ascii=False, allow_nan=False).encode("utf-8")
+        except (TypeError, ValueError, UnicodeError, RecursionError):
+            raise ValueError("TEXT_RESULT_METADATA_INVALID") from None
+
+    @staticmethod
     def text_result_metadata(*, source_receipt, provider_id, model_id, source_job_id, parameters,
                              execution_receipt=None):
         """The complete initial metadata shape, shared with pre-inference admission."""
@@ -350,7 +385,12 @@ class AssetLibraryService:
         is called at the original owner's commit boundary, including retries.
         This helper neither runs a model nor grants a review decision.
         """
-        if not isinstance(text, str) or len(text) > self.TEXT_RESULT_MAX_BYTES:
+        from ..creative.adaptation_receipt import ASSET_CONTRACT, MAX_OUTPUT_BYTES
+        maximum = self.TEXT_RESULT_MAX_BYTES
+        if isinstance(source_receipt, dict) and source_receipt.get("contract") == ASSET_CONTRACT:
+            self._text_source(source_receipt)
+            maximum = MAX_OUTPUT_BYTES
+        if not isinstance(text, str) or len(text) > maximum:
             raise ValueError("TEXT_RESULT_CONTENT_INVALID")
         try:
             data = text.encode("utf-8")
@@ -371,18 +411,26 @@ class AssetLibraryService:
                 or status not in {"APPROVED", "REJECTED"} or not callable(guard)):
             raise ValueError("TEXT_RESULT_REVIEW_INVALID")
         self._text_digest(output_digest)
-        expected = {"run_id", "run_version", "review_node_id", "output_digest", "reviewed_output_digest",
-                    "reviewed_by", "reviewed_at"}
-        if not isinstance(review_receipt, dict) or set(review_receipt) != expected:
-            raise ValueError("TEXT_RESULT_REVIEW_RECEIPT_INVALID")
-        receipt = copy.deepcopy(review_receipt)
-        for key in ("run_id", "review_node_id"):
-            self._identifier(receipt[key], key)
-        if (type(receipt["run_version"]) is not int or not 1 <= receipt["run_version"] <= 2**53 - 1
-                or receipt["reviewed_by"] != actor_id or receipt["output_digest"] != output_digest):
-            raise ValueError("TEXT_RESULT_REVIEW_BINDING_INVALID")
-        self._text_digest(receipt["reviewed_output_digest"])
-        self._text_stamp(receipt["reviewed_at"])
+        from ..creative import adaptation_receipt as adaptation_contract
+        adaptation = (isinstance(review_receipt, dict)
+                      and review_receipt.get("contract") == adaptation_contract.REVIEW_CONTRACT)
+        if adaptation:
+            if status != "APPROVED":
+                raise ValueError("TEXT_RESULT_REVIEW_INVALID")
+            receipt = copy.deepcopy(review_receipt)
+        else:
+            expected = {"run_id", "run_version", "review_node_id", "output_digest", "reviewed_output_digest",
+                        "reviewed_by", "reviewed_at"}
+            if not isinstance(review_receipt, dict) or set(review_receipt) != expected:
+                raise ValueError("TEXT_RESULT_REVIEW_RECEIPT_INVALID")
+            receipt = copy.deepcopy(review_receipt)
+            for key in ("run_id", "review_node_id"):
+                self._identifier(receipt[key], key)
+            if (type(receipt["run_version"]) is not int or not 1 <= receipt["run_version"] <= 2**53 - 1
+                    or receipt["reviewed_by"] != actor_id or receipt["output_digest"] != output_digest):
+                raise ValueError("TEXT_RESULT_REVIEW_BINDING_INVALID")
+            self._text_digest(receipt["reviewed_output_digest"])
+            self._text_stamp(receipt["reviewed_at"])
         with self._lock, workspace_mutation(self.root, "asset-library"):
             meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
             if meta.get("_owner_actor_id") != actor_id or not actor_id:
@@ -391,21 +439,38 @@ class AssetLibraryService:
                 raise ValueError("TEXT_RESULT_VERSION_INVALID")
             origin = self._text_source(meta.get("_text_result_origin"))
             from ..creative.text_execution_receipt import PRIVATE_FIELD, validate_receipt
+            if adaptation != (origin["contract"] == adaptation_contract.ASSET_CONTRACT):
+                raise ValueError("TEXT_RESULT_REVIEW_BINDING_INVALID")
             if meta.get(PRIVATE_FIELD) != execution_receipt:
                 raise ValueError("TEXT_EXECUTION_RECEIPT_CHANGED")
-            if execution_receipt is not None:
-                validate_receipt(execution_receipt, source=origin, provider_id=meta.get("provider_id"),
-                    model_id=meta.get("model_id"), parameters=meta.get("parameters", {}))
+            if adaptation:
+                receipt = adaptation_contract.validate_review(receipt, source=origin,
+                    actor_id=actor_id, output_digest=output_digest)
+                adaptation_contract.validate_receipt(execution_receipt, source=origin,
+                    provider_id=meta.get("provider_id"), model_id=meta.get("model_id"),
+                    parameters=meta.get("parameters", {}))
+                features_valid = set(meta.get("_required_features", [])) == adaptation_contract.FEATURES
+                decision_valid = True  # The closed adaptation validator checked its distinct proposal/document binding.
+            else:
+                if execution_receipt is not None:
+                    validate_receipt(execution_receipt, source=origin, provider_id=meta.get("provider_id"),
+                        model_id=meta.get("model_id"), parameters=meta.get("parameters", {}))
+                features_valid = self.TEXT_RESULT_FEATURES.issubset(meta.get("_required_features", []))
+                decision_valid = (receipt["run_id"] == origin["run_id"]
+                                  and receipt["run_version"] > origin["source_run_version"])
             if (meta.get("kind") != "text" or meta.get("media_type") != "text/plain"
-                    or not self.TEXT_RESULT_FEATURES.issubset(meta.get("_required_features", []))
-                    or not meta.get("_project_binding") or origin["output_digest"] != output_digest
-                    or meta["sha256"] != output_digest or receipt["run_id"] != origin["run_id"]
-                    or receipt["run_version"] <= origin["source_run_version"]):
+                    or not features_valid or not meta.get("_project_binding") or origin["output_digest"] != output_digest
+                    or meta["sha256"] != output_digest or not decision_valid):
                 raise ValueError("TEXT_RESULT_REVIEW_BINDING_INVALID")
             review = meta.get("_text_result_review")
             if (not isinstance(review, dict) or set(review) != {"status", "receipt", "history"}
                     or review.get("status") not in {"DRAFT", "APPROVED", "REJECTED"}
                     or not isinstance(review.get("history"), list)):
+                raise ValueError("TEXT_RESULT_REVIEW_STATE_INVALID")
+            if adaptation and ((review["status"] == "DRAFT" and meta["version"] != 1)
+                    or (review["status"] == "APPROVED" and (meta["version"] != 2
+                        or review["history"] != [{"status": "DRAFT", "asset_version": 1}]))
+                    or review["status"] == "REJECTED"):
                 raise ValueError("TEXT_RESULT_REVIEW_STATE_INVALID")
             self._verified_content(meta)
             if (review["status"] == status and review["receipt"] == receipt
@@ -425,6 +490,52 @@ class AssetLibraryService:
                 meta["approved_at"] = receipt["reviewed_at"]
             self._write_meta(meta)
             return meta
+
+    def find_text_result(self, novel_id, idempotency_key, *, branch_id, owner_actor_id, proposal_id):
+        """Server-only recovery lookup that cannot mistake a hidden row for absence.
+
+        The caller must hold the exact original project scope. Unlike generic
+        discovery, corruption, deleted matches and conflicting ownership are
+        hard failures. No content or identity from a different project scope is
+        returned, and this method neither creates nor repairs an asset. A
+        proposal identity also fences a corrupted key after an archive commit
+        whose proposal pointer has not yet committed.
+        """
+        self._identifier(novel_id, "novel_id")
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        if (not isinstance(idempotency_key, str) or not 1 <= len(idempotency_key) <= 240
+                or not isinstance(owner_actor_id, str) or not 1 <= len(owner_actor_id) <= 240):
+            raise ValueError("TEXT_RESULT_LOOKUP_INVALID")
+        self._identifier(proposal_id, "proposal_id")
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+            binding = getattr(self._scope, "binding", None)
+            if (binding is None or binding.get("novel_id") != novel_id
+                    or binding.get("branch_id") != branch_id):
+                raise ValueError("ASSET_PROJECT_BINDING_REQUIRED")
+            matches = []
+            for path in self.root.glob("*.json"):
+                try:
+                    meta = self._load(path.stem)
+                except (ValueError, OSError, RecursionError):
+                    # A corrupt row might be this same key. Treating it as
+                    # absent would allow a second archive after a partial commit.
+                    raise AssetIntegrityError("text result lookup integrity could not be verified") from None
+                if meta.get("_project_binding") != binding:
+                    continue
+                origin = meta.get("_text_result_origin")
+                if (isinstance(origin, dict) and origin.get("proposal_id") == proposal_id
+                        and meta.get("idempotency_key") != idempotency_key):
+                    raise AssetIdempotencyConflict("text result lookup identity conflict")
+                if meta.get("idempotency_key") != idempotency_key:
+                    continue
+                if (meta.get("novel_id") != novel_id or meta.get("branch_id") != branch_id
+                        or meta.get("_owner_actor_id") != owner_actor_id or meta.get("deleted_at")):
+                    raise AssetIdempotencyConflict("text result lookup identity conflict")
+                matches.append(meta)
+                if len(matches) > 1:
+                    raise AssetIdempotencyConflict("text result lookup identity conflict")
+            return copy.deepcopy(matches[0]) if matches else None
 
     def list(self, novel_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
         self._identifier(novel_id, "novel_id")

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="2" tests="4" time="8.558" timestamp="2026-10-10T14:44:16.173768-07:00" hostname="7abb01f187ba"><testcase classname="tests.test_v2_adaptation_archive" name="test_completed_archive_recovers_after_same_durable_adapter_is_rebound[file-/api]" time="5.720"><failure message="AssertionError: {'asset_output': {'actor_private': True, 'asset_id': None, 'automatic_model_retry': False, 'contract': 'creative-adapt...7b13c310a0449f8c3c1ed664452e9d:1', 'created_at': '2026-10-10T21:44:22.130459+00:00', 'created_by': 'local-author', ...}&#10;assert 'MODEL_UNAVAILABLE' == 'NEEDS_REVIEW'&#10;  &#10;  - NEEDS_REVIEW&#10;  + MODEL_UNAVAILABLE">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7fdd3363a720&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fdd33938f50&gt;, creative_base='/api/novels/r3-mounted-8f7b13c310a0449f8c3c1ed664452e9d/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fdd332681a0&gt;
+
+    def test_completed_archive_recovers_after_same_durable_adapter_is_rebound(creative_model, monkeypatch):
+        e = creative_model
+        from app.runtime import runtime
+        from app.model_runtime import LegacyTextProviderAdapter
+        row, job, calls = completed_without_refresh(e, monkeypatch)
+        before = e.creative.store.read(e.nid, row["scope"])["collections"][e.creative.adaptations.COLLECTION][row["id"]]["model_preview"]["broker"]["chosen"]
+        replacement = LegacyTextProviderAdapter("mock", runtime.providers["mock"])
+        monkeypatch.setitem(runtime.provider_registry._providers, "mock", replacement)
+        after = e.broker.current_route(before["route_id"], local_text_only=True)
+        assert after["fingerprint"] == before["fingerprint"]
+        assert after["binding_hash"] != before["binding_hash"]
+        reopen(e, monkeypatch)
+        result = action(e, row, "refresh")
+&gt;       assert result["status"] == "NEEDS_REVIEW", result
+E       AssertionError: {'asset_output': {'actor_private': True, 'asset_id': None, 'automatic_model_retry': False, 'contract': 'creative-adapt...7b13c310a0449f8c3c1ed664452e9d:1', 'created_at': '2026-10-10T21:44:22.130459+00:00', 'created_by': 'local-author', ...}
+E       assert 'MODEL_UNAVAILABLE' == 'NEEDS_REVIEW'
+E         
+E         - NEEDS_REVIEW
+E         + MODEL_UNAVAILABLE
+
+tests/test_v2_adaptation_archive.py:414: AssertionError</failure></testcase><testcase classname="tests.test_v2_adaptation_archive" name="test_completed_archive_recovers_after_same_durable_adapter_is_rebound[file-/api/v1]" time="1.771"><failure message="AssertionError: {'asset_output': {'actor_private': True, 'asset_id': None, 'automatic_model_retry': False, 'contract': 'creative-adapt...ee10702fe74e1398ba5372724ddcea:1', 'created_at': '2026-10-10T21:44:23.954943+00:00', 'created_by': 'local-author', ...}&#10;assert 'MODEL_UNAVAILABLE' == 'NEEDS_REVIEW'&#10;  &#10;  - NEEDS_REVIEW&#10;  + MODEL_UNAVAILABLE">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7fdd30e47200&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fdd33938f50&gt;, creative_base='/api/v1/novels/r3-mounted-8fee10702fe74e1398ba5372724ddcea/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fdd31976bd0&gt;
+
+    def test_completed_archive_recovers_after_same_durable_adapter_is_rebound(creative_model, monkeypatch):
+        e = creative_model
+        from app.runtime import runtime
+        from app.model_runtime import LegacyTextProviderAdapter
+        row, job, calls = completed_without_refresh(e, monkeypatch)
+        before = e.creative.store.read(e.nid, row["scope"])["collections"][e.creative.adaptations.COLLECTION][row["id"]]["model_preview"]["broker"]["chosen"]
+        replacement = LegacyTextProviderAdapter("mock", runtime.providers["mock"])
+        monkeypatch.setitem(runtime.provider_registry._providers, "mock", replacement)
+        after = e.broker.current_route(before["route_id"], local_text_only=True)
+        assert after["fingerprint"] == before["fingerprint"]
+        assert after["binding_hash"] != before["binding_hash"]
+        reopen(e, monkeypatch)
+        result = action(e, row, "refresh")
+&gt;       assert result["status"] == "NEEDS_REVIEW", result
+E       AssertionError: {'asset_output': {'actor_private': True, 'asset_id': None, 'automatic_model_retry': False, 'contract': 'creative-adapt...ee10702fe74e1398ba5372724ddcea:1', 'created_at': '2026-10-10T21:44:23.954943+00:00', 'created_by': 'local-author', ...}
+E       assert 'MODEL_UNAVAILABLE' == 'NEEDS_REVIEW'
+E         
+E         - NEEDS_REVIEW
+E         + MODEL_UNAVAILABLE
+
+tests/test_v2_adaptation_archive.py:414: AssertionError</failure></testcase><testcase classname="tests.test_v2_adaptation_archive" name="test_completed_archive_recovers_after_same_durable_adapter_is_rebound[postgres-/api]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_adaptation_archive.py:401: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_adaptation_archive" name="test_completed_archive_recovers_after_same_durable_adapter_is_rebound[postgres-/api/v1]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_adaptation_archive.py:401: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase></testsuite></testsuites>

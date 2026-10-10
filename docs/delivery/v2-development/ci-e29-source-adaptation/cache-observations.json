@@ -1,0 +1,586 @@
+{
+  "performance_causality_claim": false,
+  "observations": [
+    {
+      "run_id": 38086668258,
+      "event": "push",
+      "job_id": 114314498705,
+      "name": "Backend execution / postgres / shard 0",
+      "conclusion": "success",
+      "wall_seconds": 3187.0,
+      "log": {
+        "present": true,
+        "path": "job-114314498705.log",
+        "bytes": 236057,
+        "sha256": "822297cc791949fc440c630099666c3af03ddd9c07f54ee435bdc0a6d0cf5521"
+      },
+      "cache_lines": [
+        "2026-10-10T21:12:17.3066609Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:12:18.0496478Z Cache restored successfully",
+        "2026-10-10T21:12:18.0522523Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T22:04:36.9128348Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8, not saving cache."
+      ],
+      "install_check_lines": [
+        "2026-10-10T21:12:19.2670320Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'",
+        "2026-10-10T21:12:19.2671755Z \u001b[36;1mpython -m pip check\u001b[0m",
+        "2026-10-10T21:12:34.9990098Z No broken requirements found."
+      ],
+      "setup_install_test_steps": [
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:12:07Z",
+          "completed_at": "2026-10-10T21:12:07Z",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:12:07Z",
+          "completed_at": "2026-10-10T21:12:18Z",
+          "seconds": 11.0
+        },
+        {
+          "name": "Install backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:19Z",
+          "completed_at": "2026-10-10T21:12:37Z",
+          "seconds": 18.0
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T21:13:39Z",
+          "completed_at": "2026-10-10T22:04:35Z",
+          "seconds": 3056.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-10-10T22:04:36Z",
+          "completed_at": "2026-10-10T22:04:36Z",
+          "seconds": 0.0
+        }
+      ],
+      "performance_causality_claim": false
+    },
+    {
+      "run_id": 38086668258,
+      "event": "push",
+      "job_id": 114314498778,
+      "name": "Backend execution / file / shard 0",
+      "conclusion": "cancelled",
+      "wall_seconds": 1228.0,
+      "log": {
+        "present": true,
+        "path": "job-114314498778.log",
+        "bytes": 142426,
+        "sha256": "413414e55648f1b82e84e04815ea14c507349872458549c3e8600f48920f82c9"
+      },
+      "cache_lines": [
+        "2026-10-10T21:11:56.1231391Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:11:57.2626529Z Cache restored successfully",
+        "2026-10-10T21:11:57.2647949Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8"
+      ],
+      "install_check_lines": [
+        "2026-10-10T21:11:58.3249054Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'",
+        "2026-10-10T21:11:58.3250445Z \u001b[36;1mpython -m pip check\u001b[0m",
+        "2026-10-10T21:12:14.4852009Z No broken requirements found."
+      ],
+      "setup_install_test_steps": [
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:46Z",
+          "completed_at": "2026-10-10T21:11:46Z",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:46Z",
+          "completed_at": "2026-10-10T21:11:57Z",
+          "seconds": 11.0
+        },
+        {
+          "name": "Install backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:11:58Z",
+          "completed_at": "2026-10-10T21:12:16Z",
+          "seconds": 18.0
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 13,
+          "started_at": "2026-10-10T21:13:08Z",
+          "completed_at": "2026-10-10T21:31:47Z",
+          "seconds": 1119.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 29,
+          "started_at": "2026-10-10T21:31:48Z",
+          "completed_at": "2026-10-10T21:31:48Z",
+          "seconds": 0.0
+        }
+      ],
+      "performance_causality_claim": false
+    },
+    {
+      "run_id": 38086668258,
+      "event": "push",
+      "job_id": 114314498787,
+      "name": "Backend execution / postgres / shard 1",
+      "conclusion": "success",
+      "wall_seconds": 3029.0,
+      "log": {
+        "present": true,
+        "path": "job-114314498787.log",
+        "bytes": 237603,
+        "sha256": "618375a323a6199c11392f8d7d071373c06464c69accf63274093c116720b0e7"
+      },
+      "cache_lines": [
+        "2026-10-10T21:12:07.4609491Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:12:08.4635161Z Cache restored successfully",
+        "2026-10-10T21:12:08.4660312Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T22:01:59.2649571Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8, not saving cache."
+      ],
+      "install_check_lines": [
+        "2026-10-10T21:12:09.5155350Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'",
+        "2026-10-10T21:12:09.5156914Z \u001b[36;1mpython -m pip check\u001b[0m",
+        "2026-10-10T21:12:24.8789794Z No broken requirements found."
+      ],
+      "setup_install_test_steps": [
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:57Z",
+          "completed_at": "2026-10-10T21:11:57Z",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:11:57Z",
+          "completed_at": "2026-10-10T21:12:08Z",
+          "seconds": 11.0
+        },
+        {
+          "name": "Install backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:09Z",
+          "completed_at": "2026-10-10T21:12:26Z",
+          "seconds": 17.0
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T21:13:21Z",
+          "completed_at": "2026-10-10T22:01:57Z",
+          "seconds": 2916.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-10-10T22:01:59Z",
+          "completed_at": "2026-10-10T22:01:59Z",
+          "seconds": 0.0
+        }
+      ],
+      "performance_causality_claim": false
+    },
+    {
+      "run_id": 38086668258,
+      "event": "push",
+      "job_id": 114314498823,
+      "name": "Backend execution / original File TCP",
+      "conclusion": "success",
+      "wall_seconds": 84.0,
+      "log": {
+        "present": true,
+        "path": "job-114314498823.log",
+        "bytes": 56103,
+        "sha256": "d2ce252e469c8371176755887638b1a98d08c14e0ffd0bf387bb6e25cf5c2327"
+      },
+      "cache_lines": [
+        "2026-10-10T21:11:54.0160796Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:11:54.7590774Z Cache restored successfully",
+        "2026-10-10T21:11:54.7614155Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:12:55.4295456Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8, not saving cache."
+      ],
+      "install_check_lines": [
+        "2026-10-10T21:11:55.6142961Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'",
+        "2026-10-10T21:11:55.6143958Z \u001b[36;1mpython -m pip check\u001b[0m",
+        "2026-10-10T21:12:08.7520283Z No broken requirements found."
+      ],
+      "setup_install_test_steps": [
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:44Z",
+          "completed_at": "2026-10-10T21:11:45Z",
+          "seconds": 1.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:45Z",
+          "completed_at": "2026-10-10T21:11:54Z",
+          "seconds": 9.0
+        },
+        {
+          "name": "Install identical pinned backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:11:55Z",
+          "completed_at": "2026-10-10T21:12:10Z",
+          "seconds": 15.0
+        },
+        {
+          "name": "Original two-process loopback tests and fail-closed provenance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:15Z",
+          "completed_at": "2026-10-10T21:12:54Z",
+          "seconds": 39.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-10T21:12:55Z",
+          "completed_at": "2026-10-10T21:12:55Z",
+          "seconds": 0.0
+        }
+      ],
+      "performance_causality_claim": false
+    },
+    {
+      "run_id": 38086673970,
+      "event": "pull_request",
+      "job_id": 114314514790,
+      "name": "Backend execution / original File TCP",
+      "conclusion": "success",
+      "wall_seconds": 102.0,
+      "log": {
+        "present": true,
+        "path": "job-114314514790.log",
+        "bytes": 56988,
+        "sha256": "d9ef4d874c14f4dad320fcf7a3ba093a60ef6c0b4af59acae18a16f50daf42da"
+      },
+      "cache_lines": [
+        "2026-10-10T21:12:00.7337479Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:12:01.1120423Z Cache restored successfully",
+        "2026-10-10T21:12:01.1144865Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:13:19.1295069Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8, not saving cache."
+      ],
+      "install_check_lines": [
+        "2026-10-10T21:12:02.1837429Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'",
+        "2026-10-10T21:12:02.1838751Z \u001b[36;1mpython -m pip check\u001b[0m",
+        "2026-10-10T21:12:19.0587416Z No broken requirements found."
+      ],
+      "setup_install_test_steps": [
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:49Z",
+          "completed_at": "2026-10-10T21:11:49Z",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:49Z",
+          "completed_at": "2026-10-10T21:12:01Z",
+          "seconds": 12.0
+        },
+        {
+          "name": "Install identical pinned backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:12:02Z",
+          "completed_at": "2026-10-10T21:12:21Z",
+          "seconds": 19.0
+        },
+        {
+          "name": "Original two-process loopback tests and fail-closed provenance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:28Z",
+          "completed_at": "2026-10-10T21:13:18Z",
+          "seconds": 50.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-10T21:13:19Z",
+          "completed_at": "2026-10-10T21:13:19Z",
+          "seconds": 0.0
+        }
+      ],
+      "performance_causality_claim": false
+    },
+    {
+      "run_id": 38086673970,
+      "event": "pull_request",
+      "job_id": 114314514876,
+      "name": "Backend execution / postgres / shard 0",
+      "conclusion": "cancelled",
+      "wall_seconds": 3321.0,
+      "log": {
+        "present": true,
+        "path": "job-114314514876.log",
+        "bytes": 167102,
+        "sha256": "3373624f04948e030d6783d148c9fec7f1d728155ddf5599fac46d4d61e8203d"
+      },
+      "cache_lines": [
+        "2026-10-10T21:12:12.7018156Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:12:14.5940067Z Cache restored successfully",
+        "2026-10-10T21:12:14.5969002Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8"
+      ],
+      "install_check_lines": [
+        "2026-10-10T21:12:15.6983392Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'",
+        "2026-10-10T21:12:15.6984754Z \u001b[36;1mpython -m pip check\u001b[0m",
+        "2026-10-10T21:12:31.6417535Z No broken requirements found."
+      ],
+      "setup_install_test_steps": [
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:12:01Z",
+          "completed_at": "2026-10-10T21:12:01Z",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:12:01Z",
+          "completed_at": "2026-10-10T21:12:14Z",
+          "seconds": 13.0
+        },
+        {
+          "name": "Install backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:15Z",
+          "completed_at": "2026-10-10T21:12:33Z",
+          "seconds": 18.0
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 14,
+          "started_at": "2026-10-10T21:13:39Z",
+          "completed_at": "2026-10-10T22:06:53Z",
+          "seconds": 3194.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 30,
+          "started_at": "2026-10-10T22:06:55Z",
+          "completed_at": "2026-10-10T22:06:55Z",
+          "seconds": 0.0
+        }
+      ],
+      "performance_causality_claim": false
+    },
+    {
+      "run_id": 38086673970,
+      "event": "pull_request",
+      "job_id": 114314514934,
+      "name": "Backend execution / file / shard 0",
+      "conclusion": "cancelled",
+      "wall_seconds": 1227.0,
+      "log": {
+        "present": true,
+        "path": "job-114314514934.log",
+        "bytes": 143671,
+        "sha256": "651cee4433c0e4de66ba4861adc2e4ec59f036be1e1f193631a173c526a1418f"
+      },
+      "cache_lines": [
+        "2026-10-10T21:12:01.0337806Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:12:02.3750487Z Cache restored successfully",
+        "2026-10-10T21:12:02.3769528Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8"
+      ],
+      "install_check_lines": [
+        "2026-10-10T21:12:03.4216461Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'",
+        "2026-10-10T21:12:03.4217836Z \u001b[36;1mpython -m pip check\u001b[0m",
+        "2026-10-10T21:12:17.8847002Z No broken requirements found."
+      ],
+      "setup_install_test_steps": [
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:51Z",
+          "completed_at": "2026-10-10T21:11:51Z",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:51Z",
+          "completed_at": "2026-10-10T21:12:02Z",
+          "seconds": 11.0
+        },
+        {
+          "name": "Install backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:12:03Z",
+          "completed_at": "2026-10-10T21:12:19Z",
+          "seconds": 16.0
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 13,
+          "started_at": "2026-10-10T21:13:14Z",
+          "completed_at": "2026-10-10T21:31:52Z",
+          "seconds": 1118.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 29,
+          "started_at": "2026-10-10T21:31:54Z",
+          "completed_at": "2026-10-10T21:31:54Z",
+          "seconds": 0.0
+        }
+      ],
+      "performance_causality_claim": false
+    },
+    {
+      "run_id": 38086673970,
+      "event": "pull_request",
+      "job_id": 114314514970,
+      "name": "Backend execution / postgres / shard 1",
+      "conclusion": "success",
+      "wall_seconds": 2748.0,
+      "log": {
+        "present": true,
+        "path": "job-114314514970.log",
+        "bytes": 238215,
+        "sha256": "a1f4c8beed67de537198dbf658d292204a0421508207b359b6211c365c2f0efb"
+      },
+      "cache_lines": [
+        "2026-10-10T21:12:05.7838210Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:12:07.0992417Z Cache restored successfully",
+        "2026-10-10T21:12:07.1014596Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8",
+        "2026-10-10T21:57:22.3188517Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8, not saving cache."
+      ],
+      "install_check_lines": [
+        "2026-10-10T21:12:08.0803247Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'",
+        "2026-10-10T21:12:08.0804261Z \u001b[36;1mpython -m pip check\u001b[0m",
+        "2026-10-10T21:12:21.5890077Z No broken requirements found."
+      ],
+      "setup_install_test_steps": [
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:56Z",
+          "completed_at": "2026-10-10T21:11:56Z",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:11:56Z",
+          "completed_at": "2026-10-10T21:12:07Z",
+          "seconds": 11.0
+        },
+        {
+          "name": "Install backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:08Z",
+          "completed_at": "2026-10-10T21:12:23Z",
+          "seconds": 15.0
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T21:13:17Z",
+          "completed_at": "2026-10-10T21:57:20Z",
+          "seconds": 2643.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-10-10T21:57:22Z",
+          "completed_at": "2026-10-10T21:57:22Z",
+          "seconds": 0.0
+        }
+      ],
+      "performance_causality_claim": false
+    }
+  ]
+}

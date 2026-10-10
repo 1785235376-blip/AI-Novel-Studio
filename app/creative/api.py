@@ -254,7 +254,7 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
     @router.get("/adaptation-proposals")
     def adaptations(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke_adaptation(request, nid, x_session_token, x_branch_id, "domain.read",
-                      lambda actor, scope, guard: {"items": service.adaptations.list(nid, scope, actor)})
+                      lambda actor, scope, guard: {"items": service.adaptations.list(nid, scope, actor, guard=guard)})
 
     @router.post("/adaptation-proposals", status_code=201)
     def create_adaptation(nid: str, request: Request, body: AdaptationIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -268,7 +268,7 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
     @router.get("/adaptation-proposals/{rid}")
     def adaptation(nid: str, request: Request, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke_adaptation(request, nid, x_session_token, x_branch_id, "domain.read",
-                      lambda actor, scope, guard: service.adaptations.get(nid, scope, actor, rid))
+                      lambda actor, scope, guard: service.adaptations.get(nid, scope, actor, rid, guard=guard))
 
     @router.post("/adaptation-proposals/{rid}/preview")
     def preview_adaptation(nid: str, request: Request, rid: str, body: AdaptationPreview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

@@ -1,0 +1,302 @@
+[
+  {
+    "run_id": 38086668258,
+    "event": "push",
+    "artifact_id": 11683941917,
+    "schema_version": 1,
+    "scope": "backend",
+    "identity": {
+      "checked_out_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "source_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+      "event_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "run_id": "38086668258",
+      "run_attempt": "1",
+      "repository": "1785235376-blip/AI-Novel-Studio",
+      "python_version": "3.12.9",
+      "platform": "linux",
+      "source_manifest_sha256": "c57f8890a3274efa02274ce4e9ced3319ac7416dea89b153003266281905d5c7",
+      "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+    },
+    "backend": "postgres",
+    "shard": {
+      "index": 1,
+      "count": 2
+    },
+    "inventory_digest": "4ae5617e9e770d6cd6db89ef540252b6a826aeeade43c67d59626c05f6b2a47f",
+    "pytest_exitstatus": 0,
+    "complete": true,
+    "junit_filename": "backend.xml",
+    "inventory_count": 11533,
+    "assigned_count": 5765,
+    "collection_errors": [],
+    "validation_errors": [],
+    "junit_present": true,
+    "raw_phase_outcomes": {
+      "setup/passed": 3777,
+      "call/passed": 3777,
+      "teardown/passed": 5765,
+      "setup/skipped": 1988
+    },
+    "raw_failed_events": [],
+    "last_event": {
+      "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api]",
+      "when": "teardown",
+      "outcome": "passed",
+      "wasxfail": false,
+      "skip_reason": null
+    },
+    "raw_events_are_not_final_test_counts": true,
+    "classification": "COMPLETE_SHARD_PASS",
+    "additional_classification": null
+  },
+  {
+    "run_id": 38086668258,
+    "event": "push",
+    "artifact_id": 11683650092,
+    "schema_version": 1,
+    "scope": "backend",
+    "identity": {
+      "checked_out_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "source_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+      "event_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "run_id": "38086668258",
+      "run_attempt": "1",
+      "repository": "1785235376-blip/AI-Novel-Studio",
+      "python_version": "3.12.9",
+      "platform": "linux",
+      "source_manifest_sha256": "c57f8890a3274efa02274ce4e9ced3319ac7416dea89b153003266281905d5c7",
+      "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+    },
+    "backend": "file",
+    "shard": {
+      "index": 0,
+      "count": 1
+    },
+    "inventory_digest": "4ae5617e9e770d6cd6db89ef540252b6a826aeeade43c67d59626c05f6b2a47f",
+    "pytest_exitstatus": null,
+    "complete": false,
+    "junit_filename": "backend.xml",
+    "inventory_count": 11533,
+    "assigned_count": 11533,
+    "collection_errors": [],
+    "validation_errors": [],
+    "junit_present": false,
+    "raw_phase_outcomes": {
+      "setup/passed": 6679,
+      "call/passed": 6678,
+      "teardown/passed": 10123,
+      "setup/skipped": 3445
+    },
+    "raw_failed_events": [],
+    "last_event": {
+      "nodeid": "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_mounted_seed_preserves_authority_scan_and_readonly_evidence[default-off]",
+      "when": "setup",
+      "outcome": "passed",
+      "wasxfail": false,
+      "skip_reason": null
+    },
+    "raw_events_are_not_final_test_counts": true,
+    "classification": "INCOMPLETE_HOSTED_CI",
+    "additional_classification": null
+  },
+  {
+    "run_id": 38086668258,
+    "event": "push",
+    "artifact_id": 11683054153,
+    "schema_version": 1,
+    "scope": "backend",
+    "identity": {
+      "checked_out_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "source_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+      "event_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "run_id": "38086668258",
+      "run_attempt": "1",
+      "repository": "1785235376-blip/AI-Novel-Studio",
+      "python_version": "3.12.9",
+      "platform": "linux",
+      "source_manifest_sha256": "c57f8890a3274efa02274ce4e9ced3319ac7416dea89b153003266281905d5c7",
+      "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+    },
+    "backend": "postgres",
+    "shard": {
+      "index": 0,
+      "count": 2
+    },
+    "inventory_digest": "4ae5617e9e770d6cd6db89ef540252b6a826aeeade43c67d59626c05f6b2a47f",
+    "pytest_exitstatus": 0,
+    "complete": true,
+    "junit_filename": "backend.xml",
+    "inventory_count": 11533,
+    "assigned_count": 5768,
+    "collection_errors": [],
+    "validation_errors": [],
+    "junit_present": true,
+    "raw_phase_outcomes": {
+      "setup/skipped": 1920,
+      "teardown/passed": 5768,
+      "setup/passed": 3848,
+      "call/passed": 3848
+    },
+    "raw_failed_events": [],
+    "last_event": {
+      "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api/v1]",
+      "when": "teardown",
+      "outcome": "passed",
+      "wasxfail": false,
+      "skip_reason": null
+    },
+    "raw_events_are_not_final_test_counts": true,
+    "classification": "COMPLETE_SHARD_PASS",
+    "additional_classification": null
+  },
+  {
+    "run_id": 38086673970,
+    "event": "pull_request",
+    "artifact_id": 11683906451,
+    "schema_version": 1,
+    "scope": "backend",
+    "identity": {
+      "checked_out_sha": "395d66570bfd7f8a0e39673619448553e646fa50",
+      "source_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+      "event_sha": "395d66570bfd7f8a0e39673619448553e646fa50",
+      "run_id": "38086673970",
+      "run_attempt": "1",
+      "repository": "1785235376-blip/AI-Novel-Studio",
+      "python_version": "3.12.9",
+      "platform": "linux",
+      "source_manifest_sha256": "c57f8890a3274efa02274ce4e9ced3319ac7416dea89b153003266281905d5c7",
+      "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+    },
+    "backend": "postgres",
+    "shard": {
+      "index": 1,
+      "count": 2
+    },
+    "inventory_digest": "4ae5617e9e770d6cd6db89ef540252b6a826aeeade43c67d59626c05f6b2a47f",
+    "pytest_exitstatus": 0,
+    "complete": true,
+    "junit_filename": "backend.xml",
+    "inventory_count": 11533,
+    "assigned_count": 5765,
+    "collection_errors": [],
+    "validation_errors": [],
+    "junit_present": true,
+    "raw_phase_outcomes": {
+      "setup/passed": 3777,
+      "call/passed": 3777,
+      "teardown/passed": 5765,
+      "setup/skipped": 1988
+    },
+    "raw_failed_events": [],
+    "last_event": {
+      "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api]",
+      "when": "teardown",
+      "outcome": "passed",
+      "wasxfail": false,
+      "skip_reason": null
+    },
+    "raw_events_are_not_final_test_counts": true,
+    "classification": "COMPLETE_SHARD_PASS",
+    "additional_classification": null
+  },
+  {
+    "run_id": 38086673970,
+    "event": "pull_request",
+    "artifact_id": 11683600108,
+    "schema_version": 1,
+    "scope": "backend",
+    "identity": {
+      "checked_out_sha": "395d66570bfd7f8a0e39673619448553e646fa50",
+      "source_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+      "event_sha": "395d66570bfd7f8a0e39673619448553e646fa50",
+      "run_id": "38086673970",
+      "run_attempt": "1",
+      "repository": "1785235376-blip/AI-Novel-Studio",
+      "python_version": "3.12.9",
+      "platform": "linux",
+      "source_manifest_sha256": "c57f8890a3274efa02274ce4e9ced3319ac7416dea89b153003266281905d5c7",
+      "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+    },
+    "backend": "file",
+    "shard": {
+      "index": 0,
+      "count": 1
+    },
+    "inventory_digest": "4ae5617e9e770d6cd6db89ef540252b6a826aeeade43c67d59626c05f6b2a47f",
+    "pytest_exitstatus": null,
+    "complete": false,
+    "junit_filename": "backend.xml",
+    "inventory_count": 11533,
+    "assigned_count": 11533,
+    "collection_errors": [],
+    "validation_errors": [],
+    "junit_present": false,
+    "raw_phase_outcomes": {
+      "setup/passed": 6896,
+      "call/passed": 6895,
+      "teardown/passed": 10411,
+      "setup/skipped": 3516
+    },
+    "raw_failed_events": [],
+    "last_event": {
+      "nodeid": "tests/test_v2_graph_text_assets_api.py::test_archive_failure_response_masks_data_then_original_refresh_recovers[file-/api]",
+      "when": "setup",
+      "outcome": "passed",
+      "wasxfail": false,
+      "skip_reason": null
+    },
+    "raw_events_are_not_final_test_counts": true,
+    "classification": "INCOMPLETE_HOSTED_CI",
+    "additional_classification": null
+  },
+  {
+    "run_id": 38086673970,
+    "event": "pull_request",
+    "artifact_id": 11682924805,
+    "schema_version": 1,
+    "scope": "backend",
+    "identity": {
+      "checked_out_sha": "395d66570bfd7f8a0e39673619448553e646fa50",
+      "source_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+      "event_sha": "395d66570bfd7f8a0e39673619448553e646fa50",
+      "run_id": "38086673970",
+      "run_attempt": "1",
+      "repository": "1785235376-blip/AI-Novel-Studio",
+      "python_version": "3.12.9",
+      "platform": "linux",
+      "source_manifest_sha256": "c57f8890a3274efa02274ce4e9ced3319ac7416dea89b153003266281905d5c7",
+      "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+    },
+    "backend": "postgres",
+    "shard": {
+      "index": 0,
+      "count": 2
+    },
+    "inventory_digest": "4ae5617e9e770d6cd6db89ef540252b6a826aeeade43c67d59626c05f6b2a47f",
+    "pytest_exitstatus": null,
+    "complete": false,
+    "junit_filename": "backend.xml",
+    "inventory_count": 11533,
+    "assigned_count": 5768,
+    "collection_errors": [],
+    "validation_errors": [],
+    "junit_present": false,
+    "raw_phase_outcomes": {
+      "setup/skipped": 1898,
+      "teardown/passed": 5694,
+      "setup/passed": 3797,
+      "call/passed": 3796
+    },
+    "raw_failed_events": [],
+    "last_event": {
+      "nodeid": "tests/test_v2_text_execution_admission.py::test_oversized_receipt_rejected_before_original_admission[postgres-7200-TEXT_RESULT_METADATA_LIMIT-\"]",
+      "when": "setup",
+      "outcome": "passed",
+      "wasxfail": false,
+      "skip_reason": null
+    },
+    "raw_events_are_not_final_test_counts": true,
+    "classification": "INCOMPLETE_HOSTED_CI",
+    "additional_classification": null
+  }
+]

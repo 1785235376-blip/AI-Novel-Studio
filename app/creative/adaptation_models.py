@@ -1,7 +1,7 @@
 """Source-bound screenplay proposals; model data never carries write authority."""
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, model_validator, model_serializer
 
 from .models import Identifier, ProposalAction, Scene, StrictCreativeModel
 
@@ -70,6 +70,13 @@ class AdaptationPreview(ProposalAction):
     allow_synthetic: bool = Field(default=False, strict=True)
 
 
+class AdaptationArchiveBinding(StrictCreativeModel):
+    contract: Literal["creative-adaptation-text-asset/1"]
+    execution_receipt_contract: Literal["creative-adaptation-text-execution/1"]
+    final_publication_contract: Literal["creative-adaptation-terminal-publication/1"]
+    source_proposal_version: int = Field(ge=1, le=2**53 - 1, strict=True)
+
+
 class AdaptationJobBinding(StrictCreativeModel):
     contract: Literal["CREATIVE_ADAPTATION_V1"] = "CREATIVE_ADAPTATION_V1"
     proposal_id: Identifier
@@ -81,3 +88,18 @@ class AdaptationJobBinding(StrictCreativeModel):
     source_version: int = Field(ge=1, strict=True)
     source_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
     preview_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
+    archive: AdaptationArchiveBinding | None = None
+
+    @model_serializer(mode="wrap")
+    def preserve_legacy_shape(self, handler):
+        result = handler(self)
+        if self.archive is None: result.pop("archive", None)
+        return result
+
+
+def terminal_publication(job):
+    """Passive proof minted only by the original executor's final durable publish."""
+    from hashlib import sha256
+    return {"schema_version": 1, "contract": "creative-adaptation-terminal-publication/1",
+        "job_id": job.id, "request_digest": job.expected_request_digest,
+        "output_digest": sha256(job.output.encode("utf-8")).hexdigest()}

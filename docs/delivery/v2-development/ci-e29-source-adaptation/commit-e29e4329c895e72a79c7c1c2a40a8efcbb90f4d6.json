@@ -1,0 +1,35 @@
+{
+  "sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+  "node_id": "C_kwDOUEnaNNoAKGUyOWU0MzI5Yzg5NWU3MmE3OWM3YzFjMmE0MGE4ZWZjYmI5MGY0ZDY",
+  "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+  "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+  "author": {
+    "name": "1785235376-blip",
+    "email": "1785235376@qq.com",
+    "date": "2026-10-10T21:11:15Z"
+  },
+  "committer": {
+    "name": "1785235376-blip",
+    "email": "1785235376@qq.com",
+    "date": "2026-10-10T21:11:15Z"
+  },
+  "tree": {
+    "sha": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/trees/c592ef05396427a7f4da9bff4cf2818e6b6a14f5"
+  },
+  "message": "feat(v2): add source-bound screenplay adaptation checkpoint\n\nReuse original Creative, Author, Router, Broker and Job owners for reviewed\nsingle-chapter screenplay proposals. Fence terminal publication and Host ABA;\nretain original failure evidence and mark Asset archival/real inference partial.\nIntegrate B compact catalog and hosted capacity evidence (4d45acb6, 60b19c72).\n\nFinal source: File/PG 238 passed each; UI 2439 passed; infrastructure 352 passed.\nHistorical FAILED_OBSERVED and incomplete strict hosted coverage remain.",
+  "parents": [
+    {
+      "sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/899d40df5273413d987f9ee98d41a7405ed16d0a",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/899d40df5273413d987f9ee98d41a7405ed16d0a"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

@@ -1,0 +1,1833 @@
+{
+  "total_count": 11,
+  "jobs": [
+    {
+      "id": 114314514790,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0RZg",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514790",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114314514790",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:11:39Z",
+      "completed_at": "2026-10-10T21:13:21Z",
+      "name": "Backend execution / original File TCP",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:11:39Z",
+          "completed_at": "2026-10-10T21:11:40Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:11:40Z",
+          "completed_at": "2026-10-10T21:11:49Z"
+        },
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:49Z",
+          "completed_at": "2026-10-10T21:11:49Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:49Z",
+          "completed_at": "2026-10-10T21:12:01Z"
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:12:01Z",
+          "completed_at": "2026-10-10T21:12:02Z"
+        },
+        {
+          "name": "Install identical pinned backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:12:02Z",
+          "completed_at": "2026-10-10T21:12:21Z"
+        },
+        {
+          "name": "Fail-closed TCP evidence and joiner self-tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:12:21Z",
+          "completed_at": "2026-10-10T21:12:28Z"
+        },
+        {
+          "name": "Original two-process loopback tests and fail-closed provenance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:28Z",
+          "completed_at": "2026-10-10T21:13:18Z"
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T21:13:18Z",
+          "completed_at": "2026-10-10T21:13:18Z"
+        },
+        {
+          "name": "Upload original TCP receipts unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T21:13:18Z",
+          "completed_at": "2026-10-10T21:13:18Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-10T21:13:19Z",
+          "completed_at": "2026-10-10T21:13:19Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-10T21:13:19Z",
+          "completed_at": "2026-10-10T21:13:19Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-10T21:13:19Z",
+          "completed_at": "2026-10-10T21:13:19Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514790",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002408,
+      "runner_name": "GitHub Actions 1000002408",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114314514876,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0RvA",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514876",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114314514876",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:11:39Z",
+      "completed_at": "2026-10-10T22:07:00Z",
+      "name": "Backend execution / postgres / shard 0",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:11:40Z",
+          "completed_at": "2026-10-10T21:11:41Z"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:11:41Z",
+          "completed_at": "2026-10-10T21:11:52Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:52Z",
+          "completed_at": "2026-10-10T21:12:01Z"
+        },
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:12:01Z",
+          "completed_at": "2026-10-10T21:12:01Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:12:01Z",
+          "completed_at": "2026-10-10T21:12:14Z"
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:12:14Z",
+          "completed_at": "2026-10-10T21:12:15Z"
+        },
+        {
+          "name": "Keep V2 backend state inside its owned checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:12:15Z",
+          "completed_at": "2026-10-10T21:12:15Z"
+        },
+        {
+          "name": "Install backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:15Z",
+          "completed_at": "2026-10-10T21:12:33Z"
+        },
+        {
+          "name": "Install real media decoding and assembly tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T21:12:33Z",
+          "completed_at": "2026-10-10T21:13:00Z"
+        },
+        {
+          "name": "Install matching PostgreSQL recovery tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T21:13:00Z",
+          "completed_at": "2026-10-10T21:13:02Z"
+        },
+        {
+          "name": "Initialize disposable PostgreSQL",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T21:13:02Z",
+          "completed_at": "2026-10-10T21:13:03Z"
+        },
+        {
+          "name": "Prepare pinned OFL CJK font and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T21:13:03Z",
+          "completed_at": "2026-10-10T21:13:24Z"
+        },
+        {
+          "name": "Fail-closed coverage infrastructure self-tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T21:13:24Z",
+          "completed_at": "2026-10-10T21:13:39Z"
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 14,
+          "started_at": "2026-10-10T21:13:39Z",
+          "completed_at": "2026-10-10T22:06:53Z"
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-10T22:06:53Z",
+          "completed_at": "2026-10-10T22:06:53Z"
+        },
+        {
+          "name": "Upload backend receipts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-10T22:06:53Z",
+          "completed_at": "2026-10-10T22:06:55Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 30,
+          "started_at": "2026-10-10T22:06:55Z",
+          "completed_at": "2026-10-10T22:06:55Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31,
+          "started_at": "2026-10-10T22:06:55Z",
+          "completed_at": "2026-10-10T22:06:55Z"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32,
+          "started_at": "2026-10-10T22:06:55Z",
+          "completed_at": "2026-10-10T22:06:56Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33,
+          "started_at": "2026-10-10T22:06:56Z",
+          "completed_at": "2026-10-10T22:06:56Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514876",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002409,
+      "runner_name": "GitHub Actions 1000002409",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114314514903,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0R1w",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514903",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114314514903",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:11:39Z",
+      "completed_at": "2026-10-10T21:28:53Z",
+      "name": "Frontend / unit-type-build-tokens",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:11:40Z",
+          "completed_at": "2026-10-10T21:11:41Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:11:41Z",
+          "completed_at": "2026-10-10T21:11:50Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4.4.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:50Z",
+          "completed_at": "2026-10-10T21:11:55Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:55Z",
+          "completed_at": "2026-10-10T21:12:03Z"
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:12:03Z",
+          "completed_at": "2026-10-10T21:12:04Z"
+        },
+        {
+          "name": "Install locked frontend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:12:04Z",
+          "completed_at": "2026-10-10T21:12:07Z"
+        },
+        {
+          "name": "Frontend unit suite",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:12:07Z",
+          "completed_at": "2026-10-10T21:14:25Z"
+        },
+        {
+          "name": "Type check and production build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:14:25Z",
+          "completed_at": "2026-10-10T21:14:45Z"
+        },
+        {
+          "name": "Design-token lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T21:14:45Z",
+          "completed_at": "2026-10-10T21:14:46Z"
+        },
+        {
+          "name": "Install Chromium for geometry checks",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T21:14:46Z",
+          "completed_at": "2026-10-10T21:15:08Z"
+        },
+        {
+          "name": "Browser geometry (no golden updates)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T21:15:08Z",
+          "completed_at": "2026-10-10T21:15:21Z"
+        },
+        {
+          "name": "Install isolated backend for business browser journeys",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T21:15:21Z",
+          "completed_at": "2026-10-10T21:15:35Z"
+        },
+        {
+          "name": "Local Interop actual TypeScript client and independent peer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T21:15:35Z",
+          "completed_at": "2026-10-10T21:15:47Z"
+        },
+        {
+          "name": "Local Interop real-process browser journeys (MOCK_ONLY)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T21:15:47Z",
+          "completed_at": "2026-10-10T21:16:24Z"
+        },
+        {
+          "name": "Business browser journeys (synthetic data; explicit mock boundary)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-10T21:16:24Z",
+          "completed_at": "2026-10-10T21:16:40Z"
+        },
+        {
+          "name": "Install real media validators for experimental browser workflows",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-10T21:16:40Z",
+          "completed_at": "2026-10-10T21:16:59Z"
+        },
+        {
+          "name": "Experimental R3 business journeys and default-off regression",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-10T21:16:59Z",
+          "completed_at": "2026-10-10T21:17:48Z"
+        },
+        {
+          "name": "Prepare reviewed-layout CJK font for browser journeys",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-10T21:17:48Z",
+          "completed_at": "2026-10-10T21:18:03Z"
+        },
+        {
+          "name": "R4 writing recovery and workspace journeys",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-10T21:18:03Z",
+          "completed_at": "2026-10-10T21:27:26Z"
+        },
+        {
+          "name": "Export recovery browser isolation and screenshots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-10T21:27:26Z",
+          "completed_at": "2026-10-10T21:27:32Z"
+        },
+        {
+          "name": "Functional surface browser journeys",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-10T21:27:32Z",
+          "completed_at": "2026-10-10T21:28:21Z"
+        },
+        {
+          "name": "Branch manuscript two-client browser journeys",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-10-10T21:28:21Z",
+          "completed_at": "2026-10-10T21:28:38Z"
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-10-10T21:28:38Z",
+          "completed_at": "2026-10-10T21:28:38Z"
+        },
+        {
+          "name": "Prepare bounded original PNG evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-10-10T21:28:38Z",
+          "completed_at": "2026-10-10T21:28:39Z"
+        },
+        {
+          "name": "Upload source-labelled PNG evidence part 1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-10-10T21:28:39Z",
+          "completed_at": "2026-10-10T21:28:41Z"
+        },
+        {
+          "name": "Upload source-labelled PNG evidence part 2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-10-10T21:28:41Z",
+          "completed_at": "2026-10-10T21:28:43Z"
+        },
+        {
+          "name": "Upload source-labelled PNG evidence part 3",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 27,
+          "started_at": "2026-10-10T21:28:43Z",
+          "completed_at": "2026-10-10T21:28:43Z"
+        },
+        {
+          "name": "Upload source-labelled PNG evidence part 4",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 28,
+          "started_at": "2026-10-10T21:28:43Z",
+          "completed_at": "2026-10-10T21:28:43Z"
+        },
+        {
+          "name": "Upload compact frontend evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-10-10T21:28:43Z",
+          "completed_at": "2026-10-10T21:28:45Z"
+        },
+        {
+          "name": "Upload frontend receipts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-10-10T21:28:45Z",
+          "completed_at": "2026-10-10T21:28:47Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 58,
+          "started_at": "2026-10-10T21:28:47Z",
+          "completed_at": "2026-10-10T21:28:47Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4.4.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 59,
+          "started_at": "2026-10-10T21:28:47Z",
+          "completed_at": "2026-10-10T21:28:47Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 60,
+          "started_at": "2026-10-10T21:28:47Z",
+          "completed_at": "2026-10-10T21:28:48Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 61,
+          "started_at": "2026-10-10T21:28:48Z",
+          "completed_at": "2026-10-10T21:28:48Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514903",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002412,
+      "runner_name": "GitHub Actions 1000002412",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114314514910,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0R3g",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514910",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114314514910",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:11:39Z",
+      "completed_at": "2026-10-10T21:14:22Z",
+      "name": "V2 / Creative live workflows and geometry",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:11:39Z",
+          "completed_at": "2026-10-10T21:11:40Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:11:40Z",
+          "completed_at": "2026-10-10T21:11:49Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4.4.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:49Z",
+          "completed_at": "2026-10-10T21:11:54Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:54Z",
+          "completed_at": "2026-10-10T21:12:03Z"
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:12:03Z",
+          "completed_at": "2026-10-10T21:12:04Z"
+        },
+        {
+          "name": "Install locked V2 browser dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:12:04Z",
+          "completed_at": "2026-10-10T21:12:29Z"
+        },
+        {
+          "name": "Install isolated backend for real File and HTTP journeys",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:12:29Z",
+          "completed_at": "2026-10-10T21:12:48Z"
+        },
+        {
+          "name": "V2 live creative workflows (real File and HTTP; mock providers)",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:48Z",
+          "completed_at": "2026-10-10T21:13:57Z"
+        },
+        {
+          "name": "V2 keyboard recovery and fixture geometry (no golden updates)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T21:13:57Z",
+          "completed_at": "2026-10-10T21:14:18Z"
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T21:14:18Z",
+          "completed_at": "2026-10-10T21:14:18Z"
+        },
+        {
+          "name": "Upload V2 browser receipts and unchanged failure evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T21:14:18Z",
+          "completed_at": "2026-10-10T21:14:20Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 20,
+          "started_at": "2026-10-10T21:14:20Z",
+          "completed_at": "2026-10-10T21:14:20Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4.4.0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 21,
+          "started_at": "2026-10-10T21:14:20Z",
+          "completed_at": "2026-10-10T21:14:20Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-10-10T21:14:20Z",
+          "completed_at": "2026-10-10T21:14:20Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-10-10T21:14:20Z",
+          "completed_at": "2026-10-10T21:14:20Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514910",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002410,
+      "runner_name": "GitHub Actions 1000002410",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114314514922,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0R6g",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514922",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114314514922",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:11:39Z",
+      "completed_at": "2026-10-10T21:15:03Z",
+      "name": "V2 / Independent studio live media",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:11:39Z",
+          "completed_at": "2026-10-10T21:11:40Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:11:40Z",
+          "completed_at": "2026-10-10T21:11:49Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4.4.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:49Z",
+          "completed_at": "2026-10-10T21:11:53Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:53Z",
+          "completed_at": "2026-10-10T21:12:00Z"
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:12:00Z",
+          "completed_at": "2026-10-10T21:12:00Z"
+        },
+        {
+          "name": "Install locked V2 browser dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:12:00Z",
+          "completed_at": "2026-10-10T21:12:22Z"
+        },
+        {
+          "name": "Install isolated backend for real File and HTTP journeys",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:12:22Z",
+          "completed_at": "2026-10-10T21:12:35Z"
+        },
+        {
+          "name": "Install and record explicit independent-media decoders",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:35Z",
+          "completed_at": "2026-10-10T21:12:45Z"
+        },
+        {
+          "name": "Independent studios live media (real File and HTTP; mock providers)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T21:12:45Z",
+          "completed_at": "2026-10-10T21:14:58Z"
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T21:14:58Z",
+          "completed_at": "2026-10-10T21:14:58Z"
+        },
+        {
+          "name": "Upload independent-media receipts and first failure evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T21:14:58Z",
+          "completed_at": "2026-10-10T21:14:59Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-10T21:14:59Z",
+          "completed_at": "2026-10-10T21:14:59Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4.4.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-10T21:14:59Z",
+          "completed_at": "2026-10-10T21:14:59Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-10-10T21:14:59Z",
+          "completed_at": "2026-10-10T21:14:59Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-10-10T21:14:59Z",
+          "completed_at": "2026-10-10T21:14:59Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514922",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002411,
+      "runner_name": "GitHub Actions 1000002411",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114314514934,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0R9g",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514934",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114314514934",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:11:39Z",
+      "completed_at": "2026-10-10T21:32:06Z",
+      "name": "Backend execution / file / shard 0",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:11:40Z",
+          "completed_at": "2026-10-10T21:11:41Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:11:41Z",
+          "completed_at": "2026-10-10T21:11:51Z"
+        },
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:51Z",
+          "completed_at": "2026-10-10T21:11:51Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:51Z",
+          "completed_at": "2026-10-10T21:12:02Z"
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:12:02Z",
+          "completed_at": "2026-10-10T21:12:03Z"
+        },
+        {
+          "name": "Keep V2 backend state inside its owned checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:12:03Z",
+          "completed_at": "2026-10-10T21:12:03Z"
+        },
+        {
+          "name": "Install backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:12:03Z",
+          "completed_at": "2026-10-10T21:12:19Z"
+        },
+        {
+          "name": "Install real media decoding and assembly tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:19Z",
+          "completed_at": "2026-10-10T21:12:44Z"
+        },
+        {
+          "name": "Install matching PostgreSQL recovery tools",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-10-10T21:12:44Z",
+          "completed_at": "2026-10-10T21:12:44Z"
+        },
+        {
+          "name": "Initialize disposable PostgreSQL",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-10-10T21:12:44Z",
+          "completed_at": "2026-10-10T21:12:44Z"
+        },
+        {
+          "name": "Prepare pinned OFL CJK font and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T21:12:44Z",
+          "completed_at": "2026-10-10T21:13:02Z"
+        },
+        {
+          "name": "Fail-closed coverage infrastructure self-tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T21:13:02Z",
+          "completed_at": "2026-10-10T21:13:14Z"
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 13,
+          "started_at": "2026-10-10T21:13:14Z",
+          "completed_at": "2026-10-10T21:31:52Z"
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T21:31:52Z",
+          "completed_at": "2026-10-10T21:31:52Z"
+        },
+        {
+          "name": "Upload backend receipts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-10T21:31:52Z",
+          "completed_at": "2026-10-10T21:31:54Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 29,
+          "started_at": "2026-10-10T21:31:54Z",
+          "completed_at": "2026-10-10T21:31:54Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-10-10T21:31:54Z",
+          "completed_at": "2026-10-10T21:31:54Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31,
+          "started_at": "2026-10-10T21:31:54Z",
+          "completed_at": "2026-10-10T21:31:54Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514934",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002413,
+      "runner_name": "GitHub Actions 1000002413",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114314514953,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0SCQ",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514953",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114314514953",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:12:38Z",
+      "completed_at": "2026-10-10T21:15:31Z",
+      "name": "Windows / Host compile and native contracts",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:12:39Z",
+          "completed_at": "2026-10-10T21:12:40Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:12:40Z",
+          "completed_at": "2026-10-10T21:12:55Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:12:55Z",
+          "completed_at": "2026-10-10T21:13:44Z"
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:13:44Z",
+          "completed_at": "2026-10-10T21:14:10Z"
+        },
+        {
+          "name": "Prepare isolated Windows runtime and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:14:10Z",
+          "completed_at": "2026-10-10T21:14:11Z"
+        },
+        {
+          "name": "Install pinned Python runtime dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:14:11Z",
+          "completed_at": "2026-10-10T21:14:41Z"
+        },
+        {
+          "name": "Compile fresh DesktopHost WinExe",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:14:41Z",
+          "completed_at": "2026-10-10T21:14:59Z"
+        },
+        {
+          "name": "Windows native and packaging contracts (not window acceptance)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:14:59Z",
+          "completed_at": "2026-10-10T21:15:17Z"
+        },
+        {
+          "name": "V2 Windows environment fixture contracts (no GPU or inference acceptance)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T21:15:17Z",
+          "completed_at": "2026-10-10T21:15:25Z"
+        },
+        {
+          "name": "Upload internal Host build and receipts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T21:15:25Z",
+          "completed_at": "2026-10-10T21:15:27Z"
+        },
+        {
+          "name": "Post Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-10T21:15:27Z",
+          "completed_at": "2026-10-10T21:15:27Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-10T21:15:27Z",
+          "completed_at": "2026-10-10T21:15:28Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-10T21:15:28Z",
+          "completed_at": "2026-10-10T21:15:29Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-10T21:15:29Z",
+          "completed_at": "2026-10-10T21:15:29Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514953",
+      "labels": [
+        "windows-2022"
+      ],
+      "runner_id": 1000002415,
+      "runner_name": "GitHub Actions 1000002415",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114314514970,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0SGg",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514970",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114314514970",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:11:39Z",
+      "completed_at": "2026-10-10T21:57:27Z",
+      "name": "Backend execution / postgres / shard 1",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:11:40Z",
+          "completed_at": "2026-10-10T21:11:41Z"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:11:41Z",
+          "completed_at": "2026-10-10T21:11:52Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:52Z",
+          "completed_at": "2026-10-10T21:11:56Z"
+        },
+        {
+          "name": "Select isolated pip download cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:56Z",
+          "completed_at": "2026-10-10T21:11:56Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:11:56Z",
+          "completed_at": "2026-10-10T21:12:07Z"
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:12:07Z",
+          "completed_at": "2026-10-10T21:12:07Z"
+        },
+        {
+          "name": "Keep V2 backend state inside its owned checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:12:07Z",
+          "completed_at": "2026-10-10T21:12:08Z"
+        },
+        {
+          "name": "Install backend dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:12:08Z",
+          "completed_at": "2026-10-10T21:12:23Z"
+        },
+        {
+          "name": "Install real media decoding and assembly tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T21:12:23Z",
+          "completed_at": "2026-10-10T21:12:48Z"
+        },
+        {
+          "name": "Install matching PostgreSQL recovery tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T21:12:48Z",
+          "completed_at": "2026-10-10T21:12:50Z"
+        },
+        {
+          "name": "Initialize disposable PostgreSQL",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T21:12:50Z",
+          "completed_at": "2026-10-10T21:12:51Z"
+        },
+        {
+          "name": "Prepare pinned OFL CJK font and receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T21:12:51Z",
+          "completed_at": "2026-10-10T21:13:06Z"
+        },
+        {
+          "name": "Fail-closed coverage infrastructure self-tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T21:13:06Z",
+          "completed_at": "2026-10-10T21:13:17Z"
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T21:13:17Z",
+          "completed_at": "2026-10-10T21:57:20Z"
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-10T21:57:20Z",
+          "completed_at": "2026-10-10T21:57:20Z"
+        },
+        {
+          "name": "Upload backend receipts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-10T21:57:20Z",
+          "completed_at": "2026-10-10T21:57:22Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-10-10T21:57:22Z",
+          "completed_at": "2026-10-10T21:57:22Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31,
+          "started_at": "2026-10-10T21:57:22Z",
+          "completed_at": "2026-10-10T21:57:22Z"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32,
+          "started_at": "2026-10-10T21:57:22Z",
+          "completed_at": "2026-10-10T21:57:23Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33,
+          "started_at": "2026-10-10T21:57:23Z",
+          "completed_at": "2026-10-10T21:57:23Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514970",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002414,
+      "runner_name": "GitHub Actions 1000002414",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114314514981,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0SJQ",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514981",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114314514981",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:12:50Z",
+      "completed_at": "2026-10-10T21:16:41Z",
+      "name": "Windows / Fresh base and acceptance package",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:12:51Z",
+          "completed_at": "2026-10-10T21:12:52Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:12:52Z",
+          "completed_at": "2026-10-10T21:12:59Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:12:59Z",
+          "completed_at": "2026-10-10T21:13:38Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4.4.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:13:38Z",
+          "completed_at": "2026-10-10T21:13:48Z"
+        },
+        {
+          "name": "Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:13:48Z",
+          "completed_at": "2026-10-10T21:14:22Z"
+        },
+        {
+          "name": "Prepare isolated package paths and actual SDK receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:14:22Z",
+          "completed_at": "2026-10-10T21:14:25Z"
+        },
+        {
+          "name": "Install locked source build tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:14:25Z",
+          "completed_at": "2026-10-10T21:15:13Z"
+        },
+        {
+          "name": "Assemble official pinned base and OFL font",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T21:15:13Z",
+          "completed_at": "2026-10-10T21:15:42Z"
+        },
+        {
+          "name": "Build self-contained Host and unsigned internal acceptance package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T21:15:42Z",
+          "completed_at": "2026-10-10T21:16:21Z"
+        },
+        {
+          "name": "Native embedded Python and PostgreSQL UTF-8 recovery smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T21:16:21Z",
+          "completed_at": "2026-10-10T21:16:32Z"
+        },
+        {
+          "name": "Upload bounded native package receipts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T21:16:32Z",
+          "completed_at": "2026-10-10T21:16:33Z"
+        },
+        {
+          "name": "Upload internal package and provenance (not a Release)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T21:16:33Z",
+          "completed_at": "2026-10-10T21:16:37Z"
+        },
+        {
+          "name": "Post Run actions/setup-dotnet@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-10T21:16:37Z",
+          "completed_at": "2026-10-10T21:16:38Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4.4.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-10-10T21:16:38Z",
+          "completed_at": "2026-10-10T21:16:38Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-10-10T21:16:38Z",
+          "completed_at": "2026-10-10T21:16:38Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-10-10T21:16:38Z",
+          "completed_at": "2026-10-10T21:16:39Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-10-10T21:16:39Z",
+          "completed_at": "2026-10-10T21:16:39Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514981",
+      "labels": [
+        "windows-2022"
+      ],
+      "runner_id": 1000002417,
+      "runner_name": "GitHub Actions 1000002417",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114324887956,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAanktZlA",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114324887956",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114324887956",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-10T22:07:00Z",
+      "started_at": "2026-10-10T22:07:02Z",
+      "completed_at": "2026-10-10T22:07:26Z",
+      "name": "Backend / postgres",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T22:07:03Z",
+          "completed_at": "2026-10-10T22:07:04Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T22:07:04Z",
+          "completed_at": "2026-10-10T22:07:14Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T22:07:14Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        },
+        {
+          "name": "Require every execution job including original File TCP gate",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4,
+          "started_at": "2026-10-10T22:07:24Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        },
+        {
+          "name": "Download this attempt's exact backend shard receipts",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-10-10T22:07:24Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        },
+        {
+          "name": "Download this attempt's exact original TCP receipts",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-10-10T22:07:24Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        },
+        {
+          "name": "Validate provenance and create byte-identical aggregation copies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-10-10T22:07:24Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        },
+        {
+          "name": "Require exact complete collection and successful outcomes in both profiles",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-10-10T22:07:24Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        },
+        {
+          "name": "Upload complete collected-coverage proof",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-10-10T22:07:24Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17,
+          "started_at": "2026-10-10T22:07:24Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-10T22:07:24Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-10T22:07:24Z",
+          "completed_at": "2026-10-10T22:07:24Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114324887956",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002434,
+      "runner_name": "GitHub Actions 1000002434",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114324888050,
+      "run_id": 38086673970,
+      "workflow_name": "Cloud CI",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAanktZ8g",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114324888050",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673970/job/114324888050",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-10T22:07:00Z",
+      "started_at": "2026-10-10T22:07:03Z",
+      "completed_at": "2026-10-10T22:07:26Z",
+      "name": "Backend / file",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T22:07:04Z",
+          "completed_at": "2026-10-10T22:07:05Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T22:07:05Z",
+          "completed_at": "2026-10-10T22:07:14Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T22:07:14Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        },
+        {
+          "name": "Require every execution job including original File TCP gate",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4,
+          "started_at": "2026-10-10T22:07:23Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        },
+        {
+          "name": "Download this attempt's exact backend shard receipts",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-10-10T22:07:23Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        },
+        {
+          "name": "Download this attempt's exact original TCP receipts",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-10-10T22:07:23Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        },
+        {
+          "name": "Validate provenance and create byte-identical aggregation copies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-10-10T22:07:23Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        },
+        {
+          "name": "Require exact complete collection and successful outcomes in both profiles",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-10-10T22:07:23Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        },
+        {
+          "name": "Upload complete collected-coverage proof",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-10-10T22:07:23Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17,
+          "started_at": "2026-10-10T22:07:23Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-10T22:07:23Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-10T22:07:23Z",
+          "completed_at": "2026-10-10T22:07:23Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114324888050",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002435,
+      "runner_name": "GitHub Actions 1000002435",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

@@ -220,6 +220,12 @@ def creative_model(broker_app, monkeypatch):
     for name, value in (("store", e.store), ("novels", e.novels), ("chapters", e.chapters)):
         monkeypatch.setattr(service, name, value)
     e.creative = service
+    # Rebind the same production workspace/asset owner after the Creative store
+    # fixture changes its wrapper; no alternate generated asset store is used.
+    e.studio = e.experimental.independent_workspace_service
+    for name, value in (("creative", service), ("store", service.store), ("novels", e.novels),
+                        ("assets", e.assets), ("lineage", e.experimental.production_lineage_service)):
+        monkeypatch.setattr(e.studio, name, value)
     e.creative_base = e.base + "/creative"
     return e
 

@@ -56,12 +56,14 @@ class Job:
     provider_reference_id:str|None=None
     route_decisions:list=field(default_factory=list)
     adaptation_binding:dict|None=None
+    adaptation_publication:dict|None=None
     author_preparation_guard:object=field(default=None,repr=False)
     graph_binding:dict|None=None
     prepared_text_invocation:object=field(default=None,repr=False)
     def public(self):
         result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
         if self.adaptation_binding is not None: result["adaptation_binding"] = dict(self.adaptation_binding)
+        if self.adaptation_publication is not None: result["adaptation_publication"] = dict(self.adaptation_publication)
         if self.graph_binding is not None: result["graph_binding"] = dict(self.graph_binding)
         if self.generation_max_output_bytes is not None or self.generation_deadline is not None:
             result.update(generation_max_output_bytes=self.generation_max_output_bytes, generation_deadline=self.generation_deadline)
@@ -488,6 +490,7 @@ class JobManager:
         return job
     def _emit(self,job,chunk=""):
         with job.condition:
+            if job.status != "COMPLETED": job.adaptation_publication = None
             if chunk and not job.cancelled.is_set() and job.status not in self.terminal:job.output+=chunk
             job.updated_at=utc()
             try: self._persist(job)
@@ -503,6 +506,7 @@ class JobManager:
                 # persistence uncertainty. Do not let its failure handler emit
                 # the same rejected save as an unhandled worker exception.
                 job.output = ""
+                job.adaptation_publication = None
                 if job.status == "COMPLETED": job.status = "FAILED"
                 job.error_code = "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN"
                 job.error = "项目归属已改变，生成内容已丢弃，完成记录未能确认保存。请核对调度记录，不要自动重试。"
@@ -765,12 +769,18 @@ class JobManager:
                         if job.terminal_hook_status == "COMPLETED":
                             job.error_code = "GENERATION_AUTHORITY_REVOKED"
                             job.error = "生成授权已失效，未完成内容已丢弃。"
+                    if (job.experimental_origin == "creative_adaptation_model"
+                            and (job.adaptation_binding or {}).get("archive") is not None
+                            and job.status == "COMPLETED" and job.terminal_hook_status == "COMPLETED"):
+                        from .creative.adaptation_models import terminal_publication
+                        job.adaptation_publication = terminal_publication(job)
                     self._emit(job)
                 except Exception:
                     # A provider completion is not a published draft until its
                     # receipt is durable. Keep the separate execution outcome
                     # for once-only billing, but block review on this executor.
                     job.status = "FAILED"
+                    job.adaptation_publication = None
                     if graph_job or job.experimental_origin == "creative_adaptation_model": job.output = ""
                     job.error_code = "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN"
                     job.error = "生成已结束，但完成记录未能确认保存。请检查任务记录，不要自动重试或采用。"

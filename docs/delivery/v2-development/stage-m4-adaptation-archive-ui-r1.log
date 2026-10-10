@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/creative/CreativeScriptLabelPersistence.test.tsx (1 test) 132ms
+ ✓ src/creative/CreativeSelectLabels.test.tsx (3 tests) 122ms
+ ✓ src/creative/SourceAdaptationPanel.test.tsx (9 tests) 454ms
+ ✓ src/creative/AdaptationHostCapability.test.tsx (1 test) 236ms
+ ✓ src/creative/GenericScriptWorkspace.test.tsx (7 tests) 1257ms
+   ✓ standalone Script uses original Creative workspace > creates an explicitly independent script in the existing five-stage shell 456ms
+
+ Test Files  5 passed (5)
+      Tests  21 passed (21)
+   Start at  14:34:55
+   Duration  3.58s (transform 916ms, setup 0ms, collect 3.69s, tests 2.20s, environment 3.89s, prepare 698ms)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-adaptation-archive-ui-r1.xml

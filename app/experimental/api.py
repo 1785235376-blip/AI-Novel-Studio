@@ -670,6 +670,7 @@ from ..creative.graph import CreativeGraphService
 
 independent_workspace_service = IndependentWorkspaceService(creative_service,
     legacy_api.asset_library_service, production_lineage_service)
+creative_service.configure_adaptation_assets(independent_workspace_service)
 def creative_model_host_authority(request, token):
     from ..main import _local_discovery_host_authority
     return _local_discovery_host_authority(request, token)

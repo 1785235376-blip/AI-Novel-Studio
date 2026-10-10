@@ -18,7 +18,7 @@ class AdaptationService:
     MAX_RECORD_BYTES = 8_000_000
 
     def __init__(self, documents):
-        self.documents, self.generation = documents, None
+        self.documents, self.generation, self.assets = documents, None, None
 
     def _owned(self, nid, scope, actor, rid, state=None):
         state = state if state is not None else self.documents.store.read(nid, scope)
@@ -50,9 +50,13 @@ class AdaptationService:
     def _public(row):
         return deepcopy({key: value for key, value in row.items() if key != "history"})
 
-    def get(self, nid, scope, actor, rid):
+    def get(self, nid, scope, actor, rid, *, guard=lambda: None, reconcile=True):
         row = self._owned(nid, scope, actor, rid)
         self._current(nid, scope, row)
+        guard()
+        if self.assets and self.assets.enabled(row):
+            from ..experimental.ux import ReadContext
+            return self.assets.read(ReadContext(nid, scope, actor), rid, guard, reconcile=reconcile)
         result = self._public(row)
         if row.get("model_execution") and row["status"] not in {"APPROVED", "CANCELLED"}:
             try:
@@ -71,13 +75,22 @@ class AdaptationService:
                 result["model_execution"].update(receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY")
         return result
 
-    def list(self, nid, scope, actor):
-        rows = []
+    def list(self, nid, scope, actor, *, guard=lambda: None):
+        from ..experimental.ux import ReadContext
+        ctx = ReadContext(nid, scope, actor)
+        rows, reconciled = [], False
         for rid in self.documents.store.read(nid, scope)["collections"].get(self.COLLECTION, {}):
             try:
-                rows.append(self.get(nid, scope, actor, rid))
+                row = self.get(nid, scope, actor, rid, guard=guard, reconcile=False)
+                if (not reconciled and self.assets and row.get("model_asset_intent")
+                        and (row.get("asset_output") or {}).get("state") in {"PENDING", "INCOMPLETE"}
+                        and self.assets.can_reconcile(ctx, row)):
+                    row = self.get(nid, scope, actor, rid, guard=guard)
+                    reconciled = True
+                rows.append(row)
             except (FileNotFoundError, StaleSourceError):
                 continue
+        guard()
         return sorted(rows, key=lambda row: (row["created_at"], row["id"]), reverse=True)
 
     def create(self, nid, scope, actor, value, *, guard=lambda: None):
@@ -98,7 +111,8 @@ class AdaptationService:
                 "source_evidence": sources, "source_privacy": privacy, "selected_text": selected,
                 "selection_digest": digest(selected), "project_incarnation": self.documents.store.incarnation(nid),
                 "output": None, "output_digest": None, "model_preview": None, "model_execution": None,
-                "provenance": None, "document_id": None})
+                "provenance": None, "document_id": None,
+                "result_archive_contract": "creative-adaptation-text-asset/1"})
             state["collections"].setdefault(self.COLLECTION, {})[row["id"]] = row
             self._current(nid, scope, row)
             self._capacity(state)
@@ -118,6 +132,19 @@ class AdaptationService:
         return result
 
     def review(self, nid, scope, actor, rid, value, *, guard=lambda: None):
+        row = self._owned(nid, scope, actor, rid)
+        if not self.assets or not self.assets.enabled(row):
+            return self._review(nid, scope, actor, rid, value, guard=guard)
+        from ..experimental.ux import ReadContext
+        ctx = ReadContext(nid, scope, actor)
+        with self.assets.phase(ctx, rid, guard, create=False):
+            result = self._review(nid, scope, actor, rid, value, guard=guard)
+        # The original human decision is already committed; a failed asset
+        # projection is recoverable on the next authorized read, never replayed.
+        result["proposal"] = self.assets.read(ctx, rid, guard)
+        return result
+
+    def _review(self, nid, scope, actor, rid, value, *, guard=lambda: None):
         body = AdaptationReview.model_validate(value)
         with self.documents.store.transaction(nid, scope) as state:
             row = self._owned(nid, scope, actor, rid, state)
@@ -145,7 +172,10 @@ class AdaptationService:
             state["collections"].setdefault(self.documents.COLLECTION, {})[document["id"]] = document
             self.documents.assert_current(nid, scope, document)
             self.documents.assert_capacity(state)
-            change_row(row, actor, row["version"], lambda item: item.update(status="APPROVED",
+            decision = (self.assets.decision(row, document, digest(output), provenance["reviewed_at"])
+                        if self.assets and self.assets.enabled(row) else None)
+            change_row(row, actor, row["version"], lambda item: item.update(
+                **({"asset_review_decision": decision} if decision else {}), status="APPROVED",
                 document_id=document["id"], reviewed_by=actor, reviewed_at=provenance["reviewed_at"]))
             self._capacity(state)
             self._current(nid, scope, row)
@@ -164,7 +194,7 @@ class AdaptationService:
             if execution:
                 execution["status"] = "CANCELLED"
             change_row(row, actor, row["version"], lambda item: item.update(status="CANCELLED",
-                output=None, output_digest=None, model_preview=None, model_execution=execution))
+                output=None, output_digest=None, model_preview=None, provenance=None, model_execution=execution))
             self._capacity(state)
             guard()
             result = self._public(row)

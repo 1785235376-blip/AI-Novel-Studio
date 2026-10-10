@@ -1,9 +1,9 @@
-# Source-aware screenplay adaptation (TEXT-13, bounded first slice)
+# Source-aware screenplay adaptation (TEXT-13, bounded chapter/archive slices)
 
 Status: **PARTIAL**. One saved chapter, or an exact substring selected from that
-saved chapter, may become a private model proposal. Multi-chapter ranges and
-AssetLibrary archival are follow-on work; generated proposal storage is not
-misrepresented as the Asset system.
+saved chapter, may become a private model proposal and an automatically archived
+private TextAsset. Multi-chapter ranges and full model-quality acceptance remain
+follow-on work. The original AssetLibrary owns every new admitted result.
 
 ## Existing owners
 
@@ -72,9 +72,10 @@ or unconfirmed settlement cannot adopt a screenplay.
 
 SETTLING is pending, not a discarded success; refresh observes the published job
 once before reading settlement. Pending refresh does not consume proposal history.
-A missing live execution authority after restart currently hides output and marks
-its receipt unavailable. No automatic model replay is allowed. Durable, idempotent
-AssetLibrary archival/recovery is explicitly still missing in this first slice.
+Legacy admissions without the new archive contract retain their original live
+authority requirement. New admissions can recover from verified original durable
+Job publication and settlement, with fresh read authority and no model replay.
+The mandatory archive contract and bounded convergence are described below.
 
 The panel preserves unsaved review edits through stage changes and uncertain
 writes, requires explicit discard, and drops late identity callbacks. Optional
@@ -99,3 +100,46 @@ invalidates the old operation. Forwarded/non-loopback or wrong-Origin requests
 and nonpackaged collaboration-only sessions cannot establish Host authority.
 Capabilities expose `HOST_SESSION_REQUIRED` without mounting private reads when
 that provenance is unavailable; manual Creative editing remains usable.
+
+## Mandatory private result archive (append-only contract)
+
+New admissions bind `creative-adaptation-text-asset/1` to the original proposal
+and Job. Dispatch consent now includes retaining the exact model output as a
+private draft. Existing GET/list/refresh safely converge a completed result into
+one original AssetLibrary TextAsset v1 before exposing parsed scenes for review.
+No new endpoint, save button, queue or retry-model operation is required.
+
+`asset_output` reports `PENDING`, `INCOMPLETE`, `DRAFT`, `APPROVED` or
+`NO_ACCEPTED_RESULT`; only verified drafts/approved results expose asset ID,
+version, exact raw digest/size and the complete execution receipt. That receipt
+records the actual prompt/request/nullable parameters, model and durable route
+identity, source/selection versions/digests, original reservation settlement
+revision and final executor publication. Public generic asset/generation routes
+cannot expose these actor-private bytes or private receipt fields.
+
+Explicit review still writes only a separate SCREENPLAY document and its source
+links. The original Creative decision is committed before projecting APPROVED
+asset v2; a later read can finish that projection without another human action.
+The original raw asset bytes remain unchanged even if a reviewer edits scenes.
+Invalid generated JSON is retained as private raw evidence, never adopted.
+
+Recovery requires the same original durable Job and settlement, current actor,
+Host, feature, source/privacy/incarnation and route authority. It does not
+reconstruct authorization callbacks or call the model. An adapter re-created by
+the same durable runtime identity can support passive recovery; a changed model,
+route identity or in-call registration cannot. Live dispatch keeps its existing
+process-binding checks. The early completed accounting save is insufficient:
+only the original executor's final publication marker permits archiving.
+
+All byte limits are serialization-based and checked before reservation/inference.
+Receipt faults, corrupt metadata, lost acknowledgements and pending publication
+mask output/provenance/review together. Retries are bounded per existing read,
+with a two-second/100-entry failure cooldown and at most one convergence per list.
+
+An optional owned CPU check is available through the original acceptance script's
+`--scenario adaptation` mode. It uses the already verified local GGUF/runtime,
+CPU-only two threads and an explicit 8192-token host context. Graph remains the
+default 2048-token scenario. The script never downloads a model or repairs/retries
+its output. Invalid real structured output retains exact private raw evidence and
+fails the structured acceptance; an explicit test-client review does not certify
+human literary quality. Consult the stage report for actually executed results.

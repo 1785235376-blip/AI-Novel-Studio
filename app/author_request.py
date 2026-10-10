@@ -64,8 +64,13 @@ def request_payload(request):
 
 
 def request_digest(request, job, cloud=False):
+    return request_payload_digest(request_payload(request), job, cloud)
+
+
+def request_payload_digest(payload, job, cloud=False):
+    """Hash passive saved adapter data without reconstructing execution authority."""
     # Scope and version bind a receipt even if identical text exists elsewhere.
-    value = {"request": request_payload(request), "novel_id": job.novel_id, "chapter_id": job.chapter_id,
+    value = {"request": payload, "novel_id": job.novel_id, "chapter_id": job.chapter_id,
              "chapter_version": job.base_chapter_version, "chapter_digest": job.base_chapter_digest, "actor_id": job.actor_id, "workspace_id": job.workspace_id,
              "session_id": job.session_id, "scope": job.scope, "profile": job.profile,
              "creation_records": job.creation_records, "route_locality": "cloud" if cloud else "local"}

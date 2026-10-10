@@ -1,0 +1,711 @@
+{
+  "kind": "READ_ONLY_ORIGINAL_TRACE_DIAGNOSIS",
+  "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+  "observations": [
+    "Both reloaded documents endpoints returned HTTP 200 with the saved SCRIPT document, correct purpose and exact whitespace/newlines in body.",
+    "Both post-reload DOMs include the saved title, version and generic Script textarea. Failure is not evidence of lost persisted body or absent selected document.",
+    "The exact getByLabel selector failed; before creating the body the wrapping label textarea has no child text, while after reload it has a nonempty child text node containing the body.",
+    "The textarea has no explicit aria-label, aria-labelledby or id. The wrapper is LABEL > SPAN plus TEXTAREA.",
+    "The independently observed HTTP 401s are local-ai/environment; Creative document reads/writes succeeded."
+  ],
+  "inference": "Consistent with Playwright 1.62.1 exact label text including reloaded textarea child text: getElementLabels calls elementText for wrapping labels, and elementText recursively includes text nodes. This is static trace/code evidence, not a browser rerun or accepted product fix.",
+  "not_established": [
+    "No patched acceptance or regression run was performed.",
+    "The remainder of generic Script restore and export browser test was not reached.",
+    "No current-source acceptance is inferred from HTTP-only or geometry success."
+  ],
+  "records": [
+    {
+      "artifact_id": 11682403375,
+      "event": "push",
+      "trace_path": "extracted/11682403375/receipts/v2-creative-live/test-results/v2-creative-live-real-File-b5c88-nd-exports-without-chapters-v2-live-chromium/trace.zip",
+      "error_context": "extracted/11682403375/receipts/v2-creative-live/test-results/v2-creative-live-real-File-b5c88-nd-exports-without-chapters-v2-live-chromium/error-context.md",
+      "screenshot": "extracted/11682403375/receipts/v2-creative-live/test-results/v2-creative-live-real-File-b5c88-nd-exports-without-chapters-v2-live-chromium/test-failed-1.png",
+      "failure": {
+        "test": "real File standalone generic Script edits, reopens, restores and exports without chapters",
+        "location": "frontend/tests/e2e/v2-creative-live.spec.ts:490:186",
+        "selector": "getByRole(region, name=创作画布, exact=true).getByLabel(通用脚本内容, exact=true)",
+        "timeout_ms": 15000,
+        "error": "element(s) not found"
+      },
+      "dom_snapshots": [
+        {
+          "snapshot": "after@call@1102",
+          "timestamp": 41921.348,
+          "labels": [
+            [
+              "LABEL",
+              {
+                "class": "creative-field"
+              },
+              [
+                "SPAN",
+                {},
+                "通用脚本内容"
+              ],
+              [
+                "TEXTAREA",
+                {
+                  "__playwright_value_": "",
+                  "class": "creative-action-text",
+                  "maxlength": "64000"
+                }
+              ]
+            ]
+          ],
+          "textareas": [
+            [
+              "TEXTAREA",
+              {
+                "__playwright_value_": "",
+                "class": "creative-action-text",
+                "maxlength": "64000"
+              }
+            ]
+          ]
+        },
+        {
+          "snapshot": "after@call@1126",
+          "timestamp": 43325.229,
+          "labels": [
+            [
+              "LABEL",
+              {
+                "class": "creative-field"
+              },
+              [
+                "SPAN",
+                {},
+                "通用脚本内容"
+              ],
+              [
+                "TEXTAREA",
+                {
+                  "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                  "class": "creative-action-text",
+                  "maxlength": "64000"
+                },
+                "  播客合成开场。\n\n保留独立创作的空行。\n"
+              ]
+            ]
+          ],
+          "textareas": [
+            [
+              "TEXTAREA",
+              {
+                "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                "class": "creative-action-text",
+                "maxlength": "64000"
+              },
+              "  播客合成开场。\n\n保留独立创作的空行。\n"
+            ]
+          ]
+        },
+        {
+          "snapshot": "before@call@1128",
+          "timestamp": 43329.78,
+          "labels": [
+            [
+              "LABEL",
+              {
+                "class": "creative-field"
+              },
+              [
+                "SPAN",
+                {},
+                "通用脚本内容"
+              ],
+              [
+                "TEXTAREA",
+                {
+                  "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                  "class": "creative-action-text",
+                  "maxlength": "64000"
+                },
+                "  播客合成开场。\n\n保留独立创作的空行。\n"
+              ]
+            ]
+          ],
+          "textareas": [
+            [
+              "TEXTAREA",
+              {
+                "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                "class": "creative-action-text",
+                "maxlength": "64000"
+              },
+              "  播客合成开场。\n\n保留独立创作的空行。\n"
+            ]
+          ]
+        },
+        {
+          "snapshot": "after@call@1128",
+          "timestamp": 58334.991,
+          "labels": [
+            [
+              "LABEL",
+              {
+                "class": "creative-field"
+              },
+              [
+                "SPAN",
+                {},
+                "通用脚本内容"
+              ],
+              [
+                "TEXTAREA",
+                {
+                  "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                  "class": "creative-action-text",
+                  "maxlength": "64000"
+                },
+                "  播客合成开场。\n\n保留独立创作的空行。\n"
+              ]
+            ]
+          ],
+          "textareas": [
+            [
+              "TEXTAREA",
+              {
+                "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                "class": "creative-action-text",
+                "maxlength": "64000"
+              },
+              "  播客合成开场。\n\n保留独立创作的空行。\n"
+            ]
+          ]
+        }
+      ],
+      "network": [
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/capabilities",
+          "status": -1,
+          "startedDateTime": "2026-10-10T21:13:26.792Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/capabilities",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:26.793Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/director-proposals",
+          "status": -1,
+          "startedDateTime": "2026-10-10T21:13:26.869Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/documents",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:26.840Z",
+          "response_body": {
+            "items": []
+          },
+          "response_body_sha256": "eef46741adfc3a9f76294d3b78f37a45f113092ac9d44ee77c7a038a88ff09a1"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/model-center/local-ai/environment",
+          "status": 401,
+          "startedDateTime": "2026-10-10T21:13:26.870Z",
+          "response_body": {
+            "detail": {
+              "code": "SESSION_REQUIRED"
+            },
+            "code": "SESSION_REQUIRED",
+            "message": "SESSION_REQUIRED",
+            "details": {
+              "code": "SESSION_REQUIRED"
+            },
+            "request_id": "22803b47-afb6-495a-9164-c0d7f4a3b1a2"
+          },
+          "response_body_sha256": "90c9749c9d176a4d3a8665b564204f1f5506d43d2603fa827548ae4334ba9b69"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/director-proposals",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:26.870Z"
+        },
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/documents",
+          "status": 201,
+          "startedDateTime": "2026-10-10T21:13:27.189Z",
+          "response_body": {
+            "mode": "SCRIPT",
+            "title": "独立播客稿",
+            "source_chapter_ids": [],
+            "source_independent": true,
+            "scenes": [],
+            "shots": [],
+            "director_notes": [],
+            "video_plan": null,
+            "script": {
+              "purpose": "PODCAST",
+              "body": "  播客合成开场。\n\n保留独立创作的空行。\n"
+            },
+            "schema_version": 1,
+            "source_evidence": {},
+            "source_privacy": {},
+            "source_documents": {},
+            "project_incarnation": "file:3a127fc8-3288-4ec0-a6e5-29fbf6fd0ade",
+            "status": "DRAFT",
+            "privacy_level": "LOCAL_ONLY",
+            "id": "95b89c9c-26ad-4f4a-9363-c9c8e4f7324f",
+            "novel_id": "7d301f66",
+            "scope": {
+              "mode": "local",
+              "novel_id": "7d301f66"
+            },
+            "version": 1,
+            "created_by": "local-author",
+            "updated_by": "local-author",
+            "created_at": "2026-10-10T21:13:27.205370+00:00",
+            "updated_at": "2026-10-10T21:13:27.205370+00:00",
+            "history": []
+          },
+          "response_body_sha256": "3e56d2518a5ecaaf09392f11cb5b5cd8a9196d46cd543e770d77f7849d87386b"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/capabilities",
+          "status": -1,
+          "startedDateTime": "2026-10-10T21:13:28.266Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/capabilities",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:28.267Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/director-proposals",
+          "status": -1,
+          "startedDateTime": "2026-10-10T21:13:28.339Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/documents",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:28.323Z",
+          "response_body": {
+            "items": [
+              {
+                "created_at": "2026-10-10T21:13:27.205370+00:00",
+                "created_by": "local-author",
+                "director_notes": [],
+                "history": [],
+                "id": "95b89c9c-26ad-4f4a-9363-c9c8e4f7324f",
+                "mode": "SCRIPT",
+                "novel_id": "7d301f66",
+                "privacy_level": "LOCAL_ONLY",
+                "project_incarnation": "file:3a127fc8-3288-4ec0-a6e5-29fbf6fd0ade",
+                "scenes": [],
+                "schema_version": 1,
+                "scope": {
+                  "mode": "local",
+                  "novel_id": "7d301f66"
+                },
+                "script": {
+                  "body": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                  "purpose": "PODCAST"
+                },
+                "shots": [],
+                "source_chapter_ids": [],
+                "source_documents": {},
+                "source_evidence": {},
+                "source_independent": true,
+                "source_privacy": {},
+                "status": "DRAFT",
+                "title": "独立播客稿",
+                "updated_at": "2026-10-10T21:13:27.205370+00:00",
+                "updated_by": "local-author",
+                "version": 1,
+                "video_plan": null
+              }
+            ]
+          },
+          "response_body_sha256": "e8dede6050cae33ccfb7a87b4150d156fa2ca620f56364430253c194efff1197"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/model-center/local-ai/environment",
+          "status": 401,
+          "startedDateTime": "2026-10-10T21:13:28.340Z",
+          "response_body": {
+            "detail": {
+              "code": "SESSION_REQUIRED"
+            },
+            "code": "SESSION_REQUIRED",
+            "message": "SESSION_REQUIRED",
+            "details": {
+              "code": "SESSION_REQUIRED"
+            },
+            "request_id": "719d5c50-4ac7-40b0-bcee-431afb185ebf"
+          },
+          "response_body_sha256": "1c7af7b01cf6dea2249b871fe2d38507b76e4d77aa04c57f101a99385c83dd68"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/7d301f66/experimental/creative/director-proposals",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:28.340Z"
+        }
+      ]
+    },
+    {
+      "artifact_id": 11681713706,
+      "event": "pull_request",
+      "trace_path": "extracted/11681713706/receipts/v2-creative-live/test-results/v2-creative-live-real-File-b5c88-nd-exports-without-chapters-v2-live-chromium/trace.zip",
+      "error_context": "extracted/11681713706/receipts/v2-creative-live/test-results/v2-creative-live-real-File-b5c88-nd-exports-without-chapters-v2-live-chromium/error-context.md",
+      "screenshot": "extracted/11681713706/receipts/v2-creative-live/test-results/v2-creative-live-real-File-b5c88-nd-exports-without-chapters-v2-live-chromium/test-failed-1.png",
+      "failure": {
+        "test": "real File standalone generic Script edits, reopens, restores and exports without chapters",
+        "location": "frontend/tests/e2e/v2-creative-live.spec.ts:490:186",
+        "selector": "getByRole(region, name=创作画布, exact=true).getByLabel(通用脚本内容, exact=true)",
+        "timeout_ms": 15000,
+        "error": "element(s) not found"
+      },
+      "dom_snapshots": [
+        {
+          "snapshot": "after@call@1102",
+          "timestamp": 43234.475,
+          "labels": [
+            [
+              "LABEL",
+              {
+                "class": "creative-field"
+              },
+              [
+                "SPAN",
+                {},
+                "通用脚本内容"
+              ],
+              [
+                "TEXTAREA",
+                {
+                  "__playwright_value_": "",
+                  "class": "creative-action-text",
+                  "maxlength": "64000"
+                }
+              ]
+            ]
+          ],
+          "textareas": [
+            [
+              "TEXTAREA",
+              {
+                "__playwright_value_": "",
+                "class": "creative-action-text",
+                "maxlength": "64000"
+              }
+            ]
+          ]
+        },
+        {
+          "snapshot": "after@call@1126",
+          "timestamp": 44243.905,
+          "labels": [
+            [
+              "LABEL",
+              {
+                "class": "creative-field"
+              },
+              [
+                "SPAN",
+                {},
+                "通用脚本内容"
+              ],
+              [
+                "TEXTAREA",
+                {
+                  "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                  "class": "creative-action-text",
+                  "maxlength": "64000"
+                },
+                "  播客合成开场。\n\n保留独立创作的空行。\n"
+              ]
+            ]
+          ],
+          "textareas": [
+            [
+              "TEXTAREA",
+              {
+                "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                "class": "creative-action-text",
+                "maxlength": "64000"
+              },
+              "  播客合成开场。\n\n保留独立创作的空行。\n"
+            ]
+          ]
+        },
+        {
+          "snapshot": "before@call@1128",
+          "timestamp": 44248.545,
+          "labels": [
+            [
+              "LABEL",
+              {
+                "class": "creative-field"
+              },
+              [
+                "SPAN",
+                {},
+                "通用脚本内容"
+              ],
+              [
+                "TEXTAREA",
+                {
+                  "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                  "class": "creative-action-text",
+                  "maxlength": "64000"
+                },
+                "  播客合成开场。\n\n保留独立创作的空行。\n"
+              ]
+            ]
+          ],
+          "textareas": [
+            [
+              "TEXTAREA",
+              {
+                "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                "class": "creative-action-text",
+                "maxlength": "64000"
+              },
+              "  播客合成开场。\n\n保留独立创作的空行。\n"
+            ]
+          ]
+        },
+        {
+          "snapshot": "after@call@1128",
+          "timestamp": 59252.682,
+          "labels": [
+            [
+              "LABEL",
+              {
+                "class": "creative-field"
+              },
+              [
+                "SPAN",
+                {},
+                "通用脚本内容"
+              ],
+              [
+                "TEXTAREA",
+                {
+                  "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                  "class": "creative-action-text",
+                  "maxlength": "64000"
+                },
+                "  播客合成开场。\n\n保留独立创作的空行。\n"
+              ]
+            ]
+          ],
+          "textareas": [
+            [
+              "TEXTAREA",
+              {
+                "__playwright_value_": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                "class": "creative-action-text",
+                "maxlength": "64000"
+              },
+              "  播客合成开场。\n\n保留独立创作的空行。\n"
+            ]
+          ]
+        }
+      ],
+      "network": [
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/capabilities",
+          "status": -1,
+          "startedDateTime": "2026-10-10T21:13:31.561Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/capabilities",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:31.562Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/director-proposals",
+          "status": -1,
+          "startedDateTime": "2026-10-10T21:13:31.627Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/documents",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:31.608Z",
+          "response_body": {
+            "items": []
+          },
+          "response_body_sha256": "eef46741adfc3a9f76294d3b78f37a45f113092ac9d44ee77c7a038a88ff09a1"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/model-center/local-ai/environment",
+          "status": 401,
+          "startedDateTime": "2026-10-10T21:13:31.628Z",
+          "response_body": {
+            "detail": {
+              "code": "SESSION_REQUIRED"
+            },
+            "code": "SESSION_REQUIRED",
+            "message": "SESSION_REQUIRED",
+            "details": {
+              "code": "SESSION_REQUIRED"
+            },
+            "request_id": "7a82001e-5096-4b06-b7f3-9caca4310bd7"
+          },
+          "response_body_sha256": "54797b75a7d4abb252527e9e237f2e46fd3fb449df3e7ce2842b3fc16a1ebe30"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/director-proposals",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:31.630Z"
+        },
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/documents",
+          "status": 201,
+          "startedDateTime": "2026-10-10T21:13:31.910Z",
+          "response_body": {
+            "mode": "SCRIPT",
+            "title": "独立播客稿",
+            "source_chapter_ids": [],
+            "source_independent": true,
+            "scenes": [],
+            "shots": [],
+            "director_notes": [],
+            "video_plan": null,
+            "script": {
+              "purpose": "PODCAST",
+              "body": "  播客合成开场。\n\n保留独立创作的空行。\n"
+            },
+            "schema_version": 1,
+            "source_evidence": {},
+            "source_privacy": {},
+            "source_documents": {},
+            "project_incarnation": "file:7981fc8e-67d3-4963-ab07-ec71e38d14f3",
+            "status": "DRAFT",
+            "privacy_level": "LOCAL_ONLY",
+            "id": "62e6b14d-2a6f-4cda-99b6-01fec45bc965",
+            "novel_id": "67b77cf8",
+            "scope": {
+              "mode": "local",
+              "novel_id": "67b77cf8"
+            },
+            "version": 1,
+            "created_by": "local-author",
+            "updated_by": "local-author",
+            "created_at": "2026-10-10T21:13:31.927833+00:00",
+            "updated_at": "2026-10-10T21:13:31.927833+00:00",
+            "history": []
+          },
+          "response_body_sha256": "96ce014bd0ef3580991a83f1ad9b01a92e62a618031b4463f9850764cce6fb72"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/capabilities",
+          "status": -1,
+          "startedDateTime": "2026-10-10T21:13:32.629Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/capabilities",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:32.630Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/director-proposals",
+          "status": -1,
+          "startedDateTime": "2026-10-10T21:13:32.695Z"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/documents",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:32.676Z",
+          "response_body": {
+            "items": [
+              {
+                "created_at": "2026-10-10T21:13:31.927833+00:00",
+                "created_by": "local-author",
+                "director_notes": [],
+                "history": [],
+                "id": "62e6b14d-2a6f-4cda-99b6-01fec45bc965",
+                "mode": "SCRIPT",
+                "novel_id": "67b77cf8",
+                "privacy_level": "LOCAL_ONLY",
+                "project_incarnation": "file:7981fc8e-67d3-4963-ab07-ec71e38d14f3",
+                "scenes": [],
+                "schema_version": 1,
+                "scope": {
+                  "mode": "local",
+                  "novel_id": "67b77cf8"
+                },
+                "script": {
+                  "body": "  播客合成开场。\n\n保留独立创作的空行。\n",
+                  "purpose": "PODCAST"
+                },
+                "shots": [],
+                "source_chapter_ids": [],
+                "source_documents": {},
+                "source_evidence": {},
+                "source_independent": true,
+                "source_privacy": {},
+                "status": "DRAFT",
+                "title": "独立播客稿",
+                "updated_at": "2026-10-10T21:13:31.927833+00:00",
+                "updated_by": "local-author",
+                "version": 1,
+                "video_plan": null
+              }
+            ]
+          },
+          "response_body_sha256": "7bf437ec3ed16a8ad3975c8026fdac36dcfbc9353533673afb35c2693ca58d54"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/model-center/local-ai/environment",
+          "status": 401,
+          "startedDateTime": "2026-10-10T21:13:32.696Z",
+          "response_body": {
+            "detail": {
+              "code": "SESSION_REQUIRED"
+            },
+            "code": "SESSION_REQUIRED",
+            "message": "SESSION_REQUIRED",
+            "details": {
+              "code": "SESSION_REQUIRED"
+            },
+            "request_id": "685c489b-b1b3-4015-a387-843a44cf68bf"
+          },
+          "response_body_sha256": "479770750ccc4e59b22a3c750eeff1c22d2983d4a52409fe47fa4cdd49112791"
+        },
+        {
+          "method": "GET",
+          "url": "http://127.0.0.1:5177/api/novels/67b77cf8/experimental/creative/director-proposals",
+          "status": 200,
+          "startedDateTime": "2026-10-10T21:13:32.696Z"
+        }
+      ]
+    }
+  ],
+  "playwright_source": {
+    "path": "frontend/node_modules/.pnpm/playwright-core@1.62.1/node_modules/playwright-core/lib/coreBundle.js",
+    "sha256": "9393fa79e1c67c74edc26b610d65a4f7ed73d345a762465cc88340a33a2454ac",
+    "excerpts": {
+      "function getElementLabels": "function getElementLabels(textCache, element) {\n  const labels = getAriaLabelledByElements(element);\n  if (labels)\n    return labels.map((label) => elementText(textCache, label));\n  const ariaLabel = element.getAttribute(\"aria-label\");\n  if (ariaLabel !== null && !!ariaLabel.trim())\n    return [{ full: ariaLabel, normalized: normalizeWhiteSpace(ariaLabel), immediate: [ariaLabel] }];\n  const isNonHiddenInput = element.nodeName === \"INPUT\" && element.type !== \"hidden\";\n  if ([\"BUTTON\", \"METER\", \"OUTPUT\", \"PROGRESS\", \"SELECT\", \"TEXTAREA\"].includes(element.nodeName) || isNonHiddenInput) {\n    const labels2 = element.labels;\n    if (labels2)\n      return [...labels2].map((label) => elementText(textCache, label));\n  }\n  return [];\n}\n\n// packages/injected/src/roleSelectorEngine.ts\nvar kSupportedAttributes = [\"selected\", \"checked\", \"pressed\", \"expanded\", \"level\", \"disabled\", \"name\", \"description\", ",
+      "function elementText": "function elementText(cache, root) {\n  let value = cache.get(root);\n  if (value === void 0) {\n    value = { full: \"\", normalized: \"\", immediate: [] };\n    if (!shouldSkipForTextMatching(root)) {\n      let currentImmediate = \"\";\n      if (root instanceof HTMLInputElement && (root.type === \"submit\" || root.type === \"button\" || root.type === \"reset\")) {\n        value = { full: root.value, normalized: normalizeWhiteSpace(root.value), immediate: [root.value] };\n      } else {\n        for (let child = root.firstChild; child; child = child.nextSibling) {\n          if (child.nodeType === Node.TEXT_NODE) {\n            value.full += child.nodeValue || \"\";\n            currentImmediate += child.nodeValue || \"\";\n          } else if (child.nodeType === Node.COMMENT_NODE) {\n            continue;\n          } else {\n            if (currentImmediate)\n              value.immediate.push(currentImmediate);\n            currentImmediate = \"\";\n            if (child.nodeType === Node.ELEMENT_NODE)\n              value.full += elementText(cache, child).full;\n          }\n        }\n        if (currentImmediate)\n          value.immediate.push(currentImmediate);\n        if (root.shadowRoot)\n          value.full += elementText(cache, root.shadowRoot).full;\n        if (value.full)\n          value.normalized = normalizeWhiteSpace(value.full);\n      }\n    }\n    cache.set(root, value);\n  }\n  return value;\n}\nfunction elementMatchesText(cache, element, matcher) {\n  if (shouldSkipForTextMatching(element))\n    return \"none\";\n  if (!matcher(elementText(cache, element)))\n    return \"none\";\n  for (let child = element"
+    }
+  }
+}

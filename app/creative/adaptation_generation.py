@@ -127,6 +127,7 @@ class AdaptationModelCoordinator:
             "source_strategy": "EXACT_SAVED_SELECTION_NO_IMPLICIT_CONTEXT", "allow_synthetic": body.allow_synthetic,
             "max_output_bytes": MAX_OUTPUT_BYTES, "timeout_seconds": TIMEOUT_SECONDS,
             "model_called": False, "automatic_retry": False, "allow_cloud_fallback": False,
+            "asset_archive": self.proposals.assets.limits() if self.proposals.assets else {"available": False},
             "execution_available": bool(decision["chosen"] and known_zero(decision["chosen"]["price"]))}
         preview["preview_digest"] = digest(preview)
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
@@ -144,18 +145,40 @@ class AdaptationModelCoordinator:
         if not preview or preview["preview_digest"] != body.reviewed_preview_digest or not preview["execution_available"]:
             raise ValueError("ADAPTATION_EXACT_PREVIEW_REQUIRED")
         if row.get("model_execution"):
-            return self.proposals.get(ctx.novel_id, ctx.scope, ctx.actor, rid)
+            return self.proposals.get(ctx.novel_id, ctx.scope, ctx.actor, rid, guard=guard, reconcile=False)
         check_version(row, body.expected_version)
         self._policy(ctx, row)
+        if self.proposals.assets is None:
+            raise ValueError("ADAPTATION_SHARED_ASSET_OWNER_REQUIRED")
+        deadline = (datetime.now(timezone.utc) + timedelta(seconds=TIMEOUT_SECONDS)).isoformat()
+        archive = self.proposals.assets.binding(row["version"] + 1)
+        sizing_receipt = self.proposals.assets.validate_admission(row, row["version"] + 1, deadline)
+        # Exact known receipt bytes plus individually bounded future output and
+        # owner identifiers. These sizing stand-ins never become evidence.
+        from uuid import UUID
+        future = deepcopy(row)
+        for status in ("GENERATING", "GENERATING", "NEEDS_REVIEW", "APPROVED"):
+            change_row(future, ctx.actor, future["version"], lambda item: item.update(status=status,
+                model_asset_intent={**archive, "job_id": str(UUID(int=0)), "preview_digest": preview["preview_digest"]},
+                model_execution={"job_id": str(UUID(int=0)), "reservation_id": "f" * 64,
+                    "deadline": deadline, "status": "ADMISSION_PENDING", "receipt_state": "UNKNOWN_NO_AUTOMATIC_REPLAY",
+                    "model_called": False, "usage_state": "UNKNOWN", "accounting": {"receipt_budget": "x" * 4096}},
+                output={"canonical_output_budget": "x" * MAX_OUTPUT_BYTES}, output_digest="f" * 64,
+                provenance={"complete_receipt_budget": sizing_receipt},
+                asset_archive={"asset_id": str(UUID(int=0)), "receipt_digest": "f" * 64, "version": 2},
+                asset_review_decision={"bounded_receipt": "x" * 4096}, document_id=str(UUID(int=0))))
+        self.proposals._capacity({"collections": {self.proposals.COLLECTION: {rid: future}}})
+        guard()
         job = self.preparer.prepare_author(ctx.novel_id, AuthorPreviewInput.model_validate(preview["author"]), ctx.token, ctx.branch)
         mark_generation_origin(job, "creative_adaptation_model")
         job.adaptation_binding = AdaptationJobBinding(proposal_id=rid, project_id=ctx.novel_id,
             actor_id=ctx.actor, scope=deepcopy(ctx.scope), project_incarnation=row["project_incarnation"],
             chapter_id=row["chapter_id"], source_version=row["source_version"], source_digest=row["source_digest"],
-            preview_digest=preview["preview_digest"]).model_dump()
+            preview_digest=preview["preview_digest"], archive=archive).model_dump(exclude_none=True)
         binding = deepcopy(job.adaptation_binding)
+        intent = {**archive, "job_id": job.id, "preview_digest": preview["preview_digest"]}
         job.generation_max_output_bytes = MAX_OUTPUT_BYTES
-        job.generation_deadline = (datetime.now(timezone.utc) + timedelta(seconds=TIMEOUT_SECONDS)).isoformat()
+        job.generation_deadline = deadline
         bounds = (job.generation_max_output_bytes, job.generation_deadline)
         identity_fields = ("novel_id", "chapter_id", "actor_id", "session_id", "scope", "instruction", "source", "profile",
             "requested_provider", "requested_model", "expected_request_digest", "base_chapter_version",
@@ -166,6 +189,7 @@ class AdaptationModelCoordinator:
             active = self._current(ctx, rid, guard)
             execution = active.get("model_execution") or {}
             if (active.get("model_preview") != preview or active["source_digest"] != binding["source_digest"]
+                    or active.get("model_asset_intent") != intent
                     or job.adaptation_binding != binding or job.experimental_origin != "creative_adaptation_model"
                     or canonical({key: getattr(job, key) for key in identity_fields}) != identity
                     or job.request_authorization is not current or job.author_preparation_guard is not current
@@ -181,23 +205,12 @@ class AdaptationModelCoordinator:
         execution = {"job_id": job.id, "reservation_id": None, "status": "ADMISSION_PENDING",
             "receipt_state": "UNKNOWN_NO_AUTOMATIC_REPLAY", "model_called": False, "usage_state": "UNKNOWN",
             "deadline": job.generation_deadline}
-        # Prove storage headroom with serialized bytes before any reservation
-        # or inference. Include every bounded remaining history snapshot and
-        # the duplicated prompt in provenance; never truncate a user prompt.
-        future = deepcopy(row)
-        for status in ("GENERATING", "GENERATING", "NEEDS_REVIEW", "APPROVED"):
-            change_row(future, ctx.actor, future["version"], lambda item: item.update(status=status,
-                model_execution={**execution, "reservation_id": "f" * 240, "accounting": {"receipt_budget": "x" * 4096}},
-                output={"serialized_output_budget": "x" * MAX_OUTPUT_BYTES}, output_digest="f" * 64,
-                provenance={"prompt": preview["request"]["prompt"], "bounded_metadata_budget": "x" * 16000},
-                document_id="f" * 240))
-        self.proposals._capacity({"collections": {self.proposals.COLLECTION: {rid: future}}})
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             stored = self._current(ctx, rid, guard, state)
             check_version(stored, body.expected_version)
             if stored.get("model_execution") or stored.get("model_preview") != preview:
                 raise ValueError("ADAPTATION_ALREADY_ADMITTED_NO_REPLAY")
-            change_row(stored, ctx.actor, stored["version"], lambda item: item.update(status="GENERATING", model_execution=deepcopy(execution)))
+            change_row(stored, ctx.actor, stored["version"], lambda item: item.update(status="GENERATING", model_execution=deepcopy(execution), model_asset_intent=deepcopy(intent)))
             self.proposals._capacity(state)
             guard()
         lease = self._owner_lease(ctx, row)
@@ -250,7 +263,7 @@ class AdaptationModelCoordinator:
                     status="CANCELLED" if cancelled else "MODEL_UNAVAILABLE", model_execution=deepcopy(execution)))
                 self.proposals._capacity(state)
             raise
-        return self.proposals.get(ctx.novel_id, ctx.scope, ctx.actor, rid)
+        return self.proposals.get(ctx.novel_id, ctx.scope, ctx.actor, rid, guard=guard, reconcile=False)
 
     def _parse(self, row, output):
         if not isinstance(output, str) or len(output.encode()) > MAX_OUTPUT_BYTES:
@@ -278,6 +291,9 @@ class AdaptationModelCoordinator:
 
     def _settled_locked(self, ctx, row, job):
         execution = row["model_execution"]
+        if self.proposals.assets is not None and self.proposals.assets.enabled(row):
+            self.proposals.assets.authority(row)
+            return self.proposals.assets.ledger(row, self.proposals.assets.job(row))
         if not callable(job.request_authorization) or job.status != "COMPLETED" or job.terminal_hook_status != "COMPLETED":
             raise StaleSourceError("ADAPTATION_LIVE_SETTLED_RESULT_REQUIRED")
         job.request_authorization()
@@ -306,6 +322,36 @@ class AdaptationModelCoordinator:
             raise StaleSourceError("ADAPTATION_OUTPUT_CHANGED")
 
     def refresh(self, ctx, rid, value, guard):
+        row = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid)
+        assets = self.proposals.assets
+        if assets is None or not assets.enabled(row):
+            return self._refresh(ctx, rid, value, guard)
+        body = ProposalAction.model_validate(value)
+        check_version(row, body.expected_version)
+        self.proposals._current(ctx.novel_id, ctx.scope, row); guard()
+        if row["status"] == "CANCELLED": raise ValueError("ADAPTATION_TERMINAL")
+        try:
+            job = self.manager.get(row["model_execution"]["job_id"])
+            if row["status"] == "APPROVED":
+                return assets.read(ctx, rid, guard, force=True)
+            if job.status != "COMPLETED":
+                result = self._refresh(ctx, rid, value, guard)
+                result["asset_output"] = assets.pending("NO_ACCEPTED_RESULT" if job.status in self.manager.terminal else "PENDING")
+                return result
+            with assets.phase(ctx, rid, guard, create=True):
+                result = self._refresh(ctx, rid, value, guard)
+            result["asset_output"] = assets.project(ctx, rid, guard)
+            assets.forget_failure(ctx, row)
+            return result
+        except AdaptationPublicationPending:
+            guard()
+            return assets.pending_projection(row)
+        except (ValueError, OSError, KeyError):
+            guard()
+            assets.remember_failure(ctx, row)
+            return assets.masked(row)
+
+    def _refresh(self, ctx, rid, value, guard):
         body = ProposalAction.model_validate(value)
         row = self._current(ctx, rid, guard)
         check_version(row, body.expected_version)
@@ -321,7 +367,7 @@ class AdaptationModelCoordinator:
         except KeyError:
             job = None
         output, provenance = None, None
-        if job is None or not callable(job.request_authorization):
+        if job is None or (not callable(job.request_authorization) and not (self.proposals.assets and self.proposals.assets.enabled(row))):
             execution.update(status="UNKNOWN", receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY")
         else:
             # Observe the published job ONCE, then obtain its settled ledger.
@@ -354,7 +400,8 @@ class AdaptationModelCoordinator:
                 except (ValueError, RecursionError):
                     execution.update(status="DISCARDED", failure_code="ADAPTATION_INVALID_OUTPUT")
                 else:
-                    route = self._policy(ctx, row)
+                    route = (row["model_preview"]["broker"]["chosen"] if self.proposals.assets and self.proposals.assets.enabled(row)
+                             else self._policy(ctx, row))
                     execution.update(status="CANDIDATES", receipt_state="RECORDED", model_called=True,
                         usage_state=job.usage_status, accounting={key: ledger.get(key) for key in
                             ("id", "version", "status", "cost_state", "actual_microusd", "accounted_microusd")})
@@ -365,7 +412,7 @@ class AdaptationModelCoordinator:
                         "prompt": row["model_preview"]["request"]["prompt"], "job_id": job.id, "reservation_id": ledger["id"],
                         "request_digest": job.expected_request_digest, "preview_digest": row["model_preview"]["preview_digest"],
                         "input_digest": row["source_digest"], "selection_digest": row["selection_digest"],
-                        "raw_output_digest": digest(job.output), "generated_at": now(),
+                        "raw_output_digest": digest(job.output), "generated_at": ledger["updated_at"],
                         "quality_verification": "HUMAN_REVIEW_REQUIRED"}
             else:
                 execution.update(status="DISCARDED", failure_code=job.error_code or "ADAPTATION_NO_VERIFIED_OUTPUT")
@@ -378,7 +425,13 @@ class AdaptationModelCoordinator:
                 except AdaptationPublicationPending:
                     guard()
                     return self.proposals._public(stored)
+            archive_pointer = None
+            if self.proposals.assets and self.proposals.assets.enabled(stored) and job and job.status == "COMPLETED":
+                proof = self.proposals.assets.authority(stored)
+                archive_pointer = {"asset_id": proof["asset"]["id"], "version": proof["asset"]["version"],
+                    "receipt_digest": digest(proof["receipt"]), "output_digest": proof["origin"]["output_digest"]}
             change_row(stored, ctx.actor, stored["version"], lambda item: item.update(
+                **({"asset_archive": archive_pointer} if archive_pointer else {}),
                 status="NEEDS_REVIEW" if output else "MODEL_UNAVAILABLE", model_execution=execution,
                 output=output, output_digest=digest(output) if output else None, provenance=provenance))
             self.proposals._capacity(state)

@@ -17,7 +17,7 @@ def graph_job_binding(item):
     if item.get("adaptation_binding") is not None or item.get("experimental_origin") == "creative_adaptation_model":
         from ..creative.adaptation_models import AdaptationJobBinding
         try:
-            binding = AdaptationJobBinding.model_validate(item.get("adaptation_binding")).model_dump()
+            binding = AdaptationJobBinding.model_validate(item.get("adaptation_binding")).model_dump(exclude_none=True)
             from ..experimental.store import ExperimentalStore
             ExperimentalStore.key(item["novel_id"], binding["scope"])
             if binding["scope"].get("mode") == "collaboration":

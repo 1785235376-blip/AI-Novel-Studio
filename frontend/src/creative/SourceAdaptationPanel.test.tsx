@@ -107,3 +107,23 @@ it('keeps persisted proposals readable when optional model features are disabled
   expect((screen.getByRole('button', { name: '预览改编模型输入' }) as HTMLButtonElement).disabled).toBe(true);
   expect(app.mutations()).toHaveLength(0);
 });
+
+it('shows private asset version and passive receipt without another save action', async () => {
+  const row = { ...candidate(), asset_output: { contract: 'creative-adaptation-text-asset/1', state: 'DRAFT', asset_id: 'asset-1', version: 1, sha256: 'a'.repeat(64), execution_receipt: { quality_verification: 'NOT_RUN', model_id: 'verified-model' } } };
+  const app = setup({ rows: [row] }); await loaded();
+  fireEvent.click(screen.getByRole('button', { name: /Adapted screenplay · NEEDS_REVIEW/ }));
+  expect(screen.getByText('原始输出已归档为私有草稿')).toBeTruthy();
+  expect(screen.getByText(/TextAsset asset-1 · v1/)).toBeTruthy();
+  expect(screen.getByText('模型、输入、参数与工作流回执（未验证质量）')).toBeTruthy();
+  expect(app.mutations()).toHaveLength(0);
+});
+
+it('keeps a committed screenplay distinct from its pending asset review projection', async () => {
+  const row = proposal({ status: 'APPROVED', document_id: 'screenplay-1', asset_output: { contract: 'creative-adaptation-text-asset/1', state: 'INCOMPLETE', asset_id: null, version: null } });
+  const app = setup({ rows: [row] }); await loaded();
+  fireEvent.click(screen.getByRole('button', { name: /Adapted screenplay · APPROVED/ }));
+  expect(screen.getByText('资产归档尚未完成')).toBeTruthy();
+  expect(screen.getByText(/剧本文档已保存，资产审核版本仍待同步/)).toBeTruthy();
+  expect(screen.queryByRole('button', { name: '审核并创建剧本' })).toBeNull();
+  expect(app.mutations()).toHaveLength(0);
+});

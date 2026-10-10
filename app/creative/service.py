@@ -50,6 +50,10 @@ class CreativeService(DomainService):
         from .adaptation_generation import AdaptationModelCoordinator
         self.adaptations.generation = AdaptationModelCoordinator(self.adaptations, broker, preparer, manager)
 
+    def configure_adaptation_assets(self, workspace):
+        from .adaptation_assets import AdaptationAssets
+        self.adaptations.assets = AdaptationAssets(self.adaptations, workspace)
+
     @staticmethod
     def document_digest(row):
         return document_digest(row)

@@ -553,3 +553,50 @@ def test_direct_child_rejects_missing_isolated_data_path(tmp_path, inputs, monke
     with pytest.raises(ValueError, match="^ISOLATED_CHILD_ENVIRONMENT_REQUIRED$"):
         runner.main()
     execute.assert_not_called()
+
+
+def test_adaptation_scenario_uses_bounded_owned_cpu_context_only(inputs):
+    argv = runner.runtime_argv(inputs.server, inputs.model, inputs.port, scenario="adaptation")
+    original = runner.runtime_argv(inputs.server, inputs.model, inputs.port)
+    expected = list(original)
+    expected[expected.index("--ctx-size") + 1] = "8192"
+    assert argv == expected
+    assert argv[argv.index("--n-gpu-layers") + 1] == "0"
+    assert argv[argv.index("--threads") + 1] == "2"
+    assert "--offline" in argv
+
+
+def test_unknown_acceptance_scenario_cannot_construct_runtime_command(inputs):
+    with pytest.raises(ValueError, match="UNKNOWN_OWNED_ACCEPTANCE_SCENARIO"):
+        runner.runtime_argv(inputs.server, inputs.model, inputs.port, scenario="unapproved")
+
+
+def test_adaptation_acceptance_uses_saved_get_version_not_create_projection(tmp_path):
+    from scripts.run_v2_real_adaptation_scenario import run
+    observed = []
+    class StopBeforeModel(Exception): pass
+    def api(method, path, payload=None, status=200):
+        observed.append((method, path, payload))
+        if path.endswith("/chapters"):
+            return {"id": "owned-project:1"}  # Existing create API omits version.
+        if method == "GET":
+            return {"id": "owned-project:1", "version": 7, "content": "Saved source"}
+        assert path.endswith("/adaptation-proposals")
+        assert payload["expected_source_version"] == 7
+        raise StopBeforeModel
+    with pytest.raises(StopBeforeModel):
+        run(tmp_path, api, None, {}, "owned-project", {}, {})
+    assert len(observed) == 3
+
+
+def test_adaptation_acceptance_reads_typed_binding_not_unset_generic_actor_scope():
+    from scripts.run_v2_real_adaptation_scenario import archive_authority
+    scope = {"mode": "local", "novel_id": "project"}
+    proposal = {"id": "proposal", "novel_id": "project", "scope": scope, "created_by": "local-author"}
+    binding = {"proposal_id": "proposal", "project_id": "project", "scope": scope, "actor_id": "local-author"}
+    job = SimpleNamespace(scope=None, actor_id=None, adaptation_binding=binding)
+    assert archive_authority(proposal, job) == (scope, "local-author")
+    for key in ("proposal_id", "project_id", "scope", "actor_id"):
+        changed = dict(binding); changed[key] = "different"
+        with pytest.raises(AssertionError):
+            archive_authority(proposal, SimpleNamespace(adaptation_binding=changed))

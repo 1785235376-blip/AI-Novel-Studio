@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "3491c6ab131321103fab822b42cdd04e245beec2a431aeed1e26e44c91068fad",
+  "application_source_fingerprint_sha256": "b3a7551b6427bdb0ce1226dba33d225483fde3c43558b1a8af7e3b6f54fd2556",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -26,7 +26,7 @@
     "app/audio_provider_config.py": "37437e3fe68dd94f527dbdf176ab67a52630a674af3ae2603fc8b9ae4545dc9d",
     "app/audio_providers.py": "d43ef095f12b0cbe11070068c420bfb47a378e2d9830591e5f95e82eafbb83d6",
     "app/author_context_sources.py": "588363b48a27e89a17b815c9b8673e2efc81590581e5a05d531d1d07e5862a63",
-    "app/author_request.py": "149bfc12f5d76ad10151a24e046316070f4bd591609dd4ba02d131fa8b1e4e04",
+    "app/author_request.py": "98ad49bf9e4c8f91b2adce36a07f32e62e441d40c175cff5e9210f60204f7138",
     "app/authorization.py": "65bc7ed78c3ebbb7b0efce71d2c473e19cac4ee1dc51d2f10f1030413a58007a",
     "app/autosave/contracts.py": "21ad44cf7a8d7d316b481f96895faccd38782eb6934aa7fd6fdf86699d21a7de",
     "app/autosave/coordinator.py": "a27013595b0c73d9a6bf395ea7ef947311569480f77a190e8bd8af66b2e099b7",
@@ -47,11 +47,13 @@
     "app/context_policy.py": "057d0c4663189101e8ee44bbe7f2b3ecb3a93f437f25e7e0317fa06a3d0d3cb9",
     "app/creation_workbench_api.py": "28d4cb80ef1f45374ceda4bb0d5513be3fc0aea471d3ca8f0738ac8543429879",
     "app/creative/__init__.py": "22e9cdc335f433a18299dd63f82c0b68ca05af9e9cd0570b20baecac2624d0c4",
-    "app/creative/adaptation.py": "cbe29e8e14da929bf8ac080aea74b4b84e67d981422a6350842aeefba9be21e4",
-    "app/creative/adaptation_generation.py": "b182309acad09f73ccffa2203496a28b611fa3b6d56c917df8c2173af5263ce8",
-    "app/creative/adaptation_models.py": "3d108834a1265ccc4d26baad98595134b152571285b3a081ae65a1b5f0d34916",
+    "app/creative/adaptation.py": "5f908d819e8b6f5bd0247cff7c1a36318af04a5d17e563172340cd72968a5f06",
+    "app/creative/adaptation_assets.py": "498491be533ba112c91196db6268733eb77a9489a891318add3e9107de40f6fd",
+    "app/creative/adaptation_generation.py": "9bb20b32ccdb59aca2ab722955a4f49dac3aaac5d5773340e2e804cabe59edd2",
+    "app/creative/adaptation_models.py": "dce25a17a60327be71d5a7f1e5369e2c1cdcaf13b27c951c06c3361e061ed7a5",
+    "app/creative/adaptation_receipt.py": "86071c1c6b0fc9a633e0ce376e766ec6e25ad157f70594233f30056d717c8ac4",
     "app/creative/ai_execution.py": "72aa5cef0c096d79ba36b39d34905c71af17ba3fbba2a6aebc60bfdc5e8b25dc",
-    "app/creative/api.py": "65cdf2b1f9bab1b72d1486715e8fa4063e1f284d8d936a2a1a3a7aab5815e20c",
+    "app/creative/api.py": "cfbfe5513510f44a696e1e6f06eb0991991f82557d8690c76ae98dcb6005bf21",
     "app/creative/generation.py": "e34616fbfd7b686615f3b0eab674e7f2f988650471850ef7fc5285774a0a2d61",
     "app/creative/graph.py": "81256acae939e87ed5893c58af58eeca2d36a69966cdd71ff83e0da17c891781",
     "app/creative/graph_api.py": "242e2407af3a18ad5746f78f02ec84bdfa82aa33401729f26d94274cd7393019",
@@ -62,7 +64,7 @@
     "app/creative/proposals.py": "4e8b93d2408b214165b01beda496b9dfbfee2b0bd400c414b2794da20262fd96",
     "app/creative/screenplay_export.py": "87b8d460cbdd111756e64900aefffff271f7463bd6d5811bd6720d70fda0a384",
     "app/creative/script_export.py": "d94eb8dc9d55d27aaf83f0fb1d97c9e20a102830692f9b1d8111ae4bcd91a144",
-    "app/creative/service.py": "fac480780dcd87461da0b6dfd89bce9466d73b0f52f37e43b2a89cd42fb108e2",
+    "app/creative/service.py": "baf9a3881094fbdfe77e7a655594c80b72bbb7fb5d405117441c24a9ba5b3a21",
     "app/creative/storage_admission.py": "055cc172c00063f9dad333e7d4815174bd3c3e6b8f3af742a548c4427f0acf86",
     "app/creative/text_assets.py": "e486476bf435ed23da619818ca523d59b6cd77271e09d1abd101cbd5f815897b",
     "app/creative/text_execution_receipt.py": "3797c24bfec8d499558bb0f2a1fc6d5ff78911d06b8ee6a6c46c4b20a582df65",
@@ -76,7 +78,7 @@
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "e02ea0acef3b8d5f60541e22fed7d53580bfcdba338b7f1467da96eea4567dd9",
+    "app/experimental/api.py": "bf817aa5c578ce11a816d141d08fbb948804fbafd8f3ef473c026b6d7d96db05",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
     "app/experimental/audiobook_api.py": "02b07bb4bf12c169d4fc73e0033cc7e558f5fed4f966d3cbf54f4cf65b205ef7",
     "app/experimental/author_context_api.py": "00b8f1a33e4220bb2b1f3b1def6a1ec8ae7d20a8cbc87530304c5c0b87e4fc5a",
@@ -196,7 +198,7 @@
     "app/identity.py": "66387f126e24040c7b145cd25f8b83e38e3386cf4d2d2c06d15f9eb5a34a30b9",
     "app/import_parsers.py": "8838eba5abe4909cb507749ef67d7a6690ebaca7ccffaa09aabff5aa4b168576",
     "app/industry_export_formats.py": "4e26f355faa3b8d5c4b496f5537c317e01ad9784cdad055cc8bf1c2503794134",
-    "app/jobs.py": "f72070dd8f881d99c94d8de10eee71b9056ac44505d5caebd67ba035bc3e4561",
+    "app/jobs.py": "1e5115381a3861453e3c70ec498e11885106c33b012f7b9c1636429f4707acbb",
     "app/knowledge_extraction.py": "b5b2cc447d16bb7768a28c6e96872fdc25b97a3a3d947ab497448858c7f77f73",
     "app/local_interop/__init__.py": "a36a95760b06e4987f0301349edcdb62ccf003c9c10ececaba8fbd3eac87e51a",
     "app/local_interop/api.py": "5c6e1c57ec1fe87c740b6b3abe4f5b010d915a363e7ea6a454921bfdcb2e76fd",
@@ -313,7 +315,7 @@
     "app/repositories/file/narrative.py": "d96f2f8339b3f891ad70b87da72e04b67867c6e0f3d3e0fdc4084caf73f99ad2",
     "app/repositories/file/novel.py": "a9209c3ae13e42b7cd56145f7bfc8974493cf4d8e0429301b1bcb892eaa31ec5",
     "app/repositories/file/scope.py": "fc5f8b0649831b49143bc52b937a10d1a2c63247be5db68ebec28c6fa010e7c2",
-    "app/repositories/generation_repository.py": "7a7f3e08fa64ec2d1b964bee5a4977c5e018bf7404f35cca7dbd2adeefa2ceed",
+    "app/repositories/generation_repository.py": "75d392c7d7f1cf554065deef78e1fc34dea9e2f420c5512317853f474f525df2",
     "app/repositories/identity_interfaces.py": "cdc6eee509d3f3b3d9c71fd55fbd32c354a2a224fabee84f8e9d186d8421f8b7",
     "app/repositories/interfaces.py": "b27aaa6acc8ff206adcc3fdad97b21ce4d96ef9faab571819a3ba44f0257db71",
     "app/repositories/lore_interfaces.py": "ede87302f2cb37970097da8e1dbe90f4804cf3f7561e2e8994640fbcb495766c",
@@ -348,7 +350,7 @@
     "app/services/agent_context_service.py": "647b09c44bf8b54f1545cd1d0ac2e2a7afb9183f54103140d6ef4d2332c4c297",
     "app/services/agent_job_service.py": "894983ea8de02effb5e6bd05b1ab4daccbeb41404b6abea1b06b18ccafa780e7",
     "app/services/ai_planning_service.py": "1b7f2b06bd62ae4d378ca1809a6003b6db1e1b5b3d449f88b2b929c8dad8c9fa",
-    "app/services/asset_library_service.py": "19ebf05118b9e47d011b02df9928b8378dc7576b727dd489d8ee0f9e62384298",
+    "app/services/asset_library_service.py": "07bc76675e0125e0751d8c612792ff65f994303444c6b560c44273f38337e0eb",
     "app/services/asset_task_worker.py": "8f0f6a64af0bfb0a6d1e50dfd42511cfb5262b7dde530153237d18ee270bfd3c",
     "app/services/audiobook_service.py": "dec4c65ecd28b2d72859fb2b98bdf7cba3a61ed96396e2b323bb809a22499aea",
     "app/services/authorization_service.py": "b115f9b906bb7d09d0ec0dbdf5d8f10637e7ec77447de4ff7b90daed97a759ef",
@@ -417,7 +419,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "8453bcb12119fb4b95267ec5423d3cbf98a5a87e7cbf9b53ea109fab1e1b0a41",
+    "sha256": "5d305a59756c94335629c8844b1fe8dedd9a843ff56389ab89f8db9fb813a19a",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -2461,7 +2463,8 @@
       "operation_id": "adaptations_api_novels__nid__experimental_creative_adaptation_proposals_get",
       "owner_ref": "7818dcf8a6381dbedd2e26af4663df965eb24e2ed65b0cefde125da0992f6a84",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d30fe433a1a3696d4cad451280359d0b7fd34455873b53df7d2b6b76e878c34a",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -2472,7 +2475,8 @@
       "operation_id": "adaptation_routes_api_novels__nid__experimental_creative_adaptation_proposals_model_routes_get",
       "owner_ref": "b3ee83123cec740def0ccd8a6f3fe0aba78a9ced33af24aaf6d4d8e4b5276edf",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "964aef658a80b20242a4d6b1d740174cae8f315855311ddeb84c726069f60f2a",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -2483,7 +2487,8 @@
       "operation_id": "adaptation_api_novels__nid__experimental_creative_adaptation_proposals__rid__get",
       "owner_ref": "d70c6866f5578f3c5488038ebc7680da3af02f8b37e143313ead0e0ace2fc90f",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "3ebb13135a89d32c833f9186575bbf9c9d928a20fce9044a44561ce09821c39a",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -7475,7 +7480,8 @@
       "operation_id": "adaptations_api_v1_novels__nid__experimental_creative_adaptation_proposals_get",
       "owner_ref": "7818dcf8a6381dbedd2e26af4663df965eb24e2ed65b0cefde125da0992f6a84",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "642d97e522c8832a62a35573b102058d74c0f1638ace7502325ab88585ec2619",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -7486,7 +7492,8 @@
       "operation_id": "adaptation_routes_api_v1_novels__nid__experimental_creative_adaptation_proposals_model_routes_get",
       "owner_ref": "b3ee83123cec740def0ccd8a6f3fe0aba78a9ced33af24aaf6d4d8e4b5276edf",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "5f539ed1ced375d328a0acbfdcdf01f24513257e2bb09ad5ef58a49762d4b7ef",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -7497,7 +7504,8 @@
       "operation_id": "adaptation_api_v1_novels__nid__experimental_creative_adaptation_proposals__rid__get",
       "owner_ref": "d70c6866f5578f3c5488038ebc7680da3af02f8b37e143313ead0e0ace2fc90f",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "3a1a1cf40c49068082b1215f135d771cd1208496f83425916a9c6e1906ca4fa3",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -13071,7 +13079,8 @@
       "operation_id": "create_adaptation_api_novels__nid__experimental_creative_adaptation_proposals_post",
       "owner_ref": "f5302a9a01c9b365d46612ebd98315e01c01bbabc5c8ea8d77aa7afb1d2a1125",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7ead17addb61ecd985b6cdcf4d02c211d52ba65f2fd5993e7806e77e2af90d77",
       "schema_graph_sha256": "fe6f4b54a5060a466553c89935e0a5630ac86c99c0edb3161a7924da711cad86"
@@ -13082,7 +13091,8 @@
       "operation_id": "cancel_adaptation_api_novels__nid__experimental_creative_adaptation_proposals__rid__cancel_post",
       "owner_ref": "dcd09beb186cd7b603647dfe0a4b77da329dbec00f545577442f1e4b268c05f0",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "5e78e646495a9dfb8d4f6ed009c2bd64b776349fe41459410f8afc7a7091dcba",
       "schema_graph_sha256": "73f522fd0c18ebb0f9c35a3ed503d176f14f9bf904754d6f5c879e0c6defeb60"
@@ -13093,7 +13103,8 @@
       "operation_id": "dispatch_adaptation_api_novels__nid__experimental_creative_adaptation_proposals__rid__dispatch_post",
       "owner_ref": "415d50a3349980d2cfff7772dfffc91da217c63081db213d1e2ee8553e11f8cf",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0c927f3b82ce63627728389395619e7c4c4efbb0a09f358b514a4d81208b63d0",
       "schema_graph_sha256": "050992e79963002eca03b579ee0778cccd7519315ecc49c40d9f9450406184ae"
@@ -13104,7 +13115,8 @@
       "operation_id": "preview_adaptation_api_novels__nid__experimental_creative_adaptation_proposals__rid__preview_post",
       "owner_ref": "b061590b812cb7c868def6dfd8575be2942c1e970f2b5eda25944f0b7bc17aba",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0fc1844afd39025aab14be025a0597d92c47f6655011530886c4057bb8302d55",
       "schema_graph_sha256": "24ad3cb9945bba7cc8d4f9d7b85c02d73a0cf44c7778b614de18d7a6afeec8ed"
@@ -13115,7 +13127,8 @@
       "operation_id": "refresh_adaptation_api_novels__nid__experimental_creative_adaptation_proposals__rid__refresh_post",
       "owner_ref": "47056783c6bd1f2205164af0fd801fa9171311e54bbd32fa40539b85804a1bea",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c9643f37f8d7cae59c468358d327fc8337594bf9109195a29ff3d4a014e8eeb5",
       "schema_graph_sha256": "73f522fd0c18ebb0f9c35a3ed503d176f14f9bf904754d6f5c879e0c6defeb60"
@@ -13126,7 +13139,8 @@
       "operation_id": "review_adaptation_api_novels__nid__experimental_creative_adaptation_proposals__rid__review_post",
       "owner_ref": "1c9019ad994dc743bd91054fa1788042fb7e855acb197eae6a2ffbb606180b0a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ed22d5d01c25f4fc763cf9a4c4e5d5b7195ec16f683ac7b8c06338645c97f2ab",
       "schema_graph_sha256": "c6b72e3186e9c3d5e4be2dea7a5331a27d86032c0fbcd7f4b2b8de0bd6689db2"
@@ -19242,7 +19256,8 @@
       "operation_id": "create_adaptation_api_v1_novels__nid__experimental_creative_adaptation_proposals_post",
       "owner_ref": "f5302a9a01c9b365d46612ebd98315e01c01bbabc5c8ea8d77aa7afb1d2a1125",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "5f7b5cbde6844b2f0c6ec592d1cd0e67e3df215be84e8e407d03f500107f54e6",
       "schema_graph_sha256": "fe6f4b54a5060a466553c89935e0a5630ac86c99c0edb3161a7924da711cad86"
@@ -19253,7 +19268,8 @@
       "operation_id": "cancel_adaptation_api_v1_novels__nid__experimental_creative_adaptation_proposals__rid__cancel_post",
       "owner_ref": "dcd09beb186cd7b603647dfe0a4b77da329dbec00f545577442f1e4b268c05f0",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "94c4146b5b3f6a8014ff74b2ab13a3d7a49cd9e7b90b3fa05dd0e03dc886def7",
       "schema_graph_sha256": "73f522fd0c18ebb0f9c35a3ed503d176f14f9bf904754d6f5c879e0c6defeb60"
@@ -19264,7 +19280,8 @@
       "operation_id": "dispatch_adaptation_api_v1_novels__nid__experimental_creative_adaptation_proposals__rid__dispatch_post",
       "owner_ref": "415d50a3349980d2cfff7772dfffc91da217c63081db213d1e2ee8553e11f8cf",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d6dbde239e7909c938a4ca79cfb0279cb63c8b43344bb1dd90a0d87602e207ed",
       "schema_graph_sha256": "050992e79963002eca03b579ee0778cccd7519315ecc49c40d9f9450406184ae"
@@ -19275,7 +19292,8 @@
       "operation_id": "preview_adaptation_api_v1_novels__nid__experimental_creative_adaptation_proposals__rid__preview_post",
       "owner_ref": "b061590b812cb7c868def6dfd8575be2942c1e970f2b5eda25944f0b7bc17aba",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "35812dd158ea3bc8a79b14f4796683ecd361fdae14594ce429a0f2030c44a271",
       "schema_graph_sha256": "24ad3cb9945bba7cc8d4f9d7b85c02d73a0cf44c7778b614de18d7a6afeec8ed"
@@ -19286,7 +19304,8 @@
       "operation_id": "refresh_adaptation_api_v1_novels__nid__experimental_creative_adaptation_proposals__rid__refresh_post",
       "owner_ref": "47056783c6bd1f2205164af0fd801fa9171311e54bbd32fa40539b85804a1bea",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "636a6497971f7f68494aeae2fc40dd71a2f21821db29d189356a2a37af0b8c5c",
       "schema_graph_sha256": "73f522fd0c18ebb0f9c35a3ed503d176f14f9bf904754d6f5c879e0c6defeb60"
@@ -19297,7 +19316,8 @@
       "operation_id": "review_adaptation_api_v1_novels__nid__experimental_creative_adaptation_proposals__rid__review_post",
       "owner_ref": "1c9019ad994dc743bd91054fa1788042fb7e855acb197eae6a2ffbb606180b0a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "268b0ad4cbc046a43234423c79b4286a1eb39fa5f9dbdd9906bcaa856a00d038",
       "schema_graph_sha256": "c6b72e3186e9c3d5e4be2dea7a5331a27d86032c0fbcd7f4b2b8de0bd6689db2"
