@@ -10,11 +10,15 @@ import type {
   StudioGraphAssetRef, StudioGraphMediaCandidate, StudioGraphMediaRuntime, StudioGraphMediaPreviewInput,
   StudioGraphMediaDispatchInput, StudioGraphMediaJobInput, StudioGraphMediaReviewInput,
   StudioGraphMediaPreview, StudioGraphMediaJob, StudioGraphMediaExecution,
+  GraphTimelineProductionPreview,
 } from './studioGraphTypes';
 import type { MediaOperation, ProductionJob, ProductionPreview, RecordedMediaCommand, RecordedProductionSource, ProductionRecipe } from './studioProductionClient';
 import { graphModelCapabilities, graphModelRuntime } from './studioGraphModelContract';
 import { graphTextAssetOutput } from './studioGraphTextAssetContract';
 import { createStudioProviderClient, type StudioProviderClient } from './studioProviderClient';
+import { checkedGraphTimelineParameters, checkedGraphTimelineSnapshot, graphTimelineId, graphTimelinePorts, type GraphTimelineCommand } from './studioGraphTimelineContract';
+import { checkedTimelineExportProfile, timelineExportKey } from './studioTimelineExportTypes';
+import { checkedTimeline, timelineSources, type StudioTimelineRow } from './studioTimelineTypes';
 
 /** Inject the existing Studio transport; graph operations never look up credentials. */
 export type StudioGraphTransport = {
@@ -25,7 +29,7 @@ export type StudioGraphTransport = {
 const localDefinitionIds: readonly StudioGraphDefinitionId[] = ['text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review', 'asset_reference'];
 const modelDefinitionIds: readonly StudioGraphDefinitionId[] = [...localDefinitionIds, 'text_generate'];
 const mediaDefinitionIds: readonly StudioGraphDefinitionId[] = ['media_generate', 'media_review'];
-const definitionIds: readonly StudioGraphDefinitionId[] = [...modelDefinitionIds, ...mediaDefinitionIds];
+const definitionIds: readonly StudioGraphDefinitionId[] = [...modelDefinitionIds, ...mediaDefinitionIds, 'timeline_export'];
 const statuses: readonly StudioGraphRunStatus[] = ['QUEUED', 'RUNNING', 'WAITING_APPROVAL', 'PAUSED', 'SUCCEEDED', 'FAILED', 'CANCELLED', 'REJECTED'];
 const nodeStatuses: readonly StudioGraphNodeStatus[] = ['PENDING', 'WAITING_APPROVAL', 'QUEUED', 'WORKING', 'SUCCEEDED', 'FAILED', 'SKIPPED', 'REJECTED'];
 const actions: readonly StudioGraphAction[] = ['execute', 'approve', 'reject', 'cancel', 'pause', 'resume'];
@@ -35,6 +39,7 @@ const parameterKeys: Record<StudioGraphDefinitionId, readonly string[]> = {
   director_note: ['note'], human_review: [], asset_reference: ['asset_id', 'version', 'digest', 'kind'],
   text_generate: ['instruction', 'max_output_tokens'],
   media_generate: ['operation_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'allow_cloud', 'license_note'], media_review: [],
+  timeline_export: ['timeline_snapshot', 'edit_operations', 'source_bindings', 'export_profile'],
 };
 const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; outputs: Record<string, string> }> = {
   text_input: { inputs: {}, outputs: { text: 'TEXT' } },
@@ -47,6 +52,7 @@ const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; o
   text_generate: { inputs: { text: 'TEXT', direction: 'DIRECTOR_NOTES' }, outputs: { draft: 'DRAFT' } },
   media_generate: { inputs: { text: 'TEXT', source: 'ASSET_REF' }, outputs: { candidate: 'MEDIA_CANDIDATE' } },
   media_review: { inputs: { candidate: 'MEDIA_CANDIDATE' }, outputs: { asset: 'ASSET_REF' } },
+  timeline_export: { inputs: Object.fromEntries(graphTimelinePorts.map(port => [port, 'ASSET_REF'])), outputs: { candidate: 'MEDIA_CANDIDATE' } },
 };
 function nodePorts(kind: StudioGraphDefinitionId, mediaSchema: boolean): { inputs: Record<string, string>; outputs: Record<string, string> } {
   if (mediaSchema && kind === 'human_review') return { inputs: { draft: 'DRAFT' }, outputs: { reviewed_draft: 'DRAFT' } };
@@ -167,6 +173,7 @@ function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false
   const row = record(value, input);
   // Redacted references never expose identifiers even if a malformed response includes them.
   if (unavailable && kind === 'asset_reference') return {};
+  if (kind === 'timeline_export') { try { return checkedGraphTimelineParameters(row); } catch { return invalid(input); } }
   if (kind === 'text_input') return { text: text(row.text, 8_000, input, true) };
   if (kind === 'manual_transform') return { result: text(row.result, 8_000, input, true) };
   if (kind === 'director_note') return { note: text(row.note, 4_000, input, true) };
@@ -192,7 +199,7 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
   if (row.schema_version !== 1 && row.schema_version !== 2 && row.schema_version !== 3) invalid(input);
   const nodes: StudioGraphNode[] = list(row.nodes, row.schema_version === 3 ? 24 : 16, input).map(item => {
     const node = record(item, input), nodeId = id(node.id, input), kind = definitionId(node.definition_id, input);
-    if (kind === 'text_generate' && row.schema_version === 1 || mediaDefinitionIds.includes(kind) && row.schema_version !== 3) invalid(input);
+    if (kind === 'text_generate' && row.schema_version === 1 || [...mediaDefinitionIds, 'timeline_export'].includes(kind) && row.schema_version !== 3) invalid(input);
     if (node.definition_version !== 1) invalid(input);
     return { id: nodeId, definition_id: kind, definition_version: 1, enabled: bool(node.enabled, input),
       position: position(node.position, input), parameters: parameters(node.parameters, kind, input, unavailable.has(nodeId)) };
@@ -216,6 +223,12 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
     return result;
   });
   if (row.schema_version === 3) {
+    if (nodes.filter(node => ['media_generate', 'timeline_export'].includes(node.definition_id)).length > 4) invalid(input);
+    for (const node of nodes.filter(item => item.definition_id === 'timeline_export')) {
+      const connected = edges.filter(edge => edge.target_node_id === node.id);
+      const bindings = node.parameters.source_bindings || [];
+      if (connected.length !== bindings.length || bindings.some(binding => !connected.some(edge => edge.target_port === binding.port))) invalid(input);
+    }
     for (const node of nodes.filter(item => item.definition_id === 'media_generate')) {
       const draftEdge = edges.find(edge => edge.target_node_id === node.id && edge.target_port === 'draft');
       if (!draftEdge) continue;
@@ -245,6 +258,11 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
 function schema(value: unknown, kind: StudioGraphDefinitionId): StudioGraphParameterSchema {
   const row = record(value), properties = record(row.properties);
   if (row.type !== 'object' || row.additionalProperties !== false) invalid();
+  if (kind === 'timeline_export') {
+    if (JSON.stringify(row).length > 128000 || Object.keys(properties).length !== 4 || Object.keys(properties).some(key => !parameterKeys[kind].includes(key))) invalid();
+    return { type: 'object', additionalProperties: false, properties: { timeline_snapshot: { type: 'object' }, edit_operations: { type: 'array' },
+      source_bindings: { type: 'array' }, export_profile: { type: 'object' } }, required: ['timeline_snapshot', 'export_profile'] };
+  }
   if (kind === 'media_generate') {
     if (JSON.stringify(row).length > 100000 || Object.keys(properties).length !== parameterKeys[kind].length
       || Object.keys(properties).some(key => !parameterKeys[kind].includes(key))) invalid();
@@ -289,19 +307,19 @@ function catalogDefinition(value: unknown, mediaEnabled = false): StudioGraphCat
   if (row.version !== 1 || row.model_called !== false || row.executable !== executable) invalid();
   function checkedPorts(value: unknown, side: 'inputs' | 'outputs'): StudioGraphPort[] {
     const expected = nodePorts(kind, mediaEnabled)[side];
-    const result = list(value, 3).map(item => {
+    const result = list(value, kind === 'timeline_export' ? 8 : 3).map(item => {
       const port = record(item), portId = id(port.id), required = bool(port.required);
       if (!portKinds.includes(port.type as StudioGraphPort['type']) || expected[portId] !== port.type || port.multiple !== false) invalid();
-      if (required !== (side === 'inputs' && portId !== 'direction' && kind !== 'media_generate')) invalid();
+      if (required !== (side === 'inputs' && portId !== 'direction' && kind !== 'media_generate' && kind !== 'timeline_export')) invalid();
       return { id: portId, type: port.type as StudioGraphPort['type'], required, multiple: false as const };
     });
     if (new Set(result.map(port => port.id)).size !== Object.keys(expected).length || result.length !== Object.keys(expected).length) invalid();
     return result;
   }
-  if ((kind === 'asset_reference' || kind === 'media_generate') && row.default_parameters !== null) invalid();
+  if (['asset_reference', 'media_generate', 'timeline_export'].includes(kind) && row.default_parameters !== null) invalid();
   return { id: kind, version: 1, inputs: checkedPorts(row.inputs, 'inputs'), outputs: checkedPorts(row.outputs, 'outputs'),
     parameters_schema: schema(row.parameters_schema, kind),
-    default_parameters: kind === 'asset_reference' || kind === 'media_generate' ? null : parameters(row.default_parameters, kind),
+    default_parameters: ['asset_reference', 'media_generate', 'timeline_export'].includes(kind) ? null : parameters(row.default_parameters, kind),
     executable, model_called: false, blockers: list(row.blockers, 16).map(code) };
 }
 
@@ -327,9 +345,10 @@ function output(value: unknown, allowModel = false, allowReviewed = false): Stud
   if (row.asset !== undefined) result.asset = assetReference(row.asset);
   if (row.candidate !== undefined) {
     const candidate = record(row.candidate);
-    if (!['image', 'video', 'audio'].includes(candidate.owner as string) || Object.keys(candidate).some(key => !['owner', 'job_id', 'job_version', 'request_digest', 'asset'].includes(key))) invalid();
+    if (!['image', 'video', 'audio', 'timeline'].includes(candidate.owner as string) || Object.keys(candidate).some(key => !['owner', 'job_id', 'job_version', 'request_digest', 'asset'].includes(key))) invalid();
     result.candidate = { owner: candidate.owner as StudioGraphMediaCandidate['owner'], job_id: resourceId(candidate.job_id),
       job_version: integer(candidate.job_version, 1), request_digest: digest(candidate.request_digest), asset: assetReference(candidate.asset) };
+    if (result.candidate.owner === 'timeline' && result.candidate.asset.kind !== 'video') invalid();
   }
   if (new TextEncoder().encode(JSON.stringify(result)).length > 64_000) invalid();
   return result;
@@ -363,12 +382,59 @@ function recordedMediaCommand(value: unknown): RecordedMediaCommand {
     source_snapshots: sourceSnapshots, allow_cloud: bool(row.allow_cloud), license_note: text(row.license_note, 2000, false, true) };
 }
 function productionRecipe(value: unknown, operation: string): ProductionRecipe {
-  const row = record(value); closed(row, ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline']);
+  const row = record(value); closed(row, ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline',
+    ...(operation === 'm9.timeline.multitrack' ? ['export_profile'] : [])]);
   if (row.contract !== 'studio-execution-recipe/1' || row.operation_id !== operation || row.automatic_fallback !== false
     || !['ORIGINAL_HTTP_PROVIDER', 'COMFYUI_BUILTIN_IMAGE', 'AUTOMATIC1111_IMAGE', 'LOCAL_FFMPEG'].includes(row.adapter as string)
     || JSON.stringify(row).length > 131072) invalid();
   digest(row.recipe_digest);
   return row as ProductionRecipe;
+}
+function graphTimelineCommand(value: unknown): GraphTimelineCommand {
+  const row = record(value); closed(row, ['operation_id', 'request_id', 'timeline_snapshot', 'edit_operations', 'source_bindings', 'export_profile']);
+  if (row.operation_id !== 'm9.timeline.multitrack') invalid();
+  const requestId = text(row.request_id, 100); if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(requestId)) invalid();
+  const bindings = list(row.source_bindings, 8).map(value => { const binding = record(value); closed(binding, ['port', 'clip_id', 'asset']);
+    return { port: binding.port, clip_id: binding.clip_id, asset: assetReference(binding.asset) }; });
+  let checked; try { checked = checkedGraphTimelineParameters({ timeline_snapshot: row.timeline_snapshot, edit_operations: row.edit_operations,
+    source_bindings: bindings.map(({ port, clip_id }) => ({ port, clip_id })), export_profile: row.export_profile }); } catch { return invalid(); }
+  return { ...checked, operation_id: 'm9.timeline.multitrack', request_id: requestId,
+    source_bindings: checked.source_bindings.map((binding, index) => ({ ...binding, asset: bindings[index].asset })) };
+}
+function timelineProductionPreview(value: unknown, projectId: string, branchId: string | null): GraphTimelineProductionPreview {
+  const row = record(value); closed(row, ['contract', 'novel_id', 'branch_id', 'request_id', 'operation_id', 'preview_digest', 'request_digest', 'command', 'provider',
+    'execution_recipe', 'sources', 'product_acceptance', 'execution_available', 'automatic_dispatch', 'output_policy',
+    'timeline_snapshot', 'source_timeline_snapshot', 'timeline_edit_proof', 'export_profile']);
+  if (row.novel_id !== projectId || (row.branch_id ?? null) !== branchId) mismatch();
+  const command = graphTimelineCommand(row.command);
+  if (row.contract !== 'studio-production-preview/1' || row.request_id !== command.request_id || row.operation_id !== command.operation_id || row.provider !== null
+    || row.product_acceptance !== 'LOCAL_REQUIRED' || row.execution_available !== true || row.automatic_dispatch !== false || row.output_policy !== 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW') invalid();
+  const recipe = productionRecipe(row.execution_recipe, command.operation_id);
+  closed(recipe, ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'output_profile', 'timeline', 'export_profile']);
+  if (recipe.adapter !== 'LOCAL_FFMPEG') invalid();
+  let timeline, finalSnapshot, baseSnapshot;
+  try { timeline = checkedTimeline(recipe.timeline); finalSnapshot = checkedGraphTimelineSnapshot(row.timeline_snapshot); baseSnapshot = checkedGraphTimelineSnapshot(row.source_timeline_snapshot);
+    if (timelineExportKey(checkedTimelineExportProfile(recipe.export_profile)) !== timelineExportKey(command.export_profile)
+      || timelineExportKey(checkedTimelineExportProfile(row.export_profile)) !== timelineExportKey(command.export_profile)) invalid(); } catch { return invalid(); }
+  const edited = command.edit_operations.length + command.source_bindings.length > 0;
+  if (recipe.output_profile !== command.export_profile.preset || JSON.stringify(baseSnapshot) !== JSON.stringify(command.timeline_snapshot)
+    || finalSnapshot.id !== baseSnapshot.id || finalSnapshot.version !== baseSnapshot.version + (edited ? 1 : 0)) invalid();
+  let proof: GraphTimelineProductionPreview['timeline_edit_proof'] = null;
+  if (edited) { const rawProof = record(row.timeline_edit_proof); closed(rawProof, ['request_id', 'request_digest', 'input_version', 'input_digest', 'output_digest']);
+    if (rawProof.request_id !== command.request_id || rawProof.input_version !== baseSnapshot.version || rawProof.input_digest !== baseSnapshot.digest || rawProof.output_digest !== finalSnapshot.digest) invalid();
+    proof = { request_id: command.request_id, request_digest: digest(rawProof.request_digest), input_version: baseSnapshot.version, input_digest: baseSnapshot.digest, output_digest: finalSnapshot.digest };
+  } else if (row.timeline_edit_proof !== null || finalSnapshot.digest !== baseSnapshot.digest) invalid();
+  const expectedSources = timelineSources(timeline), sources = list(row.sources, 30).map(value => {
+    const source = record(value); closed(source, ['snapshot', 'measured']); const snapshot = mediaSource(source.snapshot);
+    if (source.measured !== null || snapshot.kind !== 'ASSET' || snapshot.reference_only !== undefined) invalid(); return { snapshot, measured: null };
+  });
+  if (sources.length !== expectedSources.length || sources.some((item, index) => (['id', 'kind', 'asset_kind', 'version', 'digest'] as const).some(key =>
+    item.snapshot[key] !== expectedSources[index][key]))) invalid();
+  return { contract: 'studio-production-preview/1', novel_id: projectId, branch_id: branchId, operation_id: command.operation_id, request_id: command.request_id,
+    command, provider: null, preview_digest: digest(row.preview_digest), request_digest: digest(row.request_digest), execution_recipe: recipe,
+    sources: sources as GraphTimelineProductionPreview['sources'], timeline_snapshot: finalSnapshot, source_timeline_snapshot: baseSnapshot,
+    timeline_edit_proof: proof, export_profile: command.export_profile, product_acceptance: 'LOCAL_REQUIRED', execution_available: true,
+    automatic_dispatch: false, output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
 }
 function productionPreview(value: unknown, projectId: string, branchId: string | null): ProductionPreview {
   const row = record(value); closed(row, ['contract', 'novel_id', 'branch_id', 'request_id', 'operation_id', 'preview_digest', 'request_digest', 'command', 'provider',
@@ -427,21 +493,28 @@ function graphMediaRuntime(value: unknown, projectId: string, branchId: string |
     if (source.preview !== null) {
       const p = record(source.preview); closed(p, ['node_id', 'input_digest', 'preview_digest', 'command', 'production_preview']);
       if (p.node_id !== nodeId) invalid();
-      const command = recordedMediaCommand(p.command), production = productionPreview(p.production_preview, projectId, branchId), captured = production.command;
-      if (command.operation_id !== captured.operation_id || command.request_id !== captured.request_id || command.prompt !== captured.prompt
-        || command.provider_id !== captured.provider_id || command.model_id !== captured.model_id || command.allow_cloud !== captured.allow_cloud || command.license_note !== captured.license_note
-        || JSON.stringify(command.source_snapshots) !== JSON.stringify(captured.source_snapshots)
-        || Object.entries(command.parameters).some(([key, value]) => captured.parameters[key] !== value)) invalid();
+      const timeline = record(p.command).operation_id === 'm9.timeline.multitrack';
+      const command = timeline ? graphTimelineCommand(p.command) : recordedMediaCommand(p.command);
+      const production = timeline ? timelineProductionPreview(p.production_preview, projectId, branchId) : productionPreview(p.production_preview, projectId, branchId), captured = production.command;
+      if (timeline) { if (JSON.stringify(command) !== JSON.stringify(captured)) invalid(); }
+      else {
+        if (command.operation_id === 'm9.timeline.multitrack' || captured.operation_id === 'm9.timeline.multitrack') invalid();
+        if (command.operation_id !== captured.operation_id || command.request_id !== captured.request_id || command.prompt !== captured.prompt
+          || command.provider_id !== captured.provider_id || command.model_id !== captured.model_id || command.allow_cloud !== captured.allow_cloud || command.license_note !== captured.license_note
+          || JSON.stringify(command.source_snapshots) !== JSON.stringify(captured.source_snapshots)
+          || Object.entries(command.parameters).some(([key, value]) => captured.parameters[key] !== value)) invalid();
+      }
       preview = { node_id: nodeId, input_digest: digest(p.input_digest), preview_digest: digest(p.preview_digest), command, production_preview: production };
     }
     if (source.execution !== null) {
       const e = record(source.execution); closed(e, ['node_id', 'owner', 'job_id', 'status', 'receipt_state', 'send_reserved', 'job', 'review_state']);
-      if (e.node_id !== nodeId || !['image', 'video', 'audio'].includes(e.owner as string) || !executionStatuses.includes(e.status as ProductionJob['status'])
+      if (e.node_id !== nodeId || !['image', 'video', 'audio', 'timeline'].includes(e.owner as string) || !executionStatuses.includes(e.status as ProductionJob['status'])
         || !['RECORDED', 'UNKNOWN_NO_AUTOMATIC_REPLAY'].includes(e.receipt_state as string) || !['NONE', 'REVIEW_RESERVED', 'APPROVED'].includes(e.review_state as string)) invalid();
       const jobId = e.job_id === null ? null : resourceId(e.job_id), job = e.job === null ? null : mediaJob(e.job);
       if (job && job.id !== jobId || job && preview && job.request_digest !== preview.production_preview.request_digest) invalid();
-      const expectedOwner = preview?.command.operation_id.startsWith('m5.') ? 'image' : preview?.command.operation_id.startsWith('m7.') ? 'video' : 'audio';
+      const expectedOwner = preview?.command.operation_id === 'm9.timeline.multitrack' ? 'timeline' : preview?.command.operation_id.startsWith('m5.') ? 'image' : preview?.command.operation_id.startsWith('m7.') ? 'video' : 'audio';
       if (preview && e.owner !== expectedOwner) invalid();
+      if (e.owner === 'timeline' && job && (job.remote_compute_may_continue || job.output_candidate && job.output_candidate.kind !== 'video')) invalid();
       execution = { node_id: nodeId, owner: e.owner as StudioGraphMediaExecution['owner'], job_id: jobId, status: code(e.status),
         receipt_state: e.receipt_state as StudioGraphMediaExecution['receipt_state'], send_reserved: bool(e.send_reserved),
         job: hidePrivate ? null : job, review_state: e.review_state as StudioGraphMediaExecution['review_state'] };
@@ -467,6 +540,10 @@ function catalog(value: unknown): StudioGraphCatalog {
   };
   const modelEnabled = capabilities.model_execution === true;
   const mediaEnabled = capabilities.media_execution === true;
+  const timelineEnabled = capabilities.timeline_execution === true;
+  if (timelineEnabled) { if (!mediaEnabled || capabilities.timeline_evidence !== 'LOCAL_REQUIRED' || capabilities.automatic_timeline_dispatch !== false) invalid();
+    expectedCapabilities.timeline_execution = true; expectedCapabilities.timeline_evidence = 'LOCAL_REQUIRED'; expectedCapabilities.automatic_timeline_dispatch = false;
+  } else if (capabilities.timeline_evidence !== undefined || capabilities.automatic_timeline_dispatch !== undefined) invalid();
   if (modelEnabled) {
     if (capabilities.model_execution_contract !== 'creative-graph-model/1') invalid();
     expectedCapabilities.model_execution = true;
@@ -480,7 +557,7 @@ function catalog(value: unknown): StudioGraphCatalog {
   if (Object.entries(expectedLimits).some(([key, value]) => limits[key] !== value)
     || Object.entries(expectedCapabilities).some(([key, value]) => capabilities[key] !== value)) invalid();
   const definitions = list(row.definitions, definitionIds.length).map(item => catalogDefinition(item, mediaEnabled));
-  const expectedDefinitions = [...(modelEnabled ? modelDefinitionIds : localDefinitionIds), ...(mediaEnabled ? mediaDefinitionIds : [])];
+  const expectedDefinitions = [...(modelEnabled ? modelDefinitionIds : localDefinitionIds), ...(mediaEnabled ? mediaDefinitionIds : []), ...(timelineEnabled ? ['timeline_export' as const] : [])];
   if (definitions.length !== expectedDefinitions.length || new Set(definitions.map(item => item.id)).size !== definitions.length
     || definitions.some(item => !expectedDefinitions.includes(item.id))) invalid();
   let mediaLimits: StudioGraphCatalog['media_limits'];
@@ -598,12 +675,17 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       const nodeState: StudioGraphNodeState = { status: state.status as StudioGraphNodeStatus,
         output: hideOutputs ? null : output(state.output, modelOutput, state.status === 'SUCCEEDED' && (!knownGraph
           || knownGraph.schemaVersion === 3 && knownGraph.nodes[nodeId] === 'human_review')), error: state.error === null ? null : { code: code(record(state.error).code) } };
+      if (knownGraph && nodeState.output?.candidate && (knownGraph.nodes[nodeId] === 'timeline_export'
+        ? nodeState.output.candidate.owner !== 'timeline' : knownGraph.nodes[nodeId] !== 'media_generate' || nodeState.output.candidate.owner === 'timeline')) invalid();
       return [id(nodeId), nodeState];
     }));
     const currentNodeId = row.current_node_id === null ? null : id(row.current_node_id);
     if (currentNodeId !== null && !Object.hasOwn(nodeStates, currentNodeId)) invalid();
     if (model && !Object.hasOwn(nodeStates, model.node_id)) invalid();
     if (media?.nodes.some(node => !Object.hasOwn(nodeStates, node.node_id))) invalid();
+    if (knownGraph && media?.nodes.some(node => !['media_generate', 'timeline_export'].includes(knownGraph.nodes[node.node_id])
+      || node.execution && (knownGraph.nodes[node.node_id] === 'timeline_export' ? node.execution.owner !== 'timeline' : node.execution.owner === 'timeline')
+      || node.preview && (knownGraph.nodes[node.node_id] === 'timeline_export') !== (node.preview.command.operation_id === 'm9.timeline.multitrack'))) invalid();
     let review: StudioGraphRun['review'] = null;
     if (!hideOutputs && row.review !== null) {
       const source = record(row.review), nodeId = id(source.node_id);
@@ -649,8 +731,23 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     });
   }
 
+  function checkedTimelineRow(value: unknown, expectedId?: string): StudioTimelineRow {
+    const row = record(value); if (row.novel_id !== projectId || (row.branch_id ?? null) !== (capturedScope?.branchId ?? null)) mismatch();
+    let snapshot; try { snapshot = checkedGraphTimelineSnapshot({ id: row.id, version: row.version, digest: row.timeline_digest }); } catch { return invalid(); }
+    if (expectedId && snapshot.id !== expectedId) mismatch();
+    let timeline; try { timeline = checkedTimeline(row.timeline); } catch { return invalid(); }
+    return { id: snapshot.id, version: snapshot.version, timeline_digest: snapshot.digest, title: text(row.title, 240), timeline,
+      created_at: text(row.created_at, 100), updated_at: text(row.updated_at, 100) };
+  }
   return {
     ...createStudioProviderClient(base, transport, owner),
+    graphTimelineList: (signal?: AbortSignal): Promise<{ items: StudioTimelineRow[] }> => transport.json(`${base}/production/timelines`, 'GET', undefined, signal).then(value => {
+      const rows = list(record(value).items, 25).map(value => checkedTimelineRow(value)); if (new Set(rows.map(row => row.id)).size !== rows.length) invalid(); return { items: rows };
+    }),
+    graphTimelineGet: (timelineId: string, signal?: AbortSignal): Promise<StudioTimelineRow> => {
+      let snapshotId; try { snapshotId = graphTimelineId(timelineId); } catch { return invalid(true); }
+      return transport.json(`${base}/production/timelines/${encodeURIComponent(snapshotId)}`, 'GET', undefined, signal).then(value => checkedTimelineRow(value, timelineId));
+    },
     catalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog`, 'GET', undefined, signal).then(catalog),
     modelCapabilities: (signal?: AbortSignal): Promise<StudioGraphModelCapabilities> => transport.json(`${base}/graphs/model-capabilities`, 'GET', undefined, signal).then(value => graphModelCapabilities(value, owner)),
     list: (signal?: AbortSignal): Promise<{ items: StudioGraphRecord[] }> => transport.json(`${base}/graphs`, 'GET', undefined, signal).then(value => {
@@ -769,6 +866,6 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
 }
 
 // Older embedded clients can omit the advisory extension; execution stays unchanged.
-type StudioGraphMediaClient = Pick<ReturnType<typeof createStudioGraphClient>, 'previewMedia' | 'dispatchMedia' | 'executeMedia' | 'refreshMedia' | 'reconcileMedia' | 'reviewMedia' | 'mediaCandidate'>;
+type StudioGraphMediaClient = Pick<ReturnType<typeof createStudioGraphClient>, 'previewMedia' | 'dispatchMedia' | 'executeMedia' | 'refreshMedia' | 'reconcileMedia' | 'reviewMedia' | 'mediaCandidate' | 'graphTimelineList' | 'graphTimelineGet'>;
 export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient>
   & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient>;

@@ -28,12 +28,19 @@ export function StudioGraphMediaExecutionPanel(props: StudioGraphMediaExecutionP
       {state.node?.status === 'PENDING' && <p>先明确执行前置节点，到达媒体边界后再预览。</p>}
       {preview && <section aria-label="图媒体预览确认">
         <Badge tone="info">预览尚未调用媒体服务</Badge>
-        <p>{MEDIA_OPERATION_LABELS[preview.command.operation_id]} · {preview.production_preview.provider
+        <p>{preview.command.operation_id === 'm9.timeline.multitrack' ? '原时间线剪辑与导出' : MEDIA_OPERATION_LABELS[preview.command.operation_id]} · {preview.production_preview.provider
           ? `${preview.production_preview.provider.provider_id} / ${preview.production_preview.provider.model_id} · ${preview.production_preview.provider.local ? '本地' : '云端'}` : '本地处理'}</p>
         <details><summary>核对完整提示词、参数与来源</summary><pre>{JSON.stringify(preview.command, null, 2)}</pre></details>
+        {preview.production_preview.operation_id === 'm9.timeline.multitrack' && <section aria-label="图时间线计划版本">
+          <p>原时间线：{preview.production_preview.source_timeline_snapshot.id} · v{preview.production_preview.source_timeline_snapshot.version}<br /><code>{preview.production_preview.source_timeline_snapshot.digest}</code></p>
+          <p>确认后保存的版本：v{preview.production_preview.timeline_snapshot.version}<br /><code>{preview.production_preview.timeline_snapshot.digest}</code></p>
+          <p>输出配置：{preview.production_preview.export_profile.preset}。确认派发会保存编辑与素材绑定，并仅入队；渲染须单独明确执行。</p>
+          <details><summary>核对所有正式来源版本与摘要</summary><pre>{JSON.stringify(preview.production_preview.sources, null, 2)}</pre></details>
+          {preview.production_preview.timeline_edit_proof && <details><summary>核对原时间线编辑批次摘要（与媒体任务请求摘要独立）</summary><pre>{JSON.stringify(preview.production_preview.timeline_edit_proof, null, 2)}</pre></details>}
+        </section>}
         <details><summary>核对执行接口和工作流</summary><pre>{JSON.stringify(preview.production_preview.execution_recipe, null, 2)}</pre></details>
         {!execution && <><label><input type="checkbox" checked={state.previewReviewed} disabled={!state.canConfirm} onChange={event => state.confirmPreview(event.target.checked)} />已核对本次输入、来源版本、处理边界与服务配置</label>
-          <Button disabled={!state.canDispatch} loading={state.pendingKind === 'dispatch'} onClick={() => void state.action('dispatch')}>仅入队当前媒体节点</Button></>}
+          <Button disabled={!state.canDispatch} loading={state.pendingKind === 'dispatch'} onClick={() => void state.action('dispatch')}>{preview.command.operation_id === 'm9.timeline.multitrack' ? '确认保存时间线编辑并仅入队' : '仅入队当前媒体节点'}</Button></>}
       </section>}
       {execution && <section aria-label="图媒体任务回执">
         <Badge>{job ? MEDIA_STATUS_LABELS[job.status] : execution.status}</Badge>
@@ -45,7 +52,7 @@ export function StudioGraphMediaExecutionPanel(props: StudioGraphMediaExecutionP
           <Button variant="primary" disabled={!state.canExecute} loading={state.pendingKind === 'execute'} onClick={() => void state.action('execute')}>明确执行该原任务一次</Button>
           <Button disabled={!state.canRefresh} loading={state.pendingKind === 'refresh'} onClick={() => void state.action('refresh')}>核对已知原任务结果</Button>
           <Button disabled={!state.canReconcile} loading={state.pendingKind === 'reconcile'} onClick={() => void state.action('reconcile')}>记录中断状态并核对</Button>
-          <Button variant="danger" disabled={!state.canCancel} loading={state.pendingKind === 'cancel'} onClick={() => void state.action('cancel')}>取消当前运行并丢弃本地候选</Button>
+          <Button variant="danger" disabled={!state.canCancel} loading={state.pendingKind === 'cancel'} onClick={() => void state.action('cancel')}>{execution.owner === 'timeline' ? '取消当前运行及本地渲染采用权限' : '取消当前运行并丢弃本地候选'}</Button>
         </div>
         {job?.output_candidate && <section aria-label="图媒体候选审核">
           <p>候选：{job.output_candidate.id} · v{job.output_candidate.version} · {job.output_candidate.kind}</p>

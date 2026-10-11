@@ -11,7 +11,7 @@ from copy import deepcopy
 
 from ..experimental.common import StaleSourceError
 from ..experimental.store import canonical
-from .graph_models import AssetParameters, MediaCandidatePort
+from .graph_models import AssetParameters, MediaCandidatePort, validate_output_ports
 from .project_store import BINDING, COLLECTIONS
 
 _phase = ContextVar("creative_graph_asset_input_phase", default=None)
@@ -135,6 +135,8 @@ class GraphAssetInputs:
                 or origin.get("scope_key") != self.store.key(nid, scope)
                 or origin.get("incarnation") != self.store.incarnation(nid)
                 or graph_binding is not None and origin.get("graph_binding") != graph_binding
+                or value["owner"] == "timeline" and (graph_binding is None
+                    or origin.get("operation_id") != "m9.timeline.multitrack" or expected["kind"] != "video")
                 or asset.get("source_job_id") != value["job_id"]):
             raise StaleSourceError("CREATIVE_GRAPH_MEDIA_CANDIDATE_CHANGED")
         self.workspace.assets.content(asset["id"], branch_id=scope.get("branch_id"), actor_id=actor)
@@ -173,10 +175,10 @@ class GraphAssetInputs:
                 if set(output) != {"asset"}:
                     raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
                 AssetParameters.model_validate(output["asset"])
-            elif node["definition_id"] == "media_generate":
+            elif node["definition_id"] in {"media_generate", "timeline_export"}:
                 if set(output) != {"candidate"}:
                     raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
-                MediaCandidatePort.model_validate(output["candidate"])
+                validate_output_ports(node["definition_id"], output, schema_version=3)
         guard()
         return saved
 

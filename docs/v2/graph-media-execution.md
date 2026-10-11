@@ -12,6 +12,7 @@
 | --- | --- |
 | `asset_reference → ASSET_REF` | 原 Asset ID／version／digest／kind 与真实文件内容核验；拒绝私有候选、删除、过期、不同 scope／incarnation 的来源。 |
 | `media_generate → MEDIA_CANDIDATE` | 可接作者 TEXT 与操作要求的 ASSET_REF；仅显式预览、入队、执行。候选绑定原 job ID／version／request digest 与原 Asset 四字段。 |
+| `timeline_export → MEDIA_CANDIDATE` | 绑定原时间线准确版本，闭合编辑／8 个正式 ASSET_REF 绑定／编码 profile；确认后保存原时间线并仅入队，再明确执行本地导出。 |
 | `media_review → ASSET_REF` | 唯一对应生成节点的候选，显式审核原 job/version/request/output digest，再由原 AssetLibrary.promote_owned 入库；正式资产版本才可下传。 |
 
 媒体配置是闭合 DTO：操作、明确 Provider／模型、Prompt、该操作允许的参数、allow_cloud 与作者许可说明。九项操作为 T2I、I2I、T2V、I2V、V2V、speech、music、effects、trim；具体参数、Provider 能力与原媒体 owner 边界见 [独立媒体执行](production-execution.md)。I2I／I2V／V2V／trim 需要对应类型的一个来源，trim 仅本地，禁止 Provider／模型／Prompt／TEXT／云端输入。
@@ -60,6 +61,20 @@
 ## 保留的未完成项
 
 - Schema 3 的 `ModelDispatch.archive_result=true` 已沿原 GraphTextAssets／GraphAssetInputs 接入文字私有档案与真实 human_review 节点审核，混合媒体执行也复核档案证明；原 schema 2 路径保持。详见 [文字档案与剪辑导出](text-archive-timeline-export.md)。
-- 独立多轨时间线已接原子编辑、原版本历史恢复、显式 schema 2 图片／变速／淡入淡出／视频声音混音和 H.264/VP9 编码导出。原 25MiB／轨道／时长门禁保持；Graph timeline node、自动 ASR／音画对齐和跨软件往返仍未实现，不能冒充验收完成。
+- 独立多轨时间线已接原子编辑、原版本历史恢复、显式 schema 2 图片／变速／淡入淡出／视频声音混音和 H.264/VP9 编码导出。Graph 时间线已接原编辑、队列、执行、候选、审核和恢复；自动 ASR／音画对齐和跨软件往返仍未实现，不能冒充验收完成。
 - 当前源码 API／V2 coverage metadata 待恢复验证后由原工具同步；历史 `776286f` 的 8 项 metadata 只对应旧 `5ed1cbee` 快照，冻结 V1 manifest 不变。
 - a40df 的原 PostgreSQL failed-call、终态超时、取消与不完整 CI、F00 INTEGRATED＋39 PARTIAL、独立复审 BLOCKED 和历史 NOT_RUN／LOCAL_REQUIRED 原样保留。Windows／原 vault／WebView2／GPU／真实模型全流程仍需最终源码上的证据。
+
+## Graph 时间线实际执行链（Phase12）
+
+输入基线 `ca6e11485f9d14f16ee1458ba9d7b3a75641038c`。显式 schema 3 新增 `timeline_export`，与 media_generate 合计最多 4 个生成节点，仍最多 24 节点／80 历史。schema 1／2 没有该节点。参数只有 `timeline_snapshot={id,version,digest}`、`edit_operations`、`source_bindings=[{port,clip_id}]`、`export_profile`；端口 source_1…source_8 只接受正式 ASSET_REF，每个绑定唯一 clip，必须经过唯一 media_review 才能向下游传递 video ASSET_REF。
+
+创建／保存／显式预检检查原时间线 owner、准确版本、闭合编辑和动态来源种类。未完成的前序 media_review 只检查 kind，不补造 Asset ID。运行到节点后，显式 preview 将实际审核来源编译为原 clip.update；作者编辑与绑定合计最多 40 项，最终 DTO、素材实际字节、200MiB 输入和原导出预算在原 asset phase 核对。预览没有 FFmpeg、模型或任务调用，measured 为 null，计划 recipe 不冒充实际测量。
+
+`dispatch` 确认准确 preview digest 后，同一原 Graph raw scope／asset phase 原子提交时间线新版本、原 last_edit/history 与节点 claim／ADMISSION_RESERVED；失败不留半批剪辑。随后释放 Graph lease，仅在原 VideoAssemblyService 保存 QUEUED job。明确 `execute` 先持久化一次执行意图，再以准确原 queue version／request digest 取得原 execution lease，调用既有 renderer／probe／publication；原同步 render/export 行为保留。
+
+执行 context 绑定基准与执行时间线快照、原编辑证明、完整最终来源、profile／recipe、actor／scope／incarnation 和服务端 Graph binding。运行复核执行快照而不是再次强套已成为历史的基准；独立编辑、恢复、删除来源、图变更、取消、权限／会话失效或期限变化均关闭采用权。发布和审核先核原 raw 文档，再核 Asset／Project；原素材读取只带纯 Host guard，不在资产锁内反向取得 Graph raw 锁。
+
+入队回执中断保留 ADMISSION_UNKNOWN，只查同一原 job，不重复编辑／入队。取消可能先于入队写入：入队回复／同步失败后再次读取原终态，明确取消刚出现的同绑定原队列记录。原执行中断仅 reconcile 已发布的确切原私有候选，校验原出处／幂等键／字节后恢复原回执；无可靠结果保留 UNKNOWN，不能重新渲染。Graph 绑定 timeline job 的独立入口不授予执行／审核权限。候选审核继续原私有资产 promote 和 media_review，未审核结果不成为 ASSET_REF。
+
+前端通过同 Host transport 的显式按钮读取原时间线，选择准确快照、编辑和 clip 绑定。`StudioGraphTimelineNodeEditor`／`studioGraphTimelineContract` 是可替换表单／严格 DTO；Graph 运行面板保留预览、剪辑并仅入队、明确导出、原记录读取、候选核验、审核／驳回和取消。Opus 可以重构 JSX 与交互，保留原 controller/client、准确同意、单次发送、UNKNOWN、CAS 和私有 Blob 生命周期。本批所有运行／测试／构建／CI／Windows／GPU／模型验收仍 NOT_RUN — USER_DEFERRED。

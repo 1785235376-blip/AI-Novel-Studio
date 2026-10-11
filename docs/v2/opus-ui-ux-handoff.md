@@ -83,3 +83,5 @@ Graph 媒体的可替换视图为 `StudioGraphMediaExecutionPanel`，行为在 `
 工程和 UI 改动收束并恢复验证后，先做相关模块与权限/恢复/CAS检查，再刷新当前源码的 API catalog 与 V2 coverage manifest，跑里程碑 CI。独立修复提交 `776286f` 的 8 项 metadata 对应旧 `5ed1cbee` 快照，不能当作覆盖这批新 API／源码的最终元数据；冻结 V1 manifest 不改。
 
 随后从最终实际远端 SHA 按原 Windows 脚本构建，经原 launcher → PostgreSQL → backend → DesktopHost 验证隔离、会话、重启与中文路径，完成真实 M4 Text Node → Router → Provider → 本地模型 → Asset → Version → Review。达到真实验收门禁后，依次推进 M5–M9 实际能力验收。
+
+Phase12 的 Graph 时间线基础表单沿 `StudioGraphTimelineNodeEditor`／`studioGraphTimelineContract`、原 graph editor controller、Graph client 与媒体运行 controller。保存节点参数不执行；显式读取时间线不生成，确认 dispatch 才提交原剪辑并仅入队，execute 才导出，media_review 才入素材库。8 个输入只绑定已有片段，作者编辑与绑定共 40 项；时间线 ID／base version／digest、剪辑证明、final version、profile、实际来源和 job CAS 均由原服务保存与核对。Opus 可以换时间尺、拖放与视图，但不能把这些动作合成自动导出、用任意 JSON／文件路径扩大输入、重建 UNKNOWN job 或采用未审核候选。原 DS shell 与单一 owner 边界保持。

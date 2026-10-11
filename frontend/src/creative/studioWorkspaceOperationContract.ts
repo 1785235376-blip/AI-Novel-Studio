@@ -58,7 +58,8 @@ function operation(value: unknown): StudioProductionOperation {
   if (!STUDIO_PRODUCTION_OPERATION_IDS.includes(row.id as StudioProductionOperationId)
     || !['EXISTING_OWNER_CONTRACT', 'RESERVED_INTERFACE'].includes(row.capability_status as string)
     || row.acceptance_status !== 'LOCAL_REQUIRED' || row.acceptance_evidence !== 'NOT_EVALUATED_BY_THIS_ENDPOINT'
-    || row.execution_available !== false || !Array.isArray(row.actions) || row.actions.length > 32) invalid();
+    || row.execution_available !== false || !Array.isArray(row.actions)
+    || row.actions.length > (row.id === 'm9.timeline.multitrack' ? 16 : 12)) invalid();
   const milestone = stage(row.milestone), id = row.id as StudioProductionOperationId;
   if (!id.startsWith(`${milestone.toLowerCase()}.`)) invalid();
   const selectedOwner = owner(row.owner), actions = row.actions.map(action), blockers = strings(row.blocked_reasons);

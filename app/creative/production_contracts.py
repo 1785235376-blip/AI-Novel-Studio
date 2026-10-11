@@ -293,7 +293,7 @@ class ProductionOperation(StrictContract):
     execution_available: Literal[False] = False
     blocked_reasons: list[Annotated[str, Field(pattern=r"^[A-Z][A-Z0-9_]*$", max_length=120)]] = Field(min_length=1, max_length=12)
     owner: ProductionOwner | None
-    actions: list[ProductionAction] = Field(max_length=12)
+    actions: list[ProductionAction] = Field(max_length=16)
     interface_contracts: ProductionInterfaceReferences = Field(default_factory=ProductionInterfaceReferences)
     input_requirements: Requirements
     source_requirements: Requirements
@@ -303,6 +303,8 @@ class ProductionOperation(StrictContract):
 
     @model_validator(mode="after")
     def truthful_boundary(self):
+        if len(self.actions) > (16 if self.id == "m9.timeline.multitrack" else 12):
+            raise ValueError("PRODUCTION_OPERATION_ACTION_LIMIT")
         if not self.id.startswith(self.milestone.lower() + "."):
             raise ValueError("PRODUCTION_OPERATION_MILESTONE_MISMATCH")
         if len({action.id for action in self.actions}) != len(self.actions):
@@ -572,7 +574,7 @@ def _operations():
         ])
         descriptor.input_requirements.append("Graph schema 3 使用闭合媒体节点与原 ASSET_REF；准确绑定运行与节点版本，先仅入队再另行明确执行。")
         descriptor.review_requirements.append("MEDIA_CANDIDATE 只可交给唯一 media_review；审核后原素材版本作为 ASSET_REF 下传。Graph 绑定任务不借独立媒体入口执行或审核。")
-    replacements["m9.timeline.multitrack"] = _existing("m9.timeline.multitrack", "独立多轨剪辑与明确编码导出",
+    replacements["m9.timeline.multitrack"] = _existing("m9.timeline.multitrack", "多轨剪辑、Graph 时间线与明确编码导出",
         _owner("app.creative.production_execution", "ProductionExecutionService", "timeline_list", "timeline_get", "timeline_save", "timeline_edit", "timeline_history", "timeline_restore", "timeline_export_preview", "timeline_export", "timeline_render", "review", "reconcile", "cancel"), [
             _action("save", "POST", production + "/timelines", "app.creative.production_execution.ProductionExecutionService.timeline_save", "TimelineSave", host=True),
             _action("update", "PUT", production + "/timelines/{tid}", "app.creative.production_execution.ProductionExecutionService.timeline_save", "TimelineSave", host=True),
@@ -589,7 +591,20 @@ def _operations():
         outputs=["原 VideoAssemblyService 持久任务调用本地 FFmpeg，支持原审阅 MP4、H.264/AAC MP4、VP9/Opus WebM；实际 probe 核对编码／容器／画幅／帧率／声音／时长后保存私有候选。"],
         review=["显式预览候选并确认输出摘要；只审核通过才进入素材库，UNKNOWN 不自动重新渲染。"],
         limitations=["导出使用原 25MiB Asset 上限和有界时长／原生执行时限，超限拒绝而不悄悄降低要求；不代表自动转录、跨软件往返或质量验收。", "本批构建、渲染、Windows／GPU与完整产品验收均 NOT_RUN。"],
-        blockers=["M4_TO_M9_ORDERED_ACCEPTANCE_REQUIRED"])
+        blockers=["M4_TO_M9_ORDERED_ACCEPTANCE_REQUIRED", "GRAPH_TIMELINE_RUNTIME_ACCEPTANCE_LOCAL_REQUIRED"])
+    timeline = replacements["m9.timeline.multitrack"]
+    media_owner = "app.creative.graph_media_execution.CreativeGraphMediaRuntime."
+    timeline.actions.extend([
+        _action("graph_preview", "POST", graph + "/media/preview", media_owner + "preview", "MediaNodeRequest", host=True),
+        _action("graph_queue", "POST", graph + "/media/dispatch", media_owner + "dispatch", "MediaDispatch", host=True),
+        _action("graph_execute", "POST", graph + "/media/execute", media_owner + "execute_job", "MediaJobRequest", host=True),
+        _action("graph_candidate", "GET", graph + "/media/candidate/{node_id}", media_owner + "candidate", permission="domain.read", host=True),
+        _action("graph_review", "POST", graph + "/media/review", media_owner + "review", "MediaGraphReview", permission="domain.review", host=True),
+        _action("graph_reconcile", "POST", graph + "/media/reconcile", media_owner + "reconcile", "MediaJobRequest", host=True),
+    ])
+    timeline.input_requirements.append("显式 schema 3 timeline_export 绑定原时间线 ID／version／digest；闭合剪辑与最多 8 个已审核 ASSET_REF→clip 绑定合计最多 40 操作，预览不执行。")
+    timeline.output_requirements.append("Graph 确认摘要后，在原 raw scope／asset phase 同时保存剪辑历史与节点 claim，再仅入队原 VideoAssemblyService；明确 execute 才调用同一个本地 FFmpeg owner。")
+    timeline.review_requirements.append("唯一 media_review 审核原 timeline candidate 后输出 video ASSET_REF；原独立任务入口不能执行或审核 Graph 绑定任务，UNKNOWN 只查原记录且不重复剪辑或渲染。")
     return [replacements.get(operation.id, operation) for operation in operations]
 
 

@@ -15,6 +15,8 @@ export function connectionIssue(definition: StudioGraphDefinition, catalog: read
   const input = descriptors.find(row => row.id === target.definition_id)?.inputs.find(port => port.id === edge.target_port);
   if (!output || !input) return '请选择真实的输出端口和输入端口。';
   if (output.type !== input.type) return `端口类型不匹配：${output.type} → ${input.type}。`;
+  if (target.definition_id === 'timeline_export' && definition.schema_version !== 3) return '时间线剪辑与导出需要明确升级为媒体图 v3。';
+  if (source.definition_id === 'timeline_export' && (target.definition_id !== 'media_review' || edge.target_port !== 'candidate')) return '时间线导出候选须连接原媒体审核节点，审核后才可作为正式视频素材。';
   if (target.definition_id === 'media_generate' && ['text', 'draft'].includes(edge.target_port)) {
     if (definition.edges.some(row => row.target_node_id === target.id && row.target_port === (edge.target_port === 'draft' ? 'text' : 'draft'))) return '媒体节点的文本与已审核草稿输入互斥，请先明确移除另一条输入连接。';
     if (edge.target_port === 'draft') {

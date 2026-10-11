@@ -72,4 +72,4 @@ FFmpeg 只读取服务端已核验字节写入的临时本地文件，compiler �
 
 原冻结 V1、PoemSeed Local Interop 1.0、历史报告、PG failed-call／终态超时、取消或不完整 CI、F00 INTEGRATED＋39 PARTIAL、独立复审 BLOCKED 保持。当前 API/V2 coverage metadata 待恢复验证后由原工具同步，冻结 V1 manifest 不改。
 
-本批实现有界多轨剪辑和上述真实编码导出路径，尚未取得 Windows、原 vault/WebView2、GPU／模型、真实 FFmpeg、中文字体／路径和最终成片质量的运行证据。自动 ASR／音画对齐、Graph timeline node 与跨软件往返不属于本批实现，不能把它们记为验收完成。
+本批实现有界多轨剪辑和上述真实编码导出路径，尚未取得 Windows、原 vault/WebView2、GPU／模型、真实 FFmpeg、中文字体／路径和最终成片质量的运行证据。后续 Phase12 已将 Graph timeline_export 接到同一原编辑／队列／执行／候选／审核和恢复路径，详见 [Graph 实际执行链](graph-media-execution.md#graph-时间线实际执行链phase12)。自动 ASR／音画对齐与跨软件往返仍未实现，不能把它们记为验收完成。

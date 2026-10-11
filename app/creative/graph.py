@@ -183,7 +183,8 @@ class CreativeGraphService:
             result["media_limits"] = {"nodes": MAX_MEDIA_NODES, "generators": MAX_MEDIA_GENERATORS, "history": MAX_MEDIA_HISTORY}
             result["capabilities"].update(media_execution=True, media_execution_contract=MEDIA_CONTRACT,
                 external_reference_execution=True, media_evidence="LOCAL_REQUIRED",
-                media_cache=False, media_parallel_execution=False, automatic_media_dispatch=False)
+                media_cache=False, media_parallel_execution=False, automatic_media_dispatch=False,
+                timeline_execution=True, timeline_evidence="LOCAL_REQUIRED", automatic_timeline_dispatch=False)
         current(); return result
 
     @contextmanager
@@ -194,6 +195,43 @@ class CreativeGraphService:
         else:
             with self.store.transaction(nid, scope) as state:
                 yield state
+
+    @staticmethod
+    def _source_kind(nodes, incoming, edge):
+        source = nodes[edge["source_node_id"]]
+        if source["definition_id"] == "asset_reference":
+            return source["parameters"]["kind"]
+        if source["definition_id"] == "media_review":
+            parent = next((item for item in incoming[source["id"]] if item["target_port"] == "candidate"), None)
+            if parent is not None:
+                generator = nodes[parent["source_node_id"]]
+                if generator["definition_id"] == "timeline_export":
+                    return "video"
+                if generator["definition_id"] == "media_generate":
+                    operation = generator["parameters"]["operation_id"]
+                    return "image" if operation.startswith("m5.") else "video" if operation.startswith("m7.") else "audio"
+        return None
+
+    def _timeline_definition_current(self, nid, scope, actor, definition, guard, state, *, node_ids=None):
+        selected = [node for node in definition["nodes"]
+            if node["definition_id"] == "timeline_export" and (node_ids is None or node["id"] in node_ids)]
+        if not selected:
+            return
+        if self.media_runtime is None:
+            raise ValueError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
+        if not self.asset_inputs.in_phase(nid, scope, actor):
+            raise ValueError("CREATIVE_GRAPH_ASSET_PHASE_ORDER_INVALID")
+        nodes = {node["id"]: node for node in definition["nodes"]}
+        incoming = {key: [] for key in nodes}
+        for edge in definition["edges"]:
+            incoming[edge["target_node_id"]].append(edge)
+        for node in selected:
+            kinds = {edge["target_port"]: self._source_kind(nodes, incoming, edge) for edge in incoming[node["id"]]}
+            if any(kind is None for kind in kinds.values()):
+                raise ValueError("CREATIVE_GRAPH_TIMELINE_SOURCE_KIND_INVALID")
+            self.media_runtime.production.graph_timeline_preflight(nid, scope, actor, node["parameters"], guard,
+                document=state, source_kinds=kinds)
+        guard()
 
     def list(self, nid, scope, actor, guard=lambda: None):
         _, current = self._context(nid, scope, actor, guard)
@@ -229,6 +267,7 @@ class CreativeGraphService:
                     raise ValueError("CREATIVE_GRAPH_REQUEST_ID_REUSED")
                 row = self._owned(nid, scope, actor, GRAPHS, found["id"], state)
             else:
+                self._timeline_definition_current(nid, scope, actor, definition, current, state)
                 row = new_row(nid, scope, actor, {BINDING: incarnation, "definition": definition,
                     "definition_digest": digest(definition), "execution_digest": digest(execution_definition(definition)),
                     "request_id": body.request_id, "request_digest": request_digest})
@@ -259,12 +298,13 @@ class CreativeGraphService:
                     item["node_id"] in added and item["state"] != "CURRENT"
                     for item in self.asset_inputs.states(nid, scope, actor, definition, current)):
                 raise StaleSourceError("CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED")
+            self._timeline_definition_current(nid, scope, actor, definition, current, state)
             change_row(row, actor, body.expected_version, lambda item: item.update(definition=definition,
                 definition_digest=digest(definition), execution_digest=digest(execution_definition(definition))))
             self._capacity(state); current(); saved = deepcopy(row)
         return self._view(nid, scope, saved, current)
 
-    def _preflight(self, row, body, actor, *, check_assets=True):
+    def _preflight(self, row, body, actor, *, check_assets=True, guard=lambda: None, state=None):
         definition = row["definition"]
         nodes = {node["id"]: node for node in definition["nodes"]}
         targets = body.target_node_ids or [node["id"] for node in definition["nodes"] if node["enabled"]]
@@ -319,7 +359,7 @@ class CreativeGraphService:
             for item in reference_states:
                 if item["state"] != "CURRENT":
                     issues.append({"code": "CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED", "node_id": item["node_id"]})
-            generators = [key for key in order if nodes[key]["definition_id"] == "media_generate"]
+            generators = [key for key in order if nodes[key]["definition_id"] in {"media_generate", "timeline_export"}]
             reviews = [key for key in order if nodes[key]["definition_id"] == "media_review"]
             if generators and self.media_runtime is None:
                 issues.append({"code": "CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE"})
@@ -327,11 +367,26 @@ class CreativeGraphService:
                 issues.append({"code": "CREATIVE_GRAPH_MEDIA_NODE_CAPACITY"})
             for generator in generators:
                 node = nodes[generator]
-                operation = node["parameters"]["operation_id"]
                 outgoing = [edge for edge in definition["edges"] if edge["source_node_id"] == generator]
                 if (len(outgoing) != 1 or outgoing[0]["target_node_id"] not in closure
                         or nodes[outgoing[0]["target_node_id"]]["definition_id"] != "media_review"):
                     issues.append({"code": "CREATIVE_GRAPH_MEDIA_REVIEW_REQUIRED", "node_id": generator})
+                if node["definition_id"] == "timeline_export":
+                    bindings = {binding["port"]: binding["clip_id"] for binding in node["parameters"]["source_bindings"]}
+                    edges = {edge["target_port"]: edge for edge in incoming[generator]}
+                    if set(edges) != set(bindings):
+                        issues.append({"code": "CREATIVE_GRAPH_TIMELINE_SOURCE_BINDING_REQUIRED", "node_id": generator})
+                    if any(self._source_kind(nodes, incoming, edge) is None for edge in edges.values()):
+                        issues.append({"code": "CREATIVE_GRAPH_TIMELINE_SOURCE_KIND_INVALID", "node_id": generator})
+                    if check_assets and self.media_runtime is not None:
+                        try:
+                            self._timeline_definition_current(row["novel_id"], row["scope"], actor, definition, guard,
+                                state if state is not None else self.store.read(row["novel_id"], row["scope"]), node_ids={generator})
+                        except (StaleSourceError, FileNotFoundError, ValueError):
+                            guard()
+                            issues.append({"code": "CREATIVE_GRAPH_TIMELINE_SOURCE_CHANGED", "node_id": generator})
+                    continue
+                operation = node["parameters"]["operation_id"]
                 source = next((edge for edge in incoming[generator] if edge["target_port"] == "source"), None)
                 text = next((edge for edge in incoming[generator] if edge["target_port"] == "text"), None)
                 draft = next((edge for edge in incoming[generator] if edge["target_port"] == "draft"), None)
@@ -349,15 +404,7 @@ class CreativeGraphService:
                 if required_kind and source is None:
                     issues.append({"code": "CREATIVE_GRAPH_MEDIA_SOURCE_REQUIRED", "node_id": generator})
                 if source is not None:
-                    source_node = nodes[source["source_node_id"]]
-                    source_kind = source_node["parameters"]["kind"] if source_node["definition_id"] == "asset_reference" else None
-                    if source_node["definition_id"] == "media_review":
-                        parent = next((edge for edge in incoming[source_node["id"]] if edge["target_port"] == "candidate"), None)
-                        if parent is not None:
-                            parent_node = nodes[parent["source_node_id"]]
-                            if parent_node["definition_id"] == "media_generate":
-                                parent_operation = parent_node["parameters"]["operation_id"]
-                                source_kind = "image" if parent_operation.startswith("m5.") else "video" if parent_operation.startswith("m7.") else "audio"
+                    source_kind = self._source_kind(nodes, incoming, source)
                     if required_kind is None or source_kind != required_kind:
                         issues.append({"code": "CREATIVE_GRAPH_MEDIA_SOURCE_KIND_INVALID", "node_id": generator})
                 if operation == "m8.audio.trim":
@@ -391,7 +438,7 @@ class CreativeGraphService:
             with self.asset_inputs.phase(nid, scope, actor, current) as state:
                 row = self._owned(nid, scope, actor, GRAPHS, rid, state)
                 check_version(row, body.expected_version)
-                result = self._preflight(row, body, actor)
+                result = self._preflight(row, body, actor, guard=current, state=state)
         else:
             result = self._preflight(row, body, actor)
         current(); return result

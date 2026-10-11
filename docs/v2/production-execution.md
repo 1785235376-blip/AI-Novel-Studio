@@ -39,7 +39,7 @@ API 基础路径为 `/api/projects/{nid}/studio/production`，原父路由另保
 | `POST /preview` | 校验 `MediaCommand` 与来源，形成绑定输入、路线和 recipe 的预览；不创建任务、不调用 Provider。 |
 | `POST /jobs` | `MediaCreate(command, reviewed_preview_digest)`；重算预览并核对用户确认摘要，仅保存 QUEUED 原任务。 |
 | `GET /jobs`、`GET /jobs/{owner}/{jid}` | 读取当前 actor／scope／incarnation 的原记录；不重放。 |
-| `POST /jobs/{owner}/{jid}/execute` | 9 项媒体操作显式执行；`owner=timeline` 使用独立 render 入口，不能在这里再次渲染。 |
+| `POST /jobs/{owner}/{jid}/execute` | 9 项媒体操作显式执行；独立 `owner=timeline` 使用原 render/export 入口。Graph 绑定时间线只能从原 Graph `/media/execute` 执行已确认的同一个 QUEUED job，不能借独立入口再次渲染。 |
 | `POST /jobs/video/{jid}/refresh` | 核对已有原远端视频任务；仅原 Provider 支持的查询，不重新生成。 |
 | `POST /jobs/{owner}/{jid}/reconcile` | 原执行 lease 已结束后核对中断状态并保留 UNKNOWN，不调用 Provider 或重排任务。 |
 | `POST /jobs/{owner}/{jid}/cancel` | owner 允许状态下丢弃本地结果采用权，保留记录与候选；时间线可沿原 lease/queue CAS 取消，执行 guard 终止本地渲染进程；不证明远端计算已停止。 |
@@ -84,3 +84,5 @@ UI 在网络、408／409／425／429、5xx 或非法成功回执后保留原 res
 Opus 可以替换 Panel／Editor JSX 与 token 样式，继续消费命名 controller actions 与严格 client；不能绕过确认、Host、source/job CAS、UNKNOWN／幂等、dirty 导航保护或 Blob 清理。详见 [UI/UX 交接](opus-ui-ux-handoff.md)。只读 [operation catalog](production-operation-contracts.md) 仍为 advisory，入口描述从不授予执行权限。
 
 恢复验证后，先检查相关权限／参数／来源／CAS／中断与 UI 生命周期，再用原工具同步当前 API catalog 与独立 V2 coverage，随后做里程碑 CI。独立 metadata 修复提交 `776286f` 的 8 项文件对应旧 `5ed1cbee` 快照，不能覆盖这批新 API／源码。原 a40df PostgreSQL 失败、取消／不完整 CI 与新 5ed source-bound 失败记录保持原样；F00 INTEGRATED + 39 PARTIAL、独立复审 BLOCKED、冻结 V1 manifest 与历史报告不改。实际 Windows 包构建及 launcher → PostgreSQL → backend → DesktopHost → M4 真实 Text 闭环仍需最终发布源码上的独立证据，之后依序验收 M5–M9。
+
+Phase12 将显式 schema 3 `timeline_export` 接到原 TIMELINES 和 VideoAssemblyService：闭合剪辑与 source_1…8 绑定先在 detached DTO 预览；确认后与 Graph claim 同事务保存原时间线历史，然后仅入队原 owner。独立保存／编辑／同步 render/export 的原请求与摘要保持；原队列明确 execute 使用其不可变 context／profile。Graph runtime 读执行快照与原 edit receipt，来源、取消、图或会话变化均拒绝旧结果。候选／人工入库／中断恢复沿原 owner，ADMISSION_UNKNOWN 不重复剪辑，UNKNOWN 不重新渲染。完整参数、锁序、竞态处理和未执行边界见 [Graph 时间线实际执行链](graph-media-execution.md#graph-时间线实际执行链phase12)。

@@ -218,6 +218,95 @@ class VideoAssemblyService:
             return self._create_studio_locked(novel_id, branch_id, actor_id, timeline, context=context,
                 guard=guard, source_guard=source_guard, publish=publish, export_profile=export_profile)
 
+    def queue_studio(self, novel_id, branch_id, actor_id, timeline, *, context, guard, export_profile=None):
+        """Persist one original QUEUED receipt without inspecting or rendering.
+
+        This accepts only server context. The supplied guard is the original
+        Host guard; a Graph caller rechecks its own run/source phase after this
+        admission. No external callback runs inside the original queue lock.
+        """
+        if not callable(guard):
+            raise ValueError("STUDIO_TIMELINE_OWNER_CALLBACKS_REQUIRED")
+        context = copy.deepcopy(context)
+        prepared = self._prepare_studio_inputs(novel_id, branch_id, actor_id, timeline, context=context,
+                                               export_profile=export_profile)
+        if context.get("operation_id") != "m9.timeline.multitrack":
+            raise ValueError("STUDIO_TIMELINE_OPERATION_INVALID")
+        job_id = prepared["job_id"]
+        guard()
+        with workspace_mutation(self.root, "studio-media-jobs"):
+            path = self._studio_path(novel_id, branch_id, actor_id, job_id, context)
+            if path.exists():
+                row = self._studio_load(novel_id, branch_id, actor_id, job_id, context)
+                if (row.get("kind") != "STUDIO_TIMELINE" or row.get("input_digest") != prepared["input_digest"]
+                        or row.get("request_digest") != prepared["request_digest"]
+                        or row.get("context", {}).get("graph_binding") != context.get("graph_binding")):
+                    raise ValueError("STUDIO_TIMELINE_IDEMPOTENCY_CONFLICT")
+            else:
+                row = self._studio_write(novel_id, branch_id, actor_id,
+                    {"id": job_id, "kind": "STUDIO_TIMELINE", "contract": "studio-timeline-render/1", "status": "QUEUED", "phase": "QUEUED",
+                     "request_id": prepared["request_id"], "request_digest": prepared["request_digest"], "input_digest": prepared["input_digest"],
+                     "operation_id": context.get("operation_id"), "timeline_snapshot": copy.deepcopy(prepared["snapshot"]), "timeline": prepared["definition"],
+                     "sources": prepared["sources"], "rights": copy.deepcopy(context.get("rights", {})), "context": context, "created_at": now(),
+                     "review_state": "HUMAN_REVIEW_REQUIRED", "output_candidate": None, "model_called": False, "automatic_retry": False},
+                    context=context)
+        guard()
+        return self._studio_projection(row)
+
+    def execute_studio(self, novel_id, branch_id, actor_id, job_id, expected_version, expected_request_digest, *,
+                       context, guard, source_guard, publish):
+        """Execute an exact QUEUED receipt once under its original lease.
+
+        RUNNING/UNKNOWN/final receipts are never retried by this method. All
+        actual input/profile values come from the original immutable receipt,
+        and the Graph/source guard remains outside the queue mutation lock.
+        """
+        self._studio_context(novel_id, branch_id, actor_id, context)
+        self._studio_path(novel_id, branch_id, actor_id, job_id, context)
+        if (type(expected_version) is not int or expected_version < 1
+                or not isinstance(expected_request_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", expected_request_digest)):
+            raise ValueError("STUDIO_TIMELINE_EXECUTE_VERSION_INVALID")
+        if not all(callable(callback) for callback in (guard, source_guard, publish)):
+            raise ValueError("STUDIO_TIMELINE_OWNER_CALLBACKS_REQUIRED")
+        guard()
+        with workspace_mutation(self.root, "studio-timeline-execution:" + job_id):
+            row = self._studio_read(novel_id, branch_id, actor_id, job_id, context=context)
+            if row.get("kind") != "STUDIO_TIMELINE":
+                raise FileNotFoundError(job_id)
+            if row["version"] != expected_version or row["request_digest"] != expected_request_digest:
+                raise CapabilityVersionConflict(copy.deepcopy(row))
+            if row.get("status") != "QUEUED":
+                raise ValueError("STUDIO_TIMELINE_EXECUTE_NOT_QUEUED")
+            captured = row.get("context")
+            if (not isinstance(captured, dict) or any(captured.get(key) != context.get(key) for key in ("actor", "scope_key", "incarnation", "graph_binding"))
+                    or captured.get("request_digest") != expected_request_digest
+                    or ("request_digest" in context and context["request_digest"] != expected_request_digest)):
+                raise ValueError("STUDIO_TIMELINE_EXECUTION_CONTEXT_CHANGED")
+            prepared = self._prepare_studio_inputs(novel_id, branch_id, actor_id, row["timeline"], context=captured,
+                                                   export_profile=captured.get("export_profile"))
+            if (prepared["job_id"] != job_id or prepared["input_digest"] != row["input_digest"]
+                    or prepared["definition"] != row["timeline"] or prepared["sources"] != row["sources"]
+                    or prepared["snapshot"] != row["timeline_snapshot"] or prepared["request_id"] != row["request_id"]
+                    or row.get("rights") != captured.get("rights", {}) or row.get("operation_id") != captured.get("operation_id")
+                    or captured.get("operation_id") != "m9.timeline.multitrack"):
+                raise ValueError("STUDIO_TIMELINE_EXECUTION_INPUT_CHANGED")
+            # This is the last external guard before the original queue CAS.
+            # A cancellation between the guard and CAS changes the version and
+            # wins without any native process or publication being invoked.
+            guard()
+            key = (str(self.root.resolve()), job_id)
+            queued_digest = row["receipt_digest"]
+            def reserve(value):
+                if (value.get("status") != "QUEUED" or value.get("request_digest") != expected_request_digest
+                        or value.get("receipt_digest") != queued_digest):
+                    raise ValueError("STUDIO_TIMELINE_EXECUTION_ATTEMPT_CHANGED")
+                value.update(status="RUNNING", phase="RENDERING", execution_started_at=now(),
+                             executor={"pid": os.getpid(), "process": self._studio_process}, automatic_retry=False)
+            row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, expected_version, reserve, context=captured)
+            self._studio_active.add(key)
+            return self._render_studio_receipt(novel_id, branch_id, actor_id, row, context=captured,
+                guard=guard, source_guard=source_guard, publish=publish, export_profile=prepared["export_profile"])
+
     def cancel_studio(self, novel_id, branch_id, actor_id, job_id, expected_version, expected_request_digest, *, context, guard):
         """Fence the original queue; the active local process observes this CAS.
 
@@ -237,7 +326,7 @@ class VideoAssemblyService:
             if value.get("request_digest") != expected_request_digest:
                 raise CapabilityVersionConflict(copy.deepcopy(value))
             previous_status = value.get("status")
-            if previous_status not in {"RUNNING", "UNKNOWN", "SUCCEEDED", "AWAITING_REVIEW"}:
+            if previous_status not in {"QUEUED", "RUNNING", "UNKNOWN", "SUCCEEDED", "AWAITING_REVIEW"}:
                 raise ValueError("STUDIO_TIMELINE_CANCEL_NOT_ACTIVE")
             value.update(status="CANCELLED", phase="EXECUTION_FENCED", cancelled_at=now(),
                          automatic_retry=False, error_code="STUDIO_TIMELINE_EXECUTION_CANCELLED",
@@ -316,18 +405,14 @@ class VideoAssemblyService:
             raise ValueError("STUDIO_TIMELINE_PUBLICATION_RECEIPT_INVALID")
         return {"id": asset["id"], "version": asset["version"], "digest": asset["sha256"], "kind": "video"}
 
-    def _create_studio_locked(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish, export_profile=None):
-        """Explicit local composition; idempotent existing receipts never execute.
-
-        publish(data, kind, filename, measured, job_id, job_guard) is supplied by the
-        original Studio owner and atomically creates the private candidate
-        with scope/incarnation/capacity and immutable source provenance. No
-        source/scope/asset callback is called under the media receipt lock.
-        """
-        from .studio_timeline_render import normalize_studio_timeline, render_studio_timeline, studio_sources, timeline_digest
+    def _prepare_studio_inputs(self, novel_id, branch_id, actor_id, timeline, *, context, export_profile=None):
+        """Pure original input normalization and digest, with no source/tool I/O."""
+        from .studio_timeline_render import normalize_studio_timeline, studio_sources, timeline_digest
         self._studio_context(novel_id, branch_id, actor_id, context)
-        if not all(callable(callback) for callback in (guard, source_guard, publish)):
-            raise ValueError("STUDIO_TIMELINE_OWNER_CALLBACKS_REQUIRED")
+        if "graph_binding" in context:
+            from ..creative.graph_media_binding import validate_graph_binding
+            if validate_graph_binding(context["graph_binding"], context) is None:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
         definition = normalize_studio_timeline(timeline)
         if export_profile is not None:
             from .studio_timeline_export import normalize_export_profile, validate_export_admission, export_profile_digest
@@ -356,6 +441,19 @@ class VideoAssemblyService:
             payload["export_profile"] = copy.deepcopy(export_profile)
         input_digest = timeline_digest(payload)
         job_id = hashlib.sha256(json.dumps([context["scope_key"], context["incarnation"], actor_id, request_id], separators=(",", ":")).encode()).hexdigest()
+        return {"definition": definition, "snapshot": snapshot, "sources": sources, "export_profile": export_profile,
+                "request_id": request_id, "request_digest": request_digest, "input_digest": input_digest, "job_id": job_id}
+
+    def _create_studio_locked(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish, export_profile=None):
+        """Keep synchronous original create behavior; existing receipts never execute."""
+        if not all(callable(callback) for callback in (guard, source_guard, publish)):
+            raise ValueError("STUDIO_TIMELINE_OWNER_CALLBACKS_REQUIRED")
+        prepared = self._prepare_studio_inputs(novel_id, branch_id, actor_id, timeline, context=context,
+                                               export_profile=export_profile)
+        definition, snapshot, sources = prepared["definition"], prepared["snapshot"], prepared["sources"]
+        request_id, request_digest = prepared["request_id"], prepared["request_digest"]
+        input_digest, job_id = prepared["input_digest"], prepared["job_id"]
+        export_profile = prepared["export_profile"]
         directory = self._studio_dir(novel_id, branch_id, actor_id, context)
         key = (str(self.root.resolve()), job_id)
         guard()
@@ -383,6 +481,19 @@ class VideoAssemblyService:
         if existing is not None:
             guard()
             return self.get_studio(novel_id, branch_id, actor_id, job_id, context=context, guard=guard)
+        return self._render_studio_receipt(novel_id, branch_id, actor_id, row, context=context,
+            guard=guard, source_guard=source_guard, publish=publish, export_profile=export_profile)
+
+    def _render_studio_receipt(self, novel_id, branch_id, actor_id, row, *, context, guard, source_guard, publish, export_profile=None):
+        """One real renderer/publication path, always under the original execution lease.
+
+        publish(data, kind, filename, measured, job_id, job_guard) remains the
+        original authorized private-Asset callback. No duplicate queue or
+        worker owns this execution, and UNKNOWN never enters this method again.
+        """
+        from .studio_timeline_render import render_studio_timeline
+        definition, job_id, request_digest = row["timeline"], row["id"], row["request_digest"]
+        key = (str(self.root.resolve()), job_id)
         def execution_current():
             # External Host/source/graph guard is never called under queue lock.
             guard()

@@ -4,6 +4,7 @@ import type { StudioAsset, StudioClient } from './studioClient';
 import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphRecord } from './studioGraphTypes';
 import type { MediaOperation } from './studioProductionClient';
 import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, retainsSavedAssetBindings } from './graphDraft';
+import { useStudioGraphTimelineEditor } from './useStudioGraphTimelineEditor';
 
 export type StudioGraphEditorSelection = { graphId?: string; runId?: string };
 export type StudioGraphEditorProps = {
@@ -37,12 +38,16 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const baseRef = useRef(base); baseRef.current = base;
   const createRequest = useRef(graphId('graph'));
   const current = useCallback(() => alive.current && isCurrent(), [isCurrent]);
-  const dirty = !same(draft, base?.definition || blankGraph());
   const locked = () => busy || saving.current || !!isBusy?.();
+  const editable = !!catalog && canMutate && !denied && !busy && !externalDirty && !executionDirty && !blocked && base?.can_edit !== false;
+  const node = draft.nodes.find(row => row.id === selected[0]);
+  const timelineEditor = useStudioGraphTimelineEditor({ client: client.graphs, node, editable, identity, isCurrent: current, isBusy: locked, read,
+    update: parameters => { const selectedNode = draftRef.current.nodes.find(row => row.id === selected[0]); if (selectedNode?.definition_id !== 'timeline_export') return;
+      change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === selectedNode.id ? { ...row, parameters } : row) }); } });
+  const dirty = !same(draft, base?.definition || blankGraph()) || timelineEditor.formDirty;
   const replaceConfirmed = !!candidate && replaceConsent === candidateKey(candidate);
   const setReplaceConfirmed = (value: boolean) => { setReplaceConsent(value && current() && !locked() && !externalDirty && !checking ? candidateKey(candidate) : undefined); };
   const invalidateCandidate = useCallback(() => { candidateEpoch.current++; candidateRequest.current?.abort(); setCandidate(undefined); setReplaceConsent(undefined); setChecking(false); }, []);
-  const editable = !!catalog && canMutate && !denied && !busy && !externalDirty && !executionDirty && !blocked && base?.can_edit !== false;
   const protectedNodes = base?.definition.nodes.filter(node => node.definition_id === 'asset_reference').map(node => node.id) || [];
 
   const restoreRequest = useRef<string>();
@@ -51,15 +56,16 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (current()) reportSelection.current?.({ graphId: baseRef.current?.id, runId });
   }, [current]);
   const accept = useCallback((record: StudioGraphRecord, restored = false) => {
+    timelineEditor.resetForm();
     setMediaSchemaConsent(false);
     selectedEpoch.current++; invalidateCandidate(); setBase(record); setDraft(structuredClone(record.definition)); setPast([]); setFuture([]); setSelected([]); setBlocked(false); setSourcePort(''); setTargetPort('');
     setRecords(rows => [...rows.filter(row => row.id !== record.id), record]); createRequest.current = graphId('graph');
     if (!restored) reportSelection.current?.({ graphId: record.id });
   }, [invalidateCandidate]);
-  const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty]);
+  const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty, timelineEditor.clearForm]);
   useEffect(() => { alive.current = true; return () => { alive.current = false; selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; candidateEpoch.current++; candidateRequest.current?.abort(); }; }, []);
   useEffect(() => {
-    if (denied) { selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; invalidateCandidate(); setCatalog(undefined); setRecords([]); setBase(undefined); setDraft(blankGraph()); setPast([]); setFuture([]); setSelected([]); setAssets([]); setPreview(undefined); setPreviewState(undefined); setPendingNavigation(undefined); setMediaSchemaConsent(false); setExecutionDirty(false); setError(''); setNotice(''); }
+    if (denied) { timelineEditor.resetForm(); selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; invalidateCandidate(); setCatalog(undefined); setRecords([]); setBase(undefined); setDraft(blankGraph()); setPast([]); setFuture([]); setSelected([]); setAssets([]); setPreview(undefined); setPreviewState(undefined); setPendingNavigation(undefined); setMediaSchemaConsent(false); setExecutionDirty(false); setError(''); setNotice(''); }
   }, [denied, invalidateCandidate]);
 
   const load = useCallback(async () => {
@@ -91,7 +97,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     try { const value = await mutate(() => client.graphs.get(id)); if (current() && epoch === selectedEpoch.current) accept(value); }
     catch (value) { if (current() && epoch === selectedEpoch.current) setError(apiErrorView(value, '创作图读取失败，当前草稿未替换。').message); }
   }
-  function newGraph() { if (!current() || locked() || externalDirty || executionDirty) return; selectedEpoch.current++; invalidateCandidate(); setBase(undefined); setDraft(blankGraph()); setSelected([]); setPast([]); setFuture([]); setBlocked(false); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); reportSelection.current?.({}); }
+  function newGraph() { if (!current() || locked() || externalDirty || executionDirty) return; timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setBase(undefined); setDraft(blankGraph()); setSelected([]); setPast([]); setFuture([]); setBlocked(false); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); reportSelection.current?.({}); }
   function confirmNavigation() {
     if (!discardConfirmed || !pendingNavigation || !current() || locked() || externalDirty || executionDirty) return;
     const work = pendingNavigation; setPendingNavigation(undefined); setDiscardConfirmed(false); work();
@@ -101,7 +107,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     accept(candidate); setReplaceConfirmed(false); setError(''); setNotice('已采用核对的图服务端版本，没有创建或执行运行。');
   }
   async function save(retry = false) {
-    if ((!editable && !(retry && blocked && !base && canMutate && !busy && !externalDirty)) || executionDirty || locked() || !current() || !draft.title.trim()) return;
+    if ((!editable && !(retry && blocked && !base && canMutate && !busy && !externalDirty)) || timelineEditor.formDirty || executionDirty || locked() || !current() || !draft.title.trim()) return;
     saving.current = true; setError(''); const epoch = selectedEpoch.current, value = structuredClone(draftRef.current), original = base, request = createRequest.current;
     try {
       const saved = await mutate(() => original ? client.graphs.save(original.id, { expected_version: original.version, definition: value }) : client.graphs.create({ request_id: request, expected_version: 0, definition: value }));
@@ -134,14 +140,17 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   function addNode() {
     const spec = catalog?.definitions.find(row => row.id === kind), asset = assets.find(row => row.id === assetChoice);
-    const media = kind === 'media_generate' || kind === 'media_review';
+    const media = kind === 'media_generate' || kind === 'media_review' || kind === 'timeline_export';
     const schemaRequired = media || kind === 'asset_reference' && catalog?.capabilities.media_execution;
     const limit = draft.schema_version === 3 ? catalog?.media_limits?.nodes || 24 : catalog!.limits.nodes;
     if (!editable || !spec || draft.nodes.length >= limit || schemaRequired && draft.schema_version !== 3
-      || kind === 'media_generate' && draft.nodes.filter(row => row.definition_id === 'media_generate').length >= 4 || kind === 'asset_reference' && !asset) return;
+      || ['media_generate', 'timeline_export'].includes(kind) && draft.nodes.filter(row => ['media_generate', 'timeline_export'].includes(row.definition_id)).length >= 4
+      || kind === 'asset_reference' && !asset || kind === 'timeline_export' && !timelineEditor.chosen) return;
     const node = { id: graphId(), definition_id: kind, definition_version: 1 as const, enabled: true, position: { x: 24 + draft.nodes.length % 4 * 280, y: 24 + Math.floor(draft.nodes.length / 4) * 180 },
       parameters: kind === 'asset_reference' ? { asset_id: asset!.id, version: asset!.version, digest: asset!.sha256, kind: asset!.kind as 'image' | 'video' | 'audio' }
         : kind === 'media_generate' ? { operation_id: 'm5.image.t2i' as const, provider_id: '', model_id: '', prompt: '', parameters: {}, allow_cloud: false, license_note: '' }
+        : kind === 'timeline_export' ? { timeline_snapshot: { id: timelineEditor.chosen!.id, version: timelineEditor.chosen!.version, digest: timelineEditor.chosen!.timeline_digest },
+          edit_operations: [], source_bindings: [], export_profile: { preset: 'REVIEW_MP4' as const } }
         : structuredClone(spec.default_parameters || {}) };
     change({ ...draft, schema_version: kind === 'text_generate' && draft.schema_version === 1 ? 2 : draft.schema_version, nodes: [...draft.nodes, node] }); setSelected([node.id]);
   }
@@ -188,7 +197,6 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     else { setFuture(rows => [structuredClone(draft), ...rows].slice(0, 50)); setPast(rows => rows.slice(0, -1)); }
     invalidateCandidate(); draftRef.current = structuredClone(value); setDraft(draftRef.current); setSourcePort(''); setTargetPort('');
   }
-  const node = draft.nodes.find(row => row.id === selected[0]);
   const downloadPreviewAsset = useCallback((asset: Asset) => read(() => client.download(asset.id)), [read, client]);
   const refreshPreview = () => { if (current() && !locked()) setPreviewRequest(value => value + 1); };
   useEffect(() => {
@@ -239,7 +247,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     discard, load, change, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
     setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
-    updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs,
+    updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,
   };
 }
 export type StudioGraphEditorController = ReturnType<typeof useStudioGraphEditorController>;

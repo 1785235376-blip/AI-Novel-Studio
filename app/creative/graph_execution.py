@@ -93,8 +93,11 @@ class CreativeGraphExecutor:
                 or row.get("typed_edges") != [edge for edge in graph["definition"]["edges"]
                     if edge["source_node_id"] in selected and edge["target_node_id"] in selected]):
             raise StaleSourceError("CREATIVE_GRAPH_RUN_BINDING_CHANGED")
+        # Schema 3's static topology remains reviewed after an explicit timeline
+        # edit advances its base. Original asset inputs are checked below; the
+        # actual edited timeline snapshot is fenced by its original runtime.
         preflight = self.service._preflight(graph, GraphPreflight(expected_version=graph["version"],
-            target_node_ids=selected), actor, check_assets=check_assets)
+            target_node_ids=selected), actor, check_assets=False if schema == 3 else check_assets)
         pairs = list(dict.fromkeys((edge["source_node_id"], edge["target_node_id"]) for edge in row["typed_edges"]))
         snapshot = {"title": graph["definition"]["title"],
             "nodes": [{"id": node["id"], "name": node["id"], "config": {},
@@ -135,10 +138,12 @@ class CreativeGraphExecutor:
         if schema == 3:
             if check_assets:
                 self.service.asset_inputs.current(nid, scope, actor, row, guard, state)
-            if any(node["definition_id"] == "media_generate" for node in expected):
+            if any(node["definition_id"] in {"media_generate", "timeline_export"} for node in expected):
                 if self.service.media_runtime is None:
                     raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
                 self.service.media_runtime.validate_snapshot(row)
+                document = state if state is not None else self.service.store.read(nid, scope)
+                self.service.media_runtime.timeline_current(row, document, guard)
         guard()
         return graph
 
@@ -151,7 +156,7 @@ class CreativeGraphExecutor:
             graph = self.service._owned(nid, scope, actor, self.service.GRAPHS, rid, state)
             check_version(graph, body.expected_graph_version)
             preflight = self.service._preflight(graph, GraphPreflight(expected_version=body.expected_graph_version,
-                target_node_ids=body.target_node_ids), actor)
+                target_node_ids=body.target_node_ids), actor, guard=current, state=state)
             if not preflight["executable"]:
                 raise ValueError("CREATIVE_GRAPH_EXECUTION_BLOCKED")
             if preflight["preflight_digest"] != body.reviewed_preflight_digest:
@@ -194,7 +199,7 @@ class CreativeGraphExecutor:
                 payload.update(model_execution_contract=CONTRACT, model_preview=None, model_execution=None)
             if graph["definition"]["schema_version"] == 3:
                 payload["graph_schema_version"] = 3
-                if any(node["definition_id"] == "media_generate" for node in typed_nodes):
+                if any(node["definition_id"] in {"media_generate", "timeline_export"} for node in typed_nodes):
                     payload.update(media_execution_contract="creative-graph-media/1", media_previews={}, media_executions={})
             row = new_row(nid, scope, actor, payload)
             rows[row["id"]] = row
@@ -302,7 +307,7 @@ class CreativeGraphExecutor:
             if current["status"] != "WAITING_APPROVAL" or node_id is None:
                 break
             node = nodes[node_id]
-            if node["definition_id"] in {"human_review", "text_generate", "media_generate", "media_review"}:
+            if node["definition_id"] in {"human_review", "text_generate", "media_generate", "media_review", "timeline_export"}:
                 break
             guard()
             host.trigger_agent_node(row["id"], node_id, actor)

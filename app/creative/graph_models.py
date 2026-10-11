@@ -120,11 +120,106 @@ class MediaNodeParameters(Strict):
 
 
 class MediaCandidatePort(Strict):
-    owner: Literal["image", "video", "audio"]
+    owner: Literal["image", "video", "audio", "timeline"]
     job_id: str = Field(min_length=1, max_length=240)
     job_version: int = Field(ge=1)
     request_digest: Digest
     asset: AssetParameters
+
+    @model_validator(mode="after")
+    def original_output_kind(self):
+        if self.asset.kind != ("video" if self.owner == "timeline" else self.owner):
+            raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
+        return self
+
+
+class TimelineSnapshotParameters(Strict):
+    id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$")
+    version: int = Field(ge=1, le=2**53 - 1)
+    digest: Digest
+
+
+class TimelineSourceBinding(Strict):
+    port: Literal["source_1", "source_2", "source_3", "source_4", "source_5", "source_6", "source_7", "source_8"]
+    clip_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$")
+
+
+def _closed_timeline_operations(operations):
+    """Bound edit syntax before the original owner validates its real base.
+
+    This grants no edit/render authority. Contextual track/clip membership,
+    ranges, overlap, source compatibility and final timeline normalization
+    still belong to apply_timeline_edits on the exact owned snapshot.
+    """
+    fields = {
+        "canvas.update": {"op", "changes"}, "track.insert": {"op", "track"},
+        "track.remove": {"op", "track_id", "remove_clips"}, "track.update": {"op", "track_id", "changes"},
+        "track.reorder": {"op", "track_ids"}, "clip.insert": {"op", "track_id", "clip"},
+        "clip.update": {"op", "clip_id", "changes"}, "clip.remove": {"op", "clip_id", "ripple"},
+        "clip.move": {"op", "clip_id", "track_id", "start_ms"},
+        "clip.duplicate": {"op", "clip_id", "new_clip_id", "track_id", "start_ms"},
+        "clip.split": {"op", "clip_id", "at_ms", "new_clip_id"},
+        "clip.trim": {"op", "clip_id", "in_ms", "out_ms", "ripple"},
+        "clip.slip": {"op", "clip_id", "offset_ms"}, "caption.insert": {"op", "caption"},
+        "caption.update": {"op", "index", "caption"}, "caption.remove": {"op", "index"},
+    }
+    clip_fields = {"source_snapshot", "start_ms", "in_ms", "out_ms", "x", "y", "width", "height",
+        "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms"}
+    for operation in operations:
+        kind = operation.get("op")
+        if not isinstance(kind, str) or kind not in fields or set(operation) != fields[kind]:
+            raise ValueError("STUDIO_TIMELINE_EDIT_FIELDS_INVALID")
+        nested = None
+        if kind.endswith(".update") and kind != "caption.update":
+            nested = operation["changes"]
+            allowed = {"duration_ms", "width", "height", "fps", "schema_version"} if kind == "canvas.update" else (
+                {"muted", "gain_db", "role"} if kind == "track.update" else clip_fields)
+            if not isinstance(nested, dict) or not nested or set(nested) - allowed:
+                raise ValueError("STUDIO_TIMELINE_EDIT_FIELDS_INVALID")
+        elif kind == "track.insert":
+            nested = operation["track"]
+            required = {"id", "kind", "order", "clips"}
+            if not isinstance(nested, dict) or required - set(nested) or set(nested) - required - {"muted", "gain_db", "role"}:
+                raise ValueError("STUDIO_TIMELINE_EDIT_FIELDS_INVALID")
+            if nested["clips"] != []:
+                raise ValueError("STUDIO_TIMELINE_EDIT_INSERT_EMPTY_TRACK_REQUIRED")
+        elif kind == "clip.insert":
+            nested = operation["clip"]
+            required = {"id", "source_snapshot", "start_ms", "in_ms", "out_ms"}
+            if not isinstance(nested, dict) or required - set(nested) or set(nested) - clip_fields - {"id"}:
+                raise ValueError("STUDIO_TIMELINE_EDIT_FIELDS_INVALID")
+        elif kind in {"caption.insert", "caption.update"}:
+            nested = operation["caption"]
+            if not isinstance(nested, dict) or set(nested) != {"start_ms", "end_ms", "text"}:
+                raise ValueError("STUDIO_TIMELINE_EDIT_FIELDS_INVALID")
+        if isinstance(nested, dict) and "source_snapshot" in nested:
+            snapshot = nested["source_snapshot"]
+            if (not isinstance(snapshot, dict) or set(snapshot) != {"kind", "id", "version", "digest", "asset_kind"}
+                    or snapshot["kind"] != "ASSET"):
+                raise ValueError("STUDIO_TIMELINE_SOURCE_INVALID")
+            AssetParameters.model_validate({"asset_id": snapshot["id"], "version": snapshot["version"],
+                "digest": snapshot["digest"], "kind": snapshot["asset_kind"]})
+    if len(canonical(operations).encode("utf-8")) > 128_000:
+        raise ValueError("STUDIO_TIMELINE_EDIT_BYTES_LIMIT")
+
+
+class TimelineNodeParameters(Strict):
+    timeline_snapshot: TimelineSnapshotParameters
+    edit_operations: list[dict] = Field(default_factory=list, max_length=40)
+    source_bindings: list[TimelineSourceBinding] = Field(default_factory=list, max_length=8)
+    export_profile: dict
+
+    @model_validator(mode="after")
+    def closed_original_configuration(self):
+        from ..services.studio_timeline_export import normalize_export_profile
+        self.export_profile = normalize_export_profile(self.export_profile)
+        _closed_timeline_operations(self.edit_operations)
+        if (len({binding.port for binding in self.source_bindings}) != len(self.source_bindings)
+                or len({binding.clip_id for binding in self.source_bindings}) != len(self.source_bindings)):
+            raise ValueError("CREATIVE_GRAPH_TIMELINE_SOURCE_BINDING_DUPLICATE")
+        if len(self.edit_operations) + len(self.source_bindings) > 40:
+            raise ValueError("STUDIO_TIMELINE_EDIT_OPERATION_LIMIT")
+        return self
 
 
 class PlanItem(Strict):
@@ -159,6 +254,8 @@ DEFINITIONS["media_generate"] = {"inputs": [port("text", "TEXT"), port("draft", 
     "outputs": [port("candidate", "MEDIA_CANDIDATE")], "parameters": MediaNodeParameters}
 DEFINITIONS["media_review"] = {"inputs": [port("candidate", "MEDIA_CANDIDATE", True)],
     "outputs": [port("asset", "ASSET_REF")], "parameters": EmptyParameters}
+DEFINITIONS["timeline_export"] = {"inputs": [port(f"source_{index}", "ASSET_REF") for index in range(1, 9)],
+    "outputs": [port("candidate", "MEDIA_CANDIDATE")], "parameters": TimelineNodeParameters}
 
 
 def definition_for(definition_id, *, schema_version=None):
@@ -205,7 +302,7 @@ class ModelNodeInstance(NodeInstance):
 
 class MediaNodeInstance(NodeInstance):
     definition_id: Literal["text_input", "text_reference", "draft_prepare", "manual_transform",
-        "director_note", "human_review", "asset_reference", "text_generate", "media_generate", "media_review"]
+        "director_note", "human_review", "asset_reference", "text_generate", "media_generate", "media_review", "timeline_export"]
 
 
 class TypedEdge(Strict):
@@ -275,7 +372,7 @@ class GraphMediaInput(GraphInput):
 
     @model_validator(mode="after")
     def media_capacity(self):
-        if sum(node.definition_id == "media_generate" for node in self.nodes) > MAX_MEDIA_GENERATORS:
+        if sum(node.definition_id in {"media_generate", "timeline_export"} for node in self.nodes) > MAX_MEDIA_GENERATORS:
             raise ValueError("CREATIVE_GRAPH_MEDIA_NODE_CAPACITY")
         return self
 
@@ -332,12 +429,12 @@ class GraphAction(Strict):
 def catalog_definitions(*, include_model=False, include_media=False):
     return [{"id": key, "version": 1, "inputs": deepcopy(value["inputs"]),
         "outputs": deepcopy(value["outputs"]), "parameters_schema": value["parameters"].model_json_schema(),
-        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate"} else None,
+        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate", "timeline_export"} else None,
         "executable": include_media or key != "asset_reference", "model_called": False,
         "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" and not include_media else []}
         for key in DEFINITIONS
         for value in [definition_for(key, schema_version=3 if include_media else None)]
-        if (include_model or key != "text_generate") and (include_media or key not in {"media_generate", "media_review"})]
+        if (include_model or key != "text_generate") and (include_media or key not in {"media_generate", "media_review", "timeline_export"})]
 
 
 def history_limit(row):
@@ -372,7 +469,10 @@ def validate_output_ports(definition_id, value, *, schema_version=None):
             result[port["id"]] = AssetParameters.model_validate(item).model_dump()
         elif port["type"] == "MEDIA_CANDIDATE":
             candidate = MediaCandidatePort.model_validate(item)
-            if candidate.owner != candidate.asset.kind:
+            if candidate.owner == "timeline":
+                if schema_version != 3 or definition_id != "timeline_export" or candidate.asset.kind != "video":
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
+            elif definition_id == "timeline_export" or candidate.owner != candidate.asset.kind:
                 raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
             result[port["id"]] = candidate.model_dump()
         else:

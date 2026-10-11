@@ -71,8 +71,10 @@ export function useStudioGraphMediaExecution(props: StudioGraphMediaExecutionPro
       canDispatch: !disabled && !unknown && !!source.client.dispatchMedia && !!previewKey && previewConsentRef.current === previewKey && allowed('dispatch'),
       canExecute: !disabled && !unknown && !!source.client.executeMedia && job?.status === 'QUEUED' && !execution?.send_reserved && run?.current_node_id === node?.node_id && run?.status === 'RUNNING' && allowed('execute'),
       canRefresh: !disabled && !!source.client.refreshMedia && !!execution && (execution.job_id === null || !!job && !['FAILED', 'CANCELLED'].includes(job.status)) && allowed('refresh'),
-      canReconcile: !disabled && !!source.client.reconcileMedia && !!job && (job.needs_reconciliation === true || ['RUNNING', 'SEND_RESERVED', 'UNKNOWN'].includes(job.status)) && allowed('reconcile'),
-      canCancel: !disabled && !!job && !['APPROVED', 'FAILED', 'CANCELLED'].includes(job.status) && allowed('cancel'),
+      canReconcile: !disabled && !!source.client.reconcileMedia && !!job && (execution?.owner === 'timeline' ? ['RUNNING', 'UNKNOWN'].includes(job.status)
+        : job.needs_reconciliation === true || ['RUNNING', 'SEND_RESERVED', 'UNKNOWN'].includes(job.status)) && allowed('reconcile'),
+      canCancel: !disabled && !!job && (execution?.owner === 'timeline' ? ['QUEUED', 'RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)
+        : !['APPROVED', 'FAILED', 'CANCELLED'].includes(job.status)) && allowed('cancel'),
       canCandidate: !locked && !!job?.output_candidate && !!source.client.mediaCandidate,
       canReview: !reviewDisabled && !!source.client.reviewMedia && reviewCurrent && !!visibleCandidate && !!binding && reviewConsentRef.current === binding
         && (['AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING'].includes(job?.status || '') || job?.status === 'APPROVED' && execution?.review_state === 'REVIEW_RESERVED') && allowed('review'),

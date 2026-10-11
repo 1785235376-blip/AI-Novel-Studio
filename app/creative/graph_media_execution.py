@@ -20,6 +20,7 @@ from .graph_models import (Digest, Id, Strict, history_limit, validate_output_po
     MAX_RECORD_BYTES, MAX_SCOPE_BYTES, MAX_OUTPUT_BYTES)
 from .graph_media_binding import make_graph_binding_digest
 from .production_execution_models import MediaCommand, MediaCreate, MediaJobAction, MediaReview
+from .graph_timeline_execution import GraphTimelineCommand
 from .project_store import BINDING
 
 CONTRACT = "creative-graph-media/1"
@@ -59,7 +60,7 @@ class CreativeGraphMediaRuntime:
 
     @staticmethod
     def nodes(row):
-        return {node["id"]: node for node in row["typed_nodes"] if node["definition_id"] == "media_generate"}
+        return {node["id"]: node for node in row["typed_nodes"] if node["definition_id"] in {"media_generate", "timeline_export"}}
 
     def _node(self, row, node_id):
         node = self.nodes(row).get(node_id)
@@ -137,7 +138,7 @@ class CreativeGraphMediaRuntime:
         # Bound only still-pending local outputs; modality references/receipts and
         # original transition traces receive an additional finite 16 KiB margin.
         pending_local = sum(MAX_OUTPUT_BYTES for node in row["typed_nodes"]
-            if node["definition_id"] not in {"media_generate", "media_review"}
+            if node["definition_id"] not in {"media_generate", "media_review", "timeline_export"}
             and row["node_states"][node["id"]]["status"] != "SUCCEEDED")
         future = min(256000, pending_local) + 16384
         addition = updates * (len(canonical(snapshot).encode("utf-8")) + future)
@@ -149,6 +150,17 @@ class CreativeGraphMediaRuntime:
     def _inputs(self, row, node):
         ports = self.service.executor._inputs(row, node["id"], row["typed_outputs"])
         command = deepcopy(node["parameters"])
+        if node["definition_id"] == "timeline_export":
+            expected = {binding["port"] for binding in command["source_bindings"]}
+            if set(ports) != expected:
+                raise StaleSourceError("CREATIVE_GRAPH_TIMELINE_RESOLVED_INPUT_REQUIRED")
+            command["source_bindings"] = [{**binding, "asset": deepcopy(ports[binding["port"]])}
+                for binding in command["source_bindings"]]
+            command.update(operation_id="m9.timeline.multitrack", request_id="graph-media-" + digest([
+                CONTRACT, row[BINDING], row["scope"], row["created_by"], row["id"], row["graph_id"],
+                row["graph_version"], row["request_digest"], node["id"]]))
+            body = GraphTimelineCommand.model_validate(command)
+            return ports, body, digest([row[BINDING], row["scope"], row["created_by"], row["graph_digest"], node, ports])
         if "text" in ports and "draft" in ports:
             raise ValueError("CREATIVE_GRAPH_MEDIA_TEXT_DRAFT_EXCLUSIVE")
         text = ports.get("text", "")
@@ -199,7 +211,7 @@ class CreativeGraphMediaRuntime:
 
     @staticmethod
     def _owner(operation):
-        return "image" if operation.startswith("m5.") else "video" if operation.startswith("m7.") else "audio"
+        return "timeline" if operation == "m9.timeline.multitrack" else "image" if operation.startswith("m5.") else "video" if operation.startswith("m7.") else "audio"
 
     def validate_snapshot(self, row):
         nodes = self.nodes(row)
@@ -219,6 +231,9 @@ class CreativeGraphMediaRuntime:
                         row["graph_digest"], {key: value for key, value in preview.items() if key != "preview_digest"}])
                     or preview["graph_binding"] != self._binding(row, nodes[node_id], command, input_digest, preview["source_run_version"])):
                 raise StaleSourceError("CREATIVE_GRAPH_MEDIA_PREVIEW_CHANGED")
+            if nodes[node_id]["definition_id"] == "timeline_export":
+                self.production.graph_timeline.context(row["novel_id"], row["scope"], row["created_by"],
+                    preview["production_preview"], preview["graph_binding"], row[BINDING])
             execution = executions.get(node_id)
             if execution:
                 expected_execution = {"node_id", "owner", "job_id", "request_id", "request_digest", "graph_binding",
@@ -244,8 +259,14 @@ class CreativeGraphMediaRuntime:
         if not small and (job.get("owner") != execution["owner"]
                 or job.get("novel_id") != row["novel_id"] or job.get("branch_id") != row["scope"].get("branch_id")
                 or job.get("request_id") != execution["request_id"]
-                or job.get("operation_id") != self.nodes(row)[node_id]["parameters"]["operation_id"]):
+                or job.get("operation_id") != row["media_previews"][node_id]["command"]["operation_id"]):
             raise StaleSourceError("CREATIVE_GRAPH_MEDIA_OWNER_BINDING_CHANGED")
+        if not small and execution["owner"] == "timeline":
+            preview = row["media_previews"][node_id]["production_preview"]
+            if (job.get("timeline_snapshot") != preview["timeline_snapshot"]
+                    or job.get("sources") != [source["snapshot"] for source in preview["sources"]]
+                    or job.get("execution_recipe") != preview["execution_recipe"] or job.get("command") is not None):
+                raise StaleSourceError("CREATIVE_GRAPH_TIMELINE_OWNER_INPUT_CHANGED")
         recorded = execution.get("job")
         if not small and recorded:
             if job["version"] < recorded["version"]:
@@ -263,7 +284,7 @@ class CreativeGraphMediaRuntime:
     @staticmethod
     def _candidate_port(execution, job):
         candidate = job["output_candidate"]
-        return validate_output_ports("media_generate", {"candidate": {"owner": execution["owner"],
+        return validate_output_ports("timeline_export" if execution["owner"] == "timeline" else "media_generate", {"candidate": {"owner": execution["owner"],
             "job_id": job["id"], "job_version": job["version"], "request_digest": job["request_digest"],
             "asset": {"asset_id": candidate["id"], "version": candidate["version"],
                 "digest": candidate["digest"], "kind": candidate["kind"]}}}, schema_version=3)["candidate"]
@@ -300,7 +321,29 @@ class CreativeGraphMediaRuntime:
                 or node_state.get("status") != "WORKING"):
             raise StaleSourceError("CREATIVE_GRAPH_MEDIA_ACTIVE_GENERATE_REQUIRED")
         self.validate_snapshot(row); self._deadline(row)
+        self.timeline_current(row, document, current)
         return row
+
+    def timeline_current(self, row, document, current, *, assets=False):
+        """Check edited snapshots, not the now-historical node base snapshot."""
+        for node_id, node in self.nodes(row).items():
+            if node["definition_id"] != "timeline_export" or node_id in row.get("media_executions", {}):
+                continue
+            # Before admission an independent edit invalidates the captured
+            # base and any displayed preview. This is a pure document check,
+            # including when called before publication's asset phase.
+            snapshot = node["parameters"]["timeline_snapshot"]
+            original = self.production._owned_timeline(row["novel_id"], row["scope"], row["created_by"], snapshot["id"],
+                {"incarnation": row[BINDING]}, document)
+            if (original["version"], original["timeline_digest"]) != (snapshot["version"], snapshot["digest"]):
+                raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+        for node_id, execution in row.get("media_executions", {}).items():
+            if execution["owner"] != "timeline": continue
+            preview = row["media_previews"][node_id]
+            context = self.production.graph_timeline.context(row["novel_id"], row["scope"], row["created_by"],
+                preview["production_preview"], preview["graph_binding"], row[BINDING])
+            self.production.graph_timeline.current(row["novel_id"], row["scope"], row["created_by"],
+                context, document, current, assets=assets)
 
     def _guards(self, nid, scope, actor, row, node_id, current):
         archival = self._text_assets(row)
@@ -312,6 +355,7 @@ class CreativeGraphMediaRuntime:
             # the same raw source lease remains held. Never reopen scope here.
             def asset_guard():
                 self.service.asset_inputs.current_under_asset_lease(nid, scope, actor, live, current)
+                self.timeline_current(live, document, current, assets=True)
                 if archival:
                     archival.current_under_asset_lease(nid, scope, actor, live, current, prepared)
             return asset_guard
@@ -319,6 +363,7 @@ class CreativeGraphMediaRuntime:
             with self._phase(nid, scope, actor, row["id"], current) as document:
                 live = self._metadata_authority(document, row, node_id, current)
                 self.service.asset_inputs.current(nid, scope, actor, live, current, document)
+                self.timeline_current(live, document, current, assets=True)
                 if archival and prepared is not None:
                     archival.output_authority(live)
         return last_mile, source_guard
@@ -371,13 +416,24 @@ class CreativeGraphMediaRuntime:
             raise ValueError("CREATIVE_GRAPH_MEDIA_NODE_NOT_AWAITING_PREVIEW")
         _, command, input_digest = self._inputs(row, node)
         binding = self._binding(row, node, command, input_digest, body.expected_version)
-        production_preview, _, _ = self.production.preview(nid, scope, actor, command, current, graph_binding=binding)
+        if node["definition_id"] == "timeline_export":
+            with self._phase(nid, scope, actor, rid, current) as document:
+                self._row(nid, scope, actor, rid, current, document)
+                production_preview, _, _ = self.production.graph_timeline.prepare(nid, scope, actor,
+                    command, current, document=document, graph_binding=binding)
+        else:
+            production_preview, _, _ = self.production.preview(nid, scope, actor, command, current, graph_binding=binding)
         preview = {"node_id": node["id"], "source_run_version": body.expected_version, "input_digest": input_digest,
             "graph_binding": binding, "command": command.model_dump(exclude_none=True), "production_preview": production_preview}
         preview["preview_digest"] = digest([CONTRACT, row[BINDING], scope, actor, row["graph_digest"], preview])
         with self._phase(nid, scope, actor, rid, current, writable=True) as state:
             stored = self._row(nid, scope, actor, rid, current, state)
             check_version(stored, body.expected_version)
+            if node["definition_id"] == "timeline_export":
+                fresh, _, _ = self.production.graph_timeline.prepare(nid, scope, actor,
+                    command, current, document=state, graph_binding=binding)
+                if fresh != production_preview:
+                    raise StaleSourceError("STUDIO_PRODUCTION_PREVIEW_CHANGED")
             projected = deepcopy(stored)
             projected["media_previews"][node["id"]] = preview
             self._admission_capacity(state, projected)
@@ -398,7 +454,7 @@ class CreativeGraphMediaRuntime:
                 or row["status"] != "WAITING_APPROVAL" or row["current_node_id"] != node["id"]
                 or node["id"] in row["media_executions"]):
             raise StaleSourceError("CREATIVE_GRAPH_MEDIA_EXACT_PREVIEW_REQUIRED")
-        execution = {"node_id": node["id"], "owner": self._owner(node["parameters"]["operation_id"]), "job_id": None,
+        execution = {"node_id": node["id"], "owner": self._owner(preview["command"]["operation_id"]), "job_id": None,
             "request_id": preview["command"]["request_id"], "request_digest": preview["production_preview"]["request_digest"],
             "graph_binding": deepcopy(preview["graph_binding"]), "status": "ADMISSION_RESERVED", "receipt_state": UNKNOWN,
             "send_reserved": False, "job": None, "review_state": "NONE"}
@@ -406,18 +462,36 @@ class CreativeGraphMediaRuntime:
             stored = self._row(nid, scope, actor, rid, current, state)
             check_version(stored, body.expected_version)
             self._admission_capacity(state, stored)
+            if node["definition_id"] == "timeline_export":
+                self.production.graph_timeline.commit(nid, scope, actor, preview["production_preview"],
+                    preview["graph_binding"], current, document=state)
             host = _ScopedOriginalWorkflowHost(stored, current)
             host.trigger_agent_node(rid, node["id"], actor); host.claim_agent_task(rid, node["id"], actor)
             host.row["media_executions"][node["id"]] = deepcopy(execution)
             self._commit_host(stored, actor, host); self.service._capacity(state); current()
             captured = deepcopy(stored)
         try:
-            job = self.production.create(nid, scope, actor, MediaCreate(command=MediaCommand.model_validate(preview["command"]),
-                reviewed_preview_digest=preview["production_preview"]["preview_digest"]), current, graph_binding=execution["graph_binding"])
+            if execution["owner"] == "timeline":
+                job = self.production.graph_timeline_queue(nid, scope, actor, preview["production_preview"],
+                    execution["graph_binding"], captured[BINDING], current)
+            else:
+                job = self.production.create(nid, scope, actor, MediaCreate(command=MediaCommand.model_validate(preview["command"]),
+                    reviewed_preview_digest=preview["production_preview"]["preview_digest"]), current, graph_binding=execution["graph_binding"])
             execution["job_id"] = job["id"]
             return self._synchronize(nid, scope, actor, captured, node["id"], execution, job, current)
         except Exception:
             self._unknown(nid, scope, actor, rid, node["id"], execution, current, "ADMISSION_UNKNOWN")
+            # Cancellation can commit while original admission is in flight.
+            # Its first lookup may see no job yet. Recheck the durable fence
+            # after admission/reply failure and cancel only the original bound
+            # receipt; never create or execute a replacement. Keep any failed
+            # cancellation evidence/receipt for later original-owner inspection.
+            try:
+                latest = self.service._owned(nid, scope, actor, self.service.RUNS, rid)
+                if latest["status"] in TERMINAL_RUNS:
+                    self.cancel(nid, scope, actor, latest, current)
+            except (FileNotFoundError, ValueError, StaleSourceError):
+                pass
             raise
 
     def _unknown(self, nid, scope, actor, rid, node_id, execution, current, status="UNKNOWN"):
@@ -442,6 +516,7 @@ class CreativeGraphMediaRuntime:
         with self._phase(nid, scope, actor, captured["id"], current, writable=True) as state:
             row = self._row(nid, scope, actor, captured["id"], current, state)
             check_version(row, captured["version"])
+            self.timeline_current(row, state, current, assets=True)
             if row["media_executions"].get(node_id, {}).get("graph_binding") != updated["graph_binding"]:
                 raise StaleSourceError("CREATIVE_GRAPH_MEDIA_ATTEMPT_CHANGED")
             host = _ScopedOriginalWorkflowHost(row, current)
@@ -536,8 +611,9 @@ class CreativeGraphMediaRuntime:
     def reconcile(self, nid, scope, actor, rid, value, guard):
         body, current, row, node_id, job = self._checked_action(nid, scope, actor, rid, value, guard)
         execution = deepcopy(row["media_executions"][node_id])
+        graph_guard, source_guard = self._guards(nid, scope, actor, row, node_id, current)
         job = self.production.reconcile(nid, scope, actor, execution["owner"], execution["job_id"], self._job_action(body), current,
-            graph_binding=execution["graph_binding"])
+            graph_binding=execution["graph_binding"], graph_guard=graph_guard, graph_source_guard=source_guard)
         return self._synchronize(nid, scope, actor, row, node_id, execution, job, current)
 
     def review(self, nid, scope, actor, rid, value, guard):
@@ -617,6 +693,7 @@ class CreativeGraphMediaRuntime:
         with self._phase(nid, scope, actor, rid, current) as state:
             latest = self._row(nid, scope, actor, rid, current, state)
             check_version(latest, row["version"])
+            self.timeline_current(latest, state, current, assets=True)
             if latest["media_executions"][node_id] != execution or latest["status"] in TERMINAL_RUNS:
                 raise StaleSourceError("CREATIVE_GRAPH_MEDIA_CANDIDATE_AUTHORITY_CHANGED")
             asset = self.service.workspace.assets.get(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)

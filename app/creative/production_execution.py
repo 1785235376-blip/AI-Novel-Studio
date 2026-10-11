@@ -52,6 +52,21 @@ class ProductionExecutionService:
         self.video = StudioVideoExecution(video_owner)
         from .graph_asset_inputs import GraphAssetInputs
         self.timeline_inputs = GraphAssetInputs(self)
+        from .graph_timeline_execution import GraphTimelineExecution
+        self.graph_timeline = GraphTimelineExecution(self)
+
+    def graph_timeline_preflight(self, nid, scope, actor, parameters, guard, *, document, source_kinds):
+        return self.graph_timeline.preflight(nid, scope, actor, parameters, guard,
+            document=document, source_kinds=source_kinds)
+
+    def graph_timeline_queue(self, nid, scope, actor, preview, graph_binding, incarnation, guard):
+        context = self.graph_timeline.context(nid, scope, actor, preview, graph_binding, incarnation)
+        with self.timeline_inputs.phase(nid, scope, actor, guard) as document:
+            self.graph_timeline.current(nid, scope, actor, context, document, guard, assets=True)
+        row = self.video_owner.queue_studio(nid, scope.get("branch_id"), actor,
+            context["execution_recipe"]["timeline"], context=context, guard=guard,
+            export_profile=context["export_profile"])
+        return self.view(row, "timeline")
 
     @staticmethod
     def _capacity(state):
@@ -483,7 +498,7 @@ class ProductionExecutionService:
         guard()
         return self.view(row, owner)
 
-    def reconcile(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None):
+    def reconcile(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, graph_guard=None, graph_source_guard=None):
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
             raise CapabilityVersionConflict(self.view(row, owner))
@@ -497,13 +512,18 @@ class ProductionExecutionService:
         elif owner == "video":
             row = self.video.reconcile(nid, branch, actor, jid, action, context=context, guard=guard)
         else:
+            if context.get("graph_binding") is not None:
+                if graph_guard is None or graph_source_guard is None:
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_SOURCE_GUARD_REQUIRED")
+                graph_guard()
             row = self.video_owner.reconcile_studio(nid, branch, actor, jid, action.expected_version,
                 action.expected_request_digest, context=context, guard=guard,
-                recover_candidate=lambda captured: self._recover_timeline_candidate(nid, scope, actor, captured, context, guard))
+                recover_candidate=lambda captured: self._recover_timeline_candidate(nid, scope, actor, captured, context, guard,
+                    graph_source_guard=graph_source_guard))
         guard()
         return self.view(row, owner)
 
-    def _recover_timeline_candidate(self, nid, scope, actor, captured, context, guard):
+    def _recover_timeline_candidate(self, nid, scope, actor, captured, context, guard, *, graph_source_guard=None):
         """Recover only an already-published original private candidate.
 
         Runs under the original stopped-executor lease; no rendering, source
@@ -513,8 +533,16 @@ class ProductionExecutionService:
         if captured.get("phase") not in {"PUBLICATION_READY", "CANDIDATE_RECORDED", "INTERRUPTED_EXECUTION_RECONCILED"} or not captured.get("output_digest"):
             return None
         with self.store.source_lease(nid, scope) as document:
+            graph_asset_guard = None
+            if context.get("graph_binding") is not None:
+                if graph_source_guard is None:
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_SOURCE_GUARD_REQUIRED")
+                graph_asset_guard = graph_source_guard(document)
+                if not callable(graph_asset_guard):
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_ASSET_GUARD_REQUIRED")
             current = self._timeline_context_current(nid, scope, actor, context, document)
             with self.workspace._asset_scope(nid, scope):
+                if graph_asset_guard is not None: graph_asset_guard()
                 if self.store.incarnation(nid) != context["incarnation"]:
                     raise StaleSourceError("STUDIO_OWNER_CHANGED")
                 self._timeline_sources_current(nid, scope, current["timeline"], guard)
@@ -542,7 +570,8 @@ class ProductionExecutionService:
         if row["request_digest"] != action.expected_request_digest:
             raise CapabilityVersionConflict(self.view(row, owner))
         if owner == "timeline":
-            return self._review_timeline(nid, scope, actor, jid, row, context, action, guard)
+            return self._review_timeline(nid, scope, actor, jid, row, context, action, guard,
+                graph_source_guard=graph_source_guard)
         _, promote = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
         sources = self._source_guard(nid, scope, guard)
         if owner == "image":
@@ -578,15 +607,22 @@ class ProductionExecutionService:
         guard()
         return self.view(row, owner)
 
-    def _review_timeline(self, nid, scope, actor, jid, captured, context, action, guard):
+    def _review_timeline(self, nid, scope, actor, jid, captured, context, action, guard, *, graph_source_guard=None):
         """Reserve and promote against one fixed original source/asset phase.
 
         A stale timeline is rejected before REVIEWING is reserved. Source edits,
         cancellation and another review cannot cross the short promotion window.
         Restart recovery accepts only this exact original promotion receipt.
         """
-        _, promote = self._callbacks(nid, scope, actor, context, guard)
+        _, promote = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
         with self.timeline_inputs.phase(nid, scope, actor, guard) as document:
+            if context.get("graph_binding") is not None:
+                if graph_source_guard is None:
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_SOURCE_GUARD_REQUIRED")
+                graph_asset_guard = graph_source_guard(document)
+                if not callable(graph_asset_guard):
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_ASSET_GUARD_REQUIRED")
+                graph_asset_guard()
             timeline = self._timeline_context_current(nid, scope, actor, context, document)
             self._timeline_sources_current(nid, scope, timeline["timeline"], guard)
             row = self.video_owner.get_studio(nid, scope.get("branch_id"), actor, jid, context=context, guard=guard)
@@ -780,7 +816,22 @@ class ProductionExecutionService:
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
             raise CapabilityVersionConflict(self.view(row, owner))
-        if owner == "timeline": raise ValueError("STUDIO_TIMELINE_ALREADY_RENDERED_EXPLICITLY")
+        if owner == "timeline":
+            if context.get("graph_binding") is None:
+                raise ValueError("STUDIO_TIMELINE_ALREADY_RENDERED_EXPLICITLY")
+            if graph_guard is None or graph_source_guard is None:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_SOURCE_GUARD_REQUIRED")
+            def timeline_guard():
+                guard()
+                graph_guard()
+            publish, _ = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
+            rendered = self.video_owner.execute_studio(nid, scope.get("branch_id"), actor, jid,
+                action.expected_version, action.expected_request_digest, context=context, guard=timeline_guard,
+                # source() already holds its asset lease during its final guard;
+                # only Host authority is safe there. Original executor guards
+                # fence Graph before/after reads; publication takes raw first.
+                source_guard=self._source_guard(nid, scope, guard), publish=publish)
+            return self.view(rendered, owner)
         command = MediaCommand.model_validate(context["command"])
         host_guard = guard
         def guard():

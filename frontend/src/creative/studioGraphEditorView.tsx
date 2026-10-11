@@ -8,6 +8,7 @@ import { MEDIA_OPERATION_LABELS } from './useStudioMediaExecution';
 import type { MediaOperation } from './studioProductionClient';
 import { GRAPH_MEDIA_PARAMETER_LABELS, graphMediaParameterNames } from './useStudioGraphEditorController';
 import type { StudioGraphEditorController, StudioGraphEditorProps } from './useStudioGraphEditorController';
+import { StudioGraphTimelineNodeEditor } from './StudioGraphTimelineNodeEditor';
 import './studioGraph.css';
 
 const portKey = (node: string, port: string) => JSON.stringify([node, port]);
@@ -22,11 +23,11 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
     setSourcePort, setTargetPort, setSelected, reportRunSelection,
     mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
-    updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs,
+    updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,
   } = controller;
   const mediaEnabled = catalog?.capabilities.media_execution === true && catalog.capabilities.media_execution_contract === 'creative-graph-media/1';
   const nodeLimit = draft.schema_version === 3 ? catalog?.media_limits?.nodes || 24 : catalog?.limits.nodes || 16;
-  const schemaRequired = kind === 'media_generate' || kind === 'media_review' || kind === 'asset_reference' && mediaEnabled;
+  const schemaRequired = kind === 'media_generate' || kind === 'media_review' || kind === 'timeline_export' || kind === 'asset_reference' && mediaEnabled;
   const mediaOperation = node?.parameters.operation_id, parameterNames = mediaOperation ? graphMediaParameterNames(mediaOperation) : [];
   const unsupported = Object.entries(node?.parameters.parameters || {}).filter(([key, value]) => value !== null && !parameterNames.includes(key)).map(([key]) => key);
   function mediaParameter(name: string) {
@@ -53,6 +54,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     {loading && <StatusMessage>正在读取当前范围的节点目录…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {externalDirty && <StatusMessage tone="warning">请先保存或放弃资产/偏好输入，再修改创作图。</StatusMessage>}
     {executionDirty && <StatusMessage tone="warning">当前图媒体有待确认输入或不确定回执。先在原运行中取消确认或读取核对，再切换或修改图。</StatusMessage>}
+    {timelineEditor.formDirty && <StatusMessage tone="warning">尚有未加入图草稿的剪辑输入，请明确加入或放弃后保存。<Button disabled={busy || timelineEditor.loading} onClick={timelineEditor.clearForm}>放弃尚未加入的剪辑输入</Button></StatusMessage>}
     {base?.can_edit === false && <StatusMessage tone="warning">图中包含不可见的资产引用，当前仅可查看。原绑定不会被省略、删除或重新保存；需恢复访问后重新读取。</StatusMessage>}
     {blocked && <section className="studio-graph-conflict" role="alert"><p>保存版本或回执不确定。草稿已保留，不会自动覆盖或重试。</p><Button disabled={busy || checking} onClick={() => void checkServer()}>核对图服务端版本</Button>{!base && <Button disabled={busy || checking || !canMutate} onClick={() => void save(true)}>使用同一请求重试保存</Button>}</section>}
     {checking && <StatusMessage>正在核对图服务端版本；当前草稿保持。</StatusMessage>}
@@ -61,8 +63,9 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     {catalog && <>{mediaEnabled && <section aria-label="媒体图版本"><p>当前图格式：v{draft.schema_version}。旧图保持原行为，升级只在明确保存后生效，不自动执行。</p>{draft.schema_version !== 3 && <><label><input type="checkbox" checked={mediaSchemaConsent} disabled={!editable} onChange={event => setMediaSchemaConsent(event.target.checked)} />确认升级为媒体图 v3；已有资产引用将可以作为当前版本来源执行读取</label><Button disabled={!editable || !mediaSchemaConsent} onClick={upgradeMediaSchema}>明确升级当前草稿为媒体图 v3</Button></>}</section>}
       <section className="studio-graph-controls" aria-label="添加与连接节点"><label>节点类型<select aria-label="节点类型" value={kind} disabled={!editable} onChange={event => { const value = event.target.value as StudioGraphDefinitionId; setKind(value); if (value === 'asset_reference') void loadAssets(); }}>{catalog.definitions.map(row => <option value={row.id} key={row.id}>{GRAPH_NODE_LABELS[row.id]}</option>)}</select></label>
       {kind === 'asset_reference' && <><label>原资产<select aria-label="原资产" disabled={!editable || assetLoading} value={assetChoice} onChange={event => setAssetChoice(event.target.value)}><option value="">选择已保存原资产</option>{assets.map(row => <option value={row.id} key={row.id}>{row.filename} · {row.kind} · v{row.version}</option>)}</select></label><Button disabled={assetLoading || busy} onClick={() => void loadAssets()}>刷新图引用资产</Button><p>只保存原资产 ID、版本和摘要；不复制文件。保存后的引用暂不能移除或重绑，可禁用节点。</p></>}
+      {kind === 'timeline_export' && <><Button disabled={!timelineEditor.canLoad} loading={timelineEditor.loading} onClick={() => void timelineEditor.loadRows()}>明确读取原时间线目录</Button><label>原时间线<select disabled={!editable || timelineEditor.loading} value={timelineEditor.choice} onChange={event => timelineEditor.choose(event.target.value)}><option value="">选择已有时间线</option>{timelineEditor.rows.map(row => <option key={row.id} value={row.id}>{row.title} · {row.id} · v{row.version}</option>)}</select></label>{timelineEditor.chosen && <p>确切来源摘要：<code>{timelineEditor.chosen.timeline_digest}</code></p>}<p>使用原时间线；新增节点不保存剪辑、不入队、不渲染。</p>{timelineEditor.error && <StatusMessage tone="error">{timelineEditor.error}</StatusMessage>}</>}
       {schemaRequired && draft.schema_version !== 3 && <p>添加可执行资产来源或媒体节点前，先明确升级当前草稿为 v3。</p>}
-      <Button disabled={!editable || draft.nodes.length >= nodeLimit || schemaRequired && draft.schema_version !== 3 || kind === 'media_generate' && draft.nodes.filter(row => row.definition_id === 'media_generate').length >= 4 || kind === 'asset_reference' && !assetChoice} onClick={addNode}>添加节点</Button>
+      <Button disabled={!editable || draft.nodes.length >= nodeLimit || schemaRequired && draft.schema_version !== 3 || ['media_generate', 'timeline_export'].includes(kind) && draft.nodes.filter(row => ['media_generate', 'timeline_export'].includes(row.definition_id)).length >= 4 || kind === 'asset_reference' && !assetChoice || kind === 'timeline_export' && !timelineEditor.chosen} onClick={addNode}>添加节点</Button>
       <label>起始输出端口<select aria-label="起始输出端口" disabled={!editable} value={sourcePort} onChange={event => setSourcePort(event.target.value)}><option value="">选择输出端口</option>{draft.nodes.flatMap(row => (catalog.definitions.find(item => item.id === row.definition_id)?.outputs || []).map(port => <option key={portKey(row.id, port.id)} value={portKey(row.id, port.id)}>{GRAPH_NODE_LABELS[row.definition_id]} · {row.id} · {port.id} ({port.type})</option>))}</select></label>
       <label>目标输入端口<select aria-label="目标输入端口" disabled={!editable} value={targetPort} onChange={event => setTargetPort(event.target.value)}><option value="">选择输入端口</option>{draft.nodes.flatMap(row => (catalog.definitions.find(item => item.id === row.definition_id)?.inputs || []).map(port => <option key={portKey(row.id, port.id)} value={portKey(row.id, port.id)}>{GRAPH_NODE_LABELS[row.definition_id]} · {row.id} · {port.id} ({port.type})</option>))}</select></label>
       <Button disabled={!editable || !sourcePort || !targetPort || draft.edges.length >= catalog.limits.edges} onClick={connect}>连接所选端口</Button></section>
@@ -84,6 +87,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <p>制作候选输出必须连接到唯一的媒体审核节点。仅审核完成后的素材端口可以用于下游；保存和连接不会调用服务。</p>
     </>}
     {node.definition_id === 'human_review' && draft.schema_version === 3 && <p>明确批准此节点后，才输出 reviewed_draft。只有直接审核原文字模型提案并批准其私有档案的节点可给媒体 draft 提供文字；审核不自动调用媒体，也不发布文字。</p>}
+    {node.definition_id === 'timeline_export' && <StudioGraphTimelineNodeEditor node={node} state={timelineEditor} editable={editable} connectedPorts={draft.edges.filter(edge => edge.target_node_id === node.id).map(edge => edge.target_port)} />}
     {node.definition_id === 'media_review' && <p>连接一个媒体制作候选。运行时先读取候选、核对摘要并明确批准或拒绝；批准入库后才输出素材引用，不自动执行下游。</p>}
     <div className="studio-graph-position">{(['x', 'y'] as const).map(axis => <label key={axis}>节点 {axis.toUpperCase()}<input type="number" min={-100000} max={100000} value={node.position[axis]} disabled={!editable} onChange={event => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= -100000 && value <= 100000) change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, position: { ...row.position, [axis]: value } } : row) }); }} /></label>)}</div>
     {node.definition_id === 'asset_reference' && <><p>图读取时引用状态：{referenceState || '待保存核对'} · {draft.schema_version === 3 ? '执行时核对当前来源版本和真实内容' : '旧图只读引用，不执行媒体处理'}</p>{node.parameters.asset_id ? <p>原资产 {node.parameters.asset_id} · 绑定 v{node.parameters.version}</p> : <p>引用不可用或无权访问，原详情已隐藏。</p>}{previewState === 'READING' && <StatusMessage>正在核对引用资产版本与摘要…</StatusMessage>}{previewState === 'STALE' && <StatusMessage tone="warning">当前资产与图中绑定不同，未显示为原绑定版本。请核对图服务端版本与来源状态。</StatusMessage>}{previewState === 'UNAVAILABLE' && <StatusMessage tone="warning">引用资产当前不可读取，原绑定保持。</StatusMessage>}{node.parameters.asset_id && <Button disabled={busy || previewState === 'READING'} onClick={refreshPreview}>核对引用资产</Button>}{preview && <AssetInspector asset={preview} downloadAsset={downloadPreviewAsset} isCurrent={current} showReferences={false} />}</>}
