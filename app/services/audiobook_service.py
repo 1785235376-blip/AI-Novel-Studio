@@ -41,6 +41,8 @@ class AudiobookService:
         raise AudiobookError("AUDIOBOOK_JOB_NOT_FOUND", "有声章节任务不存在", 404)
 
     def queue(self, novel_id, chapter, config, segments, idempotency_key=None, source_chapter=None):
+        if config.get("studio_origin"):
+            raise AudiobookError("STUDIO_AUDIO_OWNER_REQUIRED", "独立 Studio 音频须从原音频 owner 的 Studio 入口创建", 409)
         source_chapter=source_chapter or chapter
         text = re.sub(r"\A\s*#{1,6}\s+[^\r\n]*(?:\r?\n)+", "", str(chapter.get("content", ""))).strip()
         if config.get("experimental_origin"):
@@ -78,6 +80,8 @@ class AudiobookService:
     def transition(self, novel_id, job_id, target):
         def change(state):
             job = self.find(state, job_id)
+            if job.get("studio_origin"):
+                raise AudiobookError("STUDIO_AUDIO_OWNER_REQUIRED", "独立 Studio 音频须从绑定来源与版本的原入口操作", 409)
             allowed = {"QUEUED": {"FAILED", "CANCELLED"}, "CANCELLED": {"QUEUED", "RUNNING"}}
             if job["status"] not in allowed[target]:
                 code = "AUDIOBOOK_JOB_NOT_RETRYABLE" if target == "QUEUED" else "AUDIOBOOK_JOB_NOT_CANCELLABLE"
@@ -104,6 +108,8 @@ class AudiobookService:
 
     def execute(self, novel_id, job_id, chapter, resolve, load_current_source=None, check_project_policy=None, direction_guard=None, before_send=None):
         preview = self.find(self.store.load(novel_id), job_id)
+        if preview.get("studio_origin"):
+            raise AudiobookError("STUDIO_AUDIO_OWNER_REQUIRED", "独立 Studio 音频不使用章节执行入口", 409)
         if preview.get("experimental_origin"):
             if direction_guard is None: raise AudiobookError("VOICE_CURRENT_AUTHORITY_REQUIRED", "请从声音导演显式执行已审核片段", 403)
             direction_guard(preview)
@@ -225,6 +231,8 @@ class AudiobookService:
         state = self.store.load(novel_id)
         jobs = [self.find(state, job_id) for job_id in job_ids]
         for job in jobs:
+            if job.get("studio_origin"):
+                raise AudiobookError("STUDIO_AUDIO_OWNER_REQUIRED", "独立 Studio 音频不使用章节导出入口", 409)
             if job.get("experimental_origin"):
                 if direction_guard is None:
                     raise AudiobookError("VOICE_CURRENT_AUTHORITY_REQUIRED", "请从声音导演导出当前已审核的音频", 403)

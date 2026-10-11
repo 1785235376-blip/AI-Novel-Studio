@@ -1,0 +1,205 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ApiError, apiErrorView, type Asset } from '../api';
+import type { StudioAsset, StudioClient } from './studioClient';
+import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphRecord } from './studioGraphTypes';
+import { blankGraph, connectionIssue, graphId, retainsSavedAssetBindings } from './graphDraft';
+
+export type StudioGraphEditorSelection = { graphId?: string; runId?: string };
+export type StudioGraphEditorProps = {
+  active: boolean; denied: boolean; identity: string; client: StudioClient; canMutate: boolean; canReview: boolean;
+  busy: boolean; externalDirty: boolean; isCurrent: () => boolean;
+  read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
+  requestedGraphId?: string; requestedRunId?: string;
+  onSelectionChange?: (selection: StudioGraphEditorSelection) => void;
+  /** Synchronous parent activity fence, before React has rendered busy=true. */
+  isBusy?: () => boolean;
+};
+const same = (left: unknown, right: unknown) => JSON.stringify(left) === JSON.stringify(right);
+const candidateKey = (value?: StudioGraphRecord) => value && JSON.stringify([value.id, value.version, value.definition_digest, value.execution_digest]);
+
+/** Original graph editing authority and async guards, independent of its visual skin. */
+export function useStudioGraphEditorController({ active, denied, identity, client, canMutate, busy, externalDirty, isCurrent, read, mutate, requestedGraphId, onSelectionChange, isBusy }: StudioGraphEditorProps) {
+  const [catalog, setCatalog] = useState<StudioGraphCatalog>(), [records, setRecords] = useState<StudioGraphRecord[]>([]), [base, setBase] = useState<StudioGraphRecord>();
+  const [draft, setDraft] = useState<StudioGraphDefinition>(blankGraph), [selected, setSelected] = useState<string[]>([]);
+  const [past, setPast] = useState<StudioGraphDefinition[]>([]), [future, setFuture] = useState<StudioGraphDefinition[]>([]);
+  const [loading, setLoading] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [blocked, setBlocked] = useState(false);
+  const [candidate, setCandidate] = useState<StudioGraphRecord>(), [replaceConsent, setReplaceConsent] = useState<string>(), [checking, setChecking] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<() => void>(), [discardConfirmed, setDiscardConfirmed] = useState(false);
+  const [kind, setKind] = useState<StudioGraphDefinitionId>('text_input'), [sourcePort, setSourcePort] = useState(''), [targetPort, setTargetPort] = useState('');
+  const [assets, setAssets] = useState<StudioAsset[]>([]), [assetChoice, setAssetChoice] = useState(''), [assetLoading, setAssetLoading] = useState(false), [preview, setPreview] = useState<StudioAsset>();
+  const [previewState, setPreviewState] = useState<'READING' | 'CURRENT' | 'STALE' | 'UNAVAILABLE'>(), [previewRequest, setPreviewRequest] = useState(0);
+  const alive = useRef(true), selectedEpoch = useRef(0), catalogEpoch = useRef(0), assetEpoch = useRef(0), saving = useRef(false);
+  const candidateEpoch = useRef(0), candidateRequest = useRef<AbortController>();
+  const draftRef = useRef(draft); draftRef.current = draft;
+  const baseRef = useRef(base); baseRef.current = base;
+  const createRequest = useRef(graphId('graph'));
+  const current = useCallback(() => alive.current && isCurrent(), [isCurrent]);
+  const dirty = !same(draft, base?.definition || blankGraph());
+  const locked = () => busy || saving.current || !!isBusy?.();
+  const replaceConfirmed = !!candidate && replaceConsent === candidateKey(candidate);
+  const setReplaceConfirmed = (value: boolean) => { setReplaceConsent(value && current() && !locked() && !externalDirty && !checking ? candidateKey(candidate) : undefined); };
+  const invalidateCandidate = useCallback(() => { candidateEpoch.current++; candidateRequest.current?.abort(); setCandidate(undefined); setReplaceConsent(undefined); setChecking(false); }, []);
+  const editable = !!catalog && canMutate && !denied && !busy && !externalDirty && !blocked && base?.can_edit !== false;
+  const protectedNodes = base?.definition.nodes.filter(node => node.definition_id === 'asset_reference').map(node => node.id) || [];
+
+  const restoreRequest = useRef<string>();
+  const reportSelection = useRef(onSelectionChange); reportSelection.current = onSelectionChange;
+  const reportRunSelection = useCallback((runId?: string) => {
+    if (current()) reportSelection.current?.({ graphId: baseRef.current?.id, runId });
+  }, [current]);
+  const accept = useCallback((record: StudioGraphRecord, restored = false) => {
+    selectedEpoch.current++; invalidateCandidate(); setBase(record); setDraft(structuredClone(record.definition)); setPast([]); setFuture([]); setSelected([]); setBlocked(false); setSourcePort(''); setTargetPort('');
+    setRecords(rows => [...rows.filter(row => row.id !== record.id), record]); createRequest.current = graphId('graph');
+    if (!restored) reportSelection.current?.({ graphId: record.id });
+  }, [invalidateCandidate]);
+  const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.()) return; selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate]);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; candidateEpoch.current++; candidateRequest.current?.abort(); }; }, []);
+  useEffect(() => {
+    if (denied) { selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; invalidateCandidate(); setCatalog(undefined); setRecords([]); setBase(undefined); setDraft(blankGraph()); setPast([]); setFuture([]); setSelected([]); setAssets([]); setPreview(undefined); setPreviewState(undefined); setPendingNavigation(undefined); setError(''); setNotice(''); }
+  }, [denied, invalidateCandidate]);
+
+  const load = useCallback(async () => {
+    if (!current()) return;
+    const epoch = ++catalogEpoch.current; setLoading(true); setError('');
+    try {
+      const [schema, values] = await read(() => Promise.all([client.graphs.catalog(), client.graphs.list()]));
+      if (current() && epoch === catalogEpoch.current) { setCatalog(schema); setRecords(values.items); }
+    } catch (value) { if (current() && epoch === catalogEpoch.current) setError(apiErrorView(value, '创作图目录读取失败。').message); }
+    finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
+  }, [client, current, read]);
+  useEffect(() => { if (active && !denied && !catalog) void load(); }, [active, denied, catalog, load]);
+
+  const change = useCallback((next: StudioGraphDefinition, record = true) => {
+    if (!editable || !current() || saving.current || isBusy?.()) return;
+    if (!retainsSavedAssetBindings(baseRef.current?.definition.nodes || [], next.nodes)) { setError('已保存资产引用暂不能移除或重新绑定；可移动或禁用节点。原资产不会被删除。'); return; }
+    if (same(draftRef.current, next)) return;
+    if (record) { setPast(rows => [...rows.slice(-49), structuredClone(draftRef.current)]); setFuture([]); }
+    draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
+  }, [editable, current, isBusy, invalidateCandidate]);
+  function navigate(work: () => void) {
+    if (!current() || locked() || externalDirty) return;
+    if (dirty || blocked) { setDiscardConfirmed(false); setPendingNavigation(() => work); return; }
+    work();
+  }
+  async function open(id: string) {
+    if (!current() || locked() || externalDirty) return;
+    const epoch = ++selectedEpoch.current; setError('');
+    try { const value = await mutate(() => client.graphs.get(id)); if (current() && epoch === selectedEpoch.current) accept(value); }
+    catch (value) { if (current() && epoch === selectedEpoch.current) setError(apiErrorView(value, '创作图读取失败，当前草稿未替换。').message); }
+  }
+  function newGraph() { if (!current() || locked() || externalDirty) return; selectedEpoch.current++; invalidateCandidate(); setBase(undefined); setDraft(blankGraph()); setSelected([]); setPast([]); setFuture([]); setBlocked(false); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); reportSelection.current?.({}); }
+  function confirmNavigation() {
+    if (!discardConfirmed || !pendingNavigation || !current() || locked() || externalDirty) return;
+    const work = pendingNavigation; setPendingNavigation(undefined); setDiscardConfirmed(false); work();
+  }
+  function adoptCandidate() {
+    if (!candidate || !replaceConfirmed || !current() || locked() || externalDirty || checking) return;
+    accept(candidate); setReplaceConfirmed(false); setError(''); setNotice('已采用核对的图服务端版本，没有创建或执行运行。');
+  }
+  async function save(retry = false) {
+    if ((!editable && !(retry && blocked && !base && canMutate && !busy && !externalDirty)) || locked() || !current() || !draft.title.trim()) return;
+    saving.current = true; setError(''); const epoch = selectedEpoch.current, value = structuredClone(draftRef.current), original = base, request = createRequest.current;
+    try {
+      const saved = await mutate(() => original ? client.graphs.save(original.id, { expected_version: original.version, definition: value }) : client.graphs.create({ request_id: request, expected_version: 0, definition: value }));
+      if (current() && epoch === selectedEpoch.current) { accept(saved); setNotice(`创作图已保存 · v${saved.version}。没有自动创建运行。`); }
+    } catch (value) {
+      if (current() && epoch === selectedEpoch.current) { setError(apiErrorView(value, '创作图未确认保存，输入已保留。').message); if (!(value instanceof ApiError) || value.status === 0 || value.status === 409 || value.status >= 500 || value.problem.code === 'STUDIO_RESPONSE_INVALID') setBlocked(true); }
+    } finally { saving.current = false; }
+  }
+  async function checkServer() {
+    if (locked() || !current()) return;
+    candidateRequest.current?.abort(); const abort = new AbortController(); candidateRequest.current = abort;
+    const source = base, epoch = selectedEpoch.current, request = ++candidateEpoch.current; setError(''); setReplaceConsent(undefined); setCandidate(undefined); setChecking(true);
+    const valid = () => current() && epoch === selectedEpoch.current && request === candidateEpoch.current && !abort.signal.aborted;
+    try {
+      if (!source) { await load(); if (valid()) setNotice('已读取保存目录。创建回执不确定时，可明确使用同一请求重试，不按标题猜测或自动重复创建。'); }
+      else {
+        const value = await read(() => client.graphs.get(source.id, abort.signal));
+        if (value.version < source.version || value.version === source.version && (value.definition_digest !== source.definition_digest || value.execution_digest !== source.execution_digest)) throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '图服务端版本或摘要与已读取版本不一致，请重新核对。' });
+        if (valid()) { setReplaceConsent(undefined); setCandidate(value); }
+      }
+    } catch (value) { if (valid()) setError(apiErrorView(value, '服务端版本核对失败。').message); }
+    finally { if (request === candidateEpoch.current) { candidateRequest.current = undefined; if (current()) setChecking(false); } }
+  }
+  async function loadAssets() {
+    if (assetLoading || !current()) return;
+    const epoch = ++assetEpoch.current; setAssetLoading(true); setError('');
+    try { const result = await read(() => client.assets()); if (current() && epoch === assetEpoch.current) { setAssets(result.items.filter(row => ['image', 'video', 'audio'].includes(row.kind) && !row.deleted_at)); setAssetChoice(''); } }
+    catch (value) { if (current() && epoch === assetEpoch.current) setError(apiErrorView(value, '原资产目录读取失败。').message); }
+    finally { if (current() && epoch === assetEpoch.current) setAssetLoading(false); }
+  }
+  function addNode() {
+    const spec = catalog?.definitions.find(row => row.id === kind), asset = assets.find(row => row.id === assetChoice);
+    if (!editable || !spec || draft.nodes.length >= catalog!.limits.nodes || kind === 'asset_reference' && !asset) return;
+    const node = { id: graphId(), definition_id: kind, definition_version: 1 as const, enabled: true, position: { x: 24 + draft.nodes.length % 4 * 280, y: 24 + Math.floor(draft.nodes.length / 4) * 180 },
+      parameters: kind === 'asset_reference' ? { asset_id: asset!.id, version: asset!.version, digest: asset!.sha256, kind: asset!.kind as 'image' | 'video' | 'audio' } : structuredClone(spec.default_parameters || {}) };
+    change({ ...draft, schema_version: kind === 'text_generate' ? 2 : draft.schema_version, nodes: [...draft.nodes, node] }); setSelected([node.id]);
+  }
+  function connect() {
+    if (!editable || !sourcePort || !targetPort || draft.edges.length >= catalog!.limits.edges) return;
+    const [source_node_id, source_port] = JSON.parse(sourcePort), [target_node_id, target_port] = JSON.parse(targetPort);
+    const edge = { id: graphId('edge'), source_node_id, source_port, target_node_id, target_port }, problem = connectionIssue(draft, catalog!.definitions, edge);
+    if (problem) { setError(problem); return; }
+    change({ ...draft, edges: [...draft.edges, edge] }); setSourcePort(''); setTargetPort('');
+  }
+  function travel(redo: boolean) {
+    if (!editable || locked() || !current()) return;
+    const from = redo ? future : past, value = redo ? from[0] : from.at(-1); if (!value) return;
+    if (!retainsSavedAssetBindings(base?.definition.nodes || [], value.nodes)) { setError('撤销不能移除已经保存的资产绑定。'); return; }
+    if (redo) { setPast(rows => [...rows.slice(-49), structuredClone(draft)]); setFuture(rows => rows.slice(1)); }
+    else { setFuture(rows => [structuredClone(draft), ...rows].slice(0, 50)); setPast(rows => rows.slice(0, -1)); }
+    invalidateCandidate(); draftRef.current = structuredClone(value); setDraft(draftRef.current); setSourcePort(''); setTargetPort('');
+  }
+  const node = draft.nodes.find(row => row.id === selected[0]);
+  const downloadPreviewAsset = useCallback((asset: Asset) => read(() => client.download(asset.id)), [read, client]);
+  const refreshPreview = () => { if (current() && !locked()) setPreviewRequest(value => value + 1); };
+  useEffect(() => {
+    let valid = true; setPreview(undefined); setPreviewState(undefined);
+    if (!active || !node || node.definition_id !== 'asset_reference' || !node.parameters.asset_id || denied) return;
+    setPreviewState('READING'); const abort = new AbortController();
+    void read(() => client.asset(node.parameters.asset_id!, abort.signal)).then(value => {
+      if (!valid || !current()) return;
+      if (value.version !== node.parameters.version || value.sha256 !== node.parameters.digest || value.kind !== node.parameters.kind || value.deleted_at) {
+        setPreviewState('STALE'); setNotice('引用资产的当前版本、摘要或类型与图中绑定不同。未替换绑定，也未将当前资产当作原版本预览。');
+      } else { setPreview(value); setPreviewState('CURRENT'); }
+    }).catch(value => { if (valid && current() && !abort.signal.aborted) { setPreviewState('UNAVAILABLE'); setNotice(apiErrorView(value, '引用资产当前不可预览。').message); } });
+    return () => { valid = false; abort.abort(); };
+  }, [active, denied, node?.id, node?.parameters.asset_id, node?.parameters.version, node?.parameters.digest, node?.parameters.kind, previewRequest, client, read, current]);
+
+  // A recovery hint is only a read target. Never save, create, execute or guess by title.
+  useEffect(() => {
+    if (!active || denied || !requestedGraphId || !catalog || busy || externalDirty || dirty || blocked || !current()) return;
+    const recoveryKey = JSON.stringify([identity, requestedGraphId]);
+    if (restoreRequest.current === recoveryKey) return;
+    restoreRequest.current = recoveryKey;
+    if (base?.id === requestedGraphId) return;
+    const epoch = ++selectedEpoch.current, originalDraft = structuredClone(draftRef.current);
+    let valid = true, settled = false; const abort = new AbortController(); setError('');
+    void read(() => client.graphs.get(requestedGraphId, abort.signal)).then(value => {
+      if (valid && current() && epoch === selectedEpoch.current) {
+        settled = true;
+        if (same(draftRef.current, originalDraft) && !saving.current) accept(value, true);
+      }
+    }).catch(value => {
+      if (valid && !abort.signal.aborted && current() && epoch === selectedEpoch.current) {
+        settled = true;
+        setError(apiErrorView(value, '上次创作图当前不可读；当前草稿未替换。').message);
+        setNotice('上次图未恢复。可从已保存目录明确选择，不会自动重建或执行。');
+      }
+    });
+    return () => {
+      valid = false; abort.abort();
+      if (!settled && restoreRequest.current === recoveryKey) restoreRequest.current = undefined;
+    };
+  }, [active, denied, requestedGraphId, catalog, busy, externalDirty, dirty, blocked, current, identity, base?.id, read, client, accept]);
+
+  return {
+    catalog, records, base, draft, selected, past, future, loading, error, notice, blocked,
+    candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
+    assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
+    discard, load, change, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
+    setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
+    setSourcePort, setTargetPort, setSelected, reportRunSelection,
+  };
+}
+export type StudioGraphEditorController = ReturnType<typeof useStudioGraphEditorController>;

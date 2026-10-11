@@ -1,0 +1,121 @@
+"""Commands for explicit production execution, separate from advisory contracts."""
+from __future__ import annotations
+
+from typing import Literal
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+from .production_contracts import ProductionSourceSnapshot, Name, Digest
+
+MediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m7.video.i2v",
+    "m7.video.v2v", "m8.audio.speech", "m8.audio.music", "m8.audio.effects", "m8.audio.trim"]
+
+
+class ExecutionModel(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True, allow_inf_nan=False)
+
+
+class ProviderSelection(ExecutionModel):
+    operation_id: MediaOperation
+    provider_id: Name
+    model_id: Name
+
+
+class MediaParameters(ExecutionModel):
+    width: int | None = Field(default=None, ge=64, le=2048)
+    height: int | None = Field(default=None, ge=64, le=2048)
+    steps: int | None = Field(default=None, ge=1, le=150)
+    seed: int | None = Field(default=None, ge=0, le=2**31 - 1)
+    negative_prompt: str | None = Field(default=None, max_length=8000)
+    size: Literal["auto", "1024x1024", "1536x1024", "1024x1536"] | None = None
+    quality: Literal["auto", "low", "medium", "high", "standard", "hd"] | None = None
+    duration_seconds: int | None = Field(default=None, ge=1, le=600)
+    frame_rate: int | None = Field(default=None, ge=1, le=60)
+    voice_id: Name | None = None
+    speech_rate: float | None = Field(default=None, ge=0.5, le=2)
+    in_ms: int | None = Field(default=None, ge=0, le=600000)
+    out_ms: int | None = Field(default=None, ge=1, le=600000)
+
+
+class MediaCommand(ExecutionModel):
+    operation_id: MediaOperation
+    request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
+    provider_id: Name | None = None
+    model_id: Name | None = None
+    prompt: str = Field(default="", max_length=16000)
+    parameters: MediaParameters = Field(default_factory=MediaParameters)
+    source_snapshots: list[ProductionSourceSnapshot] = Field(default_factory=list, max_length=8)
+    allow_cloud: bool = False
+    license_note: str = Field(default="", max_length=2000)
+
+    @model_validator(mode="after")
+    def operation_inputs(self):
+        p = self.parameters.model_dump(exclude_none=True)
+        allowed = {
+            "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m7.video.t2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
+            "m7.video.i2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
+            "m7.video.v2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
+            "m8.audio.speech": {"voice_id", "speech_rate"},
+            "m8.audio.music": {"duration_seconds", "seed"},
+            "m8.audio.effects": {"duration_seconds", "seed"},
+            "m8.audio.trim": {"in_ms", "out_ms"},
+        }[self.operation_id]
+        if set(p) - allowed:
+            raise ValueError("STUDIO_OPERATION_PARAMETER_UNSUPPORTED")
+        if (self.parameters.width is None) != (self.parameters.height is None):
+            raise ValueError("STUDIO_OPERATION_DIMENSIONS_PAIR_REQUIRED")
+        if self.operation_id.startswith("m5.") and any(p.get(k, 64) % 8 for k in ("width", "height")):
+            raise ValueError("STUDIO_IMAGE_DIMENSIONS_INVALID")
+        keys = [(s.kind, s.id) for s in self.source_snapshots]
+        if len(set(keys)) != len(keys):
+            raise ValueError("STUDIO_OPERATION_SOURCE_DUPLICATE")
+        if self.operation_id == "m8.audio.trim":
+            if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt:
+                raise ValueError("STUDIO_AUDIO_TRIM_LOCAL_ONLY")
+            if (len(self.source_snapshots) != 1 or self.source_snapshots[0].asset_kind != "audio"
+                    or self.parameters.in_ms is None or self.parameters.out_ms is None
+                    or self.parameters.out_ms <= self.parameters.in_ms
+                    or self.parameters.out_ms - self.parameters.in_ms > 120000):
+                raise ValueError("STUDIO_AUDIO_TRIM_INPUT_REQUIRED")
+        elif not self.provider_id or not self.model_id or not self.prompt.strip() or self.provider_id == "auto":
+            raise ValueError("STUDIO_EXPLICIT_PROVIDER_MODEL_PROMPT_REQUIRED")
+        required = {"m5.image.i2i": "image", "m7.video.i2v": "image", "m7.video.v2v": "video"}.get(self.operation_id)
+        assets = [s for s in self.source_snapshots if s.kind == "ASSET"]
+        if required and (not assets or any(s.asset_kind != required for s in assets)):
+            raise ValueError("STUDIO_MEDIA_REFERENCE_KIND_INVALID")
+        if self.operation_id in {"m7.video.i2v", "m7.video.v2v"} and len(assets) != 1:
+            raise ValueError("STUDIO_VIDEO_SINGLE_REFERENCE_REQUIRED")
+        if self.operation_id == "m5.image.i2i" and len(assets) > 5:
+            raise ValueError("STUDIO_IMAGE_REFERENCE_LIMIT")
+        if not required and self.operation_id != "m8.audio.trim" and assets:
+            raise ValueError("STUDIO_OPERATION_UNUSED_ASSET_REFERENCE")
+        if any(s.kind not in {"ASSET", "CREATIVE_DOCUMENT"} for s in self.source_snapshots):
+            raise ValueError("STUDIO_OPERATION_SOURCE_OWNER_UNSUPPORTED")
+        return self
+
+
+class MediaCreate(ExecutionModel):
+    command: MediaCommand
+    reviewed_preview_digest: Digest
+
+
+class MediaJobAction(ExecutionModel):
+    expected_version: int = Field(ge=1)
+    expected_request_digest: Digest
+
+
+class MediaReview(MediaJobAction):
+    reviewed_output_digest: Digest
+
+
+class TimelineSave(ExecutionModel):
+    title: str = Field(min_length=1, max_length=240)
+    # The original render owner's closed validator validates all nested fields.
+    timeline: dict
+    expected_version: int = Field(ge=0)
+
+
+class TimelineRender(ExecutionModel):
+    expected_version: int = Field(ge=1)
+    reviewed_timeline_digest: Digest
+    request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")

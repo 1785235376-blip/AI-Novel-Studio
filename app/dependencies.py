@@ -109,13 +109,13 @@ local_ai_discovery=LocalDiscoveryService(model_center_service, settings.data_pat
 local_ai_discovery.route_bridge=LocalDiscoveryBridge(local_ai_discovery, runtime, asset_provider_registry)
 
 screenplay_service=ScreenplayService(repositories.novels,repositories.chapters,asset_provider_registry)
-def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True) -> bool:
+def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True, *, video_to_video: bool = False) -> bool:
     if provider_id == 'deterministic' or not endpoint or (requires_credential and not credential_vault.has(provider_id)):
         return False
     try:
         import httpx
         secret=credential_vault.resolve(provider_id) if requires_credential else None
-        screenplay_service.register_video_provider(provider_id, HttpVideoProvider(httpx, endpoint, secret, model_id))
+        screenplay_service.register_video_provider(provider_id, HttpVideoProvider(httpx, endpoint, secret, model_id, video_to_video=video_to_video))
         return True
     except (ImportError, ValueError):
         return False

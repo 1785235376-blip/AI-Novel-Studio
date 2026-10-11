@@ -678,8 +678,16 @@ def creative_model_host_authority(request, token):
 
 creative_graph_service = CreativeGraphService(creative_service.store, independent_workspace_service)
 creative_graph_service.configure_models(model_broker_service, legacy_api.jobs)
+from ..creative.production_execution import ProductionExecutionService
+from ..audio_production_store import audio_production_store
+import httpx as studio_media_transport
+studio_production_service = ProductionExecutionService(independent_workspace_service,
+    legacy_api.image_job_service, asset_provider_registry, legacy_api.video_assembly_service,
+    legacy_api.screenplay_service.video_providers, legacy_api._video_provider_configs,
+    audio_production_store, legacy_api.credential_vault, studio_media_transport)
 router.include_router(create_independent_workspace_router(independent_workspace_service, authorize, require_flag,
     create_project=lambda body, token: legacy_api.create_novel(
         legacy_api.NovelIn(**body.model_dump(exclude_none=True)), token),
     workspace_writer=legacy_api._shared_workspace_writer, graph_service=creative_graph_service,
-    require_host_session=require_inspection_host_session, model_host_authority=creative_model_host_authority))
+    require_host_session=require_inspection_host_session, model_host_authority=creative_model_host_authority,
+    production_service=studio_production_service))

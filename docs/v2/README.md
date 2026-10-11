@@ -16,14 +16,40 @@ RC1 build `hardening-package-20261008T012141Z-47c9f581`, ZIP SHA256 `724ae7c6940
 2. Screenplay Studio and Screenplay Agent/Skill; novel adaptation, scene/action/dialogue editing, review and screenplay export.
 3. Director Agent and typed Director Notes; camera, emotion, pacing and performance suggestions.
 4. Storyboard data and editing; numbered shots, framing, composition, camera movement, visual description and sound cues.
-5. Video Production planning interface reserved, with truthful unavailable-generation status.
+5. Independent media execution on the original image/audio/video owners: explicit T2I/I2I/T2V/I2V/V2V/TTS/music/SFX and local audio trim, with source/job CAS, private candidates and human review.
+6. Versioned, bounded multitrack timeline editing and explicit local FFmpeg review rendering on the original VideoAssemblyService; no complete NLE or high-quality delivery-export claim.
 
-All stages require backend/API/UI evidence as applicable, regression tests and separate commits pushed to this branch. No main/RC1 merge, tag or release is authorized.
+All stages require source-bound backend/API/UI evidence and the original acceptance gates. Current tests, collection, typecheck, build, CI and Windows/GPU/model execution are NOT_RUN — USER_DEFERRED. M4 remains PARTIAL; M5–M9 acceptance remains LOCAL_REQUIRED in the original M4 → M9 order. Publication of engineering source does not satisfy those gates. No main/RC1 merge, tag or release is authorized.
 
 ## Isolation
 
 Set independent `PROJECT_ROOT`, `NOVEL_DATA_PATH`, `LOCALAPPDATA`, session/profile/log paths and ports before importing the application in any V2 test or server process. Imports can initialize host identity; changing the novel data directory alone is insufficient. Read-only external tool/model resources may be reused; original RC1 services and profiles must not be modified.
 
+## Production framework and UI handoff
+
+The read-only [production operation contracts](production-operation-contracts.md)
+describe M4–M9 through original owners and remaining reserved interfaces, with
+no execution grant. The actual [production execution](production-execution.md)
+uses separate explicit commands and the original trusted Host, permissions,
+global cloud/source policies, owner stores and human review.
+The [workspace operation seam](studio-workspace-operations.md) separates reading
+and navigation from rendering. [Opus UI/UX handoff](opus-ui-ux-handoff.md) lists
+the actual entry points, protected behavior and deferred verification.
+
+Framework preparation does not advance milestone acceptance. Windows/GPU and
+real model acceptance continue in the original M4 → M9 order.
+
+The eight catalog/coverage/receipt files in separate repair commit `776286f`
+describe the earlier `5ed1cbee` snapshot and do not inventory these new
+API/source changes. Synchronize
+current metadata with the original tools after verification resumes; preserve
+the frozen V1 manifest, original failures and source-bound historical receipts.
+QingJian work is paused.
+
 ## Changelog
+
+- 2026-10-11: actual independent media commands, private result/review flow and bounded multitrack review rendering added in source; media/timeline headless UI seams and original public JSON receipts are prepared. All execution validation remains NOT_RUN — USER_DEFERRED.
+
+- 2026-10-11: additive M4–M9 read-only operation framework and UI/controller seams; execution verification is deferred by user instruction.
 
 - Baseline import: exact frozen source differences, original tests retained; verified file equality on import. No new feature or new runtime validation claimed.

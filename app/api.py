@@ -2256,6 +2256,7 @@ def video_providers():
     return {"items":items,"routing_policy":"LOCAL_FIRST"}
 class VideoProviderConfigIn(BaseModel):
     endpoint:str=''; model_id:str='video-placeholder'; enabled:bool=True;local:bool=False;requires_credential:bool=True;display_name:str=''
+    video_to_video:bool=False
     @field_validator('endpoint')
     @classmethod
     def validate_endpoint(cls,value):
@@ -2289,7 +2290,7 @@ provider_support_registry.replace_source("video", _video_provider_configs)
 from .dependencies import refresh_video_provider
 for _video_id,_video_cfg in sorted(_video_provider_configs.items(),key=lambda item:(not bool(item[1].get('local')),item[0])):
     if _video_cfg.get('enabled') and _video_cfg.get('endpoint'):
-        refresh_video_provider(_video_id,_video_cfg['endpoint'],_video_cfg.get('model_id','video-placeholder'),bool(_video_cfg.get('requires_credential',True)))
+        refresh_video_provider(_video_id,_video_cfg['endpoint'],_video_cfg.get('model_id','video-placeholder'),bool(_video_cfg.get('requires_credential',True)),video_to_video=bool(_video_cfg.get('video_to_video',False)))
 @router.put("/video-providers/{provider_id}/config")
 def configure_video_provider(provider_id:str,body:VideoProviderConfigIn):
     if not is_canonical_provider_id(provider_id):
@@ -2301,7 +2302,7 @@ def configure_video_provider(provider_id:str,body:VideoProviderConfigIn):
     from .dependencies import refresh_video_provider
     registered=False
     if body.enabled and provider_id!='deterministic':
-        registered=refresh_video_provider(provider_id,body.endpoint,body.model_id,body.requires_credential)
+        registered=refresh_video_provider(provider_id,body.endpoint,body.model_id,body.requires_credential,video_to_video=body.video_to_video)
     elif provider_id!='deterministic':
         from .dependencies import screenplay_service
         screenplay_service.video_providers.pop(provider_id,None)
@@ -2494,7 +2495,8 @@ def synthesize_speech(body:SpeechSynthesizeIn,x_session_token:str|None=Header(No
         payload={'provider_id':result.provider_id,'model_id':result.model_id,'voice':body.voice,'emotion':body.emotion,'audio_uri':result.audio_uri,'character_id':body.character_id,'chapter_id':body.chapter_id,'text':body.text,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
         if body.novel_id:
             from .dependencies import repositories
-            repositories.novels.get(body.novel_id); state=_audio_store(x_branch_id,x_session_token).load(body.novel_id); state['generations'].append(payload); _audio_store(x_branch_id,x_session_token).save(body.novel_id,state)
+            repositories.novels.get(body.novel_id)
+            _audio_store(x_branch_id,x_session_token).mutate(body.novel_id, lambda state: state['generations'].append(payload))
         return payload
     except ValueError as exc:
         if 'AUDIO_PARAMETER_UNSUPPORTED' in str(exc):raise HTTPException(400,{'code':'AUDIO_PARAMETER_UNSUPPORTED','message':'该 Provider 不支持所选情绪参数'})
@@ -2686,6 +2688,8 @@ def execute_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(Non
     service=AudiobookService(_audio_store(x_branch_id,x_session_token),asset_library_service,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
     try:
         job=service.find(_audio_store(x_branch_id,x_session_token).load(nid),job_id)
+        if job.get('studio_origin') == 'studio-audio-execution/1':
+            raise HTTPException(409,{'code':'STUDIO_AUDIO_OWNER_REQUIRED'})
         chapter=repositories.chapters.get(job['chapter_id'])
         if chapter.get('novel_id') != nid: raise HTTPException(404,'chapter not found')
         def load_current_source():
@@ -2705,7 +2709,7 @@ def consume_audiobook_jobs(nid:str,body:AudiobookConsumeIn|None=None,x_session_t
     if config.recover_stale:
         from .services.audiobook_service import AudiobookService
         recovered=AudiobookService(_audio_store(x_branch_id,x_session_token),asset_library_service,branch_id=x_branch_id if settings.enable_collaboration_runtime else None).recover(nid,config.stale_after_seconds)
-    queued=[str(job.get('id')) for job in _audio_store(x_branch_id,x_session_token).load(nid)['jobs'] if job.get('status')=='QUEUED'][:config.limit]; results=[]
+    queued=[str(job.get('id')) for job in _audio_store(x_branch_id,x_session_token).load(nid)['jobs'] if job.get('status')=='QUEUED' and job.get('studio_origin')!='studio-audio-execution/1'][:config.limit]; results=[]
     for queued_id in queued:
         try: execute_audiobook_job(nid,queued_id,x_session_token,x_branch_id)
         except HTTPException: pass

@@ -56,7 +56,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review", "_text_execution_receipt"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -179,7 +179,7 @@ class AssetLibraryService:
                media_type: str | None = None, kind: str = "image",
                idempotency_key: str | None = None, *, branch_id: str | None = None,
                required_features: tuple[str, ...] = (), owner_actor_id: str | None = None, guard=None,
-               _initial_text_result: dict | None = None):
+               _initial_text_result: dict | None = None, _initial_studio_result: dict | None = None):
         from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
         if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
@@ -222,6 +222,25 @@ class AssetLibraryService:
         if required_features or owner_actor_id:
             identity.update(_required_features=sorted(set(required_features)), _owner_actor_id=owner_actor_id)
         initial_review = None
+        if _initial_studio_result is not None:
+            # Server-only media origin. Generic metadata/lineage inputs cannot
+            # mint this immutable authority marker or adopt legacy job assets.
+            origin = copy.deepcopy(_initial_studio_result)
+            if (binding is None or not owner_actor_id or not callable(guard)
+                    or "narrative_production_v2" not in required_features
+                    or kind not in {"image", "video", "audio"}
+                    or origin.get("contract") != "studio-production-result/1"
+                    or origin.get("scope_key") != binding["scope_key"]
+                    or origin.get("incarnation") != binding["incarnation"]
+                    or origin.get("actor") != owner_actor_id
+                    or not re.fullmatch(r"[a-f0-9]{64}", str(origin.get("request_digest", "")))
+                    or len(json.dumps(origin, ensure_ascii=False).encode()) > 24 * 1024):
+                raise ValueError("STUDIO_RESULT_AUTHORITY_REQUIRED")
+            self._identifier(origin.get("job_id"), "job_id")
+            if _initial_text_result is not None:
+                raise ValueError("STUDIO_RESULT_ORIGIN_CONFLICT")
+            identity.update(_studio_result_origin=origin, source_job_id=origin["job_id"],
+                            provider_id=origin.get("provider_id"), model_id=origin.get("model_id"))
         if _initial_text_result is not None:
             # Server-only entry: no HTTP input model exposes this argument.
             # All immutable provenance participates in idempotency, while its

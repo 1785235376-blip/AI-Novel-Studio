@@ -2,6 +2,8 @@ import { ApiError, type Asset, type AssetProvenance, type AssetRelationship, typ
 import { useLocalHostSession } from '../localHostSession';
 import { isPackagedDesktopHost } from '../packagedHost';
 import { createStudioGraphClient } from './studioGraphClient';
+import { createStudioWorkspaceOperationClient } from './studioWorkspaceOperationClient';
+import { checkedStudioPreferences } from './studioWorkspacePreferences';
 
 export type CreativeIntent = 'NOVEL_WRITING' | 'NOVEL_ADAPTATION' | 'AI_SHORT_FILM' | 'COMMERCIAL_CG'
   | 'ADVERTISEMENT' | 'MUSIC_VIDEO' | 'GAME_PREVIS' | 'IMAGE_DESIGN' | 'PODCAST_VOICE' | 'BLANK' | 'CUSTOM';
@@ -226,7 +228,7 @@ function checkedRelationshipGraph(value: unknown): StudioRelationshipsGraph {
   return { graph_kind: 'ASSET_RELATIONSHIPS', nodes, edges, executable: false, knowledge_graph: false, automatic_regeneration: false };
 }
 
-function studioTransport(context: CollaborationContext) {
+export function studioTransport(context: CollaborationContext) {
   // Clone scope before any asynchronous work. Never read the active global
   // collaboration context or a later host session when a request is sent.
   const scope = context.scope ? { ...context.scope } : undefined;
@@ -306,14 +308,19 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     if (!value || value.project?.id !== projectId) mismatch();
     return value;
   }
+  function checkedOverview<T extends StudioOverview | StudioActivation>(value: T): T {
+    checkedProject(value);
+    return { ...value, preferences: checkedStudioPreferences(value.preferences) };
+  }
   return {
     graphs: createStudioGraphClient(projectId, { scope }, transport),
-    overview: (signal?: AbortSignal) => transport.json<StudioOverview>(base, 'GET', undefined, signal).then(checkedProject),
-    activate: () => transport.json<StudioActivation>(`${base}/activate`, 'POST').then(checkedProject),
-    preferences: (signal?: AbortSignal) => transport.json<StudioPreferences>(`${base}/preferences`, 'GET', undefined, signal),
+    productionContracts: createStudioWorkspaceOperationClient(projectId, transport, scope).read,
+    overview: (signal?: AbortSignal) => transport.json<StudioOverview>(base, 'GET', undefined, signal).then(checkedOverview),
+    activate: () => transport.json<StudioActivation>(`${base}/activate`, 'POST').then(checkedOverview),
+    preferences: (signal?: AbortSignal) => transport.json<StudioPreferences>(`${base}/preferences`, 'GET', undefined, signal).then(checkedStudioPreferences),
     savePreferences: (value: StudioPreferencesInput, expectedVersion: number) => transport.json<StudioPreferences>(`${base}/preferences`, 'PUT', {
       intents: [...value.intents], preset: value.preset, custom_intent: value.custom_intent, expected_version: version(expectedVersion, 0),
-    }),
+    }).then(checkedStudioPreferences),
     assets: (includeDeleted = false, signal?: AbortSignal) => transport.json<{ items: StudioAsset[] }>(`${base}/assets?include_deleted=${includeDeleted ? 'true' : 'false'}`, 'GET', undefined, signal).then(value => {
       if (!value || !Array.isArray(value.items)) mismatch();
       return { items: value.items.map(checkedAsset) };

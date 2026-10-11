@@ -28,7 +28,7 @@ const DIAGNOSTIC_GUIDANCE: Record<string, string> = {
   EXTERNAL_RUNTIME_NOT_RUNNING: '已发现文件，但服务尚未启动。请在已有安装中手动启动 Runtime，再重新检测；不会代你启动或升级。',
   RUNTIME_REQUIRED: '缺少可用 Runtime。核对已有安装或服务配置，然后重新验证。',
   MODEL_OR_RUNTIME_NOT_FOUND: '当前未找到模型或运行服务。先确认服务已启动，再核对模型 ID；不会自动下载模型。',
-  RUNTIME_MODEL_UNVERIFIED: '服务没有报告所选模型。核对模型 ID 与当前加载模型，再重新验证。',
+  RUNTIME_MODEL_UNVERIFIED: '所选模型尚未与服务报告的模型 ID 匹配。请在“配置 Runtime”核对该服务的模型 ID；外部 llama.cpp 未填写 ID 时按 GGUF 文件名匹配。保存后重新验证，不会自动改名或加载模型。',
   RUNTIME_MODEL_PATH_MISMATCH: '当前 Runtime 的模型路径与候选不一致。先核对原配置，不会自动移动或替换文件。',
   GGUF_HEADER_INVALID: '模型文件头未通过检查。核对文件是否完整、格式是否正确；不会覆盖已有模型。',
   WORKFLOW_ADAPTER_REQUIRED: '缺少匹配的工作流、模型组件或节点绑定。核对已安装节点与已审核 Adapter；不会安装未知节点。',
@@ -53,6 +53,25 @@ const DIAGNOSTIC_GUIDANCE: Record<string, string> = {
   LOCAL_AI_CREDENTIAL_BINDING_REQUIRED: '此 Runtime 需要独立的安全凭据绑定；不要把密钥粘贴到诊断或模型名称中。',
 };
 export function localAiDiagnostic(code: string): string | undefined { return DIAGNOSTIC_GUIDANCE[code]; }
+
+/** A failed local binding is unknown locality, not evidence of a remote model.
+ * This presentation never grants routing eligibility or changes registration.
+ */
+function modelLocality(model: LocalModelCandidate, v2: boolean) {
+  if (!v2) return model.local === false
+    ? { label: '云端或非本地来源 · 禁止本地路由', accessible: '非本地来源', tone: 'warning' as const }
+    : { label: '本地候选', accessible: '本地模型', tone: 'neutral' as const };
+  if (model.source_locality === 'REMOTE' || model.source === 'OLLAMA_HOSTED') {
+    return { label: '非本地来源 · 禁止本地路由', accessible: '非本地来源', tone: 'warning' as const };
+  }
+  if (model.source_locality === 'LOCAL_VERIFIED' && model.local === true) {
+    return { label: '本地来源已核对', accessible: '本地来源', tone: 'neutral' as const };
+  }
+  if (!model.source_locality && model.local === true) {
+    return { label: '本地候选 · 来源待核对', accessible: '本地候选', tone: 'neutral' as const };
+  }
+  return { label: '来源尚未确认 · 本地路由待验证', accessible: '来源尚未确认', tone: 'warning' as const };
+}
 
 function groupOf(model: LocalModelCandidate) {
   const capabilities = [...(model.declared_capabilities || []), ...(model.verified_capabilities || []), model.modality];
@@ -407,9 +426,9 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
       {showFileObservations && scan && <LocalAiWorkflowPrerequisites key={`workflow:${scan.id}`} scan={scan} stateUncertain={stateUncertain}/>}
       {v2 && scan && !showFileObservations && <p className="local-ai__muted">此扫描未提供 V2 文件观察字段；候选列表不能代表文件或索引清单。</p>}
       {!loading && !models.length && (!v2 || !!snapshot) && <EmptyState title={showFileObservations ? '尚无可接入候选' : scan ? '尚未发现模型' : '尚未开始扫描'} detail={showFileObservations ? '文件或索引观察不等于可运行候选。Runtime 绑定仍未知时，可核对已有服务后明确预览并检测；可继续手动创作。' : v2 ? '未配置或未发现可用模型时，可继续手动创作。可先预览已有服务；自定义路径与端口仅用于高级配置。' : '可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。'}/>}
-      {GROUPS.map(group => {const rows = models.filter(row => groupOf(row.model) === group); return rows.length ? <section className="local-ai__section" key={group} aria-label={group}><h3>{group}（{rows.length}）</h3><div className="local-ai__list">{rows.map(({model, registration}) => {const current = registration || model; return <article key={model.id} aria-label={`${model.display_name} ${model.local === false ? "非本地来源" : "本地模型"}`}>
+      {GROUPS.map(group => {const rows = models.filter(row => groupOf(row.model) === group); return rows.length ? <section className="local-ai__section" key={group} aria-label={group}><h3>{group}（{rows.length}）</h3><div className="local-ai__list">{rows.map(({model, registration}) => {const current = registration || model; const locality = modelLocality(v2 ? current : model, !!v2); return <article key={model.id} aria-label={`${model.display_name} ${locality.accessible}`}>
         <header><strong>{model.display_name}</strong><Badge tone={stateUncertain ? 'warning' : tone(current.status)}>{stateUncertain ? 'NOT_VERIFIED' : current.status}</Badge></header>
-        <div className="local-ai__actions"><Badge tone={model.local === false ? "warning" : "neutral"}>{model.local === false ? "云端或非本地来源 · 禁止本地路由" : "本地候选"}</Badge><Badge tone={stateUncertain ? 'warning' : registration?.enabled ? 'success' : 'neutral'}>{stateUncertain && registration ? '接入状态待确认' : registration?.enabled ? '已启用' : registration ? '已注册 · 未启用' : '候选 · 未注册'}</Badge><Badge tone={current.verified ? 'success' : 'warning'}>{current.verified ? '已通过实际生成验证' : '尚未实际生成验证'}</Badge></div>
+        <div className="local-ai__actions"><Badge tone={locality.tone}>{locality.label}</Badge><Badge tone={stateUncertain ? 'warning' : registration?.enabled ? 'success' : 'neutral'}>{stateUncertain && registration ? '接入状态待确认' : registration?.enabled ? '已启用' : registration ? '已注册 · 未启用' : '候选 · 未注册'}</Badge><Badge tone={current.verified ? 'success' : 'warning'}>{current.verified ? '已通过实际生成验证' : '尚未实际生成验证'}</Badge></div>
         <dl className="local-ai__facts"><div><dt>Runtime / 来源</dt><dd>{model.runtime_type} · {model.runtime_id} · {model.source}</dd></div><div><dt>模型族 / 模型 ID</dt><dd>{model.family} · {model.model_id}</dd></div><div><dt>声明能力</dt><dd>{current.declared_capabilities.join(' · ') || 'UNKNOWN'}</dd></div><div><dt>已验证能力</dt><dd>{current.verified_capabilities.join(' · ') || 'CAPABILITY_UNVERIFIED'}</dd></div><div><dt>只读接入验证</dt><dd>{current.validated_at ? '已完成检查（不代表实际生成验证）' : '尚未验证 / 需重新验证'}</dd></div><div><dt>兼容性</dt><dd>{COMPATIBILITY[current.compatible] || current.compatible || 'Not Verified · 未验证'}</dd></div><div><dt>模型路径 / 文件 / 来源</dt><dd>{v2 ? <details><summary>高级：查看模型来源详情</summary>{model.local_path || model.model_name || model.source}</details> : model.local_path || model.model_name || model.source}</dd></div></dl>
         <ModelEvidence model={current}/>
         {!!current.validation_notes?.length && <ul className="local-ai__notes">{current.validation_notes.map((note, index) => <li key={index}>{note}{localAiDiagnostic(note) ? `：${localAiDiagnostic(note)}` : ''}</li>)}</ul>}

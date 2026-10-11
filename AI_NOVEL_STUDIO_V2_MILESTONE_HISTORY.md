@@ -554,3 +554,126 @@ result of 484 pass / 369 existing skips, normal shutdown. Full frontend is
 Earlier 79-file results and failures retain their own source identity and are
 not promoted to final-tree aggregate acceptance. Browser collection is inventory
 only; actual hosted CI is pending the new publication SHA. Full M4 is PARTIAL.
+
+## 2026-10-11 — Studio operation framework; acceptance deferred
+
+The user paused QingJian and further testing/real model acceptance, and explicitly
+authorized preparing M5–M9 framework and operation contracts alongside the M4
+engineering work. This is an engineering-scope update, not milestone acceptance
+or permission to skip the original sequential product gates.
+
+The source work extends `5ed1cbee41d549351637d04a894477750c3e08b2` with a
+read-only, scoped production-operation catalog, strict reserved source/media/time/
+review interface schemas, an actual Independent Studio consumer, separated graph
+editor controller/view and bounded local-author navigation restoration. Existing
+media APIs remain descriptions of their original owners; the catalog has no
+dispatch authority, scheduler, model inventory or credential access.
+
+M5 image, M6 director/storyboard, M7 video, M8 audio and M9 editing requirements
+are visible through a versioned contract. Missing V2 media adapters, atomic input
+bindings, audio trim and full multitrack NLE remain explicit reserved interfaces.
+Limited video assembly, planning and OTIO exchange do not constitute an NLE.
+
+See `docs/v2/production-operation-contracts.md`,
+`docs/v2/studio-workspace-operations.md` and
+`docs/v2/opus-ui-ux-handoff.md` for the actual code/owner seams. The latter gives
+the future frontend refactor its read-first files and protected behaviors.
+
+This checkpoint's tests, collection, typecheck, build, CI and Windows/GPU/model
+acceptance are **NOT_RUN — USER_DEFERRED**. Static review is not test execution.
+M4 remains PARTIAL and M5–M9 product acceptance remains LOCAL_REQUIRED.
+The previously staged eight metadata files describe the earlier `5ed1cbee`
+catalog repair; they are preserved but do not bind this later engineering batch.
+Final catalog/coverage synchronization and verification are deferred until code
+changes settle. Original CI failures/cancellations, frozen V1/Interop evidence,
+F00 INTEGRATED + 39 PARTIAL and independent-review BLOCKED are unchanged.
+
+## 2026-10-11 — Continued operation logic and UI refactor seams
+
+The next source-only checkpoint extends the same `5ed1cbee` baseline without
+publishing or changing acceptance. Run/model panels now expose headless
+controllers with the original owners and component facades. Preflight, selection,
+creation-request recovery, human output review and model-preview consent retain
+their exact graph/run versions and digests. UI read/action exclusion does not
+introduce a scheduler or make cancellation of a transport cancel a real job.
+
+Workspace preferences have explicit base/draft and original CAS handling:
+conflicts or uncertain writes require a server read and an explicit author choice.
+Navigation/discard/adoption check the synchronous activity fence. Overview,
+storage and graph-reference previews reject late or mismatched projections;
+candidate graph adoption is bound to the checked version and digests.
+
+Future media intent/result contracts now check source identity conflicts,
+asset/track kinds, rational intervals, source binding, finite dimensions and
+receipt/media metadata coherence. These are internal shape constraints, not
+real owner receipts, rights verification, routing grants or execution adapters.
+Opus UI/UX seams and preserved behaviors are in `docs/v2/opus-ui-ux-handoff.md`.
+
+All tests, collection, typecheck, build, CI, Windows and real model acceptance
+remain **NOT_RUN — USER_DEFERRED**. M4 is still PARTIAL; M5–M9 remain subject to
+the existing sequential real acceptance gates. The eight staged catalog repair
+files and frozen V1 manifest remain unchanged; new source is unstaged. No new
+QingJian work was performed.
+
+## 2026-10-11 — Independent media execution and bounded timeline source checkpoint
+
+The user authorized actual remaining backend engineering, modest frontend and
+subsequent GitHub source publication, while continuing to defer all execution
+verification. This appended checkpoint supersedes the earlier reserved-only
+current implementation description without rewriting that historical source
+checkpoint or claiming that its original evidence covered later code.
+
+The source extends `5ed1cbee41d549351637d04a894477750c3e08b2` with nine explicit
+independent media/trim commands: T2I, I2I, T2V, I2V, V2V, TTS, MUSIC, SFX and
+local audio trim. Original ImageJobService, branch/actor AudiobookStore and
+AudiobookService, and VideoAssemblyService remain the persistent task owners.
+ProductionExecutionService composes original sources, trusted DesktopHost,
+permissions, project incarnation, source/job CAS, global cloud and source-policy
+checks, exact Provider/recipe binding and last-mile dispatch guards. It adds no
+second scheduler, synthetic Provider, fabricated asset or execution grant.
+
+Original media bytes pass bounded validation before private candidate creation
+with server-owned immutable origin. Explicit human review binds job version,
+request/output digests and exact candidate version through AssetLibrary
+promotion. Interrupted or uncertain dispatch/publication remains UNKNOWN;
+explicit reconciliation requires the original executor lease to have ended and
+never redispatches. Local discard preserves records/candidates and does not
+assert remote abort. Audio async receipts have no implemented polling protocol
+and remain UNKNOWN. ComfyUI I2I accepts one reference and rejects dimensions;
+A1111 multi-reference upstream semantics remain unverified.
+
+Versioned scoped timeline documents now support explicit bounded local FFmpeg
+review rendering through original VideoAssemblyService: up to eight VIDEO/AUDIO
+tracks (four of each), thirty clips, ten minutes, 1920x1080/60FPS, bounded video
+placement/overlay, audio gain/mute/mix and literal manual captions. Input sources
+and the timeline version/digest are rechecked, output remains private and review
+is separate. This is not complete NLE, automatic ASR, automatic alignment,
+high-quality delivery export, GPU encoding or cross-editor acceptance.
+
+The independent Studio includes headless media and timeline controllers and
+replaceable form views, original scoped transport, exact preview/create/execute/
+review consents, uncertain-request retention, dirty navigation fencing and
+private Blob cleanup. Public command/provider/recipe/source/receipt projections
+are shown without secrets; local JSON downloads serialize the original checked
+public job and do not invent results or acceptance. Opus may replace JSX/token
+styles while preserving those named actions and original AppShell/owner gates.
+The read-only production-contract catalog describes current original owners,
+but stays advisory_only=true, execution_authority=false and execution_grant=false.
+Graph media nodes and ASSET_REF atomic execution remain unconnected.
+
+See `docs/v2/production-execution.md`, `production-operation-contracts.md`,
+`studio-workspace-operations.md` and `opus-ui-ux-handoff.md`. The latter files
+are under `docs/v2/`. Final publication identity must be bound to the actual
+remote SHA after the authorized source upload; no new SHA or build is assumed.
+
+All tests, collection, typecheck, build, CI, API/Runtime execution, Windows/GPU
+and real model/product acceptance remain **NOT_RUN — USER_DEFERRED**.
+Source-only review does not establish PASS. M4 remains **PARTIAL**, M5-M9 remain
+**LOCAL_REQUIRED**, with actual M4-to-M9 acceptance in the original sequence.
+QingJian work stays paused. Separate metadata repair commit `776286f` contains
+the eight earlier 5ed1cbee catalog/coverage/receipt snapshot files; current new
+routes/source require original-tool synchronization after verification resumes.
+Frozen V1
+manifest/assets, PoemSeed Local Interop 1.0, source-bound PG/CI failures and
+cancellations, F00 INTEGRATED + 39 PARTIAL and independent-review BLOCKED are
+unchanged. Earlier milestone text and original evidence are preserved verbatim.

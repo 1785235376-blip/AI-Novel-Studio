@@ -108,6 +108,8 @@ class VideoGenerationRequest:
     task_id: str
     idempotency_key: str | None = None
     parameters: dict = field(default_factory=dict)
+    source_video_uri: str | None = None
+    dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
 
 @dataclass(frozen=True)
 class VideoGenerationResult:
@@ -136,12 +138,14 @@ class DeterministicVideoProvider:
         raise ValueError("VIDEO_PROVIDER_NOT_CONFIGURED")
 
 class HttpVideoProvider:
-    def __init__(self,transport,endpoint,api_key,default_model=''):
+    supports_dispatch_guard = True
+    def __init__(self,transport,endpoint,api_key,default_model='',*,video_to_video=False):
         if not endpoint: raise ValueError('video provider endpoint is required')
         self.transport=transport; self.endpoint=endpoint.rstrip('/'); self.api_key=api_key;self.default_model=default_model
+        self.video_to_video=bool(video_to_video)
     def _headers(self): return {'Authorization':f'Bearer {self.api_key}'} if self.api_key else {}
     def capabilities(self) -> dict[str, bool]:
-        return {"text_to_video": True, "image_to_video": True, "start_frame": True, "end_frame": True, "polling": True, "cancellation": True}
+        return {"text_to_video": True, "image_to_video": True, "start_frame": True, "end_frame": True, "polling": True, "cancellation": True, "video_to_video": self.video_to_video}
     def health_check(self):
         try:return self.transport.get(self.endpoint,headers=self._headers(),timeout=1.5).status_code<400
         except Exception:return False
@@ -159,7 +163,13 @@ class HttpVideoProvider:
         return {'status':str(data.get('status') or 'CANCELLED').upper()}
     def generate(self,request:VideoGenerationRequest)->VideoGenerationResult:
         headers={**self._headers(),'Idempotency-Key':request.idempotency_key or request.task_id}
-        response=self.transport.post(self.endpoint+'/videos',headers=headers,json={'model':request.model_id,'prompt':request.prompt,'start_frame':request.start_frame,'end_frame':request.end_frame,'task_id':request.task_id,'parameters':request.parameters},timeout=30)
+        payload={'model':request.model_id,'prompt':request.prompt,'start_frame':request.start_frame,'end_frame':request.end_frame,'task_id':request.task_id,'parameters':request.parameters}
+        if request.source_video_uri is not None:
+            if not self.video_to_video: raise ValueError('VIDEO_TO_VIDEO_NOT_CONFIGURED')
+            payload['source_video_uri']=request.source_video_uri
+        if request.dispatch_guard is not None:
+            request.dispatch_guard()
+        response=self.transport.post(self.endpoint+'/videos',headers=headers,json=payload,timeout=30)
         response.raise_for_status(); data=response.json(); uri=data.get('url') or data.get('video_url'); remote=data.get('id') or data.get('task_id')
         if not uri and not remote: raise ValueError('video provider response missing url or task id')
         status=str(data.get('status') or ('SUCCEEDED' if uri else 'RUNNING')).upper()
@@ -176,6 +186,9 @@ class AssetProviderRegistry:
 
 class OpenAICompatibleImageProvider:
     """Transport-injected adapter; credentials never belong in this class."""
+    supports_dispatch_guard = True
+    supported_parameters = ("size", "quality")
+    edit_reference_limit = 5
     def __init__(self, transport, api_key: str, endpoint: str):
         if not api_key or not endpoint: raise ValueError("image provider credentials are required")
         self.transport,self.api_key,self.endpoint=transport,api_key,endpoint.rstrip('/')
@@ -183,7 +196,9 @@ class OpenAICompatibleImageProvider:
         try:return 200<=self.transport.get(self.endpoint+"/models",headers={"Authorization":f"Bearer {self.api_key}"},timeout=1.5).status_code<300
         except Exception:return False
     def generate(self, request: AssetGenerationRequest) -> AssetGenerationResult:
-        response=self.transport.post(self.endpoint+"/images/generations",headers={"Authorization":f"Bearer {self.api_key}"},json={"model":request.model_id,"prompt":request.prompt,"n":1,**validate_image_parameters(request.parameters,{"size","quality"})},timeout=180)
+        payload={"model":request.model_id,"prompt":request.prompt,"n":1,**validate_image_parameters(request.parameters,{"size","quality"})}
+        if request.dispatch_guard is not None: request.dispatch_guard()
+        response=self.transport.post(self.endpoint+"/images/generations",headers={"Authorization":f"Bearer {self.api_key}"},json=payload,timeout=180)
         response.raise_for_status(); data=response.json(); item=(data.get("data") or [{}])[0]; uri=item.get("url") or item.get("b64_json")
         if item.get("b64_json"): uri="data:image/png;base64,"+str(item["b64_json"])
         if not uri: raise ValueError("image provider response missing url")
@@ -194,6 +209,7 @@ class OpenAICompatibleImageProvider:
         payload={"model":request.model_id,"prompt":request.prompt,"images":[{"image_url":value} for value in images],"n":1,**validate_image_parameters(request.parameters,{"size","quality"})}
         for key in ("size","quality","output_format","output_compression","background","moderation"):
             if key in options and options[key] is not None: payload[key]=options[key]
+        if request.dispatch_guard is not None: request.dispatch_guard()
         response=self.transport.post(self.endpoint+"/images/edits",headers={"Authorization":f"Bearer {self.api_key}"},json=payload,timeout=180)
         response.raise_for_status(); data=response.json(); item=(data.get("data") or [{}])[0]; uri=item.get("url") or item.get("b64_json")
         if item.get("b64_json"): uri="data:image/png;base64,"+str(item["b64_json"])
@@ -201,6 +217,9 @@ class OpenAICompatibleImageProvider:
         return AssetGenerationResult(request.provider_id,request.model_id,uri)
 
 class Automatic1111ImageProvider:
+    supports_dispatch_guard = True
+    supported_parameters = ("width", "height", "steps", "seed", "negative_prompt")
+    edit_reference_limit = 5
     def __init__(self, transport, endpoint: str): self.transport,self.endpoint=transport,endpoint.rstrip('/')
     def health_check(self) -> bool:
         try:return self.transport.get(self.endpoint+"/sdapi/v1/sd-models",timeout=1.5).status_code==200
@@ -208,12 +227,33 @@ class Automatic1111ImageProvider:
     def generate(self, request: AssetGenerationRequest) -> AssetGenerationResult:
         payload={"prompt":request.prompt,"steps":28,"width":1024,"height":1024,**validate_image_parameters(request.parameters,{"width","height","steps","seed","negative_prompt"})}
         if request.model_id: payload["override_settings"]={"sd_model_checkpoint":request.model_id}
+        if request.dispatch_guard is not None: request.dispatch_guard()
         response=self.transport.post(self.endpoint+"/sdapi/v1/txt2img",json=payload,timeout=180)
         response.raise_for_status(); images=response.json().get("images") or []
         if not images: raise ValueError("automatic1111 response missing image")
         return AssetGenerationResult(request.provider_id,request.model_id,"data:image/png;base64,"+str(images[0]).split(',',1)[-1])
 
+    def edit(self, request: AssetGenerationRequest, images: list[str], **options: object) -> AssetGenerationResult:
+        if not images or len(images) > 5 or options:
+            raise ValueError("IMAGE_EDIT_REFERENCES_OR_OPTIONS_UNSUPPORTED")
+        if any(not isinstance(value, str) or not value.startswith("data:image/") or ";base64," not in value for value in images):
+            raise ValueError("IMAGE_EDIT_VERIFIED_INLINE_REFERENCES_REQUIRED")
+        if sum(len(value) for value in images) > 36 * 1024 * 1024:
+            raise ValueError("IMAGE_EDIT_REFERENCE_LIMIT")
+        payload={"prompt":request.prompt,"init_images":images,"denoising_strength":0.6,"steps":28,"width":1024,"height":1024,
+            **validate_image_parameters(request.parameters,{"width","height","steps","seed","negative_prompt"})}
+        if request.model_id: payload["override_settings"]={"sd_model_checkpoint":request.model_id}
+        if request.dispatch_guard is not None: request.dispatch_guard()
+        response=self.transport.post(self.endpoint+"/sdapi/v1/img2img",json=payload,timeout=180)
+        response.raise_for_status(); values=response.json().get("images") or []
+        if not values: raise ValueError("automatic1111 edit response missing image")
+        return AssetGenerationResult(request.provider_id,request.model_id,"data:image/png;base64,"+str(values[0]).split(',',1)[-1])
+
 class ComfyUIImageProvider:
+    supports_dispatch_guard = True
+    supported_parameters = ("width", "height", "steps", "seed", "negative_prompt")
+    edit_supported_parameters = ("steps", "seed", "negative_prompt")
+    edit_reference_limit = 1
     def __init__(self, transport, endpoint: str): self.transport,self.endpoint=transport,endpoint.rstrip('/')
     def health_check(self) -> bool:
         try:return self.transport.get(self.endpoint+"/system_stats",timeout=1.5).status_code==200
@@ -231,17 +271,64 @@ class ComfyUIImageProvider:
         }
     def generate(self, request: AssetGenerationRequest) -> AssetGenerationResult:
         if not request.model_id: raise ValueError("ComfyUI checkpoint is required")
-        response=self.transport.post(self.endpoint+"/prompt",json={"prompt":self._workflow(request)},timeout=15)
+        workflow=self._workflow(request)
+        if request.dispatch_guard is not None: request.dispatch_guard()
+        response=self.transport.post(self.endpoint+"/prompt",json={"prompt":workflow},timeout=15)
         response.raise_for_status(); prompt_id=response.json().get("prompt_id")
         if not prompt_id: raise ValueError("ComfyUI response missing prompt_id")
+        return self._result(request,prompt_id)
+
+    def edit(self, request: AssetGenerationRequest, images: list[str], **options: object) -> AssetGenerationResult:
+        if len(images) != 1 or options or not request.model_id:
+            raise ValueError("COMFYUI_EDIT_SINGLE_REFERENCE_AND_CHECKPOINT_REQUIRED")
+        import hashlib
+        import re
+        from .media_files import inspect_image
+        validate_image_parameters(request.parameters, self.edit_supported_parameters)
+        value=images[0]
+        if not isinstance(value,str) or not value.startswith("data:image/") or ";base64," not in value or len(value)>36*1024*1024:
+            raise ValueError("IMAGE_EDIT_VERIFIED_INLINE_REFERENCE_REQUIRED")
+        data=base64.b64decode(value.split(";base64,",1)[1],validate=True)
+        if not data or len(data)>25*1024*1024: raise ValueError("IMAGE_EDIT_REFERENCE_LIMIT")
+        measured=inspect_image(data)
+        filename="studio-"+hashlib.sha256(request.task_id.encode()).hexdigest()+"."+measured["extension"]
+        workflow=self._workflow(request)
+        if request.dispatch_guard is not None: request.dispatch_guard()
+        uploaded=self.transport.post(self.endpoint+"/upload/image",files={"image":(filename,data,measured["media_type"])},
+            data={"type":"input","overwrite":"false"},timeout=30)
+        uploaded.raise_for_status(); name=uploaded.json().get("name")
+        if not isinstance(name,str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,239}",name) or ".." in name:
+            raise ValueError("COMFYUI_UPLOAD_RECEIPT_INVALID")
+        workflow["10"]={"class_type":"LoadImage","inputs":{"image":name}}
+        workflow["5"]={"class_type":"VAEEncode","inputs":{"pixels":["10",0],"vae":["4",2]}}
+        workflow["3"]["inputs"]["denoise"]=0.6
+        if request.dispatch_guard is not None: request.dispatch_guard()
+        response=self.transport.post(self.endpoint+"/prompt",json={"prompt":workflow},timeout=15)
+        response.raise_for_status(); prompt_id=response.json().get("prompt_id")
+        if not prompt_id: raise ValueError("ComfyUI response missing prompt_id")
+        return self._result(request,prompt_id)
+
+    def _result(self, request, prompt_id):
         for _ in range(120):
+            if request.dispatch_guard is not None: request.dispatch_guard()
             history=self.transport.get(self.endpoint+"/history/"+quote(str(prompt_id),safe=""),timeout=10);history.raise_for_status()
             entry=history.json().get(str(prompt_id)) or {}
             for output in (entry.get("outputs") or {}).values():
                 images=output.get("images") or []
                 if images:
-                    image=images[0];binary=self.transport.get(self.endpoint+"/view",params={"filename":image.get("filename"),"subfolder":image.get("subfolder",''),"type":image.get("type",'output')},timeout=30)
-                    binary.raise_for_status();uri="data:image/png;base64,"+base64.b64encode(binary.content).decode('ascii')
+                    image=images[0]
+                    if request.dispatch_guard is not None: request.dispatch_guard()
+                    if request.dispatch_guard is not None:
+                        from urllib.parse import urlencode
+                        from .media_files import fetch_media_bytes, inspect_image
+                        url=self.endpoint+"/view?"+urlencode({"filename":image.get("filename"),"subfolder":image.get("subfolder",''),"type":image.get("type",'output')})
+                        content=fetch_media_bytes(url,25*1024*1024,configured_provider_endpoint=self.endpoint)
+                        request.dispatch_guard()
+                        measured=inspect_image(content)
+                        uri="data:"+measured["media_type"]+";base64,"+base64.b64encode(content).decode('ascii')
+                    else:
+                        binary=self.transport.get(self.endpoint+"/view",params={"filename":image.get("filename"),"subfolder":image.get("subfolder",''),"type":image.get("type",'output')},timeout=30)
+                        binary.raise_for_status();uri="data:image/png;base64,"+base64.b64encode(binary.content).decode('ascii')
                     return AssetGenerationResult(request.provider_id,request.model_id,uri)
             time.sleep(.5)
         raise ValueError("ComfyUI generation timed out")

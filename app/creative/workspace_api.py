@@ -16,12 +16,21 @@ def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:preferences|storage|references|relationships|assets(?:/[^/]+(?:/download)?)?))?",
+        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|assets(?:/[^/]+(?:/download)?)?))?",
         "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|assets(?:/[^/]+/(?:restore|relationships))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
     if method in patterns and re.fullmatch(patterns[method], normalized_path) is not None:
+        return True
+    production = root + r"/production"
+    owners = r"(?:image|audio|video|timeline)"
+    production_patterns = {
+        "GET": production + r"/(?:providers|jobs(?:/" + owners + r"/[^/]+(?:/candidate)?)?|timelines(?:/[^/]+)?)",
+        "POST": production + r"/(?:preview|jobs(?:/" + owners + r"/[^/]+/(?:execute|cancel|review|reconcile))?|jobs/video/[^/]+/refresh|timelines(?:/[^/]+/render)?)",
+        "PUT": production + r"/timelines/[^/]+",
+    }
+    if method in production_patterns and re.fullmatch(production_patterns[method], normalized_path) is not None:
         return True
     # Closed graph routes retain the same feature and project authority checks.
     # Unknown actions/methods never gain collaboration middleware admission.
@@ -34,7 +43,7 @@ def is_independent_studio_route(method, normalized_path):
 
 
 def create_independent_workspace_router(service, authorize, require_flag, *, create_project, workspace_writer,
-                                        graph_service=None, require_host_session=None, model_host_authority=None):
+                                    graph_service=None, require_host_session=None, model_host_authority=None, production_service=None):
     router = APIRouter(tags=["Independent Studios V2"], route_class=PrivateProductionRoute)
 
     def access(nid, token, branch, permission):
@@ -152,13 +161,13 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
     def remove(nid: str, aid: str, expected_version: int = Query(ge=1),
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.lifecycle(nid, scope, aid, expected_version, guard=guard))
+                      lambda actor, scope, guard: service.lifecycle(nid, scope, aid, expected_version, guard=guard, actor_id=actor))
 
     @router.post("/projects/{nid}/studio/assets/{aid}/restore")
     def restore(nid: str, aid: str, body: AssetVersion,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.lifecycle(nid, scope, aid, body.expected_version, restore=True, guard=guard))
+                      lambda actor, scope, guard: service.lifecycle(nid, scope, aid, body.expected_version, restore=True, guard=guard, actor_id=actor))
 
     @router.get("/projects/{nid}/studio/storage")
     def storage(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -188,6 +197,14 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                             x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.relationships.remove(nid, scope, actor, aid, rid, expected_version, guard))
+
+    from .production_contract_api import create_production_contract_router
+    router.include_router(create_production_contract_router(service, invoke))
+
+    if production_service is not None:
+        from .production_execution_api import create_production_execution_router
+        router.include_router(create_production_execution_router(production_service, invoke,
+            require_host_session=require_host_session, model_host_authority=model_host_authority))
 
     if graph_service is not None:
         from .graph_api import create_creative_graph_router

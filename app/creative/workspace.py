@@ -11,8 +11,10 @@ import copy
 from contextlib import contextmanager
 import shutil
 import errno
+import re
 
-from ..experimental.common import change_row, new_row
+from ..experimental.common import change_row, new_row, now
+from ..experimental.production_lineage import LicenseDeclaration
 from ..media_files import inspect_image, inspect_media
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .project_store import BINDING
@@ -126,7 +128,13 @@ class IndependentWorkspaceService:
         # M1 only accepts manual uploads. Do not read a media task/scope store
         # under an asset-owner lease if an unsupported record reaches here.
         if row.get("source_job_id"):
-            raise ValueError("CREATIVE_ASSET_ADAPTER_REQUIRED")
+            origin = row.get("_studio_result_origin")
+            if (not isinstance(origin, dict) or origin.get("contract") != "studio-production-result/1"
+                    or origin.get("job_id") != row["source_job_id"]
+                    or origin.get("scope_key") != self.store.key(nid, scope)
+                    or origin.get("incarnation") != row.get("_project_binding", {}).get("incarnation")
+                    or not row.get("_origin_provenance")):
+                raise ValueError("CREATIVE_ASSET_ADAPTER_REQUIRED")
         return row
 
     def _view(self, nid, scope, row):
@@ -134,9 +142,96 @@ class IndependentWorkspaceService:
         if isinstance(public.get("parameters"), dict):
             # Only current scoped projections disclose source/relationship IDs.
             public["parameters"].pop("asset_lineage_v2", None)
+        provenance = self._production_provenance(nid, scope, row) if row.get("_studio_result_origin") else self.lineage.asset(nid, scope, row["id"], include_impact=False)
         return {**public,
-                "provenance": self.lineage.asset(nid, scope, row["id"], include_impact=False),
+                "provenance": provenance,
                 "relationships": self.relationships.project(nid, scope, row)}
+
+    def _production_provenance(self, nid, scope, row):
+        """Project the immutable original asset origin without reading a job store
+        under the asset/project lease. Document freshness stays unverified here;
+        execution and review recheck it through their original source owner.
+        """
+        origin = row["_studio_result_origin"]
+        self._production_asset_ids(origin)
+        declaration = self._production_declaration(row)
+        parents, sources = [], []
+        for source in origin.get("sources", []):
+            if source["kind"] != "ASSET":
+                sources.append({"id": source["id"], "version": source["version"], "digest": source["digest"], "state": "UNVERIFIED"})
+                continue
+            try:
+                parent = self._row(nid, scope, source["id"], deleted=True)
+                state = "DELETED" if parent.get("deleted_at") else "CURRENT" if (parent["version"], parent["sha256"]) == (source["version"], source["digest"]) else "STALE"
+                parents.append({"id": parent["id"], "label": parent["filename"], "version": parent["version"], "digest": parent["sha256"], "state": state})
+            except (FileNotFoundError, ValueError):
+                parents.append({"state": "UNAVAILABLE", "label": "来源不可用或无权访问"})
+        integrity = "DELETED" if row.get("deleted_at") else "VERIFIED"
+        if integrity != "DELETED":
+            try: self.assets._verified_content(row)
+            except (FileNotFoundError, ValueError): integrity = "CONTENT_UNAVAILABLE"
+        return {"id": row["id"], "label": row["filename"], "kind": row["kind"], "version": row["version"],
+                "digest": row["sha256"], "deleted": bool(row.get("deleted_at")), "integrity": integrity,
+                "origin": self._production_origin(origin),
+                "license": copy.deepcopy(declaration["license"]) if declaration else {"label": "UNSPECIFIED", "source": "", "note": origin.get("license_note", "")},
+                "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+                "operation": declaration["operation"] if declaration else origin["operation_id"], "parents": parents, "sources": sources,
+                "stale": any(p["state"] != "CURRENT" for p in parents + sources),
+                "source_task_id": origin["job_id"], "generation": None,
+                "reference_only": True, "product_acceptance": "LOCAL_REQUIRED"}
+
+    @staticmethod
+    def _production_origin(origin):
+        return "DERIVED_PROCESSING" if origin["operation_id"] in {"m8.audio.trim", "m9.timeline.multitrack"} else "GENERATED_RESULT"
+
+    @staticmethod
+    def _production_asset_ids(origin):
+        # This is an asset-metadata check, never a source/job owner lookup.
+        # A malformed marker must not silently remove deletion protection.
+        if (not isinstance(origin, dict) or origin.get("contract") != "studio-production-result/1"
+                or not isinstance(origin.get("operation_id"), str) or not origin["operation_id"]
+                or not isinstance(origin.get("sources"), list)):
+            raise ValueError("CREATIVE_PRODUCTION_ORIGIN_INVALID")
+        if any(not isinstance(source, dict) or not isinstance(source.get("kind"), str)
+               or source["kind"] not in {"ASSET", "CREATIVE_DOCUMENT"}
+               or not isinstance(source.get("id"), str) or not source["id"]
+               for source in origin["sources"]):
+            raise ValueError("CREATIVE_PRODUCTION_ORIGIN_INVALID")
+        return list(dict.fromkeys(source["id"] for source in origin["sources"] if source["kind"] == "ASSET"))
+
+    def _production_declaration(self, row):
+        """Read only the original owner's compatible author declaration.
+
+        Its parent revisions describe the annotation; execution provenance and
+        freshness above remain bound to the immutable production snapshots.
+        A legacy annotation cannot relabel this result or mint chapter sources.
+        """
+        origin = row["_studio_result_origin"]
+        parameters = row.get("parameters")
+        evidence = parameters.get("asset_lineage_v2") if isinstance(parameters, dict) else None
+        parent_ids = self._production_asset_ids(origin)
+        if (not isinstance(evidence, dict) or evidence.get("schema") != "asset-lineage-v2"
+                or evidence.get("origin") != self._production_origin(origin)
+                or evidence.get("output_digest") != row["sha256"] or evidence.get("sources") != {}
+                or evidence.get("license_verification") != "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION"
+                or not isinstance(evidence.get("parents"), dict) or set(evidence["parents"]) != set(parent_ids)
+                or not isinstance(row.get("source_asset_ids"), list)
+                or any(not isinstance(parent, str) for parent in row["source_asset_ids"])
+                or set(row["source_asset_ids"]) != set(parent_ids)
+                or len(row["source_asset_ids"]) != len(parent_ids)
+                or not isinstance(evidence.get("operation"), str) or len(evidence["operation"]) > 160
+                or not isinstance(evidence.get("license"), dict) or set(evidence["license"]) != set(LicenseDeclaration.model_fields)):
+            return None
+        if any(not isinstance(binding, dict) or set(binding) != {"version", "digest"}
+               or type(binding["version"]) is not int or binding["version"] < 1
+               or not isinstance(binding["digest"], str) or not re.fullmatch(r"[a-f0-9]{64}", binding["digest"])
+               for binding in evidence["parents"].values()):
+            return None
+        try:
+            license_value = LicenseDeclaration.model_validate(evidence["license"]).model_dump()
+        except (ValueError, TypeError):
+            return None
+        return {"license": license_value, "operation": evidence["operation"]}
 
     def list_assets(self, nid, scope, *, include_deleted=False):
         with self._asset_scope(nid, scope):
@@ -188,8 +283,33 @@ class IndependentWorkspaceService:
     def annotate(self, nid, scope, actor, aid, value, guard=lambda: None):
         body = StudioLineageInput.model_validate(value)
         with self._asset_scope(nid, scope):
-            self._row(nid, scope, aid)
-            self.lineage.annotate(nid, scope, actor, aid, body, guard, include_impact=False)
+            row = self._row(nid, scope, aid)
+            if row.get("_studio_result_origin"):
+                origin = copy.deepcopy(row["_studio_result_origin"])
+                parent_ids = self._production_asset_ids(origin)
+                if (body.origin != self._production_origin(origin) or body.chapter_ids
+                        or len(body.parent_asset_ids) != len(parent_ids) or set(body.parent_asset_ids) != set(parent_ids)):
+                    raise ValueError("CREATIVE_PRODUCTION_SOURCE_DECLARATION_IMMUTABLE")
+                if row["version"] != body.expected_version:
+                    raise CapabilityVersionConflict({"version": row["version"]})
+                # Keep the original lineage metadata shape. Only license and
+                # operation are author declarations; source IDs are fixed by
+                # the original job, and document bindings stay in its marker.
+                declaration = {"schema": "asset-lineage-v2", "origin": self._production_origin(origin),
+                    "license": body.license.model_dump(), "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+                    "operation": body.operation, "declared_by": actor, "declared_at": now(), "sources": {}}
+                def before_commit():
+                    guard()
+                    current = self._row(nid, scope, aid)
+                    if current["version"] != body.expected_version:
+                        raise CapabilityVersionConflict({"version": current["version"]})
+                    if current["_studio_result_origin"] != origin or current["sha256"] != row["sha256"]:
+                        raise ValueError("CREATIVE_PRODUCTION_ORIGIN_CHANGED")
+                    for parent_id in parent_ids: self._row(nid, scope, parent_id)
+                self.assets.annotate_lineage(aid, declaration, parent_ids, branch_id=scope.get("branch_id"),
+                    expected_version=body.expected_version, guard=before_commit)
+            else:
+                self.lineage.annotate(nid, scope, actor, aid, body, guard, include_impact=False)
             guard()
             return self._view(nid, scope, self._row(nid, scope, aid))
 
@@ -200,7 +320,7 @@ class IndependentWorkspaceService:
             guard()
             return self.assets.public(row), data
 
-    def lifecycle(self, nid, scope, aid, expected_version, *, restore=False, guard=lambda: None):
+    def lifecycle(self, nid, scope, aid, expected_version, *, restore=False, guard=lambda: None, actor_id=None):
         if type(expected_version) is not int or expected_version < 1:
             raise ValueError("CREATIVE_EXPECTED_VERSION_INVALID")
         with self._asset_scope(nid, scope):
@@ -208,8 +328,18 @@ class IndependentWorkspaceService:
             if row["version"] != expected_version:
                 raise CapabilityVersionConflict({"version": row["version"]})
             if not restore:
-                children = [other for other in self.assets.list(nid, branch_id=scope.get("branch_id"))
-                            if aid in other.get("source_asset_ids", []) or any(
+                rows = {other["id"]: other for other in self.assets.list(nid, branch_id=scope.get("branch_id"))}
+                if actor_id is not None:
+                    if not isinstance(actor_id, str) or not actor_id:
+                        raise ValueError("CREATIVE_AUTHORITY_INVALID")
+                    # Private candidates are deliberately absent from ordinary
+                    # library discovery. Count the current server actor's active
+                    # candidates without exposing them or adopting another actor.
+                    rows.update({other["id"]: other for other in self.assets.list(nid, branch_id=scope.get("branch_id"), actor_id=actor_id)})
+                children = [other for other in rows.values()
+                            if aid in other.get("source_asset_ids", []) or (
+                                other.get("_studio_result_origin") is not None
+                                and aid in self._production_asset_ids(other["_studio_result_origin"])) or any(
                                 not relation.get("removed_at") and relation["target"]["kind"] == "ASSET"
                                 and relation["target"]["id"] == aid for relation in self.relationships.records(other))]
                 if children:

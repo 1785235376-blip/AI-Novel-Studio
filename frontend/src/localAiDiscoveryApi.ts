@@ -42,6 +42,7 @@ export type LocalModelCandidate = {
   runtime_config?: LocalRuntimeConfiguration & {id: string};
   source: string;
   local?: boolean;
+  source_locality?: 'LOCAL_VERIFIED' | 'REMOTE' | 'NOT_VERIFIED';
   model_name: string;
   local_path?: string;
   status: string;

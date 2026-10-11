@@ -5,7 +5,7 @@ import base64
 import ipaddress
 from urllib.parse import urlsplit
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import Any, Callable, Protocol
 
 from .audio_provider_config import load as load_audio_provider_config
 
@@ -90,6 +90,7 @@ class AudioGenerationRequest:
     source_video_uri: str | None = None
     duration_seconds: float | None = None
     parameters: dict[str, Any] = field(default_factory=dict)
+    dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
 
 
 @dataclass(frozen=True)
@@ -108,6 +109,7 @@ class AudioProvider(Protocol):
 
 class HttpAudioProvider:
     """Adapter for local or cloud audio services exposing the studio HTTP contract."""
+    supports_dispatch_guard = True
 
     def __init__(self, transport, endpoint: str, api_key: str | None = None, *, local: bool = False, emotion_values: tuple[str, ...] = ()):
         if not endpoint:
@@ -154,6 +156,8 @@ class HttpAudioProvider:
                 "duration_seconds": request.duration_seconds,
                 **{key: value for key, value in request.parameters.items() if key not in {"model", "capability", "prompt", "task_id", "source_audio_uri", "source_video_uri"}},
             }
+        if request.dispatch_guard is not None:
+            request.dispatch_guard()
         response = self.transport.post(self.endpoint + path, headers=self._headers(), json=payload, timeout=300)
         response.raise_for_status()
         content_type = str(getattr(response, "headers", {}).get("content-type", "")).split(";", 1)[0]

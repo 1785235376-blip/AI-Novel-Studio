@@ -11,6 +11,7 @@ from uuid import uuid4
 from ..asset_providers import AssetGenerationRequest
 from ..media_files import fetch_media_bytes, inspect_image
 from ..repository import now
+from ..repositories.file.mutation_coordinator import workspace_mutation
 from ..storage import atomic_write
 
 
@@ -42,7 +43,7 @@ class ImageJobService:
         return json.loads(path.read_text()) if path.exists() else []
 
     def _mutate(self, novel_id, branch_id, operation):
-        with self._lock:
+        with self._lock, workspace_mutation(self.root, "image-jobs"):
             rows = self._load(novel_id, branch_id)
             result = operation(rows)
             atomic_write(self._path(novel_id, branch_id), json.dumps(rows, ensure_ascii=False))
@@ -56,7 +57,43 @@ class ImageJobService:
 
     def list(self, novel_id, branch_id=None):
         with self._lock:
-            return [{**row,'recoverable':row.get('status')=='RUNNING' and row.get('execution_token') not in self._active} for row in reversed(self._load(novel_id, branch_id))]
+            return [{**row,'recoverable':row.get('status')=='RUNNING' and row.get('execution_token') not in self._active} for row in reversed(self._load(novel_id, branch_id)) if row.get('contract') != 'studio-image-execution/1']
+
+    def create_studio(self, nid, branch, actor, body, context, guard):
+        from .studio_image_execution import create
+        return create(self, nid, branch, actor, body, context, guard)
+
+    def get_studio(self, nid, branch, actor, job_id, guard):
+        from .studio_image_execution import get
+        return get(self, nid, branch, actor, job_id, guard)
+
+    def list_studio(self, nid, branch, actor, context, guard):
+        from .studio_image_execution import list_jobs
+        return list_jobs(self, nid, branch, actor, context, guard)
+
+    def cancel_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard):
+        from .studio_image_execution import cancel
+        return cancel(self, nid, branch, actor, job_id, expected_version=expected_version,
+            expected_request_digest=expected_request_digest, guard=guard)
+
+    def reconcile_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard):
+        from .studio_image_execution import reconcile
+        return reconcile(self, nid, branch, actor, job_id, expected_version=expected_version,
+            expected_request_digest=expected_request_digest, guard=guard)
+
+    def execute_studio(self, nid, branch, actor, job_id, registry, *, expected_version,
+                       expected_request_digest, guard, source_guard, dispatch_guard, read_images, publish):
+        from .studio_image_execution import execute
+        return execute(self, nid, branch, actor, job_id, registry, expected_version=expected_version,
+            expected_request_digest=expected_request_digest, guard=guard, source_guard=source_guard,
+            dispatch_guard=dispatch_guard, read_images=read_images, publish=publish)
+
+    def accept_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest,
+                      expected_output_digest, guard, source_guard, promote):
+        from .studio_image_execution import accept
+        return accept(self, nid, branch, actor, job_id, expected_version=expected_version,
+            expected_request_digest=expected_request_digest, expected_output_digest=expected_output_digest,
+            guard=guard, source_guard=source_guard, promote=promote)
 
     def create(self, novel_id, branch_id, body, idempotency_key=None):
         parameters = dict(body.get('parameters') or {})
@@ -76,6 +113,7 @@ class ImageJobService:
     def transition(self, novel_id, branch_id, job_id, target):
         def change(rows):
             row=self._find(rows,job_id)
+            if row.get('contract') == 'studio-image-execution/1': raise ValueError('STUDIO_IMAGE_ORIGINAL_OWNER_ACTION_REQUIRED')
             allowed={'CANCELLED':{'QUEUED','RUNNING'},'QUEUED':{'FAILED','CANCELLED'}}
             if row['status'] not in allowed[target] and not (target=='QUEUED' and row['status']=='RUNNING' and row.get('execution_token') not in self._active): raise ValueError('IMAGE_JOB_INVALID_TRANSITION')
             row.update(status=target,execution_token=None,error=None,updated_at=now())
@@ -94,6 +132,7 @@ class ImageJobService:
 
         def claim(rows):
             row=self._find(rows,job_id)
+            if row.get('contract') == 'studio-image-execution/1': raise ValueError('STUDIO_IMAGE_ORIGINAL_OWNER_ACTION_REQUIRED')
             if row['status']!='QUEUED': raise ValueError('IMAGE_JOB_NOT_QUEUED')
             if row.get('owner_actor_id') != self.owner_actor_id or row.get('novel_id') != novel_id or row.get('branch_id') != branch_id:
                 raise ValueError('IMAGE_JOB_SCOPE_CHANGED')
