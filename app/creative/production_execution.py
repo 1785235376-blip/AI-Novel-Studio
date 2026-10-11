@@ -56,6 +56,17 @@ class ProductionExecutionService:
         self.graph_timeline = GraphTimelineExecution(self)
         from .timeline_transfer import TimelineTransfer
         self.timeline_transfer = TimelineTransfer(self)
+        from .timeline_playback import TimelinePlayback
+        self.timeline_playback = TimelinePlayback(self)
+
+    def timeline_playback_preview(self, nid, scope, actor, tid, value, guard):
+        return self.timeline_playback.preview(nid, scope, actor, tid, value, guard)
+
+    def timeline_playback_build(self, nid, scope, actor, tid, value, guard):
+        return self.timeline_playback.build(nid, scope, actor, tid, value, guard)
+
+    def timeline_playback_attest(self, nid, scope, actor, tid, value, guard):
+        return self.timeline_playback.attest(nid, scope, actor, tid, value, guard)
 
     def timeline_transfer_preview(self, nid, scope, actor, tid, value, guard):
         return self.timeline_transfer.preview(nid, scope, actor, tid, value, guard)

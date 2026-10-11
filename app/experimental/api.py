@@ -25,7 +25,7 @@ from .imports import SemanticImportService
 from .imports_api import create_import_router
 from .teams import TeamService
 from .teams_api import create_team_router
-from ..dependencies import asset_provider_registry
+from ..dependencies import asset_provider_registry, model_center_service, runtime
 from .media import MediaService, MediaAdapterRegistry
 from .media_api import create_media_router
 from .embeddings import EmbeddingService
@@ -119,10 +119,11 @@ def review_audiobook_inbox(ctx, rid, action, version):
 
 inbox_service.register(ReviewBinding('audiobook', read_audiobook_inbox,
     review_audiobook_inbox, 'audiobook_v2', frozenset()))
-from .subtitle_host_config import configured_subtitle_adapters, processing_host_required
+from .subtitle_host_config import configured_subtitle_adapters, configured_whisper_subtitle_resolver, processing_host_required
 subtitle_timeline_service = SubtitleTimelineService(store, legacy_api.novel_service,
     legacy_api.chapter_service, audiobook_service, legacy_api.asset_library_service,
-    processing_adapters=configured_subtitle_adapters())
+    processing_adapters=configured_subtitle_adapters(),
+    processing_adapter_resolver=configured_whisper_subtitle_resolver(model_center_service, runtime))
 router.include_router(create_voice_direction_router(audiobook_service, authorize, require_flag))
 router.include_router(create_subtitle_timeline_router(subtitle_timeline_service, authorize, require_flag,
     require_processing_host=(lambda token: require_inspection_host_session(token)) if processing_host_required() else None,

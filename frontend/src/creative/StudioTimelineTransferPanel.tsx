@@ -38,6 +38,8 @@ export function StudioTimelineTransferPanel({ controller: c, assets }: { control
           <p>{assets.find(asset => asset.id === clip.source_snapshot.id)?.filename ?? '素材不可用'} · v{clip.source_snapshot.version} · 放入 {clip.start_ms} ms · 入点 {clip.in_ms} — 出点 {clip.out_ms} ms</p>
           <p>速度 {clip.speed_num ?? 1}/{clip.speed_den ?? 1} · 淡入 {clip.fade_in_ms ?? 0} ms · 淡出 {clip.fade_out_ms ?? 0} ms · {clip.muted ? '隐藏或静音' : '参与渲染'} · 片段音量 {clip.gain_db ?? 0} dB</p>
           {track.kind === 'VIDEO' && <p>位置 {clip.x}, {clip.y} · 尺寸 {clip.width} × {clip.height} · 不透明度 {clip.opacity ?? 1} · {clip.include_audio ? '加入视频原声' : '未加入视频原声'}{clip.crop && <> · 源裁剪 {clip.crop.x}, {clip.crop.y}, {clip.crop.width} × {clip.crop.height}</>}</p>}
+          {clip.transition_out && <p>交叉溶解：片段 <code>{clip.id}</code> → <code>{clip.transition_out.to_clip_id}</code> · 重叠窗口 {clip.transition_out.duration_ms} ms。
+            {c.format === 'OTIO' && <>该关系保留在 Studio 元数据中，外部剪辑软件的原生轨道不能保真还原；请核对对应损失。</>}</p>}
         </li>)}</ul></div>)}
         <ul>{c.preview.timeline.captions.map((cue, index) => <li key={index}>{cue.start_ms} — {cue.end_ms} ms · {cue.text}</li>)}</ul></details>
       <details><summary>版本和转换摘要</summary><p>原 v{c.preview.timeline_snapshot.version} · <code>{c.preview.timeline_snapshot.digest}</code></p>

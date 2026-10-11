@@ -213,6 +213,47 @@ def validate_source_crop(clip, source_width, source_height):
         raise ValueError("STUDIO_TIMELINE_CROP_OUTSIDE_SOURCE")
 
 
+def _overlay_video(filters, video, label, clip, finish, output):
+    placement = _seconds(clip["start_ms"])
+    filters.append(f"[{video}][{label}]overlay=x={clip['x']}:y={clip['y']}:eof_action=pass:repeatlast=0:"
+                   f"enable='gte(t,{placement})*lt(t,{_seconds(finish)})'[{output}]")
+    return output
+
+
+def _dissolve_track(filters, video, visuals):
+    """Compile bounded adjacent groups using real two-input linear xfade.
+
+    Premultiplication keeps transparent letterboxing correct while blending;
+    the common author opacity is applied once after unpremultiplication. All
+    source crops, source speed and geometry are compiled before this step.
+    """
+    labels = {clip["id"]: (clip, label, index) for clip, label, index in visuals}
+    position = 0
+    while position < len(visuals):
+        first, label, source_index = visuals[position]
+        last = first
+        if first.get("transition_out"):
+            while last.get("transition_out"):
+                transition = last["transition_out"]
+                right, right_label, right_index = labels[transition["to_clip_id"]]
+                merged = f"vxf{right_index}"
+                offset = right["start_ms"] - first["start_ms"]
+                filters.append(f"[{label}][{right_label}]xfade=transition=fade:"
+                    f"duration={_seconds(transition['duration_ms'])}:offset={_seconds(offset)}[{merged}]")
+                label, last = merged, right
+                position += 1
+            finished = f"vxd{source_index}"
+            span = last["start_ms"] + clip_duration_ms(last) - first["start_ms"]
+            filters.append(f"[{label}]trim=duration={_seconds(span)},unpremultiply=inplace=1,"
+                f"format=rgba,colorchannelmixer=aa={first['opacity']:.8f},"
+                f"setpts=PTS+{_seconds(first['start_ms'])}/TB[{finished}]")
+            label = finished
+        video = _overlay_video(filters, video, label, first,
+            last["start_ms"] + clip_duration_ms(last), f"vo{source_index}")
+        position += 1
+    return video
+
+
 def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_profile=None):
     """Decode exact server bytes and return an actually validated local export.
 
@@ -302,7 +343,20 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
         filters = ["[0:v]setpts=PTS-STARTPTS[vbase]",
                    f"anullsrc=r=48000:cl=stereo,atrim=duration={duration}[abase]"]
         video, audio, index = "vbase", ["abase"], 1
+        transition_proof = []
         for track in timeline["tracks"]:
+            transitions = {clip["id"]: clip["transition_out"] for clip in track["clips"] if "transition_out" in clip}
+            incoming = {item["to_clip_id"]: item["duration_ms"] for item in transitions.values()}
+            participants = set(transitions) | set(incoming)
+            visuals = []
+            if not track["muted"]:
+                for clip in track["clips"]:
+                    if clip["id"] in transitions:
+                        item = transitions[clip["id"]]
+                        transition_proof.append({"track_id": track["id"], "from_clip_id": clip["id"],
+                            "to_clip_id": item["to_clip_id"], "kind": "CROSS_DISSOLVE", "duration_ms": item["duration_ms"],
+                            "start_ms": clip["start_ms"] + clip_duration_ms(clip) - item["duration_ms"],
+                            "end_ms": clip["start_ms"] + clip_duration_ms(clip)})
             for clip in track["clips"]:
                 if track["muted"] or clip.get("muted", False):
                     continue
@@ -325,21 +379,32 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
                             visual += f"crop={crop['width']}:{crop['height']}:{crop['x']}:{crop['y']}:exact=1,"
                         visual += (f"scale={clip['width']}:{clip['height']}:force_original_aspect_ratio=decrease,"
                             f"format=rgba,pad={clip['width']}:{clip['height']}:(ow-iw)/2:(oh-ih)/2:color=black@0,setsar=1,fps={timeline['fps']},")
-                        # Geometry, opacity and fades are numbers from the closed DTO.
-                        visual += f"colorchannelmixer=aa={clip['opacity']:.8f}"
-                        if clip["fade_in_ms"]:
-                            visual += f",fade=t=in:st=0:d={_seconds(clip['fade_in_ms'])}:alpha=1"
-                        if clip["fade_out_ms"]:
-                            visual += f",fade=t=out:st={_seconds(clip_duration_ms(clip)-clip['fade_out_ms'])}:d={_seconds(clip['fade_out_ms'])}:alpha=1"
-                        filters.append(visual + f",setpts=PTS+{placement}/TB[{label}]")
+                        if clip["id"] in participants:
+                            # Both inputs have the exact same planar alpha
+                            # format, CFR and timebase required by xfade. One
+                            # frame of bounded tail padding covers decode edge
+                            # rounding; it never extends the authored interval.
+                            visual += (f"settb=AVTB,setpts=PTS-STARTPTS,format=gbrap,premultiply=inplace=1,"
+                                f"tpad=stop_mode=clone:stop_duration={_seconds(math.ceil(1000 / timeline['fps']))},"
+                                f"trim=duration={_seconds(clip_duration_ms(clip))}")
+                            filters.append(visual + f"[{label}]")
+                        else:
+                            # Geometry, opacity and fades are numbers from the closed DTO.
+                            visual += f"colorchannelmixer=aa={clip['opacity']:.8f}"
+                            if clip["fade_in_ms"]:
+                                visual += f",fade=t=in:st=0:d={_seconds(clip['fade_in_ms'])}:alpha=1"
+                            if clip["fade_out_ms"]:
+                                visual += f",fade=t=out:st={_seconds(clip_duration_ms(clip)-clip['fade_out_ms'])}:d={_seconds(clip['fade_out_ms'])}:alpha=1"
+                            filters.append(visual + f",setpts=PTS+{placement}/TB[{label}]")
                     else:
                         filters.append(f"[{index}:v:0]trim=start={start}:end={end},setpts=PTS-STARTPTS+{placement}/TB,"
                                        f"scale={clip['width']}:{clip['height']}:force_original_aspect_ratio=decrease,"
                                        f"pad={clip['width']}:{clip['height']}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={timeline['fps']}[{label}]")
-                    finish = _seconds(clip["start_ms"] + clip_duration_ms(clip))
-                    filters.append(f"[{video}][{label}]overlay=x={clip['x']}:y={clip['y']}:eof_action=pass:repeatlast=0:"
-                                   f"enable='gte(t,{placement})*lt(t,{finish})'[{output}]")
-                    video = output
+                    if transitions:
+                        visuals.append((clip, label, index))
+                    else:
+                        video = _overlay_video(filters, video, label, clip,
+                            clip["start_ms"] + clip_duration_ms(clip), output)
                 if track["kind"] == "AUDIO" or clip.get("include_audio", False):
                     label = f"ac{index}"
                     mix = (f"[{index}:a:0]atrim=start={start}:end={end},asetpts=PTS-STARTPTS,aresample=48000,"
@@ -357,11 +422,21 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
                             mix += f",afade=t=in:st=0:d={_seconds(clip['fade_in_ms'])}"
                         if clip["fade_out_ms"]:
                             mix += f",afade=t=out:st={_seconds(clip_duration_ms(clip)-clip['fade_out_ms'])}:d={_seconds(clip['fade_out_ms'])}"
+                        # Video source audio follows the exact visual overlap.
+                        # Missing/unselected audio means silence on that side;
+                        # independent AUDIO tracks retain their own envelopes.
+                        if clip["id"] in incoming:
+                            mix += f",afade=t=in:st=0:d={_seconds(incoming[clip['id']])}:curve=tri"
+                        if clip["id"] in transitions:
+                            window = transitions[clip["id"]]["duration_ms"]
+                            mix += f",afade=t=out:st={_seconds(clip_duration_ms(clip)-window)}:d={_seconds(window)}:curve=tri"
                     else:
                         mix += f",volume={track['gain_db']:.4f}dB"
                     filters.append(mix + f",adelay=delays={clip['start_ms']}|{clip['start_ms']}[{label}]")
                     audio.append(label)
                 index += 1
+            if transitions and not track["muted"]:
+                video = _dissolve_track(filters, video, visuals)
         if timeline["captions"]:
             captions = directory / "captions.srt"
             captions.write_text("\n\n".join(f"{number}\n{_cue_time(cue['start_ms'])} --> {_cue_time(cue['end_ms'])}\n{cue['text']}"
@@ -390,6 +465,10 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
         sources_current()
         measured.update(**output_proof, audio_policy="STEREO_48000_MIX",
                         render_profile="STUDIO_MULTITRACK_LOCAL_FFMPEG", model_called=False, byte_count=len(data))
+        if transition_proof:
+            measured.update(video_transition_policy="PREMULTIPLIED_ALPHA_LINEAR_CROSS_DISSOLVE",
+                video_audio_transition_policy="LINEAR_SELECTED_VIDEO_AUDIO_SILENCE_FOR_UNSELECTED",
+                transition_windows=transition_proof)
         if export_profile is not None:
             measured.update(export_profile=copy.deepcopy(compiled["profile"]),
                             render_profile="STUDIO_MULTITRACK_LOCAL_FFMPEG_" + compiled["profile"]["preset"])

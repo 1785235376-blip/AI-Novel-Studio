@@ -125,10 +125,10 @@ def render_captions(row, format):
 class SubtitleTimelineService(SubtitleProcessingMixin, DomainService):
     COLLECTION = "subtitle_timeline_v2"
 
-    def __init__(self, store, novels, chapters, audiobook, assets, processing_adapters=()):
+    def __init__(self, store, novels, chapters, audiobook, assets, processing_adapters=(), processing_adapter_resolver=None):
         super().__init__(store, novels, chapters)
         self.audiobook, self.assets = audiobook, assets
-        self._initialize_processing(processing_adapters)
+        self._initialize_processing(processing_adapters, processing_adapter_resolver)
 
     def media(self, nid, scope, aid, waveform=False):
         asset = self.assets.get(aid, branch_id=scope.get("branch_id"))
@@ -215,7 +215,10 @@ class SubtitleTimelineService(SubtitleProcessingMixin, DomainService):
                 assets.append({k: a.get(k) for k in ("id", "filename", "kind", "version")})
         burn_in = any(self._processing_ready(adapter, "BURN_IN") and adapter.definition.verification == "CONTRACT_VERIFIED"
             for adapter in self._processing_adapters.values())
-        return {"assets": assets, "plans": self.audiobook.catalog(nid, scope, actor)["plans"], "alignment": "NOT_CONFIGURED",
+        alignment = any(self._processing_ready(adapter, "FORCED_ALIGNMENT") and adapter.definition.verification == "CONTRACT_VERIFIED"
+            for adapter in self._processing_adapters.values())
+        return {"assets": assets, "plans": self.audiobook.catalog(nid, scope, actor)["plans"],
+            "alignment": "CONFIGURED_NOT_VERIFIED" if alignment else "NOT_CONFIGURED",
             "burn_in": "CONFIGURED_NOT_VERIFIED" if burn_in else "NOT_CONFIGURED"}
 
     def records(self, nid, scope, actor):

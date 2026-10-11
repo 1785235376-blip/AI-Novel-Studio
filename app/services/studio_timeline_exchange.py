@@ -192,7 +192,12 @@ def _studio_v2(value):
 
 
 def _native_tracks(timeline, report):
-    """Represent audio overlaps with parallel lanes, retaining exact placement."""
+    """Represent bounded overlaps with parallel lanes, retaining placement.
+
+    A native lane projection does not reproduce Studio's two-source dissolve;
+    that exact relationship stays in the existing Studio extension and loss
+    receipt. Only unchanged native projections can restore the extension.
+    """
     from ..experimental.timeline_exchange import time_value, rational
     result = []
     rate = timeline["fps"]
@@ -220,7 +225,7 @@ def _native_tracks(timeline, report):
             lane["items"].append(item)
             lane["end"] = clip["start_ms"] + length
         if len(lanes) > 1:
-            _loss(report, f"tracks[{ti}]", "AUDIO_OVERLAP_EXPORTED_AS_PARALLEL_LANES", "WARNING")
+            _loss(report, f"tracks[{ti}]", track["kind"] + "_OVERLAP_EXPORTED_AS_PARALLEL_LANES", "WARNING")
         for li, lane in enumerate(lanes):
             if lane["end"] < timeline["duration_ms"]:
                 lane["items"].append({"kind": "Gap", "name": "Tail", "start": at(0),
@@ -254,6 +259,8 @@ def studio_timeline_to_exchange(timeline, *, title):
             if clip["muted"] or clip["gain_db"] != 0 or clip["fade_in_ms"] or clip["fade_out_ms"]:
                 _loss(report, ip, "CLIP_MIX_FADES_REQUIRE_STUDIO_METADATA")
             if track["kind"] == "VIDEO":
+                if "transition_out" in clip:
+                    _loss(report, ip + ".transition_out", "VIDEO_CROSS_DISSOLVE_NOT_NATIVE_NLE_PRESERVED_IN_STUDIO_METADATA")
                 if "crop" in clip:
                     _loss(report, ip, "CLIP_PIXEL_CROP_REQUIRES_STUDIO_METADATA")
                 if (clip["x"], clip["y"], clip["width"], clip["height"], clip["opacity"]) != (

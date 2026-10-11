@@ -100,8 +100,11 @@ class SubtitleProcessingMixin:
     """Task and review state is stored atomically alongside the caption owner."""
     PROCESSING = 'subtitle_processing_tasks'
 
-    def _initialize_processing(self, adapters):
+    def _initialize_processing(self, adapters, resolver=None):
         self._processing_boot = uuid4().hex
+        if resolver is not None and not callable(resolver):
+            raise ValueError('PROCESSING_ORIGINAL_MODEL_RESOLVER_REQUIRED')
+        self._processing_adapter_resolver = resolver
         self._processing_adapters = {}
         for adapter in adapters:
             definition = adapter.definition
@@ -116,20 +119,49 @@ class SubtitleProcessingMixin:
                 raise ValueError('PROCESSING_TRUSTED_LOCAL_ADAPTER_REQUIRED')
             self._processing_adapters[definition.adapter_id] = adapter
 
+    def _processing_registry(self):
+        """Resolve only the current original AUDIO model after Host startup.
+
+        The model owner may revoke admission at any point. Old tasks retain
+        their exact adapter identity and route; resolving does not rebind them.
+        No HTTP adapter install, new registry or automatic process launch.
+        """
+        registry = dict(self._processing_adapters)
+        if self._processing_adapter_resolver is not None:
+            from .subtitle_asr import ModelRuntimeSubtitleAdapter
+            for adapter in self._processing_adapter_resolver():
+                if (not isinstance(adapter, ModelRuntimeSubtitleAdapter)
+                        or not isinstance(adapter.definition, ProcessingDefinition)
+                        or adapter.definition.operations != ('ASR',)
+                        or adapter.definition.local is not True
+                        or adapter.definition.verification != 'CONTRACT_VERIFIED'
+                        or adapter.definition.model_verification != 'NOT_RUN'
+                        or adapter.definition.adapter_id in registry
+                        or not adapter.model_runtime_admitted()):
+                    raise ValueError('PROCESSING_ORIGINAL_MODEL_RESOLVER_INVALID')
+                registry[adapter.definition.adapter_id] = adapter
+        return registry
+
     @staticmethod
     def _processing_flags():
         for flag in FLAGS: require_flag(flag)
 
     @staticmethod
     def _processing_ready(adapter, operation):
-        # Real ASR uses the additive AUDIO node of the original durable model
-        # registries. Alignment remains blocked until its original runtime owns
-        # a real engine; ASR segment timestamps are not forced alignment.
         from .subtitle_asr import ModelRuntimeSubtitleAdapter
+        from .subtitle_alignment import MfaSubtitleAlignmentAdapter
         return bool(adapter and operation in adapter.definition.operations and
                     (adapter.definition.verification == 'MOCK_ONLY' or operation == 'BURN_IN'
                      or operation == 'ASR' and isinstance(adapter, ModelRuntimeSubtitleAdapter)
-                     and adapter.model_runtime_admitted()))
+                     and adapter.model_runtime_admitted()
+                     or operation == 'FORCED_ALIGNMENT' and isinstance(adapter, MfaSubtitleAlignmentAdapter)
+                     and adapter.alignment_runtime_admitted()))
+
+    @staticmethod
+    def _processing_uses_model(row, adapter):
+        from .subtitle_alignment import MfaSubtitleAlignmentAdapter
+        return row.get('model_binding') is not None or (row['operation'] == 'FORCED_ALIGNMENT'
+            and isinstance(adapter, MfaSubtitleAlignmentAdapter))
 
     @staticmethod
     def _processing_model_binding(adapter):
@@ -138,13 +170,14 @@ class SubtitleProcessingMixin:
 
     def processing_catalog(self):
         self._processing_flags()
-        configured = [asdict(a.definition) for a in self._processing_adapters.values()]
+        adapters = self._processing_registry()
+        configured = [asdict(a.definition) for a in adapters.values()]
         return {'schema': 'ai-novel-subtitle-processing/1', 'owner': 'subtitle_timeline_v2',
-            'operations': [{'operation': operation, 'status': ('CONTRACT_VERIFIED' if any(self._processing_ready(a, operation) and a.definition.verification == 'CONTRACT_VERIFIED' for a in self._processing_adapters.values()) else 'MOCK_ONLY') if any(self._processing_ready(a, operation) for a in self._processing_adapters.values()) else 'NOT_CONFIGURED',
+            'operations': [{'operation': operation, 'status': ('CONTRACT_VERIFIED' if any(self._processing_ready(a, operation) and a.definition.verification == 'CONTRACT_VERIFIED' for a in adapters.values()) else 'MOCK_ONLY') if any(self._processing_ready(a, operation) for a in adapters.values()) else 'NOT_CONFIGURED',
                             'runtime_verification': 'NOT_RUN'} for operation in OPERATIONS],
             'adapters': configured, 'input_schema': ProcessingCreateIn.model_json_schema(),
             'model_runtime_admission': 'ORIGINAL_AUDIO_MODEL_NODE_EXPLICIT_REGISTERED_LOCAL_ROUTE_REQUIRED',
-            'model_runtime_admission_state': 'EXPLICIT_REGISTERED_LOCAL_ROUTE' if any(self._processing_ready(a, 'ASR') and a.definition.verification == 'CONTRACT_VERIFIED' for a in self._processing_adapters.values()) else 'NOT_CONFIGURED',
+            'model_runtime_admission_state': 'EXPLICIT_REGISTERED_LOCAL_ROUTE' if any(self._processing_ready(a, 'ASR') and a.definition.verification == 'CONTRACT_VERIFIED' for a in adapters.values()) else 'NOT_CONFIGURED',
             'synthetic_execution': 'TRUSTED_HOST_FIXTURES_ONLY_NOT_A_MODEL_RUNTIME',
             'third_party_execution': 'DENY_ALL', 'privacy': 'LOCAL_ONLY',
             'max_media_bytes': MAX_MEDIA_BYTES, 'max_scope_render_bytes': MAX_SCOPE_RENDER_BYTES,
@@ -238,7 +271,7 @@ class SubtitleProcessingMixin:
             asset, _ = self.media(nid, scope, caption['asset_id'])
             if data.operation == 'BURN_IN' and (asset['kind'] != 'video' or not caption['cues']):
                 raise ValueError('PROCESSING_VIDEO_AND_CAPTIONS_REQUIRED')
-            adapter = self._processing_adapters.get(data.adapter_id)
+            adapter = self._processing_registry().get(data.adapter_id)
             if adapter and data.operation not in adapter.definition.operations:
                 raise ValueError('PROCESSING_OPERATION_UNSUPPORTED')
             row = new_row(nid, scope, actor, {'caption_id': caption['id'], 'caption_version': caption['version'],
@@ -308,7 +341,11 @@ class SubtitleProcessingMixin:
             raise ProcessingResultError('PROCESSING_ALIGNMENT_TRANSCRIPT_CHANGED')
         if sum(len(c['text']) for c in cues) > 100000: raise ProcessingResultError('PROCESSING_RESULT_TOO_LARGE')
         receipt = output.receipt
-        if receipt is not None:
+        if row['operation'] == 'FORCED_ALIGNMENT' and row['verification'] == 'CONTRACT_VERIFIED':
+            from .subtitle_alignment import validate_alignment_receipt
+            try: validate_alignment_receipt(caption, row, cues, receipt)
+            except ValueError: raise ProcessingResultError('PROCESSING_ALIGNMENT_RECEIPT_INVALID') from None
+        elif receipt is not None:
             binding = row.get('model_binding')
             fields = {'schema', 'adapter', 'operation', 'provider_id', 'model_id', 'route_digest', 'source_digest',
                 'input_sha256', 'decoded_audio_sha256', 'provider_response_sha256', 'parameters', 'elapsed_ms',
@@ -317,10 +354,11 @@ class SubtitleProcessingMixin:
                 'cues_digest', 'timebase', 'caption_version', 'media_snapshot'}
             if (not isinstance(receipt, dict) or set(receipt) != fields or not isinstance(binding, dict)
                     or row['operation'] != 'ASR' or row['verification'] != 'CONTRACT_VERIFIED'
-                    or receipt.get('schema') != 'subtitle-model-execution/1' or receipt.get('adapter') != 'WHISPER_CPP_SERVER'
+                    or receipt.get('schema') != 'subtitle-model-execution/1'
+                    or receipt.get('adapter') != ('STUDIO_FIXED_WHISPER_HOST' if binding['route']['adapter_version'].startswith('studio-fixed-whisper-host/1:') else 'WHISPER_CPP_SERVER')
                     or receipt.get('operation') != 'ASR' or receipt.get('model_called') is not True or receipt.get('local') is not True
                     or receipt.get('timing_origin') != 'MODEL_SEGMENT_TIMESTAMPS' or receipt.get('quality_verification') != 'NOT_RUN'
-                    or receipt.get('model_identity_verification') != 'HOST_ADMISSION_REQUIRED_NO_WIRE_MODEL_ATTESTATION'
+                    or receipt.get('model_identity_verification') != ('OWNED_PRIVATE_PIPE_MODEL_LOAD' if binding['route']['adapter_version'].startswith('studio-fixed-whisper-host/1:') else 'HOST_ADMISSION_REQUIRED_NO_WIRE_MODEL_ATTESTATION')
                     or receipt.get('source_digest') != digest([caption['version'], caption['asset_snapshot']])
                     or receipt.get('input_sha256') != caption['asset_snapshot']['digest']
                     or receipt.get('cues_digest') != digest(cues) or receipt.get('timebase') != caption['timebase']
@@ -342,7 +380,7 @@ class SubtitleProcessingMixin:
         elif row['verification'] == 'CONTRACT_VERIFIED' and row['operation'] == 'ASR':
             raise ProcessingResultError('PROCESSING_MODEL_RECEIPT_REQUIRED')
         return {'cues': cues, 'warnings': warnings,
-            'timing_origin': 'SYNTHETIC_FIXTURE' if row['verification'] == 'MOCK_ONLY' else 'MODEL_SEGMENT_TIMESTAMPS' if receipt is not None else 'ADAPTER_CUE_ALIGNMENT',
+            'timing_origin': 'SYNTHETIC_FIXTURE' if row['verification'] == 'MOCK_ONLY' else 'MFA_WORD_INTERVALS' if row['operation'] == 'FORCED_ALIGNMENT' and receipt is not None else 'MODEL_SEGMENT_TIMESTAMPS' if receipt is not None else 'ADAPTER_CUE_ALIGNMENT',
             'alignment_quality': 'NOT_RUN', **({'execution_receipt': copy.deepcopy(receipt)} if receipt is not None else {})}
 
     def execute_processing(self, nid, scope, actor, rid, value, reauthorize=lambda: None):
@@ -351,10 +389,10 @@ class SubtitleProcessingMixin:
             row = self._processing_owned(nid, scope, actor, rid, doc); check_version(row, data.expected_version)
             caption = self._processing_current(nid, scope, actor, row)
             if row['status'] != 'QUEUED': raise ValueError('PROCESSING_QUEUED_REQUIRED')
-            adapter = self._processing_adapters.get(row['adapter_id'])
+            adapter = self._processing_registry().get(row['adapter_id'])
             if not self._processing_ready(adapter, row['operation']) or digest(asdict(adapter.definition)) != row['adapter_identity']:
                 raise ValueError('PROCESSING_ADAPTER_NOT_CONFIGURED_OR_CHANGED')
-            if row.get('model_binding') is not None:
+            if self._processing_uses_model(row, adapter):
                 from ..creative.ai_execution import require_execution
                 require_execution()
             content = self.assets.content(caption['asset_id'], branch_id=scope.get('branch_id'))
@@ -367,15 +405,15 @@ class SubtitleProcessingMixin:
             running = copy.deepcopy(row); reauthorize()
         def guard():
             reauthorize(); current = self._processing_owned(nid, scope, actor, rid)
-            if current.get('model_binding') is not None:
+            if self._processing_uses_model(current, adapter):
                 from ..creative.ai_execution import require_execution
                 require_execution()
             if current['status'] != 'RUNNING' or current.get('claim') != claim:
                 raise ProcessingFenceError('PROCESSING_CANCELLED_OR_CLAIM_CHANGED')
             self._processing_current(nid, scope, actor, current, measured=False)
-            if self._processing_adapters.get(current['adapter_id']) is not adapter or digest(asdict(adapter.definition)) != current['adapter_identity']:
+            if self._processing_registry().get(current['adapter_id']) is not adapter or digest(asdict(adapter.definition)) != current['adapter_identity']:
                 raise ProcessingFenceError('PROCESSING_ADAPTER_CHANGED')
-            if current.get('model_binding') is not None:
+            if self._processing_uses_model(current, adapter):
                 require_execution()
         try:
             guard()
@@ -432,7 +470,7 @@ class SubtitleProcessingMixin:
                     raise ValueError('PROCESSING_RESUME_INVALID_STATE')
                 self._processing_current(nid, scope, actor, row)
                 if row['attempt'] >= MAX_ATTEMPTS: raise ValueError('PROCESSING_ATTEMPT_LIMIT')
-                adapter = self._processing_adapters.get(row['adapter_id'])
+                adapter = self._processing_registry().get(row['adapter_id'])
                 if not self._processing_ready(adapter, row['operation']):
                     raise ValueError('PROCESSING_ADAPTER_NOT_CONFIGURED')
                 self._processing_change(row, actor, row['version'], lambda r: r.update(status='QUEUED', adapter_identity=digest(asdict(adapter.definition)),

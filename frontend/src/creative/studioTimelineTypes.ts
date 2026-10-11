@@ -2,10 +2,11 @@ import { ApiError } from '../api';
 import type { StudioAsset } from './studioClient';
 
 export type StudioTimelineSource = { id: string; kind: 'ASSET'; asset_kind: 'image' | 'video' | 'audio'; version: number; digest: string };
+export type StudioTimelineTransition = { kind: 'CROSS_DISSOLVE'; to_clip_id: string; duration_ms: number };
 export type StudioTimelineClip = { id: string; source_snapshot: StudioTimelineSource; start_ms: number; in_ms: number; out_ms: number;
   x?: number; y?: number; width?: number; height?: number; speed_num?: number; speed_den?: number; opacity?: number;
   muted?: boolean; gain_db?: number; fade_in_ms?: number; fade_out_ms?: number; include_audio?: boolean;
-  crop?: { x: number; y: number; width: number; height: number } };
+  crop?: { x: number; y: number; width: number; height: number }; transition_out?: StudioTimelineTransition };
 export type StudioTimelineTrack = { id: string; kind: 'VIDEO' | 'AUDIO'; order: number; muted: boolean; gain_db: number;
   role?: 'PRIMARY' | 'OVERLAY' | 'DIALOGUE' | 'MUSIC' | 'EFFECTS'; locked?: boolean; clips: StudioTimelineClip[] };
 export type StudioTimelineCaption = { start_ms: number; end_ms: number; text: string };
@@ -74,7 +75,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
     if (!Array.isArray(track.clips) || !track.clips.length || track.clips.length > TIMELINE_LIMITS.clips) throw new Error('每条轨道需要至少一个片段。');
     const clips = track.clips.map(rawClip => {
       const clip = object(rawClip, ['id', 'source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'x', 'y', 'width', 'height',
-        ...(extended ? ['speed_num', 'speed_den', 'opacity', 'muted', 'gain_db', 'fade_in_ms', 'fade_out_ms', 'include_audio', 'crop'] : [])]);
+        ...(extended ? ['speed_num', 'speed_den', 'opacity', 'muted', 'gain_db', 'fade_in_ms', 'fade_out_ms', 'include_audio', 'crop', 'transition_out'] : [])]);
       const cid = id(clip.id), source = object(clip.source_snapshot, ['id', 'kind', 'asset_kind', 'version', 'digest']);
       if (clipIds.has(cid) || ++clipsCount > TIMELINE_LIMITS.clips) throw new Error('片段标识重复或超过三十个片段。');
       clipIds.add(cid);
@@ -108,11 +109,33 @@ export function checkedTimeline(value: unknown): StudioTimeline {
             output.crop = { x: integer(crop.x, 0, 32767), y: integer(crop.y, 0, 32767),
               width: integer(crop.width, 1, 32768), height: integer(crop.height, 1, 32768) };
           }
+          if ('transition_out' in clip) {
+            const transition = object(clip.transition_out, ['kind', 'to_clip_id', 'duration_ms']);
+            if (transition.kind !== 'CROSS_DISSOLVE') throw new Error('当前仅支持明确的交叉溶解转场。');
+            output.transition_out = { kind: 'CROSS_DISSOLVE', to_clip_id: id(transition.to_clip_id),
+              duration_ms: integer(transition.duration_ms, Math.ceil(2000 / fps), 10000) };
+          }
         }
-      } else if (['x', 'y', 'width', 'height', 'opacity', 'include_audio', 'crop'].some(key => key in clip)) throw new Error('音频片段没有画面位置、尺寸、透明度、像素裁剪或视频原声设置。');
+      } else if (['x', 'y', 'width', 'height', 'opacity', 'include_audio', 'crop', 'transition_out'].some(key => key in clip)) throw new Error('音频片段没有画面位置、尺寸、透明度、像素裁剪、转场或视频原声设置。');
       return output;
     }).sort((left, right) => left.start_ms - right.start_ms || compareText(left.id, right.id));
-    if (kind === 'VIDEO' && clips.some((clip, index) => index > 0 && clips[index - 1].start_ms + timelineClipDuration(clips[index - 1]) > clip.start_ms)) throw new Error('同一视频轨道的片段不能重叠；跨轨道可以叠放。');
+    if (kind === 'VIDEO') {
+      let incoming = 0;
+      clips.forEach((left, index) => {
+        const right = clips[index + 1], transition = left.transition_out, length = timelineClipDuration(left);
+        const overlap = right ? left.start_ms + length - right.start_ms : 0;
+        if (!transition) {
+          if (overlap > 0) throw new Error('同轨重叠必须明确指定与紧邻后片段的交叉溶解。');
+          incoming = 0; return;
+        }
+        const window = transition.duration_ms;
+        if (!right || transition.to_clip_id !== right.id || overlap !== window || window >= length
+          || window >= timelineClipDuration(right) || incoming + window > length) throw new Error('转场须精确覆盖相邻片段的重叠区，且各窗口不能相交或占满片段。');
+        if (left.x !== right.x || left.y !== right.y || left.width !== right.width || left.height !== right.height || left.opacity !== right.opacity
+          || left.muted || right.muted || left.fade_in_ms || left.fade_out_ms || right.fade_in_ms || right.fade_out_ms) throw new Error('转场片段须使用相同位置、尺寸和透明度，保持可见并清除独立淡入淡出。');
+        incoming = window;
+      });
+    }
     return { id: tid, kind, order, muted, gain_db: gain, clips, ...(extended ? { role } : {}),
       ...('locked' in track ? { locked: flag(track.locked) } : {}) } as StudioTimelineTrack;
   }).sort((left, right) => left.order - right.order);

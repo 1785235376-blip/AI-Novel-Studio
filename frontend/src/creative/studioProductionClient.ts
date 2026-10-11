@@ -3,6 +3,7 @@ import { studioTransport } from './studioClient';
 import { checkedTimeline, checkedTimelineRow, type StudioTimeline, type StudioTimelineRow } from './studioTimelineTypes';
 import { checkedTimelineTransferInput, checkedTimelineTransferPreview, timelineTransferInputDigest, type TimelineTransferInput, type TimelineTransferPreview } from './studioTimelineTransferTypes';
 import { checkedTimelineExportPreview, checkedTimelineExportProfile, type TimelineExportProfile } from './studioTimelineExportTypes';
+import { checkedTimelinePlayback, type TimelinePlayback } from './studioTimelinePlaybackTypes';
 
 export type ProductionOwner = 'image' | 'audio' | 'video' | 'timeline';
 export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm7.video.t2v' | 'm7.video.i2v' | 'm7.video.v2v' | 'm8.audio.speech' | 'm8.audio.music' | 'm8.audio.effects' | 'm8.audio.trim';
@@ -211,6 +212,36 @@ export function studioProductionClient(projectId: string, context: Collaboration
     async timelineRender(id: string, body: { expected_version: number; reviewed_timeline_digest: string; request_id: string }) {
       return job(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(id)}/render`, 'POST', body, undefined, body.request_id));
     },
+    async timelinePlaybackPreview(source: StudioTimelineRow, signal?: AbortSignal): Promise<TimelinePlayback> {
+      const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/playback-preview`, 'POST', {
+        expected_version: source.version, reviewed_timeline_digest: source.timeline_digest }, signal);
+      return checkedTimelinePlayback(raw, source, job, { novelId: projectId, branchId: branch });
+    },
+    async timelinePlaybackBuild(source: StudioTimelineRow, preview: TimelinePlayback): Promise<TimelinePlayback> {
+      const checked = checkedTimelinePlayback(preview, source, job, { novelId: projectId, branchId: branch });
+      const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/playback-build`, 'POST', {
+        expected_version: source.version, reviewed_timeline_digest: source.timeline_digest,
+        reviewed_playback_digest: checked.playback_digest }, undefined, checked.request_id);
+      const result = checkedTimelinePlayback(raw, source, job, { novelId: projectId, branchId: branch });
+      if (result.cache_key !== checked.cache_key || result.playback_digest !== checked.playback_digest || !result.job) invalid();
+      return result;
+    },
+    async timelinePlaybackAttestation(source: StudioTimelineRow, preview: TimelinePlayback) {
+      const checked = checkedTimelinePlayback(preview, source, job, { novelId: projectId, branchId: branch }), expected = checked.job;
+      if (!expected?.output_candidate || !['SUCCEEDED', 'AWAITING_REVIEW', 'APPROVED'].includes(expected.status)) invalid();
+      const proof = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/playback-attestation`, 'POST', {
+        expected_version: source.version, reviewed_timeline_digest: source.timeline_digest, reviewed_playback_digest: checked.playback_digest,
+        expected_job_version: expected.version, expected_request_digest: expected.request_digest });
+      if (!record(proof) || Object.keys(proof).some(key => !['contract', 'cache_key', 'playback_digest', 'job_id', 'job_version', 'request_digest',
+        'asset_version', 'sha256', 'byte_count', 'media_type', 'product_acceptance'].includes(key))
+        || proof.contract !== 'studio-timeline-playback-attestation/1' || proof.cache_key !== checked.cache_key || proof.playback_digest !== checked.playback_digest
+        || proof.job_id !== expected.id || proof.job_version !== expected.version || proof.request_digest !== expected.request_digest
+        || proof.asset_version !== (expected.status === 'APPROVED' ? expected.approved_asset_version : expected.output_candidate.version)
+        || proof.sha256 !== expected.output_candidate.digest || proof.byte_count !== expected.media_measurement?.byte_count
+        || typeof proof.byte_count !== 'number' || !Number.isSafeInteger(proof.byte_count) || proof.byte_count < 1 || proof.byte_count > 25 * 1024 * 1024
+        || proof.media_type !== 'video/mp4' || proof.product_acceptance !== 'LOCAL_REQUIRED') invalid();
+      return { sha256: proof.sha256 as string, byte_count: proof.byte_count, asset_version: proof.asset_version as number };
+    },
     async timelineExportPreview(source: StudioTimelineRow, profile: TimelineExportProfile) {
       const normalized = checkedTimelineExportProfile(profile);
       const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/export-preview`, 'POST', {
@@ -264,7 +295,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
   };
 }
 type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
-type TimelineExportMethods = 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock';
+type TimelineExportMethods = 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
 export type StudioProductionClient = Omit<CompleteProductionClient, TimelineExportMethods> & Partial<Pick<CompleteProductionClient, TimelineExportMethods>>;

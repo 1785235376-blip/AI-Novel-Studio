@@ -57,7 +57,7 @@ def normalize_timeline_v2(value):
         clips = []
         for raw_clip in track["clips"]:
             clip = _object(raw_clip, ("id", "source_snapshot", "start_ms", "in_ms", "out_ms", "x", "y", "width", "height",
-                "speed_num", "speed_den", "opacity", "gain_db", "muted", "fade_in_ms", "fade_out_ms", "include_audio", "crop"),
+                "speed_num", "speed_den", "opacity", "gain_db", "muted", "fade_in_ms", "fade_out_ms", "include_audio", "crop", "transition_out"),
                 ("id", "source_snapshot", "start_ms", "in_ms", "out_ms"))
             cid = _identity(clip["id"])
             if cid in clip_ids:
@@ -111,13 +111,41 @@ def normalize_timeline_v2(value):
                     # proved by the renderer; author values are never filters.
                     item["crop"] = {"x": _integer(crop["x"], 0, 32767), "y": _integer(crop["y"], 0, 32767),
                         "width": _integer(crop["width"], 1, 32768), "height": _integer(crop["height"], 1, 32768)}
-            elif any(key in clip for key in ("x", "y", "width", "height", "opacity", "include_audio", "crop")):
+                if "transition_out" in clip:
+                    transition = _object(clip["transition_out"], ("kind", "to_clip_id", "duration_ms"),
+                                         ("kind", "to_clip_id", "duration_ms"))
+                    if transition["kind"] != "CROSS_DISSOLVE":
+                        raise ValueError("STUDIO_TIMELINE_TRANSITION_KIND_INVALID")
+                    item["transition_out"] = {"kind": "CROSS_DISSOLVE", "to_clip_id": _identity(transition["to_clip_id"]),
+                        "duration_ms": _integer(transition["duration_ms"], math.ceil(2000 / fps), 10_000)}
+            elif any(key in clip for key in ("x", "y", "width", "height", "opacity", "include_audio", "crop", "transition_out")):
                 raise ValueError("STUDIO_TIMELINE_VIDEO_GEOMETRY_REQUIRES_VIDEO")
             clips.append(item)
         clips.sort(key=lambda item: (item["start_ms"], item["id"]))
-        if kind == "VIDEO" and any(left["start_ms"] + clip_duration_ms(left) > right["start_ms"]
-                                    for left, right in zip(clips, clips[1:])):
-            raise ValueError("STUDIO_TIMELINE_SAME_VIDEO_TRACK_OVERLAP")
+        if kind == "VIDEO":
+            incoming = 0
+            for index, left in enumerate(clips):
+                transition = left.get("transition_out")
+                right = clips[index + 1] if index + 1 < len(clips) else None
+                length = clip_duration_ms(left)
+                overlap = left["start_ms"] + length - right["start_ms"] if right else 0
+                if transition is None:
+                    if overlap > 0:
+                        raise ValueError("STUDIO_TIMELINE_SAME_VIDEO_TRACK_OVERLAP")
+                    incoming = 0
+                    continue
+                window = transition["duration_ms"]
+                if (right is None or transition["to_clip_id"] != right["id"] or overlap != window
+                        or window >= length or window >= clip_duration_ms(right) or incoming + window > length):
+                    raise ValueError("STUDIO_TIMELINE_TRANSITION_WINDOW_INVALID")
+                # A transition blends two pictures in one exact rectangle.
+                # Keep lower tracks visible through the common opacity. Muting
+                # one side or combining per-clip fades would change its meaning.
+                if (any(left[key] != right[key] for key in ("x", "y", "width", "height", "opacity"))
+                        or left["muted"] or right["muted"]
+                        or any(clip[key] for clip in (left, right) for key in ("fade_in_ms", "fade_out_ms"))):
+                    raise ValueError("STUDIO_TIMELINE_TRANSITION_VISUALS_INCOMPATIBLE")
+                incoming = window
         normalized_track = {"id": tid, "kind": kind, "order": order, "role": role, "muted": muted, "gain_db": gain, "clips": clips}
         if "locked" in track:
             normalized_track["locked"] = _boolean(track["locked"])

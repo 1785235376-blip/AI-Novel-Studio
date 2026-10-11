@@ -4,7 +4,8 @@ import { checkedTimelineExportProfile, type TimelineExportProfile } from './stud
 export type GraphTimelineSnapshot = { id: string; version: number; digest: string };
 export type GraphTimelinePort = `source_${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8}`;
 export type GraphTimelineBinding = { port: GraphTimelinePort; clip_id: string };
-export type TimelineClipChanges = Partial<Omit<StudioTimelineClip, 'id' | 'crop'>> & { crop?: StudioTimelineClip['crop'] | null };
+export type TimelineClipChanges = Partial<Omit<StudioTimelineClip, 'id' | 'crop' | 'transition_out'>> & {
+  crop?: StudioTimelineClip['crop'] | null; transition_out?: StudioTimelineClip['transition_out'] | null };
 export type GraphTimelineEdit =
   | { op: 'canvas.update'; changes: Partial<{ schema_version: 2; duration_ms: number; width: number; height: number; fps: number }> }
   | { op: 'track.insert'; track: StudioTimelineTrack }
@@ -48,13 +49,19 @@ function source(value: unknown): StudioTimelineSource {
   if (result.kind !== 'ASSET' || !['image', 'video', 'audio'].includes(result.asset_kind as string)) invalid();
   return { id: graphTimelineId(result.id), version: integer(result.version, 1), digest: digest(result.digest), kind: 'ASSET', asset_kind: result.asset_kind as StudioTimelineSource['asset_kind'] };
 }
-const clipFields = ['source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'x', 'y', 'width', 'height', 'speed_num', 'speed_den', 'opacity', 'gain_db', 'muted', 'include_audio', 'fade_in_ms', 'fade_out_ms', 'crop'];
+const clipFields = ['source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'x', 'y', 'width', 'height', 'speed_num', 'speed_den', 'opacity', 'gain_db', 'muted', 'include_audio', 'fade_in_ms', 'fade_out_ms', 'crop', 'transition_out'];
 function clipChanges(value: unknown): TimelineClipChanges {
   const raw = fields(value, [], clipFields); if (!Object.keys(raw).length) invalid();
   for (const [key, value] of Object.entries(raw)) {
     if (key === 'source_snapshot') source(value);
     else if (key === 'crop') {
       if (value !== null) { const crop = fields(value, ['x', 'y', 'width', 'height']); integer(crop.x, 0, 32767); integer(crop.y, 0, 32767); integer(crop.width, 1, 32768); integer(crop.height, 1, 32768); }
+    }
+    else if (key === 'transition_out') {
+      if (value !== null) {
+        const transition = fields(value, ['kind', 'to_clip_id', 'duration_ms']);
+        if (transition.kind !== 'CROSS_DISSOLVE') invalid(); graphTimelineId(transition.to_clip_id); integer(transition.duration_ms, 1, 10000);
+      }
     }
     else if (['muted', 'include_audio'].includes(key)) bool(value);
     else if (key === 'opacity') number(value, 0, 1);
@@ -65,7 +72,7 @@ function clipChanges(value: unknown): TimelineClipChanges {
 }
 function clip(value: unknown): StudioTimelineClip {
   const raw = fields(value, ['id', 'source_snapshot', 'start_ms', 'in_ms', 'out_ms'], clipFields);
-  if (raw.crop === null) invalid();
+  if (raw.crop === null || raw.transition_out === null) invalid();
   graphTimelineId(raw.id); const { id: _id, ...changes } = raw; clipChanges(changes);
   return structuredClone(raw) as StudioTimelineClip;
 }

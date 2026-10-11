@@ -121,6 +121,20 @@ class TimelineRender(ExecutionModel):
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
 
 
+class TimelinePlaybackPreview(ExecutionModel):
+    expected_version: int = Field(ge=1, le=2**53 - 1)
+    reviewed_timeline_digest: Digest
+
+
+class TimelinePlaybackBuild(TimelinePlaybackPreview):
+    reviewed_playback_digest: Digest
+
+
+class TimelinePlaybackAttestation(TimelinePlaybackBuild):
+    expected_job_version: int = Field(ge=1, le=2**53 - 1)
+    expected_request_digest: Digest
+
+
 class TimelineEdit(ExecutionModel):
     expected_version: int = Field(ge=1)
     reviewed_timeline_digest: Digest

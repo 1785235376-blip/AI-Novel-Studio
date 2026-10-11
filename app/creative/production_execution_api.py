@@ -9,7 +9,7 @@ from ..services.audiobook_service import AudiobookError
 from ..audio_production_store import AudioStateVersionConflict
 from .production_execution_models import (MediaCommand, MediaCreate, MediaJobAction, MediaReview, TimelineSave, TimelineRender,
     TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport,
-    TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload)
+    TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload, TimelinePlaybackPreview, TimelinePlaybackBuild, TimelinePlaybackAttestation)
 
 Owner = Literal["image", "audio", "video", "timeline"]
 
@@ -50,6 +50,18 @@ def create_production_execution_router(service, invoke, *, require_host_session,
     @router.get("/projects/{nid}/studio/production/providers")
     def providers(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.providers(nid, scope, actor, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/playback-preview")
+    def playback_preview(nid: str, tid: str, request: Request, body: TimelinePlaybackPreview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.timeline_playback_preview(nid, scope, actor, tid, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/playback-build")
+    def playback_build(nid: str, tid: str, request: Request, body: TimelinePlaybackBuild, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.timeline_playback_build(nid, scope, actor, tid, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/playback-attestation")
+    def playback_attestation(nid: str, tid: str, request: Request, body: TimelinePlaybackAttestation, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.timeline_playback_attest(nid, scope, actor, tid, body, guard))
 
     @router.post("/projects/{nid}/studio/production/preview")
     def preview(nid: str, request: Request, body: MediaCommand, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

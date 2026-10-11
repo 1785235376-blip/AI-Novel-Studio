@@ -1,6 +1,8 @@
 """Finite M2-A graph contracts. Definitions describe trusted code, never load it."""
 from __future__ import annotations
 
+import re
+
 from copy import deepcopy
 from typing import Annotated, Literal
 
@@ -164,7 +166,7 @@ def _closed_timeline_operations(operations):
         "caption.update": {"op", "index", "caption"}, "caption.remove": {"op", "index"},
     }
     clip_fields = {"source_snapshot", "start_ms", "in_ms", "out_ms", "x", "y", "width", "height",
-        "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop"}
+        "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop", "transition_out"}
     for operation in operations:
         kind = operation.get("op")
         if not isinstance(kind, str) or kind not in fields or set(operation) != fields[kind]:
@@ -203,13 +205,20 @@ def _closed_timeline_operations(operations):
             raise ValueError("STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID")
         if isinstance(nested, dict) and "crop" in nested:
             crop = nested["crop"]
-            if crop is None and kind == "clip.update":
-                continue
-            if (not isinstance(crop, dict) or set(crop) != {"x", "y", "width", "height"}
+            if not (crop is None and kind == "clip.update") and (not isinstance(crop, dict) or set(crop) != {"x", "y", "width", "height"}
                     or any(type(crop[key]) is not int for key in crop)
                     or not 0 <= crop["x"] <= 32767 or not 0 <= crop["y"] <= 32767
                     or not 1 <= crop["width"] <= 32768 or not 1 <= crop["height"] <= 32768):
                 raise ValueError("STUDIO_TIMELINE_CROP_INVALID")
+        if isinstance(nested, dict) and "transition_out" in nested:
+            transition = nested["transition_out"]
+            if not (transition is None and kind == "clip.update") and (
+                    not isinstance(transition, dict) or set(transition) != {"kind", "to_clip_id", "duration_ms"}
+                    or transition["kind"] != "CROSS_DISSOLVE"
+                    or not isinstance(transition["to_clip_id"], str)
+                    or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,239}", transition["to_clip_id"])
+                    or type(transition["duration_ms"]) is not int or not 1 <= transition["duration_ms"] <= 10_000):
+                raise ValueError("STUDIO_TIMELINE_TRANSITION_INVALID")
     if len(canonical(operations).encode("utf-8")) > 128_000:
         raise ValueError("STUDIO_TIMELINE_EDIT_BYTES_LIMIT")
 

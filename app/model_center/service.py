@@ -84,6 +84,7 @@ class RuntimeLifecycle:
         self._log_byte_limit = log_byte_limit
         self._lock = threading.Lock()
         self._probe_open = _runtime_probe_opener().open
+        self._trusted_whisper: dict[str, Any] = {}
 
     def _drain(self, runtime_id: str, stream_name: str, stream: Any) -> None:
         logs = self._logs[runtime_id][stream_name]
@@ -129,6 +130,8 @@ class RuntimeLifecycle:
         }
 
     def refresh(self, runtime_id: str) -> RuntimeInstance | None:
+        if runtime_id in self._trusted_whisper:
+            return self._trusted_whisper[runtime_id].refresh()
         instance = self.instances.get(runtime_id)
         process = self._owned.get(runtime_id)
         if instance is None or process is None:
@@ -180,6 +183,13 @@ class RuntimeLifecycle:
         except ValueError:
             return False
     def discover(self, definition: RuntimeDefinition, probe_version: bool = False) -> dict[str, Any]:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            instance = self.refresh(definition.id)
+            return {"runtime_id": definition.id, "runtime_type": definition.runtime_type,
+                "path_exists": Path(definition.executable).is_file(), "executable_exists": Path(definition.executable).is_file(),
+                "version": instance.version if instance else None, "version_source": "OWNED_PRIVATE_PIPE" if instance and instance.loaded_models else "NOT_VERIFIED",
+                "executable_executed": False, "health": instance.health if instance else {"reachable": False},
+                "gpu_capability": "UNKNOWN", "security_warning": None}
         executable: Path | None = None
         if definition.executable:
             try:
@@ -210,6 +220,11 @@ class RuntimeLifecycle:
             "security_warning": None if self.is_local(definition) else "RUNTIME_NOT_LOOPBACK_BOUND",
         }
     def health(self, definition: RuntimeDefinition) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            if definition.id not in self._trusted_whisper:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return self.refresh(definition.id) or RuntimeInstance(definition.id, base_url=definition.base_url,
+                management=RuntimeManagement.MANAGED)
         self.refresh(definition.id)
         instance = self.instances.setdefault(definition.id, RuntimeInstance(definition.id, base_url=definition.base_url, management=definition.management))
         instance.management = definition.management
@@ -233,7 +248,13 @@ class RuntimeLifecycle:
             instance.state = RuntimeState.FAILED if definition.id in self._owned else RuntimeState.STOPPED; instance.health = {"reachable": False}; instance.error = "RUNTIME_HEALTH_FAILED"; instance.safe_error_code = "HTTP_UNREACHABLE"
         if not instance.http_reachable: instance.last_failure = datetime.now(timezone.utc).isoformat()
         instance.last_health_check = datetime.now(timezone.utc).isoformat(); return instance
-    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None) -> RuntimeInstance:
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
         if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
         if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
         _safe_runtime_environment(definition.environment)
@@ -272,6 +293,8 @@ class RuntimeLifecycle:
             self._start_log_readers(definition.id, proc)
             return instance
     def stop(self, runtime_id: str) -> RuntimeInstance:
+        if runtime_id in self._trusted_whisper:
+            return self._trusted_whisper[runtime_id].stop()
         with self._lock:
             proc = self._owned.get(runtime_id)
             if proc is None: raise ValueError("RUNTIME_NOT_OWNED")
@@ -451,6 +474,8 @@ class ModelCenterService:
         )
     def configure_runtime(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
         with self._config_lock:
+            if self.runtimes[runtime_id].runtime_type == RuntimeType.WHISPER_CPP:
+                raise ValueError("WHISPER_HOST_CONFIG_IMMUTABLE")
             if any(key in values for key in ("identity_id", "runtime_uuid", "runtime_id")):
                 raise ValueError("RUNTIME_ID_IMMUTABLE")
             if "launch_arguments" in values:
@@ -475,6 +500,8 @@ class ModelCenterService:
 
     def configure_runtime_profile(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
         with self._config_lock:
+            if self.runtimes[runtime_id].runtime_type == RuntimeType.WHISPER_CPP:
+                raise ValueError("WHISPER_HOST_CONFIG_IMMUTABLE")
             if any(key in values for key in ("identity_id", "runtime_uuid", "runtime_id")):
                 raise ValueError("RUNTIME_ID_IMMUTABLE")
             runtime = self.runtimes[runtime_id]
@@ -490,6 +517,14 @@ class ModelCenterService:
 
     def validate_runtime(self, runtime_id: str) -> dict[str, Any]:
         runtime = self.runtimes[runtime_id]
+        if runtime.runtime_type == RuntimeType.WHISPER_CPP:
+            instance = self.lifecycle.health(runtime)
+            loaded = bool(instance.loaded_models and instance.state == RuntimeState.RUNNING)
+            return {"runtime_id": runtime_id, "status": "MODEL_LOADED" if loaded else "LOCAL_REQUIRED",
+                "safe_error_code": None if loaded else instance.safe_error_code or "WHISPER_HOST_NOT_ADMITTED",
+                "checks": [{"name": "owned_private_pipe_model_load", "status": "PASS" if loaded else "NOT_RUN",
+                    "code": None if loaded else "WHISPER_HOST_NOT_ADMITTED"}], "version": instance.version,
+                "inference_verification": "NOT_RUN", "product_acceptance": "LOCAL_REQUIRED"}
         checks: list[dict[str, Any]] = []
         def check(name: str, passed: bool, code: str):
             checks.append({"name": name, "status": "PASS" if passed else "FAIL", "code": None if passed else code})

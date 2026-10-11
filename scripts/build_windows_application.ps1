@@ -17,7 +17,10 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$ViteCliPath,
     [Parameter(Mandatory = $true)]
-    [string]$VerifiedFontDirectory
+    [string]$VerifiedFontDirectory,
+
+    [string]$WhisperHostPackageDirectory = '',
+    [string]$ExpectedWhisperHostSHA256 = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -31,6 +34,10 @@ $publishManifest = Join-Path $OutputRoot 'desktophost-publish-manifest.json'
 $provenanceManifest = Join-Path $OutputRoot 'desktophost-provenance.json'
 $applicationManifest = Join-Path $OutputRoot 'application-provenance.json'
 $frontendBuild = Join-Path $OutputRoot 'frontend-build\dist'
+$whisperHostProvenance = [ordered]@{ status = 'NOT_CONFIGURED'; inference = 'NOT_RUN'; gpu = 'NOT_RUN' }
+if ([bool]$WhisperHostPackageDirectory -ne [bool]$ExpectedWhisperHostSHA256) {
+    throw 'Whisper package and expected executable SHA256 must be supplied together'
+}
 
 function Resolve-ExistingPath([string]$Path, [string]$Label) {
     if (-not (Test-Path -LiteralPath $Path)) {
@@ -198,6 +205,60 @@ if (-not (Test-Path -LiteralPath $freshHostDll -PathType Leaf)) {
 
 Copy-Item -LiteralPath $baseApplicationPath -Destination $outputApplication -Recurse
 
+# Optional fixed host package is explicit build material. No model is bundled,
+# no environment configuration is activated and no executable is started.
+if ($WhisperHostPackageDirectory) {
+    if ($ExpectedWhisperHostSHA256 -cnotmatch '^[a-f0-9]{64}$') { throw 'Whisper executable pin is invalid' }
+    $whisperPackageRoot = Resolve-ExistingPath $WhisperHostPackageDirectory 'Fixed Whisper package'
+    $whisperManifestPath = Join-Path $whisperPackageRoot 'whisper-fixed-host-package.json'
+    $whisperManifestFile = Get-Item -LiteralPath $whisperManifestPath
+    if ($whisperManifestFile.Length -lt 1 -or $whisperManifestFile.Length -gt 8MB -or
+        $whisperManifestFile.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Fixed Whisper manifest capacity or identity invalid' }
+    $whisperManifest = Get-Content -LiteralPath $whisperManifestPath -Raw | ConvertFrom-Json
+    if ($whisperManifest.schema -ne 'studio-fixed-whisper-package/1' -or
+        $whisperManifest.protocol -ne 'studio-fixed-whisper-host/1' -or
+        $whisperManifest.executable -ne 'studio-fixed-whisper-host.exe' -or
+        $whisperManifest.executable_sha256 -cne $ExpectedWhisperHostSHA256 -or
+        $whisperManifest.upstream_commit -ne '4979e04f5dcaccb36057e059bbaed8a2f5288315' -or
+        $whisperManifest.upstream_version -ne '1.8.2' -or
+        $whisperManifest.backend -ne 'CPU_STATIC' -or
+        $whisperManifest.files.Count -lt 5 -or $whisperManifest.files.Count -gt 16) {
+        throw 'Fixed Whisper package provenance is invalid'
+    }
+    $whisperDestination = Join-Path $outputApplication 'Tools\WhisperFixedHost'
+    if (Test-Path -LiteralPath $whisperDestination) { throw 'Base Application already contains a Whisper fixed host; use a fresh base' }
+    [void](New-Item -ItemType Directory -Path $whisperDestination)
+    $whisperNames = @{}
+    $whisperBytes = 0L
+    foreach ($item in $whisperManifest.files) {
+        $relative = [string]$item.path
+        if ($relative -cnotmatch '^(studio-fixed-whisper-host\.exe|Licenses/(whisper-LICENSE\.txt|ggml-source-with-license\.h|httplib-source-with-license\.h|json-source-with-license\.hpp))$' -or
+            $whisperNames.ContainsKey($relative) -or [string]$item.sha256 -cnotmatch '^[a-f0-9]{64}$' -or
+            [long]$item.size -lt 1 -or [long]$item.size -gt 512MB) { throw 'Whisper member path or capacity invalid' }
+        $whisperNames[$relative] = $true
+        $source = Join-Path $whisperPackageRoot $relative
+        $file = Get-Item -LiteralPath $source
+        if ($file.Attributes -band [IO.FileAttributes]::ReparsePoint -or $file.Length -ne [long]$item.size -or
+            (Get-FileHash -Algorithm SHA256 -LiteralPath $source).Hash.ToLowerInvariant() -cne [string]$item.sha256) {
+            throw 'Fixed Whisper member hash or identity mismatch'
+        }
+        $whisperBytes += $file.Length
+        if ($whisperBytes -gt 512MB) { throw 'Fixed Whisper package capacity exceeded' }
+        $target = Join-Path $whisperDestination $relative
+        [void](New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force)
+        Copy-Item -LiteralPath $source -Destination $target
+        if ((Get-FileHash -Algorithm SHA256 -LiteralPath $target).Hash.ToLowerInvariant() -cne [string]$item.sha256) { throw 'Staged Whisper member hash mismatch' }
+    }
+    if ($whisperNames.Count -ne 5 -or -not $whisperNames.ContainsKey('studio-fixed-whisper-host.exe') -or
+        (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $whisperDestination 'studio-fixed-whisper-host.exe')).Hash.ToLowerInvariant() -cne $ExpectedWhisperHostSHA256) {
+        throw 'Complete fixed Whisper binary and notices are required'
+    }
+    Copy-Item -LiteralPath $whisperManifestPath -Destination (Join-Path $whisperDestination 'whisper-fixed-host-package.json')
+    $whisperHostProvenance = [ordered]@{ status = 'PACKAGED_NOT_VERIFIED'; source = $whisperPackageRoot
+        stage = $whisperDestination; executable_sha256 = $ExpectedWhisperHostSHA256; inventory = $whisperManifest.files
+        backend = 'CPU_STATIC'; inference = 'NOT_RUN'; gpu = 'NOT_RUN'; model = 'NOT_BUNDLED'; configuration = 'NOT_ACTIVATED' }
+}
+
 $stagedFrontend = Join-Path $outputApplication 'Frontend\dist'
 if (Test-Path -LiteralPath $stagedFrontend) {
     Remove-Item -LiteralPath $stagedFrontend -Recurse -Force
@@ -362,6 +423,7 @@ $release = Get-Content -LiteralPath (Join-Path $projectRoot 'release\version.jso
     }
     source_commit = (& git -C $projectRoot rev-parse HEAD)
     font_inventory = $fontInventory
+    whisper_fixed_host = $whisperHostProvenance
     runtime_license_provenance = $runtimeLicenseProvenance
     python_runtime = (& (Join-Path $baseApplicationPath 'Runtime\Python\python.exe') --version)
     postgresql_runtime = (& (Join-Path $baseApplicationPath 'PostgreSQL\bin\pg_ctl.exe') --version)

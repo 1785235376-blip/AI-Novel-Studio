@@ -159,9 +159,9 @@ def apply_timeline_edits(timeline, operations):
         elif operation == "clip.insert":
             body = _fields(raw, ("op", "track_id", "clip"))
             _fields(body["clip"], ("id", "source_snapshot", "start_ms", "in_ms", "out_ms"),
-                ("x", "y", "width", "height", "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop"))
+                ("x", "y", "width", "height", "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop", "transition_out"))
             _id(body["clip"]["id"])
-            if "crop" in body["clip"] and result.get("schema_version") != 2:
+            if any(key in body["clip"] for key in ("crop", "transition_out")) and result.get("schema_version") != 2:
                 raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             _integer(body["clip"]["start_ms"])
             _duration(body["clip"])
@@ -171,10 +171,10 @@ def apply_timeline_edits(timeline, operations):
         elif operation == "clip.update":
             body = _fields(raw, ("op", "clip_id", "changes"))
             changes = _fields(body["changes"], (), ("source_snapshot", "start_ms", "in_ms", "out_ms", "x", "y", "width", "height",
-                "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop"))
+                "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop", "transition_out"))
             if not changes:
                 raise ValueError("STUDIO_TIMELINE_EDIT_EMPTY")
-            if "crop" in changes and result.get("schema_version") != 2:
+            if any(key in changes for key in ("crop", "transition_out")) and result.get("schema_version") != 2:
                 raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             for key in ("start_ms", "in_ms", "out_ms", "x", "y", "width", "height", "speed_num", "speed_den", "fade_in_ms", "fade_out_ms"):
                 if key in changes:
@@ -182,9 +182,10 @@ def apply_timeline_edits(timeline, operations):
             row, clip = locate(body["clip_id"])
             editable(row)
             applied = deepcopy(changes)
-            if "crop" in applied and applied["crop"] is None:
-                clip.pop("crop", None)
-                applied.pop("crop")
+            for optional in ("crop", "transition_out"):
+                if optional in applied and applied[optional] is None:
+                    clip.pop(optional, None)
+                    applied.pop(optional)
             clip.update(applied)
         elif operation == "clip.remove":
             body = _fields(raw, ("op", "clip_id", "ripple"))
@@ -213,6 +214,9 @@ def apply_timeline_edits(timeline, operations):
             if target["kind"] != row["kind"]:
                 raise ValueError("STUDIO_TIMELINE_EDIT_MOVE_KIND_INVALID")
             copied = deepcopy(clip)
+            # A duplicate has a new identity and placement; it never steals the
+            # original clip's outgoing neighbour relationship.
+            copied.pop("transition_out", None)
             copied.update(id=_id(body["new_clip_id"]), start_ms=_integer(body["start_ms"]))
             target["clips"].append(copied)
         elif operation == "clip.split":
@@ -231,6 +235,9 @@ def apply_timeline_edits(timeline, operations):
             if isinstance(clip.get("source_snapshot"), dict) and clip["source_snapshot"].get("asset_kind") == "image":
                 copied.update(in_ms=0, out_ms=clip["out_ms"] - offset)
             clip["out_ms"] = cut
+            # The original tail, now the new right-hand clip, retains the exact
+            # outgoing transition. The head no longer reaches that neighbour.
+            clip.pop("transition_out", None)
             if "fade_out_ms" in clip:
                 clip["fade_out_ms"] = 0
             if "fade_in_ms" in copied:

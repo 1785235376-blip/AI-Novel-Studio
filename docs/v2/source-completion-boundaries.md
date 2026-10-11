@@ -14,6 +14,7 @@
 - 原 audio trim 使用原受控进程 guard、明确时限和超过上限的拒绝；取消／Host 或 Graph 失效可停止受控进程，迟到结果不能采用。
 - 原字幕处理任务可执行受控 FFmpeg 烧录并保留实际编码／尺寸／帧率／声音／时长与字节证明，批准后才下载。原时间线已经支持字幕烧录，本适配器也使原独立字幕任务拥有具体实现。
 - 原 Model Registry 新增 AUDIO node；whisper.cpp 适配器有真实音频解码、一次本地 multipart `/inference` 请求、严格 timed segments 校验、原队列审核及模型回执代码。没有可信模型准入时它仍不可执行。
+- Phase14 新增固定 Whisper native host 的真实模型 HANDLE 加载与私有 pipe 证明、原 Model Center 生命周期和字幕 lazy resolver；未配置／未加载仍 NOT_CONFIGURED，实际推理质量仍 NOT_RUN。新增 MFA 真实声学强制对齐、原持久候选的明确交互播放缓存，以及双源视频交叉溶解。具体实现、配置和限制见 [媒体执行收束](media-execution-source-completion.md)。
 - Graph 中断 REVIEWING 的维护沿原 run／node／job／版本／请求／候选／Host／incarnation 证明执行；旧 Graph 或来源变更不阻塞被证明未提升的私有占用释放。它只更新原 owner 回执，不推进节点、归档、发送或提升，不授予 stale 来源执行／审核权。前端恢复三字段必须由当前原 Host client 实际 GET 观察到。
 - 前端支持明确选择本地 .otio／.srt／.vtt，经父级 mutex、容量、严格 UTF-8、保存版本／当前来源／client／epoch 校验后只读入本轮交换草稿；映射、预览、明确导入和附件仍分别操作。Opus 可替换对应视图而保留 headless 操作边界。
 
@@ -28,12 +29,12 @@ AI_NOVEL_STUDIO_V2_SUBTITLE_FFPROBE=<已安装并受信的 ffprobe.exe 绝对路
 
 必须同时明确配置，构造只校验工具位置与哈希、不启动进程；未配置保持 NOT_CONFIGURED。HTTP 只接收 adapter ID，不能提交可执行路径或 shell 参数。V2 processing HTTP 使用原 DesktopHost principal／会话 guard，默认 V1 配置与凭据保持原样。未设置、设置错误、编码器缺失与执行失败都不能记为“能力通过”。
 
-ASR 只能通过 `register_local_whisper_cpp` 和 `ModelRuntimeSubtitleAdapter` 注入原服务，并由真实可信 host admission 证明已启用 provider／model／runtime／稳定 UUID、准确模型哈希、endpoint 与 revision。`/health`、本地文件发现、客户端自报哈希或单纯能访问 `/inference` 均不足以授予身份。当前原 Model Center 尚未提供该可信 AUDIO 模型证明，应用默认 **ASR NOT_CONFIGURED**；不自动注册、启动或下载 Whisper。
+ASR 使用原 `ModelRuntimeSubtitleAdapter`，由原固定 Whisper Host owner 的私有 pipe 实际模型加载证明授予 AUDIO Registry 准入，再按当前 route 懒读取到字幕任务。`/health`、本地文件发现、客户端自报哈希或单纯能访问 `/inference` 均不足以授予身份。应用默认 **ASR NOT_CONFIGURED**；V2 的 server-owned 固定路径／SHA 配置仅安装原生命周期 owner，显式原 Host start 成功后才能有当前 ASR adapter，不自动启动或下载。完整环境字段与 MFA 配置见 [媒体执行收束](media-execution-source-completion.md)。旧裸 server 的显式兼容回调不被应用用来自动准入。
 
 ## 尚未完成，不能用接口或本批源码冒称通过
 
-- Forced alignment 尚无支持并受原模型准入控制的具体 engine；不能用 ASR 段时间戳、平均分词或手工字幕代替。
-- 交互 proxy／cache 播放、视频 cross-dissolve、FCPXML／EDL 的实际互通与更广音频转换／降噪／分离并未因本批变成已实现能力。上述历史需求须按实际原 roadmap 范围继续收束，不能被通用 schema 或模型 family 名称覆盖。
+- Whisper、MFA 强制对齐、交互播放缓存与 cross-dissolve 已有实际执行源码；native 构建、运行配置、模型加载／质量、Windows／GPU、交互与成片仍未执行验收，不能写成能力已通过。MFA 的中文输入须明确空格分词并匹配固定词典。
+- FCPXML／EDL 的实际互通与更广音频转换／降噪／分离仍有缺口；上述历史需求须按实际原 roadmap 范围继续收束，不能被通用 schema 或模型 family 名称覆盖。
 - Opus 5.5 后续仍可重构视图和 UX；原 headless 控制器、Host transport、CAS、dirty／UNKNOWN、loss confirmation 和原 owner 是操作边界，不可用 UI 重构绕过。
 - 当前仓库历史 feature matrix 是需求对照快照，Master Roadmap 全文未在本批恢复时找到；不猜测缺失附件，也不改写历史状态来制造全功能封顶。
 

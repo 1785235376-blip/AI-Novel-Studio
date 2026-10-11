@@ -25,6 +25,8 @@
 | 模型操作控制器与视图 | `useStudioGraphModelExecutionController.ts`、`studioGraphModelExecutionView.tsx`、`GraphModelExecutionPanel.tsx` | 原 WorkflowRun / JobManager / Router 持有任务；本地确认绑定运行版本、预览摘要、原路由和测试适配器选择 |
 | 独立媒体视图与控制器 | `StudioMediaExecutionPanel.tsx`、`useStudioMediaExecution.ts` | 9 项闭合 MediaCommand；预览确认、仅入队、明确执行、原回执核对、私有候选摘要／Blob 校验和人工审核分别操作 |
 | 多轨视图、控制器与类型 | `StudioTimelineEditor.tsx`、`useStudioTimelineEditor.ts`、`studioTimelineTypes.ts` | base/draft/server candidate、轨道／片段／手工字幕、CAS 保存、准确时间线版本／摘要确认后显式渲染，不把网络取消等同停止 FFmpeg |
+| 交互播放视图、控制器与类型 | `StudioTimelinePlaybackPanel.tsx`、`useStudioTimelinePlayback.ts`、`studioTimelinePlaybackTypes.ts` | 明确方案／同意／一次原渲染、原 candidate attestation、实际 Blob SHA、原任务读取／取消、有限 LRU 与同步撤权隐藏；视图不持有授权 |
+| 固定 Whisper 生命周期消费 | `frontend/src/ui/ModelCenter.tsx` | 原 Host context start／stop，服务器固定配置只读，实际私有模型加载证明与质量未验收分别展示 |
 | 实际媒体／时间线客户端 | `studioProductionClient.ts` | 原捕获 Host transport；严格 project/branch、公有 job/recipe/source 投影、命名动作与原版本／request/output digest |
 | 生成资产声明表单 | `StudioAssetDeclarationForm.tsx` | 有 source_task_id 时仅编辑 license／operation；origin、原父资产／文档快照只读，保持原 parent_asset_ids，chapter_ids=[]；手工资产仍用原共享表单 |
 | 偏好控制器与表单 | `useStudioWorkspacePreferences.ts`、`StudioWorkspacePreferencesForm.tsx`、`studioWorkspacePreferences.ts` | 原 expected_version 保存；冲突或回执不确定时先读取，再人工采用服务端值或保留输入，不自动覆盖/重试 |
@@ -67,7 +69,7 @@
 - 原 Owner 的成功不自动升级为 Router 已结算、真实 GPU 调用或产品验收。模型元数据、目录发现、Mock 和 CPU 运行分别记录。
 - API Provider 执行仍按既有门禁；不加入付费 fallback、模拟身份、开发 token、关闭认证、内存凭据或 V1 凭据访问。
 - 云端授权还继承原不可变 Asset 来源和有证明的 legacy parent 版本／摘要；直接／间接文档须原 CLOUD_ALLOWED，64 节点／16 层／200MiB 有界，缺失／旧章节证明、新父来源、循环／stale 都 fail closed。作者声明不产生 cloud grant；UI 不能靠修改 license／origin／parent 绕过后端。
-- Graph 媒体与 `ASSET_REF` 仅在显式 schema 3 接入；保留原 WorkflowRun、媒体 owner、原子来源、候选审核、UNKNOWN 与一次发送边界。schema 3 文字档案已沿原 owner 接入，真实对应 human_review 节点批准／驳回，档案仍私有且不构成整图验收。原 schema 1／2 和 TEXT Router allowlist 不自动扩展。Graph timeline node 已沿原剪辑／导出 owner 接入；原 Registry AUDIO 与本地 ASR 执行源码已接入，但当前应用缺可信模型准入，自动 ASR／音画对齐仍不可启用。详见 [文字档案与剪辑导出](text-archive-timeline-export.md) 和 [执行细节与剩余边界](source-completion-boundaries.md)。
+- Graph 媒体与 `ASSET_REF` 仅在显式 schema 3 接入；保留原 WorkflowRun、媒体 owner、原子来源、候选审核、UNKNOWN 与一次发送边界。schema 3 文字档案已沿原 owner 接入，真实对应 human_review 节点批准／驳回，档案仍私有且不构成整图验收。原 schema 1／2 和 TEXT Router allowlist 不自动扩展。Graph timeline node 已沿原剪辑／导出 owner 接入；固定 Whisper Host 的原 AUDIO 模型加载准入和 MFA 的真实声学强制对齐源码已补齐，默认未配置／未加载继续 NOT_CONFIGURED，不能自动启用或假定完成音画／口型对齐。详见 [文字档案与剪辑导出](text-archive-timeline-export.md)、[执行细节与剩余边界](source-completion-boundaries.md) 和 [媒体执行收束](media-execution-source-completion.md)。
 - 媒体／时间线控制器保留预览、route／recipe／source／job CAS、request ID 和一次明确发送／审核确认。网络、408/409/425/429、5xx 和非法成功回执不得重复发送；先读取原记录。显式 reconcile 仅原 lease 已结束后处理：不明派发为 UNKNOWN，能确证原私有 publication 或未提升 REVIEWING 的才恢复待审核；不重新调用 Provider／FFmpeg。视频 refresh 只查询已记录远端任务，异步音频没有 poll。`LOCAL_RESULT_DISCARD` 不声称远端 abort，保留原候选。
 - 后端未来意图模型校验来源重复/冲突、轨道与完整来源快照、rational timing、尺寸/MIME/大小及作业/审核引用的一致性。JSON Schema 单独不能表达全部跨字段规则；形状一致不证明真实文件、路由、回执、权利或 scope。接入原执行 owner 前必须重新核对原门禁，不能从只读目录产生执行请求。
 - PoemSeed Local Interop 1.0、冻结 V1、历史 PR、失败证据与 NOT_RUN / LOCAL_REQUIRED / BLOCKED 标签原样保留。
@@ -93,3 +95,7 @@ Phase13 新增 `StudioTimelineTransferPanel`／`useStudioTimelineTransfer`／`st
 交换草稿支持明确选择单个本地 .otio／.srt／.vtt 文件：headless controller 在父级 mutex 内做大小和严格 UTF-8 校验，再核对 client／epoch／保存版本／格式／方向／内容／当前素材，才载入本轮私有草稿并清除旧映射与确认。OTIO 上限 2 MiB，字幕上限 192000 bytes。文件选择不自动识别映射、预览、导入、写文件或读取外部媒体；Opus 可重构文件入口与编辑区，保留这些动作的独立性。
 
 Graph 的 `review_recovery` 三字段只授予原 REVIEWING 私有预留的明确维护入口。stale／终态／暂停 run 可核对并释放被证明未提升的占用；不能执行、批准、推进节点或重新发送。控制器只接受当前原 Host client 实际观察到的原 run／node／job／version／request 证据，masked 回执不恢复候选、Prompt 或执行权限。保持原 run 视图与 client 严格解码，详见 [Graph 媒体执行](graph-media-execution.md)。
+
+Phase14 的播放缓存经原 export/job/private Asset owner；稳定 request ID 由服务器实际版本／来源／工具 SHA 构造，不创建第二队列。复用旧 Blob 前也需原 candidate attestation；后端拒绝／撤权／来源变更立即撤销本会话字节，不清除 UNKNOWN 原请求身份。读回执与取消可在长时间 BUILD 中显式操作，但仍互斥且不重发。视图可重构时间定位、按钮和视频外观，不可自动生成／播放／审核；dirty／UNKNOWN 与原父级导航保护保持。
+
+交叉溶解关系位于 VIDEO clip 的 `transition_out`，由原 schema／edit／Graph author 操作及实际双源 FFmpeg 渲染共同处理；表单不自动移动片段或清除用户 fades 来凑合法结果。两片段须真实重叠等于指定窗口且保持同一几何／opacity。OTIO 预览明确给出关系与 loss，不能用 Studio extension 的回读承诺外部 NLE 原生保真。Whisper Host 固定配置及 MFA 运行时／词典／声学 pin 由 server-owned 配置持有，前端不接收绝对路径、任意 argv、token 或动态模型替换；源码／loaded 状态／真实质量三个层次分别记录。

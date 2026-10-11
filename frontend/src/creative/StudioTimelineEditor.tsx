@@ -5,6 +5,7 @@ import { useStudioTimelineEditor, type StudioTimelineEditorProps } from './useSt
 import { StudioTimelineExportPanel } from './StudioTimelineExportPanel';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 import { StudioTimelineTransferPanel } from './StudioTimelineTransferPanel';
+import { StudioTimelinePlaybackPanel } from './StudioTimelinePlaybackPanel';
 export type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
 
 const numeric = (value: string) => value === '' ? Number.NaN : Number(value);
@@ -55,7 +56,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
         ...(track.kind === 'VIDEO' ? { opacity: 1, include_audio: false } : {}) } : {}) });
   });
   const locked = !c.canEdit || props.busy;
-  const readLocked = c.denied || props.busy || !!c.pending || c.transfer.locked;
+  const readLocked = c.denied || props.busy || !!c.pending || c.transfer.locked || c.playback.locked;
   const clipsCount = draft.timeline.tracks.reduce((sum, track) => sum + track.clips.length, 0);
   return <Panel title="多轨时间线" aria-label="Studio 多轨时间线编辑器" actions={<Button loading={c.pending === 'LIST'} disabled={readLocked} onClick={() => void c.reload()}>刷新时间线列表</Button>}>
     <p>选择已有视频和音频素材，设定裁剪与摆放。视频按轨道顺序叠放，音频轨道混音；视频自身声音只在扩展编辑中明确加入。总长最多十分钟，产物仍须在制作任务中预览和人工审核。</p>
@@ -97,7 +98,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
         <Button disabled={!c.trackLockAvailable || c.inputDirty || !c.base || !c.sourcesCurrent} loading={c.pending === 'TRACK_LOCK'} onClick={() => void c.setTrackLocked(track.id, !track.locked)}>{track.locked ? '通过原服务明确解锁' : '通过原服务锁定此轨道'}</Button>
         <p>锁定与解锁直接保存新版本，需要先保存草稿；锁定轨道不接受片段、排序或画布改动。解锁使用独立原编辑动作。</p></>}
       <fieldset disabled={!!track.locked}><legend>轨道编辑</legend>
-      <p>{track.kind === 'VIDEO' ? '靠后的轨道覆盖前面的画面，同轨道片段不能重叠。' : '参与轨道按摆放时间混音，未放入声音的区间保留静音。'}</p>
+      <p>{track.kind === 'VIDEO' ? '靠后的轨道覆盖前面的画面；同轨道只有明确交叉溶解的相邻片段可按准确窗口重叠。' : '参与轨道按摆放时间混音，未放入声音的区间保留静音。'}</p>
       <label><input type="checkbox" checked={track.muted} onChange={event => { const muted = event.currentTarget.checked; changeTrack(track.id, row => { row.muted = muted; }); }} />{track.kind === 'VIDEO' ? '隐藏整条轨道' : '整条轨道静音'}</label>
       {extended && <label>轨道用途<select value={track.role ?? (track.kind === 'VIDEO' ? 'PRIMARY' : 'DIALOGUE')} onChange={event => {
         const role = event.currentTarget.value as StudioTimelineTrack['role']; changeTrack(track.id, row => { row.role = role; });
@@ -133,7 +134,19 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
           <NumberField label="淡出（毫秒）" value={clip.fade_out_ms ?? 0} max={timelineClipDuration(clip)} onChange={value => changeClip(track.id, clip.id, row => { row.fade_out_ms = value; })} />
           <label><input type="checkbox" checked={clip.muted ?? false} onChange={event => { const muted = event.currentTarget.checked; changeClip(track.id, clip.id, row => { row.muted = muted; }); }} />{track.kind === 'VIDEO' ? '隐藏此片段及其声音' : '此片段静音'}</label>
           {track.kind === 'VIDEO' && <><NumberField label="不透明度" value={clip.opacity ?? 1} max={1} step={0.05} onChange={value => changeClip(track.id, clip.id, row => { row.opacity = value; })} />
-            <label><input type="checkbox" checked={clip.include_audio ?? false} disabled={clip.source_snapshot.asset_kind === 'image' && !clip.include_audio} onChange={event => { const include = event.currentTarget.checked; changeClip(track.id, clip.id, row => { row.include_audio = include; }); }} />明确加入此视频原声（静态画面保持关闭）</label></>}
+            <label><input type="checkbox" checked={clip.include_audio ?? false} disabled={clip.source_snapshot.asset_kind === 'image' && !clip.include_audio} onChange={event => { const include = event.currentTarget.checked; changeClip(track.id, clip.id, row => { row.include_audio = include; }); }} />明确加入此视频原声（静态画面保持关闭）</label>
+            <label>交叉溶解到下一片段<select value={clip.transition_out?.to_clip_id ?? ''} onChange={event => {
+              const targetId = event.currentTarget.value; changeClip(track.id, clip.id, row => {
+                if (!targetId) delete row.transition_out;
+                else { const target = track.clips.find(item => item.id === targetId);
+                  row.transition_out = { kind: 'CROSS_DISSOLVE', to_clip_id: targetId,
+                    duration_ms: target ? Math.max(1, clip.start_ms + timelineClipDuration(clip) - target.start_ms) : 500 }; }
+              });
+            }}><option value="">无交叉溶解</option>{track.clips.filter(item => item.start_ms > clip.start_ms).sort((left, right) => left.start_ms - right.start_ms).slice(0, 1)
+              .map(item => <option key={item.id} value={item.id}>{item.id}</option>)}</select></label>
+            {clip.transition_out && <NumberField label="两源交叉溶解窗口（毫秒）" value={clip.transition_out.duration_ms} min={Math.ceil(2000 / draft.timeline.fps)} max={10000}
+              onChange={value => changeClip(track.id, clip.id, row => { if (row.transition_out) row.transition_out.duration_ms = value; })} />}
+            <p>转场需两个相邻片段准确重叠，同位置、尺寸与不透明度；窗口至少两帧且小于两片段时长。转场片段不能另外淡入淡出或静音；修改摆放后须重新核对窗口。</p></>}
           <NumberField label={track.kind === 'VIDEO' ? '原声音量（dB；未加入原声时保持 0）' : '片段音量（dB）'} value={clip.gain_db ?? 0} min={-60} max={12} step={0.1} onChange={value => changeClip(track.id, clip.id, row => { row.gain_db = value; })} />
           <p>渲染时长 {seconds(timelineClipDuration(clip))}；淡入与淡出总长不能超过此长度。</p>
         </details>}
@@ -162,7 +175,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
           <NumberField label="复制或移动至（时间线毫秒）" value={clipEdits[clip.id]?.position ?? clip.start_ms + timelineClipDuration(clip)} max={draft.timeline.duration_ms - 1} onChange={value => editControl(clip.id, { position: value })} />
           <Button disabled={clipsCount >= TIMELINE_LIMITS.clips} onClick={() => c.duplicateClip(track.id, clip.id, clipEdits[clip.id]?.position ?? clip.start_ms + timelineClipDuration(clip))}>在原轨道复制片段</Button>
           <Button onClick={() => c.moveClip(track.id, clip.id, clipEdits[clip.id]?.target ?? track.id, clipEdits[clip.id]?.position ?? clip.start_ms + timelineClipDuration(clip))}>移动原片段至所选轨道</Button>
-          <p>这些操作只改本地草稿，保留素材快照；不允许同视频轨道重叠或超出总长。拆分不调用模型，不生成新媒体。</p>
+          <p>这些操作只改本地草稿，保留素材快照；同视频轨道仅允许已明确指定的相邻交叉溶解重叠，不能超出总长。拆分不调用模型，不生成新媒体。</p>
         </details>
         <Button variant="danger" onClick={() => changeTrack(track.id, row => { row.clips = row.clips.filter(value => value.id !== clip.id); })}>移除此片段</Button>
       </section>)}
@@ -198,6 +211,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     </section>}
     <StudioTimelineExportPanel controller={c} />
     <StudioTimelineTransferPanel controller={c.transfer} assets={props.assets} />
+    <StudioTimelinePlaybackPanel controller={c.playback} />
     {c.attempt && <StatusMessage tone={c.attempt.state === 'UNKNOWN' ? 'warning' : 'info'}>{c.attempt.state === 'UNKNOWN' ? '渲染或导出结果仍需核对，请从制作任务读取原回执；不会再次发送此请求。' : '此快照与配置的请求已有回执，不会从这里重复发起。'} 原请求：<code>{c.attempt.requestId}</code>{c.attempt.exportProfile && <> · 导出 {c.attempt.exportProfile.preset}</>}</StatusMessage>}
     {c.attempt && <StudioTimelineMeasurement measurement={c.attempt.measurement} />}
     {c.attempt && <Button disabled={readLocked} loading={c.pending === 'JOB'} onClick={() => void c.checkRenderJob()}>读取此请求的原渲染或导出回执</Button>}

@@ -6,6 +6,7 @@ import { checkedTimeline, checkedTimelineDraft, checkedTimelineList, checkedTime
   timelineClipDuration, timelineFailure, timelineInputKey, timelineSources, timelineSourcesCurrent, type StudioTimeline, type StudioTimelineDraft, type StudioTimelineRow, type StudioTimelineSource } from './studioTimelineTypes';
 import { checkedTimelineExportPreview, checkedTimelineExportProfile, timelineExportKey, type TimelineExportProfile, type TimelineExportPreview } from './studioTimelineExportTypes';
 import { useStudioTimelineTransfer } from './useStudioTimelineTransfer';
+import { useStudioTimelinePlayback } from './useStudioTimelinePlayback';
 
 export type StudioTimelineJob = Awaited<ReturnType<StudioProductionClient['timelineRender']>>;
 export type StudioTimelineEditorProps = {
@@ -33,6 +34,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   const exportRef = useRef<{ profile: TimelineExportProfile; preview?: TimelineExportPreview; consent: string }>({ profile: exportProfile, consent: '' });
   const reservedBindings = useRef(new Set<string>());
   const transferGate = useRef(false);
+  const playbackGate = useRef(false);
   const latest = useRef(props); latest.current = props;
   const alive = useRef(true), epoch = useRef(0), owner = useRef(props.client), reading = useRef<AbortController>();
   const slot = useRef<{ epoch: number; operation: Operation }>(), started = useRef(false), deniedRef = useRef(false);
@@ -41,18 +43,22 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   draftRef.current = draft; baseRef.current = base; candidateRef.current = candidate; failureRef.current = failure; attemptRef.current = attempt;
   const baseline = useRef(timelineInputKey(newTimelineDraft()));
   const current = () => alive.current && !deniedRef.current && owner.current === latest.current.client && latest.current.isCurrent();
-  const blocked = () => !!slot.current || transferGate.current || latest.current.busy || !!latest.current.isBusy?.() || !current();
+  const blocked = () => !!slot.current || transferGate.current || playbackGate.current || latest.current.busy || !!latest.current.isBusy?.() || !current();
   const owns = owner.current === props.client && props.isCurrent() && !denied;
   const inputDirty = timelineInputKey(draft) !== baseline.current;
   const uncertainRender = !!attempt && attempt.state === 'UNKNOWN';
   const sourcesCurrent = timelineSourcesCurrent(draft.timeline, props.assets);
   const transfer = useStudioTimelineTransfer({ props: { ...props, isCurrent: current }, source: owns ? base : undefined,
-    canOperate: owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !!base && !inputDirty && sourcesCurrent,
+    canOperate: owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !playbackGate.current && !!base && !inputDirty && sourcesCurrent,
     isReady: () => !blocked() && latest.current.canMutate && !!baseRef.current && !failureRef.current && attemptRef.current?.state !== 'UNKNOWN'
       && timelineInputKey(draftRef.current) === baseline.current && timelineSourcesCurrent(baseRef.current.timeline, latest.current.assets),
     onAdopt: row => adopt(row), onAuthorityLost: loseAuthority, onGateChange: value => { transferGate.current = value; } });
-  const dirty = owns && (inputDirty || !!failure || uncertainRender || !!transfer.dirty || !!exportConfirmed || pending === 'SAVE' || pending === 'RENDER' || pending === 'EXPORT' || pending === 'EXPORT_PREVIEW' || pending === 'TRACK_LOCK');
-  const canEdit = owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !transfer.locked;
+  const playback = useStudioTimelinePlayback({ props: { ...props, isCurrent: current }, source: owns ? base : undefined,
+    isReady: () => !blocked() && latest.current.canMutate && !!baseRef.current && !failureRef.current && attemptRef.current?.state !== 'UNKNOWN'
+      && timelineInputKey(draftRef.current) === baseline.current && timelineSourcesCurrent(baseRef.current.timeline, latest.current.assets),
+    onAuthorityLost: loseAuthority, onGateChange: value => { playbackGate.current = value; } });
+  const dirty = owns && (inputDirty || !!failure || uncertainRender || !!transfer.dirty || !!playback.dirty || !!exportConfirmed || pending === 'SAVE' || pending === 'RENDER' || pending === 'EXPORT' || pending === 'EXPORT_PREVIEW' || pending === 'TRACK_LOCK');
+  const canEdit = owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !transfer.locked && !playback.locked;
   const savedBinding = base ? timelineBinding(base) : '';
   const renderedThisSnapshot = reservedBindings.current.has(savedBinding);
   const canRender = canEdit && !!base && !inputDirty && confirmed === savedBinding && sourcesCurrent && !renderedThisSnapshot && !uncertainRender;
@@ -387,7 +393,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     exportAvailable, exportProfile: owns ? exportProfile : { preset: 'REVIEW_MP4' } as TimelineExportProfile, exportPreview: owns ? exportPreview : undefined,
     exportConfirmed: owns && !!exportPreview && exportConfirmed === exportPreview.preview_digest, canPreviewExport, canExport,
     changeExportProfile, previewExport, exportTimeline, setTrackLocked, trackLockAvailable: !!props.client.timelineTrackLock,
-    transfer,
+    transfer, playback,
     setExportConfirmed: (value: boolean) => {
       const source = baseRef.current, preview = exportRef.current.preview;
       if (blocked() || !source || !preview || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'

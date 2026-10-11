@@ -29,6 +29,7 @@ from .model_center.discovery_types import local_endpoint
 from .model_runtime import ModelDescriptor, ModelRuntimeError, Modality, ProviderDescriptor, RuntimeErrorCode
 from .experimental.subtitle_burn_in import _executable, _file_identity, _fingerprint
 from .services.studio_timeline_export import run_guarded_process
+from .stable_identity import validate_uuid
 
 MAX_RESPONSE_BYTES = 1024 * 1024
 MAX_PCM_BYTES = 20 * 1024 * 1024
@@ -54,7 +55,8 @@ def _seconds(value):
 class LocalWhisperCppProvider:
     supports_dispatch_guard = True
 
-    def __init__(self, *, provider_id, model_id, endpoint, model_sha256, ffmpeg_path, admission_guard):
+    def __init__(self, *, provider_id, model_id, endpoint, model_sha256, ffmpeg_path, admission_guard,
+            request_authorization=None):
         if (not isinstance(provider_id, str) or not 1 <= len(provider_id) <= 240
                 or not isinstance(model_id, str) or not 1 <= len(model_id) <= 240
                 or not isinstance(model_sha256, str) or not re.fullmatch(r'[a-f0-9]{64}', model_sha256)
@@ -63,6 +65,9 @@ class LocalWhisperCppProvider:
         self.provider_id, self.model_id = provider_id, model_id
         self.endpoint, self.model_sha256 = local_endpoint(endpoint), model_sha256
         self._admission_guard = admission_guard
+        if request_authorization is not None and not callable(request_authorization):
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, 'ASR 私有传输授权须由原主机 owner 持有')
+        self._request_authorization = request_authorization
         self._ffmpeg = _executable(ffmpeg_path)
         self._tool_hash, self._tool_identity = _fingerprint(self._ffmpeg), _file_identity(self._ffmpeg)
         self._execution_lock = threading.Lock()
@@ -71,17 +76,30 @@ class LocalWhisperCppProvider:
         proof = self._admission_guard()
         fields = {'schema', 'provider_id', 'model_id', 'endpoint', 'model_sha256', 'runtime_kind',
                   'management', 'enabled', 'model_locality', 'revision'}
-        if (not isinstance(proof, dict) or set(proof) != fields or proof.get('schema') != 'host-local-model-admission/1'
+        owned_fields = fields | {'runtime_uuid', 'process_id', 'executable_sha256', 'startup_nonce', 'ready_digest'}
+        owned = isinstance(proof, dict) and proof.get('schema') == 'host-local-model-admission/2'
+        if owned:
+            try:
+                validate_uuid(proof.get('runtime_uuid'), field='runtime_id')
+            except ValueError:
+                raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, 'ASR 原运行时持久身份无效') from None
+        if (not isinstance(proof, dict) or set(proof) != (owned_fields if owned else fields)
+                or proof.get('schema') not in {'host-local-model-admission/1', 'host-local-model-admission/2'}
                 or proof.get('provider_id') != self.provider_id or proof.get('model_id') != self.model_id
                 or proof.get('endpoint') != self.endpoint or proof.get('model_sha256') != self.model_sha256
-                or proof.get('runtime_kind') != 'WHISPER_CPP' or proof.get('management') != 'EXTERNAL'
+                or proof.get('runtime_kind') != 'WHISPER_CPP' or proof.get('management') != ('MANAGED' if owned else 'EXTERNAL')
                 or proof.get('enabled') is not True or proof.get('model_locality') != 'LOCAL_VERIFIED'
                 or type(proof.get('revision')) is not int or not 1 <= proof['revision'] <= 2**53 - 1
-                or _file_identity(self._ffmpeg) != self._tool_identity):
+                or _file_identity(self._ffmpeg) != self._tool_identity
+                or owned and (self._request_authorization is None or type(proof.get('process_id')) is not int
+                    or proof['process_id'] < 1 or not isinstance(proof.get('runtime_uuid'), str)
+                    or any(not isinstance(proof.get(key), str) or not re.fullmatch(r'[a-f0-9]{64}', proof[key])
+                           for key in ('executable_sha256', 'startup_nonce', 'ready_digest')))
+                or not owned and self._request_authorization is not None):
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, 'ASR 模型或原主机本地准入证据未验证或已变化')
         return {'schema': 'local-audio-admission/1', 'provider_id': self.provider_id, 'model_id': self.model_id,
             'endpoint': self.endpoint, 'model_sha256': self.model_sha256, 'admission_digest': audio_digest(proof),
-            'operations': ['ASR'], 'adapter_version': 'whisper.cpp-server/1:' + self._tool_hash}
+            'operations': ['ASR'], 'adapter_version': ('studio-fixed-whisper-host/1:' if owned else 'whisper.cpp-server/1:') + self._tool_hash}
 
     def _pcm(self, request, guard):
         extension = MEDIA_EXTENSIONS.get(request.media_type)
@@ -165,6 +183,17 @@ class LocalWhisperCppProvider:
             connection.putheader('Accept', 'application/json')
             connection.putheader('Accept-Encoding', 'identity')
             connection.putheader('Connection', 'close')
+            if self._request_authorization is not None:
+                authorization = self._request_authorization()
+                if (not isinstance(authorization, dict) or set(authorization) != {
+                        'X-Studio-Whisper-Token', 'X-Studio-Whisper-Revision', 'X-Studio-Whisper-PID'}
+                        or not isinstance(authorization.get('X-Studio-Whisper-Token'), str)
+                        or not re.fullmatch(r'[a-f0-9]{64}', authorization['X-Studio-Whisper-Token'])
+                        or any(not isinstance(authorization.get(key), str) or not authorization[key].isdigit()
+                               for key in ('X-Studio-Whisper-Revision', 'X-Studio-Whisper-PID'))):
+                    raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, 'ASR 私有进程授权已失效')
+                for name, value in authorization.items():
+                    connection.putheader(name, value)
             current()
             connection.endheaders()
             for part in pieces:
@@ -247,13 +276,16 @@ class LocalWhisperCppProvider:
             if _fingerprint(self._ffmpeg) != self._tool_hash:
                 raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, 'ASR 媒体解码器已变化，输出已丢弃')
             return AudioProcessingResponse(self.provider_id, self.model_id, tuple(segments), {
-                'schema': 'subtitle-model-execution/1', 'adapter': 'WHISPER_CPP_SERVER', 'operation': 'ASR',
+                'schema': 'subtitle-model-execution/1',
+                'adapter': 'STUDIO_FIXED_WHISPER_HOST' if self._request_authorization is not None else 'WHISPER_CPP_SERVER',
+                'operation': 'ASR',
                 'provider_id': self.provider_id, 'model_id': self.model_id, 'route_digest': request.route_digest,
                 'source_digest': request.source_digest, 'input_sha256': hashlib.sha256(request.media).hexdigest(),
                 'decoded_audio_sha256': hashlib.sha256(pcm).hexdigest(), 'provider_response_sha256': hashlib.sha256(body).hexdigest(),
                 'parameters': parameters, 'elapsed_ms': int((time.monotonic() - started) * 1000),
                 'model_called': True, 'local': True, 'timing_origin': 'MODEL_SEGMENT_TIMESTAMPS',
-                'model_identity_verification': 'HOST_ADMISSION_REQUIRED_NO_WIRE_MODEL_ATTESTATION',
+                'model_identity_verification': 'OWNED_PRIVATE_PIPE_MODEL_LOAD' if self._request_authorization is not None
+                    else 'HOST_ADMISSION_REQUIRED_NO_WIRE_MODEL_ATTESTATION',
                 'quality_verification': 'NOT_RUN'})
         finally:
             self._execution_lock.release()
