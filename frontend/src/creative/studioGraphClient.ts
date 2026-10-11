@@ -48,6 +48,11 @@ const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; o
   media_generate: { inputs: { text: 'TEXT', source: 'ASSET_REF' }, outputs: { candidate: 'MEDIA_CANDIDATE' } },
   media_review: { inputs: { candidate: 'MEDIA_CANDIDATE' }, outputs: { asset: 'ASSET_REF' } },
 };
+function nodePorts(kind: StudioGraphDefinitionId, mediaSchema: boolean): { inputs: Record<string, string>; outputs: Record<string, string> } {
+  if (mediaSchema && kind === 'human_review') return { inputs: { draft: 'DRAFT' }, outputs: { reviewed_draft: 'DRAFT' } };
+  if (mediaSchema && kind === 'media_generate') return { inputs: { text: 'TEXT', draft: 'DRAFT', source: 'ASSET_REF' }, outputs: { candidate: 'MEDIA_CANDIDATE' } };
+  return ports[kind];
+}
 const mediaOperations: readonly MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v',
   'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const mediaParameterKeys = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms'];
@@ -201,7 +206,7 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
       target_node_id: id(edge.target_node_id, input), target_port: id(edge.target_port, input) };
     const source = nodeMap.get(result.source_node_id), target = nodeMap.get(result.target_node_id);
     if (!source || !target || edgeIds.has(result.id)) invalid(input);
-    const sourcePorts = ports[source.definition_id].outputs, targetPorts = ports[target.definition_id].inputs;
+    const sourcePorts = nodePorts(source.definition_id, row.schema_version === 3).outputs, targetPorts = nodePorts(target.definition_id, row.schema_version === 3).inputs;
     if (!Object.hasOwn(sourcePorts, result.source_port) || !Object.hasOwn(targetPorts, result.target_port)) invalid(input);
     const outputType = sourcePorts[result.source_port], inputType = targetPorts[result.target_port];
     if (!outputType || !inputType || outputType !== inputType) invalid(input);
@@ -210,6 +215,16 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
     targets.add(targetKey); edgeIds.add(result.id);
     return result;
   });
+  if (row.schema_version === 3) {
+    for (const node of nodes.filter(item => item.definition_id === 'media_generate')) {
+      const draftEdge = edges.find(edge => edge.target_node_id === node.id && edge.target_port === 'draft');
+      if (!draftEdge) continue;
+      if (edges.some(edge => edge.target_node_id === node.id && edge.target_port === 'text')) invalid(input);
+      const review = nodeMap.get(draftEdge.source_node_id), modelEdge = edges.find(edge => edge.target_node_id === review?.id && edge.target_port === 'draft');
+      if (review?.definition_id !== 'human_review' || draftEdge.source_port !== 'reviewed_draft' || !modelEdge
+        || modelEdge.source_port !== 'draft' || nodeMap.get(modelEdge.source_node_id)?.definition_id !== 'text_generate') invalid(input);
+    }
+  }
   // Reject cycles before sending, without executing or dynamically importing any node.
   const active = new Set<string>(), done = new Set<string>();
   function visit(nodeId: string): void {
@@ -273,8 +288,8 @@ function catalogDefinition(value: unknown, mediaEnabled = false): StudioGraphCat
   const executable = mediaEnabled || kind !== 'asset_reference';
   if (row.version !== 1 || row.model_called !== false || row.executable !== executable) invalid();
   function checkedPorts(value: unknown, side: 'inputs' | 'outputs'): StudioGraphPort[] {
-    const expected = ports[kind][side];
-    const result = list(value, 2).map(item => {
+    const expected = nodePorts(kind, mediaEnabled)[side];
+    const result = list(value, 3).map(item => {
       const port = record(item), portId = id(port.id), required = bool(port.required);
       if (!portKinds.includes(port.type as StudioGraphPort['type']) || expected[portId] !== port.type || port.multiple !== false) invalid();
       if (required !== (side === 'inputs' && portId !== 'direction' && kind !== 'media_generate')) invalid();
@@ -302,12 +317,13 @@ function draft(value: unknown, allowModel = false): StudioGraphDraft {
   if (row.direction !== undefined) result.direction = { note: text(record(row.direction).note, 4_000, false, true) };
   return result;
 }
-function output(value: unknown, allowModel = false): StudioGraphOutput | null {
+function output(value: unknown, allowModel = false, allowReviewed = false): StudioGraphOutput | null {
   if (value === null) return null;
   const row = record(value), result: StudioGraphOutput = {};
   if (row.text !== undefined) result.text = text(row.text, 8_000, false, true);
   if (row.direction !== undefined) result.direction = { note: text(record(row.direction).note, 4_000, false, true) };
   if (row.draft !== undefined) result.draft = draft(row.draft, allowModel);
+  if (row.reviewed_draft !== undefined) { if (!allowReviewed) invalid(); result.reviewed_draft = draft(row.reviewed_draft, allowModel); }
   if (row.asset !== undefined) result.asset = assetReference(row.asset);
   if (row.candidate !== undefined) {
     const candidate = record(row.candidate);
@@ -488,7 +504,8 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   const base = `/api/projects/${encodeURIComponent(projectId)}/studio`;
   const graphUrl = (value: unknown) => `${base}/graphs/${encodeURIComponent(resourceId(value, true))}`;
   const runUrl = (value: unknown) => `${base}/graph-runs/${encodeURIComponent(resourceId(value, true))}`;
-  const observedGraphs = new Map<string, { version: number; can_edit: boolean; enabledIds: string[]; definition_digest: string }>();
+  const observedGraphs = new Map<string, { version: number; can_edit: boolean; enabledIds: string[]; definition_digest: string;
+    schemaVersion: number; nodes: Record<string, StudioGraphDefinitionId> }>();
   const observedRuns = new Map<string, string>();
 
   function owner(row: Record<string, unknown>): StudioGraphOwner {
@@ -533,6 +550,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if (!previous || previous.version <= value.version) observedGraphs.set(value.id, {
       version: value.version, can_edit: value.can_edit, enabledIds: value.definition.nodes.filter(node => node.enabled).map(node => node.id),
       definition_digest: value.definition_digest,
+      schemaVersion: value.definition.schema_version, nodes: Object.fromEntries(value.definition.nodes.map(node => [node.id, node.definition_id])),
     });
     return value;
   }
@@ -571,13 +589,15 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     const modelCalled = bool(row.model_called);
     if (model ? modelCalled !== (model.execution?.model_called ?? false) : modelCalled) invalid();
     const modelOutput = modelCalled && !!model && ['RESULT_REVIEW', 'TERMINAL'].includes(model.status);
+    const observed = observedGraphs.get(graphId), knownGraph = observed?.version === row.graph_version ? observed : undefined;
     const rawStates = record(row.node_states), stateIds = Object.keys(rawStates);
     if (stateIds.length > 24) invalid();
     const nodeStates = Object.fromEntries(stateIds.map(nodeId => {
       const state = record(rawStates[nodeId]);
       if (!nodeStatuses.includes(state.status as StudioGraphNodeStatus)) invalid();
       const nodeState: StudioGraphNodeState = { status: state.status as StudioGraphNodeStatus,
-        output: hideOutputs ? null : output(state.output, modelOutput), error: state.error === null ? null : { code: code(record(state.error).code) } };
+        output: hideOutputs ? null : output(state.output, modelOutput, state.status === 'SUCCEEDED' && (!knownGraph
+          || knownGraph.schemaVersion === 3 && knownGraph.nodes[nodeId] === 'human_review')), error: state.error === null ? null : { code: code(record(state.error).code) } };
       return [id(nodeId), nodeState];
     }));
     const currentNodeId = row.current_node_id === null ? null : id(row.current_node_id);

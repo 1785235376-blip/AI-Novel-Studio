@@ -1,6 +1,7 @@
 import { ApiError, type CollaborationContext } from '../api';
 import { studioTransport } from './studioClient';
-import type { StudioTimeline, StudioTimelineRow } from './studioTimelineTypes';
+import { checkedTimeline, type StudioTimeline, type StudioTimelineRow } from './studioTimelineTypes';
+import { checkedTimelineExportPreview, checkedTimelineExportProfile, type TimelineExportProfile } from './studioTimelineExportTypes';
 
 export type ProductionOwner = 'image' | 'audio' | 'video' | 'timeline';
 export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm7.video.t2v' | 'm7.video.i2v' | 'm7.video.v2v' | 'm8.audio.speech' | 'm8.audio.music' | 'm8.audio.effects' | 'm8.audio.trim';
@@ -14,15 +15,19 @@ export type ProductionPreview = { contract: 'studio-production-preview/1'; novel
   preview_digest: string; request_digest: string; command: MediaCommand; provider: { provider_id: string; model_id: string; local: boolean; route_digest: string } | null;
   execution_recipe: ProductionRecipe; product_acceptance: 'LOCAL_REQUIRED'; execution_available: true; automatic_dispatch: false; output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
 export type ProductionRecipe = { contract: 'studio-execution-recipe/1'; operation_id: string; adapter: string; recipe_digest: string; automatic_fallback: false; [key: string]: unknown };
+export type TimelineMediaMeasurement = { duration_ms?: number; byte_count?: number; width?: number; height?: number; fps?: number;
+  video_codec?: string; audio_codec?: string; sample_rate?: number; channels?: number; container?: 'mp4' | 'webm';
+  profile_validation?: 'NATIVE_FFPROBE_EXACT'; render_profile?: string; export_profile?: TimelineExportProfile };
 export type ProductionJob = { contract: 'studio-production-job/1'; owner: ProductionOwner; id: string; novel_id: string; branch_id: string | null; version: number;
   operation_id: string; request_id: string; status: 'QUEUED' | 'RUNNING' | 'SEND_RESERVED' | 'REMOTE_RUNNING' | 'RESULT_READY' | 'AWAITING_REVIEW' | 'SUCCEEDED' | 'REVIEWING' | 'APPROVED' | 'UNKNOWN' | 'FAILED' | 'CANCELLED';
   request_digest: string; receipt_digest: string | null; output_candidate: { id: string; version: number; digest: string; kind: 'image' | 'video' | 'audio' } | null;
-  error_code?: string | null; review_state?: string | null; product_acceptance: 'LOCAL_REQUIRED'; automatic_replay: false; remote_compute_may_continue: boolean;
+  error_code?: string | null; review_state?: string | null; cancellation_mode?: string | null; product_acceptance: 'LOCAL_REQUIRED'; automatic_replay: false; remote_compute_may_continue: boolean;
   timeline_snapshot: { id: string; version: number; digest: string } | null;
   sources: RecordedProductionSource[];
   command: RecordedMediaCommand | null;
   provider: { provider_id: string; model_id: string; local: boolean; route_digest: string } | null;
   execution_recipe: ProductionRecipe; approved_asset_version: number | null;
+  media_measurement?: TimelineMediaMeasurement | null;
   needs_reconciliation?: boolean; execution_state?: string; created_at: string; updated_at: string };
 export type ProductionAction = { expected_version: number; expected_request_digest: string };
 
@@ -44,9 +49,39 @@ function sources(v: unknown, limit: number): asserts v is RecordedProductionSour
 function recipe(v: unknown, operation: unknown): ProductionRecipe {
   if (!record(v) || v.contract !== 'studio-execution-recipe/1' || v.operation_id !== operation || !hex(v.recipe_digest)
     || v.automatic_fallback !== false || !['ORIGINAL_HTTP_PROVIDER', 'COMFYUI_BUILTIN_IMAGE', 'AUTOMATIC1111_IMAGE', 'LOCAL_FFMPEG'].includes(String(v.adapter))
-    || Object.keys(v).some(k => !['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline'].includes(k))
+    || Object.keys(v).some(k => !['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline', 'export_profile'].includes(k))
     || JSON.stringify(v).length > 131072) invalid();
   return v as ProductionRecipe;
+}
+function measurement(v: unknown, owner: unknown, executionRecipe: ProductionRecipe): TimelineMediaMeasurement | null | undefined {
+  if (v === undefined || v === null) return v;
+  if (owner !== 'timeline' || !record(v) || Object.keys(v).some(key => !['duration_ms', 'byte_count', 'width', 'height', 'fps', 'video_codec', 'audio_codec',
+    'sample_rate', 'channels', 'container', 'profile_validation', 'render_profile', 'export_profile'].includes(key))) invalid();
+  const bounds: Record<string, [number, number]> = { duration_ms: [1, 36000000], byte_count: [1, 25 * 1024 * 1024], width: [16, 1920], height: [16, 1080], sample_rate: [1, 384000], channels: [1, 32] };
+  if (Object.entries(bounds).some(([key, [min, max]]) => key in v && (typeof v[key] !== 'number' || !Number.isSafeInteger(v[key]) || v[key] < min || v[key] > max))
+    || 'fps' in v && (typeof v.fps !== 'number' || !Number.isFinite(v.fps) || v.fps <= 0 || v.fps > 60.001)
+    || ['video_codec', 'audio_codec'].some(key => key in v && (typeof v[key] !== 'string' || !/^[A-Za-z0-9_.-]{1,64}$/.test(v[key])))
+    || 'container' in v && !['mp4', 'webm'].includes(String(v.container))
+    || 'profile_validation' in v && v.profile_validation !== 'NATIVE_FFPROBE_EXACT'
+    || 'render_profile' in v && !['STUDIO_MULTITRACK_LOCAL_FFMPEG', 'STUDIO_MULTITRACK_LOCAL_FFMPEG_REVIEW_MP4', 'STUDIO_MULTITRACK_LOCAL_FFMPEG_DELIVERY_H264_MP4', 'STUDIO_MULTITRACK_LOCAL_FFMPEG_DELIVERY_VP9_WEBM'].includes(String(v.render_profile))) invalid();
+  if ('export_profile' in v) {
+    try {
+      const profile = checkedTimelineExportProfile(v.export_profile), expected = checkedTimelineExportProfile(executionRecipe.export_profile);
+      if (JSON.stringify(profile) !== JSON.stringify(expected) || executionRecipe.output_profile !== profile.preset) invalid();
+    } catch { return invalid(); }
+  }
+  if (v.profile_validation === 'NATIVE_FFPROBE_EXACT') {
+    if (['duration_ms', 'byte_count', 'width', 'height', 'fps', 'video_codec', 'audio_codec', 'sample_rate', 'channels', 'container', 'render_profile'].some(key => !(key in v))) invalid();
+    const preset = (v.export_profile as TimelineExportProfile | undefined)?.preset ?? 'REVIEW_MP4';
+    const expected = preset === 'DELIVERY_VP9_WEBM' ? ['vp9', 'opus', 'webm'] : [preset === 'DELIVERY_H264_MP4' ? 'h264' : 'mpeg4', 'aac', 'mp4'];
+    if (v.video_codec !== expected[0] || v.audio_codec !== expected[1] || v.container !== expected[2] || v.sample_rate !== 48000 || v.channels !== 2) invalid();
+    try {
+      const timeline = checkedTimeline(executionRecipe.timeline);
+      if (v.width !== timeline.width || v.height !== timeline.height || Math.abs((v.fps as number) - timeline.fps) > 0.001
+        || Math.abs((v.duration_ms as number) - timeline.duration_ms) > Math.max(100, Math.ceil(2000 / timeline.fps))) invalid();
+    } catch { return invalid(); }
+  }
+  return v as TimelineMediaMeasurement;
 }
 
 export function studioProductionClient(projectId: string, context: CollaborationContext) {
@@ -69,7 +104,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
     if (Object.keys(v).some(key => !['contract', 'owner', 'id', 'novel_id', 'branch_id', 'version', 'status', 'request_digest', 'receipt_digest',
       'attempt', 'created_at', 'updated_at', 'error_code', 'review_state', 'cancellation_mode', 'needs_reconciliation', 'execution_state', 'operation_id',
       'output_candidate', 'timeline_snapshot', 'sources', 'command', 'provider', 'execution_recipe', 'approved_asset_version', 'request_id',
-      'product_acceptance', 'automatic_replay', 'remote_compute_may_continue'].includes(key))) invalid();
+      'product_acceptance', 'automatic_replay', 'remote_compute_may_continue', 'media_measurement'].includes(key))) invalid();
     if (v.contract !== 'studio-production-job/1' || !owners.includes(v.owner as ProductionOwner) || !identifier(v.id) || !revision(v.version)
       || !states.includes(String(v.status)) || !hex(v.request_digest) || (v.receipt_digest !== null && !hex(v.receipt_digest))
       || typeof v.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(v.request_id)
@@ -77,6 +112,9 @@ export function studioProductionClient(projectId: string, context: Collaboration
       || v.product_acceptance !== 'LOCAL_REQUIRED' || v.automatic_replay !== false || typeof v.remote_compute_may_continue !== 'boolean') invalid();
     const expectedOwner = v.operation_id.startsWith('m5.') ? 'image' : v.operation_id.startsWith('m7.') ? 'video' : v.operation_id.startsWith('m8.') ? 'audio' : 'timeline';
     if (v.owner !== expectedOwner || typeof v.created_at !== 'string' || typeof v.updated_at !== 'string') invalid();
+    if (v.cancellation_mode !== undefined && v.cancellation_mode !== null && (typeof v.cancellation_mode !== 'string' || !/^[A-Z_]{1,80}$/.test(v.cancellation_mode))) invalid();
+    if (v.owner === 'timeline' && (v.remote_compute_may_continue !== false || v.cancellation_mode !== undefined && v.cancellation_mode !== null
+      && !['LOCAL_RENDER_PROCESS_STOP_REQUESTED', 'LOCAL_RESULT_DISCARD'].includes(String(v.cancellation_mode)))) invalid();
     if (v.output_candidate !== null) {
       const c = v.output_candidate;
       if (!record(c) || !identifier(c.id) || !revision(c.version) || !hex(c.digest) || !['image', 'video', 'audio'].includes(String(c.kind))) invalid();
@@ -86,7 +124,8 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const s = v.timeline_snapshot;
       if (!record(s) || !identifier(s.id) || !revision(s.version) || !hex(s.digest) || v.operation_id !== 'm9.timeline.multitrack') invalid();
     } else if (v.timeline_snapshot !== null) invalid();
-    recipe(v.execution_recipe, v.operation_id);
+    const executionRecipe = recipe(v.execution_recipe, v.operation_id);
+    measurement(v.media_measurement, v.owner, executionRecipe);
     if (v.approved_asset_version !== null && !revision(v.approved_asset_version)) invalid();
     if (v.owner === 'timeline') { if (v.command !== null || v.provider !== null) invalid(); }
     else {
@@ -172,6 +211,29 @@ export function studioProductionClient(projectId: string, context: Collaboration
     async timelineRender(id: string, body: { expected_version: number; reviewed_timeline_digest: string; request_id: string }) {
       return job(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(id)}/render`, 'POST', body, undefined, body.request_id));
     },
+    async timelineExportPreview(source: StudioTimelineRow, profile: TimelineExportProfile) {
+      const normalized = checkedTimelineExportProfile(profile);
+      const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/export-preview`, 'POST', {
+        expected_version: source.version, reviewed_timeline_digest: source.timeline_digest, export_profile: normalized });
+      const result = checkedTimelineExportPreview(raw, source, normalized), executionRecipe = recipe(result.execution_recipe, 'm9.timeline.multitrack');
+      if (executionRecipe.adapter !== 'LOCAL_FFMPEG' || executionRecipe.output_profile !== normalized.preset
+        || Object.keys(executionRecipe).some(key => !['contract', 'operation_id', 'adapter', 'output_profile', 'timeline', 'export_profile', 'automatic_fallback', 'recipe_digest'].includes(key))
+        || JSON.stringify(checkedTimeline(executionRecipe.timeline)) !== JSON.stringify(checkedTimeline(source.timeline))
+        || JSON.stringify(checkedTimelineExportProfile(executionRecipe.export_profile)) !== JSON.stringify(normalized)) invalid();
+      return result;
+    },
+    async timelineExport(source: StudioTimelineRow, profile: TimelineExportProfile, requestId: string, reviewedExportDigest: string) {
+      const result = job(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/export`, 'POST', {
+        expected_version: source.version, reviewed_timeline_digest: source.timeline_digest, export_profile: checkedTimelineExportProfile(profile),
+        request_id: requestId, reviewed_export_digest: reviewedExportDigest }, undefined, requestId));
+      if (result.owner !== 'timeline' || result.request_id !== requestId || result.operation_id !== 'm9.timeline.multitrack'
+        || result.timeline_snapshot?.id !== source.id || result.timeline_snapshot.version !== source.version || result.timeline_snapshot.digest !== source.timeline_digest) invalid();
+      return result;
+    },
   };
 }
-export type StudioProductionClient = ReturnType<typeof studioProductionClient>;
+type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
+type TimelineExportMethods = 'timelineExportPreview' | 'timelineExport';
+// Existing embedded clients keep their original media/render surface. Export
+// controls require both additive methods before becoming available.
+export type StudioProductionClient = Omit<CompleteProductionClient, TimelineExportMethods> & Partial<Pick<CompleteProductionClient, TimelineExportMethods>>;

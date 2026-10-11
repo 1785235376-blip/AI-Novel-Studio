@@ -3,7 +3,7 @@ import { ApiError, apiErrorView, type Asset } from '../api';
 import type { StudioAsset, StudioClient } from './studioClient';
 import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphRecord } from './studioGraphTypes';
 import type { MediaOperation } from './studioProductionClient';
-import { blankGraph, connectionIssue, graphId, retainsSavedAssetBindings } from './graphDraft';
+import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, retainsSavedAssetBindings } from './graphDraft';
 
 export type StudioGraphEditorSelection = { graphId?: string; runId?: string };
 export type StudioGraphEditorProps = {
@@ -232,7 +232,8 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }, [active, denied, requestedGraphId, catalog, busy, externalDirty, executionDirty, dirty, blocked, current, identity, base?.id, read, client, accept]);
 
   return {
-    catalog, records, base, draft, selected, past, future, loading, error, notice, blocked,
+    catalog: catalog ? { ...catalog, definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
+    records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
     discard, load, change, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,

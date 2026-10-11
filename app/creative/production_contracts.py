@@ -572,17 +572,23 @@ def _operations():
         ])
         descriptor.input_requirements.append("Graph schema 3 使用闭合媒体节点与原 ASSET_REF；准确绑定运行与节点版本，先仅入队再另行明确执行。")
         descriptor.review_requirements.append("MEDIA_CANDIDATE 只可交给唯一 media_review；审核后原素材版本作为 ASSET_REF 下传。Graph 绑定任务不借独立媒体入口执行或审核。")
-    replacements["m9.timeline.multitrack"] = _existing("m9.timeline.multitrack", "独立多轨编辑与审阅渲染",
-        _owner("app.creative.production_execution", "ProductionExecutionService", "timeline_list", "timeline_get", "timeline_save", "timeline_render", "review", "reconcile"), [
+    replacements["m9.timeline.multitrack"] = _existing("m9.timeline.multitrack", "独立多轨剪辑与明确编码导出",
+        _owner("app.creative.production_execution", "ProductionExecutionService", "timeline_list", "timeline_get", "timeline_save", "timeline_edit", "timeline_history", "timeline_restore", "timeline_export_preview", "timeline_export", "timeline_render", "review", "reconcile", "cancel"), [
             _action("save", "POST", production + "/timelines", "app.creative.production_execution.ProductionExecutionService.timeline_save", "TimelineSave", host=True),
             _action("update", "PUT", production + "/timelines/{tid}", "app.creative.production_execution.ProductionExecutionService.timeline_save", "TimelineSave", host=True),
             _action("render", "POST", production + "/timelines/{tid}/render", "app.creative.production_execution.ProductionExecutionService.timeline_render", "TimelineRender", host=True),
+            _action("edit", "POST", production + "/timelines/{tid}/edit", "app.creative.production_execution.ProductionExecutionService.timeline_edit", "TimelineEdit", host=True),
+            _action("history", "GET", production + "/timelines/{tid}/history", "app.creative.production_execution.ProductionExecutionService.timeline_history", permission="domain.read", host=True),
+            _action("restore", "POST", production + "/timelines/{tid}/restore", "app.creative.production_execution.ProductionExecutionService.timeline_restore", "TimelineRestore", host=True),
+            _action("export_preview", "POST", production + "/timelines/{tid}/export-preview", "app.creative.production_execution.ProductionExecutionService.timeline_export_preview", "TimelineExportPreview", permission="domain.read", host=True),
+            _action("export", "POST", production + "/timelines/{tid}/export", "app.creative.production_execution.ProductionExecutionService.timeline_export", "TimelineExport", host=True),
+            _action("cancel", "POST", production + "/jobs/timeline/{jid}/cancel", "app.creative.production_execution.ProductionExecutionService.cancel", "MediaJobAction", host=True),
             _action("review", "POST", production + "/jobs/timeline/{jid}/review", "app.creative.production_execution.ProductionExecutionService.review", "MediaReview", permission="domain.review", host=True)],
-        inputs=["保存版本化时间线后，准确确认版本／摘要再渲染；最多 8 轨、30 段、10 分钟、1920×1080／60FPS。", "视频裁剪／摆放／叠放，音频裁剪／音量／静音／混音，手工字幕有界；不执行任意脚本或外部路径。"],
-        sources=["绑定原视频／音频资产快照与时间线版本，渲染前后及审核时再次校验。"],
-        outputs=["沿用原 VideoAssemblyService 持久任务与原 FFmpeg，实际输出经媒体校验后保存为私有候选。"],
+        inputs=["保存版本化时间线后，准确确认版本／摘要；最多 8 轨、30 段、10 分钟、1920×1080／60FPS。", "原子分切／移动／复制／滑移／波纹裁剪／分轨／字幕及历史恢复；显式 schema 2 另含静态图片、变速、透明度、淡入淡出与原视频声音混音。"],
+        sources=["绑定原视频／图片／音频资产快照与时间线版本，在原 scope→asset→project 临界区保存／编辑，渲染前后及审核时再次校验。"],
+        outputs=["原 VideoAssemblyService 持久任务调用本地 FFmpeg，支持原审阅 MP4、H.264/AAC MP4、VP9/Opus WebM；实际 probe 核对编码／容器／画幅／帧率／声音／时长后保存私有候选。"],
         review=["显式预览候选并确认输出摘要；只审核通过才进入素材库，UNKNOWN 不自动重新渲染。"],
-        limitations=["这是有界审阅渲染，不宣称高质量成片、自动转录、完整 NLE 或跨软件往返验收。", "本批构建、渲染、Windows／GPU与完整产品验收均 NOT_RUN。"],
+        limitations=["导出使用原 25MiB Asset 上限和有界时长／原生执行时限，超限拒绝而不悄悄降低要求；不代表自动转录、跨软件往返或质量验收。", "本批构建、渲染、Windows／GPU与完整产品验收均 NOT_RUN。"],
         blockers=["M4_TO_M9_ORDERED_ACCEPTANCE_REQUIRED"])
     return [replacements.get(operation.id, operation) for operation in operations]
 

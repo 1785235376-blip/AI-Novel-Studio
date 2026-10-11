@@ -7,7 +7,8 @@ from ..experimental.production_lineage_api import PrivateProductionRoute
 from ..services.v1_capability_service import CapabilityVersionConflict
 from ..services.audiobook_service import AudiobookError
 from ..audio_production_store import AudioStateVersionConflict
-from .production_execution_models import MediaCommand, MediaCreate, MediaJobAction, MediaReview, TimelineSave, TimelineRender
+from .production_execution_models import (MediaCommand, MediaCreate, MediaJobAction, MediaReview, TimelineSave, TimelineRender,
+    TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport)
 
 Owner = Literal["image", "audio", "video", "timeline"]
 
@@ -110,5 +111,25 @@ def create_production_execution_router(service, invoke, *, require_host_session,
     @router.post("/projects/{nid}/studio/production/timelines/{tid}/render")
     def render(nid: str, tid: str, request: Request, body: TimelineRender, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.timeline_render(nid, scope, actor, tid, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/edit")
+    def edit(nid: str, tid: str, request: Request, body: TimelineEdit, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.timeline_edit(nid, scope, actor, tid, body, guard))
+
+    @router.get("/projects/{nid}/studio/production/timelines/{tid}/history")
+    def history(nid: str, tid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.timeline_history(nid, scope, actor, tid, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/restore")
+    def restore(nid: str, tid: str, request: Request, body: TimelineRestore, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.timeline_restore(nid, scope, actor, tid, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/export-preview")
+    def export_preview(nid: str, tid: str, request: Request, body: TimelineExportPreview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.timeline_export_preview(nid, scope, actor, tid, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/export")
+    def export(nid: str, tid: str, request: Request, body: TimelineExport, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.timeline_export(nid, scope, actor, tid, body, guard))
 
     return router

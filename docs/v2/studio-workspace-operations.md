@@ -34,11 +34,11 @@ operation 的 input/source/output/review requirements 描述原约束。`interfa
 
 云端来源继承沿原不可变 Studio Asset 来源与有证明的 legacy parent 快照核对原 owner；直接／间接文档须原 CLOUD_ALLOWED，最多 64 节点／16 层／200MiB。缺失／旧章节证明、新加父来源、循环、stale 和超限都阻止发送；作者 license 声明不授予 cloud grant。生成资产专用声明表单只编辑 license／operation，origin／parents／docs 保持原执行记录，不把 CREATIVE_DOCUMENT 映射成章节。
 
-`useStudioTimelineEditor` 的 base／draft 与已读服务端 candidate 独立；`studioTimelineTypes` 闭合轨道／片段／字幕 shape，`StudioTimelineEditor` 渲染其命名动作。CAS 保存冲突先读，用户明确采用服务端版本或保留输入并基于原版本编辑。只有已保存且无 dirty 的确切时间线版本／摘要才能明确 render；render 会实际同步调用原有界 FFmpeg 并返回原 owner job，不是仅创建队列。最多 8 轨／30 段／10 分钟，VIDEO／AUDIO 各 4 轨；视频叠放、音频 gain／mute／mix 和手工字幕均有界。不是完整 NLE、自动 ASR、音画对齐或高质量导出。
+`useStudioTimelineEditor` 的 base／draft 与已读服务端 candidate 独立；`studioTimelineTypes` 闭合轨道／片段／字幕 shape，`StudioTimelineEditor` 渲染其命名动作。CAS 保存冲突先读，用户明确采用服务端版本或保留输入并基于原版本编辑。只有已保存且无 dirty 的确切时间线版本／摘要才能明确 render/export；实际同步调用原 FFmpeg 并返回原 owner job。多轨片段可分切／复制／跨同类轨移动，控制器保留本地 undo/redo；原后端还实现闭合原子 edit 和原历史 restore。显式时间线 schema 2 支持图片叠层、变速、透明度、增益／静音／淡入淡出与原视频声音，单独 export-preview／同意／export 选择 H.264 MP4 或 VP9 WebM；实际 native measurement 与计划 recipe 分开。原 8 轨／30 段／10 分钟／25MiB 上限保持，详见 [剪辑与导出](text-archive-timeline-export.md)。
 
 父级绑定当前 client 的外部 timeline job 可供媒体消费者预览／审核；仅在没有 pending、身份仍当前时采用新版本，不覆盖正在编辑的媒体草稿、不自动 GET／generate／review。身份／client 替换、权限撤销、任务／版本／来源变化和卸载清空原候选 URL／审核同意，立即 revoke Blob，晚到响应不得再采用；关闭 transport 不表示 owner 已取消。
 
-网络、408／409／425／429、5xx 或非法成功回执保留不确定状态，阻止相同版本重复发送并提供原任务读取核对。显式 reconcile 对 image／audio／video／timeline 都只在原 executor lease 结束后处理 RUNNING／SEND_RESERVED 为 UNKNOWN，不重发。视频 refresh 只查询原已保存远端 task；异步音频当前无 poll，继续 UNKNOWN。本地 discard 保留候选且不声称 remote abort。媒体 dirty 与时间线 dirty 纳入父级未保存导航保护；确认离开不取消后台任务。
+网络、408／409／425／429、5xx 或非法成功回执保留不确定状态，阻止相同版本重复发送并提供原任务读取核对。显式 reconcile 需原 executor lease 已结束，不重发；时间线在已发布原私有候选且来源／字节／origin／job 绑定全部核对时可恢复原成功回执，否则 UNKNOWN。视频 refresh 只查询原已保存远端 task；异步音频当前无 poll，继续 UNKNOWN。本地 discard 保留候选且不声称 remote abort；时间线取消 fence 可终止本地渲染进程。媒体 dirty 与时间线 dirty 纳入父级未保存导航保护；确认离开不取消后台任务。
 
 实际后端、API 和输出边界详见 [production-execution.md](production-execution.md)。Opus 可重排这些 Panel／Editor JSX 和 token 样式；须继续消费原 controller/client、命名动作、Host、CAS、人工同意、导航与私有 Blob 生命周期，不能另造执行流。
 

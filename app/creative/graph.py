@@ -334,6 +334,16 @@ class CreativeGraphService:
                     issues.append({"code": "CREATIVE_GRAPH_MEDIA_REVIEW_REQUIRED", "node_id": generator})
                 source = next((edge for edge in incoming[generator] if edge["target_port"] == "source"), None)
                 text = next((edge for edge in incoming[generator] if edge["target_port"] == "text"), None)
+                draft = next((edge for edge in incoming[generator] if edge["target_port"] == "draft"), None)
+                if text is not None and draft is not None:
+                    issues.append({"code": "CREATIVE_GRAPH_MEDIA_TEXT_DRAFT_EXCLUSIVE", "node_id": generator})
+                if draft is not None:
+                    reviewer = nodes[draft["source_node_id"]]
+                    original = next((edge for edge in incoming[reviewer["id"]] if edge["target_port"] == "draft"), None)
+                    if (reviewer["definition_id"] != "human_review" or draft["source_port"] != "reviewed_draft"
+                            or original is None or original["source_port"] != "draft"
+                            or nodes[original["source_node_id"]]["definition_id"] != "text_generate"):
+                        issues.append({"code": "CREATIVE_GRAPH_MEDIA_APPROVED_MODEL_DRAFT_REQUIRED", "node_id": generator})
                 required_kind = {"m5.image.i2i": "image", "m7.video.i2v": "image",
                     "m7.video.v2v": "video", "m8.audio.trim": "audio"}.get(operation)
                 if required_kind and source is None:
@@ -351,9 +361,9 @@ class CreativeGraphService:
                     if required_kind is None or source_kind != required_kind:
                         issues.append({"code": "CREATIVE_GRAPH_MEDIA_SOURCE_KIND_INVALID", "node_id": generator})
                 if operation == "m8.audio.trim":
-                    if text is not None:
+                    if text is not None or draft is not None:
                         issues.append({"code": "STUDIO_AUDIO_TRIM_LOCAL_ONLY", "node_id": generator})
-                elif not node["parameters"]["prompt"].strip() and text is None:
+                elif not node["parameters"]["prompt"].strip() and text is None and draft is None:
                     issues.append({"code": "CREATIVE_GRAPH_MEDIA_PROMPT_REQUIRED", "node_id": generator})
             for review in reviews:
                 sources = [edge for edge in incoming[review] if edge["target_port"] == "candidate"]
@@ -404,12 +414,27 @@ class CreativeGraphService:
     def get_run(self, nid, scope, actor, rid, guard=lambda: None, *, reconcile=True):
         _, current = self._context(nid, scope, actor, guard)
         row = self._owned(nid, scope, actor, RUNS, rid)
+        archival = self.model_runtime is not None and self.model_runtime.text_assets.enabled(row)
+        if archival:
+            result = self.model_runtime.text_assets.read(nid, scope, actor, rid, current, reconcile=reconcile)
+            if (result["stale"] or result["status"] in {"FAILED", "CANCELLED", "REJECTED"}
+                    or row.get("graph_schema_version") != 3 or not row.get("media_execution_contract")):
+                return result
+            if self.media_runtime is None:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
+            # Text convergence/decision projection is complete before original
+            # media queues are read outside leases. The same run version must
+            # still own both projections; stale text cannot become media success.
+            media = self.media_runtime.read(nid, scope, actor, rid, current, expected_version=result["version"])
+            if media["stale"]:
+                return self.model_runtime.text_assets.masked(media)
+            if "asset_output" not in media:
+                media["asset_output"] = deepcopy(result["asset_output"])
+            return media
         if row.get("graph_schema_version") == 3 and row.get("media_execution_contract"):
             if self.media_runtime is None:
                 raise ValueError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
             return self.media_runtime.read(nid, scope, actor, rid, current)
-        if self.model_runtime and self.model_runtime.text_assets.enabled(row):
-            return self.model_runtime.text_assets.read(nid, scope, actor, rid, current, reconcile=reconcile)
         result = self.executor.view(nid, scope, actor, row, current)
         current(); return result
 
@@ -434,4 +459,10 @@ class CreativeGraphService:
             return self.get_run(nid, scope, actor, rid, guard, reconcile=False)
         if archival and action == "cancel":
             result["asset_output"] = self.model_runtime.text_assets.pending("NO_ACCEPTED_RESULT")
+        if (archival and row.get("graph_schema_version") == 3 and row.get("media_execution_contract")
+                and action == "approve" and not result["stale"] and result["status"] not in {"FAILED", "CANCELLED", "REJECTED"}):
+            if self.media_runtime is None:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
+            projected = self.media_runtime.read(nid, scope, actor, rid, guard, expected_version=result["version"])
+            return self.model_runtime.text_assets.masked(projected) if projected["stale"] else projected
         return result

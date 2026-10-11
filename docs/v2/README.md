@@ -17,7 +17,7 @@ RC1 build `hardening-package-20261008T012141Z-47c9f581`, ZIP SHA256 `724ae7c6940
 3. Director Agent and typed Director Notes; camera, emotion, pacing and performance suggestions.
 4. Storyboard data and editing; numbered shots, framing, composition, camera movement, visual description and sound cues.
 5. Independent media execution on the original image/audio/video owners: explicit T2I/I2I/T2V/I2V/V2V/TTS/music/SFX and local audio trim, with source/job CAS, private candidates and human review.
-6. Versioned, bounded multitrack timeline editing and explicit local FFmpeg review rendering on the original VideoAssemblyService; no complete NLE or high-quality delivery-export claim.
+6. Versioned multitrack clip/track/caption edits, atomic source-bound saves and history restore, plus explicit local FFmpeg review/H.264/VP9 export on the original VideoAssemblyService. [Schema 3 text archive and timeline export](text-archive-timeline-export.md) describes the actual source behavior and retained resource/acceptance gates.
 
 All stages require source-bound backend/API/UI evidence and the original acceptance gates. Current tests, collection, typecheck, build, CI and Windows/GPU/model execution are NOT_RUN — USER_DEFERRED. M4 remains PARTIAL; M5–M9 acceptance remains LOCAL_REQUIRED in the original M4 → M9 order. Publication of engineering source does not satisfy those gates. No main/RC1 merge, tag or release is authorized.
 

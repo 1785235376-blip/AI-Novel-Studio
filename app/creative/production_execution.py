@@ -9,13 +9,15 @@ import base64
 import copy
 import hashlib
 import ipaddress
+from contextlib import nullcontext
 from urllib.parse import urlsplit
 
 from ..experimental.common import StaleSourceError, new_row, change_row
 from ..experimental.store import canonical
 from ..media_files import inspect_image, inspect_media
 from ..services.v1_capability_service import CapabilityVersionConflict
-from .production_execution_models import MediaCommand, MediaCreate, ProviderSelection, TimelineSave, TimelineRender
+from .production_execution_models import (MediaCommand, MediaCreate, ProviderSelection, TimelineSave, TimelineRender,
+    TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport)
 from .project_store import BINDING
 from .workspace import FLAG
 
@@ -48,6 +50,16 @@ class ProductionExecutionService:
         self.audio_store, self.vault, self.transport = audio_store, vault, transport
         from ..services.studio_video_execution import StudioVideoExecution
         self.video = StudioVideoExecution(video_owner)
+        from .graph_asset_inputs import GraphAssetInputs
+        self.timeline_inputs = GraphAssetInputs(self)
+
+    @staticmethod
+    def _capacity(state):
+        timelines = state["collections"].get(TIMELINES, {})
+        if len(timelines) > 25 or len(canonical(timelines).encode("utf-8")) > 4 * 1024 * 1024:
+            raise ValueError("STUDIO_TIMELINE_STORAGE_LIMIT")
+        if any(len(row.get("history", [])) > 100 for row in timelines.values()):
+            raise ValueError("STUDIO_TIMELINE_HISTORY_LIMIT")
 
     def _base(self, nid, scope, actor, guard):
         guard()
@@ -318,9 +330,13 @@ class ProductionExecutionService:
             "command": command,
             "provider": {k: binding[k] for k in ("provider_id", "model_id", "local", "route_digest")} if binding else None,
             "execution_recipe": copy.deepcopy(context.get("execution_recipe")),
+            "media_measurement": {key: copy.deepcopy(row["measured"][key]) for key in
+                ("duration_ms", "byte_count", "width", "height", "fps", "video_codec", "audio_codec", "sample_rate", "channels",
+                 "container", "profile_validation", "render_profile", "export_profile") if key in row.get("measured", {})}
+                if owner == "timeline" and isinstance(row.get("measured"), dict) else None,
             "approved_asset_version": row.get("approved_asset_version", row.get("output_asset_version") if row.get("status") == "APPROVED" else None),
             "request_id": row.get("context", {}).get("request_id"), "product_acceptance": "LOCAL_REQUIRED",
-            "automatic_replay": False, "remote_compute_may_continue": row.get("cancellation_mode") == "LOCAL_RESULT_DISCARD"}
+            "automatic_replay": False, "remote_compute_may_continue": owner != "timeline" and row.get("cancellation_mode") == "LOCAL_RESULT_DISCARD"}
 
     def create(self, nid, scope, actor, value, guard, *, graph_binding=None):
         body = MediaCreate.model_validate(value)
@@ -400,6 +416,42 @@ class ProductionExecutionService:
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
         candidate = self.view(row, owner)["output_candidate"]
         if candidate is None: raise FileNotFoundError(jid)
+        if owner == "timeline":
+            # Read the original queue first, then fence the saved timeline,
+            # exact formal sources and candidate under the same publication
+            # scope -> asset -> project order. A later queue read only checks
+            # the captured receipt; it never holds a queue lock across a scope
+            # callback and cannot recreate a candidate or adopt stale output.
+            with self.timeline_inputs.phase(nid, scope, actor, guard) as document:
+                current = self._timeline_context_current(nid, scope, actor, context, document)
+                self._timeline_sources_current(nid, scope, current["timeline"], guard)
+                meta = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                expected_version = row.get("approved_asset_version") if row["status"] == "APPROVED" else candidate["version"]
+                origin = self._timeline_result_origin(context, jid)
+                reviewed_origin = {"contract": "studio-production-review/1", "job_id": jid,
+                    "request_digest": row["request_digest"], "output_digest": candidate["digest"],
+                    "candidate_version": candidate["version"], "review_actor": actor}
+                if (meta.get("version") != expected_version or meta.get("sha256") != candidate["digest"]
+                        or meta.get("kind") != "video" or meta.get("deleted_at")
+                        or meta.get("novel_id") != nid or meta.get("branch_id") != scope.get("branch_id")
+                        or meta.get("_required_features") != [FLAG]
+                        or meta.get("_studio_result_origin") != origin or meta.get("source_job_id") != jid
+                        or meta.get("_project_binding") != {"novel_id": nid, "branch_id": scope.get("branch_id"),
+                            "scope_key": context["scope_key"], "incarnation": context["incarnation"]}
+                        or (row["status"] == "APPROVED" and (meta.get("_owner_actor_id") is not None
+                            or meta.get("_origin_provenance") != reviewed_origin))
+                        or (row["status"] != "APPROVED" and meta.get("_owner_actor_id") != actor)):
+                    raise StaleSourceError("STUDIO_CANDIDATE_RECEIPT_MISMATCH")
+                data = self.workspace.assets.content(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                if hashlib.sha256(data).hexdigest() != candidate["digest"]:
+                    raise StaleSourceError("STUDIO_CANDIDATE_BYTES_CHANGED")
+                latest = self.video_owner.get_studio(nid, scope.get("branch_id"), actor, jid, context=context, guard=guard)
+                if (latest["version"] != row["version"] or latest["request_digest"] != row["request_digest"]
+                        or latest["status"] != row["status"] or latest.get("output_candidate") != row.get("output_candidate")):
+                    raise StaleSourceError("STUDIO_CANDIDATE_JOB_CHANGED")
+                result = self.workspace.assets.public(meta)
+                guard()
+            return result, data
         with self.workspace._asset_scope(nid, scope):
             meta = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)
             origin = meta.get("_studio_result_origin", {})
@@ -421,7 +473,13 @@ class ProductionExecutionService:
         elif owner == "image":
             row = self._image(actor).cancel_studio(nid, scope.get("branch_id"), actor, jid,
                 expected_version=action.expected_version, expected_request_digest=action.expected_request_digest, guard=guard)
-        else: raise ValueError("STUDIO_RENDER_CANCEL_REQUIRES_EXECUTOR_OWNER")
+        else:
+            # Fence publication under its original scope -> asset -> project
+            # leases before the original queue CAS. Do not wait on the executor
+            # lease or require stale input assets to become current to cancel.
+            with self.timeline_inputs.phase(nid, scope, actor, guard):
+                row = self.video_owner.cancel_studio(nid, scope.get("branch_id"), actor, jid,
+                    action.expected_version, action.expected_request_digest, context=context, guard=guard)
         guard()
         return self.view(row, owner)
 
@@ -440,14 +498,51 @@ class ProductionExecutionService:
             row = self.video.reconcile(nid, branch, actor, jid, action, context=context, guard=guard)
         else:
             row = self.video_owner.reconcile_studio(nid, branch, actor, jid, action.expected_version,
-                action.expected_request_digest, context=context, guard=guard)
+                action.expected_request_digest, context=context, guard=guard,
+                recover_candidate=lambda captured: self._recover_timeline_candidate(nid, scope, actor, captured, context, guard))
         guard()
         return self.view(row, owner)
+
+    def _recover_timeline_candidate(self, nid, scope, actor, captured, context, guard):
+        """Recover only an already-published original private candidate.
+
+        Runs under the original stopped-executor lease; no rendering, source
+        rewriting, promotion or replacement job is permitted. The original
+        queue owner does the final version/status CAS after this short phase.
+        """
+        if captured.get("phase") not in {"PUBLICATION_READY", "CANDIDATE_RECORDED", "INTERRUPTED_EXECUTION_RECONCILED"} or not captured.get("output_digest"):
+            return None
+        with self.store.source_lease(nid, scope) as document:
+            current = self._timeline_context_current(nid, scope, actor, context, document)
+            with self.workspace._asset_scope(nid, scope):
+                if self.store.incarnation(nid) != context["incarnation"]:
+                    raise StaleSourceError("STUDIO_OWNER_CHANGED")
+                self._timeline_sources_current(nid, scope, current["timeline"], guard)
+                key = "studio-production:" + digest([context["scope_key"], context["incarnation"], actor, captured["id"]])
+                matches = [asset for asset in self.workspace.assets.list(nid, branch_id=scope.get("branch_id"),
+                    include_deleted=True, actor_id=actor) if asset.get("idempotency_key") == key]
+                if not matches: return None
+                if len(matches) != 1: raise ValueError("STUDIO_TIMELINE_RECOVERY_CANDIDATE_AMBIGUOUS")
+                asset = matches[0]
+                origin = self._timeline_result_origin(context, captured["id"])
+                if (asset.get("kind") != "video" or asset.get("novel_id") != nid or asset.get("branch_id") != scope.get("branch_id")
+                        or asset.get("_owner_actor_id") != actor or asset.get("deleted_at") or asset.get("_required_features") != [FLAG]
+                        or asset.get("sha256") != captured["output_digest"] or asset.get("source_job_id") != captured["id"]
+                        or asset.get("_studio_result_origin") != origin or asset.get("_project_binding") !=
+                            {"novel_id": nid, "branch_id": scope.get("branch_id"), "scope_key": context["scope_key"], "incarnation": context["incarnation"]}):
+                    raise ValueError("STUDIO_TIMELINE_RECOVERY_CANDIDATE_INVALID")
+                data = self.workspace.assets.content(asset["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                if hashlib.sha256(data).hexdigest() != captured["output_digest"]:
+                    raise ValueError("STUDIO_TIMELINE_RECOVERY_BYTES_CHANGED")
+                guard()
+                return copy.deepcopy(asset)
 
     def review(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, graph_source_guard=None):
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
         if row["request_digest"] != action.expected_request_digest:
             raise CapabilityVersionConflict(self.view(row, owner))
+        if owner == "timeline":
+            return self._review_timeline(nid, scope, actor, jid, row, context, action, guard)
         _, promote = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
         sources = self._source_guard(nid, scope, guard)
         if owner == "image":
@@ -483,6 +578,89 @@ class ProductionExecutionService:
         guard()
         return self.view(row, owner)
 
+    def _review_timeline(self, nid, scope, actor, jid, captured, context, action, guard):
+        """Reserve and promote against one fixed original source/asset phase.
+
+        A stale timeline is rejected before REVIEWING is reserved. Source edits,
+        cancellation and another review cannot cross the short promotion window.
+        Restart recovery accepts only this exact original promotion receipt.
+        """
+        _, promote = self._callbacks(nid, scope, actor, context, guard)
+        with self.timeline_inputs.phase(nid, scope, actor, guard) as document:
+            timeline = self._timeline_context_current(nid, scope, actor, context, document)
+            self._timeline_sources_current(nid, scope, timeline["timeline"], guard)
+            row = self.video_owner.get_studio(nid, scope.get("branch_id"), actor, jid, context=context, guard=guard)
+            if row["version"] != action.expected_version or row["request_digest"] != action.expected_request_digest:
+                raise CapabilityVersionConflict(self.view(row, "timeline"))
+            if row["version"] != captured["version"] or row.get("output_candidate") != captured.get("output_candidate"):
+                raise StaleSourceError("STUDIO_CANDIDATE_JOB_CHANGED")
+            candidate = row.get("output_candidate")
+            if candidate is None or candidate["digest"] != action.reviewed_output_digest:
+                raise StaleSourceError("STUDIO_REVIEW_OUTPUT_CHANGED")
+            if row["status"] not in {"AWAITING_REVIEW", "SUCCEEDED", "REVIEWING", "APPROVED"}:
+                raise ValueError("STUDIO_PRODUCTION_JOB_NOT_REVIEWABLE")
+            provenance = {"contract": "studio-production-review/1", "job_id": jid,
+                "request_digest": row["request_digest"], "output_digest": candidate["digest"], "candidate_version": candidate["version"]}
+            meta = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+            already_promoted = (meta.get("_owner_actor_id") is None
+                and meta.get("_origin_provenance") == {**provenance, "review_actor": actor}
+                and meta.get("version") == candidate["version"] + 1)
+            private_current = meta.get("_owner_actor_id") == actor and meta.get("version") == candidate["version"]
+            if (meta.get("sha256") != candidate["digest"] or meta.get("kind") != "video" or meta.get("deleted_at")
+                    or meta.get("_studio_result_origin") != self._timeline_result_origin(context, jid)
+                    or meta.get("novel_id") != nid or meta.get("branch_id") != scope.get("branch_id")
+                    or meta.get("source_job_id") != jid or meta.get("_required_features") != [FLAG]
+                    or meta.get("_project_binding") != {"novel_id": nid, "branch_id": scope.get("branch_id"),
+                        "scope_key": context["scope_key"], "incarnation": context["incarnation"]}
+                    or not (private_current or already_promoted and row["status"] in {"REVIEWING", "APPROVED"})):
+                raise StaleSourceError("STUDIO_CANDIDATE_RECEIPT_MISMATCH")
+            data = self.workspace.assets.content(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+            if hashlib.sha256(data).hexdigest() != candidate["digest"]:
+                raise StaleSourceError("STUDIO_CANDIDATE_BYTES_CHANGED")
+            if row["status"] == "APPROVED":
+                if not already_promoted or row.get("approved_asset_version") != meta["version"]:
+                    raise StaleSourceError("STUDIO_CANDIDATE_APPROVAL_CHANGED")
+                guard()
+                return self.view(row, "timeline")
+            previous_status = row["status"]
+            if previous_status != "REVIEWING":
+                guard()
+                row = self.video_owner._studio_mutate(nid, scope.get("branch_id"), actor, jid, row["version"],
+                    lambda current: current.update(status="REVIEWING"), context=context)
+            reviewed_version = row["version"]
+            def queue_current():
+                current = self.video_owner._studio_read(nid, scope.get("branch_id"), actor, jid, context=context)
+                if (current["version"] != reviewed_version or current["status"] != "REVIEWING"
+                        or current["request_digest"] != action.expected_request_digest
+                        or current.get("output_candidate") != candidate):
+                    raise ValueError("STUDIO_REVIEW_ATTEMPT_CHANGED")
+            def job_current():
+                guard()
+                queue_current()
+            try:
+                asset = promote(candidate["id"], candidate["version"], provenance, job_current)
+            except Exception:
+                # Roll back only a known unpromoted private candidate. A failed
+                # write with a durable promotion remains REVIEWING for exact
+                # original-receipt recovery; it must never become discardable.
+                actual = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                if (actual.get("_owner_actor_id") == actor and actual.get("version") == candidate["version"]
+                        and actual.get("sha256") == candidate["digest"]):
+                    # Internal compensation of this exact reservation grants
+                    # no authority and performs no promotion or external call.
+                    # A revoked Host still receives its original auth error;
+                    # it cannot strand a proven unpromoted job in REVIEWING.
+                    queue_current()
+                    self.video_owner._studio_mutate(nid, scope.get("branch_id"), actor, jid, reviewed_version,
+                        lambda current: current.update(status=previous_status if previous_status != "REVIEWING" else "SUCCEEDED",
+                            review_state="HUMAN_REVIEW_REQUIRED"), context=context)
+                raise
+            job_current()
+            row = self.video_owner._studio_mutate(nid, scope.get("branch_id"), actor, jid, reviewed_version,
+                lambda current: current.update(status="APPROVED", review_state="ORIGINAL_OWNER_REVIEWED", approved_asset_version=asset["version"]), context=context)
+            guard()
+            return self.view(row, "timeline")
+
     def timeline_list(self, nid, scope, actor, guard):
         self._base(nid, scope, actor, guard)
         rows = [self._timeline_view(row, scope) for row in self.store.read(nid, scope)["collections"].get(TIMELINES, {}).values() if row.get("created_by") == actor]
@@ -505,9 +683,7 @@ class ProductionExecutionService:
                     raise ValueError("CREATIVE_GRAPH_MEDIA_ASSET_GUARD_REQUIRED")
             snapshot = context.get("timeline_snapshot")
             if snapshot:
-                row = document["collections"].get(TIMELINES, {}).get(snapshot["id"])
-                if row is None or row.get("created_by") != actor or (row["version"], row["timeline_digest"]) != (snapshot["version"], snapshot["digest"]):
-                    raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+                self._timeline_context_current(nid, scope, actor, context, document)
             return asset_guard
         def publish(data, kind, filename, measured, jid, job_guard=lambda: None):
             # The source document is leased before assets -> project. Never
@@ -544,11 +720,14 @@ class ProductionExecutionService:
                         key, branch_id=scope.get("branch_id"), required_features=(FLAG,), owner_actor_id=actor, guard=commit,
                         _initial_studio_result=origin)
         def promote(aid, expected_version, provenance, job_guard=lambda: None):
-            with self.store.source_lease(nid, scope) as document:
+            shared_phase = bool(context.get("timeline_snapshot")) and self.timeline_inputs.in_phase(nid, scope, actor)
+            phase = nullcontext(self.store.read(nid, scope)) if shared_phase else self.store.source_lease(nid, scope)
+            with phase as document:
                 graph_asset_guard = timeline_current(document)
                 for source in context["sources"]:
                     if source["kind"] != "ASSET": self.source(nid, scope, source, guard)
-                with self.workspace._asset_scope(nid, scope):
+                asset_phase = nullcontext() if shared_phase else self.workspace._asset_scope(nid, scope)
+                with asset_phase:
                     if self.store.incarnation(nid) != context["incarnation"]: raise StaleSourceError("STUDIO_OWNER_CHANGED")
                     if graph_asset_guard is not None: graph_asset_guard()
                     for source in context["sources"]:
@@ -666,32 +845,182 @@ class ProductionExecutionService:
         return self.view(row, "video")
 
     def timeline_get(self, nid, scope, actor, tid, guard):
-        self._base(nid, scope, actor, guard)
-        row = self.store.read(nid, scope)["collections"].get(TIMELINES, {}).get(tid)
-        if row is None or row.get("created_by") != actor: raise FileNotFoundError(tid)
+        context = self._base(nid, scope, actor, guard)
+        row = self._owned_timeline(nid, scope, actor, tid, context, self.store.read(nid, scope))
         guard()
         return self._timeline_view(row, scope)
+
+    def _owned_timeline(self, nid, scope, actor, tid, context, document):
+        from ..services.studio_timeline_render import normalize_studio_timeline
+        row = document["collections"].get(TIMELINES, {}).get(tid)
+        if (not isinstance(row, dict) or row.get("created_by") != actor or row.get("novel_id") != nid
+                or row.get("scope") != scope or row.get(BINDING) != context["incarnation"]):
+            raise FileNotFoundError(tid)
+        normalized = normalize_studio_timeline(row.get("timeline"))
+        if (normalized != row["timeline"] or digest(normalized) != row.get("timeline_digest")
+                or type(row.get("version")) is not int or row["version"] < 1 or not isinstance(row.get("history"), list)):
+            raise ValueError("STUDIO_TIMELINE_RECORD_CORRUPT")
+        return row
+
+    def _timeline_context_current(self, nid, scope, actor, context, document):
+        from ..services.studio_timeline_render import studio_sources
+        snapshot = context.get("timeline_snapshot")
+        if not isinstance(snapshot, dict):
+            raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+        row = self._owned_timeline(nid, scope, actor, snapshot.get("id"), context, document)
+        if ((row["version"], row["timeline_digest"]) != (snapshot.get("version"), snapshot.get("digest"))
+                or studio_sources(row["timeline"]) != context.get("sources")):
+            raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+        return row
+
+    @staticmethod
+    def _timeline_result_origin(context, jid):
+        origin = {"contract": "studio-production-result/1", "job_id": jid,
+            **{field: copy.deepcopy(context[field]) for field in ("scope_key", "incarnation", "actor", "request_digest", "operation_id", "sources")},
+            "provider_id": None, "model_id": None, "license_note": context.get("license_note", "")}
+        if context.get("graph_binding") is not None:
+            origin["graph_binding"] = copy.deepcopy(context["graph_binding"])
+        return origin
+
+    def _timeline_sources_current(self, nid, scope, timeline, guard):
+        """Only inside the existing raw scope -> asset -> project phase."""
+        from ..services.studio_timeline_render import studio_sources
+        for source in studio_sources(timeline):
+            row = self.workspace._row(nid, scope, source["id"])
+            if (row.get("_owner_actor_id") or (row["version"], row["sha256"], row["kind"]) !=
+                    (source["version"], source["digest"], source["asset_kind"])):
+                raise StaleSourceError("STUDIO_TIMELINE_SOURCE_CHANGED")
+            self.workspace.assets.content(row["id"], branch_id=scope.get("branch_id"))
+        guard()
 
     def timeline_save(self, nid, scope, actor, tid, value, guard):
         from ..services.studio_timeline_render import normalize_studio_timeline, studio_sources
         body = TimelineSave.model_validate(value)
         context = self._base(nid, scope, actor, guard)
         timeline = normalize_studio_timeline(body.timeline)
-        for source in studio_sources(timeline): self.source(nid, scope, source, guard)
-        with self.store.transaction(nid, scope) as document:
+        with self.timeline_inputs.transaction(nid, scope, actor, guard) as document:
+            self._timeline_sources_current(nid, scope, timeline, guard)
             collection = document["collections"].setdefault(TIMELINES, {})
             if tid is None:
                 if body.expected_version != 0 or len(collection) >= 25: raise ValueError("STUDIO_TIMELINE_CREATE_LIMIT_OR_VERSION")
                 row = new_row(nid, scope, actor, {"title": body.title, "timeline": timeline, "timeline_digest": digest(timeline), BINDING: context["incarnation"]})
                 collection[row["id"]] = row
             else:
-                row = collection.get(tid)
-                if row is None or row.get("created_by") != actor: raise FileNotFoundError(tid)
+                row = self._owned_timeline(nid, scope, actor, tid, context, document)
                 if len(row["history"]) >= 100: raise ValueError("STUDIO_TIMELINE_HISTORY_LIMIT")
-                change_row(row, actor, body.expected_version, lambda current: current.update(title=body.title, timeline=timeline, timeline_digest=digest(timeline)))
+                change_row(row, actor, body.expected_version, lambda current: current.update(title=body.title, timeline=timeline,
+                    timeline_digest=digest(timeline), last_edit=None))
             if len(canonical(collection).encode()) > 4 * 1024 * 1024: raise ValueError("STUDIO_TIMELINE_STORAGE_LIMIT")
             guard()
         return self.timeline_get(nid, scope, actor, row["id"], guard)
+
+    def timeline_edit(self, nid, scope, actor, tid, value, guard):
+        from ..services.studio_timeline_edit import apply_timeline_edits
+        body = TimelineEdit.model_validate(value)
+        context = self._base(nid, scope, actor, guard)
+        request_digest = digest(body.model_dump())
+        with self.timeline_inputs.transaction(nid, scope, actor, guard) as document:
+            row = self._owned_timeline(nid, scope, actor, tid, context, document)
+            prior = row.get("last_edit") or {}
+            if (prior.get("request_id") == body.request_id and prior.get("request_digest") == request_digest
+                    and prior.get("input_version") == body.expected_version and row["version"] == body.expected_version + 1
+                    and prior.get("output_digest") == row["timeline_digest"]):
+                self._timeline_sources_current(nid, scope, row["timeline"], guard)
+            else:
+                if row["version"] != body.expected_version or row["timeline_digest"] != body.reviewed_timeline_digest:
+                    raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+                if prior.get("request_id") == body.request_id:
+                    raise ValueError("STUDIO_TIMELINE_EDIT_IDEMPOTENCY_CONFLICT")
+                if any((entry.get("last_edit") or {}).get("request_id") == body.request_id for entry in row["history"]):
+                    raise ValueError("STUDIO_TIMELINE_EDIT_IDEMPOTENCY_CONFLICT")
+                if len(row["history"]) >= 100: raise ValueError("STUDIO_TIMELINE_HISTORY_LIMIT")
+                timeline = apply_timeline_edits(row["timeline"], body.operations)
+                self._timeline_sources_current(nid, scope, timeline, guard)
+                receipt = {"request_id": body.request_id, "request_digest": request_digest,
+                    "input_version": row["version"], "input_digest": row["timeline_digest"], "output_digest": digest(timeline)}
+                change_row(row, actor, body.expected_version, lambda current: current.update(timeline=timeline,
+                    timeline_digest=receipt["output_digest"], last_edit=receipt))
+            result = self._timeline_view(row, scope)
+            guard()
+        return result
+
+    def timeline_history(self, nid, scope, actor, tid, guard):
+        context = self._base(nid, scope, actor, guard)
+        row = self._owned_timeline(nid, scope, actor, tid, context, self.store.read(nid, scope))
+        result = {"timeline_id": tid, "current_version": row["version"],
+            "items": [self._timeline_view(version, scope) for version in reversed(row["history"])]}
+        guard()
+        return result
+
+    def timeline_restore(self, nid, scope, actor, tid, value, guard):
+        from ..services.studio_timeline_render import normalize_studio_timeline
+        body = TimelineRestore.model_validate(value)
+        context = self._base(nid, scope, actor, guard)
+        with self.timeline_inputs.transaction(nid, scope, actor, guard) as document:
+            row = self._owned_timeline(nid, scope, actor, tid, context, document)
+            if row["version"] != body.expected_version or row["timeline_digest"] != body.reviewed_timeline_digest:
+                raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+            versions = [entry for entry in row["history"] if entry.get("version") == body.restore_version]
+            if len(versions) != 1 or versions[0].get("timeline_digest") != body.restore_digest:
+                raise ValueError("STUDIO_TIMELINE_HISTORY_VERSION_INVALID")
+            original = versions[0]
+            timeline = normalize_studio_timeline(original["timeline"])
+            if digest(timeline) != body.restore_digest: raise ValueError("STUDIO_TIMELINE_HISTORY_CORRUPT")
+            self._timeline_sources_current(nid, scope, timeline, guard)
+            if len(row["history"]) >= 100: raise ValueError("STUDIO_TIMELINE_HISTORY_LIMIT")
+            change_row(row, actor, body.expected_version, lambda current: current.update(title=original["title"], timeline=timeline,
+                timeline_digest=body.restore_digest, last_edit=None))
+            result = self._timeline_view(row, scope)
+            guard()
+        return result
+
+    def timeline_export_preview(self, nid, scope, actor, tid, value, guard):
+        from ..services.studio_timeline_render import studio_sources, RENDER_TIMEOUT_SECONDS
+        from ..services.studio_timeline_export import normalize_export_profile, validate_export_admission
+        body = TimelineExportPreview.model_validate(value)
+        context = self._base(nid, scope, actor, guard)
+        profile = normalize_export_profile(body.export_profile)
+        with self.timeline_inputs.phase(nid, scope, actor, guard) as document:
+            row = self._owned_timeline(nid, scope, actor, tid, context, document)
+            if row["version"] != body.expected_version or row["timeline_digest"] != body.reviewed_timeline_digest:
+                raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+            self._timeline_sources_current(nid, scope, row["timeline"], guard)
+            validate_export_admission(row["timeline"], profile, self.workspace.assets.MAX_BYTES)
+            recipe = {"contract": "studio-execution-recipe/1", "operation_id": "m9.timeline.multitrack", "adapter": "LOCAL_FFMPEG",
+                "output_profile": profile["preset"], "timeline": copy.deepcopy(row["timeline"]),
+                "export_profile": profile, "automatic_fallback": False}
+            recipe["recipe_digest"] = digest(recipe)
+            result = {"contract": "studio-timeline-export-preview/1", "timeline_snapshot": {"id": tid, "version": row["version"], "digest": row["timeline_digest"]},
+                "export_profile": profile, "sources": studio_sources(row["timeline"]), "execution_recipe": recipe,
+                "limits": {"max_output_bytes": self.workspace.assets.MAX_BYTES, "render_timeout_seconds": RENDER_TIMEOUT_SECONDS},
+                "model_called": False, "automatic_replay": False, "product_acceptance": "LOCAL_REQUIRED"}
+            result["preview_digest"] = digest([context, result])
+            guard()
+        return result
+
+    def timeline_export(self, nid, scope, actor, tid, value, guard):
+        from ..services.studio_timeline_export import export_profile_digest
+        body = TimelineExport.model_validate(value)
+        preview = self.timeline_export_preview(nid, scope, actor, tid, body.model_dump(exclude={"request_id", "reviewed_export_digest"}), guard)
+        if preview["preview_digest"] != body.reviewed_export_digest:
+            raise StaleSourceError("STUDIO_TIMELINE_EXPORT_PREVIEW_CHANGED")
+        context = self._base(nid, scope, actor, guard)
+        context.update(request_id=body.request_id, operation_id="m9.timeline.multitrack", sources=copy.deepcopy(preview["sources"]),
+            timeline_snapshot=copy.deepcopy(preview["timeline_snapshot"]), provider_binding=None, license_note="", rights={"license_note": ""},
+            execution_recipe=copy.deepcopy(preview["execution_recipe"]), export_profile=copy.deepcopy(preview["export_profile"]),
+            export_profile_digest=export_profile_digest(preview["export_profile"]),
+            reviewed_export_digest=preview["preview_digest"])
+        context["request_digest"] = digest(context)
+        def current():
+            guard()
+            actual = self.timeline_get(nid, scope, actor, tid, guard)
+            if (actual["version"], actual["timeline_digest"]) != (body.expected_version, body.reviewed_timeline_digest):
+                raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+        publish, _ = self._callbacks(nid, scope, actor, context, guard)
+        rendered = self.video_owner.create_studio(nid, scope.get("branch_id"), actor, preview["execution_recipe"]["timeline"],
+            context=context, guard=current, source_guard=self._source_guard(nid, scope, guard), publish=publish,
+            export_profile=preview["export_profile"])
+        return self.view(rendered, "timeline")
 
     def timeline_render(self, nid, scope, actor, tid, value, guard):
         from ..services.studio_timeline_render import studio_sources

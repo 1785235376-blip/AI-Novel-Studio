@@ -277,8 +277,10 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (!latest.current.canMutate) return false;
     if (kind === 'execute') return job.owner !== 'timeline' && job.status === 'QUEUED' && fresh;
     if (kind === 'refresh') return job.owner === 'video' && ['REMOTE_RUNNING', 'RESULT_READY', 'UNKNOWN'].includes(job.status);
-    if (kind === 'reconcile') return ['RUNNING', 'SEND_RESERVED'].includes(job.status);
-    return job.owner !== 'timeline' && ['QUEUED', 'AWAITING_REVIEW', 'UNKNOWN', 'REMOTE_RUNNING', 'RESULT_READY'].includes(job.status);
+    if (kind === 'reconcile') return job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN'].includes(job.status)
+      : ['RUNNING', 'SEND_RESERVED'].includes(job.status);
+    return job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)
+      : ['QUEUED', 'AWAITING_REVIEW', 'UNKNOWN', 'REMOTE_RUNNING', 'RESULT_READY'].includes(job.status);
   }
   async function action(kind: 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review') {
     if (!canAction(kind)) return; const job = selectedRef.current!;
@@ -287,7 +289,10 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     try {
       const result = await latest.current.mutate(() => value.client[kind](job)); if (!live(value)) return;
       adoptJob(result); markUncertain(false);
-      setNotice(kind === 'cancel' ? '已丢弃本地结果的采用权限；远端计算可能继续。' : kind === 'review' ? '已保存审核回执，请核对当前素材库。' : kind === 'reconcile' ? '已核对本地中断状态，未重新提交媒体生成。' : '已收到任务回执，请核对状态与候选结果。');
+      setNotice(kind === 'cancel' ? result.owner === 'timeline'
+        ? result.cancellation_mode === 'LOCAL_RENDER_PROCESS_STOP_REQUESTED' ? '已记录停止本地渲染进程的请求；请重新读取原任务核对。已有回执与候选保留，不能继续采用。' : '已取消此未审核时间线结果的采用权限，原回执与候选保留。'
+        : '已丢弃本地结果的采用权限；远端计算可能继续。'
+        : kind === 'review' ? '已保存审核回执，请核对当前素材库。' : kind === 'reconcile' ? '已核对本地中断状态，未重新提交媒体生成。' : '已收到任务回执，请核对状态与候选结果。');
       if (kind === 'review' && result.status === 'APPROVED') {
         const approved = jobIdentity(result);
         try { void Promise.resolve(latest.current.onApproved?.()).catch(() => {

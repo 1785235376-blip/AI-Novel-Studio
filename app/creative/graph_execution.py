@@ -120,6 +120,14 @@ class CreativeGraphExecutor:
             if (engine_output.get("ports") != output or receipt.get("output_digest") != digest(output)
                     or receipt.get("key") != self._key(row, actor, by_id[node_id], self._inputs(row, node_id, row["typed_outputs"]))):
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_RECEIPT_INVALID")
+            if schema == 3 and by_id[node_id]["definition_id"] == "human_review":
+                approved = row["node_states"][node_id].get("output") or {}
+                if (output.get("reviewed_draft") != self._inputs(row, node_id, row["typed_outputs"])["draft"]
+                        or approved.get("approved_by") != actor.strip() or not approved.get("approved_at")
+                        or engine_output.get("provenance") != {"method": "ORIGINAL_HUMAN_REVIEW",
+                            "review_node_id": node_id, "reviewed_output_digest": digest([row["id"], node_id,
+                                row["graph_version"], output["reviewed_draft"]])}):
+                    raise StaleSourceError("CREATIVE_GRAPH_REVIEWED_DRAFT_RECEIPT_CHANGED")
         if any(node["definition_id"] == "text_generate" for node in expected):
             if self.service.model_runtime is None:
                 raise StaleSourceError("CREATIVE_MODEL_RUNTIME_UNAVAILABLE")
@@ -379,6 +387,7 @@ class CreativeGraphExecutor:
                 if row["status"] != "QUEUED":
                     raise ValueError("CREATIVE_GRAPH_EXECUTE_REQUIRES_QUEUED")
             host = _ScopedOriginalWorkflowHost(engine_row, fresh)
+            drive_row = row
             timed = host.get_workflow_run(rid)
             if timed["status"] == "FAILED" and timed.get("error", {}).get("code") == "WORKFLOW_TIMEOUT":
                 result = timed
@@ -398,13 +407,32 @@ class CreativeGraphExecutor:
                         raise StaleSourceError("CREATIVE_GRAPH_EXACT_REVIEW_REQUIRED")
                     if action == "approve":
                         host.approve_workflow_node(rid, body.node_id, actor, body.note)
+                        if row.get("graph_schema_version") == 3:
+                            # The existing manual-approval owner has completed
+                            # this exact node. Add typed projection to that same
+                            # original state; no separate approval is created.
+                            output = validate_output_ports("human_review",
+                                {"reviewed_draft": review["draft"]}, schema_version=3)
+                            states = deepcopy(host.row["node_states"])
+                            states[body.node_id]["output"]["result"] = {"ports": deepcopy(output),
+                                "provenance": {"method": "ORIGINAL_HUMAN_REVIEW", "review_node_id": body.node_id,
+                                    "reviewed_output_digest": review["output_digest"]}, "model_called": False, "applied": False}
+                            host._update("workflow_runs", rid, {"node_states": states}, novel_id=nid,
+                                expected_version=host.row["version"], action="CREATIVE_GRAPH_REVIEWED_DRAFT_RECORDED",
+                                target_type="WorkflowRun")
+                            host.row["typed_outputs"][body.node_id] = output
+                            node = next(node for node in row["typed_nodes"] if node["id"] == body.node_id)
+                            ports = self._inputs(row, body.node_id, row["typed_outputs"])
+                            host.row["cache_keys"][body.node_id] = {"key": self._key(row, actor, node, ports),
+                                "output_digest": digest(output), "cacheable": False}
+                            drive_row = host.row
                     else:
                         host.reject_workflow_node(rid, body.node_id, actor, body.note)
                 elif action == "execute":
                     host._advance_workflow_run(rid)
                 else:
                     host.set_workflow_run_state(rid, action)
-                result = self._drive(host, row, actor, state, fresh) if action in {"execute", "approve", "resume"} else deepcopy(host.row)
+                result = self._drive(host, drive_row, actor, state, fresh) if action in {"execute", "approve", "resume"} else deepcopy(host.row)
             payload = {key: item for key, item in result.items() if key not in {"history", "version"}}
             payload.update(trace=row["trace"] + host.transitions, dispatch_trace=row["dispatch_trace"] + host.dispatches)
             change_row(row, actor, body.expected_version, lambda item: item.update(payload))

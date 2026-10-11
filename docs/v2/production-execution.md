@@ -15,7 +15,7 @@
 | `m8.audio.trim` | 同一原音频 owner；原 FFmpeg | 仅一个已保存音频 Asset，起止毫秒位于实际来源时长内，片段最多 120 秒；输出 PCM S16LE WAV／48kHz／立体声。无 Provider、云端授权或 Prompt。 |
 | `m9.timeline.multitrack` | 原 `VideoAssemblyService.create_studio`；`studio_timeline_render.py` | 保存版本化时间线，确认版本／摘要后显式本地渲染；有界视频叠放、音频混音与手工字幕，输出仍先私有再人工审核。 |
 
-这 9 项 MediaCommand 现另由显式 schema 3 的 [Graph 媒体执行与原子输入](graph-media-execution.md) 接入原 WorkflowRun。原文字图的队列、ModelBroker、Router、GraphTextAssets、审核与结算仍由原 owner 负责；schema 1／2 的资产引用保持原阻塞。独立多轨命令仍是原版本化时间线入口。本批不实现完整 NLE、自动 ASR、自动音画对齐、高质量交付导出或跨剪辑软件往返验收。
+这 9 项 MediaCommand 现另由显式 schema 3 的 [Graph 媒体执行与原子输入](graph-media-execution.md) 接入原 WorkflowRun。原文字图的队列、ModelBroker、Router、GraphTextAssets、审核与结算仍由原 owner 负责；schema 1／2 的资产引用保持原阻塞。后续源码已接入 schema 3 文字档案，以及独立多轨的原子剪辑、版本恢复和明确编码导出，详见 [文字档案与多轨导出](text-archive-timeline-export.md)。自动 ASR／音画对齐和跨剪辑软件往返尚无实现或验收。
 
 ## 可信会话、权限与隐私
 
@@ -42,7 +42,7 @@ API 基础路径为 `/api/projects/{nid}/studio/production`，原父路由另保
 | `POST /jobs/{owner}/{jid}/execute` | 9 项媒体操作显式执行；`owner=timeline` 使用独立 render 入口，不能在这里再次渲染。 |
 | `POST /jobs/video/{jid}/refresh` | 核对已有原远端视频任务；仅原 Provider 支持的查询，不重新生成。 |
 | `POST /jobs/{owner}/{jid}/reconcile` | 原执行 lease 已结束后核对中断状态并保留 UNKNOWN，不调用 Provider 或重排任务。 |
-| `POST /jobs/{owner}/{jid}/cancel` | owner 允许状态下丢弃本地结果采用权，保留记录与候选；不证明远端计算已停止。时间线当前无此丢弃动作。 |
+| `POST /jobs/{owner}/{jid}/cancel` | owner 允许状态下丢弃本地结果采用权，保留记录与候选；时间线可沿原 lease/queue CAS 取消，执行 guard 终止本地渲染进程；不证明远端计算已停止。 |
 | `GET /jobs/{owner}/{jid}/candidate` | 原授权下读取实际候选字节，响应 `no-store`、Asset 版本与 SHA256；不返回远端媒体 URL。 |
 | `POST /jobs/{owner}/{jid}/review` | 绑定原 job version、request digest 与已查看 output digest，显式调用原 `AssetLibrary.promote_owned`。 |
 | `GET /timelines`、`GET /timelines/{tid}` | 当前 actor 的原版本化时间线读取。 |
@@ -65,7 +65,9 @@ API 基础路径为 `/api/projects/{nid}/studio/production`，原父路由另保
 
 UI 在网络、408／409／425／429、5xx 或非法成功回执后保留原 reservation／发送键并阻止重复动作，先读取原 job 核对；读取相同值不证明旧请求完成。取消是 `LOCAL_RESULT_DISCARD`，保留原候选并提示远端可能继续，不声称 remote abort。
 
-## 有界多轨实现
+## 原审阅规格与增强多轨实现
+
+以下为旧无 schema_version 时间线的保留规格。显式时间线 schema 2 的图片／变速／透明度／淡入淡出／原视频声音、原子编辑、原历史恢复，以及 export-preview/export 的 H.264/AAC MP4、VP9/Opus WebM 真实执行另见 [增强剪辑与编码导出](text-archive-timeline-export.md)。旧 normalize 输出／定义摘要与原 render 请求保持，新增导出不自动取代原审阅动作。
 
 `normalize_studio_timeline` 接受严格闭合的毫秒 DTO；最多 8 轨，其中 VIDEO／AUDIO 各最多 4 轨、总共 30 段、时长最多 600000ms，至少一轨 VIDEO。轨道 ID／order 和 clip ID 唯一；同一 Asset 的多次使用必须快照一致。VIDEO 同轨不得重叠，不同 VIDEO 轨按 order 叠放；AUDIO 可重叠并按 gain_db／muted 混音。源 in_ms／out_ms 再对实际媒体时长核对。
 

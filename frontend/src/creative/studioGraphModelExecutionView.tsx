@@ -13,7 +13,7 @@ export function studioGraphModelExecutionView(controller: StudioGraphModelExecut
   return <section className="studio-graph-model" aria-label="可选本地文字模型执行">
     <h3>可选本地文字模型执行</h3><p>先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。</p>
     <p>云端 API：预留，当前不可执行。实际推理质量验收：未运行。</p>
-    {props.archiveResultAllowed === false && <StatusMessage tone="warning">当前媒体图的文字档案接入尚未完成。此处文字结果只进入原节点提案与人工审核；需要文字资产档案时使用原文字图流程。</StatusMessage>}
+    {props.archiveResultAllowed === false && <StatusMessage tone="warning">当前入口未允许文字归档；文字结果仍按原节点提案与人工审核处理。</StatusMessage>}
     <Button disabled={!canRead} onClick={() => void load()}>读取本地模型能力</Button>
     {loading && <StatusMessage>正在核对模型执行信息…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}
     {capabilities && <><p>适配器：{capabilities.adapter_owner} · 路由：{capabilities.router_owner} · 调度：{capabilities.scheduler_owner}</p><p>每次运行最多 {capabilities.limits.model_nodes} 个模型节点，最长 {capabilities.limits.timeout_seconds} 秒，最多 {capabilities.limits.max_output_tokens} 输出 token。</p>
@@ -28,7 +28,7 @@ export function studioGraphModelExecutionView(controller: StudioGraphModelExecut
     {model && <><Badge>{model.status}</Badge>{model.status === 'PENDING' && <p>先明确执行前置本地节点，到达模型边界后再预览。</p>}
       {previewReady && <Button disabled={!canPreview} onClick={() => void action('preview')}>预览图节点模型输入</Button>}
       {preview && !terminal && <section aria-label="图节点模型输入预览"><Badge tone="info">预览尚未调用模型</Badge><p>节点：{preview.node_id} · 路由：{preview.route?.provider_id || '未选定'} / {preview.route?.model_id || '未选定'}</p><p>最多 {preview.limits.max_output_tokens} 输出 token · 最长 {preview.limits.timeout_seconds} 秒 · 最高费用 0 USD</p><details><summary>核对完整模型输入</summary><pre>{preview.prompt}</pre></details>{preview.reasons.map(reason => <StatusMessage key={reason} tone="warning">{reason}</StatusMessage>)}
-        {!execution && <>{capabilities?.result_storage && <p>成功结果会保存为私有待审核文字资产，审核不会写入正文。</p>}<label><input type="checkbox" checked={reviewed} disabled={!canConfirm} onChange={event => reviewPreview(event.target.checked)} />已核对当前节点、完整输入和本地路由，允许调用一次</label><Button variant="primary" disabled={!canDispatch} onClick={() => void action('dispatch')}>确认调用图节点本地模型</Button></>}
+        {!execution && <>{props.archiveResultAllowed !== false && capabilities?.result_storage && <p>成功结果会保存为当前身份的私有待审核文字档案，按对应原节点的人工审核批准或驳回。归档不写入正文、不发布媒体，也不代表整张图或本机流程已验收。</p>}<label><input type="checkbox" checked={reviewed} disabled={!canConfirm} onChange={event => reviewPreview(event.target.checked)} />已核对当前节点、完整输入和本地路由，允许调用一次</label><Button variant="primary" disabled={!canDispatch} onClick={() => void action('dispatch')}>确认调用图节点本地模型</Button></>}
       </section>}
       {execution && <section aria-label="图节点模型执行回执"><p>任务：{execution.job_id} · {execution.status}</p><p>模型调用：{execution.model_called ? '已调用' : '调用记录尚待核对'} · {execution.synthetic ? '测试适配器任务' : '本地模型任务'}</p><p>回执：{execution.receipt_state} · 用量：{execution.usage_state}</p>{execution.failure_code && <StatusMessage tone="warning">{execution.failure_code}</StatusMessage>}{!terminal && <Button disabled={!canRefresh} onClick={() => void action('refresh')}>核对图节点模型结果</Button>}<p>等待中的模型任务只能核对或取消，不能暂停后重复调度。</p></section>}
       {(uncertain || model.status === 'UNKNOWN') && <StatusMessage tone="warning">调用回执不确定。请重新读取当前运行或核对结果；不会自动重放。</StatusMessage>}

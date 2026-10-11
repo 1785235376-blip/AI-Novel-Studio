@@ -26,8 +26,8 @@ def is_independent_studio_route(method, normalized_path):
     production = root + r"/production"
     owners = r"(?:image|audio|video|timeline)"
     production_patterns = {
-        "GET": production + r"/(?:providers|jobs(?:/" + owners + r"/[^/]+(?:/candidate)?)?|timelines(?:/[^/]+)?)",
-        "POST": production + r"/(?:preview|jobs(?:/" + owners + r"/[^/]+/(?:execute|cancel|review|reconcile))?|jobs/video/[^/]+/refresh|timelines(?:/[^/]+/render)?)",
+        "GET": production + r"/(?:providers|jobs(?:/" + owners + r"/[^/]+(?:/candidate)?)?|timelines(?:/[^/]+(?:/history)?)?)",
+        "POST": production + r"/(?:preview|jobs(?:/" + owners + r"/[^/]+/(?:execute|cancel|review|reconcile))?|jobs/video/[^/]+/refresh|timelines(?:/[^/]+/(?:render|edit|restore|export-preview|export))?)",
         "PUT": production + r"/timelines/[^/]+",
     }
     if method in production_patterns and re.fullmatch(production_patterns[method], normalized_path) is not None:

@@ -204,7 +204,7 @@ class VideoAssemblyService:
         guard()
         return [self._studio_projection(row) for row in sorted(rows, key=lambda row: (row["created_at"], row["id"]), reverse=True)]
 
-    def create_studio(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish):
+    def create_studio(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish, export_profile=None):
         """Lease one original execution; callbacks never hold the queue lock."""
         self._studio_context(novel_id, branch_id, actor_id, context)
         request_id = context.get("request_id")
@@ -216,10 +216,39 @@ class VideoAssemblyService:
         guard()
         with workspace_mutation(self.root, "studio-timeline-execution:" + job_id):
             return self._create_studio_locked(novel_id, branch_id, actor_id, timeline, context=context,
-                guard=guard, source_guard=source_guard, publish=publish)
+                guard=guard, source_guard=source_guard, publish=publish, export_profile=export_profile)
 
-    def reconcile_studio(self, novel_id, branch_id, actor_id, job_id, expected_version, expected_request_digest, *, context, guard):
-        """Explicitly fence a stopped executor; never resume/render/publish.
+    def cancel_studio(self, novel_id, branch_id, actor_id, job_id, expected_version, expected_request_digest, *, context, guard):
+        """Fence the original queue; the active local process observes this CAS.
+
+        This intentionally does not wait for the execution lease. A private
+        publication already in flight may still exist; cancellation never
+        implies deletion of that candidate or remote-provider termination.
+        """
+        self._studio_context(novel_id, branch_id, actor_id, context)
+        self._studio_path(novel_id, branch_id, actor_id, job_id, context)
+        if (type(expected_version) is not int or expected_version < 1
+                or not isinstance(expected_request_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", expected_request_digest)):
+            raise ValueError("STUDIO_TIMELINE_CANCEL_VERSION_INVALID")
+        guard()
+        def cancel(value):
+            if value.get("kind") != "STUDIO_TIMELINE":
+                raise FileNotFoundError(job_id)
+            if value.get("request_digest") != expected_request_digest:
+                raise CapabilityVersionConflict(copy.deepcopy(value))
+            previous_status = value.get("status")
+            if previous_status not in {"RUNNING", "UNKNOWN", "SUCCEEDED", "AWAITING_REVIEW"}:
+                raise ValueError("STUDIO_TIMELINE_CANCEL_NOT_ACTIVE")
+            value.update(status="CANCELLED", phase="EXECUTION_FENCED", cancelled_at=now(),
+                         automatic_retry=False, error_code="STUDIO_TIMELINE_EXECUTION_CANCELLED",
+                         cancellation_mode="LOCAL_RENDER_PROCESS_STOP_REQUESTED" if previous_status == "RUNNING" else "LOCAL_RESULT_DISCARD")
+        row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, expected_version, cancel, context=context)
+        guard()
+        return self._studio_projection(row)
+
+    def reconcile_studio(self, novel_id, branch_id, actor_id, job_id, expected_version, expected_request_digest, *, context, guard,
+                         recover_candidate=None):
+        """Fence a stopped executor and recover only a proven original Asset.
 
         Acquiring the same cross-process execution lease proves the original
         rendering call is no longer holding it. GET cannot make this claim.
@@ -229,6 +258,8 @@ class VideoAssemblyService:
         if (type(expected_version) is not int or expected_version < 1
                 or not isinstance(expected_request_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", expected_request_digest)):
             raise ValueError("STUDIO_TIMELINE_RECONCILE_VERSION_INVALID")
+        if recover_candidate is not None and not callable(recover_candidate):
+            raise ValueError("STUDIO_TIMELINE_RECOVERY_CALLBACK_INVALID")
         guard()
         with workspace_mutation(self.root, "studio-timeline-execution:" + job_id):
             row = self._studio_read(novel_id, branch_id, actor_id, job_id, context=context)
@@ -236,16 +267,56 @@ class VideoAssemblyService:
                 raise FileNotFoundError(job_id)
             if row["version"] != expected_version or row["request_digest"] != expected_request_digest:
                 raise CapabilityVersionConflict(copy.deepcopy(row))
-            if row.get("status") != "RUNNING":
-                raise ValueError("STUDIO_TIMELINE_RECONCILE_NOT_RUNNING")
+            if row.get("status") not in {"RUNNING", "UNKNOWN"}:
+                raise ValueError("STUDIO_TIMELINE_RECONCILE_NOT_ACTIVE")
             guard()
-            row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, expected_version,
-                lambda value: value.update(status="UNKNOWN", phase="INTERRUPTED_EXECUTION_RECONCILED",
-                    error_code="STUDIO_TIMELINE_OUTCOME_UNKNOWN", automatic_retry=False), context=context)
+            asset = None
+            if (recover_candidate is not None and row.get("phase") in {"PUBLICATION_READY", "CANDIDATE_RECORDED", "INTERRUPTED_EXECUTION_RECONCILED"}
+                    and isinstance(row.get("output_digest"), str) and re.fullmatch(r"[a-f0-9]{64}", row["output_digest"])):
+                # The callback leases the original scope/assets and proves
+                # bytes and the original idempotency key. It never publishes.
+                asset = recover_candidate(copy.deepcopy(row))
+            if asset is None:
+                row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, expected_version,
+                    lambda value: value.update(status="UNKNOWN", phase="INTERRUPTED_EXECUTION_RECONCILED",
+                        error_code="STUDIO_TIMELINE_OUTCOME_UNKNOWN", automatic_retry=False), context=context)
+            else:
+                candidate = self._studio_candidate(novel_id, branch_id, actor_id, job_id, context,
+                                                   asset, row["output_digest"])
+                if row.get("output_candidate") is not None and row["output_candidate"] != candidate:
+                    raise ValueError("STUDIO_TIMELINE_RECOVERY_CANDIDATE_CHANGED")
+                guard()
+                row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, expected_version,
+                    lambda value: value.update(status="SUCCEEDED", phase="HUMAN_REVIEW_REQUIRED", error_code=None,
+                        output_candidate=candidate, recovery_state="ORIGINAL_PRIVATE_CANDIDATE_RECOVERED", automatic_retry=False),
+                    context=context)
             guard()
             return self._studio_projection(row)
 
-    def _create_studio_locked(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish):
+    @staticmethod
+    def _studio_candidate(novel_id, branch_id, actor_id, job_id, context, asset, output_digest):
+        expected_origin = {"contract": "studio-production-result/1", "job_id": job_id,
+            **{key: context[key] for key in ("scope_key", "incarnation", "actor", "request_digest", "operation_id", "sources")},
+            "provider_id": None, "model_id": None, "license_note": context.get("license_note", "")}
+        if "graph_binding" in context:
+            from ..creative.graph_media_binding import validate_graph_binding
+            graph_binding = validate_graph_binding(context["graph_binding"], context)
+            if graph_binding is None:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
+            expected_origin["graph_binding"] = copy.deepcopy(graph_binding)
+        if (not isinstance(asset, dict) or not isinstance(asset.get("id"), str)
+                or type(asset.get("version")) is not int or asset["version"] < 1
+                or asset.get("sha256") != output_digest or asset.get("kind") != "video"
+                or asset.get("novel_id") != novel_id or asset.get("branch_id") != branch_id
+                or asset.get("_owner_actor_id") != actor_id or asset.get("deleted_at")
+                or asset.get("source_job_id") != job_id or asset.get("_required_features") != ["narrative_production_v2"]
+                or asset.get("_studio_result_origin") != expected_origin
+                or asset.get("_project_binding") != {"novel_id": novel_id, "branch_id": branch_id,
+                    "scope_key": context["scope_key"], "incarnation": context["incarnation"]}):
+            raise ValueError("STUDIO_TIMELINE_PUBLICATION_RECEIPT_INVALID")
+        return {"id": asset["id"], "version": asset["version"], "digest": asset["sha256"], "kind": "video"}
+
+    def _create_studio_locked(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish, export_profile=None):
         """Explicit local composition; idempotent existing receipts never execute.
 
         publish(data, kind, filename, measured, job_id, job_guard) is supplied by the
@@ -258,6 +329,15 @@ class VideoAssemblyService:
         if not all(callable(callback) for callback in (guard, source_guard, publish)):
             raise ValueError("STUDIO_TIMELINE_OWNER_CALLBACKS_REQUIRED")
         definition = normalize_studio_timeline(timeline)
+        if export_profile is not None:
+            from .studio_timeline_export import normalize_export_profile, validate_export_admission, export_profile_digest
+            export_profile = normalize_export_profile(export_profile)
+            validate_export_admission(definition, export_profile, self.assets.MAX_BYTES)
+            if (context.get("export_profile") != export_profile
+                    or context.get("export_profile_digest") != export_profile_digest(export_profile)):
+                raise ValueError("STUDIO_TIMELINE_EXPORT_CONTEXT_CHANGED")
+        elif "export_profile" in context or "export_profile_digest" in context:
+            raise ValueError("STUDIO_TIMELINE_EXPORT_CONTEXT_CHANGED")
         request_id, request_digest = context.get("request_id"), context.get("request_digest")
         if (not isinstance(request_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,99}", request_id)
                 or not isinstance(request_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", request_digest)):
@@ -272,6 +352,8 @@ class VideoAssemblyService:
             raise ValueError("STUDIO_TIMELINE_CONTEXT_SOURCE_OR_DEFINITION_CHANGED")
         payload = {"definition": definition, "timeline_snapshot": snapshot, "sources": sources,
                    "rights": context.get("rights", {}), "operation_id": context.get("operation_id")}
+        if export_profile is not None:
+            payload["export_profile"] = copy.deepcopy(export_profile)
         input_digest = timeline_digest(payload)
         job_id = hashlib.sha256(json.dumps([context["scope_key"], context["incarnation"], actor_id, request_id], separators=(",", ":")).encode()).hexdigest()
         directory = self._studio_dir(novel_id, branch_id, actor_id, context)
@@ -301,39 +383,34 @@ class VideoAssemblyService:
         if existing is not None:
             guard()
             return self.get_studio(novel_id, branch_id, actor_id, job_id, context=context, guard=guard)
-        try:
-            data, measured = render_studio_timeline(definition, source_guard=source_guard, guard=guard, max_bytes=self.assets.MAX_BYTES)
+        def execution_current():
+            # External Host/source/graph guard is never called under queue lock.
             guard()
+            current = self._studio_read(novel_id, branch_id, actor_id, job_id, context=context)
+            if (current.get("status") != "RUNNING" or current.get("request_digest") != request_digest
+                    or current.get("version") != row["version"] or current.get("receipt_digest") != row["receipt_digest"]):
+                raise ValueError("STUDIO_TIMELINE_EXECUTION_FENCED")
+        candidate = None
+        try:
+            data, measured = render_studio_timeline(definition, source_guard=source_guard, guard=execution_current,
+                                                  max_bytes=self.assets.MAX_BYTES, export_profile=export_profile)
+            execution_current()
             row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, row["version"],
                 lambda value: value.update(phase="PUBLICATION_READY", output_digest=hashlib.sha256(data).hexdigest(),
                                           measured=copy.deepcopy(measured)), context=context)
             publication_version = row["version"]
+            publication_digest = row["receipt_digest"]
             def job_current():
                 current = self._studio_read(novel_id, branch_id, actor_id, job_id, context=context)
                 if (current["version"] != publication_version or current["status"] != "RUNNING"
-                        or current.get("phase") != "PUBLICATION_READY" or current["request_digest"] != request_digest):
+                        or current.get("phase") != "PUBLICATION_READY" or current["request_digest"] != request_digest
+                        or current.get("receipt_digest") != publication_digest):
                     raise ValueError("STUDIO_TIMELINE_PUBLICATION_ATTEMPT_CHANGED")
-            asset = publish(data, "video", f"studio-timeline-{job_id}.mp4", measured, job_id, job_current)
-            expected_origin = {"contract": "studio-production-result/1", "job_id": job_id,
-                **{key: context[key] for key in ("scope_key", "incarnation", "actor", "request_digest", "operation_id", "sources")},
-                "provider_id": None, "model_id": None, "license_note": context.get("license_note", "")}
-            if "graph_binding" in context:
-                from ..creative.graph_media_binding import validate_graph_binding
-                graph_binding = validate_graph_binding(context["graph_binding"], context)
-                if graph_binding is None:
-                    raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
-                expected_origin["graph_binding"] = copy.deepcopy(graph_binding)
-            if (not isinstance(asset, dict) or not isinstance(asset.get("id"), str)
-                    or type(asset.get("version")) is not int or asset["version"] < 1
-                    or asset.get("sha256") != hashlib.sha256(data).hexdigest() or asset.get("kind") != "video"
-                    or asset.get("novel_id") != novel_id or asset.get("branch_id") != branch_id
-                    or asset.get("_owner_actor_id") != actor_id or asset.get("deleted_at")
-                    or asset.get("source_job_id") != job_id or asset.get("_required_features") != ["narrative_production_v2"]
-                    or asset.get("_studio_result_origin") != expected_origin
-                    or asset.get("_project_binding") != {"novel_id": novel_id, "branch_id": branch_id,
-                        "scope_key": context["scope_key"], "incarnation": context["incarnation"]}):
-                raise ValueError("STUDIO_TIMELINE_PUBLICATION_RECEIPT_INVALID")
-            candidate = {"id": asset["id"], "version": asset["version"], "digest": asset["sha256"], "kind": "video"}
+            suffix = measured.get("extension")
+            if suffix not in {"mp4", "webm"}:
+                raise ValueError("STUDIO_TIMELINE_OUTPUT_CONTAINER_INVALID")
+            asset = publish(data, "video", f"studio-timeline-{job_id}.{suffix}", measured, job_id, job_current)
+            candidate = self._studio_candidate(novel_id, branch_id, actor_id, job_id, context, asset, hashlib.sha256(data).hexdigest())
             row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, row["version"],
                 lambda value: value.update(output_candidate=candidate, phase="CANDIDATE_RECORDED"), context=context)
             guard()
@@ -346,10 +423,33 @@ class VideoAssemblyService:
             ambiguous = (not isinstance(error, Exception) or isinstance(error, (subprocess.TimeoutExpired, OSError))
                          or row.get("phase") in {"PUBLICATION_READY", "CANDIDATE_RECORDED"})
             try:
-                row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, row["version"],
-                    lambda value: value.update(status="UNKNOWN" if ambiguous else "FAILED",
-                                              error_code="STUDIO_TIMELINE_OUTCOME_UNKNOWN" if ambiguous else "STUDIO_TIMELINE_RENDER_FAILED",
-                                              automatic_retry=False), context=context)
+                latest = self._studio_read(novel_id, branch_id, actor_id, job_id, context=context)
+                if latest.get("status") == "CANCELLED":
+                    # The cancel CAS wins; never replace its fence with UNKNOWN.
+                    row = latest
+                    if candidate is not None and latest.get("output_candidate") is None:
+                        # Publication has already happened and its private
+                        # owner/origin/hash were validated above. Retain that
+                        # fact without reopening, rerendering or promoting it.
+                        def retain_cancelled(value):
+                            if value.get("status") != "CANCELLED" or value.get("request_digest") != request_digest:
+                                raise ValueError("STUDIO_TIMELINE_CANCELLED_RECEIPT_CHANGED")
+                            value.update(output_candidate=copy.deepcopy(candidate),
+                                         late_output_state="CANCELLED_RESULT_RETAINED")
+                        try:
+                            row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, latest["version"],
+                                                      retain_cancelled, context=context)
+                        except Exception:
+                            # A competing receipt CAS or write failure cannot
+                            # justify changing the durable cancellation fence.
+                            row = self._studio_read(novel_id, branch_id, actor_id, job_id, context=context)
+                            if row.get("status") != "CANCELLED":
+                                raise error
+                else:
+                    row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, row["version"],
+                        lambda value: value.update(status="UNKNOWN" if ambiguous else "FAILED",
+                                                  error_code="STUDIO_TIMELINE_OUTCOME_UNKNOWN" if ambiguous else "STUDIO_TIMELINE_RENDER_FAILED",
+                                                  automatic_retry=False), context=context)
             except Exception:
                 # Preserve the original in-flight/candidate receipt if the
                 # status commit itself failed. Never replace it with success.

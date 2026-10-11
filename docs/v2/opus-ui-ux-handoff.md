@@ -49,7 +49,7 @@
 
 媒体表单有 T2I／I2I／T2V／I2V／V2V／语音／音乐／音效／本地截取 9 项操作，Provider／模型来自只读配置参考，参数按当前 Provider 支持范围显示并校验；没有任意 JSON 编辑或配置发现即启用 Runtime。来源选择绑定确切 Asset 版本／摘要。云端发送需本次明确同意并经过原全局与来源政策；recipe 预览可核对实际接口、默认参数与原内置工作流。创建仅入队，执行须另一次明确动作。ComfyUI I2I 仅一张参考并拒绝尺寸参数，A1111 多参考语义未实际验收；异步音频无 poll，保持 UNKNOWN。
 
-多轨表单支持原有界 VIDEO／AUDIO 轨道、片段裁剪／摆放、音量／静音与手工字幕。保存不渲染；明确核对时间线版本／摘要后，render 会实际进入原本地 FFmpeg 与 VideoAssemblyService，而不是只入队。它是有界审阅渲染，不是完整 NLE 或高质量导出。返回的 timeline job 经父级当前 client 绑定共享到媒体消费者，供用户明确读取候选／审核，不自动 GET、生成或采用。
+多轨表单支持有界 VIDEO／AUDIO 轨道、分切／移动／复制、图片叠层、精确有理变速、片段音量／静音／淡入淡出与手工字幕。保存不渲染；原 render 保留审阅规格，新增 export 经保存版本／来源／编码预览摘要确认后进入原本地 FFmpeg 与 VideoAssemblyService，支持明确 H.264 MP4 或 VP9 WebM profile。返回的 timeline job 经父级当前 client 绑定共享到媒体消费者，供用户明确读取候选／审核，不自动 GET、生成或采用。输出仍受原 25MiB／120 秒边界约束，原生编码与成片质量尚待真实验收。
 
 任务详情使用原公共 `command`／`provider`／`execution_recipe`／来源与结果摘要；用户可以下载当前已读 JSON，不能在前端补写模型调用、结果、rights 或验收回执。候选只能来自原 API 实际字节和核验过的 Blob 本地 URL；身份、任务／版本、权限、来源变化、卸载时立即清空并 revoke，音视频不自动播放。更换 JSX 仍须执行 controller 命名动作，不直接绕过到 client。
 
@@ -67,16 +67,18 @@
 - 原 Owner 的成功不自动升级为 Router 已结算、真实 GPU 调用或产品验收。模型元数据、目录发现、Mock 和 CPU 运行分别记录。
 - API Provider 执行仍按既有门禁；不加入付费 fallback、模拟身份、开发 token、关闭认证、内存凭据或 V1 凭据访问。
 - 云端授权还继承原不可变 Asset 来源和有证明的 legacy parent 版本／摘要；直接／间接文档须原 CLOUD_ALLOWED，64 节点／16 层／200MiB 有界，缺失／旧章节证明、新父来源、循环／stale 都 fail closed。作者声明不产生 cloud grant；UI 不能靠修改 license／origin／parent 绕过后端。
-- Graph 媒体与 `ASSET_REF` 仅在显式 schema 3 接入；保留原 WorkflowRun、媒体 owner、原子来源、候选审核、UNKNOWN 与一次发送边界。原 schema 1／2 和 TEXT Router allowlist 不自动扩展。完整 NLE、Graph timeline node、自动 ASR、自动音画对齐、高质量交付导出仍未接入；schema 3 文字档案 seam 另明确阻塞。详见 [Graph 媒体执行](graph-media-execution.md)。
+- Graph 媒体与 `ASSET_REF` 仅在显式 schema 3 接入；保留原 WorkflowRun、媒体 owner、原子来源、候选审核、UNKNOWN 与一次发送边界。schema 3 文字档案已沿原 owner 接入，真实对应 human_review 节点批准／驳回，档案仍私有且不构成整图验收。原 schema 1／2 和 TEXT Router allowlist 不自动扩展。独立时间线已有原子编辑／历史恢复与明确编码导出，Graph timeline node、自动 ASR／音画对齐仍未接入。详见 [文字档案与剪辑导出](text-archive-timeline-export.md)。
 - 媒体／时间线控制器保留预览、route／recipe／source／job CAS、request ID 和一次明确发送／审核确认。网络、408/409/425/429、5xx 和非法成功回执不得重复发送；先读取原记录。显式 reconcile 仅原 lease 已结束后处理中断为 UNKNOWN，不重新调用 Provider／FFmpeg；视频 refresh 只查询已记录远端任务，异步音频没有 poll。`LOCAL_RESULT_DISCARD` 不声称远端 abort，保留原候选。
 - 后端未来意图模型校验来源重复/冲突、轨道与完整来源快照、rational timing、尺寸/MIME/大小及作业/审核引用的一致性。JSON Schema 单独不能表达全部跨字段规则；形状一致不证明真实文件、路由、回执、权利或 scope。接入原执行 owner 前必须重新核对原门禁，不能从只读目录产生执行请求。
 - PoemSeed Local Interop 1.0、冻结 V1、历史 PR、失败证据与 NOT_RUN / LOCAL_REQUIRED / BLOCKED 标签原样保留。
 
 ## 后续验证顺序
 
-本轮只完成源码与静态复审，全部 tests、collect-only、typecheck、build、CI、Runtime、Windows／GPU／真实模型与全流程验收均为 NOT_RUN — USER_DEFERRED。新增的契约/恢复定位用例仅编写，不能记通过。此前 GraphFlow 返回 Transport closed；本次子任务 context 恢复，plan 请求未完成。完整回执留在 Phase10 报告；不把失败／未完成工具请求写成成功。
+本轮只完成源码与静态复审，全部 tests、collect-only、typecheck、build、CI、Runtime、Windows／GPU／真实模型与全流程验收均为 NOT_RUN — USER_DEFERRED。历史新增的契约/恢复定位用例仅编写，不能记通过。Phase10 的 GraphFlow 状态保留在原报告；本批 Phase11 的 context／plan 返回 Transport closed，索引结果另按真实回执记录，不把失败工具请求写成成功。
 
 Graph 媒体的可替换视图为 `StudioGraphMediaExecutionPanel`，行为在 `useStudioGraphMediaExecution`、原 `useStudioGraphRunController` 与 `studioGraphClient`。原节点编辑器提供有限参数控件；运行选择和排他仍由原父控制器持有。Opus 可重排这些视图，须保留 run/node/job CAS、候选实际字节核验、source 审核、未知回执恢复和导航保护。
+
+时间线增强视图继续在 `StudioTimelineEditor`，`useStudioTimelineEditor` 保留编辑／本地撤销重做／保存／导出预览／明确同意／一次发送和 UNKNOWN 原任务查询恢复。`studioTimelineExportTypes` 与严格 Production client 校验真实 recipe、源快照、预览 digest 和原任务；实际 `media_measurement` 与计划 profile 分开显示。Opus 可以完善时间尺／拖放／参数交互，但不能在换皮时自动生成任务、替换原 request_id、隐式升级旧时间线或将候选直接视作已审核交付。
 
 工程和 UI 改动收束并恢复验证后，先做相关模块与权限/恢复/CAS检查，再刷新当前源码的 API catalog 与 V2 coverage manifest，跑里程碑 CI。独立修复提交 `776286f` 的 8 项 metadata 对应旧 `5ed1cbee` 快照，不能当作覆盖这批新 API／源码的最终元数据；冻结 V1 manifest 不改。
 

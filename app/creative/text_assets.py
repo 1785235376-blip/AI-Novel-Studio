@@ -124,6 +124,15 @@ class GraphTextAssets:
     def _lease(self, nid, scope, actor, rid, guard):
         if self.runtime.broker.store is not self.service.store.store:
             raise ValueError("CREATIVE_TEXT_ASSET_SHARED_SCOPE_OWNER_REQUIRED")
+        row = self.service._owned(nid, scope, actor, self.service.RUNS, rid)
+        if row.get("graph_schema_version") == 3:
+            # Share schema 3's writable raw-scope -> asset -> project phase
+            # while completing/reviewing the original workflow. Never open a
+            # nested raw transaction or acquire assets after a project lease.
+            with self.service.asset_inputs.phase(nid, scope, actor, guard) as state:
+                yield self._source(nid, scope, actor, rid, guard, state)
+                guard()
+            return
         with self.service.store.source_lease(nid, scope) as state:
             with self.workspace._asset_scope(nid, scope):
                 row = self._source(nid, scope, actor, rid, guard, state)
@@ -220,11 +229,93 @@ class GraphTextAssets:
         return {"max_output_tokens": self.runtime.node(row)["parameters"]["max_output_tokens"],
             "temperature": 0.0, "synthetic": row["model_preview"]["route"]["synthetic"], "quality_verification": "NOT_RUN"}
 
-    def ensure(self, nid, scope, actor, rid, guard, *, create):
+    def prepare_projection(self, row, guard):
+        """Capture registered route authority before any persistence lease.
+
+        This is transient preparation, not archive/dispatch authority. The
+        existing original asset and durable completion are checked again inside
+        the caller's exact source/asset phase before establishing a proof.
+        """
+        if not self.enabled(row) or row["node_states"][self.runtime.node(row)["id"]]["status"] != "SUCCEEDED":
+            return None
+        guard(); self.validate_intent(row); self._job(row)
+        return (row[BINDING], deepcopy(row["model_preview"]), self._route(row))
+
+    @contextmanager
+    def projection(self, nid, scope, actor, rid, guard, prepared):
+        """Establish read authority in an already held Graph asset phase.
+
+        Never creates an archive, projects review, upgrades a readonly phase or
+        opens another raw transaction. Slow route preparation ran outside.
+        """
+        if prepared is None:
+            yield None
+            return
+        if not self.service.asset_inputs.in_phase(nid, scope, actor):
+            raise ValueError("CREATIVE_TEXT_ASSET_LEASE_REQUIRED")
+        asset, row, origin, route_guard = self.ensure(nid, scope, actor, rid, guard,
+            create=False, _prepared=prepared)
+        self.projected(asset, row, origin)
+        with self._proof(nid, scope, actor, rid, guard, asset, row, origin, route_guard):
+            yield (asset, row, origin)
+
+    def _verify_private(self, row, asset, job, origin, execution_receipt):
+        from .ai_execution import FLAGS
+        expected_binding = {"novel_id": row["novel_id"], "branch_id": row["scope"].get("branch_id"),
+            "scope_key": self.service.store.key(row["novel_id"], row["scope"]), "incarnation": row[BINDING]}
+        if (not isinstance(asset, dict) or asset.get("deleted_at") or asset.get("kind") != "text"
+                or asset.get("media_type") != "text/plain" or asset.get("novel_id") != row["novel_id"]
+                or asset.get("branch_id") != row["scope"].get("branch_id")
+                or asset.get("_owner_actor_id") != row["created_by"] or asset.get("_project_binding") != expected_binding
+                or not set(FLAGS).issubset(asset.get("_required_features", []))
+                or asset.get("_text_result_origin") != origin or asset.get(PRIVATE_FIELD) != execution_receipt
+                or asset.get("source_job_id") != job.id or asset.get("provider_id") != job.provider
+                or asset.get("model_id") != job.model or asset.get("parameters") != self._parameters(row)
+                or self.assets.content(asset["id"], branch_id=row["scope"].get("branch_id"),
+                    actor_id=row["created_by"]) != job.output.encode()):
+            raise StaleSourceError("CREATIVE_TEXT_ASSET_OUTPUT_CHANGED")
+
+    def current_under_asset_lease(self, nid, scope, actor, row, guard, prepared):
+        """Pure archive fence in the original publication/promote asset lease.
+
+        The caller checked the original raw scope first. No scope lookup,
+        transaction, phase or route construction occurs here; broker reads see
+        the caller's same already active raw document.
+        """
+        if prepared is None:
+            if self.enabled(row) and row["node_states"][self.runtime.node(row)["id"]]["status"] == "SUCCEEDED":
+                raise StaleSourceError("CREATIVE_TEXT_ASSET_ARCHIVE_INCOMPLETE")
+            return
+        if getattr(self.assets._scope, "binding", None) != {"novel_id": nid,
+                "branch_id": scope.get("branch_id"), "incarnation": row[BINDING],
+                "scope_key": self.service.store.key(nid, scope)}:
+            raise ValueError("CREATIVE_TEXT_ASSET_LEASE_REQUIRED")
+        incarnation, preview, route_guard = prepared
+        guard(); route_guard()
+        if row[BINDING] != incarnation or row["model_preview"] != preview or row["created_by"] != actor:
+            raise StaleSourceError("CREATIVE_TEXT_ASSET_SOURCE_CHANGED")
+        self.validate_intent(row)
+        job = self._job(row)
+        origin = self._origin(row, job)
+        receipt = self._execution_receipt(row, job, origin)
+        asset = self._find(row)
+        self._verify_private(row, asset, job, origin, receipt)
+        self.projected(asset, row, origin)
+        output = row.get("typed_outputs", {}).get(self.runtime.node(row)["id"])
+        if not output or output.get("draft", {}).get("text") != job.output:
+            raise StaleSourceError("CREATIVE_TEXT_ASSET_OUTPUT_CHANGED")
+        guard(); route_guard()
+
+    def ensure(self, nid, scope, actor, rid, guard, *, create, _prepared=None):
         row = self._source(nid, scope, actor, rid, guard)
         # Slow metadata checks are outside the source/asset persistence lease.
-        route_guard = self._route(row)
-        incarnation, preview = row[BINDING], deepcopy(row["model_preview"])
+        if _prepared is None:
+            route_guard = self._route(row)
+            incarnation, preview = row[BINDING], deepcopy(row["model_preview"])
+        else:
+            incarnation, preview, route_guard = _prepared
+            if row[BINDING] != incarnation or row["model_preview"] != preview:
+                raise StaleSourceError("CREATIVE_TEXT_ASSET_SOURCE_CHANGED")
         with self._lease(nid, scope, actor, rid, guard) as current:
             if current[BINDING] != incarnation or current["model_preview"] != preview:
                 raise StaleSourceError("CREATIVE_TEXT_ASSET_SOURCE_CHANGED")
@@ -245,6 +336,8 @@ class GraphTextAssets:
                     raise StaleSourceError("CREATIVE_TEXT_EXECUTION_RECEIPT_CHANGED")
             asset = self._find(current)
             if asset is None and create:
+                if current.get("graph_schema_version") == 3 and current["status"] != "RUNNING":
+                    raise StaleSourceError("CREATIVE_TEXT_ASSET_ARCHIVE_INCOMPLETE")
                 usage = self.assets.project_usage(nid, branch_id=scope.get("branch_id"))
                 data = job.output.encode()
                 if usage["count"] >= self.workspace.MAX_ASSETS or usage["bytes"] + len(data) > self.workspace.MAX_PROJECT_BYTES:
@@ -269,15 +362,36 @@ class GraphTextAssets:
                 raise StaleSourceError("CREATIVE_TEXT_EXECUTION_RECEIPT_CHANGED")
             if self.assets.content(asset["id"], branch_id=scope.get("branch_id"), actor_id=actor) != job.output.encode():
                 raise StaleSourceError("CREATIVE_TEXT_ASSET_BYTES_CHANGED")
+            if current.get("graph_schema_version") == 3:
+                self._verify_private(current, asset, job, origin, execution_receipt)
             fresh()
             return deepcopy(asset), deepcopy(current), origin, route_guard
 
     @contextmanager
     def phase(self, nid, scope, actor, rid, guard, *, create=True):
+        row = self._source(nid, scope, actor, rid, guard)
+        if row.get("graph_schema_version") == 3:
+            if self.service.asset_inputs.in_phase(nid, scope, actor):
+                raise ValueError("CREATIVE_TEXT_ASSET_PHASE_PREPARATION_ORDER_INVALID")
+            # Resolve the route before persistence leases, then keep original
+            # assets fixed until the workflow's original raw scope commit.
+            prepared = (row[BINDING], deepcopy(row["model_preview"]), self._route(row))
+            with self.service.asset_inputs.transaction(nid, scope, actor, guard):
+                asset, current, origin, route_guard = self.ensure(nid, scope, actor, rid, guard,
+                    create=create, _prepared=prepared)
+                with self._proof(nid, scope, actor, rid, guard, asset, current, origin, route_guard):
+                    yield asset
+            return
         asset, row, origin, route_guard = self.ensure(nid, scope, actor, rid, guard, create=create)
+        with self._proof(nid, scope, actor, rid, guard, asset, row, origin, route_guard):
+            yield asset
+
+    @contextmanager
+    def _proof(self, nid, scope, actor, rid, guard, asset, row, origin, route_guard):
         proof = {"runtime": self.runtime, "run_id": rid, "incarnation": row[BINDING], "origin": origin,
             "execution_receipt": deepcopy(asset.get(PRIVATE_FIELD)),
-            "actor": actor, "scope": deepcopy(scope), "guard": guard, "route_guard": route_guard}
+            "actor": actor, "scope": deepcopy(scope), "guard": guard, "route_guard": route_guard,
+            "leased_asset": deepcopy(asset) if row.get("graph_schema_version") == 3 else None}
         token = _phase.set(proof)
         try:
             yield asset
@@ -296,6 +410,15 @@ class GraphTextAssets:
             raise StaleSourceError("CREATIVE_TEXT_ASSET_OUTPUT_CHANGED")
         if proof["execution_receipt"] != self._execution_receipt(row, job, proof["origin"]):
             raise StaleSourceError("CREATIVE_TEXT_EXECUTION_RECEIPT_CHANGED")
+        if row.get("graph_schema_version") == 3:
+            if not self.service.asset_inputs.in_phase(row["novel_id"], row["scope"], row["created_by"]):
+                raise StaleSourceError("CREATIVE_TEXT_ASSET_LEASE_REQUIRED")
+            expected = proof["leased_asset"]
+            asset = self.assets.get(expected["id"], branch_id=row["scope"].get("branch_id"), actor_id=row["created_by"])
+            if (asset != expected or asset.get("_owner_actor_id") != row["created_by"]
+                    or self.assets.content(asset["id"], branch_id=row["scope"].get("branch_id"),
+                        actor_id=row["created_by"]) != job.output.encode()):
+                raise StaleSourceError("CREATIVE_TEXT_ASSET_OUTPUT_CHANGED")
         output = row.get("typed_outputs", {}).get(self.runtime.node(row)["id"])
         if output is not None and output.get("draft", {}).get("text") != job.output:
             raise StaleSourceError("CREATIVE_TEXT_ASSET_OUTPUT_CHANGED")
@@ -307,8 +430,46 @@ class GraphTextAssets:
         except (StaleSourceError, FileNotFoundError, KeyError):
             return False
 
+    def public_current(self, row):
+        """A passive receipt from the same leased proof as the node outputs."""
+        self.output_authority(row)
+        proof = _phase.get()
+        if row.get("graph_schema_version") != 3 or proof["leased_asset"] is None:
+            raise StaleSourceError("CREATIVE_TEXT_ASSET_LEASE_REQUIRED")
+        return self.projected(proof["leased_asset"], row, proof["origin"])
+
     def _decision(self, row, output_digest):
         snapshots = [*row["history"], row]
+        if row.get("graph_schema_version") == 3:
+            # A reviewed text proposal can precede additional media work. The
+            # exact original human-review transition, rather than the later
+            # whole-graph terminal state, owns this text review projection.
+            model_node = self.runtime.node(row)["id"]
+            descendants, queue = {model_node}, [model_node]
+            while queue:
+                source = queue.pop()
+                for edge in row["typed_edges"]:
+                    if (edge["source_node_id"] == source and edge["source_port"] == "draft"
+                            and edge["target_port"] == "draft" and edge["target_node_id"] not in descendants):
+                        descendants.add(edge["target_node_id"]); queue.append(edge["target_node_id"])
+            for index, current in enumerate(snapshots[1:], 1):
+                review = self.service.executor._review(snapshots[index - 1])
+                if not review or review["node_id"] not in descendants:
+                    continue
+                draft = review["draft"]
+                if (draft.get("origin") != "MODEL_PROPOSAL"
+                        or sha256(draft.get("text", "").encode()).hexdigest() != output_digest
+                        or review["output_digest"] != sha256(canonical([row["id"], review["node_id"],
+                            row["graph_version"], draft]).encode()).hexdigest()):
+                    raise StaleSourceError("CREATIVE_TEXT_ASSET_REVIEW_CHANGED")
+                status = current.get("node_states", {}).get(review["node_id"], {}).get("status")
+                if status not in {"SUCCEEDED", "REJECTED"}:
+                    continue
+                return "APPROVED" if status == "SUCCEEDED" else "REJECTED", {
+                    "run_id": row["id"], "run_version": current["version"], "review_node_id": review["node_id"],
+                    "output_digest": output_digest, "reviewed_output_digest": review["output_digest"],
+                    "reviewed_by": current["updated_by"], "reviewed_at": current["updated_at"]}
+            return "DRAFT", None
         for index, current in enumerate(snapshots):
             if index == 0:
                 continue
@@ -344,6 +505,15 @@ class GraphTextAssets:
                     expected_version=asset["version"], output_digest=origin["output_digest"], status=status,
                     review_receipt=decision, guard=before_review_commit, execution_receipt=asset.get(PRIVATE_FIELD))
         guard()
+        return self.projected(asset, row, origin)
+
+    def projected(self, asset, row, origin):
+        """Pure current receipt projection; no review or persistence action."""
+        status, decision = self._decision(row, origin["output_digest"])
+        if row.get("graph_schema_version") == 3:
+            review = asset.get("_text_result_review", {})
+            if review.get("status") != status or review.get("receipt") != decision:
+                raise StaleSourceError("CREATIVE_TEXT_ASSET_REVIEW_PROJECTION_REQUIRED")
         return {"contract": CONTRACT, "state": status, "asset_id": asset["id"], "version": asset["version"],
             "sha256": asset["sha256"], "size": asset["size"], "kind": "text", "media_type": "text/plain",
             "created_at": asset["created_at"], "updated_at": asset["updated_at"], "source": origin,
@@ -364,6 +534,11 @@ class GraphTextAssets:
             state["output"] = None
         if result.get("model_runtime"):
             result["model_runtime"]["preview"] = None
+        if result.get("media_runtime"):
+            for node in result["media_runtime"]["nodes"]:
+                node.update(status="STALE", preview=None)
+                if node.get("execution"):
+                    node["execution"]["job"] = None
         return result
 
     def decorate(self, nid, scope, actor, rid, guard, result):
@@ -406,7 +581,8 @@ class GraphTextAssets:
             if self._cooldowns.get(key, 0) > time.monotonic():
                 return self.masked(result)
         try:
-            if row["status"] == "RUNNING":
+            if (row["status"] == "RUNNING" and (row.get("graph_schema_version") != 3
+                    or row["node_states"][self.runtime.node(row)["id"]]["status"] != "SUCCEEDED")):
                 result = self.runtime.refresh(nid, scope, actor, rid, {"expected_version": row["version"]}, guard)
             else:
                 with self.phase(nid, scope, actor, rid, guard, create=False):

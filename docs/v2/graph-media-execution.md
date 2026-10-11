@@ -59,7 +59,7 @@
 
 ## 保留的未完成项
 
-- Schema 3 的 `ModelDispatch.archive_result=true` 显式返回 `CREATIVE_GRAPH_SCHEMA3_TEXT_ARCHIVE_NOT_INTEGRATED`；原 schema 2 GraphTextAssets 路径保持。此批不把两套资产临界区嵌套或把未接入档案能力记为完成。
-- 时间线多轨仍使用已有独立文档／有界审阅渲染；没有新增 Graph timeline node、完整 NLE、自动 ASR／音画对齐或高质量交付导出。
+- Schema 3 的 `ModelDispatch.archive_result=true` 已沿原 GraphTextAssets／GraphAssetInputs 接入文字私有档案与真实 human_review 节点审核，混合媒体执行也复核档案证明；原 schema 2 路径保持。详见 [文字档案与剪辑导出](text-archive-timeline-export.md)。
+- 独立多轨时间线已接原子编辑、原版本历史恢复、显式 schema 2 图片／变速／淡入淡出／视频声音混音和 H.264/VP9 编码导出。原 25MiB／轨道／时长门禁保持；Graph timeline node、自动 ASR／音画对齐和跨软件往返仍未实现，不能冒充验收完成。
 - 当前源码 API／V2 coverage metadata 待恢复验证后由原工具同步；历史 `776286f` 的 8 项 metadata 只对应旧 `5ed1cbee` 快照，冻结 V1 manifest 不变。
 - a40df 的原 PostgreSQL failed-call、终态超时、取消与不完整 CI、F00 INTEGRATED＋39 PARTIAL、独立复审 BLOCKED 和历史 NOT_RUN／LOCAL_REQUIRED 原样保留。Windows／原 vault／WebView2／GPU／真实模型全流程仍需最终源码上的证据。

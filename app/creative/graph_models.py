@@ -155,10 +155,22 @@ DEFINITIONS = {
 # Additive versioned model execution; the default seven-item catalog stays frozen.
 DEFINITIONS["text_generate"] = {"inputs": [port("text", "TEXT", True), port("direction", "DIRECTOR_NOTES")],
     "outputs": [port("draft", "DRAFT")], "parameters": ModelTextParameters}
-DEFINITIONS["media_generate"] = {"inputs": [port("text", "TEXT"), port("source", "ASSET_REF")],
+DEFINITIONS["media_generate"] = {"inputs": [port("text", "TEXT"), port("draft", "DRAFT"), port("source", "ASSET_REF")],
     "outputs": [port("candidate", "MEDIA_CANDIDATE")], "parameters": MediaNodeParameters}
 DEFINITIONS["media_review"] = {"inputs": [port("candidate", "MEDIA_CANDIDATE", True)],
     "outputs": [port("asset", "ASSET_REF")], "parameters": EmptyParameters}
+
+
+def definition_for(definition_id, *, schema_version=None):
+    """Only schema 3 exposes a completed original human review's draft.
+
+    The frozen schema 1/2 catalog and their edge/output validators still use
+    the original empty human-review output contract.
+    """
+    definition = DEFINITIONS[definition_id]
+    if definition_id == "human_review" and schema_version == 3:
+        return {**definition, "outputs": [port("reviewed_draft", "DRAFT")]}
+    return definition
 
 DefinitionId = Literal["text_input", "text_reference", "draft_prepare", "manual_transform", "director_note", "human_review", "asset_reference"]
 
@@ -230,8 +242,8 @@ class GraphInput(Strict):
             if edge.source_node_id not in nodes or edge.target_node_id not in nodes:
                 raise ValueError("CREATIVE_GRAPH_UNKNOWN_NODE")
             source, target = nodes[edge.source_node_id], nodes[edge.target_node_id]
-            out = next((p for p in DEFINITIONS[source.definition_id]["outputs"] if p["id"] == edge.source_port), None)
-            inp = next((p for p in DEFINITIONS[target.definition_id]["inputs"] if p["id"] == edge.target_port), None)
+            out = next((p for p in definition_for(source.definition_id, schema_version=self.schema_version)["outputs"] if p["id"] == edge.source_port), None)
+            inp = next((p for p in definition_for(target.definition_id, schema_version=self.schema_version)["inputs"] if p["id"] == edge.target_port), None)
             if not out or not inp:
                 raise ValueError("CREATIVE_GRAPH_UNKNOWN_PORT")
             if out["type"] != inp["type"]:
@@ -323,7 +335,8 @@ def catalog_definitions(*, include_model=False, include_media=False):
         "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate"} else None,
         "executable": include_media or key != "asset_reference", "model_called": False,
         "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" and not include_media else []}
-        for key, value in DEFINITIONS.items()
+        for key in DEFINITIONS
+        for value in [definition_for(key, schema_version=3 if include_media else None)]
         if (include_model or key != "text_generate") and (include_media or key not in {"media_generate", "media_review"})]
 
 
@@ -333,7 +346,7 @@ def history_limit(row):
 
 def validate_output_ports(definition_id, value, *, schema_version=None):
     """Finite output types also apply to persisted/cached local receipts."""
-    expected = DEFINITIONS[definition_id]["outputs"]
+    expected = definition_for(definition_id, schema_version=schema_version)["outputs"]
     if not isinstance(value, dict) or set(value) != {port["id"] for port in expected}:
         raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
     result = {}
@@ -346,7 +359,9 @@ def validate_output_ports(definition_id, value, *, schema_version=None):
         elif port["type"] == "DIRECTOR_NOTES":
             result[port["id"]] = DirectorParameters.model_validate(item).model_dump()
         elif port["type"] == "DRAFT":
-            draft = (ModelDraftPort if definition_id == "text_generate" else DraftPort).model_validate(item)
+            model_draft = definition_id == "text_generate" or (definition_id == "human_review"
+                and schema_version == 3 and isinstance(item, dict) and item.get("origin") == "MODEL_PROPOSAL")
+            draft = (ModelDraftPort if model_draft else DraftPort).model_validate(item)
             if ((definition_id == "draft_prepare" and (draft.origin != "USER_SUPPLIED" or draft.plan is None))
                     or (definition_id == "manual_transform" and (draft.origin != "MANUAL" or draft.plan is not None))):
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")

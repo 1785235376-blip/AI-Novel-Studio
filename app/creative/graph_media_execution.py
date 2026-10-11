@@ -7,6 +7,7 @@ replay. Only media_review promotes a candidate and emits a usable ASSET_REF.
 from __future__ import annotations
 
 from copy import deepcopy
+from contextlib import contextmanager, nullcontext
 from datetime import datetime, timezone
 import hashlib
 
@@ -74,6 +75,43 @@ class CreativeGraphMediaRuntime:
         self.service.executor._current(nid, scope, actor, row, guard, state)
         return row
 
+    def _text_assets(self, row):
+        runtime = self.service.model_runtime
+        return runtime.text_assets if runtime and runtime.text_assets.enabled(row) else None
+
+    @contextmanager
+    def _phase(self, nid, scope, actor, rid, guard, *, writable=False, expected_version=None):
+        """Prepare text routes outside leases; share original leased proofs.
+
+        Original owner queue reads stay outside this context. It never creates
+        or reviews text assets: archival convergence belongs to GraphTextAssets.
+        """
+        captured = self.service._owned(nid, scope, actor, self.service.RUNS, rid)
+        if expected_version is not None:
+            check_version(captured, expected_version)
+        archival = self._text_assets(captured)
+        prepared = (archival.prepare_projection(captured, guard)
+            if archival and captured["status"] not in TERMINAL_RUNS else None)
+        phase = (self.service.asset_inputs.transaction(nid, scope, actor, guard)
+            if writable else self.service.asset_inputs.phase(nid, scope, actor, guard))
+        with phase as state:
+            current = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
+            check_version(current, captured["version"])
+            projection = (archival.projection(nid, scope, actor, rid, guard, prepared)
+                if archival and prepared is not None else nullcontext())
+            with projection:
+                yield state
+
+    def _view(self, nid, scope, actor, row, guard, state):
+        result = self.service.executor.view(nid, scope, actor, row, guard, state)
+        archival = self._text_assets(row)
+        if archival and not result["stale"] and row["node_states"][archival.runtime.node(row)["id"]]["status"] == "SUCCEEDED":
+            try:
+                result["asset_output"] = archival.public_current(row)
+            except (StaleSourceError, FileNotFoundError):
+                return archival.masked(result)
+        return result
+
     @staticmethod
     def _deadline(row):
         from .graph_execution import CreativeGraphExecutor
@@ -111,9 +149,34 @@ class CreativeGraphMediaRuntime:
     def _inputs(self, row, node):
         ports = self.service.executor._inputs(row, node["id"], row["typed_outputs"])
         command = deepcopy(node["parameters"])
+        if "text" in ports and "draft" in ports:
+            raise ValueError("CREATIVE_GRAPH_MEDIA_TEXT_DRAFT_EXCLUSIVE")
         text = ports.get("text", "")
         if text:
             command["prompt"] = command.get("prompt", "") + ("\n\n" if command.get("prompt") else "") + "GRAPH_SOURCE_TEXT\n" + text
+        if "draft" in ports:
+            draft = ports["draft"]
+            edge = next((edge for edge in row["typed_edges"]
+                if edge["target_node_id"] == node["id"] and edge["target_port"] == "draft"), None)
+            reviewer = next((source for source in row["typed_nodes"]
+                if edge and source["id"] == edge["source_node_id"]), None)
+            original = next((source for source in row["typed_edges"] if reviewer
+                and source["target_node_id"] == reviewer["id"] and source["target_port"] == "draft"), None)
+            archival = self._text_assets(row)
+            if (row.get("graph_schema_version") != 3 or not archival or not reviewer or not original
+                    or reviewer["definition_id"] != "human_review" or edge["source_port"] != "reviewed_draft"
+                    or row["node_states"][reviewer["id"]]["status"] != "SUCCEEDED"
+                    or reviewer["id"] not in row.get("reviewed_nodes", [])
+                    or original["source_node_id"] != archival.runtime.node(row)["id"] or original["source_port"] != "draft"
+                    or draft != row["typed_outputs"].get(reviewer["id"], {}).get("reviewed_draft")
+                    or draft != row["typed_outputs"].get(original["source_node_id"], {}).get("draft")
+                    or archival._decision(row, hashlib.sha256(draft["text"].encode()).hexdigest())[0] != "APPROVED"):
+                raise StaleSourceError("CREATIVE_GRAPH_MEDIA_APPROVED_MODEL_DRAFT_REQUIRED")
+            # Metadata checks here are pure: _current calls this before proof
+            # establishment. Every write/send/publication/promotion additionally
+            # verifies the same APPROVED private archive and original bytes in
+            # its source/asset phase; a node status alone grants no authority.
+            command["prompt"] = command.get("prompt", "") + ("\n\n" if command.get("prompt") else "") + "GRAPH_SOURCE_DRAFT\n" + draft["text"]
         sources = []
         if "source" in ports:
             asset = ports["source"]
@@ -208,6 +271,10 @@ class CreativeGraphMediaRuntime:
     def _metadata_authority(self, document, captured, node_id, current):
         row = self.service.asset_inputs.validate_document(captured["novel_id"], captured["scope"],
             captured["created_by"], captured, document, current)
+        # Publication already owns the raw source scope. Revalidate original
+        # node/cache/approval receipts without entering an asset phase here.
+        self.service.executor._current(captured["novel_id"], captured["scope"],
+            captured["created_by"], row, current, document, check_assets=False)
         expected = captured["media_executions"].get(node_id)
         live = row.get("media_executions", {}).get(node_id)
         if (row.get("status") in TERMINAL_RUNS or row.get("status") == "PAUSED"
@@ -236,16 +303,24 @@ class CreativeGraphMediaRuntime:
         return row
 
     def _guards(self, nid, scope, actor, row, node_id, current):
+        archival = self._text_assets(row)
+        prepared = archival.prepare_projection(row, current) if archival else None
         def source_guard(document):
             live = self._metadata_authority(document, row, node_id, current)
             self._admission_capacity(document, live, 2)
             # Production calls this after taking its existing asset lease while
             # the same raw source lease remains held. Never reopen scope here.
-            return lambda: self.service.asset_inputs.current_under_asset_lease(nid, scope, actor, live, current)
+            def asset_guard():
+                self.service.asset_inputs.current_under_asset_lease(nid, scope, actor, live, current)
+                if archival:
+                    archival.current_under_asset_lease(nid, scope, actor, live, current, prepared)
+            return asset_guard
         def last_mile():
-            with self.service.asset_inputs.phase(nid, scope, actor, current) as document:
+            with self._phase(nid, scope, actor, row["id"], current) as document:
                 live = self._metadata_authority(document, row, node_id, current)
                 self.service.asset_inputs.current(nid, scope, actor, live, current, document)
+                if archival and prepared is not None:
+                    archival.output_authority(live)
         return last_mile, source_guard
 
     def _job(self, nid, scope, actor, row, node_id, current):
@@ -300,7 +375,7 @@ class CreativeGraphMediaRuntime:
         preview = {"node_id": node["id"], "source_run_version": body.expected_version, "input_digest": input_digest,
             "graph_binding": binding, "command": command.model_dump(exclude_none=True), "production_preview": production_preview}
         preview["preview_digest"] = digest([CONTRACT, row[BINDING], scope, actor, row["graph_digest"], preview])
-        with self.service.asset_inputs.transaction(nid, scope, actor, current) as state:
+        with self._phase(nid, scope, actor, rid, current, writable=True) as state:
             stored = self._row(nid, scope, actor, rid, current, state)
             check_version(stored, body.expected_version)
             projected = deepcopy(stored)
@@ -308,7 +383,7 @@ class CreativeGraphMediaRuntime:
             self._admission_capacity(state, projected)
             change_row(stored, actor, body.expected_version, lambda item: item["media_previews"].update({node["id"]: deepcopy(preview)}))
             self.service._capacity(state); current()
-            return self.service.executor.view(nid, scope, actor, stored, current, state)
+            return self._view(nid, scope, actor, stored, current, state)
 
     def dispatch(self, nid, scope, actor, rid, value, guard):
         """Claim the original node and queue once. This method never sends."""
@@ -327,7 +402,7 @@ class CreativeGraphMediaRuntime:
             "request_id": preview["command"]["request_id"], "request_digest": preview["production_preview"]["request_digest"],
             "graph_binding": deepcopy(preview["graph_binding"]), "status": "ADMISSION_RESERVED", "receipt_state": UNKNOWN,
             "send_reserved": False, "job": None, "review_state": "NONE"}
-        with self.service.asset_inputs.transaction(nid, scope, actor, current) as state:
+        with self._phase(nid, scope, actor, rid, current, writable=True) as state:
             stored = self._row(nid, scope, actor, rid, current, state)
             check_version(stored, body.expected_version)
             self._admission_capacity(state, stored)
@@ -364,7 +439,7 @@ class CreativeGraphMediaRuntime:
         updated = {**deepcopy(execution), "status": job["status"],
             "receipt_state": UNKNOWN if job["status"] in {"UNKNOWN", "RUNNING", "SEND_RESERVED"} else "RECORDED",
             "job": {key: deepcopy(job.get(key)) for key in RECEIPT_FIELDS}}
-        with self.service.asset_inputs.transaction(nid, scope, actor, current) as state:
+        with self._phase(nid, scope, actor, captured["id"], current, writable=True) as state:
             row = self._row(nid, scope, actor, captured["id"], current, state)
             check_version(row, captured["version"])
             if row["media_executions"].get(node_id, {}).get("graph_binding") != updated["graph_binding"]:
@@ -398,7 +473,7 @@ class CreativeGraphMediaRuntime:
             host.row = self.service.executor._drive(host, host.row, actor, state, current)
             if host.row != row:
                 self._commit_host(row, actor, host); self.service._capacity(state); current()
-            return self.service.executor.view(nid, scope, actor, row, current, state)
+            return self._view(nid, scope, actor, row, current, state)
 
     def execute_job(self, nid, scope, actor, rid, value, guard):
         body, current, row, node_id, job = self._checked_action(nid, scope, actor, rid, value, guard)
@@ -408,7 +483,7 @@ class CreativeGraphMediaRuntime:
                 or row["node_states"][node_id]["status"] != "WORKING"):
             raise ValueError("CREATIVE_GRAPH_MEDIA_SEND_ONCE_REQUIRES_UNSENT_QUEUED_JOB")
         execution.update(send_reserved=True, status="SEND_RESERVED", receipt_state=UNKNOWN)
-        with self.service.asset_inputs.transaction(nid, scope, actor, current) as state:
+        with self._phase(nid, scope, actor, rid, current, writable=True) as state:
             stored = self._row(nid, scope, actor, rid, current, state)
             check_version(stored, body.expected_version)
             self._admission_capacity(state, stored, 4)
@@ -478,7 +553,7 @@ class CreativeGraphMediaRuntime:
             raise StaleSourceError("CREATIVE_GRAPH_MEDIA_EXACT_CANDIDATE_REVIEW_REQUIRED")
         if execution["review_state"] != "REVIEW_RESERVED":
             execution["review_state"] = "REVIEW_RESERVED"
-            with self.service.asset_inputs.transaction(nid, scope, actor, current) as state:
+            with self._phase(nid, scope, actor, rid, current, writable=True) as state:
                 stored = self._row(nid, scope, actor, rid, current, state)
                 check_version(stored, body.expected_version)
                 self._admission_capacity(state, stored, 2)
@@ -498,7 +573,7 @@ class CreativeGraphMediaRuntime:
             updated = {**execution, "status": "APPROVED", "receipt_state": "RECORDED", "review_state": "APPROVED",
                 "job": {key: deepcopy(reviewed.get(key)) for key in RECEIPT_FIELDS}}
             asset = {**candidate["asset"], "version": reviewed["approved_asset_version"]}
-            with self.service.asset_inputs.transaction(nid, scope, actor, current) as state:
+            with self._phase(nid, scope, actor, rid, current, writable=True) as state:
                 stored = self._row(nid, scope, actor, rid, current, state)
                 check_version(stored, row["version"])
                 if stored["media_executions"][node_id]["review_state"] != "REVIEW_RESERVED":
@@ -519,7 +594,7 @@ class CreativeGraphMediaRuntime:
                 host.row["media_executions"][node_id] = updated
                 host.row = self.service.executor._drive(host, host.row, actor, state, current)
                 self._commit_host(stored, actor, host); self.service._capacity(state); current()
-                return self.service.executor.view(nid, scope, actor, stored, current, state)
+                return self._view(nid, scope, actor, stored, current, state)
         except Exception:
             self._unknown(nid, scope, actor, rid, node_id, execution, current)
             raise
@@ -539,7 +614,7 @@ class CreativeGraphMediaRuntime:
         # Do not read an owner queue while holding this final source/asset phase.
         # Recheck its original asset directly and reject a late stale private
         # response after source edits, cancellation, promotion or replacement.
-        with self.service.asset_inputs.phase(nid, scope, actor, current) as state:
+        with self._phase(nid, scope, actor, rid, current) as state:
             latest = self._row(nid, scope, actor, rid, current, state)
             check_version(latest, row["version"])
             if latest["media_executions"][node_id] != execution or latest["status"] in TERMINAL_RUNS:
@@ -600,7 +675,7 @@ class CreativeGraphMediaRuntime:
                 # original receipts and candidates for inspection.
                 continue
 
-    def read(self, nid, scope, actor, rid, guard):
+    def read(self, nid, scope, actor, rid, guard, *, expected_version=None):
         """Read-only current owner receipts; no polling, reconciliation or write.
 
         Current job versions are needed after an unknown owner reply, including
@@ -608,9 +683,9 @@ class CreativeGraphMediaRuntime:
         Queue reads happen after releasing the scope/asset phase.
         """
         _, current = self.service._context(nid, scope, actor, guard)
-        with self.service.asset_inputs.phase(nid, scope, actor, current) as state:
+        with self._phase(nid, scope, actor, rid, current, expected_version=expected_version) as state:
             row = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
-            result = self.service.executor.view(nid, scope, actor, row, current, state)
+            result = self._view(nid, scope, actor, row, current, state)
             captured = deepcopy(row)
         if result["stale"] or captured["status"] in TERMINAL_RUNS:
             return result
@@ -632,12 +707,12 @@ class CreativeGraphMediaRuntime:
                 public["status"] = job["status"]
                 by_id[node_id]["status"] = job["status"]
             public["receipt_state"] = UNKNOWN if job["status"] in {"UNKNOWN", "RUNNING", "SEND_RESERVED"} else "RECORDED"
-        with self.service.asset_inputs.phase(nid, scope, actor, current) as state:
+        with self._phase(nid, scope, actor, rid, current) as state:
             latest = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
             check_version(latest, captured["version"])
             if latest["media_executions"] != captured["media_executions"]:
                 raise StaleSourceError("CREATIVE_GRAPH_MEDIA_READ_RECEIPT_CHANGED")
-            final = self.service.executor.view(nid, scope, actor, latest, current, state)
+            final = self._view(nid, scope, actor, latest, current, state)
             if not final["stale"]:
                 final["media_runtime"] = result["media_runtime"]
             current()

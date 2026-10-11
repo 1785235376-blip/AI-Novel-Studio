@@ -119,3 +119,29 @@ class TimelineRender(ExecutionModel):
     expected_version: int = Field(ge=1)
     reviewed_timeline_digest: Digest
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
+
+
+class TimelineEdit(ExecutionModel):
+    expected_version: int = Field(ge=1)
+    reviewed_timeline_digest: Digest
+    request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
+    operations: list[dict] = Field(min_length=1, max_length=40)
+
+
+class TimelineRestore(ExecutionModel):
+    expected_version: int = Field(ge=1)
+    reviewed_timeline_digest: Digest
+    restore_version: int = Field(ge=1)
+    restore_digest: Digest
+
+
+class TimelineExportPreview(ExecutionModel):
+    expected_version: int = Field(ge=1)
+    reviewed_timeline_digest: Digest
+    # Closed preset/codec/rate fields are validated by the original renderer.
+    export_profile: dict
+
+
+class TimelineExport(TimelineExportPreview):
+    request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
+    reviewed_export_digest: Digest

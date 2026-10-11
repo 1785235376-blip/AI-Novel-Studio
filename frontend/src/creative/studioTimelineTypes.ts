@@ -1,12 +1,14 @@
 import { ApiError } from '../api';
 import type { StudioAsset } from './studioClient';
 
-export type StudioTimelineSource = { id: string; kind: 'ASSET'; asset_kind: 'video' | 'audio'; version: number; digest: string };
+export type StudioTimelineSource = { id: string; kind: 'ASSET'; asset_kind: 'image' | 'video' | 'audio'; version: number; digest: string };
 export type StudioTimelineClip = { id: string; source_snapshot: StudioTimelineSource; start_ms: number; in_ms: number; out_ms: number;
-  x?: number; y?: number; width?: number; height?: number };
-export type StudioTimelineTrack = { id: string; kind: 'VIDEO' | 'AUDIO'; order: number; muted: boolean; gain_db: number; clips: StudioTimelineClip[] };
+  x?: number; y?: number; width?: number; height?: number; speed_num?: number; speed_den?: number; opacity?: number;
+  muted?: boolean; gain_db?: number; fade_in_ms?: number; fade_out_ms?: number; include_audio?: boolean };
+export type StudioTimelineTrack = { id: string; kind: 'VIDEO' | 'AUDIO'; order: number; muted: boolean; gain_db: number;
+  role?: 'PRIMARY' | 'OVERLAY' | 'DIALOGUE' | 'MUSIC' | 'EFFECTS'; clips: StudioTimelineClip[] };
 export type StudioTimelineCaption = { start_ms: number; end_ms: number; text: string };
-export type StudioTimeline = { duration_ms: number; width: number; height: number; fps: number; tracks: StudioTimelineTrack[]; captions: StudioTimelineCaption[] };
+export type StudioTimeline = { schema_version?: 2; duration_ms: number; width: number; height: number; fps: number; tracks: StudioTimelineTrack[]; captions: StudioTimelineCaption[] };
 export type StudioTimelineDraft = { title: string; timeline: StudioTimeline };
 export type StudioTimelineRow = StudioTimelineDraft & { id: string; version: number; timeline_digest: string; created_at: string; updated_at: string };
 export const TIMELINE_LIMITS = { duration: 600000, tracks: 8, kindTracks: 4, clips: 30, captions: 500, captionCharacters: 32000 } as const;
@@ -15,6 +17,7 @@ const identity = /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/, digest = /^[a-f0-9]{64}$/;
 export const cloneTimeline = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 export const timelineInputKey = (value: StudioTimelineDraft) => JSON.stringify(value);
 export const timelineBinding = (value: StudioTimelineRow) => `${value.id}:${value.version}:${value.timeline_digest}`;
+export const timelineClipDuration = (clip: StudioTimelineClip) => (clip.out_ms - clip.in_ms) * (clip.speed_den ?? 1) / (clip.speed_num ?? 1);
 export const newTimelineDraft = (): StudioTimelineDraft => ({ title: '未命名时间线', timeline: { duration_ms: 5000, width: 1280, height: 720, fps: 24, tracks: [], captions: [] } });
 
 function object(value: unknown, allowed?: readonly string[]): Record<string, unknown> {
@@ -30,6 +33,12 @@ function id(value: unknown): string {
   return value;
 }
 function flag(value: unknown): boolean { if (typeof value !== 'boolean') throw new Error('轨道隐藏或静音状态无效。'); return value; }
+function scalar(value: unknown, min: number, max: number): number {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max) throw new Error(`参数需要在 ${min} 至 ${max} 范围内。`);
+  return value;
+}
+const defaulted = (row: Record<string, unknown>, key: string, fallback: unknown) => key in row ? row[key] : fallback;
+function gcd(a: number, b: number): number { while (b) [a, b] = [b, a % b]; return a; }
 function compareText(left: string, right: string): number {
   const a = Array.from(left), b = Array.from(right);
   for (let index = 0; index < Math.min(a.length, b.length); index++) {
@@ -40,44 +49,62 @@ function compareText(left: string, right: string): number {
 
 /** Pure closed DTO validation for the form; the original server remains authoritative. */
 export function checkedTimeline(value: unknown): StudioTimeline {
-  const row = object(value, ['duration_ms', 'width', 'height', 'fps', 'tracks', 'captions']);
+  const row = object(value, ['schema_version', 'duration_ms', 'width', 'height', 'fps', 'tracks', 'captions']);
+  const extended = row.schema_version === 2;
+  if ('schema_version' in row && !extended) throw new Error('时间线版本无效；旧时间线保持原字段，扩展时间线使用版本 2。');
   const duration = integer(row.duration_ms, 1, TIMELINE_LIMITS.duration), width = integer(row.width, 16, 1920), height = integer(row.height, 16, 1080), fps = integer(row.fps, 1, 60);
   if (width % 2 || height % 2) throw new Error('画面宽高需要为偶数。');
   if (!Array.isArray(row.tracks) || !row.tracks.length || row.tracks.length > TIMELINE_LIMITS.tracks) throw new Error('请至少添加一条视频轨道，最多八条轨道。');
   const trackIds = new Set<string>(), orders = new Set<number>(), clipIds = new Set<string>(), sources = new Map<string, string>();
   let videos = 0, audios = 0, clipsCount = 0;
   const tracks = row.tracks.map(raw => {
-    const track = object(raw, ['id', 'kind', 'order', 'muted', 'gain_db', 'clips']), tid = id(track.id), order = integer(track.order, 0, 7);
+    const track = object(raw, ['id', 'kind', 'order', 'muted', 'gain_db', 'clips', ...(extended ? ['role'] : [])]), tid = id(track.id), order = integer(track.order, 0, 7);
     if (track.kind !== 'VIDEO' && track.kind !== 'AUDIO' || trackIds.has(tid) || orders.has(order)) throw new Error('轨道类型、标识或叠放顺序无效。');
     const kind = track.kind;
+    const role = defaulted(track, 'role', kind === 'VIDEO' ? 'PRIMARY' : 'DIALOGUE');
+    if (extended && !(kind === 'VIDEO' ? ['PRIMARY', 'OVERLAY'] : ['DIALOGUE', 'MUSIC', 'EFFECTS']).includes(String(role))) throw new Error('轨道用途与类型不一致。');
     trackIds.add(tid); orders.add(order); kind === 'VIDEO' ? videos++ : audios++;
     if (videos > 4 || audios > 4) throw new Error('视频和音频各最多四条轨道。');
     const muted = flag(track.muted), gain = track.gain_db;
     if (typeof gain !== 'number' || !Number.isFinite(gain) || gain < -60 || gain > 12 || kind === 'VIDEO' && gain !== 0) throw new Error('音量范围为 −60 至 12 dB，仅音频轨道可调整。');
     if (!Array.isArray(track.clips) || !track.clips.length || track.clips.length > TIMELINE_LIMITS.clips) throw new Error('每条轨道需要至少一个片段。');
     const clips = track.clips.map(rawClip => {
-      const clip = object(rawClip, ['id', 'source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'x', 'y', 'width', 'height']);
+      const clip = object(rawClip, ['id', 'source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'x', 'y', 'width', 'height',
+        ...(extended ? ['speed_num', 'speed_den', 'opacity', 'muted', 'gain_db', 'fade_in_ms', 'fade_out_ms', 'include_audio'] : [])]);
       const cid = id(clip.id), source = object(clip.source_snapshot, ['id', 'kind', 'asset_kind', 'version', 'digest']);
       if (clipIds.has(cid) || ++clipsCount > TIMELINE_LIMITS.clips) throw new Error('片段标识重复或超过三十个片段。');
       clipIds.add(cid);
-      const assetKind = kind === 'VIDEO' ? 'video' : 'audio';
-      if (source.kind !== 'ASSET' || source.asset_kind !== assetKind || typeof source.digest !== 'string' || !digest.test(source.digest)) throw new Error('素材类型或摘要无效。');
-      const snapshot: StudioTimelineSource = { id: id(source.id), kind: 'ASSET', asset_kind: assetKind, version: integer(source.version, 1, Number.MAX_SAFE_INTEGER), digest: source.digest };
+      const assetKind = source.asset_kind;
+      if (source.kind !== 'ASSET' || !(kind === 'VIDEO' ? extended ? ['image', 'video'] : ['video'] : ['audio']).includes(String(assetKind)) || typeof source.digest !== 'string' || !digest.test(source.digest)) throw new Error('素材类型或摘要无效。');
+      const snapshot: StudioTimelineSource = { id: id(source.id), kind: 'ASSET', asset_kind: assetKind as StudioTimelineSource['asset_kind'], version: integer(source.version, 1, Number.MAX_SAFE_INTEGER), digest: source.digest };
       const previous = sources.get(snapshot.id), key = JSON.stringify(snapshot);
       if (previous && previous !== key) throw new Error('同一素材不能绑定两个不同的版本。');
       sources.set(snapshot.id, key);
       const start = integer(clip.start_ms, 0, duration - 1), trimIn = integer(clip.in_ms, 0, 36000000), trimOut = integer(clip.out_ms, 1, 36000000);
-      if (trimOut <= trimIn || start + trimOut - trimIn > duration) throw new Error('片段出点须晚于入点，摆放后的结束不能超过时间线。');
+      const rawNum = extended ? integer(defaulted(clip, 'speed_num', 1), 1, 4) : 1, rawDen = extended ? integer(defaulted(clip, 'speed_den', 1), 1, 4) : 1;
+      const divisor = gcd(rawNum, rawDen), speedNum = rawNum / divisor, speedDen = rawDen / divisor;
+      const length = (trimOut - trimIn) * speedDen / speedNum;
+      if (trimOut <= trimIn || !Number.isSafeInteger(length) || start + length > duration) throw new Error('片段长度须为正整数毫秒，摆放后的结束不能超过时间线。');
+      if (assetKind === 'image' && (trimIn !== 0 || speedNum !== 1 || speedDen !== 1)) throw new Error('静态画面入点为零，速度保持 1/1；出点表示展示时长。');
       const output: StudioTimelineClip = { id: cid, source_snapshot: snapshot, start_ms: start, in_ms: trimIn, out_ms: trimOut };
+      if (extended) Object.assign(output, { speed_num: speedNum, speed_den: speedDen, muted: flag(defaulted(clip, 'muted', false)), gain_db: scalar(defaulted(clip, 'gain_db', 0), -60, 12),
+        fade_in_ms: integer(defaulted(clip, 'fade_in_ms', 0), 0, length), fade_out_ms: integer(defaulted(clip, 'fade_out_ms', 0), 0, length) });
+      if ((output.fade_in_ms ?? 0) + (output.fade_out_ms ?? 0) > length) throw new Error('淡入和淡出总长不能超过片段的渲染时长。');
       if (kind === 'VIDEO') {
         const x = integer(clip.x, 0, width - 16), y = integer(clip.y, 0, height - 16), cw = integer(clip.width, 16, width - x), ch = integer(clip.height, 16, height - y);
         if (cw % 2 || ch % 2) throw new Error('视频片段尺寸需要为偶数，并位于画面之内。');
         Object.assign(output, { x, y, width: cw, height: ch });
-      } else if (['x', 'y', 'width', 'height'].some(key => key in clip)) throw new Error('音频片段没有画面位置或尺寸。');
+        if (extended) {
+          const includeAudio = flag(defaulted(clip, 'include_audio', false));
+          if (includeAudio && assetKind !== 'video') throw new Error('静态画面不能包含视频原声。');
+          if (!includeAudio && output.gain_db !== 0) throw new Error('视频片段的音量只在明确加入原声时可调整。');
+          Object.assign(output, { opacity: scalar(defaulted(clip, 'opacity', 1), 0, 1), include_audio: includeAudio });
+        }
+      } else if (['x', 'y', 'width', 'height', 'opacity', 'include_audio'].some(key => key in clip)) throw new Error('音频片段没有画面位置、尺寸、透明度或视频原声设置。');
       return output;
     }).sort((left, right) => left.start_ms - right.start_ms || compareText(left.id, right.id));
-    if (kind === 'VIDEO' && clips.some((clip, index) => index > 0 && clips[index - 1].start_ms + clips[index - 1].out_ms - clips[index - 1].in_ms > clip.start_ms)) throw new Error('同一视频轨道的片段不能重叠；跨轨道可以叠放。');
-    return { id: tid, kind, order, muted, gain_db: gain, clips } as StudioTimelineTrack;
+    if (kind === 'VIDEO' && clips.some((clip, index) => index > 0 && clips[index - 1].start_ms + timelineClipDuration(clips[index - 1]) > clip.start_ms)) throw new Error('同一视频轨道的片段不能重叠；跨轨道可以叠放。');
+    return { id: tid, kind, order, muted, gain_db: gain, clips, ...(extended ? { role } : {}) } as StudioTimelineTrack;
   }).sort((left, right) => left.order - right.order);
   if (!videos) throw new Error('时间线至少需要一条视频轨道。');
   if (!Array.isArray(row.captions) || row.captions.length > TIMELINE_LIMITS.captions) throw new Error('字幕最多五百条。');
@@ -91,7 +118,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
     if (characters > TIMELINE_LIMITS.captionCharacters) throw new Error('字幕总文字超过三万二千字。');
     return { start_ms: start, end_ms: end, text };
   }).sort((left, right) => left.start_ms - right.start_ms || left.end_ms - right.end_ms || compareText(left.text, right.text));
-  return { duration_ms: duration, width, height, fps, tracks, captions };
+  return { ...(extended ? { schema_version: 2 as const } : {}), duration_ms: duration, width, height, fps, tracks, captions };
 }
 
 export function checkedTimelineDraft(value: StudioTimelineDraft): StudioTimelineDraft {

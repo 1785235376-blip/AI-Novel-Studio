@@ -342,10 +342,6 @@ class CreativeGraphNodeRuntime:
         body = ModelDispatch.model_validate(value)
         _, current = self.service._context(nid, scope, actor, guard)
         row = self.row(nid, scope, actor, rid, current)
-        if row.get("graph_schema_version") == 3 and body.archive_result:
-            # The existing text archive convergence has its own asset phase.
-            # Schema 3 does not silently nest or replace that authority seam.
-            raise ValueError("CREATIVE_GRAPH_SCHEMA3_TEXT_ARCHIVE_NOT_INTEGRATED")
         preview = row.get("model_preview")
         if not preview or preview["preview_digest"] != body.reviewed_preview_digest or not preview["execution_available"]:
             raise StaleSourceError("CREATIVE_MODEL_EXACT_PREVIEW_REQUIRED")
@@ -513,7 +509,9 @@ class CreativeGraphNodeRuntime:
                 raise StaleSourceError("CREATIVE_MODEL_RECEIPT_CHANGED")
             host = _ScopedOriginalWorkflowHost(stored, current)
             timed = host.get_workflow_run(rid)
-            if timed["status"] == "RUNNING" and public and public["status"] in {"COMPLETED", "FAILED", "CANCELLED"}:
+            if (timed["status"] == "RUNNING" and public and public["status"] in {"COMPLETED", "FAILED", "CANCELLED"}
+                    and (stored.get("graph_schema_version") != 3
+                        or stored["node_states"][execution["node_id"]]["status"] == "WORKING")):
                 if public["status"] == "COMPLETED" and self.text_assets.enabled(stored) and not archive_authority:
                     # Completion can arrive after refresh's archival precheck.
                     # Keep the current run refreshable until a later request
