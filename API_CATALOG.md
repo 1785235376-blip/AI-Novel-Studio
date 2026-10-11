@@ -190,7 +190,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/creative/documents/{rid}/history` | `app/creative/api.py:133` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/documents/{rid}/screenplay-export` | `app/creative/api.py:146` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/documents/{rid}/script-export` | `app/creative/api.py:160` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/creative/screenplay-presets` | `app/creative/api.py:91` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/creative/screenplay-presets` | `app/creative/api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/declarative-agents/catalog` | `app/experimental/declarative_agents_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/declarative-agents/runs` | `app/experimental/declarative_agents_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -609,7 +609,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/history` | `app/creative/api.py:133` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/screenplay-export` | `app/creative/api.py:146` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/script-export` | `app/creative/api.py:160` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/creative/screenplay-presets` | `app/creative/api.py:91` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/creative/screenplay-presets` | `app/creative/api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/declarative-agents/catalog` | `app/experimental/declarative_agents_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/declarative-agents/runs` | `app/experimental/declarative_agents_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |

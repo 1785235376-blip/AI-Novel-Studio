@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "1b6005b3bd5f6dcc3652d815158469b8a58e9c6400aa0a5cafe97e574c0ee50d",
+  "application_source_fingerprint_sha256": "f8b96fd536121e401d82d2aeecab4a0663d5076e6eaf5ff7580cbe6048fadf28",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -73,7 +73,7 @@
     "app/creative/workspace_api.py": "a2e90f2229ba3f30861b3bf2637397e62a44931c4f29a62ed39dabaddff8f3a1",
     "app/creative/workspace_models.py": "95d8652d9492613876eb39ab06b07e48eb7a0436f967e248261a976e5f5c01e9",
     "app/creative/workspace_relationships.py": "e33cd0076d2e6aec5685b8007992ce298664cf035edf9ca4bb87d319407de310",
-    "app/credential_vault.py": "986bbc6fe63a7658a0bd22e0223677a63448e1b6ab46603bb11cdc530558ab26",
+    "app/credential_vault.py": "1ae84eab118b9b3317ddb1812bd544702dc96a93bd63b5314c7e9e46848c4a40",
     "app/dependencies.py": "2a6bc47c6399d874e2a5e33e713f3159192853a5ded3c2aae832b6b411468dc7",
     "app/document.py": "70ecdf6f175cada0f0bcbcf0dfc1d7aa7a419895263741154dc4f0e7717d4f49",
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
@@ -251,18 +251,20 @@
     "app/native_text_providers.py": "666a9d8fe10bd582a9c7886a1bf8246b541964ca957a21357b8e8c2767fcf884",
     "app/net_safety.py": "7b39cfb21390cfd4f27b8e7e8fe3c13da5480118ca6ebb1bd6f434ab0a197ee9",
     "app/openai_compatible.py": "1b2a6969ef8133e1702866a5de50ad136bbf16e6d5c20fe8b5680318b0ae0332",
+    "app/packaged_profile.py": "183650ea0e0ed0144e70c5336c6860f02fdef9c6a61f1494153a50815ea8af8d",
     "app/packaging/__init__.py": "ad90ac64984f7d1deb285323aabce486ad2b1804e0076e9bd3584f80611fc126",
     "app/packaging/bootstrap_api.py": "c1400a4dd0561be0ff6438e2d2c5b0a2d15083088f4c8b5b0acfa81bae79418e",
-    "app/packaging/control_pipe.py": "6b1d56c279d34a313175fba3715dfe66b8fd7ef1d4922ba8af961ce90d9c56fc",
+    "app/packaging/control_pipe.py": "6dd0bcafc7a28768ff7ffbef7ceb771f853fdec004fc8538f24f6df9990bd5bb",
     "app/packaging/database_bootstrap.py": "6b56aafc82260b4a1fa6285d97ddd503ae137d2a27bd48adf93fe9979b0095d8",
     "app/packaging/desktop_bridge.py": "bd8d511ac440bbdec9c683c73e8b0adb3284c06fd953d79f71e56e8666d6aa2d",
-    "app/packaging/host_uplink.py": "85f15526ff94d38e5b279ab74763f9ea07a7c91e52663b1354dcb215d7874582",
+    "app/packaging/host_uplink.py": "6305e273e549d36d1feaa531209e7a4d17317f920cb4e41c2241fefe364adfe3",
     "app/packaging/initial_workspace.py": "7b4113912a4d17d1122017103911c8ac1e43cce93fb48d0ebbf68ac48b7fdc0b",
+    "app/packaging/launch_profiles.py": "597b4e56df4f7c8c3e6526430093fe24febe0947c4a9c594fcef31a4dd03f42d",
     "app/packaging/local_session_bootstrap.py": "19f4f1280d6194e9e8d1ed04a458478977a88157046f04b83e3ece935b5b3fd0",
-    "app/packaging/packaged_desktop_host.py": "86a2be5b1f302469af6048a46a40047e3a038c1ad5b85a1eb6ab73c1a8614041",
-    "app/packaging/packaged_desktop_launcher.py": "712870eff8f10998c44a5b980e7fbb0fbe502d97dcd51185053d20f5d20b5ea5",
-    "app/packaging/packaged_launcher.py": "39df9b31166dac5d922a4e5763bde32b09b7edb497fa8a6f95e0314fa636bec5",
-    "app/packaging/packaged_processes.py": "4fbdc2ab89cc3fe61941531b59487b8e10eea38281a1b339e81591e33d494f59",
+    "app/packaging/packaged_desktop_host.py": "71e966bdb0cb922fccb3004c052d2133fc87ebb1b5b36266ca7be17895e4c120",
+    "app/packaging/packaged_desktop_launcher.py": "3fe802155b7f67b4bf8678eb85ca52a8e0aefc2501a762b5673f7ebd212331ba",
+    "app/packaging/packaged_launcher.py": "93a3315ac149bb20bba90043a659df3c8fbd79497ea59d4e049b4c68dd14ed08",
+    "app/packaging/packaged_processes.py": "9abed7bace2a922bb4f94b5dfb901422e9d837f461560ff57fcd60a4bd825665",
     "app/packaging/paths.py": "c2e971d22cdec482c915cb5850621f290c5c71ce533ec5d0f5118bfb9153eec0",
     "app/packaging/postgres_migrations.py": "5a85e98353ac6266e4bcce85b89facf901a9a39cff4ef8f3c7a4a4ad84e1e60d",
     "app/packaging/runtime_identity.py": "c8fcf5ff5150abbab0f44b8cf6316ab0c9448629934039599202fb3ccc9ca2b3",
@@ -420,7 +422,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "17d99d1ab7c7a07b85be38370ec5f8db41ac78d234c93c65850c3a7597760db0",
+    "sha256": "b7ac5d0d752ee3c73d47527fe30ddca67e9bcd131c69e5ebb199fcb9d869b310",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -2620,7 +2622,8 @@
       "operation_id": "screenplay_presets_api_novels__nid__experimental_creative_screenplay_presets_get",
       "owner_ref": "558bfbf7e075db275acd6381f8ed5459be27b8b7d67e1640ed26383531d57cc9",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "83c7227565db96ecb3785b8ef0506bc7cd766036744edf62ff22bcc71dcd5477",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -7648,7 +7651,8 @@
       "operation_id": "screenplay_presets_api_v1_novels__nid__experimental_creative_screenplay_presets_get",
       "owner_ref": "558bfbf7e075db275acd6381f8ed5459be27b8b7d67e1640ed26383531d57cc9",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "753fba313b9a087a5e2e25c59df8aaef8a1820f86e08e169a0a82142d828a7db",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"

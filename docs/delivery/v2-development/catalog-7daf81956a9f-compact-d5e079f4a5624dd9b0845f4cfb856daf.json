@@ -1,0 +1,28 @@
+{
+  "staged_tree": "7daf81956a9f5d72db4fa31d0828d81cdba89052",
+  "utc": "2026-10-11T07:25:48.909115+00:00",
+  "command": [
+    "D:\\PoemSeed\\Builds\\studio-v2-host-5ed1cbee-20261011\\venv\\Scripts\\python.exe",
+    "-B",
+    "-c",
+    "\nimport atexit, ctypes, json, os, sys\nfrom pathlib import Path\n_native_attempts = []\ndef _native_credential_tripwire(event, args):\n    if event == 'ctypes.dlopen':\n        name = os.path.basename(str(args[0]).replace('\\\\', '/')).lower()\n        if name in {'advapi32', 'advapi32.dll'}:\n            _native_attempts.append({'event': event, 'api': 'advapi32 loading'})\n            raise AssertionError('Real Native CredentialVault DLL is forbidden during catalog generation')\n    if event in {'ctypes.dlsym', 'ctypes.dlsym/handle'}:\n        name = args[-1]\n        if isinstance(name, bytes): name = name.decode('ascii', 'replace')\n        if str(name).startswith('Cred'):\n            _native_attempts.append({'event': event, 'api': str(name)})\n            raise AssertionError('Real Cred* symbol resolution is forbidden during catalog generation')\nsys.addaudithook(_native_credential_tripwire)\ndef _write_native_tripwire():\n    Path('.profile/catalog-native-tripwire.json').write_text(json.dumps({'attempts': _native_attempts, 'real_native_credential_calls': 0}), encoding='utf-8')\natexit.register(_write_native_tripwire)\n\nimport json, os, runpy, sys\nfrom pathlib import Path\nroot = Path.cwd().resolve()\nomitted = root / 'docs' / 'delivery'\ndef reject_omitted_reads(event, args):\n    if event == 'open' and isinstance(args[0], (str, bytes, os.PathLike)):\n        path = Path(os.fsdecode(args[0])).resolve()\n        if path == omitted or path.is_relative_to(omitted):\n            raise RuntimeError('Compact catalog accessed excluded delivery evidence')\nsys.addaudithook(reject_omitted_reads)\nrunpy.run_path(str(root / 'scripts/refresh_product_api_catalog.py'), run_name='__main__')\norigins = {}\nfor name, module in list(sys.modules.items()):\n    if name.split('.')[0] in {'app', 'local_interop_protocol', 'local_interop_desktop'}:\n        for origin in [getattr(module, '__file__', None), *getattr(module, '__path__', [])]:\n            if origin and not Path(origin).resolve().is_relative_to(root):\n                raise RuntimeError('Project import escaped compact snapshot: ' + name)\n        if getattr(module, '__file__', None):\n            origins[name] = str(Path(module.__file__).resolve().relative_to(root))\n(root / '.profile/catalog-import-origins.json').write_text(json.dumps(origins, sort_keys=True) + '\\n')\n"
+  ],
+  "cwd": "D:\\PoemSeed\\Worktrees\\studio-v2-current-catalog-20261011\\.runtime\\v2-staged\\d5e079f4a5624dd9b0845f4cfb856daf",
+  "exit_code": 0,
+  "snapshot": {
+    "mode": "compact",
+    "excluded_prefix": "docs/delivery/",
+    "retained_files": 2320,
+    "retained_blob_bytes": 31522395,
+    "excluded_files": 3060,
+    "excluded_blob_bytes": 448286226,
+    "retained_inventory_sha256": "c405138de9071161211895061affcd8571ab75cdf99c871b7e0580fde2aa4cab",
+    "project_import_origins_sha256": "3f5e80d088ffd9d3ac34d8b3731cf25199bc50f7068e2e751ef5abe68f1be2fc"
+  },
+  "sha256": {
+    "API_CATALOG.json": "61a27040fd1cf92b5b65bfa38755670dcc557b15ee9cd59b2c34042d9eba320e",
+    "API_CATALOG.md": "b306b0e34a783301f56e3df9094ebc9e23d7be7e5e8418335e6f4c2efe70f039",
+    "API_CATALOG_DETAIL.json.gz": "b7ac5d0d752ee3c73d47527fe30ddca67e9bcd131c69e5ebb199fcb9d869b310",
+    "API_OPENAPI.json.gz": "b9358f9a21222eeaeb60f41ce586f48aac1b7a99d06a77627dfbac259c3e06f7"
+  }
+}
