@@ -242,7 +242,12 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
       finally { finish(operation); }
       return false;
     }
-    if (!evidence || run.stale || terminalRun(run) || run.status === 'PAUSED'
+    const recovery = kind === 'reconcile' && evidence
+      ? run.media_runtime.nodes.find(node => node.node_id === evidence.node_id)?.execution : undefined;
+    const recoveryOnly = !!recovery?.review_recovery && recovery.status === 'REVIEWING' && recovery.review_state === 'REVIEW_RESERVED'
+      && !!recovery.job_id && evidence?.expected_job_version === recovery.review_recovery.job_version
+      && evidence?.expected_request_digest === recovery.review_recovery.request_digest;
+    if (!evidence || (run.stale || terminalRun(run) || run.status === 'PAUSED') && !recoveryOnly
       || (kind === 'review' ? !source.canReview : !source.canMutate)
       || uncertainRef.current && !['refresh', 'reconcile'].includes(kind)) return false;
     const { previewMedia, dispatchMedia, executeMedia, refreshMedia, reconcileMedia, reviewMedia } = source.client;
@@ -263,7 +268,9 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
           default: throw invalidRun();
         }
       });
-      if (live(operation)) { acceptRun(value, run.id); markUncertain(false); setNotice('图媒体运行回执已更新，请在媒体面板核对原任务与审核结果。'); return true; }
+      if (live(operation)) { acceptRun(value, run.id); markUncertain(false); setNotice(recoveryOnly
+        ? '已核对原私有审核占用，未推进图工作流；执行和审核仍需重新读取并核对来源。'
+        : '图媒体运行回执已更新，请在媒体面板核对原任务与审核结果。'); return true; }
     } catch (value) {
       if (live(operation)) {
         if (uncertainFailure(value)) markUncertain(true);

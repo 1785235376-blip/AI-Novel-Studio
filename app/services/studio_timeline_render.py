@@ -195,6 +195,24 @@ def _cue_time(milliseconds):
     return f"{hours:02d}:{minutes:02d}:{seconds:02d},{ms:03d}"
 
 
+def validate_source_crop(clip, source_width, source_height):
+    """Compare closed integer crop to actually decoded/probed coded pixels.
+
+    Callers must supply dimensions from the original validated source bytes,
+    never from an author/client claim or the output canvas.
+    """
+    crop = clip.get("crop")
+    if crop is None:
+        return
+    crop = _object(crop, ("x", "y", "width", "height"), ("x", "y", "width", "height"))
+    _integer(crop["x"], 0, 32767); _integer(crop["y"], 0, 32767)
+    _integer(crop["width"], 1, 32768); _integer(crop["height"], 1, 32768)
+    if (type(source_width) is not int or type(source_height) is not int
+            or source_width < 1 or source_height < 1
+            or crop["x"] + crop["width"] > source_width or crop["y"] + crop["height"] > source_height):
+        raise ValueError("STUDIO_TIMELINE_CROP_OUTSIDE_SOURCE")
+
+
 def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_profile=None):
     """Decode exact server bytes and return an actually validated local export.
 
@@ -250,6 +268,27 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
         for index, (identity, source) in enumerate(verified.items()):
             path = directory / f"source-{index}.{source['measured']['extension']}"
             path.write_bytes(source["data"]); files[identity] = path
+        dimensions = {}
+        for track in timeline["tracks"]:
+            for clip in track["clips"]:
+                if "crop" not in clip:
+                    continue
+                identity = clip["source_snapshot"]["id"]
+                if identity not in dimensions:
+                    if clip["source_snapshot"]["asset_kind"] == "image":
+                        measured = verified[identity]["measured"]
+                        dimensions[identity] = (measured.get("width"), measured.get("height"))
+                    else:
+                        # The actual pinned source file is probed once. No
+                        # author-supplied source dimensions are accepted.
+                        probe = probe_media_file(files[identity], guard=guard)
+                        streams = [stream for stream in probe["streams"]
+                            if isinstance(stream, dict) and stream.get("codec_type") == "video"]
+                        if not streams:
+                            raise MediaValidationError("STUDIO_TIMELINE_CROP_VIDEO_STREAM_REQUIRED")
+                        dimensions[identity] = (streams[0].get("width"), streams[0].get("height"))
+                validate_source_crop(clip, *dimensions[identity])
+                guard()
         require_encoders(decoder, compiled, cwd=directory, guard=guard)
         audio_sources = {clip["source_snapshot"]["id"] for track in timeline["tracks"] for clip in track["clips"]
                          if clip.get("include_audio") and not track["muted"] and not clip.get("muted", False)}
@@ -268,6 +307,11 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
                 if track["muted"] or clip.get("muted", False):
                     continue
                 command += ["-threads", "1", "-protocol_whitelist", "file,pipe"]
+                if "crop" in clip:
+                    # Optional crop uses coded-source pixel coordinates. Do
+                    # not silently rotate the decoder frame before applying
+                    # this exact rectangle; untouched inputs keep old behavior.
+                    command += ["-noautorotate"]
                 if clip["source_snapshot"]["asset_kind"] == "image":
                     command += ["-loop", "1", "-framerate", str(timeline["fps"]), "-t", _seconds(clip_duration_ms(clip))]
                 command += ["-i", str(files[clip["source_snapshot"]["id"]])]
@@ -275,8 +319,11 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
                 if track["kind"] == "VIDEO":
                     label, output = f"vc{index}", f"vo{index}"
                     if enriched:
-                        visual = (f"[{index}:v:0]trim=start={start}:end={end},setpts=(PTS-STARTPTS)*{clip['speed_den']}/{clip['speed_num']},"
-                            f"scale={clip['width']}:{clip['height']}:force_original_aspect_ratio=decrease,"
+                        visual = f"[{index}:v:0]trim=start={start}:end={end},setpts=(PTS-STARTPTS)*{clip['speed_den']}/{clip['speed_num']},"
+                        if "crop" in clip:
+                            crop = clip["crop"]
+                            visual += f"crop={crop['width']}:{crop['height']}:{crop['x']}:{crop['y']}:exact=1,"
+                        visual += (f"scale={clip['width']}:{clip['height']}:force_original_aspect_ratio=decrease,"
                             f"format=rgba,pad={clip['width']}:{clip['height']}:(ow-iw)/2:(oh-ih)/2:color=black@0,setsar=1,fps={timeline['fps']},")
                         # Geometry, opacity and fades are numbers from the closed DTO.
                         visual += f"colorchannelmixer=aa={clip['opacity']:.8f}"

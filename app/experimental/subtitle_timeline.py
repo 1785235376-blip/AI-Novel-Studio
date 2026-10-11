@@ -213,7 +213,10 @@ class SubtitleTimelineService(SubtitleProcessingMixin, DomainService):
         for a in self.assets.list(nid, branch_id=scope.get("branch_id")):
             if a.get("branch_id") == scope.get("branch_id") and a.get("kind") in {"audio", "video"}:
                 assets.append({k: a.get(k) for k in ("id", "filename", "kind", "version")})
-        return {"assets": assets, "plans": self.audiobook.catalog(nid, scope, actor)["plans"], "alignment": "NOT_CONFIGURED", "burn_in": "NOT_CONFIGURED"}
+        burn_in = any(self._processing_ready(adapter, "BURN_IN") and adapter.definition.verification == "CONTRACT_VERIFIED"
+            for adapter in self._processing_adapters.values())
+        return {"assets": assets, "plans": self.audiobook.catalog(nid, scope, actor)["plans"], "alignment": "NOT_CONFIGURED",
+            "burn_in": "CONFIGURED_NOT_VERIFIED" if burn_in else "NOT_CONFIGURED"}
 
     def records(self, nid, scope, actor):
         require_flag(SUBTITLE_FLAG); result = []

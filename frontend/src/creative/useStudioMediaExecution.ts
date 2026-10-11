@@ -277,8 +277,9 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (!latest.current.canMutate) return false;
     if (kind === 'execute') return job.owner !== 'timeline' && job.status === 'QUEUED' && fresh;
     if (kind === 'refresh') return job.owner === 'video' && ['REMOTE_RUNNING', 'RESULT_READY', 'UNKNOWN'].includes(job.status);
-    if (kind === 'reconcile') return job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN'].includes(job.status)
-      : ['RUNNING', 'SEND_RESERVED'].includes(job.status);
+    if (kind === 'reconcile') return job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status)
+      : job.owner === 'video' ? ['RUNNING', 'SEND_RESERVED', 'UNKNOWN', 'RESULT_READY', 'REVIEWING'].includes(job.status)
+      : ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status);
     return job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)
       : ['QUEUED', 'AWAITING_REVIEW', 'UNKNOWN', 'REMOTE_RUNNING', 'RESULT_READY'].includes(job.status);
   }

@@ -37,6 +37,26 @@ def _duration(clip):
     return span * denominator // numerator
 
 
+def require_timeline_lock_preservation(current, replacement):
+    """Fence whole-document save/restore/import against author track locks.
+
+    Unlock is an explicit original track.update operation, never a permission
+    change or an inferred unlock through replacement of the full document.
+    The returned DTO is normalized without adding absent optional fields.
+    """
+    before = normalize_studio_timeline(current)
+    after = normalize_studio_timeline(replacement)
+    locked = [row for row in before["tracks"] if row.get("locked") is True]
+    if not locked:
+        return after
+    if any(before.get(key) != after.get(key) for key in ("schema_version", "duration_ms", "width", "height", "fps")):
+        raise ValueError("STUDIO_TIMELINE_TRACK_LOCKED")
+    by_id = {row["id"]: row for row in after["tracks"]}
+    if any(by_id.get(row["id"]) != row for row in locked):
+        raise ValueError("STUDIO_TIMELINE_TRACK_LOCKED")
+    return after
+
+
 def apply_timeline_edits(timeline, operations):
     """Apply one closed batch to a detached normalized document, then validate.
 
@@ -69,6 +89,10 @@ def apply_timeline_edits(timeline, operations):
             if clip["id"] != excluding and clip["start_ms"] >= boundary:
                 clip["start_ms"] += delta
 
+    def editable(row):
+        if row.get("locked") is True:
+            raise ValueError("STUDIO_TIMELINE_TRACK_LOCKED")
+
     for raw in operations:
         if not isinstance(raw, dict):
             raise ValueError("STUDIO_TIMELINE_EDIT_FIELDS_INVALID")
@@ -84,26 +108,42 @@ def apply_timeline_edits(timeline, operations):
             # into existing saved timelines by an implicit normalization step.
             if "schema_version" in changes and changes["schema_version"] != 2:
                 raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
+            if (any(row.get("locked") is True for row in result["tracks"])
+                    and any(key in changes and changes[key] != result.get(key)
+                        for key in ("schema_version", "duration_ms", "width", "height", "fps"))):
+                raise ValueError("STUDIO_TIMELINE_TRACK_LOCKED")
             result.update(deepcopy(changes))
         elif operation == "track.insert":
             body = _fields(raw, ("op", "track"))
-            _fields(body["track"], ("id", "kind", "order", "clips"), ("muted", "gain_db", "role"))
+            _fields(body["track"], ("id", "kind", "order", "clips"), ("muted", "gain_db", "role", "locked"))
             _id(body["track"]["id"])
+            if "locked" in body["track"] and result.get("schema_version") != 2:
+                raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
+            if "locked" in body["track"] and type(body["track"]["locked"]) is not bool:
+                raise ValueError("STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID")
             if not isinstance(body["track"]["clips"], list) or body["track"]["clips"]:
                 raise ValueError("STUDIO_TIMELINE_EDIT_INSERT_EMPTY_TRACK_REQUIRED")
             result["tracks"].append(deepcopy(body["track"]))
         elif operation == "track.remove":
             body = _fields(raw, ("op", "track_id", "remove_clips"))
             row = track(body["track_id"])
+            editable(row)
             if type(body["remove_clips"]) is not bool or row["clips"] and not body["remove_clips"]:
                 raise ValueError("STUDIO_TIMELINE_EDIT_TRACK_DELETE_CONFIRMATION_REQUIRED")
             result["tracks"].remove(row)
         elif operation == "track.update":
             body = _fields(raw, ("op", "track_id", "changes"))
-            changes = _fields(body["changes"], (), ("muted", "gain_db", "role"))
+            changes = _fields(body["changes"], (), ("muted", "gain_db", "role", "locked"))
             if not changes:
                 raise ValueError("STUDIO_TIMELINE_EDIT_EMPTY")
-            track(body["track_id"]).update(deepcopy(changes))
+            row = track(body["track_id"])
+            if "locked" in changes and result.get("schema_version") != 2:
+                raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
+            if "locked" in changes and type(changes["locked"]) is not bool:
+                raise ValueError("STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID")
+            if row.get("locked") is True and changes != {"locked": False}:
+                raise ValueError("STUDIO_TIMELINE_TRACK_LOCKED")
+            row.update(deepcopy(changes))
         elif operation == "track.reorder":
             body = _fields(raw, ("op", "track_ids"))
             identities = body["track_ids"]
@@ -112,28 +152,44 @@ def apply_timeline_edits(timeline, operations):
                     or set(identities) != {row["id"] for row in result["tracks"]}):
                 raise ValueError("STUDIO_TIMELINE_EDIT_TRACK_ORDER_INVALID")
             for order, identity in enumerate(identities):
-                track(identity)["order"] = order
+                row = track(identity)
+                if row.get("locked") is True and row["order"] != order:
+                    raise ValueError("STUDIO_TIMELINE_TRACK_LOCKED")
+                row["order"] = order
         elif operation == "clip.insert":
             body = _fields(raw, ("op", "track_id", "clip"))
             _fields(body["clip"], ("id", "source_snapshot", "start_ms", "in_ms", "out_ms"),
-                ("x", "y", "width", "height", "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms"))
+                ("x", "y", "width", "height", "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop"))
             _id(body["clip"]["id"])
+            if "crop" in body["clip"] and result.get("schema_version") != 2:
+                raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             _integer(body["clip"]["start_ms"])
             _duration(body["clip"])
-            track(body["track_id"])["clips"].append(deepcopy(body["clip"]))
+            row = track(body["track_id"])
+            editable(row)
+            row["clips"].append(deepcopy(body["clip"]))
         elif operation == "clip.update":
             body = _fields(raw, ("op", "clip_id", "changes"))
             changes = _fields(body["changes"], (), ("source_snapshot", "start_ms", "in_ms", "out_ms", "x", "y", "width", "height",
-                "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms"))
+                "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop"))
             if not changes:
                 raise ValueError("STUDIO_TIMELINE_EDIT_EMPTY")
+            if "crop" in changes and result.get("schema_version") != 2:
+                raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             for key in ("start_ms", "in_ms", "out_ms", "x", "y", "width", "height", "speed_num", "speed_den", "fade_in_ms", "fade_out_ms"):
                 if key in changes:
                     _integer(changes[key])
-            locate(body["clip_id"])[1].update(deepcopy(changes))
+            row, clip = locate(body["clip_id"])
+            editable(row)
+            applied = deepcopy(changes)
+            if "crop" in applied and applied["crop"] is None:
+                clip.pop("crop", None)
+                applied.pop("crop")
+            clip.update(applied)
         elif operation == "clip.remove":
             body = _fields(raw, ("op", "clip_id", "ripple"))
             row, clip = locate(body["clip_id"])
+            editable(row)
             if type(body["ripple"]) is not bool:
                 raise ValueError("STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID")
             if body["ripple"]:
@@ -143,6 +199,7 @@ def apply_timeline_edits(timeline, operations):
             body = _fields(raw, ("op", "clip_id", "track_id", "start_ms"))
             row, clip = locate(body["clip_id"])
             target = track(body["track_id"])
+            editable(row); editable(target)
             if target["kind"] != row["kind"]:
                 raise ValueError("STUDIO_TIMELINE_EDIT_MOVE_KIND_INVALID")
             row["clips"].remove(clip)
@@ -152,6 +209,7 @@ def apply_timeline_edits(timeline, operations):
             body = _fields(raw, ("op", "clip_id", "new_clip_id", "track_id", "start_ms"))
             row, clip = locate(body["clip_id"])
             target = track(body["track_id"])
+            editable(row); editable(target)
             if target["kind"] != row["kind"]:
                 raise ValueError("STUDIO_TIMELINE_EDIT_MOVE_KIND_INVALID")
             copied = deepcopy(clip)
@@ -160,6 +218,7 @@ def apply_timeline_edits(timeline, operations):
         elif operation == "clip.split":
             body = _fields(raw, ("op", "clip_id", "at_ms", "new_clip_id"))
             row, clip = locate(body["clip_id"])
+            editable(row)
             offset = _integer(body["at_ms"]) - clip["start_ms"]
             if not 0 < offset < _duration(clip):
                 raise ValueError("STUDIO_TIMELINE_EDIT_SPLIT_OUTSIDE_CLIP")
@@ -180,6 +239,7 @@ def apply_timeline_edits(timeline, operations):
         elif operation == "clip.trim":
             body = _fields(raw, ("op", "clip_id", "in_ms", "out_ms", "ripple"))
             row, clip = locate(body["clip_id"])
+            editable(row)
             if type(body["ripple"]) is not bool:
                 raise ValueError("STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID")
             previous = _duration(clip)
@@ -188,7 +248,8 @@ def apply_timeline_edits(timeline, operations):
                 shift(row, clip["start_ms"] + previous, _duration(clip) - previous, clip["id"])
         elif operation == "clip.slip":
             body = _fields(raw, ("op", "clip_id", "offset_ms"))
-            _, clip = locate(body["clip_id"])
+            row, clip = locate(body["clip_id"])
+            editable(row)
             _duration(clip)
             if not isinstance(clip.get("source_snapshot"), dict) or clip["source_snapshot"].get("asset_kind") == "image":
                 raise ValueError("STUDIO_TIMELINE_EDIT_STILL_SLIP_INVALID")

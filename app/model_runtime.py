@@ -6,11 +6,14 @@ import time
 from threading import Event
 from dataclasses import dataclass, field, replace as dc_replace
 from enum import Enum
-from typing import Any, Callable, Iterable, Mapping, Protocol
+from typing import Any, Callable, Iterable, Mapping, Protocol, TYPE_CHECKING
 from uuid import UUID
 
 from .providers import Generation, LLMProvider, ProviderError
 from .stable_identity import IdentityMutationError, StableIdentityStore, canonical_model_identity_key, validate_uuid
+
+if TYPE_CHECKING:
+    from .audio_processing_runtime import AudioProcessingProvider
 
 
 class Modality(str, Enum):
@@ -19,6 +22,7 @@ class Modality(str, Enum):
     IMAGE = "IMAGE"
     VISION = "VISION"
     VIDEO = "VIDEO"
+    AUDIO = "AUDIO"
 
 
 class RuntimeErrorCode(str, Enum):
@@ -224,11 +228,11 @@ class LegacyTextProviderAdapter:
 
 class ProviderRegistry:
     def __init__(self, identity_store: StableIdentityStore | None = None) -> None:
-        self._providers: dict[str, TextProvider] = {}
+        self._providers: dict[str, TextProvider | AudioProcessingProvider] = {}
         self._descriptors: dict[str, ProviderDescriptor] = {}
         self.identity_store = identity_store
 
-    def register(self, descriptor: ProviderDescriptor, provider: TextProvider, *, replace: bool = False) -> None:
+    def register(self, descriptor: ProviderDescriptor, provider: TextProvider | AudioProcessingProvider, *, replace: bool = False) -> None:
         if descriptor.provider_id in self._providers and not replace:
             raise ValueError(f"provider already registered: {descriptor.provider_id}")
         if self.identity_store is not None:
@@ -241,7 +245,7 @@ class ProviderRegistry:
         self._providers[descriptor.provider_id] = provider
         self._descriptors[descriptor.provider_id] = descriptor
 
-    def resolve(self, provider_id: str) -> TextProvider:
+    def resolve(self, provider_id: str) -> TextProvider | AudioProcessingProvider:
         try:
             descriptor, provider = self._descriptors[provider_id], self._providers[provider_id]
         except KeyError as exc:
@@ -379,3 +383,7 @@ class GenerationRuntime:
         self.providers = providers
         self.models = models
         self.text_node = TextModelNode(providers, models)
+        # AUDIO is additive and never broadens the original TEXT Router. No
+        # audio route is registered or launched by constructing this node.
+        from .audio_processing_runtime import AudioProcessingModelNode
+        self.audio_processing_node = AudioProcessingModelNode(providers, models)

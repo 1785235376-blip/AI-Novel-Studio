@@ -8,7 +8,8 @@ from ..services.v1_capability_service import CapabilityVersionConflict
 from ..services.audiobook_service import AudiobookError
 from ..audio_production_store import AudioStateVersionConflict
 from .production_execution_models import (MediaCommand, MediaCreate, MediaJobAction, MediaReview, TimelineSave, TimelineRender,
-    TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport)
+    TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport,
+    TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload)
 
 Owner = Literal["image", "audio", "video", "timeline"]
 
@@ -131,5 +132,19 @@ def create_production_execution_router(service, invoke, *, require_host_session,
     @router.post("/projects/{nid}/studio/production/timelines/{tid}/export")
     def export(nid: str, tid: str, request: Request, body: TimelineExport, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.timeline_export(nid, scope, actor, tid, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/transfer-preview")
+    def transfer_preview(nid: str, tid: str, request: Request, body: TimelineTransferPreview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.timeline_transfer_preview(nid, scope, actor, tid, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/transfer-import")
+    def transfer_import(nid: str, tid: str, request: Request, body: TimelineTransferImport, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.timeline_transfer_import(nid, scope, actor, tid, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/timelines/{tid}/transfer-attachment")
+    def transfer_attachment(nid: str, tid: str, request: Request, body: TimelineTransferDownload, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        data, sha256, format = call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.timeline_transfer_attachment(nid, scope, actor, tid, body, guard))
+        return Response(data, media_type={"OTIO": "application/vnd.opentimelineio+json", "SRT": "application/x-subrip", "VTT": "text/vtt"}[format],
+            headers={"Cache-Control": "no-store", "X-Asset-SHA256": sha256, "Content-Disposition": f'attachment; filename="studio-timeline.{format.lower()}"'})
 
     return router

@@ -11,6 +11,7 @@ import base64
 import copy
 from dataclasses import asdict, dataclass
 import hashlib
+import re
 from typing import Callable, Literal, Protocol
 from uuid import uuid4
 
@@ -79,6 +80,7 @@ class ProcessingResult:
     cues: tuple[dict, ...] = ()
     content: bytes = b''
     media_type: str = ''
+    receipt: dict | None = None
 
 
 class SubtitleProcessingAdapter(Protocol):
@@ -107,7 +109,7 @@ class SubtitleProcessingMixin:
                 or definition.verification not in {'CONTRACT_VERIFIED', 'MOCK_ONLY'}
                 or definition.model_verification != 'NOT_RUN'
                 or not definition.adapter_id or len(definition.adapter_id) > 160
-                or not definition.version or not definition.operations
+                or not definition.version or len(definition.version) > 160 or not definition.operations
                 or set(definition.operations) - set(OPERATIONS)
                 or definition.adapter_id in self._processing_adapters
                 or not callable(getattr(adapter, 'process', None))):
@@ -120,19 +122,29 @@ class SubtitleProcessingMixin:
 
     @staticmethod
     def _processing_ready(adapter, operation):
-        # ASR/alignment models need the existing model admission coordinator.
-        # The current in-process seam executes synthetic fixtures only.
+        # Real ASR uses the additive AUDIO node of the original durable model
+        # registries. Alignment remains blocked until its original runtime owns
+        # a real engine; ASR segment timestamps are not forced alignment.
+        from .subtitle_asr import ModelRuntimeSubtitleAdapter
         return bool(adapter and operation in adapter.definition.operations and
-                    (adapter.definition.verification == 'MOCK_ONLY' or operation == 'BURN_IN'))
+                    (adapter.definition.verification == 'MOCK_ONLY' or operation == 'BURN_IN'
+                     or operation == 'ASR' and isinstance(adapter, ModelRuntimeSubtitleAdapter)
+                     and adapter.model_runtime_admitted()))
+
+    @staticmethod
+    def _processing_model_binding(adapter):
+        from .subtitle_asr import ModelRuntimeSubtitleAdapter
+        return adapter.model_binding if isinstance(adapter, ModelRuntimeSubtitleAdapter) else None
 
     def processing_catalog(self):
         self._processing_flags()
         configured = [asdict(a.definition) for a in self._processing_adapters.values()]
         return {'schema': 'ai-novel-subtitle-processing/1', 'owner': 'subtitle_timeline_v2',
-            'operations': [{'operation': operation, 'status': ('CONTRACT_VERIFIED' if operation == 'BURN_IN' and any(operation in a['operations'] and a['verification'] == 'CONTRACT_VERIFIED' for a in configured) else 'MOCK_ONLY') if any(self._processing_ready(a, operation) for a in self._processing_adapters.values()) else 'NOT_CONFIGURED',
+            'operations': [{'operation': operation, 'status': ('CONTRACT_VERIFIED' if any(self._processing_ready(a, operation) and a.definition.verification == 'CONTRACT_VERIFIED' for a in self._processing_adapters.values()) else 'MOCK_ONLY') if any(self._processing_ready(a, operation) for a in self._processing_adapters.values()) else 'NOT_CONFIGURED',
                             'runtime_verification': 'NOT_RUN'} for operation in OPERATIONS],
             'adapters': configured, 'input_schema': ProcessingCreateIn.model_json_schema(),
-            'model_runtime_admission': 'NOT_CONFIGURED_ORIGINAL_MEDIA_RUNTIME_REQUIRED',
+            'model_runtime_admission': 'ORIGINAL_AUDIO_MODEL_NODE_EXPLICIT_REGISTERED_LOCAL_ROUTE_REQUIRED',
+            'model_runtime_admission_state': 'EXPLICIT_REGISTERED_LOCAL_ROUTE' if any(self._processing_ready(a, 'ASR') and a.definition.verification == 'CONTRACT_VERIFIED' for a in self._processing_adapters.values()) else 'NOT_CONFIGURED',
             'synthetic_execution': 'TRUSTED_HOST_FIXTURES_ONLY_NOT_A_MODEL_RUNTIME',
             'third_party_execution': 'DENY_ALL', 'privacy': 'LOCAL_ONLY',
             'max_media_bytes': MAX_MEDIA_BYTES, 'max_scope_render_bytes': MAX_SCOPE_RENDER_BYTES,
@@ -164,8 +176,27 @@ class SubtitleProcessingMixin:
             raise FileNotFoundError('subtitle processing task')
         return row
 
-    def _processing_current(self, nid, scope, actor, row):
-        caption = self._current(nid, scope, actor, row['caption_id'])
+    def _processing_current(self, nid, scope, actor, row, *, measured=True):
+        if measured:
+            caption = self._current(nid, scope, actor, row['caption_id'])
+        else:
+            # Native/HTTP cancellation polls only original owner metadata and
+            # source CAS. Repeated ffprobe/decode here would start validators
+            # for every poll. Full measured checks still fence claim, result
+            # publication, review and download through the unchanged owner.
+            caption = self.get(nid, scope, self.COLLECTION, row['caption_id'])
+            if caption.get('created_by') != actor:
+                raise FileNotFoundError(row['caption_id'])
+            asset = self.assets.get(caption['asset_id'], branch_id=scope.get('branch_id'))
+            if (asset.get('novel_id') != nid or asset.get('branch_id') != scope.get('branch_id')
+                    or asset.get('kind') not in {'audio', 'video'}):
+                raise FileNotFoundError(caption['asset_id'])
+            if {'version': asset['version'], 'digest': asset['sha256']} != caption['asset_snapshot']:
+                raise StaleSourceError('CAPTION_MEDIA_CHANGED')
+            snapshots, speakers, sources = self._snapshot(nid, scope, actor, caption.get('plan_id'), caption['cues'])
+            if (snapshots != caption['segment_snapshots'] or speakers != caption['speakers'] or sources != caption['sources']):
+                raise StaleSourceError('CAPTION_SPEAKER_SOURCE_CHANGED')
+            self.assert_sources(nid, caption['sources'], scope)
         expected = row.get('applied_caption_version', row['caption_version'])
         if caption['version'] != expected or caption['asset_snapshot'] != row['asset_snapshot']:
             raise StaleSourceError('PROCESSING_CAPTION_SOURCE_CHANGED')
@@ -213,6 +244,7 @@ class SubtitleProcessingMixin:
             row = new_row(nid, scope, actor, {'caption_id': caption['id'], 'caption_version': caption['version'],
                 'asset_snapshot': copy.deepcopy(caption['asset_snapshot']), 'adapter_id': data.adapter_id,
                 'adapter_identity': digest(asdict(adapter.definition)) if adapter else None,
+                'model_binding': self._processing_model_binding(adapter),
                 'operation': data.operation, 'transcript': data.transcript, 'attempt': 0,
                 'status': 'QUEUED' if self._processing_ready(adapter, data.operation) else 'NOT_CONFIGURED', 'runtime_verification': 'NOT_RUN',
                 'verification': adapter.definition.verification if adapter else 'CONTRACT_VERIFIED',
@@ -230,12 +262,41 @@ class SubtitleProcessingMixin:
             info = inspect_media(output.content, 'video')
             from fractions import Fraction
             original_ms = Fraction(**caption['media']['duration_seconds']) * 1000
-            if not info.get('duration_ms') or abs(Fraction(str(info['duration_ms'])) - original_ms) > 1:
+            tolerance = 1
+            receipt = output.receipt
+            if receipt is not None:
+                fields = {'schema', 'source_digest', 'source_sha256', 'output_sha256', 'width', 'height',
+                    'fps_num', 'fps_den', 'duration_ms', 'duration_tolerance_ms', 'audio_streams', 'profile',
+                    'tool_digest', 'validation', 'quality_verification'}
+                import math
+                if (not isinstance(receipt, dict) or set(receipt) != fields
+                        or receipt.get('schema') != 'subtitle-native-render/1'
+                        or receipt.get('source_digest') != digest([caption['version'], caption['asset_snapshot']])
+                        or receipt.get('source_sha256') != caption['asset_snapshot']['digest']
+                        or receipt.get('output_sha256') != hashlib.sha256(output.content).hexdigest()
+                        or receipt.get('profile') != 'REVIEW_MP4' or receipt.get('validation') != 'NATIVE_FFPROBE_EXACT'
+                        or receipt.get('quality_verification') != 'NOT_RUN'
+                        or any(type(receipt.get(key)) is not int for key in ('width', 'height', 'fps_num', 'fps_den',
+                            'duration_ms', 'duration_tolerance_ms', 'audio_streams'))
+                        or not 16 <= receipt['width'] <= 1920 or not 16 <= receipt['height'] <= 1080
+                        or receipt['width'] % 2 or receipt['height'] % 2
+                        or not 1 <= receipt['fps_num'] <= 1_000_000 or not 1 <= receipt['fps_den'] <= 1_000_000
+                        or not 1 <= Fraction(receipt['fps_num'], receipt['fps_den']) <= 60
+                        or receipt['audio_streams'] not in (0, 1) or not 1 <= receipt['duration_ms'] <= 600_000
+                        or not isinstance(receipt.get('tool_digest'), str)
+                        or not re.fullmatch(r'[a-f0-9]{64}', receipt['tool_digest'])):
+                    raise ProcessingResultError('PROCESSING_RENDER_RECEIPT_INVALID')
+                tolerance = max(100, math.ceil(2000 / Fraction(receipt['fps_num'], receipt['fps_den'])))
+                if (receipt['duration_tolerance_ms'] != tolerance
+                        or abs(Fraction(str(info.get('duration_ms', 0))) - receipt['duration_ms']) > 1):
+                    raise ProcessingResultError('PROCESSING_RENDER_RECEIPT_INVALID')
+            if not info.get('duration_ms') or abs(Fraction(str(info['duration_ms'])) - original_ms) > tolerance:
                 raise ProcessingResultError('PROCESSING_RENDER_DURATION_CHANGED')
             if output.media_type != info['media_type']: raise ProcessingResultError('PROCESSING_RESULT_MIME_MISMATCH')
             return {'content_base64': base64.b64encode(output.content).decode(), 'media_type': info['media_type'],
                 'sha256': hashlib.sha256(output.content).hexdigest(), 'bytes': len(output.content),
-                'render_verification': 'MOCK_ONLY' if row['verification'] == 'MOCK_ONLY' else 'NOT_RUN'}
+                'render_verification': 'MOCK_ONLY' if row['verification'] == 'MOCK_ONLY' else 'NOT_RUN',
+                **({'execution_receipt': copy.deepcopy(receipt)} if receipt is not None else {})}
         if output.content or output.media_type or not 1 <= len(output.cues) <= 2000:
             raise ProcessingResultError('PROCESSING_RESULT_INVALID')
         if any(not isinstance(c, dict) or any(type(c.get(k)) is not int for k in ('start_tick', 'end_tick')) for c in output.cues):
@@ -246,8 +307,43 @@ class SubtitleProcessingMixin:
         if row['operation'] == 'FORCED_ALIGNMENT' and ' '.join(' '.join(c['text'].split()) for c in cues) != ' '.join(row['transcript'].split()):
             raise ProcessingResultError('PROCESSING_ALIGNMENT_TRANSCRIPT_CHANGED')
         if sum(len(c['text']) for c in cues) > 100000: raise ProcessingResultError('PROCESSING_RESULT_TOO_LARGE')
-        return {'cues': cues, 'warnings': warnings, 'timing_origin': 'SYNTHETIC_FIXTURE' if row['verification'] == 'MOCK_ONLY' else 'ADAPTER_CUE_ALIGNMENT',
-            'alignment_quality': 'NOT_RUN'}
+        receipt = output.receipt
+        if receipt is not None:
+            binding = row.get('model_binding')
+            fields = {'schema', 'adapter', 'operation', 'provider_id', 'model_id', 'route_digest', 'source_digest',
+                'input_sha256', 'decoded_audio_sha256', 'provider_response_sha256', 'parameters', 'elapsed_ms',
+                'model_called', 'local', 'timing_origin', 'model_identity_verification', 'quality_verification',
+                'provider_uuid', 'model_uuid', 'execution_node_uuid', 'model_sha256', 'admission_digest',
+                'cues_digest', 'timebase', 'caption_version', 'media_snapshot'}
+            if (not isinstance(receipt, dict) or set(receipt) != fields or not isinstance(binding, dict)
+                    or row['operation'] != 'ASR' or row['verification'] != 'CONTRACT_VERIFIED'
+                    or receipt.get('schema') != 'subtitle-model-execution/1' or receipt.get('adapter') != 'WHISPER_CPP_SERVER'
+                    or receipt.get('operation') != 'ASR' or receipt.get('model_called') is not True or receipt.get('local') is not True
+                    or receipt.get('timing_origin') != 'MODEL_SEGMENT_TIMESTAMPS' or receipt.get('quality_verification') != 'NOT_RUN'
+                    or receipt.get('model_identity_verification') != 'HOST_ADMISSION_REQUIRED_NO_WIRE_MODEL_ATTESTATION'
+                    or receipt.get('source_digest') != digest([caption['version'], caption['asset_snapshot']])
+                    or receipt.get('input_sha256') != caption['asset_snapshot']['digest']
+                    or receipt.get('cues_digest') != digest(cues) or receipt.get('timebase') != caption['timebase']
+                    or receipt.get('caption_version') != caption['version'] or receipt.get('media_snapshot') != caption['asset_snapshot']
+                    or any(receipt.get(key) != binding[key] for key in ('provider_id', 'model_id', 'provider_uuid',
+                        'model_uuid', 'execution_node_uuid', 'route_digest'))
+                    or receipt.get('model_sha256') != binding['route']['model_sha256']
+                    or receipt.get('admission_digest') != binding['route']['admission_digest']
+                    or type(receipt.get('elapsed_ms')) is not int or not 0 <= receipt['elapsed_ms'] <= 310_000
+                    or any(not isinstance(receipt.get(key), str) or not re.fullmatch(r'[a-f0-9]{64}', receipt[key])
+                        for key in ('decoded_audio_sha256', 'provider_response_sha256', 'cues_digest'))):
+                raise ProcessingResultError('PROCESSING_MODEL_RECEIPT_INVALID')
+            language = caption['language'].split('-', 1)[0].lower()
+            expected_parameters = {'response_format': 'verbose_json', 'language': language, 'translate': 'false',
+                'temperature': '0', 'temperature_inc': '0', 'diarize': 'false', 'tinydiarize': 'false',
+                'no_timestamps': 'false', 'token_timestamps': 'false', 'no_language_probabilities': 'true'}
+            if receipt.get('parameters') != expected_parameters:
+                raise ProcessingResultError('PROCESSING_MODEL_RECEIPT_INVALID')
+        elif row['verification'] == 'CONTRACT_VERIFIED' and row['operation'] == 'ASR':
+            raise ProcessingResultError('PROCESSING_MODEL_RECEIPT_REQUIRED')
+        return {'cues': cues, 'warnings': warnings,
+            'timing_origin': 'SYNTHETIC_FIXTURE' if row['verification'] == 'MOCK_ONLY' else 'MODEL_SEGMENT_TIMESTAMPS' if receipt is not None else 'ADAPTER_CUE_ALIGNMENT',
+            'alignment_quality': 'NOT_RUN', **({'execution_receipt': copy.deepcopy(receipt)} if receipt is not None else {})}
 
     def execute_processing(self, nid, scope, actor, rid, value, reauthorize=lambda: None):
         data = ProcessingActionIn.model_validate(value); reauthorize()
@@ -258,6 +354,9 @@ class SubtitleProcessingMixin:
             adapter = self._processing_adapters.get(row['adapter_id'])
             if not self._processing_ready(adapter, row['operation']) or digest(asdict(adapter.definition)) != row['adapter_identity']:
                 raise ValueError('PROCESSING_ADAPTER_NOT_CONFIGURED_OR_CHANGED')
+            if row.get('model_binding') is not None:
+                from ..creative.ai_execution import require_execution
+                require_execution()
             content = self.assets.content(caption['asset_id'], branch_id=scope.get('branch_id'))
             if len(content) > MAX_MEDIA_BYTES: raise ValueError('PROCESSING_INPUT_TOO_LARGE')
             asset = self.assets.get(caption['asset_id'], branch_id=scope.get('branch_id'))
@@ -268,11 +367,16 @@ class SubtitleProcessingMixin:
             running = copy.deepcopy(row); reauthorize()
         def guard():
             reauthorize(); current = self._processing_owned(nid, scope, actor, rid)
+            if current.get('model_binding') is not None:
+                from ..creative.ai_execution import require_execution
+                require_execution()
             if current['status'] != 'RUNNING' or current.get('claim') != claim:
                 raise ProcessingFenceError('PROCESSING_CANCELLED_OR_CLAIM_CHANGED')
-            self._processing_current(nid, scope, actor, current)
+            self._processing_current(nid, scope, actor, current, measured=False)
             if self._processing_adapters.get(current['adapter_id']) is not adapter or digest(asdict(adapter.definition)) != current['adapter_identity']:
                 raise ProcessingFenceError('PROCESSING_ADAPTER_CHANGED')
+            if current.get('model_binding') is not None:
+                require_execution()
         try:
             guard()
             adapter_guard_errors = []
@@ -332,7 +436,8 @@ class SubtitleProcessingMixin:
                 if not self._processing_ready(adapter, row['operation']):
                     raise ValueError('PROCESSING_ADAPTER_NOT_CONFIGURED')
                 self._processing_change(row, actor, row['version'], lambda r: r.update(status='QUEUED', adapter_identity=digest(asdict(adapter.definition)),
-                    verification=adapter.definition.verification, result=None, error_code=None, claim=None))
+                    verification=adapter.definition.verification, model_binding=self._processing_model_binding(adapter),
+                    result=None, error_code=None, claim=None))
             elif action in {'approve', 'reject'}:
                 caption = self._processing_current(nid, scope, actor, row)
                 if row['status'] != 'NEEDS_REVIEW' or data.preview_digest != row.get('preview_digest'):

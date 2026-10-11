@@ -145,3 +145,50 @@ class TimelineExportPreview(ExecutionModel):
 class TimelineExport(TimelineExportPreview):
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
     reviewed_export_digest: Digest
+
+
+class TimelineAssetSnapshot(ExecutionModel):
+    id: Name
+    kind: Literal["ASSET"]
+    asset_kind: Literal["image", "video", "audio"]
+    version: int = Field(ge=1, le=2**53 - 1)
+    digest: Digest
+
+
+class TimelineMediaBinding(ExecutionModel):
+    reference: str = Field(min_length=1, max_length=4096)
+    source_snapshot: TimelineAssetSnapshot
+
+
+class TimelineTransferPreview(ExecutionModel):
+    expected_version: int = Field(ge=1, le=2**53 - 1)
+    reviewed_timeline_digest: Digest
+    direction: Literal["IMPORT", "EXPORT"]
+    format: Literal["OTIO", "SRT", "VTT"]
+    content: str = Field(default="", max_length=2 * 1024 * 1024)
+    media_bindings: list[TimelineMediaBinding] = Field(default_factory=list, max_length=30)
+
+    @model_validator(mode="after")
+    def transfer_shape(self):
+        if self.direction == "EXPORT" and (self.content or self.media_bindings):
+            raise ValueError("STUDIO_TRANSFER_EXPORT_UNUSED_INPUT")
+        if self.direction == "IMPORT" and not self.content.strip():
+            raise ValueError("STUDIO_TRANSFER_IMPORT_CONTENT_REQUIRED")
+        if self.format != "OTIO" and self.media_bindings:
+            raise ValueError("STUDIO_TRANSFER_SUBTITLE_MEDIA_BINDINGS_UNUSED")
+        try:
+            size = len(self.content.encode("utf-8"))
+        except UnicodeEncodeError:
+            raise ValueError("STUDIO_TRANSFER_UTF8_REQUIRED") from None
+        if size > (2 * 1024 * 1024 if self.format == "OTIO" else 192000):
+            raise ValueError("STUDIO_TRANSFER_INPUT_BYTE_LIMIT")
+        return self
+
+
+class TimelineTransferDownload(TimelineTransferPreview):
+    reviewed_preview_digest: Digest
+    acknowledge_losses: bool = False
+
+
+class TimelineTransferImport(TimelineTransferDownload):
+    request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")

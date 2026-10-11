@@ -466,6 +466,11 @@ class CreativeGraphService:
             result = self.model_runtime.text_assets.read(nid, scope, actor, rid, current, reconcile=reconcile)
             if (result["stale"] or result["status"] in {"FAILED", "CANCELLED", "REJECTED"}
                     or row.get("graph_schema_version") != 3 or not row.get("media_execution_contract")):
+                if row.get("graph_schema_version") == 3 and row.get("media_execution_contract"):
+                    if self.media_runtime is None:
+                        raise ValueError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
+                    return self.media_runtime.review_recovery_read(nid, scope, actor, rid, current,
+                        expected_version=result["version"], fallback=result)
                 return result
             if self.media_runtime is None:
                 raise ValueError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")

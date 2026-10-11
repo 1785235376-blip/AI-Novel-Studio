@@ -275,8 +275,8 @@ export function studioTransport(context: CollaborationContext) {
       try { return await result.json() as T; }
       catch { throw new ApiError({ status: result.status, code: 'STUDIO_RESPONSE_INVALID', message: '服务返回的数据不可用，请重新读取。' }); }
     },
-    async blob(url: string): Promise<Blob> {
-      const result = await response(url);
+    async blob(url: string, method = 'GET', body?: unknown, signal?: AbortSignal, idempotencyKey?: string): Promise<Blob> {
+      const result = await response(url, method, body, signal, idempotencyKey);
       try { return await result.blob(); }
       catch { throw new ApiError({ status: result.status, code: 'STUDIO_RESPONSE_INVALID', message: '文件未能读取，请重试下载。' }); }
     },

@@ -67,8 +67,8 @@
 - 原 Owner 的成功不自动升级为 Router 已结算、真实 GPU 调用或产品验收。模型元数据、目录发现、Mock 和 CPU 运行分别记录。
 - API Provider 执行仍按既有门禁；不加入付费 fallback、模拟身份、开发 token、关闭认证、内存凭据或 V1 凭据访问。
 - 云端授权还继承原不可变 Asset 来源和有证明的 legacy parent 版本／摘要；直接／间接文档须原 CLOUD_ALLOWED，64 节点／16 层／200MiB 有界，缺失／旧章节证明、新父来源、循环／stale 都 fail closed。作者声明不产生 cloud grant；UI 不能靠修改 license／origin／parent 绕过后端。
-- Graph 媒体与 `ASSET_REF` 仅在显式 schema 3 接入；保留原 WorkflowRun、媒体 owner、原子来源、候选审核、UNKNOWN 与一次发送边界。schema 3 文字档案已沿原 owner 接入，真实对应 human_review 节点批准／驳回，档案仍私有且不构成整图验收。原 schema 1／2 和 TEXT Router allowlist 不自动扩展。独立时间线已有原子编辑／历史恢复与明确编码导出，Graph timeline node、自动 ASR／音画对齐仍未接入。详见 [文字档案与剪辑导出](text-archive-timeline-export.md)。
-- 媒体／时间线控制器保留预览、route／recipe／source／job CAS、request ID 和一次明确发送／审核确认。网络、408/409/425/429、5xx 和非法成功回执不得重复发送；先读取原记录。显式 reconcile 仅原 lease 已结束后处理中断为 UNKNOWN，不重新调用 Provider／FFmpeg；视频 refresh 只查询已记录远端任务，异步音频没有 poll。`LOCAL_RESULT_DISCARD` 不声称远端 abort，保留原候选。
+- Graph 媒体与 `ASSET_REF` 仅在显式 schema 3 接入；保留原 WorkflowRun、媒体 owner、原子来源、候选审核、UNKNOWN 与一次发送边界。schema 3 文字档案已沿原 owner 接入，真实对应 human_review 节点批准／驳回，档案仍私有且不构成整图验收。原 schema 1／2 和 TEXT Router allowlist 不自动扩展。Graph timeline node 已沿原剪辑／导出 owner 接入；原 Registry AUDIO 与本地 ASR 执行源码已接入，但当前应用缺可信模型准入，自动 ASR／音画对齐仍不可启用。详见 [文字档案与剪辑导出](text-archive-timeline-export.md) 和 [执行细节与剩余边界](source-completion-boundaries.md)。
+- 媒体／时间线控制器保留预览、route／recipe／source／job CAS、request ID 和一次明确发送／审核确认。网络、408/409/425/429、5xx 和非法成功回执不得重复发送；先读取原记录。显式 reconcile 仅原 lease 已结束后处理：不明派发为 UNKNOWN，能确证原私有 publication 或未提升 REVIEWING 的才恢复待审核；不重新调用 Provider／FFmpeg。视频 refresh 只查询已记录远端任务，异步音频没有 poll。`LOCAL_RESULT_DISCARD` 不声称远端 abort，保留原候选。
 - 后端未来意图模型校验来源重复/冲突、轨道与完整来源快照、rational timing、尺寸/MIME/大小及作业/审核引用的一致性。JSON Schema 单独不能表达全部跨字段规则；形状一致不证明真实文件、路由、回执、权利或 scope。接入原执行 owner 前必须重新核对原门禁，不能从只读目录产生执行请求。
 - PoemSeed Local Interop 1.0、冻结 V1、历史 PR、失败证据与 NOT_RUN / LOCAL_REQUIRED / BLOCKED 标签原样保留。
 
@@ -85,3 +85,11 @@ Graph 媒体的可替换视图为 `StudioGraphMediaExecutionPanel`，行为在 `
 随后从最终实际远端 SHA 按原 Windows 脚本构建，经原 launcher → PostgreSQL → backend → DesktopHost 验证隔离、会话、重启与中文路径，完成真实 M4 Text Node → Router → Provider → 本地模型 → Asset → Version → Review。达到真实验收门禁后，依次推进 M5–M9 实际能力验收。
 
 Phase12 的 Graph 时间线基础表单沿 `StudioGraphTimelineNodeEditor`／`studioGraphTimelineContract`、原 graph editor controller、Graph client 与媒体运行 controller。保存节点参数不执行；显式读取时间线不生成，确认 dispatch 才提交原剪辑并仅入队，execute 才导出，media_review 才入素材库。8 个输入只绑定已有片段，作者编辑与绑定共 40 项；时间线 ID／base version／digest、剪辑证明、final version、profile、实际来源和 job CAS 均由原服务保存与核对。Opus 可以换时间尺、拖放与视图，但不能把这些动作合成自动导出、用任意 JSON／文件路径扩大输入、重建 UNKNOWN job 或采用未审核候选。原 DS shell 与单一 owner 边界保持。
+
+Phase13 新增 `StudioTimelineTransferPanel`／`useStudioTimelineTransfer`／`studioTimelineTransferTypes`：只读预览、明确媒体映射、loss 确认、原 CAS 导入与摘要验证附件分别操作。未确定导入保留原 request ID／版本／预览／输入；只读原 timeline 的安全 transfer_receipt 准确匹配后才清除 UNKNOWN，不因内容恰好相同而认定成功。Transfer 与父时间线编辑互斥，dirty／UNKNOWN 阻止导航和整份保存；附件 URL 随 scope／timeline／来源变化或卸载撤销。Opus 可换映射表、字幕编辑器和布局，保留 headless controller 的命名动作。
+
+轨道可通过原 `track.update` 的独立 locked 字段明确锁定／解锁；整份保存、恢复和导入不能替它解锁。像素 crop 使用未旋转源编码尺寸，表单不能把预览布局坐标直接当源像素。字幕处理只在 V2 显式 host 配置原生工具后启用烧录，并由原 DesktopHost session／principal 反复授权；配置或源码存在不等于真实运行通过。
+
+交换草稿支持明确选择单个本地 .otio／.srt／.vtt 文件：headless controller 在父级 mutex 内做大小和严格 UTF-8 校验，再核对 client／epoch／保存版本／格式／方向／内容／当前素材，才载入本轮私有草稿并清除旧映射与确认。OTIO 上限 2 MiB，字幕上限 192000 bytes。文件选择不自动识别映射、预览、导入、写文件或读取外部媒体；Opus 可重构文件入口与编辑区，保留这些动作的独立性。
+
+Graph 的 `review_recovery` 三字段只授予原 REVIEWING 私有预留的明确维护入口。stale／终态／暂停 run 可核对并释放被证明未提升的占用；不能执行、批准、推进节点或重新发送。控制器只接受当前原 Host client 实际观察到的原 run／node／job／version／request 证据，masked 回执不恢复候选、Prompt 或执行权限。保持原 run 视图与 client 严格解码，详见 [Graph 媒体执行](graph-media-execution.md)。

@@ -22,6 +22,7 @@ from .media import StrictModel
 
 MAX_BYTES = 2 * 1024 * 1024
 NS = "ai_novel_studio_exchange_v1"
+STUDIO_NS = "ai_novel_studio_timeline_v1"
 
 
 def parser_status():
@@ -113,18 +114,52 @@ def _name(value, path, report):
     return value[:240]
 
 
-def _extras(item, path, report):
+def _extras(item, path, report, *, speed_supported=False, studio_supported=False):
     for effect in getattr(item, "effects", []):
+        if speed_supported and effect.schema_name() == "LinearTimeWarp":
+            if getattr(effect, "metadata", {}) or getattr(effect, "name", ""):
+                _loss(report, path, "SPEED_EFFECT_APPLICATION_METADATA_NOT_REPRESENTED")
+            continue
         code = "SPEED_EFFECT_NOT_REPRESENTED_TIMING_UNVERIFIED" if "Time" in effect.schema_name() or effect.schema_name() == "FreezeFrame" else "EFFECT_NOT_REPRESENTED"
         _loss(report, path, code)
     if getattr(item, "markers", []):
         _loss(report, path, "MARKERS_NOT_REPRESENTED")
     extension = getattr(item, "metadata", {}).get(NS, {})
-    supported = {"in_offset", "out_offset"} if getattr(item, "schema_name", lambda: "")() == "Transition" else {"start", "duration"} if getattr(item, "schema_name", lambda: "")() in {"Clip", "Gap"} else set()
+    supported = {"in_offset", "out_offset"} if getattr(item, "schema_name", lambda: "")() == "Transition" else {"start", "duration", "speed"} if getattr(item, "schema_name", lambda: "")() == "Clip" else {"start", "duration"} if getattr(item, "schema_name", lambda: "")() == "Gap" else set()
     if extension and (not hasattr(extension, "keys") or set(extension.keys()) - supported):
         _loss(report, path, "UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED")
-    if any(key != NS for key in getattr(item, "metadata", {})):
+    if any(key not in ({NS, STUDIO_NS} if studio_supported else {NS}) for key in getattr(item, "metadata", {})):
         _loss(report, path, "APPLICATION_METADATA_MIX_SUBTITLES_NOT_REPRESENTED")
+
+
+def _read_speed(item):
+    """A single positive LinearTimeWarp changes media speed, not item duration.
+
+    Other effects retain the original explicit loss report. Exact speed metadata
+    is evidence only when it still matches the native effect after an NLE edit.
+    """
+    effects = [effect for effect in getattr(item, "effects", [])
+               if effect.schema_name() == "LinearTimeWarp"]
+    if not effects:
+        metadata = getattr(item, "metadata", {}).get(NS, {})
+        if not hasattr(metadata, "get"):
+            raise ValueError("OTIO_EXACT_SPEED_METADATA_INVALID")
+        if metadata.get("speed") is not None:
+            raise ValueError("OTIO_EXACT_SPEED_METADATA_MISMATCH")
+        return None
+    if len(effects) != 1:
+        raise ValueError("OTIO_MULTIPLE_LINEAR_TIME_WARPS_NOT_SUPPORTED")
+    scalar = effects[0].time_scalar
+    if not math.isfinite(scalar) or not 0 < scalar <= 1000000:
+        raise ValueError("OTIO_SPEED_OUTSIDE_SUPPORTED_RANGE")
+    speed = Fraction(str(scalar)).limit_denominator(1000000)
+    metadata = getattr(item, "metadata", {}).get(NS, {})
+    exact = metadata.get("speed") if hasattr(metadata, "get") else None
+    if exact is not None:
+        speed = fraction(dict(exact))
+        if float(speed) != scalar:
+            raise ValueError("OTIO_EXACT_SPEED_METADATA_MISMATCH")
+    return rational(speed)
 
 
 def _url(value):
@@ -164,9 +199,41 @@ def _bounded_json(text):
     return raw
 
 
+def _serialized_extras(raw, report):
+    """Native JSON extension fields must never disappear without a receipt."""
+    common = {"OTIO_SCHEMA", "name", "metadata"}
+    item = common | {"source_range", "effects", "markers", "enabled"}
+    fields = {
+        "Timeline": common | {"tracks", "global_start_time"},
+        "Stack": item | {"children"},
+        "Track": item | {"children", "kind"},
+        "Clip": item | {"media_reference", "media_references", "active_media_reference_key"},
+        "Gap": item,
+        "Transition": common | {"in_offset", "out_offset", "transition_type"},
+        "ExternalReference": common | {"target_url", "available_range", "available_image_bounds"},
+        "MissingReference": common | {"available_range", "available_image_bounds"},
+        "LinearTimeWarp": common | {"effect_name", "time_scalar"},
+        "RationalTime": {"OTIO_SCHEMA", "value", "rate"},
+        "TimeRange": {"OTIO_SCHEMA", "start_time", "duration"},
+    }
+    stack = [(raw, "timeline")]
+    while stack:
+        value, path = stack.pop()
+        if isinstance(value, dict):
+            schema = value.get("OTIO_SCHEMA")
+            kind = schema.split(".", 1)[0] if isinstance(schema, str) else None
+            if kind in fields and set(value) - fields[kind]:
+                _loss(report, path, "UNKNOWN_NATIVE_SCHEMA_FIELDS_NOT_REPRESENTED")
+            # Application metadata is checked by _extras or the strict Studio
+            # extension validator; it is not recursively treated as OTIO data.
+            stack.extend((child, f"{path}.{key}") for key, child in value.items() if key != "metadata")
+        elif isinstance(value, list):
+            stack.extend((child, f"{path}[{index}]") for index, child in enumerate(value))
+
+
 def read_otio(text):
     """Read supported subset and a bounded, explicit normalization loss report."""
-    _bounded_json(text)
+    raw = _bounded_json(text)
     otio = _otio()
     try:
         timeline = otio.core.deserialize_json_from_string(text)
@@ -175,11 +242,15 @@ def read_otio(text):
     if not isinstance(timeline, otio.schema.Timeline):
         raise ValueError("OTIO_TIMELINE_ROOT_REQUIRED")
     report = []
-    _extras(timeline, "timeline", report); _extras(timeline.tracks, "tracks", report)
+    _serialized_extras(raw, report)
+    studio = raw.get("metadata", {}).get(STUDIO_NS) if isinstance(raw, dict) and isinstance(raw.get("metadata", {}), dict) else None
+    _extras(timeline, "timeline", report, studio_supported=studio is not None); _extras(timeline.tracks, "tracks", report)
     if not timeline.tracks.enabled:
         raise ValueError("OTIO_DISABLED_ROOT_NOT_SUPPORTED")
     if timeline.tracks.source_range is not None:
         raise ValueError("OTIO_ROOT_TRIM_NOT_SUPPORTED")
+    if timeline.tracks.name:
+        _loss(report, "tracks", "ROOT_STACK_NAME_NOT_REPRESENTED")
     doc = {"name": _name(timeline.name, "timeline.name", report), "tracks": [], "global_start_time": _native_time(timeline.global_start_time) if timeline.global_start_time is not None else None}
     if len(timeline.tracks) > 16:
         raise ValueError("OTIO_TRACK_LIMIT_16")
@@ -196,7 +267,9 @@ def read_otio(text):
         for ii, item in enumerate(track):
             total_items += 1
             if total_items > 2000: raise ValueError("OTIO_ITEM_LIMIT_2000")
-            ip = f"{path}.items[{ii}]"; _extras(item, ip, report)
+            ip = f"{path}.items[{ii}]"
+            speed = _read_speed(item) if isinstance(item, otio.schema.Clip) else None
+            _extras(item, ip, report, speed_supported=speed is not None)
             if isinstance(item, otio.schema.Transition):
                 if item.transition_type != "SMPTE_Dissolve":
                     _loss(report, ip, "TRANSITION_NOT_REPRESENTED_CUT_USED")
@@ -213,8 +286,12 @@ def read_otio(text):
                 raise ValueError("OTIO_CLIP_TIME_LIMIT")
             row = {"kind": "Clip" if isinstance(item, otio.schema.Clip) else "Gap", "name": _name(item.name, ip + ".name", report), "start": start, "duration": duration}
             if isinstance(item, otio.schema.Clip):
+                if speed is not None:
+                    row["speed"] = speed
                 ref = item.media_reference
                 _extras(ref, ip + ".media_reference", report)
+                if getattr(ref, "available_image_bounds", None) is not None:
+                    _loss(report, ip + ".media_reference", "MEDIA_IMAGE_BOUNDS_NOT_REPRESENTED")
                 if isinstance(ref, otio.schema.ExternalReference):
                     row["target_url"] = _url(ref.target_url)
                     row["media_state"] = "EXTERNAL_REFERENCE_NOT_OPENED"
@@ -232,12 +309,17 @@ def read_otio(text):
                 _loss(report, ip, "NESTED_COMPOSITION_REPLACED_WITH_GAP")
             if hasattr(item, "enabled") and not item.enabled:
                 row = {**row, "kind": "Gap"}; row.pop("target_url", None); row.pop("media_state", None); row.pop("available_range", None)
+                row.pop("speed", None)
                 _loss(report, ip, "DISABLED_ITEM_REPLACED_WITH_GAP")
             result["items"].append(row)
         doc["tracks"].append(result)
     if not doc["tracks"]:
         raise ValueError("OTIO_NO_SUPPORTED_TRACKS")
-    validate_document(doc)
+    if studio is not None:
+        from ..services.studio_timeline_exchange import validate_studio_extension
+        doc["studio"] = validate_studio_extension(studio)
+    from ..services.studio_timeline_exchange import normalize_exchange_document
+    doc = normalize_exchange_document(doc)
     return doc, report
 
 
@@ -259,8 +341,12 @@ def validate_document(doc):
 
 def write_otio(doc):
     """Produce a genuinely parsed native OTIO file; never use optional adapters."""
-    validate_document(doc); otio = _otio()
+    from ..services.studio_timeline_exchange import normalize_exchange_document
+    doc = normalize_exchange_document(doc); otio = _otio()
     timeline = otio.schema.Timeline(name=doc["name"])
+    if "studio" in doc:
+        from ..services.studio_timeline_exchange import validate_studio_extension
+        timeline.metadata[STUDIO_NS] = validate_studio_extension(doc["studio"])
     if doc.get("global_start_time") is not None:
         timeline.global_start_time = _to_native(doc["global_start_time"])
     for row in doc["tracks"]:
@@ -277,9 +363,16 @@ def write_otio(doc):
                     if item.get("available_range") and item.get("target_url"):
                         ref.available_range = otio.opentime.TimeRange(_to_native(item["available_range"]["start"]), _to_native(item["available_range"]["duration"]))
                     native = otio.schema.Clip(name=item["name"], source_range=span, media_reference=ref)
+                    if "speed" in item:
+                        speed = fraction(item["speed"])
+                        if not 0 < speed <= 1000000:
+                            raise ValueError("OTIO_SPEED_OUTSIDE_SUPPORTED_RANGE")
+                        native.effects.append(otio.schema.LinearTimeWarp(time_scalar=float(speed)))
                 else:
                     native = otio.schema.Gap(name=item["name"], source_range=span)
                 exact = {k: item[k] for k in ("start", "duration")}
+                if "speed" in item:
+                    exact["speed"] = item["speed"]
             native.metadata[NS] = exact
             track.append(native)
         timeline.tracks.append(track)

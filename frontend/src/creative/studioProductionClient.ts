@@ -1,6 +1,7 @@
 import { ApiError, type CollaborationContext } from '../api';
 import { studioTransport } from './studioClient';
-import { checkedTimeline, type StudioTimeline, type StudioTimelineRow } from './studioTimelineTypes';
+import { checkedTimeline, checkedTimelineRow, type StudioTimeline, type StudioTimelineRow } from './studioTimelineTypes';
+import { checkedTimelineTransferInput, checkedTimelineTransferPreview, timelineTransferInputDigest, type TimelineTransferInput, type TimelineTransferPreview } from './studioTimelineTransferTypes';
 import { checkedTimelineExportPreview, checkedTimelineExportProfile, type TimelineExportProfile } from './studioTimelineExportTypes';
 
 export type ProductionOwner = 'image' | 'audio' | 'video' | 'timeline';
@@ -149,8 +150,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
     if (!record(v)) invalid(); scoped(v);
     if (!identifier(v.id) || !revision(v.version) || !hex(v.timeline_digest) || typeof v.title !== 'string' || v.title.length > 240 || !record(v.timeline)
       || !Array.isArray(v.timeline.tracks) || v.timeline.tracks.length > 8 || !Array.isArray(v.timeline.captions) || v.timeline.captions.length > 500) invalid();
-    return { id: v.id, title: v.title, version: v.version, timeline_digest: v.timeline_digest, timeline: v.timeline as unknown as StudioTimeline,
-      created_at: String(v.created_at), updated_at: String(v.updated_at) };
+    return checkedTimelineRow(v);
   }
   async function action(owner: ProductionOwner, id: string, operation: 'execute' | 'refresh' | 'cancel' | 'reconcile' | 'review', body: ProductionAction & { reviewed_output_digest?: string }) {
     const result = job(await transport.json<unknown>(`${jobUrl(owner, id)}/${operation}`, 'POST', body));
@@ -230,10 +230,41 @@ export function studioProductionClient(projectId: string, context: Collaboration
         || result.timeline_snapshot?.id !== source.id || result.timeline_snapshot.version !== source.version || result.timeline_snapshot.digest !== source.timeline_digest) invalid();
       return result;
     },
+    async timelineTransferPreview(source: StudioTimelineRow, body: TimelineTransferInput, signal?: AbortSignal): Promise<TimelineTransferPreview> {
+      const input = checkedTimelineTransferInput(body), inputDigest = await timelineTransferInputDigest(input);
+      if (input.expected_version !== source.version || input.reviewed_timeline_digest !== source.timeline_digest) invalid();
+      const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/transfer-preview`, 'POST', input, signal);
+      return checkedTimelineTransferPreview(raw, source, input, inputDigest);
+    },
+    async timelineTransferImport(source: StudioTimelineRow, body: TimelineTransferInput, preview: TimelineTransferPreview, requestId: string, acknowledgeLosses: boolean): Promise<StudioTimelineRow> {
+      const input = checkedTimelineTransferInput(body), inputDigest = await timelineTransferInputDigest(input);
+      const checked = checkedTimelineTransferPreview(preview, source, input, inputDigest);
+      if (input.direction !== 'IMPORT' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(requestId) || checked.requires_loss_acknowledgment && !acknowledgeLosses) invalid();
+      return timeline(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/transfer-import`, 'POST',
+        { ...input, request_id: requestId, reviewed_preview_digest: checked.preview_digest, acknowledge_losses: acknowledgeLosses }, undefined, requestId));
+    },
+    async timelineTransferAttachment(source: StudioTimelineRow, body: TimelineTransferInput, preview: TimelineTransferPreview, acknowledgeLosses: boolean, signal?: AbortSignal): Promise<Blob> {
+      const input = checkedTimelineTransferInput(body), inputDigest = await timelineTransferInputDigest(input);
+      const checked = checkedTimelineTransferPreview(preview, source, input, inputDigest);
+      if (input.direction !== 'EXPORT' || checked.requires_loss_acknowledgment && !acknowledgeLosses) invalid();
+      const blob = await transport.blob(`${base}/timelines/${encodeURIComponent(source.id)}/transfer-attachment`, 'POST',
+        { ...input, reviewed_preview_digest: checked.preview_digest, acknowledge_losses: acknowledgeLosses }, signal);
+      if (blob.size !== checked.output_bytes || blob.size > (input.format === 'OTIO' ? 2 * 1024 * 1024 : 192000)) invalid();
+      const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await blob.arrayBuffer())), value => value.toString(16).padStart(2, '0')).join('');
+      if (hash !== checked.output_sha256) invalid();
+      return blob;
+    },
+    async timelineTrackLock(source: StudioTimelineRow, trackId: string, locked: boolean, requestId: string): Promise<StudioTimelineRow> {
+      if (!identifier(trackId) || typeof locked !== 'boolean' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(requestId)) invalid();
+      return timeline(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/edit`, 'POST', {
+        expected_version: source.version, reviewed_timeline_digest: source.timeline_digest, request_id: requestId,
+        operations: [{ op: 'track.update', track_id: trackId, changes: { locked } }],
+      }, undefined, requestId));
+    },
   };
 }
 type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
-type TimelineExportMethods = 'timelineExportPreview' | 'timelineExport';
+type TimelineExportMethods = 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
 export type StudioProductionClient = Omit<CompleteProductionClient, TimelineExportMethods> & Partial<Pick<CompleteProductionClient, TimelineExportMethods>>;

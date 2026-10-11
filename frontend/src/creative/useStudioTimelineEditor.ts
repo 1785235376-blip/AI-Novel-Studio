@@ -5,6 +5,7 @@ import type { StudioProductionClient } from './studioProductionClient';
 import { checkedTimeline, checkedTimelineDraft, checkedTimelineList, checkedTimelineRow, cloneTimeline, newTimelineDraft, timelineBinding,
   timelineClipDuration, timelineFailure, timelineInputKey, timelineSources, timelineSourcesCurrent, type StudioTimeline, type StudioTimelineDraft, type StudioTimelineRow, type StudioTimelineSource } from './studioTimelineTypes';
 import { checkedTimelineExportPreview, checkedTimelineExportProfile, timelineExportKey, type TimelineExportProfile, type TimelineExportPreview } from './studioTimelineExportTypes';
+import { useStudioTimelineTransfer } from './useStudioTimelineTransfer';
 
 export type StudioTimelineJob = Awaited<ReturnType<StudioProductionClient['timelineRender']>>;
 export type StudioTimelineEditorProps = {
@@ -12,7 +13,7 @@ export type StudioTimelineEditorProps = {
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onDirtyChange: (dirty: boolean) => void; onJob: (job: StudioTimelineJob) => void; onUnavailable: () => void;
 };
-type Operation = 'LIST' | 'GET' | 'SAVE' | 'RENDER' | 'JOB' | 'EXPORT_PREVIEW' | 'EXPORT';
+type Operation = 'LIST' | 'GET' | 'SAVE' | 'RENDER' | 'JOB' | 'EXPORT_PREVIEW' | 'EXPORT' | 'TRACK_LOCK';
 type Attempt = { binding: string; requestId: string; state: 'UNKNOWN' | 'RETURNED'; requestDigest?: string;
   snapshot: { id: string; version: number; digest: string }; sources: StudioTimelineSource[]; timeline: StudioTimeline;
   exportProfile?: TimelineExportProfile; recipeDigest?: string; measurement?: StudioTimelineJob['media_measurement'] };
@@ -31,6 +32,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   const [exportPreview, setExportPreview] = useState<TimelineExportPreview>(), [exportConfirmed, setExportConfirmed] = useState('');
   const exportRef = useRef<{ profile: TimelineExportProfile; preview?: TimelineExportPreview; consent: string }>({ profile: exportProfile, consent: '' });
   const reservedBindings = useRef(new Set<string>());
+  const transferGate = useRef(false);
   const latest = useRef(props); latest.current = props;
   const alive = useRef(true), epoch = useRef(0), owner = useRef(props.client), reading = useRef<AbortController>();
   const slot = useRef<{ epoch: number; operation: Operation }>(), started = useRef(false), deniedRef = useRef(false);
@@ -39,13 +41,18 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   draftRef.current = draft; baseRef.current = base; candidateRef.current = candidate; failureRef.current = failure; attemptRef.current = attempt;
   const baseline = useRef(timelineInputKey(newTimelineDraft()));
   const current = () => alive.current && !deniedRef.current && owner.current === latest.current.client && latest.current.isCurrent();
-  const blocked = () => !!slot.current || latest.current.busy || !!latest.current.isBusy?.() || !current();
+  const blocked = () => !!slot.current || transferGate.current || latest.current.busy || !!latest.current.isBusy?.() || !current();
   const owns = owner.current === props.client && props.isCurrent() && !denied;
   const inputDirty = timelineInputKey(draft) !== baseline.current;
   const uncertainRender = !!attempt && attempt.state === 'UNKNOWN';
-  const dirty = owns && (inputDirty || !!failure || uncertainRender || !!exportConfirmed || pending === 'SAVE' || pending === 'RENDER' || pending === 'EXPORT' || pending === 'EXPORT_PREVIEW');
-  const canEdit = owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender;
   const sourcesCurrent = timelineSourcesCurrent(draft.timeline, props.assets);
+  const transfer = useStudioTimelineTransfer({ props: { ...props, isCurrent: current }, source: owns ? base : undefined,
+    canOperate: owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !!base && !inputDirty && sourcesCurrent,
+    isReady: () => !blocked() && latest.current.canMutate && !!baseRef.current && !failureRef.current && attemptRef.current?.state !== 'UNKNOWN'
+      && timelineInputKey(draftRef.current) === baseline.current && timelineSourcesCurrent(baseRef.current.timeline, latest.current.assets),
+    onAdopt: row => adopt(row), onAuthorityLost: loseAuthority, onGateChange: value => { transferGate.current = value; } });
+  const dirty = owns && (inputDirty || !!failure || uncertainRender || !!transfer.dirty || !!exportConfirmed || pending === 'SAVE' || pending === 'RENDER' || pending === 'EXPORT' || pending === 'EXPORT_PREVIEW' || pending === 'TRACK_LOCK');
+  const canEdit = owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !transfer.locked;
   const savedBinding = base ? timelineBinding(base) : '';
   const renderedThisSnapshot = reservedBindings.current.has(savedBinding);
   const canRender = canEdit && !!base && !inputDirty && confirmed === savedBinding && sourcesCurrent && !renderedThisSnapshot && !uncertainRender;
@@ -100,7 +107,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     consent.current = { render: '', adopt: '', discard: '' };
     clearExportPreview();
     setPending(operation); setError(''); setNotice(''); setConfirmed(''); setAdoptConfirmed(false); setDiscardConfirmed(false);
-    if (operation === 'SAVE' || operation === 'RENDER' || operation === 'EXPORT' || operation === 'EXPORT_PREVIEW') latest.current.onDirtyChange(true);
+    if (operation === 'SAVE' || operation === 'RENDER' || operation === 'EXPORT' || operation === 'EXPORT_PREVIEW' || operation === 'TRACK_LOCK') latest.current.onDirtyChange(true);
     return { ...value, client: latest.current.client };
   }
   function active(value: { epoch: number; client: StudioProductionClient }) { return current() && owner.current === value.client && slot.current?.epoch === value.epoch && epoch.current === value.epoch; }
@@ -149,6 +156,11 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   function change(work: (input: StudioTimelineDraft) => void) {
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN') return;
     const input = cloneTimeline(draftRef.current); work(input);
+    const source = baseRef.current, lockedTracks = source?.timeline.tracks.filter(track => track.locked) ?? [];
+    if (source && lockedTracks.length && (['duration_ms', 'width', 'height', 'fps'].some(key => input.timeline[key as 'duration_ms'] !== source.timeline[key as 'duration_ms'])
+      || lockedTracks.some(track => JSON.stringify(input.timeline.tracks.find(row => row.id === track.id)) !== JSON.stringify(track)))) {
+      setError('锁定轨道的片段、顺序和画布受保护。请先保存其他草稿，并通过原服务明确解锁。'); return;
+    }
     if (timelineInputKey(input) === timelineInputKey(draftRef.current)) return;
     history.current.undo = [...history.current.undo.slice(-49), cloneTimeline(draftRef.current)]; history.current.redo = [];
     setHistorySize({ undo: history.current.undo.length, redo: 0 }); applyLocalInput(input);
@@ -237,6 +249,26 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       if (active(request)) { adopt(saved); setNotice('时间线已保存。核对这个版本的摘要与素材后，才能明确发起本地渲染。'); }
     } catch (reason) {
       if (active(request)) { const kind = timelineFailure(reason); failureRef.current = kind; setFailure(kind); handleError(reason, '时间线未确认保存，输入已保留。'); }
+    } finally { finish(request); }
+  }
+  async function setTrackLocked(trackId: string, locked: boolean) {
+    const source = baseRef.current, method = latest.current.client.timelineTrackLock;
+    if (!source || !method || blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
+      || timelineInputKey(draftRef.current) !== baseline.current || source.timeline.schema_version !== 2
+      || !timelineSourcesCurrent(source.timeline, latest.current.assets)) return;
+    const track = source.timeline.tracks.find(row => row.id === trackId);
+    if (!track || (track.locked ?? false) === locked) return;
+    const expected = cloneTimeline(source.timeline), target = expected.tracks.find(row => row.id === trackId)!; target.locked = locked;
+    const requestId = crypto.randomUUID(), request = begin('TRACK_LOCK'); if (!request) return;
+    try {
+      const row = checkedTimelineRow(await latest.current.mutate(() => method(source, trackId, locked, requestId)), source.id);
+      if (row.version !== source.version + 1 || row.title !== source.title
+        || JSON.stringify(row.timeline) !== JSON.stringify(checkedTimeline(expected))) throw new ApiError({ status: 200,
+          code: 'STUDIO_RESPONSE_INVALID', message: '轨道锁回执与原版本或本次动作不一致，请读取原时间线核对。' });
+      if (active(request)) { adopt(row); setNotice(`轨道已通过原编辑服务${locked ? '锁定' : '明确解锁'}并保存新版本；本地撤销与重做已清空。`); }
+    } catch (reason) {
+      if (active(request)) { const kind = timelineFailure(reason); failureRef.current = kind; setFailure(kind);
+        handleError(reason, `轨道锁请求 ${requestId} 尚未核对，请读取服务端；没有再次发送。`); }
     } finally { finish(request); }
   }
   async function render() {
@@ -354,7 +386,8 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     moveClip: (trackId: string, clipId: string, targetId: string, position: number) => editClip(trackId, clipId, 'move', position, targetId),
     exportAvailable, exportProfile: owns ? exportProfile : { preset: 'REVIEW_MP4' } as TimelineExportProfile, exportPreview: owns ? exportPreview : undefined,
     exportConfirmed: owns && !!exportPreview && exportConfirmed === exportPreview.preview_digest, canPreviewExport, canExport,
-    changeExportProfile, previewExport, exportTimeline,
+    changeExportProfile, previewExport, exportTimeline, setTrackLocked, trackLockAvailable: !!props.client.timelineTrackLock,
+    transfer,
     setExportConfirmed: (value: boolean) => {
       const source = baseRef.current, preview = exportRef.current.preview;
       if (blocked() || !source || !preview || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'

@@ -4,13 +4,17 @@ import type { StudioAsset } from './studioClient';
 export type StudioTimelineSource = { id: string; kind: 'ASSET'; asset_kind: 'image' | 'video' | 'audio'; version: number; digest: string };
 export type StudioTimelineClip = { id: string; source_snapshot: StudioTimelineSource; start_ms: number; in_ms: number; out_ms: number;
   x?: number; y?: number; width?: number; height?: number; speed_num?: number; speed_den?: number; opacity?: number;
-  muted?: boolean; gain_db?: number; fade_in_ms?: number; fade_out_ms?: number; include_audio?: boolean };
+  muted?: boolean; gain_db?: number; fade_in_ms?: number; fade_out_ms?: number; include_audio?: boolean;
+  crop?: { x: number; y: number; width: number; height: number } };
 export type StudioTimelineTrack = { id: string; kind: 'VIDEO' | 'AUDIO'; order: number; muted: boolean; gain_db: number;
-  role?: 'PRIMARY' | 'OVERLAY' | 'DIALOGUE' | 'MUSIC' | 'EFFECTS'; clips: StudioTimelineClip[] };
+  role?: 'PRIMARY' | 'OVERLAY' | 'DIALOGUE' | 'MUSIC' | 'EFFECTS'; locked?: boolean; clips: StudioTimelineClip[] };
 export type StudioTimelineCaption = { start_ms: number; end_ms: number; text: string };
 export type StudioTimeline = { schema_version?: 2; duration_ms: number; width: number; height: number; fps: number; tracks: StudioTimelineTrack[]; captions: StudioTimelineCaption[] };
 export type StudioTimelineDraft = { title: string; timeline: StudioTimeline };
-export type StudioTimelineRow = StudioTimelineDraft & { id: string; version: number; timeline_digest: string; created_at: string; updated_at: string };
+export type TimelineTransferReceipt = { operation: 'TRANSFER_IMPORT'; request_id: string; input_version: number; input_digest: string;
+  output_digest: string; preview_digest: string; format: 'OTIO' | 'SRT' | 'VTT'; transfer_input_digest: string; acknowledge_losses: boolean };
+export type StudioTimelineRow = StudioTimelineDraft & { id: string; version: number; timeline_digest: string; created_at: string; updated_at: string;
+  transfer_receipt?: TimelineTransferReceipt };
 export const TIMELINE_LIMITS = { duration: 600000, tracks: 8, kindTracks: 4, clips: 30, captions: 500, captionCharacters: 32000 } as const;
 const identity = /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/, digest = /^[a-f0-9]{64}$/;
 
@@ -58,7 +62,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
   const trackIds = new Set<string>(), orders = new Set<number>(), clipIds = new Set<string>(), sources = new Map<string, string>();
   let videos = 0, audios = 0, clipsCount = 0;
   const tracks = row.tracks.map(raw => {
-    const track = object(raw, ['id', 'kind', 'order', 'muted', 'gain_db', 'clips', ...(extended ? ['role'] : [])]), tid = id(track.id), order = integer(track.order, 0, 7);
+    const track = object(raw, ['id', 'kind', 'order', 'muted', 'gain_db', 'clips', ...(extended ? ['role', 'locked'] : [])]), tid = id(track.id), order = integer(track.order, 0, 7);
     if (track.kind !== 'VIDEO' && track.kind !== 'AUDIO' || trackIds.has(tid) || orders.has(order)) throw new Error('轨道类型、标识或叠放顺序无效。');
     const kind = track.kind;
     const role = defaulted(track, 'role', kind === 'VIDEO' ? 'PRIMARY' : 'DIALOGUE');
@@ -70,7 +74,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
     if (!Array.isArray(track.clips) || !track.clips.length || track.clips.length > TIMELINE_LIMITS.clips) throw new Error('每条轨道需要至少一个片段。');
     const clips = track.clips.map(rawClip => {
       const clip = object(rawClip, ['id', 'source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'x', 'y', 'width', 'height',
-        ...(extended ? ['speed_num', 'speed_den', 'opacity', 'muted', 'gain_db', 'fade_in_ms', 'fade_out_ms', 'include_audio'] : [])]);
+        ...(extended ? ['speed_num', 'speed_den', 'opacity', 'muted', 'gain_db', 'fade_in_ms', 'fade_out_ms', 'include_audio', 'crop'] : [])]);
       const cid = id(clip.id), source = object(clip.source_snapshot, ['id', 'kind', 'asset_kind', 'version', 'digest']);
       if (clipIds.has(cid) || ++clipsCount > TIMELINE_LIMITS.clips) throw new Error('片段标识重复或超过三十个片段。');
       clipIds.add(cid);
@@ -99,12 +103,18 @@ export function checkedTimeline(value: unknown): StudioTimeline {
           if (includeAudio && assetKind !== 'video') throw new Error('静态画面不能包含视频原声。');
           if (!includeAudio && output.gain_db !== 0) throw new Error('视频片段的音量只在明确加入原声时可调整。');
           Object.assign(output, { opacity: scalar(defaulted(clip, 'opacity', 1), 0, 1), include_audio: includeAudio });
+          if ('crop' in clip) {
+            const crop = object(clip.crop, ['x', 'y', 'width', 'height']);
+            output.crop = { x: integer(crop.x, 0, 32767), y: integer(crop.y, 0, 32767),
+              width: integer(crop.width, 1, 32768), height: integer(crop.height, 1, 32768) };
+          }
         }
-      } else if (['x', 'y', 'width', 'height', 'opacity', 'include_audio'].some(key => key in clip)) throw new Error('音频片段没有画面位置、尺寸、透明度或视频原声设置。');
+      } else if (['x', 'y', 'width', 'height', 'opacity', 'include_audio', 'crop'].some(key => key in clip)) throw new Error('音频片段没有画面位置、尺寸、透明度、像素裁剪或视频原声设置。');
       return output;
     }).sort((left, right) => left.start_ms - right.start_ms || compareText(left.id, right.id));
     if (kind === 'VIDEO' && clips.some((clip, index) => index > 0 && clips[index - 1].start_ms + timelineClipDuration(clips[index - 1]) > clip.start_ms)) throw new Error('同一视频轨道的片段不能重叠；跨轨道可以叠放。');
-    return { id: tid, kind, order, muted, gain_db: gain, clips, ...(extended ? { role } : {}) } as StudioTimelineTrack;
+    return { id: tid, kind, order, muted, gain_db: gain, clips, ...(extended ? { role } : {}),
+      ...('locked' in track ? { locked: flag(track.locked) } : {}) } as StudioTimelineTrack;
   }).sort((left, right) => left.order - right.order);
   if (!videos) throw new Error('时间线至少需要一条视频轨道。');
   if (!Array.isArray(row.captions) || row.captions.length > TIMELINE_LIMITS.captions) throw new Error('字幕最多五百条。');
@@ -131,7 +141,18 @@ export function checkedTimelineRow(value: unknown, expectedId?: string): StudioT
     if (expectedId && rowId !== expectedId || typeof row.timeline_digest !== 'string' || !digest.test(row.timeline_digest) || typeof row.created_at !== 'string' || typeof row.updated_at !== 'string') throw new Error();
     const version = integer(row.version, 1, Number.MAX_SAFE_INTEGER);
     const input = checkedTimelineDraft({ title: row.title as string, timeline: row.timeline as StudioTimeline });
-    return { id: rowId, version, timeline_digest: row.timeline_digest, created_at: row.created_at, updated_at: row.updated_at, ...input };
+    let receipt: TimelineTransferReceipt | undefined;
+    if (row.transfer_receipt !== undefined) {
+      const r = object(row.transfer_receipt, ['operation', 'request_id', 'input_version', 'input_digest', 'output_digest', 'preview_digest', 'format', 'transfer_input_digest', 'acknowledge_losses']);
+      if (r.operation !== 'TRANSFER_IMPORT' || typeof r.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(r.request_id)
+        || typeof r.input_digest !== 'string' || !digest.test(r.input_digest) || typeof r.output_digest !== 'string' || !digest.test(r.output_digest)
+        || r.output_digest !== row.timeline_digest || typeof r.preview_digest !== 'string' || !digest.test(r.preview_digest)
+        || typeof r.transfer_input_digest !== 'string' || !digest.test(r.transfer_input_digest) || !['OTIO', 'SRT', 'VTT'].includes(String(r.format))
+        || typeof r.acknowledge_losses !== 'boolean' || integer(r.input_version, 1, Number.MAX_SAFE_INTEGER) + 1 !== version) throw new Error();
+      receipt = r as unknown as TimelineTransferReceipt;
+    }
+    return { id: rowId, version, timeline_digest: row.timeline_digest, created_at: row.created_at, updated_at: row.updated_at, ...input,
+      ...(receipt ? { transfer_receipt: receipt } : {}) };
   } catch {
     throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '时间线回执字段无效，请读取服务端核对。' });
   }

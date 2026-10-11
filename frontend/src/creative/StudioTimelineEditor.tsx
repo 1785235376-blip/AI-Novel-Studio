@@ -4,6 +4,7 @@ import { TIMELINE_LIMITS, timelineClipDuration, timelineSourceState, type Studio
 import { useStudioTimelineEditor, type StudioTimelineEditorProps } from './useStudioTimelineEditor';
 import { StudioTimelineExportPanel } from './StudioTimelineExportPanel';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
+import { StudioTimelineTransferPanel } from './StudioTimelineTransferPanel';
 export type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
 
 const numeric = (value: string) => value === '' ? Number.NaN : Number(value);
@@ -54,7 +55,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
         ...(track.kind === 'VIDEO' ? { opacity: 1, include_audio: false } : {}) } : {}) });
   });
   const locked = !c.canEdit || props.busy;
-  const readLocked = c.denied || props.busy || !!c.pending;
+  const readLocked = c.denied || props.busy || !!c.pending || c.transfer.locked;
   const clipsCount = draft.timeline.tracks.reduce((sum, track) => sum + track.clips.length, 0);
   return <Panel title="多轨时间线" aria-label="Studio 多轨时间线编辑器" actions={<Button loading={c.pending === 'LIST'} disabled={readLocked} onClick={() => void c.reload()}>刷新时间线列表</Button>}>
     <p>选择已有视频和音频素材，设定裁剪与摆放。视频按轨道顺序叠放，音频轨道混音；视频自身声音只在扩展编辑中明确加入。总长最多十分钟，产物仍须在制作任务中预览和人工审核。</p>
@@ -92,6 +93,10 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       <Button disabled={draft.timeline.tracks.length >= 8 || draft.timeline.tracks.filter(track => track.kind === 'AUDIO').length >= 4} onClick={() => addTrack('AUDIO')}>添加音频轨道</Button>
     </fieldset>
     {draft.timeline.tracks.map((track, index) => <fieldset key={track.id} disabled={locked}><legend>{track.kind === 'VIDEO' ? '视频' : '音频'}轨道 {index + 1}</legend>
+      {extended && <><Badge tone={track.locked ? 'warning' : 'neutral'}>{track.locked ? '已保存的轨道锁' : '轨道可编辑'}</Badge>
+        <Button disabled={!c.trackLockAvailable || c.inputDirty || !c.base || !c.sourcesCurrent} loading={c.pending === 'TRACK_LOCK'} onClick={() => void c.setTrackLocked(track.id, !track.locked)}>{track.locked ? '通过原服务明确解锁' : '通过原服务锁定此轨道'}</Button>
+        <p>锁定与解锁直接保存新版本，需要先保存草稿；锁定轨道不接受片段、排序或画布改动。解锁使用独立原编辑动作。</p></>}
+      <fieldset disabled={!!track.locked}><legend>轨道编辑</legend>
       <p>{track.kind === 'VIDEO' ? '靠后的轨道覆盖前面的画面，同轨道片段不能重叠。' : '参与轨道按摆放时间混音，未放入声音的区间保留静音。'}</p>
       <label><input type="checkbox" checked={track.muted} onChange={event => { const muted = event.currentTarget.checked; changeTrack(track.id, row => { row.muted = muted; }); }} />{track.kind === 'VIDEO' ? '隐藏整条轨道' : '整条轨道静音'}</label>
       {extended && <label>轨道用途<select value={track.role ?? (track.kind === 'VIDEO' ? 'PRIMARY' : 'DIALOGUE')} onChange={event => {
@@ -137,6 +142,16 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
           <NumberField label="画面顶部位置" value={clip.y ?? 0} max={draft.timeline.height - 16} onChange={value => changeClip(track.id, clip.id, row => { row.y = value; })} />
           <NumberField label="片段宽度" value={clip.width ?? draft.timeline.width} min={16} max={draft.timeline.width} step={2} onChange={value => changeClip(track.id, clip.id, row => { row.width = value; })} />
           <NumberField label="片段高度" value={clip.height ?? draft.timeline.height} min={16} max={draft.timeline.height} step={2} onChange={value => changeClip(track.id, clip.id, row => { row.height = value; })} />
+          {extended && <><label><input type="checkbox" checked={!!clip.crop} onChange={event => {
+            const enabled = event.currentTarget.checked; changeClip(track.id, clip.id, row => {
+              if (enabled) row.crop = { x: 0, y: 0, width: row.width ?? draft.timeline.width, height: row.height ?? draft.timeline.height };
+              else delete row.crop;
+            });
+          }} />明确裁剪素材原始像素区域</label><p>裁剪发生在缩放之前。实际素材尺寸由原渲染服务核对，参数越界会拒绝执行。</p>
+            {clip.crop && <><NumberField label="源像素左侧" value={clip.crop.x} max={32767} onChange={value => changeClip(track.id, clip.id, row => { if (row.crop) row.crop.x = value; })} />
+              <NumberField label="源像素顶部" value={clip.crop.y} max={32767} onChange={value => changeClip(track.id, clip.id, row => { if (row.crop) row.crop.y = value; })} />
+              <NumberField label="源裁剪宽度" value={clip.crop.width} min={1} max={32768} onChange={value => changeClip(track.id, clip.id, row => { if (row.crop) row.crop.width = value; })} />
+              <NumberField label="源裁剪高度" value={clip.crop.height} min={1} max={32768} onChange={value => changeClip(track.id, clip.id, row => { if (row.crop) row.crop.height = value; })} /></>}</>}
         </details>}
         <details><summary>拆分、复制与移动</summary>
           <NumberField label="拆分位置（时间线毫秒）" value={clipEdits[clip.id]?.split ?? clip.start_ms + Math.floor(timelineClipDuration(clip) / 2)} min={clip.start_ms + 1} max={clip.start_ms + timelineClipDuration(clip) - 1} onChange={value => editControl(clip.id, { split: value })} />
@@ -151,6 +166,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
         </details>
         <Button variant="danger" onClick={() => changeTrack(track.id, row => { row.clips = row.clips.filter(value => value.id !== clip.id); })}>移除此片段</Button>
       </section>)}
+      </fieldset>
     </fieldset>)}
     <fieldset disabled={locked}><legend>字幕（可选，作者输入的纯文字）</legend>
       <p>字幕不代表模型转录。每条一至八行，不接受空行、样式标记或文件路径。</p>
@@ -181,6 +197,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       <Button loading={c.pending === 'RENDER'} disabled={!c.canRender} onClick={() => void c.render()}>明确渲染此保存版本</Button>
     </section>}
     <StudioTimelineExportPanel controller={c} />
+    <StudioTimelineTransferPanel controller={c.transfer} assets={props.assets} />
     {c.attempt && <StatusMessage tone={c.attempt.state === 'UNKNOWN' ? 'warning' : 'info'}>{c.attempt.state === 'UNKNOWN' ? '渲染或导出结果仍需核对，请从制作任务读取原回执；不会再次发送此请求。' : '此快照与配置的请求已有回执，不会从这里重复发起。'} 原请求：<code>{c.attempt.requestId}</code>{c.attempt.exportProfile && <> · 导出 {c.attempt.exportProfile.preset}</>}</StatusMessage>}
     {c.attempt && <StudioTimelineMeasurement measurement={c.attempt.measurement} />}
     {c.attempt && <Button disabled={readLocked} loading={c.pending === 'JOB'} onClick={() => void c.checkRenderJob()}>读取此请求的原渲染或导出回执</Button>}

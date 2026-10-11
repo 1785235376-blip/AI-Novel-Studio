@@ -241,7 +241,8 @@ export type StudioGraphMediaPreview = { node_id: string; input_digest: string; p
 export type StudioGraphMediaJob = Pick<ProductionJob, 'id' | 'version' | 'status' | 'request_digest' | 'receipt_digest' | 'output_candidate' | 'approved_asset_version' | 'error_code' | 'needs_reconciliation' | 'execution_state' | 'remote_compute_may_continue'> & { cancellation_mode?: string };
 export type StudioGraphMediaExecution = { node_id: string; owner: 'image' | 'video' | 'audio' | 'timeline'; job_id: string | null; status: string;
   receipt_state: 'RECORDED' | 'UNKNOWN_NO_AUTOMATIC_REPLAY'; send_reserved: boolean; job: StudioGraphMediaJob | null;
-  review_state?: 'NONE' | 'REVIEW_RESERVED' | 'APPROVED' };
+  review_state?: 'NONE' | 'REVIEW_RESERVED' | 'APPROVED';
+  review_recovery?: { contract: 'creative-graph-review-recovery/1'; job_version: number; request_digest: string } };
 export type StudioGraphMediaRuntime = {
   schema_version: 1; contract: 'creative-graph-media/1'; nodes: StudioGraphMediaNodeRuntime[];
   automatic_retry: false; automatic_poll: false; applied: false; product_acceptance: 'LOCAL_REQUIRED';

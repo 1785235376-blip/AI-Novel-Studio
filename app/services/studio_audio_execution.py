@@ -14,7 +14,6 @@ import os
 from pathlib import Path
 import re
 import shutil
-import subprocess
 import tempfile
 import threading
 from urllib.parse import urlsplit
@@ -427,7 +426,10 @@ class StudioAudioExecution:
                 guard(); row = self._job(state, job_id, context)
                 if row["status"] != "RUNNING" or row.get("execution_token") != claim["execution_token"]:
                     return row
-                return self._bump(row, publication_state="RESERVED", receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY")
+                return self._bump(row, publication_state="RESERVED", receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY",
+                    publication_ready={"kind": "audio", "output_digest": output_digest,
+                        "output_bytes": len(content), "media_type": measured["media_type"]},
+                    duration_ms=measured["duration_ms"], media_validation=measured["validation"], timing_status="MEASURED")
             reserved = self.store.mutate(nid, reserve_output)
             if reserved["status"] != "RUNNING" or reserved.get("execution_token") != claim["execution_token"]:
                 return reserved
@@ -513,10 +515,20 @@ class StudioAudioExecution:
             source_path, target = Path(directory) / ("source." + measured["extension"]), Path(directory) / "candidate.wav"
             source_path.write_bytes(data)
             if self._attempt(nid, claim, context, guard, source_guard) is None: raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
-            subprocess.run([executable, "-nostdin", "-v", "error", "-xerror", "-threads", "1", "-protocol_whitelist", "file,pipe",
+            from .studio_timeline_export import run_guarded_process
+            def trim_current():
+                # Poll the original Host/token fence without repeatedly probing
+                # audio bytes. Exact source checks occur before native work and
+                # again in the original publication source/asset phase.
+                if self._attempt(nid, claim, context, guard) is None:
+                    raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
+            run_guarded_process([executable, "-nostdin", "-v", "error", "-xerror", "-threads", "1", "-protocol_whitelist", "file,pipe",
                 "-ss", f"{parameters['in_ms'] / 1000:.3f}", "-i", str(source_path), "-map", "0:a:0", "-vn", "-sn", "-dn",
-                "-t", f"{duration / 1000:.3f}", "-ar", "48000", "-ac", "2", "-c:a", "pcm_s16le", "-fs", str(self.assets.MAX_BYTES),
-                "-f", "wav", str(target)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=50, check=True)
+                "-t", f"{duration / 1000:.3f}", "-ar", "48000", "-ac", "2", "-c:a", "pcm_s16le", "-fs", str(self.assets.MAX_BYTES + 1),
+                "-f", "wav", str(target)], cwd=directory, guard=trim_current, timeout=50)
+            trim_current()
+            if not target.is_file() or not 0 < target.stat().st_size <= self.assets.MAX_BYTES:
+                raise MediaValidationError("trim output exceeds asset limit")
             with target.open("rb") as stream: output = stream.read(self.assets.MAX_BYTES + 1)
         if not 0 < len(output) <= self.assets.MAX_BYTES: raise MediaValidationError("trim output exceeds asset limit")
         result = inspect_media(output, "audio")
@@ -536,31 +548,141 @@ class StudioAudioExecution:
                                   "UNKNOWN_NO_AUTOMATIC_REPLAY" if row["dispatch_state"] != "NOT_SENT" or row["publication_state"] != "NOT_STARTED" else "NOT_SENT"))
         return self.store.mutate(nid, change)
 
-    def reconcile(self, nid, job_id, expected_version, context, guard, *, expected_request_digest=None):
+    def reconcile(self, nid, job_id, expected_version, context, guard, *, expected_request_digest=None, recover_candidate=None, recover_review=None):
         """Explicit orphan receipt recovery; never polls, dispatches or requeues."""
         self._authority(context); guard()
         with self._lease(nid, job_id):
-            return self._reconcile(nid, job_id, expected_version, context, guard, expected_request_digest=expected_request_digest)
+            return self._reconcile(nid, job_id, expected_version, context, guard,
+                expected_request_digest=expected_request_digest, recover_candidate=recover_candidate, recover_review=recover_review)
 
-    def _reconcile(self, nid, job_id, expected_version, context, guard, *, expected_request_digest=None):
+    def _reconcile(self, nid, job_id, expected_version, context, guard, *, expected_request_digest=None, recover_candidate=None, recover_review=None):
         _version(expected_version); guard()
+        captured = self.get(nid, job_id, context, guard)
+        self._expected(captured, expected_version, context, expected_request_digest)
         with _ACTIVE_LOCK:
             active = self._active_key(nid, job_id) in _ACTIVE
-            def change(state):
-                guard(); row = self._job(state, job_id, context)
-                self._expected(row, expected_version, context, expected_request_digest)
-                if row["status"] != "RUNNING" or active: return row
-                return self._bump(row, status="UNKNOWN", execution_token=None, receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY",
-                                  error_code="STUDIO_AUDIO_ORPHANED_ATTEMPT", error="原音频执行回执中断；不会自动重放")
-            return self.store.mutate(nid, change)
+        if captured["status"] == "REVIEWING" and not active:
+            result = self._reconcile_review(nid, job_id, context, captured, recover_review)
+            guard()
+            return result
+        if captured["status"] not in {"RUNNING", "UNKNOWN"} or active:
+            return captured
+        ready, candidate = captured.get("publication_ready"), None
+        if callable(recover_candidate) and isinstance(ready, dict):
+            try:
+                _sha(ready.get("output_digest"))
+                if (set(ready) != {"kind", "output_digest", "output_bytes", "media_type"} or ready["kind"] != "audio"
+                        or type(ready["output_bytes"]) is not int or not 0 < ready["output_bytes"] <= self.assets.MAX_BYTES
+                        or not isinstance(ready["media_type"], str)
+                        or type(captured.get("duration_ms")) is not int or captured["duration_ms"] < 1
+                        or not isinstance(captured.get("media_validation"), str)):
+                    raise _error("STUDIO_AUDIO_PUBLICATION_READY_INVALID", "原音频结果持久证明无效", 409)
+                asset = recover_candidate(copy.deepcopy(captured))
+                if asset is not None:
+                    candidate = self._recovered_candidate(nid, captured, asset, ready)
+                guard()
+            except Exception:
+                guard()
+                candidate = None
+        def change(state):
+            guard(); row = self._job(state, job_id, context)
+            self._expected(row, expected_version, context, expected_request_digest)
+            if (row["status"] != captured["status"] or row.get("execution_token") != captured.get("execution_token")
+                    or row.get("publication_ready") != ready or row["context"] != captured["context"]):
+                raise _error("STUDIO_AUDIO_RECONCILE_CHANGED", "原音频恢复回执已变化", 409)
+            if candidate is not None:
+                stamp = timestamp()
+                self._bump(row, status="AWAITING_REVIEW", review_state="VERIFIED_PRIVATE_CANDIDATE", publication_state="VERIFIED",
+                    output_asset_id=candidate["id"], candidate_asset_version=candidate["version"], output_asset_version=candidate["version"],
+                    output_digest=ready["output_digest"], completed_at=stamp, receipt_state="VERIFIED_PRIVATE_CANDIDATE",
+                    execution_token=None, error=None, error_code=None)
+                generation = {"job_id": job_id, "chapter_id": None, "studio_origin": STUDIO_ORIGIN,
+                    "experimental_origin": "narrative_production_v2", "operation_id": row["operation_id"],
+                    "owner_actor_id": row["context"]["actor"], "asset_id": candidate["id"], "provider_id": row["provider_id"],
+                    "model_id": row["model_id"], "created_at": stamp, "duration_ms": row["duration_ms"],
+                    "source_sha256": row["source_sha256"], "approval_status": "PENDING"}
+                state["generations"] = [item for item in state["generations"] if item.get("job_id") != job_id] + [generation]
+                return row
+            return self._bump(row, status="UNKNOWN", execution_token=None, receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY",
+                error_code="STUDIO_AUDIO_ORPHANED_ATTEMPT", error="原音频执行回执中断；不会自动重放")
+        return self.store.mutate(nid, change)
 
-    def review(self, nid, job_id, expected_version, context, guard, source_guard, reviewed_output_digest, promote, *, expected_request_digest=None):
+    def _reconcile_review(self, nid, job_id, context, captured, recover_review):
+        """Release only an exact stopped review with original private proof.
+
+        Entry authority and the original per-job lease are held by reconcile.
+        This internal bookkeeping deliberately needs no current source grant
+        and neither dispatches nor promotes an output.
+        """
+        if not callable(recover_review):
+            return captured
+        recovered = None
+        try:
+            _name(captured.get("output_asset_id")); _version(captured.get("candidate_asset_version"))
+            _sha(captured.get("output_digest")); _sha(captured.get("receipt_digest"))
+            if captured.get("review_token") is not None: _name(captured["review_token"])
+            receipt = copy.deepcopy(captured)
+            self._receipt(receipt)
+            if (captured["receipt_digest"] != receipt["receipt_digest"] or captured.get("approval_status") != "PENDING"
+                    or captured.get("output_asset_version") != captured["candidate_asset_version"]
+                    or captured["version"] >= 2**53 - 1):
+                raise _error("STUDIO_AUDIO_RECONCILE_REVIEW_CHANGED", "原音频审核恢复回执不可核对", 409)
+            candidate = {"id": captured["output_asset_id"], "version": captured["candidate_asset_version"],
+                "digest": captured["output_digest"], "kind": "audio"}
+            def compensate():
+                nonlocal recovered
+                def change(state):
+                    row = self._job(state, job_id, context)
+                    self._expected(row, captured["version"], context, captured["request_digest"])
+                    fields = ("context", "review_token", "execution_token", "receipt_digest", "approval_status",
+                        "output_asset_id", "candidate_asset_version", "output_asset_version", "output_digest")
+                    current_receipt = copy.deepcopy(row)
+                    self._receipt(current_receipt)
+                    if (row["status"] != "REVIEWING" or any(row.get(key) != captured.get(key) for key in fields)
+                            or row["receipt_digest"] != current_receipt["receipt_digest"]):
+                        raise _error("STUDIO_AUDIO_RECONCILE_REVIEW_CHANGED", "原音频审核恢复回执已变化", 409)
+                    return self._bump(row, status="AWAITING_REVIEW", review_token=None, review_from_version=None,
+                        review_state="VERIFIED_PRIVATE_CANDIDATE", error_code="STUDIO_AUDIO_REVIEW_RECOVERED_NOT_PROMOTED",
+                        error="原候选仍为私有，已显式恢复审核或取消入口", recovery_state="EXACT_PRIVATE_REVIEW_RELEASED_NO_REPLAY",
+                        review_reconciled_at=timestamp())
+                recovered = self.store.mutate(nid, change)
+                return recovered
+            # Preserve the unchanged V1 queue -> asset order. Private proof and
+            # this reentrant exact CAS both run before the asset lease ends.
+            with self.store._lock:
+                recover_review(candidate, compensate)
+        except Exception:
+            # A promoted/missing/changed candidate grants no recovery. Keep the
+            # captured REVIEWING receipt unless the exact CAS already succeeded.
+            pass
+        return recovered if recovered is not None else captured
+
+    def _recovered_candidate(self, nid, captured, asset, ready):
+        binding = captured["context"]
+        provider = binding["provider_binding"] or {}
+        origin = {"contract": "studio-production-result/1", "job_id": captured["id"],
+            **{key: copy.deepcopy(binding[key]) for key in ("actor", "scope_key", "incarnation", "request_digest", "operation_id", "sources")},
+            "provider_id": provider.get("provider_id"), "model_id": provider.get("model_id"), "license_note": binding.get("license_note", "")}
+        if "graph_binding" in binding:
+            origin["graph_binding"] = copy.deepcopy(binding["graph_binding"])
+        if (not isinstance(asset, dict) or asset.get("kind") != "audio" or asset.get("novel_id") != nid
+                or asset.get("branch_id") != self.branch_id or asset.get("deleted_at") or asset.get("_owner_actor_id") != binding["actor"]
+                or asset.get("source_job_id") != captured["id"] or asset.get("_required_features") != ["narrative_production_v2"]
+                or asset.get("sha256") != ready["output_digest"] or asset.get("size") != ready["output_bytes"]
+                or asset.get("media_type") != ready["media_type"] or asset.get("_studio_result_origin") != origin
+                or asset.get("_project_binding") != {"novel_id": nid, "branch_id": self.branch_id,
+                    "scope_key": binding["scope_key"], "incarnation": binding["incarnation"]}):
+            raise _error("STUDIO_AUDIO_RECOVERY_CANDIDATE_INVALID", "原音频私有候选不能核对", 409)
+        _name(asset.get("id")); _version(asset.get("version"))
+        return copy.deepcopy(asset)
+
+    def review(self, nid, job_id, expected_version, context, guard, source_guard, reviewed_output_digest, promote, *, expected_request_digest=None, recover_review=None):
         self._authority(context); guard()
         with self._lease(nid, job_id):
             return self._review(nid, job_id, expected_version, context, guard, source_guard, reviewed_output_digest, promote,
-                                expected_request_digest=expected_request_digest)
+                                expected_request_digest=expected_request_digest, recover_review=recover_review)
 
-    def _review(self, nid, job_id, expected_version, context, guard, source_guard, reviewed_output_digest, promote, *, expected_request_digest=None):
+    def _review(self, nid, job_id, expected_version, context, guard, source_guard, reviewed_output_digest, promote, *, expected_request_digest=None, recover_review=None):
         _version(expected_version); _sha(reviewed_output_digest)
         if not callable(promote): raise _error("STUDIO_AUDIO_REVIEW_OWNER_REQUIRED", "须使用原资产 promote_owned 审核入口", 403)
         guard()
@@ -606,11 +728,44 @@ class StudioAudioExecution:
                 return row
             return self.store.mutate(nid, approve)
         except Exception:
-            def uncertain(state):
-                guard(); row = self._job(state, job_id, context)
-                if row["status"] == "REVIEWING" and row.get("review_token") == claim["review_token"]:
-                    return self._bump(row, review_token=None, review_state="REVIEW_UNCERTAIN_EXPLICIT_RECOVERY",
-                                      error_code="STUDIO_AUDIO_REVIEW_INCOMPLETE", error="原审核或回写未完成；保留最初候选版本，可显式核对后恢复审核")
-                return row
-            self.store.mutate(nid, uncertain)
+            restored = False
+            if callable(recover_review):
+                def compensate():
+                    nonlocal restored
+                    def change(state):
+                        row = self._job(state, job_id, context)
+                        self._expected(row, claim["version"], context, claim["request_digest"])
+                        if (row["status"] != "REVIEWING" or row.get("review_token") != claim["review_token"]
+                                or row["context"] != claim["context"] or row.get("receipt_digest") != claim.get("receipt_digest")
+                                or row.get("output_asset_id") != claim["output_asset_id"]
+                                or row.get("candidate_asset_version") != claim["candidate_asset_version"]
+                                or row.get("output_digest") != reviewed_output_digest):
+                            raise _error("STUDIO_AUDIO_REVIEW_CHANGED", "原音频审核已被其他操作取代", 409)
+                        return self._bump(row, status="AWAITING_REVIEW", review_token=None, review_state="VERIFIED_PRIVATE_CANDIDATE",
+                            error_code="STUDIO_AUDIO_REVIEW_NOT_PROMOTED", error="原审核未提升候选；可重新核对或取消")
+                    result = self.store.mutate(nid, change)
+                    restored = True
+                    return result
+                try:
+                    # Acquire the original audio queue mutex first, preserving
+                    # V1's queue -> asset order. The private-proof callback then
+                    # invokes the reentrant exact CAS while holding its leases.
+                    with self.store._lock:
+                        recover_review({"id": claim["output_asset_id"], "version": claim["candidate_asset_version"],
+                            "digest": reviewed_output_digest, "kind": "audio"}, compensate)
+                except Exception:
+                    pass
+            if not restored:
+                try:
+                    def uncertain(state):
+                        row = self._job(state, job_id, context)
+                        if (row["version"] == claim["version"] and row["status"] == "REVIEWING"
+                                and row.get("review_token") == claim["review_token"] and row["context"] == claim["context"]):
+                            return self._bump(row, review_token=None, review_state="REVIEW_UNCERTAIN_EXPLICIT_RECOVERY",
+                                error_code="STUDIO_AUDIO_REVIEW_INCOMPLETE", error="原审核或回写未完成；保留最初候选版本，可显式核对后恢复审核")
+                        return row
+                    self.store.mutate(nid, uncertain)
+                except Exception:
+                    # Never replace the first failure with a bookkeeping error.
+                    pass
             raise

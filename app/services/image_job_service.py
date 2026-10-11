@@ -76,10 +76,12 @@ class ImageJobService:
         return cancel(self, nid, branch, actor, job_id, expected_version=expected_version,
             expected_request_digest=expected_request_digest, guard=guard)
 
-    def reconcile_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard):
+    def reconcile_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard,
+                         recover_candidate=None, recover_review=None):
         from .studio_image_execution import reconcile
         return reconcile(self, nid, branch, actor, job_id, expected_version=expected_version,
-            expected_request_digest=expected_request_digest, guard=guard)
+            expected_request_digest=expected_request_digest, guard=guard, recover_candidate=recover_candidate,
+            recover_review=recover_review)
 
     def execute_studio(self, nid, branch, actor, job_id, registry, *, expected_version,
                        expected_request_digest, guard, source_guard, dispatch_guard, read_images, publish):
@@ -89,11 +91,11 @@ class ImageJobService:
             dispatch_guard=dispatch_guard, read_images=read_images, publish=publish)
 
     def accept_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest,
-                      expected_output_digest, guard, source_guard, promote):
+                      expected_output_digest, guard, source_guard, promote, recover_review=None):
         from .studio_image_execution import accept
         return accept(self, nid, branch, actor, job_id, expected_version=expected_version,
             expected_request_digest=expected_request_digest, expected_output_digest=expected_output_digest,
-            guard=guard, source_guard=source_guard, promote=promote)
+            guard=guard, source_guard=source_guard, promote=promote, recover_review=recover_review)
 
     def create(self, novel_id, branch_id, body, idempotency_key=None):
         parameters = dict(body.get('parameters') or {})

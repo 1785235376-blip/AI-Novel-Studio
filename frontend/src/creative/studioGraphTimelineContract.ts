@@ -4,12 +4,12 @@ import { checkedTimelineExportProfile, type TimelineExportProfile } from './stud
 export type GraphTimelineSnapshot = { id: string; version: number; digest: string };
 export type GraphTimelinePort = `source_${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8}`;
 export type GraphTimelineBinding = { port: GraphTimelinePort; clip_id: string };
-export type TimelineClipChanges = Partial<Omit<StudioTimelineClip, 'id'>>;
+export type TimelineClipChanges = Partial<Omit<StudioTimelineClip, 'id' | 'crop'>> & { crop?: StudioTimelineClip['crop'] | null };
 export type GraphTimelineEdit =
   | { op: 'canvas.update'; changes: Partial<{ schema_version: 2; duration_ms: number; width: number; height: number; fps: number }> }
   | { op: 'track.insert'; track: StudioTimelineTrack }
   | { op: 'track.remove'; track_id: string; remove_clips: boolean }
-  | { op: 'track.update'; track_id: string; changes: Partial<Pick<StudioTimelineTrack, 'muted' | 'gain_db' | 'role'>> }
+  | { op: 'track.update'; track_id: string; changes: Partial<Pick<StudioTimelineTrack, 'muted' | 'gain_db' | 'role' | 'locked'>> }
   | { op: 'track.reorder'; track_ids: string[] }
   | { op: 'clip.insert'; track_id: string; clip: StudioTimelineClip }
   | { op: 'clip.update'; clip_id: string; changes: TimelineClipChanges }
@@ -48,11 +48,14 @@ function source(value: unknown): StudioTimelineSource {
   if (result.kind !== 'ASSET' || !['image', 'video', 'audio'].includes(result.asset_kind as string)) invalid();
   return { id: graphTimelineId(result.id), version: integer(result.version, 1), digest: digest(result.digest), kind: 'ASSET', asset_kind: result.asset_kind as StudioTimelineSource['asset_kind'] };
 }
-const clipFields = ['source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'x', 'y', 'width', 'height', 'speed_num', 'speed_den', 'opacity', 'gain_db', 'muted', 'include_audio', 'fade_in_ms', 'fade_out_ms'];
+const clipFields = ['source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'x', 'y', 'width', 'height', 'speed_num', 'speed_den', 'opacity', 'gain_db', 'muted', 'include_audio', 'fade_in_ms', 'fade_out_ms', 'crop'];
 function clipChanges(value: unknown): TimelineClipChanges {
   const raw = fields(value, [], clipFields); if (!Object.keys(raw).length) invalid();
   for (const [key, value] of Object.entries(raw)) {
     if (key === 'source_snapshot') source(value);
+    else if (key === 'crop') {
+      if (value !== null) { const crop = fields(value, ['x', 'y', 'width', 'height']); integer(crop.x, 0, 32767); integer(crop.y, 0, 32767); integer(crop.width, 1, 32768); integer(crop.height, 1, 32768); }
+    }
     else if (['muted', 'include_audio'].includes(key)) bool(value);
     else if (key === 'opacity') number(value, 0, 1);
     else if (key === 'gain_db') number(value, -60, 12);
@@ -62,14 +65,16 @@ function clipChanges(value: unknown): TimelineClipChanges {
 }
 function clip(value: unknown): StudioTimelineClip {
   const raw = fields(value, ['id', 'source_snapshot', 'start_ms', 'in_ms', 'out_ms'], clipFields);
+  if (raw.crop === null) invalid();
   graphTimelineId(raw.id); const { id: _id, ...changes } = raw; clipChanges(changes);
   return structuredClone(raw) as StudioTimelineClip;
 }
-function trackChanges(value: unknown): Partial<Pick<StudioTimelineTrack, 'muted' | 'gain_db' | 'role'>> {
-  const raw = fields(value, [], ['muted', 'gain_db', 'role']); if (!Object.keys(raw).length) invalid();
+function trackChanges(value: unknown): Partial<Pick<StudioTimelineTrack, 'muted' | 'gain_db' | 'role' | 'locked'>> {
+  const raw = fields(value, [], ['muted', 'gain_db', 'role', 'locked']); if (!Object.keys(raw).length) invalid();
   if ('muted' in raw) bool(raw.muted); if ('gain_db' in raw) number(raw.gain_db, -60, 12);
+  if ('locked' in raw) bool(raw.locked);
   if ('role' in raw && !['PRIMARY', 'OVERLAY', 'DIALOGUE', 'MUSIC', 'EFFECTS'].includes(raw.role as string)) invalid();
-  return structuredClone(raw) as Partial<Pick<StudioTimelineTrack, 'muted' | 'gain_db' | 'role'>>;
+  return structuredClone(raw) as Partial<Pick<StudioTimelineTrack, 'muted' | 'gain_db' | 'role' | 'locked'>>;
 }
 function caption(value: unknown): StudioTimelineCaption {
   const raw = fields(value, ['start_ms', 'end_ms', 'text']); integer(raw.start_ms, 0, 600000); integer(raw.end_ms, 1, 600000);
@@ -86,9 +91,9 @@ export function checkedGraphTimelineEdits(value: unknown): GraphTimelineEdit[] {
       check(['changes']); const changes = fields(raw.changes, [], ['duration_ms', 'width', 'height', 'fps', 'schema_version']);
       if (!Object.keys(changes).length) invalid(); Object.entries(changes).forEach(([key, value]) => { if (key === 'schema_version' ? value !== 2 : !Number.isSafeInteger(value)) invalid(); });
     } else if (op === 'track.insert') {
-      check(['track']); const track = fields(raw.track, ['id', 'kind', 'order', 'clips'], ['muted', 'gain_db', 'role']);
+      check(['track']); const track = fields(raw.track, ['id', 'kind', 'order', 'clips'], ['muted', 'gain_db', 'role', 'locked']);
       graphTimelineId(track.id); integer(track.order, 0, 7); if (!['VIDEO', 'AUDIO'].includes(track.kind as string) || !Array.isArray(track.clips) || track.clips.length) invalid();
-      const extra = Object.fromEntries(Object.entries(track).filter(([key]) => ['muted', 'gain_db', 'role'].includes(key))); if (Object.keys(extra).length) trackChanges(extra);
+      const extra = Object.fromEntries(Object.entries(track).filter(([key]) => ['muted', 'gain_db', 'role', 'locked'].includes(key))); if (Object.keys(extra).length) trackChanges(extra);
     } else if (op === 'track.remove') { check(['track_id', 'remove_clips']); graphTimelineId(raw.track_id); bool(raw.remove_clips);
     } else if (op === 'track.update') { check(['track_id', 'changes']); graphTimelineId(raw.track_id); trackChanges(raw.changes);
     } else if (op === 'track.reorder') {

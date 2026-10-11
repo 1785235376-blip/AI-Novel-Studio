@@ -284,23 +284,102 @@ def cancel(service, nid, branch, actor, job_id, *, expected_version, expected_re
     return value
 
 
-def reconcile(service, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard):
+def reconcile(service, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard, recover_candidate=None, recover_review=None):
     """Explicit interruption receipt after the original executor lease ends.
 
     This never contacts a provider or returns a job to QUEUED.
     """
     with _execution_lease(service, job_id):
         guard()
+        captured = _read(service, nid, branch, actor, job_id)
+        _cas(captured, expected_version, expected_request_digest)
+        if captured["status"] == "REVIEWING":
+            value = _reconcile_review(service, nid, branch, actor, job_id, captured, recover_review)
+            guard()
+            return value
+        if captured["status"] not in {"RUNNING", "UNKNOWN"}:
+            raise ValueError("STUDIO_IMAGE_NOT_RECONCILABLE")
+        candidate = None
+        ready = captured.get("publication_ready")
+        if callable(recover_candidate) and isinstance(ready, dict):
+            try:
+                _require_digest(ready.get("output_digest"))
+                if (set(ready) != {"kind", "output_digest", "output_bytes", "media_type"} or ready["kind"] != "image"
+                        or type(ready["output_bytes"]) is not int or not 0 < ready["output_bytes"] <= MAX_BYTES
+                        or not isinstance(ready["media_type"], str)):
+                    raise ValueError("STUDIO_IMAGE_PUBLICATION_READY_INVALID")
+                asset = recover_candidate(copy.deepcopy(captured))
+                if asset is not None:
+                    candidate = _candidate_identity(asset, captured, ready["output_digest"], ready["output_bytes"], ready["media_type"])
+                guard()
+            except Exception:
+                # A stale/ambiguous source or missing candidate never causes
+                # re-admission, generation, publication or adoption.
+                guard()
+                candidate = None
         def change(rows):
             row = _owned(service, service._find(rows, job_id), nid, branch, actor)
             _cas(row, expected_version, expected_request_digest)
-            if row["status"] != "RUNNING":
-                raise ValueError("STUDIO_IMAGE_NOT_RECONCILABLE")
+            if (row["status"] != captured["status"] or row.get("execution_token") != captured.get("execution_token")
+                    or row.get("publication_ready") != ready or row["context"] != captured["context"]):
+                raise ValueError("STUDIO_IMAGE_RECONCILE_RECEIPT_CHANGED")
+            if candidate is not None:
+                _advance(row, status="AWAITING_REVIEW", execution_token=None, output_asset_id=candidate["id"],
+                    output_asset_version=candidate["version"], candidate_asset_version=candidate["version"],
+                    output_digest=candidate["sha256"], review_state="VERIFIED_PRIVATE_CANDIDATE", error_code=None)
+                row["receipt_digest"] = _digest(_receipt(row))
+                return copy.deepcopy(row)
             return copy.deepcopy(_advance(row, status="UNKNOWN", execution_token=None,
                 error_code="STUDIO_IMAGE_INTERRUPTED_DISPATCH"))
         value = service._mutate(nid, branch, change)
         guard()
         return value
+
+
+def _reconcile_review(service, nid, branch, actor, job_id, captured, recover_review):
+    """Only release a stopped review proven to own its original private bytes.
+
+    The caller holds the original execution lease and has already checked Host,
+    actor, version and request. No current source authority is needed for this
+    internal reservation bookkeeping; no provider or promotion is invoked.
+    """
+    if not callable(recover_review):
+        return captured
+    recovered = None
+    try:
+        _text(captured.get("output_asset_id")); _require_version(captured.get("candidate_asset_version"))
+        _require_digest(captured.get("output_digest")); _require_digest(captured.get("receipt_digest"))
+        _text(captured.get("review_token")); _require_version(captured.get("review_from_version"))
+        if (captured["receipt_digest"] != _digest(_receipt(captured))
+                or captured.get("output_asset_version") != captured["candidate_asset_version"]
+                or captured["review_from_version"] >= captured["version"]):
+            raise ValueError("STUDIO_IMAGE_RECONCILE_REVIEW_RECEIPT_CHANGED")
+        candidate = {"id": captured["output_asset_id"], "version": captured["candidate_asset_version"],
+            "digest": captured["output_digest"], "kind": "image"}
+        def compensate():
+            nonlocal recovered
+            def change(rows):
+                row = _owned(service, service._find(rows, job_id), nid, branch, actor)
+                _cas(row, captured["version"], captured["request_digest"])
+                fields = ("context", "review_token", "review_from_version", "execution_token", "receipt_digest",
+                    "output_asset_id", "candidate_asset_version", "output_asset_version", "output_digest")
+                if (row["status"] != "REVIEWING" or any(row.get(key) != captured.get(key) for key in fields)
+                        or row["receipt_digest"] != _digest(_receipt(row))):
+                    raise ValueError("STUDIO_IMAGE_RECONCILE_REVIEW_RECEIPT_CHANGED")
+                return copy.deepcopy(_advance(row, status="AWAITING_REVIEW", review_token=None, review_from_version=None,
+                    review_state="VERIFIED_PRIVATE_CANDIDATE", error_code="STUDIO_IMAGE_REVIEW_RECOVERED_NOT_PROMOTED",
+                    recovery_state="EXACT_PRIVATE_REVIEW_RELEASED_NO_REPLAY", review_reconciled_at=now()))
+            recovered = service._mutate(nid, branch, change)
+            return recovered
+        # Retain V1's queue -> asset order. The callback holds the original
+        # source/asset leases while invoking this reentrant exact CAS write.
+        with service._lock, workspace_mutation(service.root, "image-jobs"):
+            recover_review(candidate, compensate)
+    except Exception:
+        # Already promoted, deleted, changed or unprovable reviews remain as
+        # recorded. A successful exact bookkeeping write is never undone.
+        pass
+    return recovered if recovered is not None else captured
 
 
 def _decode(uri, provider):
@@ -323,8 +402,12 @@ def _decode(uri, provider):
 
 
 def _candidate(asset, job, data, measured):
+    return _candidate_identity(asset, job, hashlib.sha256(data).hexdigest(), len(data), measured["media_type"])
+
+
+def _candidate_identity(asset, job, output_digest, output_bytes, media_type):
     expected = {"novel_id": job["novel_id"], "branch_id": job["branch_id"], "kind": "image",
-        "sha256": hashlib.sha256(data).hexdigest(), "size": len(data), "media_type": measured["media_type"],
+        "sha256": output_digest, "size": output_bytes, "media_type": media_type,
         "source_job_id": job["id"], "provider_id": job["body"]["provider_id"], "model_id": job["body"]["model_id"]}
     expected_binding = {"novel_id": job["novel_id"], "branch_id": job["branch_id"],
         "incarnation": job["context"]["incarnation"], "scope_key": job["context"]["scope_key"]}
@@ -439,6 +522,14 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                 raise ValueError("STUDIO_IMAGE_PROVIDER_CHANGED")
             data, measured = _decode(result.asset_uri, provider)
             guard(); source_guard(); dispatch_guard(job, provider); current()
+            def publication_ready(rows):
+                row = _owned(service, service._find(rows, job_id), nid, branch, actor)
+                _cas(row, job["version"], job["request_digest"])
+                if row["status"] != "RUNNING" or row.get("execution_token") != job["execution_token"]:
+                    raise ValueError("STUDIO_IMAGE_ATTEMPT_CHANGED")
+                return copy.deepcopy(_advance(row, publication_ready={"kind": "image",
+                    "output_digest": hashlib.sha256(data).hexdigest(), "output_bytes": len(data), "media_type": measured["media_type"]}))
+            job = service._mutate(nid, branch, publication_ready)
             # No image-job mutex is held while entering source -> asset -> project.
             candidate = _candidate(publish(data, "image", "studio-image-" + job_id + "." + measured["extension"], measured, job_id,
                 lambda: current(under_asset_lease=True)), job, data, measured)
@@ -473,7 +564,7 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
 
 
 def accept(service, nid, branch, actor, job_id, *, expected_version, expected_request_digest,
-           expected_output_digest, guard, source_guard, promote):
+           expected_output_digest, guard, source_guard, promote, recover_review=None):
     if not all(callable(value) for value in (guard, source_guard, promote)):
         raise ValueError("STUDIO_IMAGE_REVIEW_GUARDS_REQUIRED")
     _require_digest(expected_output_digest)
@@ -516,17 +607,45 @@ def accept(service, nid, branch, actor, job_id, *, expected_version, expected_re
         provenance = {**_receipt(job), "receipt_digest": job["receipt_digest"], "human_review": "EXPLICIT_APPROVAL"}
         # Private candidate promotion is owned by original AssetLibrary.promote_owned.
         # Stable provenance permits recovery if promotion committed before job write.
-        promoted = promote(job["output_asset_id"], job["candidate_asset_version"], provenance, job_guard)
-        if (not isinstance(promoted, dict) or promoted.get("id") != job["output_asset_id"]
-                or promoted.get("sha256") != job["output_digest"]
-                or promoted.get("version") != job["candidate_asset_version"] + 1):
-            raise ValueError("STUDIO_IMAGE_PROMOTED_ASSET_CHANGED")
-        guard(); source_guard()
-        def finish(rows):
-            row = _owned(service, service._find(rows, job_id), nid, branch, actor)
-            _cas(row, job["version"], job["request_digest"])
-            if (row["status"] != "REVIEWING" or row.get("review_token") != job["review_token"]
-                    or row["receipt_digest"] != job["receipt_digest"] or _digest(_receipt(row)) != job["receipt_digest"]):
-                raise ValueError("STUDIO_IMAGE_REVIEW_CHANGED")
-            return copy.deepcopy(_advance(row, status="APPROVED", output_asset_version=promoted["version"], error_code=None))
-        return service._mutate(nid, branch, finish)
+        try:
+            promoted = promote(job["output_asset_id"], job["candidate_asset_version"], provenance, job_guard)
+            if (not isinstance(promoted, dict) or promoted.get("id") != job["output_asset_id"]
+                    or promoted.get("sha256") != job["output_digest"]
+                    or promoted.get("version") != job["candidate_asset_version"] + 1):
+                raise ValueError("STUDIO_IMAGE_PROMOTED_ASSET_CHANGED")
+            guard(); source_guard()
+            def finish(rows):
+                row = _owned(service, service._find(rows, job_id), nid, branch, actor)
+                _cas(row, job["version"], job["request_digest"])
+                if (row["status"] != "REVIEWING" or row.get("review_token") != job["review_token"]
+                        or row["receipt_digest"] != job["receipt_digest"] or _digest(_receipt(row)) != job["receipt_digest"]):
+                    raise ValueError("STUDIO_IMAGE_REVIEW_CHANGED")
+                return copy.deepcopy(_advance(row, status="APPROVED", output_asset_version=promoted["version"], error_code=None))
+            return service._mutate(nid, branch, finish)
+        except Exception:
+            if callable(recover_review):
+                def compensate():
+                    def change(rows):
+                        row = _owned(service, service._find(rows, job_id), nid, branch, actor)
+                        _cas(row, job["version"], job["request_digest"])
+                        if (row["status"] != "REVIEWING" or row.get("review_token") != job["review_token"]
+                                or row["context"] != job["context"] or row["receipt_digest"] != job["receipt_digest"]
+                                or _digest(_receipt(row)) != job["receipt_digest"]):
+                            raise ValueError("STUDIO_IMAGE_REVIEW_CHANGED")
+                        return copy.deepcopy(_advance(row, status="AWAITING_REVIEW", review_token=None,
+                            review_from_version=None, review_state="VERIFIED_PRIVATE_CANDIDATE",
+                            error_code="STUDIO_IMAGE_REVIEW_NOT_PROMOTED"))
+                    return service._mutate(nid, branch, change)
+                try:
+                    # Keep the original queue -> asset order, including the
+                    # private-proof callback. The callback invokes this exact
+                    # reentrant CAS write while its source/asset leases remain
+                    # held. No source/Host authority or provider action occurs.
+                    with service._lock, workspace_mutation(service.root, "image-jobs"):
+                        recover_review({"id": job["output_asset_id"], "version": job["candidate_asset_version"],
+                            "digest": job["output_digest"], "kind": "image"}, compensate)
+                except Exception:
+                    # Promoted, deleted, changed or unprovable candidates stay
+                    # REVIEWING for explicit recovery; preserve the first error.
+                    pass
+            raise

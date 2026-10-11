@@ -37,7 +37,7 @@ def normalize_timeline_v2(value):
         return numeric
 
     for raw in raw_tracks:
-        track = _object(raw, ("id", "kind", "order", "role", "muted", "gain_db", "clips"),
+        track = _object(raw, ("id", "kind", "order", "role", "muted", "gain_db", "clips", "locked"),
                         ("id", "kind", "order", "clips"))
         tid, kind, order = _identity(track["id"]), track["kind"], _integer(track["order"], 0, 7)
         if not isinstance(kind, str) or kind not in counts or tid in ids or order in orders:
@@ -57,7 +57,7 @@ def normalize_timeline_v2(value):
         clips = []
         for raw_clip in track["clips"]:
             clip = _object(raw_clip, ("id", "source_snapshot", "start_ms", "in_ms", "out_ms", "x", "y", "width", "height",
-                "speed_num", "speed_den", "opacity", "gain_db", "muted", "fade_in_ms", "fade_out_ms", "include_audio"),
+                "speed_num", "speed_den", "opacity", "gain_db", "muted", "fade_in_ms", "fade_out_ms", "include_audio", "crop"),
                 ("id", "source_snapshot", "start_ms", "in_ms", "out_ms"))
             cid = _identity(clip["id"])
             if cid in clip_ids:
@@ -104,14 +104,26 @@ def normalize_timeline_v2(value):
                     raise ValueError("STUDIO_TIMELINE_STILL_RANGE_INVALID")
                 if not item["include_audio"] and item["gain_db"] != 0:
                     raise ValueError("STUDIO_TIMELINE_GAIN_REQUIRES_AUDIO")
-            elif any(key in clip for key in ("x", "y", "width", "height", "opacity", "include_audio")):
+                if "crop" in clip:
+                    crop = _object(clip["crop"], ("x", "y", "width", "height"), ("x", "y", "width", "height"))
+                    # Pixels refer to the original coded source, before display
+                    # autorotation and output scaling. Actual source bounds are
+                    # proved by the renderer; author values are never filters.
+                    item["crop"] = {"x": _integer(crop["x"], 0, 32767), "y": _integer(crop["y"], 0, 32767),
+                        "width": _integer(crop["width"], 1, 32768), "height": _integer(crop["height"], 1, 32768)}
+            elif any(key in clip for key in ("x", "y", "width", "height", "opacity", "include_audio", "crop")):
                 raise ValueError("STUDIO_TIMELINE_VIDEO_GEOMETRY_REQUIRES_VIDEO")
             clips.append(item)
         clips.sort(key=lambda item: (item["start_ms"], item["id"]))
         if kind == "VIDEO" and any(left["start_ms"] + clip_duration_ms(left) > right["start_ms"]
                                     for left, right in zip(clips, clips[1:])):
             raise ValueError("STUDIO_TIMELINE_SAME_VIDEO_TRACK_OVERLAP")
-        tracks.append({"id": tid, "kind": kind, "order": order, "role": role, "muted": muted, "gain_db": gain, "clips": clips})
+        normalized_track = {"id": tid, "kind": kind, "order": order, "role": role, "muted": muted, "gain_db": gain, "clips": clips}
+        if "locked" in track:
+            normalized_track["locked"] = _boolean(track["locked"])
+        # New optional fields stay absent from old saved schema-two records, so
+        # normalization does not rewrite their canonical digest or history.
+        tracks.append(normalized_track)
     if not counts["VIDEO"]:
         raise ValueError("STUDIO_TIMELINE_VIDEO_TRACK_REQUIRED")
     raw_captions = row.get("captions", [])

@@ -119,10 +119,14 @@ def review_audiobook_inbox(ctx, rid, action, version):
 
 inbox_service.register(ReviewBinding('audiobook', read_audiobook_inbox,
     review_audiobook_inbox, 'audiobook_v2', frozenset()))
+from .subtitle_host_config import configured_subtitle_adapters, processing_host_required
 subtitle_timeline_service = SubtitleTimelineService(store, legacy_api.novel_service,
-    legacy_api.chapter_service, audiobook_service, legacy_api.asset_library_service)
+    legacy_api.chapter_service, audiobook_service, legacy_api.asset_library_service,
+    processing_adapters=configured_subtitle_adapters())
 router.include_router(create_voice_direction_router(audiobook_service, authorize, require_flag))
-router.include_router(create_subtitle_timeline_router(subtitle_timeline_service, authorize, require_flag))
+router.include_router(create_subtitle_timeline_router(subtitle_timeline_service, authorize, require_flag,
+    require_processing_host=(lambda token: require_inspection_host_session(token)) if processing_host_required() else None,
+    model_host_authority=(lambda request, token: creative_model_host_authority(request, token)) if processing_host_required() else None))
 register_legacy_bindings(inbox_service)
 from .finding_review_composition import register_finding_review_bindings
 register_finding_review_bindings(inbox_service, legacy_api, authorize, require_flag)

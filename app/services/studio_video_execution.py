@@ -8,6 +8,7 @@ from __future__ import annotations
 import base64
 import copy
 import hashlib
+from contextlib import contextmanager
 from functools import wraps
 from uuid import uuid4
 
@@ -32,10 +33,17 @@ class StudioVideoExecution:
     def __init__(self, owner):
         self.owner = owner
 
+    @contextmanager
+    def review_phase(self, jid):
+        # The same original executor lease serializes review/refresh/recovery;
+        # it creates neither a second job nor another lock namespace.
+        with workspace_mutation(self.owner.root, "studio-video-execution:" + jid):
+            yield
+
     @staticmethod
     def _receipt(row):
         return hashlib.sha256(canonical({k: row.get(k) for k in
-            ("id", "request_digest", "context", "attempt", "remote_task_id", "output_candidate", "status")}).encode()).hexdigest()
+            ("id", "request_digest", "context", "attempt", "remote_task_id", "output_candidate", "status", "publication_ready")}).encode()).hexdigest()
 
     def get(self, nid, branch, actor, jid, *, context, guard):
         guard()
@@ -164,6 +172,10 @@ class StudioVideoExecution:
         current = self.get(nid, branch, actor, row["id"], context=context, guard=guard)
         if current["version"] != row["version"] or current["status"] != row["status"]:
             raise ValueError("STUDIO_VIDEO_ATTEMPT_CHANGED")
+        # Durable proof before the asset write permits explicit recovery of
+        # the same private bytes after process interruption, never another send.
+        row = self._mutate(nid, branch, actor, row, context, publication_ready={"kind": "video",
+            "output_digest": hashlib.sha256(data).hexdigest(), "output_bytes": len(data), "media_type": measured["media_type"]})
         def job_current():
             current = self.owner._studio_read(nid, branch, actor, row["id"], context=context)
             if current["version"] != row["version"] or current["status"] != row["status"]:
@@ -231,13 +243,47 @@ class StudioVideoExecution:
         return self._mutate(nid, branch, actor, row, context, status="CANCELLED", cancellation_mode="LOCAL_RESULT_DISCARD", execution_token=None)
 
     @exclusive
-    def reconcile(self, nid, branch, actor, jid, action, *, context, guard):
+    def reconcile(self, nid, branch, actor, jid, action, *, context, guard, recover_candidate=None, recover_review=None):
         # Obtaining the original per-job lease proves no new execution of this
         # job is still in progress. This reconciles local state, never submits.
         row = self.get(nid, branch, actor, jid, context=context, guard=guard)
         if row["version"] != action.expected_version or row["request_digest"] != action.expected_request_digest:
             raise ValueError("STUDIO_VIDEO_RECONCILE_VERSION_CHANGED")
-        if row["status"] not in {"RUNNING", "SEND_RESERVED"}:
+        if row["status"] not in {"RUNNING", "SEND_RESERVED", "UNKNOWN", "RESULT_READY", "REVIEWING"}:
             raise ValueError("STUDIO_VIDEO_RECONCILE_STATE_INVALID")
+        if row["status"] == "REVIEWING":
+            # An explicit stopped-review recovery only clears an exact private
+            # reservation. It never reauthorizes stale sources or promotes a
+            # candidate, and durable/ambiguous promotion stays REVIEWING.
+            candidate = copy.deepcopy(row.get("output_candidate"))
+            recovered = None
+            def compensate():
+                nonlocal recovered
+                def change(current):
+                    if (current["status"] != "REVIEWING" or current["request_digest"] != row["request_digest"]
+                            or current.get("output_candidate") != candidate or current["context"] != row["context"]
+                            or current.get("receipt_digest") != row.get("receipt_digest")):
+                        raise ValueError("STUDIO_VIDEO_REVIEW_RECOVERY_CHANGED")
+                    current.update(status="AWAITING_REVIEW", review_state="HUMAN_REVIEW_REQUIRED",
+                        error_code="STUDIO_VIDEO_REVIEW_NOT_PROMOTED", recovery_state="EXACT_PRIVATE_REVIEW_RECOVERED_NO_REPLAY")
+                recovered = self.owner._studio_mutate(nid, branch, actor, jid, row["version"], change, context=context)
+            if candidate is not None and callable(recover_review):
+                recover_review(candidate, compensate)
+            guard()
+            return recovered if recovered is not None else row
+        if row.get("publication_ready") and callable(recover_candidate):
+            try:
+                candidate = recover_candidate(copy.deepcopy(row))
+                guard()
+            except Exception:
+                guard()
+                candidate = None
+            if candidate is not None:
+                return self._mutate(nid, branch, actor, row, context, status="AWAITING_REVIEW", execution_token=None,
+                    output_candidate={"id": candidate["id"], "version": candidate["version"], "digest": candidate["sha256"], "kind": "video"},
+                    error_code=None, recovery_state="EXACT_PRIVATE_PUBLICATION_RECOVERED_NO_REPLAY")
+        if row["status"] in {"UNKNOWN", "RESULT_READY"}:
+            guard()
+            return row
         return self._mutate(nid, branch, actor, row, context, status="UNKNOWN", execution_token=None,
             error_code="STUDIO_VIDEO_INTERRUPTED_NO_AUTOMATIC_REPLAY")

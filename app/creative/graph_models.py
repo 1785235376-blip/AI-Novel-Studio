@@ -164,7 +164,7 @@ def _closed_timeline_operations(operations):
         "caption.update": {"op", "index", "caption"}, "caption.remove": {"op", "index"},
     }
     clip_fields = {"source_snapshot", "start_ms", "in_ms", "out_ms", "x", "y", "width", "height",
-        "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms"}
+        "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop"}
     for operation in operations:
         kind = operation.get("op")
         if not isinstance(kind, str) or kind not in fields or set(operation) != fields[kind]:
@@ -173,13 +173,13 @@ def _closed_timeline_operations(operations):
         if kind.endswith(".update") and kind != "caption.update":
             nested = operation["changes"]
             allowed = {"duration_ms", "width", "height", "fps", "schema_version"} if kind == "canvas.update" else (
-                {"muted", "gain_db", "role"} if kind == "track.update" else clip_fields)
+                {"muted", "gain_db", "role", "locked"} if kind == "track.update" else clip_fields)
             if not isinstance(nested, dict) or not nested or set(nested) - allowed:
                 raise ValueError("STUDIO_TIMELINE_EDIT_FIELDS_INVALID")
         elif kind == "track.insert":
             nested = operation["track"]
             required = {"id", "kind", "order", "clips"}
-            if not isinstance(nested, dict) or required - set(nested) or set(nested) - required - {"muted", "gain_db", "role"}:
+            if not isinstance(nested, dict) or required - set(nested) or set(nested) - required - {"muted", "gain_db", "role", "locked"}:
                 raise ValueError("STUDIO_TIMELINE_EDIT_FIELDS_INVALID")
             if nested["clips"] != []:
                 raise ValueError("STUDIO_TIMELINE_EDIT_INSERT_EMPTY_TRACK_REQUIRED")
@@ -199,6 +199,17 @@ def _closed_timeline_operations(operations):
                 raise ValueError("STUDIO_TIMELINE_SOURCE_INVALID")
             AssetParameters.model_validate({"asset_id": snapshot["id"], "version": snapshot["version"],
                 "digest": snapshot["digest"], "kind": snapshot["asset_kind"]})
+        if isinstance(nested, dict) and "locked" in nested and type(nested["locked"]) is not bool:
+            raise ValueError("STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID")
+        if isinstance(nested, dict) and "crop" in nested:
+            crop = nested["crop"]
+            if crop is None and kind == "clip.update":
+                continue
+            if (not isinstance(crop, dict) or set(crop) != {"x", "y", "width", "height"}
+                    or any(type(crop[key]) is not int for key in crop)
+                    or not 0 <= crop["x"] <= 32767 or not 0 <= crop["y"] <= 32767
+                    or not 1 <= crop["width"] <= 32768 or not 1 <= crop["height"] <= 32768):
+                raise ValueError("STUDIO_TIMELINE_CROP_INVALID")
     if len(canonical(operations).encode("utf-8")) > 128_000:
         raise ValueError("STUDIO_TIMELINE_EDIT_BYTES_LIMIT")
 

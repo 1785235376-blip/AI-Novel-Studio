@@ -2,6 +2,7 @@
 from __future__ import annotations
 import base64
 import copy
+from contextlib import contextmanager
 import hashlib
 import json
 import os
@@ -336,7 +337,7 @@ class VideoAssemblyService:
         return self._studio_projection(row)
 
     def reconcile_studio(self, novel_id, branch_id, actor_id, job_id, expected_version, expected_request_digest, *, context, guard,
-                         recover_candidate=None):
+                         recover_candidate=None, recover_review=None):
         """Fence a stopped executor and recover only a proven original Asset.
 
         Acquiring the same cross-process execution lease proves the original
@@ -347,7 +348,8 @@ class VideoAssemblyService:
         if (type(expected_version) is not int or expected_version < 1
                 or not isinstance(expected_request_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", expected_request_digest)):
             raise ValueError("STUDIO_TIMELINE_RECONCILE_VERSION_INVALID")
-        if recover_candidate is not None and not callable(recover_candidate):
+        if (recover_candidate is not None and not callable(recover_candidate)
+                or recover_review is not None and not callable(recover_review)):
             raise ValueError("STUDIO_TIMELINE_RECOVERY_CALLBACK_INVALID")
         guard()
         with workspace_mutation(self.root, "studio-timeline-execution:" + job_id):
@@ -356,9 +358,27 @@ class VideoAssemblyService:
                 raise FileNotFoundError(job_id)
             if row["version"] != expected_version or row["request_digest"] != expected_request_digest:
                 raise CapabilityVersionConflict(copy.deepcopy(row))
-            if row.get("status") not in {"RUNNING", "UNKNOWN"}:
+            if row.get("status") not in {"RUNNING", "UNKNOWN", "REVIEWING"}:
                 raise ValueError("STUDIO_TIMELINE_RECONCILE_NOT_ACTIVE")
             guard()
+            if row["status"] == "REVIEWING":
+                candidate = copy.deepcopy(row.get("output_candidate"))
+                recovered = None
+                def compensate():
+                    nonlocal recovered
+                    def change(current):
+                        if (current["status"] != "REVIEWING" or current["request_digest"] != row["request_digest"]
+                                or current.get("output_candidate") != candidate or current["context"] != row["context"]
+                                or current.get("receipt_digest") != row.get("receipt_digest")):
+                            raise ValueError("STUDIO_TIMELINE_REVIEW_RECOVERY_CHANGED")
+                        current.update(status="AWAITING_REVIEW", phase="HUMAN_REVIEW_REQUIRED", review_state="HUMAN_REVIEW_REQUIRED",
+                            error_code="STUDIO_TIMELINE_REVIEW_NOT_PROMOTED", recovery_state="EXACT_PRIVATE_REVIEW_RECOVERED_NO_REPLAY",
+                            automatic_retry=False)
+                    recovered = self._studio_mutate(novel_id, branch_id, actor_id, job_id, row["version"], change, context=context)
+                if candidate is not None and recover_review is not None:
+                    recover_review(candidate, compensate)
+                guard()
+                return self._studio_projection(recovered if recovered is not None else row)
             asset = None
             if (recover_candidate is not None and row.get("phase") in {"PUBLICATION_READY", "CANDIDATE_RECORDED", "INTERRUPTED_EXECUTION_RECONCILED"}
                     and isinstance(row.get("output_digest"), str) and re.fullmatch(r"[a-f0-9]{64}", row["output_digest"])):
@@ -381,6 +401,13 @@ class VideoAssemblyService:
                     context=context)
             guard()
             return self._studio_projection(row)
+
+    @contextmanager
+    def studio_review_phase(self, job_id):
+        # Share the original timeline execution/recovery lease. A live review
+        # cannot be mistaken for an interrupted reservation by reconcile.
+        with workspace_mutation(self.root, "studio-timeline-execution:" + job_id):
+            yield
 
     @staticmethod
     def _studio_candidate(novel_id, branch_id, actor_id, job_id, context, asset, output_digest):

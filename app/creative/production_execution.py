@@ -54,6 +54,17 @@ class ProductionExecutionService:
         self.timeline_inputs = GraphAssetInputs(self)
         from .graph_timeline_execution import GraphTimelineExecution
         self.graph_timeline = GraphTimelineExecution(self)
+        from .timeline_transfer import TimelineTransfer
+        self.timeline_transfer = TimelineTransfer(self)
+
+    def timeline_transfer_preview(self, nid, scope, actor, tid, value, guard):
+        return self.timeline_transfer.preview(nid, scope, actor, tid, value, guard)
+
+    def timeline_transfer_import(self, nid, scope, actor, tid, value, guard):
+        return self.timeline_transfer.apply(nid, scope, actor, tid, value, guard)
+
+    def timeline_transfer_attachment(self, nid, scope, actor, tid, value, guard):
+        return self.timeline_transfer.attachment(nid, scope, actor, tid, value, guard)
 
     def graph_timeline_preflight(self, nid, scope, actor, parameters, guard, *, document, source_kinds):
         return self.graph_timeline.preflight(nid, scope, actor, parameters, guard,
@@ -460,23 +471,68 @@ class ProductionExecutionService:
                 data = self.workspace.assets.content(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)
                 if hashlib.sha256(data).hexdigest() != candidate["digest"]:
                     raise StaleSourceError("STUDIO_CANDIDATE_BYTES_CHANGED")
-                latest = self.video_owner.get_studio(nid, scope.get("branch_id"), actor, jid, context=context, guard=guard)
-                if (latest["version"] != row["version"] or latest["request_digest"] != row["request_digest"]
-                        or latest["status"] != row["status"] or latest.get("output_candidate") != row.get("output_candidate")):
-                    raise StaleSourceError("STUDIO_CANDIDATE_JOB_CHANGED")
                 result = self.workspace.assets.public(meta)
                 guard()
-            return result, data
-        with self.workspace._asset_scope(nid, scope):
-            meta = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)
-            origin = meta.get("_studio_result_origin", {})
-            if (meta["sha256"] != candidate["digest"] or origin.get("job_id") != jid
-                    or origin.get("graph_binding") != context.get("graph_binding")
-                    or any(origin.get(k) != context[k] for k in ("actor", "scope_key", "incarnation", "request_digest"))):
-                raise ValueError("STUDIO_CANDIDATE_RECEIPT_MISMATCH")
-            data = self.workspace.assets.content(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+            latest, latest_context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+            if (latest["version"] != row["version"] or latest["request_digest"] != row["request_digest"]
+                    or latest["status"] != row["status"] or latest.get("output_candidate") != row.get("output_candidate")
+                    or latest.get("receipt_digest") != row.get("receipt_digest") or latest_context != context):
+                raise StaleSourceError("STUDIO_CANDIDATE_JOB_CHANGED")
             guard()
-        return self.workspace.assets.public(meta), data
+            return result, data
+        # Inspection of a cancelled private result remains available, but its
+        # exact recorded bytes/identity are never replaced by current metadata.
+        # Queue reads stay outside the source/asset phase (V1 queue -> asset).
+        with self.store.source_lease(nid, scope):
+            with self.workspace._asset_scope(nid, scope):
+                if row["status"] == "APPROVED":
+                    meta = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                    approved = self.view(row, owner)["approved_asset_version"]
+                    provenance = self._approved_media_provenance(row, owner, actor)
+                    if (approved != candidate["version"] + 1 or meta.get("version") != approved
+                            or meta.get("_owner_actor_id") is not None or meta.get("deleted_at")
+                            or meta.get("kind") != candidate["kind"] or meta.get("sha256") != candidate["digest"]
+                            or meta.get("novel_id") != nid or meta.get("branch_id") != scope.get("branch_id")
+                            or meta.get("source_job_id") != jid or meta.get("_required_features") != [FLAG]
+                            or meta.get("_origin_provenance") != provenance
+                            or meta.get("_studio_result_origin") != self._media_result_origin(context, jid)
+                            or meta.get("_project_binding") != {"novel_id": nid, "branch_id": scope.get("branch_id"),
+                                "scope_key": context["scope_key"], "incarnation": context["incarnation"]}):
+                        raise StaleSourceError("STUDIO_CANDIDATE_RECEIPT_MISMATCH")
+                    data = self.workspace.assets.content(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                    if hashlib.sha256(data).hexdigest() != candidate["digest"] or len(data) != meta["size"]:
+                        raise StaleSourceError("STUDIO_CANDIDATE_BYTES_CHANGED")
+                else:
+                    meta = self._private_media_candidate(nid, scope, actor, context, jid, candidate)
+                    data = self.workspace.assets.content(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                result = self.workspace.assets.public(meta)
+                guard()
+        latest, latest_context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+        if (latest["version"] != row["version"] or latest["status"] != row["status"] or latest_context != context
+                or latest["request_digest"] != row["request_digest"] or latest.get("receipt_digest") != row.get("receipt_digest")
+                or self.view(latest, owner)["output_candidate"] != candidate):
+            raise StaleSourceError("STUDIO_CANDIDATE_JOB_CHANGED")
+        guard()
+        return result, data
+
+    @staticmethod
+    def _approved_media_provenance(row, owner, actor):
+        # These are the original owners' immutable approval receipts; this
+        # projection neither changes them nor performs an approval.
+        if owner == "image":
+            from ..services.studio_image_execution import _receipt
+            return {**_receipt(row), "receipt_digest": row["receipt_digest"], "human_review": "EXPLICIT_APPROVAL", "review_actor": actor}
+        context = row["context"]
+        if owner == "audio":
+            from ..services.studio_audio_execution import STUDIO_ORIGIN
+            return {"contract": "studio-production-review/1", "studio_origin": STUDIO_ORIGIN, "source_job_id": row["id"],
+                "request_digest": context["request_digest"], "actor": actor, "scope_key": context["scope_key"],
+                "incarnation": context["incarnation"], "source_snapshots": copy.deepcopy(context["sources"]),
+                "output_digest": row["output_digest"], "candidate_version": row["candidate_asset_version"],
+                "provider_binding": copy.deepcopy(context["provider_binding"]), "rights": copy.deepcopy(context["rights"]), "review_actor": actor}
+        candidate = row["output_candidate"]
+        return {"contract": "studio-production-review/1", "job_id": row["id"], "request_digest": row["request_digest"],
+            "output_digest": candidate["digest"], "candidate_version": candidate["version"], "review_actor": actor}
 
     def cancel(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None):
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
@@ -503,25 +559,121 @@ class ProductionExecutionService:
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
             raise CapabilityVersionConflict(self.view(row, owner))
         branch = scope.get("branch_id")
+        recover = lambda captured: self._recover_media_candidate(nid, scope, actor, captured, context, guard,
+            graph_source_guard=graph_source_guard)
+        recover_review = self._review_compensation(nid, scope, actor, context, jid)
         if owner == "image":
             row = self._image(actor).reconcile_studio(nid, branch, actor, jid,
-                expected_version=action.expected_version, expected_request_digest=action.expected_request_digest, guard=guard)
+                expected_version=action.expected_version, expected_request_digest=action.expected_request_digest, guard=guard,
+                recover_candidate=recover, recover_review=recover_review)
         elif owner == "audio":
             row = self._audio(scope, actor).reconcile(nid, jid, action.expected_version, context, guard,
-                expected_request_digest=action.expected_request_digest)
+                expected_request_digest=action.expected_request_digest, recover_candidate=recover, recover_review=recover_review)
         elif owner == "video":
-            row = self.video.reconcile(nid, branch, actor, jid, action, context=context, guard=guard)
+            row = self.video.reconcile(nid, branch, actor, jid, action, context=context, guard=guard,
+                recover_candidate=recover, recover_review=recover_review)
         else:
-            if context.get("graph_binding") is not None:
+            if context.get("graph_binding") is not None and row["status"] != "REVIEWING":
                 if graph_guard is None or graph_source_guard is None:
                     raise ValueError("CREATIVE_GRAPH_MEDIA_SOURCE_GUARD_REQUIRED")
                 graph_guard()
             row = self.video_owner.reconcile_studio(nid, branch, actor, jid, action.expected_version,
                 action.expected_request_digest, context=context, guard=guard,
                 recover_candidate=lambda captured: self._recover_timeline_candidate(nid, scope, actor, captured, context, guard,
-                    graph_source_guard=graph_source_guard))
+                    graph_source_guard=graph_source_guard), recover_review=recover_review)
         guard()
         return self.view(row, owner)
+
+    @staticmethod
+    def _media_result_origin(context, jid):
+        binding = context.get("provider_binding") or {}
+        origin = {"contract": "studio-production-result/1", "job_id": jid,
+            **{key: copy.deepcopy(context[key]) for key in ("scope_key", "incarnation", "actor", "request_digest", "operation_id", "sources")},
+            "provider_id": binding.get("provider_id"), "model_id": binding.get("model_id"), "license_note": context.get("license_note", "")}
+        if context.get("graph_binding") is not None:
+            origin["graph_binding"] = copy.deepcopy(context["graph_binding"])
+        return origin
+
+    def _private_media_candidate(self, nid, scope, actor, context, jid, candidate):
+        """Exact proof only; caller already holds the source -> asset phase."""
+        if not isinstance(candidate, dict) or self.store.incarnation(nid) != context["incarnation"]:
+            raise StaleSourceError("STUDIO_CANDIDATE_OWNER_CHANGED")
+        meta = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+        if (meta.get("novel_id") != nid or meta.get("branch_id") != scope.get("branch_id")
+                or meta.get("_owner_actor_id") != actor or meta.get("version") != candidate["version"]
+                or meta.get("kind") != candidate["kind"] or meta.get("sha256") != candidate["digest"] or meta.get("deleted_at")
+                or meta.get("source_job_id") != jid or meta.get("_required_features") != [FLAG] or meta.get("_origin_provenance") is not None
+                or meta.get("_studio_result_origin") != self._media_result_origin(context, jid)
+                or meta.get("_project_binding") != {"novel_id": nid, "branch_id": scope.get("branch_id"),
+                    "scope_key": context["scope_key"], "incarnation": context["incarnation"]}):
+            raise StaleSourceError("STUDIO_PRIVATE_CANDIDATE_PROOF_CHANGED")
+        data = self.workspace.assets.content(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+        if hashlib.sha256(data).hexdigest() != candidate["digest"] or len(data) != meta["size"]:
+            raise StaleSourceError("STUDIO_CANDIDATE_BYTES_CHANGED")
+        return copy.deepcopy(meta)
+
+    def _review_compensation(self, nid, scope, actor, context, jid):
+        def recover(candidate, compensate):
+            # Internal compensation grants no new authority. A revoked Host or
+            # stale source must not strand this proven unpromoted reservation.
+            # The owner pre-acquires its original queue fence and supplies its
+            # exact CAS write; it runs before the private asset lease ends.
+            try:
+                with self.store.source_lease(nid, scope):
+                    with self.workspace._asset_scope(nid, scope):
+                        self._private_media_candidate(nid, scope, actor, context, jid, candidate)
+                        compensate()
+                return True
+            except Exception:
+                return False
+        return recover
+
+    def _recover_media_candidate(self, nid, scope, actor, captured, context, guard, *, graph_source_guard=None):
+        ready = captured.get("publication_ready")
+        if not isinstance(ready, dict) or set(ready) != {"kind", "output_digest", "output_bytes", "media_type"}:
+            return None
+        if (ready["kind"] not in {"image", "video", "audio"} or type(ready["output_bytes"]) is not int
+                or not 0 < ready["output_bytes"] <= self.workspace.assets.MAX_BYTES):
+            raise ValueError("STUDIO_PUBLICATION_READY_RECEIPT_INVALID")
+        with self.store.source_lease(nid, scope) as document:
+            guard()
+            graph_asset_guard = None
+            if context.get("graph_binding") is not None:
+                if graph_source_guard is None:
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_SOURCE_GUARD_REQUIRED")
+                graph_asset_guard = graph_source_guard(document)
+                if not callable(graph_asset_guard):
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_ASSET_GUARD_REQUIRED")
+            for source in context["sources"]:
+                if source["kind"] != "ASSET": self.source(nid, scope, source, guard)
+            with self.workspace._asset_scope(nid, scope):
+                if graph_asset_guard is not None: graph_asset_guard()
+                if self.store.incarnation(nid) != context["incarnation"]:
+                    raise StaleSourceError("STUDIO_OWNER_CHANGED")
+                for source in context["sources"]:
+                    if source["kind"] == "ASSET":
+                        asset = self.workspace._row(nid, scope, source["id"])
+                        if (asset.get("_owner_actor_id") or (asset["version"], asset["sha256"], asset["kind"]) !=
+                                (source["version"], source["digest"], source["asset_kind"])):
+                            raise StaleSourceError("STUDIO_SOURCE_CHANGED")
+                        self.workspace.assets.content(asset["id"], branch_id=scope.get("branch_id"))
+                key = "studio-production:" + digest([context["scope_key"], context["incarnation"], actor, captured["id"]])
+                matches = [asset for asset in self.workspace.assets.list(nid, branch_id=scope.get("branch_id"),
+                    include_deleted=True, actor_id=actor) if asset.get("idempotency_key") == key]
+                if not matches: return None
+                if len(matches) != 1: raise ValueError("STUDIO_RECOVERY_CANDIDATE_AMBIGUOUS")
+                meta = matches[0]
+                # The original publication creates version 1. No candidate
+                # version was durably captured yet, so a later metadata edit
+                # cannot supply its own expected version as recovery proof.
+                if type(meta.get("version")) is not int or meta["version"] != 1:
+                    raise StaleSourceError("STUDIO_RECOVERY_ORIGINAL_PUBLICATION_CHANGED")
+                candidate = {"id": meta["id"], "version": 1, "digest": ready["output_digest"], "kind": ready["kind"]}
+                asset = self._private_media_candidate(nid, scope, actor, context, captured["id"], candidate)
+                if asset["size"] != ready["output_bytes"] or asset["media_type"] != ready["media_type"]:
+                    raise ValueError("STUDIO_RECOVERY_CANDIDATE_MEASUREMENT_CHANGED")
+                guard()
+                return asset
 
     def _recover_timeline_candidate(self, nid, scope, actor, captured, context, guard, *, graph_source_guard=None):
         """Recover only an already-published original private candidate.
@@ -555,6 +707,7 @@ class ProductionExecutionService:
                 origin = self._timeline_result_origin(context, captured["id"])
                 if (asset.get("kind") != "video" or asset.get("novel_id") != nid or asset.get("branch_id") != scope.get("branch_id")
                         or asset.get("_owner_actor_id") != actor or asset.get("deleted_at") or asset.get("_required_features") != [FLAG]
+                        or type(asset.get("version")) is not int or asset["version"] != 1 or asset.get("_origin_provenance") is not None
                         or asset.get("sha256") != captured["output_digest"] or asset.get("source_job_id") != captured["id"]
                         or asset.get("_studio_result_origin") != origin or asset.get("_project_binding") !=
                             {"novel_id": nid, "branch_id": scope.get("branch_id"), "scope_key": context["scope_key"], "incarnation": context["incarnation"]}):
@@ -570,42 +723,88 @@ class ProductionExecutionService:
         if row["request_digest"] != action.expected_request_digest:
             raise CapabilityVersionConflict(self.view(row, owner))
         if owner == "timeline":
-            return self._review_timeline(nid, scope, actor, jid, row, context, action, guard,
-                graph_source_guard=graph_source_guard)
+            with self.video_owner.studio_review_phase(jid):
+                return self._review_timeline(nid, scope, actor, jid, row, context, action, guard,
+                    graph_source_guard=graph_source_guard)
         _, promote = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
         sources = self._source_guard(nid, scope, guard)
         if owner == "image":
             row = self._image(actor).accept_studio(nid, scope.get("branch_id"), actor, jid,
                 expected_version=action.expected_version, expected_request_digest=action.expected_request_digest,
                 expected_output_digest=action.reviewed_output_digest, guard=guard,
-                source_guard=lambda: [sources(s) for s in context["sources"]], promote=promote)
+                source_guard=lambda: [sources(s) for s in context["sources"]], promote=promote,
+                recover_review=self._review_compensation(nid, scope, actor, context, jid))
         elif owner == "audio":
-            row = self._audio(scope, actor).review(nid, jid, action.expected_version, context, guard, sources, action.reviewed_output_digest, promote)
+            row = self._audio(scope, actor).review(nid, jid, action.expected_version, context, guard, sources, action.reviewed_output_digest, promote,
+                recover_review=self._review_compensation(nid, scope, actor, context, jid))
         else:
+            return self._review_video(nid, scope, actor, jid, row, context, action, guard, sources, promote)
+        guard()
+        return self.view(row, owner)
+
+    def _review_video(self, nid, scope, actor, jid, captured, context, action, guard, sources, promote):
+        with self.video.review_phase(jid):
+            row = self.video.get(nid, scope.get("branch_id"), actor, jid, context=context, guard=guard)
+            if row["version"] != captured["version"] or row["request_digest"] != action.expected_request_digest:
+                raise CapabilityVersionConflict(self.view(row, "video"))
             candidate = row.get("output_candidate")
             if candidate is None or candidate["digest"] != action.reviewed_output_digest:
                 raise StaleSourceError("STUDIO_REVIEW_OUTPUT_CHANGED")
             if row["version"] != action.expected_version:
-                raise CapabilityVersionConflict(self.view(row, owner))
+                raise CapabilityVersionConflict(self.view(row, "video"))
             if row["status"] not in {"AWAITING_REVIEW", "SUCCEEDED", "REVIEWING", "APPROVED"}:
                 raise ValueError("STUDIO_PRODUCTION_JOB_NOT_REVIEWABLE")
             for source in context["sources"]: sources(source)
-            if row["status"] == "APPROVED": return self.view(row, owner)
+            provenance = {"contract": "studio-production-review/1", "job_id": jid,
+                "request_digest": row["request_digest"], "output_digest": candidate["digest"], "candidate_version": candidate["version"]}
+            if row["status"] == "APPROVED":
+                with self.store.source_lease(nid, scope):
+                    with self.workspace._asset_scope(nid, scope):
+                        meta = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                        if (meta.get("_owner_actor_id") is not None or meta.get("version") != candidate["version"] + 1
+                                or meta.get("sha256") != candidate["digest"] or meta.get("deleted_at")
+                                or meta.get("kind") != "video" or meta.get("novel_id") != nid or meta.get("branch_id") != scope.get("branch_id")
+                                or meta.get("source_job_id") != jid or meta.get("_required_features") != [FLAG]
+                                or meta.get("_project_binding") != {"novel_id": nid, "branch_id": scope.get("branch_id"),
+                                    "scope_key": context["scope_key"], "incarnation": context["incarnation"]}
+                                or meta.get("_origin_provenance") != {**provenance, "review_actor": actor}
+                                or meta.get("_studio_result_origin") != self._media_result_origin(context, jid)
+                                or row.get("approved_asset_version") != meta.get("version")):
+                            raise StaleSourceError("STUDIO_CANDIDATE_APPROVAL_CHANGED")
+                        data = self.workspace.assets.content(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                        if hashlib.sha256(data).hexdigest() != candidate["digest"] or len(data) != meta["size"]:
+                            raise StaleSourceError("STUDIO_CANDIDATE_BYTES_CHANGED")
+                guard()
+                return self.view(row, "video")
             if row["status"] != "REVIEWING":
                 row = self.video_owner._studio_mutate(nid, scope.get("branch_id"), actor, jid, row["version"],
                     lambda current: current.update(status="REVIEWING"), context=context)
             reviewed_version = row["version"]
-            provenance = {"contract": "studio-production-review/1", "job_id": jid,
-                "request_digest": row["request_digest"], "output_digest": candidate["digest"], "candidate_version": candidate["version"]}
             def job_current():
                 current = self.video_owner._studio_read(nid, scope.get("branch_id"), actor, jid, context=context)
-                if current["version"] != reviewed_version or current["status"] != "REVIEWING":
+                if (current["version"] != reviewed_version or current["status"] != "REVIEWING"
+                        or current["request_digest"] != action.expected_request_digest or current.get("output_candidate") != candidate):
                     raise ValueError("STUDIO_REVIEW_ATTEMPT_CHANGED")
-            asset = promote(candidate["id"], candidate["version"], provenance, job_current)
+            try:
+                asset = promote(candidate["id"], candidate["version"], provenance, job_current)
+            except Exception:
+                # Only the exact unpromoted reservation becomes cancellable/reviewable again;
+                # durable promotion or ambiguous evidence remains REVIEWING.
+                recover = self._review_compensation(nid, scope, actor, context, jid)
+                def compensate():
+                    def restore(current):
+                        if (current["status"] != "REVIEWING" or current["request_digest"] != action.expected_request_digest
+                                or current.get("output_candidate") != candidate):
+                            raise ValueError("STUDIO_REVIEW_ATTEMPT_CHANGED")
+                        current.update(status="AWAITING_REVIEW", review_state="HUMAN_REVIEW_REQUIRED")
+                    self.video_owner._studio_mutate(nid, scope.get("branch_id"), actor, jid, reviewed_version, restore, context=context)
+                recover(candidate, compensate)
+                raise
+            job_current()
             row = self.video_owner._studio_mutate(nid, scope.get("branch_id"), actor, jid, reviewed_version,
                 lambda current: current.update(status="APPROVED", review_state="ORIGINAL_OWNER_REVIEWED", approved_asset_version=asset["version"]), context=context)
-        guard()
-        return self.view(row, owner)
+            guard()
+            return self.view(row, "video")
 
     def _review_timeline(self, nid, scope, actor, jid, captured, context, action, guard, *, graph_source_guard=None):
         """Reserve and promote against one fixed original source/asset phase.
@@ -705,8 +904,16 @@ class ProductionExecutionService:
 
     @staticmethod
     def _timeline_view(row, scope):
-        return {**{k: copy.deepcopy(row[k]) for k in ("id", "novel_id", "title", "version", "timeline_digest", "timeline", "created_at", "updated_at")},
+        result = {**{k: copy.deepcopy(row[k]) for k in ("id", "novel_id", "title", "version", "timeline_digest", "timeline", "created_at", "updated_at")},
             "branch_id": scope.get("branch_id")}
+        transfer = row.get("last_edit") or {}
+        if transfer.get("operation") == "TRANSFER_IMPORT":
+            if (row["version"] != transfer.get("input_version", -1) + 1 or row["timeline_digest"] != transfer.get("output_digest")):
+                raise ValueError("STUDIO_TRANSFER_RECEIPT_CORRUPT")
+            result["transfer_receipt"] = {key: copy.deepcopy(transfer[key]) for key in (
+                "operation", "request_id", "input_version", "input_digest", "output_digest", "preview_digest", "format",
+                "transfer_input_digest", "acknowledge_losses")}
+        return result
 
     def _callbacks(self, nid, scope, actor, context, guard, *, graph_source_guard=None):
         def timeline_current(document):
@@ -875,7 +1082,13 @@ class ProductionExecutionService:
             def resolve(pid, capability):
                 before_send()
                 return resolve_provider(pid, capability, self.vault, self.transport)
-            row = self._audio(scope, actor).execute(nid, jid, action.expected_version, context, guard, source_guard, resolve, publish, before_send)
+            execution_guard = guard
+            if command.operation_id == "m8.audio.trim" and context.get("graph_binding") is not None:
+                if graph_guard is None:
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_DISPATCH_GUARD_REQUIRED")
+                def execution_guard():
+                    guard(); graph_guard()
+            row = self._audio(scope, actor).execute(nid, jid, action.expected_version, context, execution_guard, source_guard, resolve, publish, before_send)
         guard()
         return self.view(row, owner)
 
@@ -946,6 +1159,7 @@ class ProductionExecutionService:
 
     def timeline_save(self, nid, scope, actor, tid, value, guard):
         from ..services.studio_timeline_render import normalize_studio_timeline, studio_sources
+        from ..services.studio_timeline_edit import require_timeline_lock_preservation
         body = TimelineSave.model_validate(value)
         context = self._base(nid, scope, actor, guard)
         timeline = normalize_studio_timeline(body.timeline)
@@ -958,6 +1172,7 @@ class ProductionExecutionService:
                 collection[row["id"]] = row
             else:
                 row = self._owned_timeline(nid, scope, actor, tid, context, document)
+                timeline = require_timeline_lock_preservation(row["timeline"], timeline)
                 if len(row["history"]) >= 100: raise ValueError("STUDIO_TIMELINE_HISTORY_LIMIT")
                 change_row(row, actor, body.expected_version, lambda current: current.update(title=body.title, timeline=timeline,
                     timeline_digest=digest(timeline), last_edit=None))
@@ -1005,6 +1220,7 @@ class ProductionExecutionService:
 
     def timeline_restore(self, nid, scope, actor, tid, value, guard):
         from ..services.studio_timeline_render import normalize_studio_timeline
+        from ..services.studio_timeline_edit import require_timeline_lock_preservation
         body = TimelineRestore.model_validate(value)
         context = self._base(nid, scope, actor, guard)
         with self.timeline_inputs.transaction(nid, scope, actor, guard) as document:
@@ -1017,6 +1233,7 @@ class ProductionExecutionService:
             original = versions[0]
             timeline = normalize_studio_timeline(original["timeline"])
             if digest(timeline) != body.restore_digest: raise ValueError("STUDIO_TIMELINE_HISTORY_CORRUPT")
+            timeline = require_timeline_lock_preservation(row["timeline"], timeline)
             self._timeline_sources_current(nid, scope, timeline, guard)
             if len(row["history"]) >= 100: raise ValueError("STUDIO_TIMELINE_HISTORY_LIMIT")
             change_row(row, actor, body.expected_version, lambda current: current.update(title=original["title"], timeline=timeline,

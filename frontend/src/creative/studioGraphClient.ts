@@ -507,7 +507,7 @@ function graphMediaRuntime(value: unknown, projectId: string, branchId: string |
       preview = { node_id: nodeId, input_digest: digest(p.input_digest), preview_digest: digest(p.preview_digest), command, production_preview: production };
     }
     if (source.execution !== null) {
-      const e = record(source.execution); closed(e, ['node_id', 'owner', 'job_id', 'status', 'receipt_state', 'send_reserved', 'job', 'review_state']);
+      const e = record(source.execution); closed(e, ['node_id', 'owner', 'job_id', 'status', 'receipt_state', 'send_reserved', 'job', 'review_state', 'review_recovery']);
       if (e.node_id !== nodeId || !['image', 'video', 'audio', 'timeline'].includes(e.owner as string) || !executionStatuses.includes(e.status as ProductionJob['status'])
         || !['RECORDED', 'UNKNOWN_NO_AUTOMATIC_REPLAY'].includes(e.receipt_state as string) || !['NONE', 'REVIEW_RESERVED', 'APPROVED'].includes(e.review_state as string)) invalid();
       const jobId = e.job_id === null ? null : resourceId(e.job_id), job = e.job === null ? null : mediaJob(e.job);
@@ -515,9 +515,18 @@ function graphMediaRuntime(value: unknown, projectId: string, branchId: string |
       const expectedOwner = preview?.command.operation_id === 'm9.timeline.multitrack' ? 'timeline' : preview?.command.operation_id.startsWith('m5.') ? 'image' : preview?.command.operation_id.startsWith('m7.') ? 'video' : 'audio';
       if (preview && e.owner !== expectedOwner) invalid();
       if (e.owner === 'timeline' && job && (job.remote_compute_may_continue || job.output_candidate && job.output_candidate.kind !== 'video')) invalid();
+      let reviewRecovery: StudioGraphMediaExecution['review_recovery'];
+      if (e.review_recovery !== undefined) {
+        const proof = record(e.review_recovery); closed(proof, ['contract', 'job_version', 'request_digest']);
+        if (proof.contract !== 'creative-graph-review-recovery/1' || !jobId || e.status !== 'REVIEWING' || e.review_state !== 'REVIEW_RESERVED') invalid();
+        reviewRecovery = { contract: 'creative-graph-review-recovery/1', job_version: integer(proof.job_version, 1, Number.MAX_SAFE_INTEGER),
+          request_digest: digest(proof.request_digest) };
+        if (job && (job.status !== 'REVIEWING' || job.version !== reviewRecovery.job_version || job.request_digest !== reviewRecovery.request_digest)) invalid();
+      }
       execution = { node_id: nodeId, owner: e.owner as StudioGraphMediaExecution['owner'], job_id: jobId, status: code(e.status),
         receipt_state: e.receipt_state as StudioGraphMediaExecution['receipt_state'], send_reserved: bool(e.send_reserved),
-        job: hidePrivate ? null : job, review_state: e.review_state as StudioGraphMediaExecution['review_state'] };
+        job: hidePrivate ? null : job, review_state: e.review_state as StudioGraphMediaExecution['review_state'],
+        ...(reviewRecovery ? { review_recovery: reviewRecovery } : {}) };
     }
     if (!execution && !['PENDING', 'AWAITING_PREVIEW', 'STALE'].includes(status)) invalid();
     return { node_id: nodeId, status, preview: hidePrivate ? null : preview, execution };
@@ -584,6 +593,12 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   const observedGraphs = new Map<string, { version: number; can_edit: boolean; enabledIds: string[]; definition_digest: string;
     schemaVersion: number; nodes: Record<string, StudioGraphDefinitionId> }>();
   const observedRuns = new Map<string, string>();
+  const observedReviewRecoveries = new Map<string, { version: number; workflow: string;
+    nodes: Map<string, { owner: StudioGraphMediaExecution['owner']; jobId: string;
+      proof: NonNullable<StudioGraphMediaExecution['review_recovery']> }> }>();
+  const recoveryWorkflow = (run: StudioGraphRun) => JSON.stringify([run.graph_id, run.graph_version,
+    run.status, run.current_node_id, run.reviewed, run.cache,
+    Object.entries(run.node_states).sort(([left], [right]) => left.localeCompare(right)).map(([nodeId, state]) => [nodeId, state.status])]);
 
   function owner(row: Record<string, unknown>): StudioGraphOwner {
     if (row.project_id !== projectId) mismatch();
@@ -704,6 +719,16 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if (row.asset_output !== undefined) result.asset_output = graphTextAssetOutput(row.asset_output, result, observedGraphs.get(graphId));
     if (observedRuns.has(runId) && observedRuns.get(runId) !== graphId) mismatch();
     observedRuns.set(runId, graphId);
+    const recoveryNodes = new Map<string, { owner: StudioGraphMediaExecution['owner']; jobId: string;
+      proof: NonNullable<StudioGraphMediaExecution['review_recovery']> }>();
+    for (const node of result.media_runtime?.nodes || []) {
+      const execution = node.execution;
+      if (execution?.job_id && execution.review_recovery) recoveryNodes.set(node.node_id,
+        { owner: execution.owner, jobId: execution.job_id, proof: execution.review_recovery });
+    }
+    if (recoveryNodes.size) observedReviewRecoveries.set(runId,
+      { version: result.version, workflow: recoveryWorkflow(result), nodes: recoveryNodes });
+    else observedReviewRecoveries.delete(runId);
     return result;
   }
   function checkedModelRun(value: unknown, runId: string): StudioGraphRun {
@@ -725,9 +750,27 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   }
   function mediaJobAction(runId: string, action: 'execute' | 'refresh' | 'reconcile', value: StudioGraphMediaJobInput): Promise<StudioGraphRun> {
     const payload = mediaJobInput(value);
+    // Only an explicitly observed original REVIEWING receipt permits a masked
+    // maintenance reply. Ordinary execution/refresh still require their job.
+    const recovery = action === 'reconcile' ? observedReviewRecoveries.get(runId) : undefined;
+    const original = recovery?.nodes.get(payload.node_id);
+    const recoveryRequest = recovery?.version === payload.expected_version && original
+      && original.proof.job_version === payload.expected_job_version && original.proof.request_digest === payload.expected_request_digest;
     return transport.json(`${runUrl(runId)}/media/${action}`, 'POST', payload).then(value => {
-      const result = checkedMediaRun(value, runId, payload.node_id), job = result.media_runtime!.nodes.find(item => item.node_id === payload.node_id)?.execution?.job;
-      if (!job || job.request_digest !== payload.expected_request_digest) invalid(); return result;
+      const result = checkedMediaRun(value, runId, payload.node_id), execution = result.media_runtime!.nodes.find(item => item.node_id === payload.node_id)?.execution;
+      const job = execution?.job;
+      if (job) { if (job.request_digest !== payload.expected_request_digest) invalid(); return result; }
+      if (!recoveryRequest || !recovery || !original || !result.stale || !execution
+        || execution.job_id !== original.jobId || execution.owner !== original.owner || execution.review_state !== 'REVIEW_RESERVED'
+        || execution.receipt_state !== 'RECORDED' || recoveryWorkflow(result) !== recovery.workflow) invalid();
+      if (execution.status === 'AWAITING_REVIEW') {
+        if (result.version !== payload.expected_version + 1 || execution.review_recovery !== undefined) invalid();
+      } else if (execution.status === 'REVIEWING') {
+        if (![payload.expected_version, payload.expected_version + 1].includes(result.version)
+          || execution.review_recovery?.job_version !== payload.expected_job_version
+          || execution.review_recovery?.request_digest !== payload.expected_request_digest) invalid();
+      } else invalid();
+      return result;
     });
   }
 

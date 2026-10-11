@@ -61,7 +61,7 @@
 ## 保留的未完成项
 
 - Schema 3 的 `ModelDispatch.archive_result=true` 已沿原 GraphTextAssets／GraphAssetInputs 接入文字私有档案与真实 human_review 节点审核，混合媒体执行也复核档案证明；原 schema 2 路径保持。详见 [文字档案与剪辑导出](text-archive-timeline-export.md)。
-- 独立多轨时间线已接原子编辑、原版本历史恢复、显式 schema 2 图片／变速／淡入淡出／视频声音混音和 H.264/VP9 编码导出。Graph 时间线已接原编辑、队列、执行、候选、审核和恢复；自动 ASR／音画对齐和跨软件往返仍未实现，不能冒充验收完成。
+- 独立多轨时间线已接原子编辑、原版本历史恢复、显式 schema 2 图片／变速／淡入淡出／视频声音混音和 H.264/VP9 编码导出。Graph 时间线已接原编辑、队列、执行、候选、审核和恢复。Phase13 已实现 OTIO／SRT／WebVTT 转换及原 CAS 导入；Resolve／Premiere 实际往返仍 NOT_RUN。原 Registry AUDIO／本地 ASR 执行源码已接入，但应用缺可信 Whisper loaded-model admission，ASR 仍 NOT_CONFIGURED；强制对齐仍缺准入 engine，不能冒充验收完成。
 - 当前源码 API／V2 coverage metadata 待恢复验证后由原工具同步；历史 `776286f` 的 8 项 metadata 只对应旧 `5ed1cbee` 快照，冻结 V1 manifest 不变。
 - a40df 的原 PostgreSQL failed-call、终态超时、取消与不完整 CI、F00 INTEGRATED＋39 PARTIAL、独立复审 BLOCKED 和历史 NOT_RUN／LOCAL_REQUIRED 原样保留。Windows／原 vault／WebView2／GPU／真实模型全流程仍需最终源码上的证据。
 
@@ -78,3 +78,11 @@
 入队回执中断保留 ADMISSION_UNKNOWN，只查同一原 job，不重复编辑／入队。取消可能先于入队写入：入队回复／同步失败后再次读取原终态，明确取消刚出现的同绑定原队列记录。原执行中断仅 reconcile 已发布的确切原私有候选，校验原出处／幂等键／字节后恢复原回执；无可靠结果保留 UNKNOWN，不能重新渲染。Graph 绑定 timeline job 的独立入口不授予执行／审核权限。候选审核继续原私有资产 promote 和 media_review，未审核结果不成为 ASSET_REF。
 
 前端通过同 Host transport 的显式按钮读取原时间线，选择准确快照、编辑和 clip 绑定。`StudioGraphTimelineNodeEditor`／`studioGraphTimelineContract` 是可替换表单／严格 DTO；Graph 运行面板保留预览、剪辑并仅入队、明确导出、原记录读取、候选核验、审核／驳回和取消。Opus 可以重构 JSX 与交互，保留原 controller/client、准确同意、单次发送、UNKNOWN、CAS 和私有 Blob 生命周期。本批所有运行／测试／构建／CI／Windows／GPU／模型验收仍 NOT_RUN — USER_DEFERRED。
+
+## Phase13：中断审核的原 owner 维护
+
+原 Graph／来源编辑或删除后，普通执行与审核仍拒绝旧快照。只有原 run 的 durable definition、typed node／output／cache／preview／model／media binding 和实际 REVIEWING owner 均吻合，GET 才可返回三字段 `review_recovery={contract:'creative-graph-review-recovery/1',job_version,request_digest}`。其余私有投影隐藏，不泄露候选、Prompt、路径或 Provider 详情。
+
+明确 reconcile 核对原 run version、node、job version／request digest、Host／actor／scope／incarnation，在原 owner 的 execution lease 结束后，只能用准确未提升私有候选证明释放审核预留。只更新原 media_executions 回执，不改 typed_outputs、node_states、current_node_id、trace，也不调用归档、_drive、发送或提升。原 Graph 当前版本／是否存在不作为内部维护的授权来源；普通预览、执行、候选和审核保留原 freshness 门禁。已提升、改变或缺证据候选保留 REVIEWING。
+
+前端只有当前捕获的原 Host client 实际读到恢复证据，才接受对应 masked reconcile 回执；成功必须原 run version 加一、AWAITING_REVIEW／REVIEW_RESERVED／RECORDED、同 owner／job 和不变 workflow。未证明的 REVIEWING 保留原 job version／request digest。Opus 可换视图，但不能把维护入口变成重新审核、节点推进或结果采用。

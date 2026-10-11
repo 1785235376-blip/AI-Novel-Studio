@@ -530,7 +530,7 @@ def _operations():
             sources=["沿用原音频资产和可选计划版本证据，检查当前操作者范围和字幕版本。"],
             outputs=["原服务保存带版本的手工字幕文档和有界 SRT／VTT 附件。"],
             review=["时间与文字由人明确决定；拆分、合并、保存不能证明语音识别或对齐验收已过。"],
-            limitations=["自动对齐／字幕烧录仍为 NOT_CONFIGURED；手工字幕编辑不实现自动转录。"]),
+            limitations=["自动对齐仍为 NOT_CONFIGURED；字幕烧录只有显式配置原处理 adapter 后才可执行，真实质量为 NOT_RUN；手工字幕编辑不实现自动转录。"]),
         _reserved("m9.timeline.multitrack", "多轨剪辑／混音／成片渲染（预留）", inputs=["绑定视频／音频／字幕资产版本，限制轨道、片段和时间基准编辑，并明确最终导出规格。"], sources=reserved_sources, outputs=reserved_outputs, blocker="MULTITRACK_NLE_OWNER_NOT_CONNECTED"),
     ]
     # The advisory catalog still grants no execution. These descriptors now
@@ -605,6 +605,24 @@ def _operations():
     timeline.input_requirements.append("显式 schema 3 timeline_export 绑定原时间线 ID／version／digest；闭合剪辑与最多 8 个已审核 ASSET_REF→clip 绑定合计最多 40 操作，预览不执行。")
     timeline.output_requirements.append("Graph 确认摘要后，在原 raw scope／asset phase 同时保存剪辑历史与节点 claim，再仅入队原 VideoAssemblyService；明确 execute 才调用同一个本地 FFmpeg owner。")
     timeline.review_requirements.append("唯一 media_review 审核原 timeline candidate 后输出 video ASSET_REF；原独立任务入口不能执行或审核 Graph 绑定任务，UNKNOWN 只查原记录且不重复剪辑或渲染。")
+    timeline.input_requirements.append("schema 2 可选源编码像素 crop 矩形；实际源尺寸在原渲染器校验，裁切后缩放。轨道 locked 是作者锁，只有原 track.update 的独立解锁动作可以解除。")
+    timeline.review_requirements.append("原媒体 publish 前持久保存真实输出摘要、大小与类型；显式 reconcile 仅恢复同一来源与私有字节，不重发。未提升审核失败按精确私有候选证明补偿，已提升或不明的 REVIEWING 保留。")
+    transfer_owner = "app.creative.production_execution.ProductionExecutionService."
+    transfer_actions = [
+        _action("transfer_preview", "POST", production + "/timelines/{tid}/transfer-preview", transfer_owner + "timeline_transfer_preview", "TimelineTransferPreview", permission="domain.read", host=True),
+        _action("transfer_import", "POST", production + "/timelines/{tid}/transfer-import", transfer_owner + "timeline_transfer_import", "TimelineTransferImport", host=True),
+        _action("transfer_attachment", "POST", production + "/timelines/{tid}/transfer-attachment", transfer_owner + "timeline_transfer_attachment", "TimelineTransferDownload", permission="domain.read", host=True),
+    ]
+    exchange = next(item for item in operations if item.id == "m9.timeline.exchange")
+    exchange.actions.extend(transfer_actions)
+    exchange.input_requirements.append("Studio 原时间线支持 OTIO 的明确预览、精确媒体快照映射、转换损失确认及 CAS 导入；导出附件重新核对预览摘要／来源，不写客户端路径。")
+    exchange.output_requirements.append("原官方 OTIO 0.18.1 serializer 与有界转换器处理多轨、Gap、精确 rational speed 与只读媒体引用；Studio 完整 metadata 仅在原生投影未改变时还原。")
+    exchange.limitations.append("导入不打开外部引用；跨软件效果／混音／裁切／锁定等差异须确认 loss receipt。Resolve／Premiere、FCPXML／EDL 与交互 proxy 播放未因此通过验收。")
+    subtitle = next(item for item in operations if item.id == "m9.subtitle.edit")
+    subtitle.actions.extend(transfer_actions)
+    subtitle.input_requirements.append("原 Studio 时间线另可导入／导出闭合 SRT／WebVTT；预览不写，替换已有字幕须明确确认损失与准确版本。")
+    subtitle.output_requirements.append("原 SubtitleTimelineService 持久处理任务可注入 V2 显式配置的受控 FFmpeg 烧录；本地 ASR 执行代码经原 Registry AUDIO 与可信 Host model admission，未配置则拒绝执行。")
+    subtitle.limitations.append("真实 ASR 需要可靠的已启用模型／runtime 身份准入；whisper.cpp wire 本身不证明模型哈希。Forced alignment engine 仍 NOT_CONFIGURED，不能把 ASR 段时间戳写成强制对齐。")
     return [replacements.get(operation.id, operation) for operation in operations]
 
 

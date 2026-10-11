@@ -15,9 +15,9 @@ from pydantic import Field
 
 from ..experimental.common import StaleSourceError, change_row, check_version
 from ..experimental.declarative_agents import _ScopedOriginalWorkflowHost
-from .graph_execution import digest
+from .graph_execution import ADAPTER_VERSION, digest
 from .graph_models import (Digest, Id, Strict, history_limit, validate_output_ports,
-    MAX_RECORD_BYTES, MAX_SCOPE_BYTES, MAX_OUTPUT_BYTES)
+    GraphPreflight, MAX_NODES, MAX_RECORD_BYTES, MAX_SCOPE_BYTES, MAX_OUTPUT_BYTES, parse_graph)
 from .graph_media_binding import make_graph_binding_digest
 from .production_execution_models import MediaCommand, MediaCreate, MediaJobAction, MediaReview
 from .graph_timeline_execution import GraphTimelineCommand
@@ -609,12 +609,206 @@ class CreativeGraphMediaRuntime:
         return self._synchronize(nid, scope, actor, row, node_id, execution, job, current)
 
     def reconcile(self, nid, scope, actor, rid, value, guard):
+        body = MediaJobRequest.model_validate(value)
+        _, current = self.service._context(nid, scope, actor, guard)
+        with self.service.asset_inputs.phase(nid, scope, actor, current) as state:
+            captured = deepcopy(self._bookkeeping_row(nid, scope, actor, rid, current, state))
+            check_version(captured, body.expected_version)
+            self._node(captured, body.node_id)
+        job = self._job(nid, scope, actor, captured, body.node_id, current)
+        if (job["version"], job["request_digest"]) != (body.expected_job_version, body.expected_request_digest):
+            raise StaleSourceError("CREATIVE_GRAPH_MEDIA_EXACT_OWNER_VERSION_REQUIRED")
+        if job["status"] == "REVIEWING":
+            return self._reconcile_review(nid, scope, actor, captured, body, job, current)
+        # Ordinary execution reconciliation retains every original source,
+        # timeline, route, deadline and workflow transition gate.
         body, current, row, node_id, job = self._checked_action(nid, scope, actor, rid, value, guard)
         execution = deepcopy(row["media_executions"][node_id])
         graph_guard, source_guard = self._guards(nid, scope, actor, row, node_id, current)
         job = self.production.reconcile(nid, scope, actor, execution["owner"], execution["job_id"], self._job_action(body), current,
             graph_binding=execution["graph_binding"], graph_guard=graph_guard, graph_source_guard=source_guard)
         return self._synchronize(nid, scope, actor, row, node_id, execution, job, current)
+
+    def _bookkeeping_row(self, nid, scope, actor, rid, current, state):
+        """Validate original metadata without granting current source authority.
+
+        This is limited to stopped-review bookkeeping/read receipts. It is never
+        used by preview, dispatch, execution, refresh, candidate or approval.
+        """
+        current()
+        row = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
+        if row.get("graph_schema_version") != 3 or row.get("media_execution_contract") != CONTRACT:
+            raise ValueError("CREATIVE_GRAPH_MEDIA_CONTRACT_REQUIRED")
+        # The current Graph can have been edited/deleted after reservation.
+        # Validate the durable original run snapshot; never revive that Graph
+        # or let this metadata proof authorize a source, send or transition.
+        snapshot = row.get("definition_snapshot")
+        selected = row.get("selected_closure")
+        if (not isinstance(snapshot, dict) or not isinstance(selected, list)
+                or any(not isinstance(node_id, str) for node_id in selected)
+                or len(set(selected)) != len(selected) or not selected
+                or type(row.get("graph_version")) is not int or row["graph_version"] < 1
+                or row.get("adapter_version") != ADAPTER_VERSION
+                or any(not isinstance(row.get(key), str) or len(row[key]) != 64
+                    or any(character not in "0123456789abcdef" for character in row[key])
+                    for key in ("graph_digest", "execution_digest", "request_digest"))):
+            raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_BINDING_CHANGED")
+        definition = parse_graph({"schema_version": 3, "title": snapshot.get("title"),
+            "nodes": row.get("typed_nodes"), "edges": row.get("typed_edges")}).model_dump()
+        nodes, edges = definition["nodes"], definition["edges"]
+        if nodes != row["typed_nodes"] or edges != row["typed_edges"] or set(selected) != {node["id"] for node in nodes}:
+            raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_BINDING_CHANGED")
+        # check_assets=False uses only schema/topology and feature authority;
+        # it does not look up current assets/timeline/model routes or jobs.
+        preflight = self.service._preflight({"id": row["graph_id"], "novel_id": nid, "scope": scope,
+            BINDING: row[BINDING], "version": row["graph_version"], "definition_digest": row["graph_digest"],
+            "definition": definition}, GraphPreflight(expected_version=row["graph_version"], target_node_ids=selected),
+            actor, check_assets=False)
+        pairs = list(dict.fromkeys((edge["source_node_id"], edge["target_node_id"]) for edge in edges))
+        expected_snapshot = {"title": definition["title"],
+            "nodes": [{"id": node["id"], "name": node["id"], "config": {},
+                "type": "manual_approval" if node["definition_id"] in {"human_review", "media_review"} else "agent_task"}
+                for node in nodes],
+            "edges": [{"source": source, "target": target} for source, target in pairs],
+            "topological_order": preflight["execution_order"]}
+        statuses = {"PENDING", "WAITING_APPROVAL", "QUEUED", "WORKING", "SUCCEEDED", "FAILED", "SKIPPED", "REJECTED"}
+        states = row.get("node_states")
+        if (not preflight["executable"] or preflight["selected_closure"] != selected or snapshot != expected_snapshot
+                or row.get("step_limit") != max(MAX_NODES, len(nodes)) or not isinstance(states, dict)
+                or set(states) != set(selected) or any(not isinstance(value, dict) or value.get("status") not in statuses
+                    for value in states.values())
+                or row.get("status") not in {"QUEUED", "RUNNING", "WAITING_APPROVAL", "PAUSED", "SUCCEEDED", "FAILED", "CANCELLED", "REJECTED"}):
+            raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_ENGINE_CHANGED")
+        by_id = {node["id"]: node for node in nodes}
+        outputs = row.get("typed_outputs")
+        if not isinstance(outputs, dict) or set(outputs) - set(by_id):
+            raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_OUTPUT_CHANGED")
+        for node_id, output in outputs.items():
+            if states[node_id]["status"] != "SUCCEEDED":
+                raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_OUTPUT_CHANGED")
+            validate_output_ports(by_id[node_id]["definition_id"], output, schema_version=3)
+            receipt = row.get("cache_keys", {}).get(node_id, {})
+            engine_output = (states[node_id].get("output") or {}).get("result") or {}
+            if (engine_output.get("ports") != output or receipt.get("output_digest") != digest(output)
+                    or receipt.get("key") != self.service.executor._key(row, actor, by_id[node_id],
+                        self.service.executor._inputs(row, node_id, outputs))):
+                raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_OUTPUT_CHANGED")
+            if by_id[node_id]["definition_id"] == "human_review":
+                approved = states[node_id].get("output") or {}
+                if (output.get("reviewed_draft") != self.service.executor._inputs(row, node_id, outputs)["draft"]
+                        or approved.get("approved_by") != actor.strip() or not approved.get("approved_at")
+                        or engine_output.get("provenance") != {"method": "ORIGINAL_HUMAN_REVIEW", "review_node_id": node_id,
+                            "reviewed_output_digest": digest([row["id"], node_id, row["graph_version"], output["reviewed_draft"]])}):
+                    raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_OUTPUT_CHANGED")
+        if any(node["definition_id"] == "text_generate" for node in nodes):
+            if self.service.model_runtime is None:
+                raise StaleSourceError("CREATIVE_MODEL_RUNTIME_UNAVAILABLE")
+            self.service.model_runtime.validate_snapshot(row)
+        self.service.executor._timing(row)
+        self.validate_snapshot(row)
+        current()
+        return row
+
+    def _review_recovery_binding(self, row, node_id, job):
+        execution = row["media_executions"].get(node_id)
+        candidate = row.get("typed_outputs", {}).get(node_id, {}).get("candidate")
+        if not execution:
+            raise StaleSourceError("CREATIVE_GRAPH_MEDIA_EXACT_REVIEW_RECOVERY_REQUIRED")
+        self._validate_job(row, node_id, execution, job)
+        if (execution["review_state"] != "REVIEW_RESERVED" or not candidate
+                or not job.get("output_candidate") or candidate["owner"] != execution["owner"]
+                or candidate["job_id"] != execution["job_id"] or candidate["request_digest"] != execution["request_digest"]
+                or candidate["job_version"] > job["version"]
+                or candidate["asset"] != {"asset_id": job["output_candidate"]["id"], "version": job["output_candidate"]["version"],
+                    "digest": job["output_candidate"]["digest"], "kind": job["output_candidate"]["kind"]}):
+            raise StaleSourceError("CREATIVE_GRAPH_MEDIA_EXACT_REVIEW_RECOVERY_REQUIRED")
+        validate_output_ports("timeline_export" if execution["owner"] == "timeline" else "media_generate",
+            {"candidate": candidate}, schema_version=3)
+        return execution
+
+    def _bookkeeping_view(self, row, jobs):
+        """Masked original GraphRun DTO; unverified sources remain unusable."""
+        result = {key: deepcopy(row[key]) for key in ("id", "version", "graph_id", "graph_version", "status",
+            "current_node_id", "cache", "created_at", "updated_at", "reviewed")}
+        result.update(project_id=row["novel_id"], scope=deepcopy(row["scope"]), stale=True,
+            timeout_seconds=row["timeout_seconds"], deadline_at=self.service.executor._timing(row),
+            node_states={node_id: {"status": value["status"], "reviewed": node_id in row.get("reviewed_nodes", []),
+                "output": None, "error": {"code": "CREATIVE_GRAPH_NODE_FAILED"} if value.get("error") else None}
+                for node_id, value in row["node_states"].items()},
+            review=None, model_called=False, external_calls=0, applied=False)
+        if any(node["definition_id"] == "text_generate" for node in row["typed_nodes"]):
+            if self.service.model_runtime is None:
+                raise ValueError("CREATIVE_MODEL_RUNTIME_UNAVAILABLE")
+            # public(stale=True) projects stored metadata only; no route/source
+            # admission, text archival convergence or runtime owner is invoked.
+            result["model_runtime"] = self.service.model_runtime.public(row, stale=True)
+            result["model_called"] = bool(row.get("model_execution", {}).get("model_called")) if row.get("model_execution") else False
+        result["media_runtime"] = self.public(row, stale=True)
+        for node in result["media_runtime"]["nodes"]:
+            job = jobs.get(node["node_id"])
+            if job and job["status"] == "REVIEWING":
+                node["execution"]["status"] = "REVIEWING"
+                node["execution"]["review_recovery"] = {"contract": "creative-graph-review-recovery/1",
+                    "job_version": job["version"], "request_digest": job["request_digest"]}
+        return result
+
+    def _reconcile_review(self, nid, scope, actor, captured, body, original_job, current):
+        node_id = body.node_id
+        execution = deepcopy(self._review_recovery_binding(captured, node_id, original_job))
+        self._capacity(captured, 1)
+        # Host/actor/incarnation and original binding remain required. No route,
+        # current source grant or workflow advancement is needed to release an
+        # exact stopped private reservation through its original job owner.
+        job = self.production.reconcile(nid, scope, actor, execution["owner"], execution["job_id"], self._job_action(body), current,
+            graph_binding=execution["graph_binding"])
+        self._validate_job(captured, node_id, execution, job)
+        if job["status"] not in {"REVIEWING", "AWAITING_REVIEW"} or job.get("output_candidate") != original_job.get("output_candidate"):
+            raise StaleSourceError("CREATIVE_GRAPH_MEDIA_REVIEW_RECOVERY_OUTCOME_CHANGED")
+        updated = {**deepcopy(execution), "status": job["status"], "receipt_state": "RECORDED",
+            "job": {key: deepcopy(job.get(key)) for key in RECEIPT_FIELDS}}
+        with self.service.asset_inputs.transaction(nid, scope, actor, current) as state:
+            row = self._bookkeeping_row(nid, scope, actor, captured["id"], current, state)
+            check_version(row, captured["version"])
+            if row["media_executions"] != captured["media_executions"]:
+                raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_RECEIPT_CHANGED")
+            if updated != execution:
+                change_row(row, actor, row["version"], lambda item: item["media_executions"].update({node_id: deepcopy(updated)}))
+                self.service._capacity(state)
+            result = self._bookkeeping_view(row, {node_id: job})
+            current()
+        return result
+
+    def review_recovery_read(self, nid, scope, actor, rid, guard, *, expected_version=None, fallback=None):
+        """Host GET only: exact owner lookup outside all scope/asset leases.
+
+        No candidate, prompt, source or route is exposed. The three-field action
+        evidence grants only an explicit original-owner REVIEWING reconciliation.
+        """
+        _, current = self.service._context(nid, scope, actor, guard)
+        with self.service.asset_inputs.phase(nid, scope, actor, current) as state:
+            captured = deepcopy(self._bookkeeping_row(nid, scope, actor, rid, current, state))
+            if expected_version is not None: check_version(captured, expected_version)
+        jobs = {}
+        for node_id, execution in captured["media_executions"].items():
+            if not execution["job_id"] or execution["review_state"] != "REVIEW_RESERVED": continue
+            try:
+                job = self._job(nid, scope, actor, captured, node_id, current)
+                if job["status"] != "REVIEWING": continue
+                self._review_recovery_binding(captured, node_id, job)
+                jobs[node_id] = job
+            except FileNotFoundError:
+                continue
+        if not jobs:
+            current()
+            return fallback
+        with self.service.asset_inputs.phase(nid, scope, actor, current) as state:
+            latest = self._bookkeeping_row(nid, scope, actor, rid, current, state)
+            check_version(latest, captured["version"])
+            if latest["media_executions"] != captured["media_executions"]:
+                raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_RECEIPT_CHANGED")
+            result = self._bookkeeping_view(latest, jobs)
+            current()
+        return result
 
     def review(self, nid, scope, actor, rid, value, guard):
         body, current, row, node_id, job = self._checked_action(nid, scope, actor, rid, value, guard, review=True)
@@ -753,6 +947,17 @@ class CreativeGraphMediaRuntime:
                 continue
 
     def read(self, nid, scope, actor, rid, guard, *, expected_version=None):
+        try:
+            result = self._read_current(nid, scope, actor, rid, guard, expected_version=expected_version)
+        except (StaleSourceError, FileNotFoundError):
+            result = self.review_recovery_read(nid, scope, actor, rid, guard, expected_version=expected_version)
+            if result is None: raise
+            return result
+        if result["stale"] or result["status"] in TERMINAL_RUNS:
+            return self.review_recovery_read(nid, scope, actor, rid, guard, expected_version=result["version"], fallback=result)
+        return result
+
+    def _read_current(self, nid, scope, actor, rid, guard, *, expected_version=None):
         """Read-only current owner receipts; no polling, reconciliation or write.
 
         Current job versions are needed after an unknown owner reply, including
@@ -783,6 +988,12 @@ class CreativeGraphMediaRuntime:
             if execution["review_state"] != "REVIEW_RESERVED":
                 public["status"] = job["status"]
                 by_id[node_id]["status"] = job["status"]
+            elif job["status"] == "REVIEWING":
+                self._review_recovery_binding(captured, node_id, job)
+                public["status"] = "REVIEWING"
+                by_id[node_id]["status"] = "REVIEWING"
+                public["review_recovery"] = {"contract": "creative-graph-review-recovery/1",
+                    "job_version": job["version"], "request_digest": job["request_digest"]}
             public["receipt_state"] = UNKNOWN if job["status"] in {"UNKNOWN", "RUNNING", "SEND_RESERVED"} else "RECORDED"
         with self._phase(nid, scope, actor, rid, current) as state:
             latest = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)

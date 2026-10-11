@@ -45,7 +45,7 @@ export function useStudioGraphMediaExecution(props: StudioGraphMediaExecutionPro
   function snapshot() {
     const source = latest.current, run = source.run, nodes = run?.media_runtime?.nodes || [];
     const node = nodes.find(item => item.node_id === selectedRef.current) || nodes.find(item => item.node_id === run?.current_node_id) || nodes[0];
-    const execution = node?.execution, job = execution?.job, preview = node?.preview;
+    const execution = node?.execution, job = execution?.job, preview = node?.preview, reviewRecovery = execution?.review_recovery;
     const reviewNodeId = source.graph?.id === run?.graph_id && source.graph?.version === run?.graph_version
       ? source.graph.definition.edges.find(edge => edge.source_node_id === node?.node_id && edge.source_port === 'candidate'
         && edge.target_port === 'candidate' && source.graph!.definition.nodes.some(item => item.id === edge.target_node_id && item.definition_id === 'media_review'))?.target_node_id : undefined;
@@ -60,21 +60,26 @@ export function useStudioGraphMediaExecution(props: StudioGraphMediaExecutionPro
     const binding = candidateKey(run, node), visibleCandidate = candidateRef.current?.binding === binding ? candidateRef.current : undefined;
     const actionKey = (action: GraphMediaAction) => !run || !node ? '' : action === 'dispatch'
       ? JSON.stringify([run.id, node.node_id, action, preview?.preview_digest])
-      : job ? JSON.stringify([run.id, node.node_id, action, job.id, job.version, job.request_digest]) : JSON.stringify([run.id, run.version, node.node_id, action]);
+      : job ? JSON.stringify([run.id, node.node_id, action, job.id, job.version, job.request_digest])
+      : reviewRecovery ? JSON.stringify([run.id, node.node_id, action, execution?.job_id, reviewRecovery.job_version, reviewRecovery.request_digest])
+      : JSON.stringify([run.id, run.version, node.node_id, action]);
     const onceOnly = (action: GraphMediaAction) => ['dispatch', 'execute', 'review', 'reject', 'cancel'].includes(action);
     const allowed = (action: GraphMediaAction) => !onceOnly(action) || !sent.current.has(actionKey(action));
     const reviewCurrent = !!reviewNodeId && run?.current_node_id === reviewNodeId && run.node_states[reviewNodeId]?.status === 'WAITING_APPROVAL';
-    return { run, nodes, node, execution, job, preview, reviewNodeId, reviewCurrent, locked, disabled, reviewDisabled, unknown, previewKey, binding, visibleCandidate, actionKey, onceOnly,
+    const canRecoverReview = !locked && commandsAvailable && source.canMutate && !!run && !!execution?.job_id
+      && execution.status === 'REVIEWING' && execution.review_state === 'REVIEW_RESERVED' && !!reviewRecovery;
+    return { run, nodes, node, execution, job, preview, reviewRecovery, reviewNodeId, reviewCurrent, locked, disabled, reviewDisabled, unknown, previewKey, binding, visibleCandidate, actionKey, onceOnly,
       canRead: !locked && !!run,
       canPreview: !disabled && !unknown && !!source.client.previewMedia && !!node && !execution && ['AWAITING_PREVIEW', 'PREVIEWED'].includes(node.status) && allowed('preview'),
       canConfirm: !disabled && !unknown && !!previewKey && preview?.production_preview.execution_available === true,
       canDispatch: !disabled && !unknown && !!source.client.dispatchMedia && !!previewKey && previewConsentRef.current === previewKey && allowed('dispatch'),
       canExecute: !disabled && !unknown && !!source.client.executeMedia && job?.status === 'QUEUED' && !execution?.send_reserved && run?.current_node_id === node?.node_id && run?.status === 'RUNNING' && allowed('execute'),
       canRefresh: !disabled && !!source.client.refreshMedia && !!execution && (execution.job_id === null || !!job && !['FAILED', 'CANCELLED'].includes(job.status)) && allowed('refresh'),
-      canReconcile: !disabled && !!source.client.reconcileMedia && !!job && (execution?.owner === 'timeline' ? ['RUNNING', 'UNKNOWN'].includes(job.status)
-        : job.needs_reconciliation === true || ['RUNNING', 'SEND_RESERVED', 'UNKNOWN'].includes(job.status)) && allowed('reconcile'),
+      canReconcile: canRecoverReview && !!source.client.reconcileMedia && allowed('reconcile') || !disabled && !!source.client.reconcileMedia && !!job && (execution?.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status)
+        : execution?.owner === 'video' ? ['RUNNING', 'SEND_RESERVED', 'UNKNOWN', 'RESULT_READY', 'REVIEWING'].includes(job.status)
+        : job.needs_reconciliation === true || ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status)) && allowed('reconcile'),
       canCancel: !disabled && !!job && (execution?.owner === 'timeline' ? ['QUEUED', 'RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)
-        : !['APPROVED', 'FAILED', 'CANCELLED'].includes(job.status)) && allowed('cancel'),
+        : !['APPROVED', 'FAILED', 'CANCELLED', 'REVIEWING'].includes(job.status)) && allowed('cancel'),
       canCandidate: !locked && !!job?.output_candidate && !!source.client.mediaCandidate,
       canReview: !reviewDisabled && !!source.client.reviewMedia && reviewCurrent && !!visibleCandidate && !!binding && reviewConsentRef.current === binding
         && (['AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING'].includes(job?.status || '') || job?.status === 'APPROVED' && execution?.review_state === 'REVIEW_RESERVED') && allowed('review'),
@@ -112,6 +117,8 @@ export function useStudioGraphMediaExecution(props: StudioGraphMediaExecutionPro
     const evidence = kind === 'get' ? undefined : { node_id: kind === 'review' || kind === 'reject' ? state.reviewNodeId! : state.node!.node_id,
       ...(kind === 'dispatch' ? { reviewed_preview_digest: state.preview!.preview_digest } : {}),
       ...(!['preview', 'dispatch'].includes(kind) && state.job ? { expected_job_version: state.job.version, expected_request_digest: state.job.request_digest } : {}),
+      ...(kind === 'reconcile' && !state.job && state.reviewRecovery ? { expected_job_version: state.reviewRecovery.job_version,
+        expected_request_digest: state.reviewRecovery.request_digest } : {}),
       ...(kind === 'review' || kind === 'reject' ? { reviewed_output_digest: state.job!.output_candidate!.digest } : {}) };
     if (state.onceOnly(kind)) sent.current.add(state.actionKey(kind));
     pending.current = request; setPendingKind(kind); setError(''); clearConsent();
