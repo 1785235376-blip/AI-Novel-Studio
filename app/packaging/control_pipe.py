@@ -3,8 +3,8 @@ from __future__ import annotations
 import json, os, sys, threading
 from dataclasses import dataclass
 from ..credential_vault import SUPPORTED_PROVIDERS, credential_vault
+from .host_uplink import BACKEND_CONTROL_PROTOCOL as PROTOCOL, encode_ping
 
-PROTOCOL = "packaged-control/v1"
 MAX_FRAME_BYTES = 4096
 CREDENTIAL_PROTOCOL = "packaged-credential/v1"
 _module_runtime_key_present = "PACKAGED_RUNTIME_INSTANCE_ID" in os.environ
@@ -125,6 +125,3 @@ def start_packaged_control_reader():
         return None
     with control_reader_status._lock: control_reader_status.start_result = "STARTED"
     return reader
-
-def encode_ping(runtime_instance_id: str) -> bytes:
-    return (json.dumps({"protocol": PROTOCOL, "type": "ping", "runtime_instance_id": runtime_instance_id}, separators=(",", ":")) + "\n").encode()

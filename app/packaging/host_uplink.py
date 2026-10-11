@@ -1,7 +1,7 @@
 """Strict DesktopHost -> launcher control framing."""
 from __future__ import annotations
 import json
-from ..credential_vault import SUPPORTED_PROVIDERS
+from ..provider_support import STATIC_CREDENTIAL_PROVIDERS as SUPPORTED_PROVIDERS
 
 PREFIX = "AI_NOVEL_HOST_CONTROL_V1\t"
 PROTOCOL = "packaged-host-control/v1"
@@ -9,6 +9,11 @@ MAX_FRAME_BYTES = 2048
 CREDENTIAL_PREFIX = "AI_NOVEL_HOST_CREDENTIAL_V1\t"
 CREDENTIAL_PROTOCOL = "packaged-host-credential/v1"
 CREDENTIAL_MAX_BYTES = 4096
+BACKEND_CONTROL_PROTOCOL = "packaged-control/v1"
+
+
+def encode_ping(runtime_instance_id: str) -> bytes:
+    return (json.dumps({"protocol": BACKEND_CONTROL_PROTOCOL, "type": "ping", "runtime_instance_id": runtime_instance_id}, separators=(",", ":")) + "\n").encode()
 
 def parse_host_ping(line: str, runtime_instance_id: str) -> bool:
     if not line.startswith(PREFIX) or len(line.encode("utf-8")) > MAX_FRAME_BYTES:

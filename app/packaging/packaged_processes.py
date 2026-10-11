@@ -22,8 +22,11 @@ from .versioning import load_release_version
 from .static_frontend import validate_frontend_dist
 from .postgres_migrations import PackagedPostgresMigrationRunner
 from .database_bootstrap import PackagedDatabaseBootstrap
-from .control_pipe import encode_ping
-from .host_uplink import parse_host_credential, encode_backend_credential
+from .host_uplink import parse_host_credential, encode_backend_credential, encode_ping
+from .launch_profiles import (
+    DEFAULT_PROFILE, PROFILE_ENV, V2_PROFILE, validate_profile,
+    validate_profile_paths, v2_backend_environment,
+)
 
 
 RUNTIME_INCOMPLETE = "应用运行组件不完整，请重新安装 AI-Novel-Studio。"
@@ -103,12 +106,19 @@ class PackagedProcessConfig:
     version: str
     database_name: str = "ai_novel_studio"
     database_user: str = "novel_studio"
+    launch_profile: str = DEFAULT_PROFILE
+
+    def __post_init__(self) -> None:
+        validate_profile(self.launch_profile)
+        validate_profile_paths(self.launch_profile, self.paths, postgres_root=self.layout.postgres if self.launch_profile == V2_PROFILE else None)
 
     @classmethod
-    def create(cls, application: Path, paths: WindowsPackagingPaths) -> "PackagedProcessConfig":
+    def create(cls, application: Path, paths: WindowsPackagingPaths, *,
+               launch_profile: str = DEFAULT_PROFILE) -> "PackagedProcessConfig":
+        validate_profile_paths(launch_profile, paths, postgres_root=application / "PostgreSQL")
         layout = PackagedRuntimeLayout.resolve(application)
         release = load_release_version(layout.release_version)
-        return cls(layout=layout, paths=paths, version=release.version)
+        return cls(layout=layout, paths=paths, version=release.version, launch_profile=launch_profile)
 
     def environment(
         self, *, database_port: int, backend_port: int,
@@ -139,10 +149,12 @@ class PackagedProcessConfig:
         if runtime_instance_id is not None and bootstrap_secret is not None:
             value["PACKAGED_RUNTIME_INSTANCE_ID"] = runtime_instance_id
             value["PACKAGED_BOOTSTRAP_SECRET"] = bootstrap_secret
+        if self.launch_profile == V2_PROFILE:
+            value.update(v2_backend_environment(self.paths, postgres_root=self.layout.postgres))
         return value
 
     def public_runtime_metadata(self, *, database_port: int, backend_port: int) -> dict[str, object]:
-        return {
+        value = {
             "application_version": self.version,
             "packaged_windows_mode": True,
             "user_data_root": str(self.paths.user_data),
@@ -152,6 +164,9 @@ class PackagedProcessConfig:
             "database_port": database_port,
             "backend_port": backend_port,
         }
+        if self.launch_profile == V2_PROFILE:
+            value["launch_profile"] = V2_PROFILE
+        return value
 
 
 class PackagedManagedChild:
@@ -225,6 +240,8 @@ class PackagedProcessFactory:
     ) -> PackagedManagedChild:
         if paths != self.config.paths:
             raise ValueError("packaged process paths changed after validation")
+        validate_profile_paths(self.config.launch_profile, paths,
+                               postgres_root=self.config.layout.postgres if self.config.launch_profile == V2_PROFILE else None)
         if role is RuntimeRole.POSTGRESQL:
             self.database_port = port
             return self._start_postgres(port, runtime)
@@ -330,6 +347,9 @@ class PackagedProcessFactory:
         log.parent.mkdir(parents=True, exist_ok=True)
         executable = self.config.layout.python
         environment = os.environ.copy()
+        # Only the explicit launcher argument selects the profile. Never inherit
+        # a backend profile marker from the caller into the default package.
+        environment.pop(PROFILE_ENV, None)
         self._bootstrap_secret = secrets.token_urlsafe(48)
         environment.update(self.config.environment(
             database_port=self.database_port or 0, backend_port=port,

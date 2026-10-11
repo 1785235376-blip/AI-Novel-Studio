@@ -1,7 +1,10 @@
 param(
     [string]$ApplicationRoot,
     [string]$LocalAppDataRoot,
-    [string]$UserProfileRoot
+    [string]$UserProfileRoot,
+    [Alias('Profile')]
+    [ValidateSet('default', 'v2')]
+    [string]$LaunchProfile = 'default'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -65,6 +68,7 @@ $launcherArgs = @(
     '--local-app-data', $local,
     '--user-profile', $profile
 )
+if ($LaunchProfile -eq 'v2') { $launcherArgs += @('--profile', 'v2') }
 Push-Location -LiteralPath $backend
 try {
     & $python @launcherArgs

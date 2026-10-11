@@ -1,0 +1,20 @@
+{
+  "base": "a40df1156a3aaafd88668b11c4bee647ba9330ad",
+  "status": "INVENTORY_ONLY",
+  "tests_executed": false,
+  "collections_identical": true,
+  "parent_node_count": 12159,
+  "current_node_count": 12294,
+  "added_node_count": 135,
+  "added_test_files": [
+    "tests/test_v2_packaged_launch_isolation.py",
+    "tests/test_v2_packaged_launch_profile.py",
+    "tests/test_v2_windows_vault_namespace.py"
+  ],
+  "original_nodes_preserved_in_order": true,
+  "historical_skip_maps_and_external_gates_unchanged": true,
+  "original_test_files_byte_identical": 515,
+  "frozen_v1_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "v2_manifest_sha256": "f7f65480281369dd6564fa47d9e321f414684744835f3c0068304879ce85f58c",
+  "collection_sha256": "0208eb755c2869b4a4f8cf0462e0b093b4888efeb54781f1f8ed87a7cbfeb3be"
+}

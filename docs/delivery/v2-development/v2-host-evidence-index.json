@@ -1,0 +1,269 @@
+{
+  "base": "a40df1156a3aaafd88668b11c4bee647ba9330ad",
+  "scope": "Cloud tests and read-only source review; native Windows/model acceptance NOT_RUN",
+  "final_tests": [
+    {
+      "label": "v2-host-final-isolation",
+      "passed": 385,
+      "skipped": 3,
+      "source_stable": true,
+      "log_sha256": "49e9e920889f25c8b0e6e07b85d938a2aa063ddec86bf52f69333058125c48f3"
+    },
+    {
+      "label": "v2-host-execution-final",
+      "passed": 632,
+      "skipped": 285,
+      "source_stable": true,
+      "log_sha256": "d34077eb1e8f784454ea2c9e96e0648170c14136d4098827bbb49d5e4b4ebdc4"
+    }
+  ],
+  "source_input_count": 1787,
+  "source_map_sha256": "37664e272dd64d75283515275a61c5c6811acc7a3a1d7c8c8261479073ca707e",
+  "lossless_files": [
+    {
+      "raw_name": "v2-host-baseline-pre.json",
+      "compressed_name": "v2-host-baseline-pre.json.gz",
+      "raw_sha256": "5e886e6d2bba5cbeedaaf466fb5496c716f8f72705c3b51dd9e51b134758129e",
+      "compressed_sha256": "bf5c1010871762faf73ea3b8a20daaffb08c71a6b22bcbc7ff4b5a91a25b0f24",
+      "raw_bytes": 413588,
+      "compressed_bytes": 173168,
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "v2-host-baseline-pre.log",
+      "compressed_name": "v2-host-baseline-pre.log.gz",
+      "raw_sha256": "acd476051d3ebe412ed649890f76ba4f9bb59fc85d21853062f7673aadb4ed94",
+      "compressed_sha256": "e7438d2130cba1acf60f7a48cc3e03b772c4843639e576366cb5ee69e81f52d5",
+      "raw_bytes": 110,
+      "compressed_bytes": 64
+    },
+    {
+      "raw_name": "v2-host-execution-authority.json",
+      "compressed_name": "v2-host-execution-authority.json.gz",
+      "raw_sha256": "001efa8c6bf5bc4742bf231c1e3fc8a7a6cfa487a662d9497359d46e9f768d12",
+      "compressed_sha256": "3f9c8e519ea4d239cc1953434c4ac99e8e8778cb2772f58ae3740696a15b3e9b",
+      "raw_bytes": 414795,
+      "compressed_bytes": 173513,
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": true
+    },
+    {
+      "raw_name": "v2-host-execution-authority.log",
+      "compressed_name": "v2-host-execution-authority.log.gz",
+      "raw_sha256": "1e4f28e713e3a32c009d13409698fa065f7a18ad09a2af033dd501cd61267af8",
+      "compressed_sha256": "569de4ad6c5c4c5e79f7d571d20ea8f342b1b35768e219aa08b1bd4a9d745fb3",
+      "raw_bytes": 6714,
+      "compressed_bytes": 882
+    },
+    {
+      "raw_name": "v2-host-execution-final.json",
+      "compressed_name": "v2-host-execution-final.json.gz",
+      "raw_sha256": "22e316326636f77a611f8f5f77492348759940f63ab8ca86828f76b8387e5055",
+      "compressed_sha256": "65cec101eb81e1dcf27a0ec5873b4ad2511c20eeaad4eece7827b0d14615fade",
+      "raw_bytes": 414756,
+      "compressed_bytes": 173510,
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "v2-host-execution-final.log",
+      "compressed_name": "v2-host-execution-final.log.gz",
+      "raw_sha256": "d34077eb1e8f784454ea2c9e96e0648170c14136d4098827bbb49d5e4b4ebdc4",
+      "compressed_sha256": "f6a8c0adf827828f83030b32ab92920424a60e0adae1bccc498dc11454971032",
+      "raw_bytes": 6714,
+      "compressed_bytes": 882
+    },
+    {
+      "raw_name": "v2-host-final-isolation.json",
+      "compressed_name": "v2-host-final-isolation.json.gz",
+      "raw_sha256": "020f3e2dca946ed5a4bbfc81b477c2c3abd0be946c9be266d404c025a29b9524",
+      "compressed_sha256": "8f7a5bfe24745647ba331772fdc35db476f7f1ad24bc929ca6a86aef0de8e616",
+      "raw_bytes": 415423,
+      "compressed_bytes": 173684,
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "v2-host-final-isolation.log",
+      "compressed_name": "v2-host-final-isolation.log.gz",
+      "raw_sha256": "49e9e920889f25c8b0e6e07b85d938a2aa063ddec86bf52f69333058125c48f3",
+      "compressed_sha256": "8763aa5fc510700a0a87326c107c07180963b58940e3361b16dd19c5a054b136",
+      "raw_bytes": 1348,
+      "compressed_bytes": 496
+    },
+    {
+      "raw_name": "v2-host-final-regression.json",
+      "compressed_name": "v2-host-final-regression.json.gz",
+      "raw_sha256": "71ef09ae1ed7021538a2fd94389b75c99cead90e5fd14121f700d75f9ceaa445",
+      "compressed_sha256": "4d9b86135b2d6d6a152ad7545a2e6645858b196ef87133872976fbfcc1d3df47",
+      "raw_bytes": 415433,
+      "compressed_bytes": 173693,
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "v2-host-final-regression.log",
+      "compressed_name": "v2-host-final-regression.log.gz",
+      "raw_sha256": "2ec64e8cfacc5816a51d4047c83d862d4833c59117e74452cac8107a46c11553",
+      "compressed_sha256": "b9a16227e5de82233693cf131fd8046fae2e83854ca8f99a1f8b2b35a49d8836",
+      "raw_bytes": 1348,
+      "compressed_bytes": 496
+    },
+    {
+      "raw_name": "v2-host-hardlink-limits.json",
+      "compressed_name": "v2-host-hardlink-limits.json.gz",
+      "raw_sha256": "07cbb7fde8214b4f6b3f3c6dd066590faf0f96c8e96456ee4a8637ad0debcc4a",
+      "compressed_sha256": "594ef30b18ce1353cf72e2ad035395089259416564104b3e5737e4e094718019",
+      "raw_bytes": 414179,
+      "compressed_bytes": 173420,
+      "status": "FAIL",
+      "exit_code": 1,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "v2-host-hardlink-limits.log",
+      "compressed_name": "v2-host-hardlink-limits.log.gz",
+      "raw_sha256": "0b03ff7ee5d93011768e1b1fa75f06ddf0b14797a229bdc3557e3257dc9c0cd6",
+      "compressed_sha256": "17783c962a53bcea167c6fce17133c8cb66e6da943566b8b3f552886f03d557b",
+      "raw_bytes": 91342,
+      "compressed_bytes": 4313
+    },
+    {
+      "raw_name": "v2-host-inventory-first.json",
+      "compressed_name": "v2-host-inventory-first.json.gz",
+      "raw_sha256": "1deae74e46bb99646c2bc21270e4d5cdda9a16e407e375d8a83c65aab91d3dc8",
+      "compressed_sha256": "f53feb0d6d1345e691d64641beefde642ee6e809ebadfa4d11f06fb2dbbaf0a1",
+      "raw_bytes": 6607195,
+      "compressed_bytes": 162047,
+      "exit_code": 0
+    },
+    {
+      "raw_name": "v2-host-inventory-review.json",
+      "compressed_name": "v2-host-inventory-review.json.gz",
+      "raw_sha256": "a3e1902243854e2e98151c70b940447b216ef00d7821a0ae03c9f06c250127f7",
+      "compressed_sha256": "e00674c524bb264bb2365a835fc08df9ea981780a307fbe23661488329536def",
+      "raw_bytes": 13464,
+      "compressed_bytes": 5404,
+      "status": "INVENTORY_ONLY"
+    },
+    {
+      "raw_name": "v2-host-inventory-second.json",
+      "compressed_name": "v2-host-inventory-second.json.gz",
+      "raw_sha256": "1deae74e46bb99646c2bc21270e4d5cdda9a16e407e375d8a83c65aab91d3dc8",
+      "compressed_sha256": "f53feb0d6d1345e691d64641beefde642ee6e809ebadfa4d11f06fb2dbbaf0a1",
+      "raw_bytes": 6607195,
+      "compressed_bytes": 162047,
+      "exit_code": 0
+    },
+    {
+      "raw_name": "v2-host-inventory-write.json",
+      "compressed_name": "v2-host-inventory-write.json.gz",
+      "raw_sha256": "7e9c1e60bb136cefb2cd43941574a2ad860c4fc8c61db4c2dd766dd2116b2932",
+      "compressed_sha256": "57245f75d73e3d7f1553a20081d40c8bd9ad05aec57e9c4a836668cf892345cf",
+      "raw_bytes": 13618,
+      "compressed_bytes": 5483,
+      "status": "INVENTORY_ONLY"
+    },
+    {
+      "raw_name": "v2-host-owned-junctions.json",
+      "compressed_name": "v2-host-owned-junctions.json.gz",
+      "raw_sha256": "87b2b80478afd8508a60a67996c6891cc00617417c8bf923f984a1150d877e5e",
+      "compressed_sha256": "83b662e6eb95a5476f7791f5e874f2e983bbdabafbdd428958de73de9c4ab417",
+      "raw_bytes": 414356,
+      "compressed_bytes": 173454,
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "v2-host-owned-junctions.log",
+      "compressed_name": "v2-host-owned-junctions.log.gz",
+      "raw_sha256": "58fdb1a94eba651ebcceca80d1dad1deaf206c165259068afdf35759fc0d7eee",
+      "compressed_sha256": "3298d29bf6ae5d7084756036a2574e69b551ea0f1d7f23faa3b6bba329cc6113",
+      "raw_bytes": 260,
+      "compressed_bytes": 69
+    },
+    {
+      "raw_name": "v2-host-profile-first.json",
+      "compressed_name": "v2-host-profile-first.json.gz",
+      "raw_sha256": "a81172f3df5af558d16dbcd77155edcf02d6305f2390fe73a8fb1cc1f1d008a0",
+      "compressed_sha256": "27c3cc4fec0abd6f132e2a4658f20edf50969d517e8cd9e89c0e2ca32eaad0ed",
+      "raw_bytes": 413825,
+      "compressed_bytes": 173296,
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "v2-host-profile-first.log",
+      "compressed_name": "v2-host-profile-first.log.gz",
+      "raw_sha256": "36ffa2c9a14994c9062b8b83779e0909e1f4b7beb3944719f03e077ae96f9b43",
+      "compressed_sha256": "131d276cc33caa81155a8b18e60c076cc1795f28d79b884de615309a9e4a9539",
+      "raw_bytes": 99,
+      "compressed_bytes": 52
+    },
+    {
+      "raw_name": "v2-host-profile-isolation.json",
+      "compressed_name": "v2-host-profile-isolation.json.gz",
+      "raw_sha256": "dd798534cbb5b354fe4ae7ae68f363786b85c9407bddc55fc398a16e2c647e4c",
+      "compressed_sha256": "c4a7d7d36d21e909f118f5d1620c4bf13dd5f680836c2043f5fe925c23b0dd30",
+      "raw_bytes": 414380,
+      "compressed_bytes": 173446,
+      "status": "FAIL",
+      "exit_code": 1,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "v2-host-profile-isolation.log",
+      "compressed_name": "v2-host-profile-isolation.log.gz",
+      "raw_sha256": "cbef44ccc6b48ac9bcb19f511e0096eb0af3b81d3acab13b14dea5d58d0f2a23",
+      "compressed_sha256": "9737b2ddc210d1fc9387757fea9fea366f252c80dcd3fca1de17854a1e12150d",
+      "raw_bytes": 77988,
+      "compressed_bytes": 4000
+    },
+    {
+      "raw_name": "windows-vault-namespace-mock.json",
+      "compressed_name": "windows-vault-namespace-mock.json.gz",
+      "raw_sha256": "310f7de8a0f476e356897b56c1a3c88ecac30e772fc496210fd2fc961738f50e",
+      "compressed_sha256": "ba4c86c2784cab2c44d8261ad9bf2bcd8e553d8a3ce566fc64bc16125580b4d2",
+      "raw_bytes": 413594,
+      "compressed_bytes": 173195,
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "windows-vault-namespace-mock.log",
+      "compressed_name": "windows-vault-namespace-mock.log.gz",
+      "raw_sha256": "2ba59f54caa9e4a5303261e3beaf4f783ee87204a4c97714cbd95cea0b86e0fb",
+      "compressed_sha256": "5481ffe045889d9c67ca1536d0e401eb92870853c2edd3eabd05e5b8b07cbc13",
+      "raw_bytes": 190,
+      "compressed_bytes": 75
+    },
+    {
+      "raw_name": "windows-vault-namespace-regression.json",
+      "compressed_name": "windows-vault-namespace-regression.json.gz",
+      "raw_sha256": "d652a7be5908b7d8cef0fe56af090e2339568bb717480b55232f9494055bc88c",
+      "compressed_sha256": "5d3e3404429fcdecd0fb6fb08085b5508b888498e9f45f578b2f272b56adea8d",
+      "raw_bytes": 413967,
+      "compressed_bytes": 173276,
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "raw_name": "windows-vault-namespace-regression.log",
+      "compressed_name": "windows-vault-namespace-regression.log.gz",
+      "raw_sha256": "fddfbb6f2d61e0668ff226909ec053644984f9623be365aa89c5c91f1239c5f6",
+      "compressed_sha256": "c6ae8dc8f5ef2952438046d4bed298ddda4350eb268b84c898ed1a0c83a843b8",
+      "raw_bytes": 795,
+      "compressed_bytes": 332
+    }
+  ]
+}

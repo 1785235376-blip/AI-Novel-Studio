@@ -10,8 +10,8 @@ from pathlib import Path
 from .desktop_bridge import DesktopHostLaunch
 from .packaged_desktop_host import PackagedDesktopHost
 from .packaged_launcher import _install_stop_handlers, create_packaged_backend_runtime
-from .paths import WindowsPackagingPaths
 from .runtime_identity import RuntimeRole
+from .launch_profiles import DEFAULT_PROFILE, PROFILES, V2_PROFILE, resolve_profile_paths
 
 
 def main() -> int:
@@ -19,15 +19,17 @@ def main() -> int:
     parser.add_argument("--application-root", type=Path)
     parser.add_argument("--local-app-data", type=Path)
     parser.add_argument("--user-profile", type=Path)
+    parser.add_argument("--profile", choices=PROFILES, default=DEFAULT_PROFILE)
     args = parser.parse_args()
     paths = None
     if args.local_app_data is not None or args.user_profile is not None:
         if args.local_app_data is None or args.user_profile is None:
             parser.error("both packaged path roots are required")
-        paths = WindowsPackagingPaths.resolve(
+        paths = resolve_profile_paths(args.profile,
             local_app_data=args.local_app_data, user_profile=args.user_profile,
         )
-    runtime, factory = create_packaged_backend_runtime(application=args.application_root, paths=paths)
+    runtime, factory = create_packaged_backend_runtime(application=args.application_root, paths=paths,
+                                                      launch_profile=args.profile)
     stopping = False
     host = None
 
@@ -41,10 +43,11 @@ def main() -> int:
         assert runtime.reservations is not None
         port = runtime.reservations.ports[RuntimeRole.BACKEND]
         origin = f"http://127.0.0.1:{port}"
-        host = PackagedDesktopHost(
-            application=factory.config.layout.application, runtime=identity,
-            inspector=runtime.inspector, job=runtime.job,
-        )
+        host_options = dict(application=factory.config.layout.application, runtime=identity,
+                            inspector=runtime.inspector, job=runtime.job)
+        if args.profile == V2_PROFILE:
+            host_options.update(launch_profile=V2_PROFILE, paths=factory.config.paths)
+        host = PackagedDesktopHost(**host_options)
         host.start(DesktopHostLaunch(
             frontend_origin=origin, backend_origin=origin,
             runtime_instance_id=identity.runtime_instance_id,
