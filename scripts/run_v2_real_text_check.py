@@ -314,6 +314,7 @@ def execute(root, server, model, expected_sha, port, *, scenario="graph"):
         "paid_api": False, "gpu": False, "private_credentials_used": False, "automatic_model_download": False}
     endpoint = f"http://127.0.0.1:{port}"
     process = None
+    operational_error = None
     started = time.monotonic()
     def terminate_owned_check(_signal, _frame):
         raise TimeoutError("OWNED_ACCEPTANCE_CANCELLED")
@@ -343,30 +344,57 @@ def execute(root, server, model, expected_sha, port, *, scenario="graph"):
                 raise RuntimeError("REAL_INFERENCE_RECEIPT_UNCONFIRMED")
             receipt["status"] = "PASS"
     except BaseException as error:
+        operational_error = error
         receipt.update(status="FAIL", error_type=type(error).__name__, error=str(error)[:2000])
         raise
     finally:
+        finalization_error = None
         if process is not None:
-            if process.poll() is None:
-                process.terminate()
+            receipt.update(runtime_returncode=None, owned_runtime_stopped=False)
             try:
-                process.wait(timeout=15)
-            except subprocess.TimeoutExpired:
-                process.kill(); process.wait(timeout=5)
-                receipt["forced_stop"] = True
-            receipt.update(runtime_returncode=process.returncode, owned_runtime_stopped=process.poll() is not None)
-            if receipt["status"] == "PASS" and (process.returncode != 0 or receipt.get("forced_stop")
+                returncode = process.poll()
+                receipt.update(runtime_returncode=returncode, owned_runtime_stopped=returncode is not None)
+                if returncode is None:
+                    process.terminate()
+                try:
+                    returncode = process.wait(timeout=15)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    receipt["forced_stop"] = True
+                    returncode = process.wait(timeout=5)
+                # Retain observed exit evidence even if the final poll fails.
+                receipt.update(runtime_returncode=returncode, owned_runtime_stopped=returncode is not None)
+                returncode = process.poll()
+                receipt.update(runtime_returncode=returncode, owned_runtime_stopped=returncode is not None)
+            except BaseException as error:
+                finalization_error = error
+                receipt.update(cleanup_error_type=type(error).__name__, cleanup_error=str(error)[:2000])
+            if receipt["status"] == "PASS" and (finalization_error is not None
+                                                or receipt["runtime_returncode"] != 0 or receipt.get("forced_stop")
                                                 or not receipt["owned_runtime_stopped"]):
                 receipt["status"] = "FAIL_RUNTIME_SHUTDOWN"
-        after = source_identity()
-        write_json(root / "source-after.json", after)
-        receipt["source_stable"] = before == after
-        if not receipt["source_stable"] and receipt["status"] == "PASS":
-            receipt["status"] = "INCONCLUSIVE_SOURCE_DRIFT"
+        receipt["source_stable"] = None
+        try:
+            after = source_identity()
+            write_json(root / "source-after.json", after)
+            receipt["source_stable"] = before == after
+            if not receipt["source_stable"] and receipt["status"] == "PASS":
+                receipt["status"] = "INCONCLUSIVE_SOURCE_DRIFT"
+        except BaseException as error:
+            receipt.update(source_error_type=type(error).__name__, source_error=str(error)[:2000])
+            if finalization_error is None:
+                finalization_error = error
+            if receipt["status"] == "PASS":
+                receipt["status"] = "INCONCLUSIVE_SOURCE_IDENTITY"
         receipt["elapsed_seconds"] = time.monotonic() - started
         receipt["finished_utc"] = datetime.now(timezone.utc).isoformat()
         write_json(root / "acceptance.json", receipt)
         print(json.dumps({key: value for key, value in receipt.items() if key != "argv"}), flush=True)
+        # A secondary failure must not replace the operational exception already
+        # being reraised. Otherwise propagate the first finalization exception
+        # only after retaining both cleanup and provenance outcomes.
+        if operational_error is None and finalization_error is not None:
+            raise finalization_error
         if receipt["status"] == "INCONCLUSIVE_SOURCE_DRIFT":
             raise SystemExit(2)
         if receipt["status"] == "FAIL_RUNTIME_SHUTDOWN":

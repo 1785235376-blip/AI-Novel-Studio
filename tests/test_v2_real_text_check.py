@@ -716,3 +716,142 @@ def test_direct_input_validation_rejects_unsupported_platform_before_model_read(
         validate(inputs)
     model_read.assert_not_called()
     inputs.socket_factory.assert_not_called()
+
+
+def fail_owned_cleanup(harness, monkeypatch, stage, error):
+    """Inject one owned-process failure without starting or signalling a process."""
+    timeout = runner.subprocess.TimeoutExpired("test-owned-host", 15)
+    if stage in {"terminate", "kill"}:
+        def failed_signal():
+            harness.process.calls.append((stage,))
+            raise error
+        monkeypatch.setattr(harness.process, stage, failed_signal)
+    if stage == "wait":
+        harness.process.waits = deque([error])
+    elif stage == "kill":
+        harness.process.waits = deque([timeout])
+    elif stage == "final_wait":
+        harness.process.waits = deque([timeout, error])
+    elif stage == "initial_poll":
+        monkeypatch.setattr(harness.process, "poll", Mock(side_effect=[None, error]))
+    elif stage == "final_poll":
+        monkeypatch.setattr(harness.process, "poll", Mock(side_effect=[None, None, error]))
+    return {
+        "initial_poll": [], "terminate": [("terminate",)],
+        "wait": [("terminate",), ("wait", 15)],
+        "kill": [("terminate",), ("wait", 15), ("kill",)],
+        "final_wait": [("terminate",), ("wait", 15), ("kill",), ("wait", 5)],
+        "final_poll": [("terminate",), ("wait", 15)],
+    }[stage]
+
+
+@pytest.mark.parametrize("operational_failure", [None, "runtime", "interrupt"])
+@pytest.mark.parametrize("stage", ["initial_poll", "terminate", "wait", "kill", "final_wait", "final_poll"])
+def test_cleanup_error_retains_acceptance_and_original_failure(
+        execute_harness, monkeypatch, operational_failure, stage):
+    harness = execute_harness
+    cleanup_error = OSError("simulated-owned-" + stage)
+    calls = fail_owned_cleanup(harness, monkeypatch, stage, cleanup_error)
+    original = {None: None, "runtime": RuntimeError("simulated-operational-failure"),
+                "interrupt": KeyboardInterrupt("simulated-operational-interruption")}[operational_failure]
+    if original is not None:
+        harness.acceptance.side_effect = original
+    with pytest.raises(BaseException) as raised:
+        execute(harness)
+    value = receipt(harness)
+    assert raised.value is (original if original is not None else cleanup_error)
+    assert value["status"] == ("FAIL" if original is not None else "FAIL_RUNTIME_SHUTDOWN")
+    assert value["real_inference"] == ("NOT_RUN" if original is not None else "PASS")
+    if original is not None:
+        assert value["error_type"] == type(original).__name__ and value["error"] == str(original)
+    assert value["cleanup_error_type"] == "OSError" and value["cleanup_error"] == str(cleanup_error)
+    assert value["owned_runtime_stopped"] is (stage == "final_poll")
+    assert value["runtime_returncode"] == (0 if stage == "final_poll" else None)
+    assert value.get("forced_stop", False) is (stage == "final_wait")
+    assert value["source_stable"] is True
+    assert (harness.root / "source-after.json").is_file()
+    assert value["finished_utc"] and value["elapsed_seconds"] >= 0
+    assert harness.process.calls == calls
+    assert harness.identity.call_count == 2
+
+
+@pytest.mark.parametrize("operational_failure", [None, "runtime", "interrupt"])
+@pytest.mark.parametrize("source_failure", ["read", "write"])
+def test_provenance_error_retains_acceptance_and_original_failure(
+        execute_harness, monkeypatch, operational_failure, source_failure):
+    harness = execute_harness
+    source_error = OSError("simulated-final-source-" + source_failure)
+    if source_failure == "read":
+        harness.identity.side_effect = [harness.identity.return_value, source_error]
+    else:
+        original_write = runner.write_json
+        def fail_source_write(path, value):
+            if path.name == "source-after.json":
+                raise source_error
+            original_write(path, value)
+        monkeypatch.setattr(runner, "write_json", fail_source_write)
+    original = {None: None, "runtime": RuntimeError("simulated-operational-failure"),
+                "interrupt": KeyboardInterrupt("simulated-operational-interruption")}[operational_failure]
+    if original is not None:
+        harness.acceptance.side_effect = original
+    with pytest.raises(BaseException) as raised:
+        execute(harness)
+    value = receipt(harness)
+    assert raised.value is (original if original is not None else source_error)
+    assert value["status"] == ("FAIL" if original is not None else "INCONCLUSIVE_SOURCE_IDENTITY")
+    assert value["real_inference"] == ("NOT_RUN" if original is not None else "PASS")
+    if original is not None:
+        assert value["error_type"] == type(original).__name__ and value["error"] == str(original)
+    assert value["source_error_type"] == "OSError" and value["source_error"] == str(source_error)
+    assert value["source_stable"] is None
+    assert value["owned_runtime_stopped"] is True and value["runtime_returncode"] == 0
+    assert harness.process.calls == [("terminate",), ("wait", 15)]
+    assert (harness.root / "source-before.json").is_file()
+    assert value["finished_utc"] and value["elapsed_seconds"] >= 0
+
+
+@pytest.mark.parametrize("operational_failure", [False, True])
+def test_cleanup_and_provenance_errors_both_survive_in_acceptance(
+        execute_harness, monkeypatch, operational_failure):
+    harness = execute_harness
+    original = RuntimeError("simulated-operational-failure")
+    cleanup_error = OSError("simulated-owned-final-wait")
+    source_error = RuntimeError("simulated-source-read-failure")
+    fail_owned_cleanup(harness, monkeypatch, "final_wait", cleanup_error)
+    harness.identity.side_effect = [harness.identity.return_value, source_error]
+    if operational_failure:
+        harness.acceptance.side_effect = original
+    with pytest.raises(BaseException) as raised:
+        execute(harness)
+    value = receipt(harness)
+    assert raised.value is (original if operational_failure else cleanup_error)
+    assert value["status"] == ("FAIL" if operational_failure else "FAIL_RUNTIME_SHUTDOWN")
+    assert value["cleanup_error"] == str(cleanup_error) and value["cleanup_error_type"] == "OSError"
+    assert value["source_error"] == str(source_error) and value["source_error_type"] == "RuntimeError"
+    assert value["source_stable"] is None and value["owned_runtime_stopped"] is False
+    assert value["runtime_returncode"] is None and value["forced_stop"] is True
+
+
+def test_cleanup_error_keeps_already_observed_exit_evidence(execute_harness):
+    harness = execute_harness
+    harness.process.returncode = 2
+    harness.process.waits = deque([OSError("simulated-reap-failure")])
+    with pytest.raises(RuntimeError, match="^OWNED_RUNTIME_EXITED_BEFORE_READINESS$"):
+        execute(harness)
+    value = receipt(harness)
+    assert value["status"] == "FAIL" and value["error"] == "OWNED_RUNTIME_EXITED_BEFORE_READINESS"
+    assert value["owned_runtime_stopped"] is True and value["runtime_returncode"] == 2
+    assert value["cleanup_error"] == "simulated-reap-failure"
+    assert harness.process.calls == [("wait", 15)]
+
+
+def test_shutdown_without_exit_evidence_cannot_receive_pass(execute_harness, monkeypatch):
+    harness = execute_harness
+    wait = Mock(return_value=None)
+    monkeypatch.setattr(harness.process, "wait", wait)
+    with pytest.raises(SystemExit) as raised:
+        execute(harness)
+    value = receipt(harness)
+    assert raised.value.code == 1 and value["status"] == "FAIL_RUNTIME_SHUTDOWN"
+    assert value["owned_runtime_stopped"] is False and value["runtime_returncode"] is None
+    wait.assert_called_once_with(timeout=15)

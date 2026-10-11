@@ -1,0 +1,95 @@
+{
+  "parent_head": "bf1be37d1f27da0a9b9b3994cdac0fec4397784d",
+  "source_count": 1782,
+  "source_map_sha256": "7dde8794a29ceeaab2741ca283fe526f95d37813db8ba5f50b503e06654e09de",
+  "original_test_bytes_preserved": true,
+  "files": {
+    ".github/ci/coverage_manifest_v2.json.gz": "ddb6f159cead52838829aaf6a3fe0be51e6c78cde67239962a7c2454a300b31a",
+    "MILESTONE_M4_RECEIPT_PRESERVATION_REPORT.md": "cbc80f72d597addac0d92c8f766176353ceeae258d3bc69c04abb5ea2d79ce6b",
+    "docs/delivery/v2-development/m4-receipt-adjacent-green-20261011t0507.json.gz": "1053feb123ae51f8fdfba3f68e7a877f9ebbfc411b9325c43fe8096e2c844151",
+    "docs/delivery/v2-development/m4-receipt-adjacent-green-20261011t0507.log.gz": "b542fdc605a464af6c7c2811863830d01b4852042ce7ff182822d0f468b3b573",
+    "docs/delivery/v2-development/m4-receipt-collection-green-20261011t0508.json.gz": "af8f776c18b5f9c6cc8ca74a3be409af3ba35580cb391d69652fe6323c5e48a2",
+    "docs/delivery/v2-development/m4-receipt-collection-green-20261011t0508.log.gz": "edeb83ae906ba820cd19d0e12bdd76249dbf8e0e7d1770a6159686138551e13b",
+    "docs/delivery/v2-development/m4-receipt-development-audit.json": "82522292abe318e38621012a68e526bac0fbb5c5099b5e7ac7e207cbce49eacf",
+    "docs/delivery/v2-development/m4-receipt-final-20261011t0511.json.gz": "fb8d9197db5ff37463161651620ec31d8ba24a93853a6afb984583d34fecedd2",
+    "docs/delivery/v2-development/m4-receipt-final-20261011t0511.log.gz": "8b976df9df23df7c4c82b7883025db474e5dc64917a721c4bc9551118227739c",
+    "docs/delivery/v2-development/m4-receipt-final-20261011t0511.xml": "4f30f27a718bcce268e7731c69f5dd39b8f12922207785179c0ab19fd842323b",
+    "docs/delivery/v2-development/m4-receipt-implementation.diff.gz": "989753db819b181b35e04b3bf2559316d3187bfc1f59ce0f09c88f4d25aa8cce",
+    "docs/delivery/v2-development/m4-receipt-infra-green-20261011t0508.json.gz": "3810aa09a08071646f69f4c782addddffbcff681b5aa188cf0c61732a1f60edb",
+    "docs/delivery/v2-development/m4-receipt-infra-green-20261011t0508.log.gz": "78012d2ec5414c42faafbacd5c6223f42807b2075f7bff87bc7846502e8d2deb",
+    "docs/delivery/v2-development/m4-receipt-inventory-1.json.gz": "6096f8c1c655ba78b9a6232097a1189c503ef169fdc7d14620f8a19e69e58efd",
+    "docs/delivery/v2-development/m4-receipt-inventory-2.json.gz": "6096f8c1c655ba78b9a6232097a1189c503ef169fdc7d14620f8a19e69e58efd",
+    "docs/delivery/v2-development/m4-receipt-inventory-proof.json": "2b8d0c1243c6be132087c9a0f5e8ece8837451d37511d2ccb59a7c34b3986b54",
+    "docs/delivery/v2-development/m4-receipt-inventory-review.json": "58dca95138241931503a198287c10752417a0137e0a20e4605790e5427db3eaf",
+    "docs/delivery/v2-development/m4-receipt-inventory-write.json": "7adea973dfa1fb5fed928677a68ca40a38e3aa9dcede14f8fa5cfe6662eb5a7b",
+    "docs/delivery/v2-development/m4-receipt-lossless-evidence-index.json": "5a7bfcb3ff082913b874cde00e2bc9da26f6785fcfaef53634a5688f2ee59e97",
+    "docs/delivery/v2-development/m4-receipt-parent-ci-before-publication.json": "1540cff6580e37a4f935be5950a9c1d4d87eb538ad6b95276b4b38fde66e9ff6",
+    "docs/delivery/v2-development/m4-receipt-preservation-green-20261011t0506.json.gz": "330e0666bac02353d5b157255244a51ffaed41141c98289f180754eb04ec2161",
+    "docs/delivery/v2-development/m4-receipt-preservation-green-20261011t0506.log.gz": "332834c349cdf3835a3d768f67cd094ce2b46fef4428c47586491a574bdfe838",
+    "docs/delivery/v2-development/m4-receipt-preservation-red-20261011t0506.json.gz": "e2e0de9343d47d29a0d453deff34bb42438a5033bd8a83bf17f4d5df6439892e",
+    "docs/delivery/v2-development/m4-receipt-preservation-red-20261011t0506.log.gz": "142076fda4fcd107cb85c50104821aa75d822edf7ca0b3f56563aa0811326c88",
+    "scripts/run_v2_real_text_check.py": "c475f8c9222c31026b0a3e57b605aa20151ef84c097e80e865a3dede1fb66b38",
+    "tests/test_v2_real_text_check.py": "4accf406734b2eaacbbc2c5fb7e513b88f3e6dea111ef63eea3201c164458a32"
+  },
+  "runs": [
+    {
+      "receipt": "m4-receipt-adjacent-green-20261011t0507.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "99740ebedd7714710376f3c091e215cc1cee98e637afdd4edac3342cd6a343cf",
+      "sources_stable": true
+    },
+    {
+      "receipt": "m4-receipt-collection-green-20261011t0508.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "e24140f3453a0a888dabaa3e9255afdbb3156082a71d66a11597a9be3e60b939",
+      "sources_stable": true
+    },
+    {
+      "receipt": "m4-receipt-final-20261011t0511.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "97869e314d03c3ad74c11b6565a076b79139f769526668061580d288c5cc5df5",
+      "sources_stable": true
+    },
+    {
+      "receipt": "m4-receipt-infra-green-20261011t0508.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "b2d8647a2d1784e3a2b908c3a63fc2b2a0459c219c00f2861bf69650a83c7f01",
+      "sources_stable": true
+    },
+    {
+      "receipt": "m4-receipt-preservation-green-20261011t0506.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "37c32c886e2fd502686a6cd165b78b2726729118de1a8be690d2bd95bd7d44bb",
+      "sources_stable": true
+    },
+    {
+      "receipt": "m4-receipt-preservation-red-20261011t0506.json",
+      "status": "FAIL",
+      "exit_code": 1,
+      "log_sha256": "ccc3c7e5787658626540d52fea43afa4f841b874329d8fe3bbd15d04e2cdc7c2",
+      "sources_stable": true
+    }
+  ],
+  "verification": {
+    "harness": 193,
+    "harness_adjacent": 198,
+    "infrastructure": 352,
+    "final_combined": 545,
+    "independent_full_generator_collections": 2,
+    "ordered_nodes": 12159,
+    "git_diff_check": "PASS",
+    "targeted_compile": "PASS",
+    "ordinary_review": "NO_BLOCKING_FINDINGS"
+  },
+  "limits": [
+    "No real model/runtime/GPU/Windows acceptance",
+    "No full backend/File/PG/frontend suite run",
+    "M4 remains PARTIAL",
+    "Pre-try, final acceptance write, stdout and uncatchable termination outside scope"
+  ]
+}
