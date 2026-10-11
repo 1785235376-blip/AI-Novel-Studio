@@ -1,6 +1,6 @@
 # Studio 制作操作与视图替换契约
 
-此页包含 M4–M9 的只读制作目录，以及另经原 owner 命令入口接入的独立媒体和有界多轨消费者。已有操作继续由原服务、权限、版本校验和任务管理负责；Graph 媒体节点等未接入部分保持不可执行。目录 GET 不评价 Windows、GPU、模型质量或产品验收，也不授予执行权限；M4 保持 PARTIAL，M5–M9 保持 LOCAL_REQUIRED，M4→M9 的真实验收顺序不变。
+此页包含 M4–M9 的只读制作目录，以及另经原 owner 命令入口接入的独立媒体和有界多轨消费者。已有操作继续由原服务、权限、版本校验和任务管理负责；显式 schema 3 的 [Graph 媒体执行](graph-media-execution.md) 另有严格操作入口。目录 GET 不评价 Windows、GPU、模型质量或产品验收，也不授予执行权限；M4 保持 PARTIAL，M5–M9 保持 LOCAL_REQUIRED，M4→M9 的真实验收顺序不变。
 
 ## 已接入的消费者
 

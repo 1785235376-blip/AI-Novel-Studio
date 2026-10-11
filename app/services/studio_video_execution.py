@@ -174,6 +174,12 @@ class StudioVideoExecution:
             **{k: row["context"][k] for k in ("actor", "scope_key", "incarnation", "request_digest", "operation_id", "sources")},
             "provider_id": row["body"]["provider_id"], "model_id": row["body"]["model_id"],
             "license_note": row["context"].get("license_note", "")}
+        if "graph_binding" in row["context"]:
+            from ..creative.graph_media_binding import validate_graph_binding
+            graph_binding = validate_graph_binding(row["context"]["graph_binding"], row["context"])
+            if graph_binding is None:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
+            expected_origin["graph_binding"] = copy.deepcopy(graph_binding)
         expected_binding = {"novel_id": nid, "branch_id": branch,
             "scope_key": row["context"]["scope_key"], "incarnation": row["context"]["incarnation"]}
         if (candidate.get("kind") != "video" or candidate.get("sha256") != hashlib.sha256(data).hexdigest()

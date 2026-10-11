@@ -7,7 +7,11 @@ import type {
   StudioGraphRecord, StudioGraphReferenceState, StudioGraphRun, StudioGraphRunStatus, StudioGraphCatalog,
   StudioGraphScope, StudioGraphOwner, StudioGraphNodeState, StudioGraphNodeStatus,
   StudioGraphModelCapabilities, StudioGraphModelPreviewInput, StudioGraphModelDispatchInput, StudioGraphModelRefreshInput,
+  StudioGraphAssetRef, StudioGraphMediaCandidate, StudioGraphMediaRuntime, StudioGraphMediaPreviewInput,
+  StudioGraphMediaDispatchInput, StudioGraphMediaJobInput, StudioGraphMediaReviewInput,
+  StudioGraphMediaPreview, StudioGraphMediaJob, StudioGraphMediaExecution,
 } from './studioGraphTypes';
+import type { MediaOperation, ProductionJob, ProductionPreview, RecordedMediaCommand, RecordedProductionSource, ProductionRecipe } from './studioProductionClient';
 import { graphModelCapabilities, graphModelRuntime } from './studioGraphModelContract';
 import { graphTextAssetOutput } from './studioGraphTextAssetContract';
 import { createStudioProviderClient, type StudioProviderClient } from './studioProviderClient';
@@ -15,18 +19,22 @@ import { createStudioProviderClient, type StudioProviderClient } from './studioP
 /** Inject the existing Studio transport; graph operations never look up credentials. */
 export type StudioGraphTransport = {
   json<T>(url: string, method?: string, body?: unknown, signal?: AbortSignal, idempotencyKey?: string): Promise<T>;
+  blob?(url: string): Promise<Blob>;
 };
 
 const localDefinitionIds: readonly StudioGraphDefinitionId[] = ['text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review', 'asset_reference'];
-const definitionIds: readonly StudioGraphDefinitionId[] = [...localDefinitionIds, 'text_generate'];
+const modelDefinitionIds: readonly StudioGraphDefinitionId[] = [...localDefinitionIds, 'text_generate'];
+const mediaDefinitionIds: readonly StudioGraphDefinitionId[] = ['media_generate', 'media_review'];
+const definitionIds: readonly StudioGraphDefinitionId[] = [...modelDefinitionIds, ...mediaDefinitionIds];
 const statuses: readonly StudioGraphRunStatus[] = ['QUEUED', 'RUNNING', 'WAITING_APPROVAL', 'PAUSED', 'SUCCEEDED', 'FAILED', 'CANCELLED', 'REJECTED'];
 const nodeStatuses: readonly StudioGraphNodeStatus[] = ['PENDING', 'WAITING_APPROVAL', 'QUEUED', 'WORKING', 'SUCCEEDED', 'FAILED', 'SKIPPED', 'REJECTED'];
 const actions: readonly StudioGraphAction[] = ['execute', 'approve', 'reject', 'cancel', 'pause', 'resume'];
-const portKinds = ['TEXT', 'DIRECTOR_NOTES', 'DRAFT', 'ASSET_REF'] as const;
+const portKinds = ['TEXT', 'DIRECTOR_NOTES', 'DRAFT', 'ASSET_REF', 'MEDIA_CANDIDATE'] as const;
 const parameterKeys: Record<StudioGraphDefinitionId, readonly string[]> = {
   text_input: ['text'], text_reference: [], draft_prepare: [], manual_transform: ['result'],
   director_note: ['note'], human_review: [], asset_reference: ['asset_id', 'version', 'digest', 'kind'],
   text_generate: ['instruction', 'max_output_tokens'],
+  media_generate: ['operation_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'allow_cloud', 'license_note'], media_review: [],
 };
 const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; outputs: Record<string, string> }> = {
   text_input: { inputs: {}, outputs: { text: 'TEXT' } },
@@ -37,6 +45,20 @@ const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; o
   human_review: { inputs: { draft: 'DRAFT' }, outputs: {} },
   asset_reference: { inputs: {}, outputs: { asset: 'ASSET_REF' } },
   text_generate: { inputs: { text: 'TEXT', direction: 'DIRECTOR_NOTES' }, outputs: { draft: 'DRAFT' } },
+  media_generate: { inputs: { text: 'TEXT', source: 'ASSET_REF' }, outputs: { candidate: 'MEDIA_CANDIDATE' } },
+  media_review: { inputs: { candidate: 'MEDIA_CANDIDATE' }, outputs: { asset: 'ASSET_REF' } },
+};
+const mediaOperations: readonly MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v',
+  'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
+const mediaParameterKeys = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms'];
+const parametersForOperation: Record<MediaOperation, readonly string[]> = {
+  'm5.image.t2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
+  'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
+  'm7.video.t2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
+  'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
+  'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
+  'm8.audio.speech': ['voice_id', 'speech_rate'], 'm8.audio.music': ['duration_seconds', 'seed'],
+  'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms'],
 };
 
 function invalid(input = false): never {
@@ -98,7 +120,7 @@ function list(value: unknown, maximum: number, input = false): unknown[] {
   return value;
 }
 function uniqueIds(value: unknown, input = false): string[] {
-  const result = list(value, 16, input).map(item => id(item, input));
+  const result = list(value, 24, input).map(item => id(item, input));
   if (new Set(result).size !== result.length) invalid(input);
   return result;
 }
@@ -109,6 +131,32 @@ function definitionId(value: unknown, input = false): StudioGraphDefinitionId {
 function position(value: unknown, input = false): StudioGraphPosition {
   const row = record(value, input);
   return { x: number(row.x, -100_000, 100_000, input), y: number(row.y, -100_000, 100_000, input) };
+}
+function mediaOperation(value: unknown, input = false): MediaOperation {
+  if (!mediaOperations.includes(value as MediaOperation)) invalid(input); return value as MediaOperation;
+}
+function mediaParameterValues(value: unknown, operation: MediaOperation, input = false): NonNullable<StudioGraphParameters['parameters']> {
+  const row = record(value, input), result: NonNullable<StudioGraphParameters['parameters']> = {};
+  if (Object.keys(row).some(key => !mediaParameterKeys.includes(key))) invalid(input);
+  for (const [key, value] of Object.entries(row)) {
+    if (value === null) { result[key] = null; continue; }
+    if (!parametersForOperation[operation].includes(key)) invalid(input);
+    if (key === 'negative_prompt') result[key] = text(value, 8000, input, true);
+    else if (key === 'voice_id') result[key] = resourceId(value, input);
+    else if (key === 'size' || key === 'quality') {
+      const options = key === 'size' ? ['auto', '1024x1024', '1536x1024', '1024x1536'] : ['auto', 'low', 'medium', 'high', 'standard', 'hd'];
+      if (!options.includes(value as string)) invalid(input); result[key] = value as string;
+    } else if (key === 'speech_rate') result[key] = number(value, 0.5, 2, input);
+    else {
+      const ranges: Record<string, [number, number]> = { width: [64, 2048], height: [64, 2048], steps: [1, 150], seed: [0, 2147483647],
+        duration_seconds: [1, 600], frame_rate: [1, 60], in_ms: [0, 600000], out_ms: [1, 600000] };
+      const range = ranges[key]; if (!range) invalid(input); result[key] = integer(value, range[0], range[1], input);
+      if (operation.startsWith('m5.') && ['width', 'height'].includes(key) && Number(result[key]) % 8 !== 0) invalid(input);
+    }
+  }
+  if ((result.width != null) !== (result.height != null)) invalid(input);
+  if (operation === 'm8.audio.trim' && (typeof result.in_ms !== 'number' || typeof result.out_ms !== 'number' || result.out_ms <= result.in_ms || result.out_ms - result.in_ms > 120000)) invalid(input);
+  return result;
 }
 function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false, unavailable = false): StudioGraphParameters {
   const row = record(value, input);
@@ -123,14 +171,23 @@ function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false
     return { asset_id: resourceId(row.asset_id, input), version: integer(row.version, 1, Number.MAX_SAFE_INTEGER, input),
       digest: digest(row.digest, input), kind: row.kind as 'image' | 'video' | 'audio' };
   }
+  if (kind === 'media_generate') {
+    if (Object.keys(row).some(key => !parameterKeys[kind].includes(key))) invalid(input);
+    const operation = mediaOperation(row.operation_id, input), trim = operation === 'm8.audio.trim';
+    const provider = row.provider_id == null ? null : resourceId(row.provider_id, input), model = row.model_id == null ? null : resourceId(row.model_id, input);
+    const prompt = text(row.prompt ?? '', 16000, input, true), allowCloud = bool(row.allow_cloud ?? false, input);
+    if (trim ? provider !== null || model !== null || prompt !== '' || allowCloud : provider === null || model === null) invalid(input);
+    return { operation_id: operation, provider_id: provider, model_id: model, prompt,
+      parameters: mediaParameterValues(row.parameters ?? {}, operation, input), allow_cloud: allowCloud, license_note: text(row.license_note ?? '', 2000, input, true) };
+  }
   return {};
 }
 function definition(value: unknown, input = false, unavailable = new Set<string>()): StudioGraphDefinition {
   const row = record(value, input);
-  if (row.schema_version !== 1 && row.schema_version !== 2) invalid(input);
-  const nodes: StudioGraphNode[] = list(row.nodes, 16, input).map(item => {
+  if (row.schema_version !== 1 && row.schema_version !== 2 && row.schema_version !== 3) invalid(input);
+  const nodes: StudioGraphNode[] = list(row.nodes, row.schema_version === 3 ? 24 : 16, input).map(item => {
     const node = record(item, input), nodeId = id(node.id, input), kind = definitionId(node.definition_id, input);
-    if (kind === 'text_generate' && row.schema_version !== 2) invalid(input);
+    if (kind === 'text_generate' && row.schema_version === 1 || mediaDefinitionIds.includes(kind) && row.schema_version !== 3) invalid(input);
     if (node.definition_version !== 1) invalid(input);
     return { id: nodeId, definition_id: kind, definition_version: 1, enabled: bool(node.enabled, input),
       position: position(node.position, input), parameters: parameters(node.parameters, kind, input, unavailable.has(nodeId)) };
@@ -173,6 +230,19 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
 function schema(value: unknown, kind: StudioGraphDefinitionId): StudioGraphParameterSchema {
   const row = record(value), properties = record(row.properties);
   if (row.type !== 'object' || row.additionalProperties !== false) invalid();
+  if (kind === 'media_generate') {
+    if (JSON.stringify(row).length > 100000 || Object.keys(properties).length !== parameterKeys[kind].length
+      || Object.keys(properties).some(key => !parameterKeys[kind].includes(key))) invalid();
+    const operation = record(properties.operation_id);
+    if (operation.type !== 'string' || !Array.isArray(operation.enum) || operation.enum.length !== mediaOperations.length
+      || operation.enum.some(item => !mediaOperations.includes(item as MediaOperation))) invalid();
+    // This is a bounded display projection. The executable parameter validator above is code-owned.
+    return { type: 'object', additionalProperties: false, properties: {
+      operation_id: { type: 'string', enum: [...mediaOperations] }, provider_id: { type: 'string', maxLength: 240 },
+      model_id: { type: 'string', maxLength: 240 }, prompt: { type: 'string', maxLength: 16000, default: '' },
+      parameters: { type: 'object', default: {} }, allow_cloud: { type: 'boolean', default: false }, license_note: { type: 'string', maxLength: 2000, default: '' },
+    }, required: ['operation_id'] };
+  }
   const result: StudioGraphParameterSchema = { type: 'object', additionalProperties: false, properties: {} };
   for (const key of parameterKeys[kind]) {
     const field = record(properties[key]);
@@ -198,25 +268,26 @@ function schema(value: unknown, kind: StudioGraphDefinitionId): StudioGraphParam
   }
   return result;
 }
-function catalogDefinition(value: unknown): StudioGraphCatalogDefinition {
+function catalogDefinition(value: unknown, mediaEnabled = false): StudioGraphCatalogDefinition {
   const row = record(value), kind = definitionId(row.id);
-  if (row.version !== 1 || row.model_called !== false || row.executable !== (kind !== 'asset_reference')) invalid();
+  const executable = mediaEnabled || kind !== 'asset_reference';
+  if (row.version !== 1 || row.model_called !== false || row.executable !== executable) invalid();
   function checkedPorts(value: unknown, side: 'inputs' | 'outputs'): StudioGraphPort[] {
     const expected = ports[kind][side];
     const result = list(value, 2).map(item => {
       const port = record(item), portId = id(port.id), required = bool(port.required);
       if (!portKinds.includes(port.type as StudioGraphPort['type']) || expected[portId] !== port.type || port.multiple !== false) invalid();
-      if (required !== (side === 'inputs' && portId !== 'direction')) invalid();
+      if (required !== (side === 'inputs' && portId !== 'direction' && kind !== 'media_generate')) invalid();
       return { id: portId, type: port.type as StudioGraphPort['type'], required, multiple: false as const };
     });
     if (new Set(result.map(port => port.id)).size !== Object.keys(expected).length || result.length !== Object.keys(expected).length) invalid();
     return result;
   }
-  if (kind === 'asset_reference' && row.default_parameters !== null) invalid();
+  if ((kind === 'asset_reference' || kind === 'media_generate') && row.default_parameters !== null) invalid();
   return { id: kind, version: 1, inputs: checkedPorts(row.inputs, 'inputs'), outputs: checkedPorts(row.outputs, 'outputs'),
     parameters_schema: schema(row.parameters_schema, kind),
-    default_parameters: kind === 'asset_reference' ? null : parameters(row.default_parameters, kind),
-    executable: kind !== 'asset_reference', model_called: false, blockers: list(row.blockers, 16).map(code) };
+    default_parameters: kind === 'asset_reference' || kind === 'media_generate' ? null : parameters(row.default_parameters, kind),
+    executable, model_called: false, blockers: list(row.blockers, 16).map(code) };
 }
 
 function draft(value: unknown, allowModel = false): StudioGraphDraft {
@@ -237,8 +308,133 @@ function output(value: unknown, allowModel = false): StudioGraphOutput | null {
   if (row.text !== undefined) result.text = text(row.text, 8_000, false, true);
   if (row.direction !== undefined) result.direction = { note: text(record(row.direction).note, 4_000, false, true) };
   if (row.draft !== undefined) result.draft = draft(row.draft, allowModel);
+  if (row.asset !== undefined) result.asset = assetReference(row.asset);
+  if (row.candidate !== undefined) {
+    const candidate = record(row.candidate);
+    if (!['image', 'video', 'audio'].includes(candidate.owner as string) || Object.keys(candidate).some(key => !['owner', 'job_id', 'job_version', 'request_digest', 'asset'].includes(key))) invalid();
+    result.candidate = { owner: candidate.owner as StudioGraphMediaCandidate['owner'], job_id: resourceId(candidate.job_id),
+      job_version: integer(candidate.job_version, 1), request_digest: digest(candidate.request_digest), asset: assetReference(candidate.asset) };
+  }
   if (new TextEncoder().encode(JSON.stringify(result)).length > 64_000) invalid();
   return result;
+}
+function assetReference(value: unknown): StudioGraphAssetRef {
+  const row = record(value);
+  if (!['image', 'video', 'audio'].includes(row.kind as string) || Object.keys(row).some(key => !['asset_id', 'version', 'digest', 'kind'].includes(key))) invalid();
+  return { asset_id: resourceId(row.asset_id), version: integer(row.version, 1), digest: digest(row.digest), kind: row.kind as StudioGraphAssetRef['kind'] };
+}
+const mediaJobStatuses: readonly ProductionJob['status'][] = ['QUEUED', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY',
+  'AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED', 'UNKNOWN', 'FAILED', 'CANCELLED'];
+function closed(row: Record<string, unknown>, keys: readonly string[]): void { if (Object.keys(row).some(key => !keys.includes(key))) invalid(); }
+function mediaSource(value: unknown): RecordedProductionSource {
+  const row = record(value); closed(row, ['id', 'kind', 'version', 'digest', 'asset_kind', 'reference_only']);
+  if (row.reference_only !== undefined && row.reference_only !== true) invalid();
+  const base = { id: resourceId(row.id), version: integer(row.version, 1), digest: digest(row.digest),
+    ...(row.reference_only === true ? { reference_only: true as const } : {}) };
+  if (row.kind === 'CREATIVE_DOCUMENT' && row.asset_kind === undefined) return { ...base, kind: 'CREATIVE_DOCUMENT' };
+  if (row.kind !== 'ASSET' || !['image', 'video', 'audio'].includes(row.asset_kind as string)) invalid();
+  return { ...base, kind: 'ASSET', asset_kind: row.asset_kind as 'image' | 'video' | 'audio' };
+}
+function recordedMediaCommand(value: unknown): RecordedMediaCommand {
+  const row = record(value); closed(row, ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note']);
+  const operation = mediaOperation(row.operation_id), resolved = mediaParameterValues(row.parameters, operation);
+  const requestId = text(row.request_id, 100); if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(requestId)) invalid();
+  const sourceSnapshots = list(row.source_snapshots, 8).map(mediaSource);
+  if (sourceSnapshots.some(source => source.kind !== 'ASSET')) invalid();
+  return { operation_id: operation, request_id: requestId, provider_id: row.provider_id == null ? null : resourceId(row.provider_id),
+    model_id: row.model_id == null ? null : resourceId(row.model_id), prompt: text(row.prompt, 16000, false, true),
+    parameters: Object.fromEntries(Object.entries(resolved).filter((item): item is [string, string | number] => item[1] !== null)),
+    source_snapshots: sourceSnapshots, allow_cloud: bool(row.allow_cloud), license_note: text(row.license_note, 2000, false, true) };
+}
+function productionRecipe(value: unknown, operation: string): ProductionRecipe {
+  const row = record(value); closed(row, ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline']);
+  if (row.contract !== 'studio-execution-recipe/1' || row.operation_id !== operation || row.automatic_fallback !== false
+    || !['ORIGINAL_HTTP_PROVIDER', 'COMFYUI_BUILTIN_IMAGE', 'AUTOMATIC1111_IMAGE', 'LOCAL_FFMPEG'].includes(row.adapter as string)
+    || JSON.stringify(row).length > 131072) invalid();
+  digest(row.recipe_digest);
+  return row as ProductionRecipe;
+}
+function productionPreview(value: unknown, projectId: string, branchId: string | null): ProductionPreview {
+  const row = record(value); closed(row, ['contract', 'novel_id', 'branch_id', 'request_id', 'operation_id', 'preview_digest', 'request_digest', 'command', 'provider',
+    'execution_recipe', 'sources', 'product_acceptance', 'execution_available', 'automatic_dispatch', 'output_policy']);
+  if (row.novel_id !== projectId || (row.branch_id ?? null) !== branchId) mismatch();
+  const command = recordedMediaCommand(row.command), operation = mediaOperation(row.operation_id);
+  if (row.contract !== 'studio-production-preview/1' || row.request_id !== command.request_id || operation !== command.operation_id
+    || row.product_acceptance !== 'LOCAL_REQUIRED' || row.execution_available !== true || row.automatic_dispatch !== false
+    || row.output_policy !== 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW') invalid();
+  let provider: ProductionPreview['provider'] = null;
+  if (row.provider !== null) {
+    const p = record(row.provider); closed(p, ['provider_id', 'model_id', 'local', 'route_digest']);
+    provider = { provider_id: resourceId(p.provider_id), model_id: resourceId(p.model_id), local: bool(p.local), route_digest: digest(p.route_digest) };
+    if (provider.provider_id !== command.provider_id || provider.model_id !== command.model_id) invalid();
+  }
+  if ((operation === 'm8.audio.trim') !== (provider === null)) invalid();
+  const measuredSources = list(row.sources, 8);
+  if (measuredSources.length !== command.source_snapshots.length) invalid();
+  measuredSources.forEach((value, index) => { const evidence = record(value); closed(evidence, ['snapshot', 'measured']); const snapshot = mediaSource(evidence.snapshot);
+    const expected = command.source_snapshots[index]; if (['id', 'kind', 'version', 'digest', 'asset_kind'].some(key =>
+      (snapshot as Record<string, unknown>)[key] !== (expected as Record<string, unknown>)[key])) invalid(); });
+  // Project a checked command instead of retaining unknown response keys or nullable parameters.
+  return { contract: 'studio-production-preview/1', novel_id: projectId, branch_id: branchId, operation_id: operation, request_id: command.request_id,
+    command: command as ProductionPreview['command'], provider, preview_digest: digest(row.preview_digest), request_digest: digest(row.request_digest),
+    execution_recipe: productionRecipe(row.execution_recipe, operation), product_acceptance: 'LOCAL_REQUIRED', execution_available: true,
+    automatic_dispatch: false, output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
+}
+function mediaJob(value: unknown): StudioGraphMediaJob {
+  const row = record(value); closed(row, ['id', 'version', 'status', 'request_digest', 'receipt_digest', 'output_candidate', 'approved_asset_version', 'error_code',
+    'needs_reconciliation', 'execution_state', 'cancellation_mode', 'remote_compute_may_continue']);
+  if (!mediaJobStatuses.includes(row.status as ProductionJob['status'])) invalid();
+  let candidate: ProductionJob['output_candidate'] = null;
+  if (row.output_candidate !== null) {
+    const c = record(row.output_candidate); closed(c, ['id', 'version', 'digest', 'kind']);
+    if (!['image', 'video', 'audio'].includes(c.kind as string)) invalid();
+    candidate = { id: resourceId(c.id), version: integer(c.version, 1), digest: digest(c.digest), kind: c.kind as 'image' | 'video' | 'audio' };
+  }
+  return { id: resourceId(row.id), version: integer(row.version, 1), status: row.status as ProductionJob['status'], request_digest: digest(row.request_digest),
+    receipt_digest: row.receipt_digest == null ? null : digest(row.receipt_digest), output_candidate: candidate,
+    approved_asset_version: row.approved_asset_version == null ? null : integer(row.approved_asset_version, 1),
+    ...(row.error_code === undefined ? {} : { error_code: row.error_code === null ? null : code(row.error_code) }),
+    ...(row.needs_reconciliation == null ? {} : { needs_reconciliation: bool(row.needs_reconciliation) }),
+    ...(row.execution_state == null ? {} : { execution_state: code(row.execution_state) }),
+    ...(row.cancellation_mode == null ? {} : { cancellation_mode: code(row.cancellation_mode) }), remote_compute_may_continue: bool(row.remote_compute_may_continue) };
+}
+function graphMediaRuntime(value: unknown, projectId: string, branchId: string | null, hidePrivate: boolean): StudioGraphMediaRuntime {
+  const row = record(value); closed(row, ['schema_version', 'contract', 'nodes', 'product_acceptance', 'automatic_retry', 'automatic_poll', 'applied']);
+  if (row.schema_version !== 1 || row.contract !== 'creative-graph-media/1' || row.product_acceptance !== 'LOCAL_REQUIRED'
+    || row.automatic_retry !== false || row.automatic_poll !== false || row.applied !== false) invalid();
+  const executionStatuses = [...mediaJobStatuses, 'ADMISSION_RESERVED', 'ADMISSION_UNKNOWN', 'JOB_NOT_FOUND'];
+  const nodes = list(row.nodes, 4).map(value => {
+    const source = record(value); closed(source, ['node_id', 'status', 'preview', 'execution']);
+    const nodeId = id(source.node_id), status = code(source.status);
+    if (![...executionStatuses, 'PENDING', 'AWAITING_PREVIEW', 'STALE'].includes(status)) invalid();
+    let preview: StudioGraphMediaPreview | null = null, execution: StudioGraphMediaExecution | null = null;
+    if (source.preview !== null) {
+      const p = record(source.preview); closed(p, ['node_id', 'input_digest', 'preview_digest', 'command', 'production_preview']);
+      if (p.node_id !== nodeId) invalid();
+      const command = recordedMediaCommand(p.command), production = productionPreview(p.production_preview, projectId, branchId), captured = production.command;
+      if (command.operation_id !== captured.operation_id || command.request_id !== captured.request_id || command.prompt !== captured.prompt
+        || command.provider_id !== captured.provider_id || command.model_id !== captured.model_id || command.allow_cloud !== captured.allow_cloud || command.license_note !== captured.license_note
+        || JSON.stringify(command.source_snapshots) !== JSON.stringify(captured.source_snapshots)
+        || Object.entries(command.parameters).some(([key, value]) => captured.parameters[key] !== value)) invalid();
+      preview = { node_id: nodeId, input_digest: digest(p.input_digest), preview_digest: digest(p.preview_digest), command, production_preview: production };
+    }
+    if (source.execution !== null) {
+      const e = record(source.execution); closed(e, ['node_id', 'owner', 'job_id', 'status', 'receipt_state', 'send_reserved', 'job', 'review_state']);
+      if (e.node_id !== nodeId || !['image', 'video', 'audio'].includes(e.owner as string) || !executionStatuses.includes(e.status as ProductionJob['status'])
+        || !['RECORDED', 'UNKNOWN_NO_AUTOMATIC_REPLAY'].includes(e.receipt_state as string) || !['NONE', 'REVIEW_RESERVED', 'APPROVED'].includes(e.review_state as string)) invalid();
+      const jobId = e.job_id === null ? null : resourceId(e.job_id), job = e.job === null ? null : mediaJob(e.job);
+      if (job && job.id !== jobId || job && preview && job.request_digest !== preview.production_preview.request_digest) invalid();
+      const expectedOwner = preview?.command.operation_id.startsWith('m5.') ? 'image' : preview?.command.operation_id.startsWith('m7.') ? 'video' : 'audio';
+      if (preview && e.owner !== expectedOwner) invalid();
+      execution = { node_id: nodeId, owner: e.owner as StudioGraphMediaExecution['owner'], job_id: jobId, status: code(e.status),
+        receipt_state: e.receipt_state as StudioGraphMediaExecution['receipt_state'], send_reserved: bool(e.send_reserved),
+        job: hidePrivate ? null : job, review_state: e.review_state as StudioGraphMediaExecution['review_state'] };
+    }
+    if (!execution && !['PENDING', 'AWAITING_PREVIEW', 'STALE'].includes(status)) invalid();
+    return { node_id: nodeId, status, preview: hidePrivate ? null : preview, execution };
+  });
+  if (new Set(nodes.map(node => node.node_id)).size !== nodes.length) invalid();
+  return { schema_version: 1, contract: 'creative-graph-media/1', nodes, product_acceptance: 'LOCAL_REQUIRED', automatic_retry: false, automatic_poll: false, applied: false };
 }
 function runStatus(value: unknown): StudioGraphRunStatus {
   if (!statuses.includes(value as StudioGraphRunStatus)) invalid();
@@ -254,22 +450,41 @@ function catalog(value: unknown): StudioGraphCatalog {
     actor_private: true, cache_mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY',
   };
   const modelEnabled = capabilities.model_execution === true;
+  const mediaEnabled = capabilities.media_execution === true;
   if (modelEnabled) {
     if (capabilities.model_execution_contract !== 'creative-graph-model/1') invalid();
     expectedCapabilities.model_execution = true;
     expectedCapabilities.model_execution_contract = 'creative-graph-model/1';
   } else if (capabilities.model_execution_contract !== undefined) invalid();
+  if (mediaEnabled) {
+    if (capabilities.media_execution_contract !== 'creative-graph-media/1') invalid();
+    expectedCapabilities.media_execution = true; expectedCapabilities.media_execution_contract = 'creative-graph-media/1';
+    expectedCapabilities.external_reference_execution = true;
+  } else if (capabilities.media_execution_contract !== undefined) invalid();
   if (Object.entries(expectedLimits).some(([key, value]) => limits[key] !== value)
     || Object.entries(expectedCapabilities).some(([key, value]) => capabilities[key] !== value)) invalid();
-  const definitions = list(row.definitions, definitionIds.length).map(catalogDefinition);
-  const expectedDefinitions = modelEnabled ? definitionIds : localDefinitionIds;
+  const definitions = list(row.definitions, definitionIds.length).map(item => catalogDefinition(item, mediaEnabled));
+  const expectedDefinitions = [...(modelEnabled ? modelDefinitionIds : localDefinitionIds), ...(mediaEnabled ? mediaDefinitionIds : [])];
   if (definitions.length !== expectedDefinitions.length || new Set(definitions.map(item => item.id)).size !== definitions.length
     || definitions.some(item => !expectedDefinitions.includes(item.id))) invalid();
-  return { definitions, limits: expectedLimits, capabilities: expectedCapabilities };
+  let mediaLimits: StudioGraphCatalog['media_limits'];
+  if (mediaEnabled) {
+    const value = record(row.media_limits); if (value.nodes !== 24 || value.generators !== 4 || value.history !== 80) invalid();
+    mediaLimits = { nodes: 24, generators: 4, history: 80 };
+  } else if (row.media_limits !== undefined) invalid();
+  return { definitions, limits: expectedLimits, capabilities: expectedCapabilities, ...(mediaLimits ? { media_limits: mediaLimits } : {}) };
 }
 
 export function createStudioGraphClient(projectId: string, context: Pick<CollaborationContext, 'scope'>, transport: StudioGraphTransport) {
   const capturedScope = context.scope ? { ...context.scope } : undefined;
+  const originalTransport = transport;
+  const admitted = () => { if (capturedScope && capturedScope.projectId !== projectId) mismatch(); };
+  transport = {
+    json<T>(url: string, method?: string, body?: unknown, signal?: AbortSignal, idempotencyKey?: string): Promise<T> {
+      admitted(); return originalTransport.json<T>(url, method, body, signal, idempotencyKey);
+    },
+    ...(originalTransport.blob ? { blob: (url: string) => { admitted(); return originalTransport.blob!(url); } } : {}),
+  };
   const base = `/api/projects/${encodeURIComponent(projectId)}/studio`;
   const graphUrl = (value: unknown) => `${base}/graphs/${encodeURIComponent(resourceId(value, true))}`;
   const runUrl = (value: unknown) => `${base}/graph-runs/${encodeURIComponent(resourceId(value, true))}`;
@@ -295,7 +510,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   function checkedGraph(value: unknown, expectedId?: string): StudioGraphRecord {
     const row = record(value), ownership = owner(row), graphId = resourceId(row.id);
     if (expectedId !== undefined && expectedId !== graphId) mismatch();
-    const referenceStates: StudioGraphReferenceState[] = list(row.reference_states, 16).map(item => {
+    const referenceStates: StudioGraphReferenceState[] = list(row.reference_states, 24).map(item => {
       const state = record(item);
       if (!['CURRENT', 'STALE', 'UNAVAILABLE'].includes(state.state as string)) invalid();
       return { node_id: id(state.node_id), state: state.state as StudioGraphReferenceState['state'] };
@@ -351,11 +566,13 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if (row.external_calls !== 0 || row.applied !== false || row.timeout_seconds !== 3600) invalid();
     const stale = bool(row.stale), status = runStatus(row.status), hideOutputs = stale || ['CANCELLED', 'REJECTED', 'FAILED'].includes(status);
     const model = row.model_runtime === undefined ? undefined : graphModelRuntime(row.model_runtime, hideOutputs);
+    const media = row.media_runtime === undefined ? undefined : graphMediaRuntime(row.media_runtime, projectId, capturedScope?.branchId ?? null,
+      hideOutputs);
     const modelCalled = bool(row.model_called);
     if (model ? modelCalled !== (model.execution?.model_called ?? false) : modelCalled) invalid();
     const modelOutput = modelCalled && !!model && ['RESULT_REVIEW', 'TERMINAL'].includes(model.status);
     const rawStates = record(row.node_states), stateIds = Object.keys(rawStates);
-    if (stateIds.length > 16) invalid();
+    if (stateIds.length > 24) invalid();
     const nodeStates = Object.fromEntries(stateIds.map(nodeId => {
       const state = record(rawStates[nodeId]);
       if (!nodeStatuses.includes(state.status as StudioGraphNodeStatus)) invalid();
@@ -366,6 +583,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     const currentNodeId = row.current_node_id === null ? null : id(row.current_node_id);
     if (currentNodeId !== null && !Object.hasOwn(nodeStates, currentNodeId)) invalid();
     if (model && !Object.hasOwn(nodeStates, model.node_id)) invalid();
+    if (media?.nodes.some(node => !Object.hasOwn(nodeStates, node.node_id))) invalid();
     let review: StudioGraphRun['review'] = null;
     if (!hideOutputs && row.review !== null) {
       const source = record(row.review), nodeId = id(source.node_id);
@@ -376,9 +594,10 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if (cache.mode !== 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY') invalid();
     const result: StudioGraphRun = { ...ownership, id: runId, version: integer(row.version, 1), graph_id: graphId, graph_version: integer(row.graph_version, 1),
       status, current_node_id: currentNodeId, node_states: nodeStates, review,
-      cache: { hits: integer(cache.hits, 0, 16), misses: integer(cache.misses, 0, 16), mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' },
+      cache: { hits: integer(cache.hits, 0, 24), misses: integer(cache.misses, 0, 24), mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' },
       created_at: text(row.created_at, 64), updated_at: text(row.updated_at, 64), model_called: modelCalled, external_calls: 0,
       ...(model ? { model_runtime: model } : {}),
+      ...(media ? { media_runtime: media } : {}),
       applied: false, stale, reviewed: bool(row.reviewed), timeout_seconds: 3600, deadline_at: deadline(row.deadline_at) };
     if (row.asset_output !== undefined) result.asset_output = graphTextAssetOutput(row.asset_output, result, observedGraphs.get(graphId));
     if (observedRuns.has(runId) && observedRuns.get(runId) !== graphId) mismatch();
@@ -389,6 +608,25 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     const result = checkedRun(value, runId, observedRuns.get(runId));
     if (!result.model_runtime) invalid();
     return result;
+  }
+  function checkedMediaRun(value: unknown, runId: string, nodeId: string): StudioGraphRun {
+    const result = checkedRun(value, runId, observedRuns.get(runId));
+    if (!result.media_runtime || !Object.hasOwn(result.node_states, nodeId)) invalid(); return result;
+  }
+  function mediaInput(value: unknown): StudioGraphMediaPreviewInput {
+    const row = record(value, true);
+    return { expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, true), node_id: id(row.node_id, true) };
+  }
+  function mediaJobInput(value: unknown): StudioGraphMediaJobInput {
+    const row = record(value, true); return { ...mediaInput(row), expected_job_version: integer(row.expected_job_version, 1, Number.MAX_SAFE_INTEGER, true),
+      expected_request_digest: digest(row.expected_request_digest, true) };
+  }
+  function mediaJobAction(runId: string, action: 'execute' | 'refresh' | 'reconcile', value: StudioGraphMediaJobInput): Promise<StudioGraphRun> {
+    const payload = mediaJobInput(value);
+    return transport.json(`${runUrl(runId)}/media/${action}`, 'POST', payload).then(value => {
+      const result = checkedMediaRun(value, runId, payload.node_id), job = result.media_runtime!.nodes.find(item => item.node_id === payload.node_id)?.execution?.job;
+      if (!job || job.request_digest !== payload.expected_request_digest) invalid(); return result;
+    });
   }
 
   return {
@@ -462,6 +700,40 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
         return result;
       });
     },
+    previewMedia: (runId: string, value: StudioGraphMediaPreviewInput): Promise<StudioGraphRun> => {
+      const payload = mediaInput(value);
+      return transport.json(`${runUrl(runId)}/media/preview`, 'POST', payload).then(value => {
+        const result = checkedMediaRun(value, runId, payload.node_id);
+        if (!result.media_runtime!.nodes.find(item => item.node_id === payload.node_id)?.preview) invalid(); return result;
+      });
+    },
+    dispatchMedia: (runId: string, value: StudioGraphMediaDispatchInput): Promise<StudioGraphRun> => {
+      const row = record(value, true), payload: StudioGraphMediaDispatchInput = { ...mediaInput(row), reviewed_preview_digest: digest(row.reviewed_preview_digest, true) };
+      return transport.json(`${runUrl(runId)}/media/dispatch`, 'POST', payload).then(value => {
+        const result = checkedMediaRun(value, runId, payload.node_id);
+        if (!result.media_runtime!.nodes.find(item => item.node_id === payload.node_id)?.execution) invalid(); return result;
+      });
+    },
+    executeMedia: (runId: string, value: StudioGraphMediaJobInput) => mediaJobAction(runId, 'execute', value),
+    refreshMedia: (runId: string, value: StudioGraphMediaPreviewInput | StudioGraphMediaJobInput): Promise<StudioGraphRun> => {
+      if ('expected_job_version' in value) return mediaJobAction(runId, 'refresh', value);
+      const payload = mediaInput(value);
+      return transport.json(`${runUrl(runId)}/media/refresh`, 'POST', payload).then(value => checkedMediaRun(value, runId, payload.node_id));
+    },
+    reconcileMedia: (runId: string, value: StudioGraphMediaJobInput) => mediaJobAction(runId, 'reconcile', value),
+    reviewMedia: (runId: string, value: StudioGraphMediaReviewInput): Promise<StudioGraphRun> => {
+      const row = record(value, true), payload: StudioGraphMediaReviewInput = { ...mediaJobInput(row), reviewed_output_digest: digest(row.reviewed_output_digest, true) };
+      return transport.json(`${runUrl(runId)}/media/review`, 'POST', payload).then(value => {
+        const result = checkedMediaRun(value, runId, payload.node_id);
+        const approved = result.node_states[payload.node_id]?.output?.asset;
+        if (approved ? approved.digest !== payload.reviewed_output_digest
+          : !result.media_runtime!.nodes.some(item => item.execution?.job?.request_digest === payload.expected_request_digest)) invalid(); return result;
+      });
+    },
+    mediaCandidate: (runId: string, nodeId: string): Promise<Blob> => {
+      if (!transport.blob) throw new ApiError({ status: 400, code: 'STUDIO_GRAPH_MEDIA_TRANSPORT_REQUIRED', message: '当前入口不支持可信媒体下载，请使用完整 Studio 工作区。' });
+      return transport.blob(`${runUrl(runId)}/media/candidate/${encodeURIComponent(id(nodeId, true))}`);
+    },
     action: (runId: string, action: StudioGraphAction, value: StudioGraphActionInput): Promise<StudioGraphRun> => {
       const url = runUrl(runId), row = record(value, true);
       if (!actions.includes(action)) invalid(true);
@@ -477,4 +749,6 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
 }
 
 // Older embedded clients can omit the advisory extension; execution stays unchanged.
-export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient> & Partial<StudioProviderClient>;
+type StudioGraphMediaClient = Pick<ReturnType<typeof createStudioGraphClient>, 'previewMedia' | 'dispatchMedia' | 'executeMedia' | 'refreshMedia' | 'reconcileMedia' | 'reviewMedia' | 'mediaCandidate'>;
+export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient>
+  & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient>;

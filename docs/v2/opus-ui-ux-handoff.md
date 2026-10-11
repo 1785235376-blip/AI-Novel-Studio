@@ -1,6 +1,6 @@
 # Studio V2：前端 UI / UX 重构交接
 
-本轮按用户授权继续实际后端工程和基础前端，已接入独立媒体命令与有界多轨审阅渲染；测试、构建与真实全流程验收暂缓。工作基于 `5ed1cbee41d549351637d04a894477750c3e08b2`。这些新增源码尚未经过本轮执行验证，不能据此认定 M4 或后续里程碑通过。M4 保持 PARTIAL，M5–M9 保持 LOCAL_REQUIRED；QingJian 暂停推进。
+按用户授权继续实际后端工程和基础前端：独立媒体／有界多轨之后，从 `4a4a9df1e59217f249a4e1f90c863729aefc1ea8` 接入显式 Graph schema 3 媒体与原子资产输入。测试、构建与真实全流程验收暂缓。这些新增源码尚未经过执行验证，不能据此认定 M4 或后续里程碑通过。M4 保持 PARTIAL，M5–M9 保持 LOCAL_REQUIRED；QingJian 暂停推进。
 
 ## 先读的文件
 
@@ -67,14 +67,16 @@
 - 原 Owner 的成功不自动升级为 Router 已结算、真实 GPU 调用或产品验收。模型元数据、目录发现、Mock 和 CPU 运行分别记录。
 - API Provider 执行仍按既有门禁；不加入付费 fallback、模拟身份、开发 token、关闭认证、内存凭据或 V1 凭据访问。
 - 云端授权还继承原不可变 Asset 来源和有证明的 legacy parent 版本／摘要；直接／间接文档须原 CLOUD_ALLOWED，64 节点／16 层／200MiB 有界，缺失／旧章节证明、新父来源、循环／stale 都 fail closed。作者声明不产生 cloud grant；UI 不能靠修改 license／origin／parent 绕过后端。
-- Graph 媒体节点、`ASSET_REF` 原子输入、完整 NLE、自动 ASR、自动音画对齐和高质量交付导出保持未接入；独立实际命令不自动扩大 Graph Router 的 TEXT 执行 allowlist。现有规划、有限拼接、OTIO 交换与新的有界多轨审阅渲染不能冒充完整剪辑器。
+- Graph 媒体与 `ASSET_REF` 仅在显式 schema 3 接入；保留原 WorkflowRun、媒体 owner、原子来源、候选审核、UNKNOWN 与一次发送边界。原 schema 1／2 和 TEXT Router allowlist 不自动扩展。完整 NLE、Graph timeline node、自动 ASR、自动音画对齐、高质量交付导出仍未接入；schema 3 文字档案 seam 另明确阻塞。详见 [Graph 媒体执行](graph-media-execution.md)。
 - 媒体／时间线控制器保留预览、route／recipe／source／job CAS、request ID 和一次明确发送／审核确认。网络、408/409/425/429、5xx 和非法成功回执不得重复发送；先读取原记录。显式 reconcile 仅原 lease 已结束后处理中断为 UNKNOWN，不重新调用 Provider／FFmpeg；视频 refresh 只查询已记录远端任务，异步音频没有 poll。`LOCAL_RESULT_DISCARD` 不声称远端 abort，保留原候选。
 - 后端未来意图模型校验来源重复/冲突、轨道与完整来源快照、rational timing、尺寸/MIME/大小及作业/审核引用的一致性。JSON Schema 单独不能表达全部跨字段规则；形状一致不证明真实文件、路由、回执、权利或 scope。接入原执行 owner 前必须重新核对原门禁，不能从只读目录产生执行请求。
 - PoemSeed Local Interop 1.0、冻结 V1、历史 PR、失败证据与 NOT_RUN / LOCAL_REQUIRED / BLOCKED 标签原样保留。
 
 ## 后续验证顺序
 
-本轮只完成源码与静态复审，全部 tests、collect-only、typecheck、build、CI、Runtime、Windows／GPU／真实模型与全流程验收均为 NOT_RUN — USER_DEFERRED。新增的契约/恢复定位用例仅编写，不能记通过。GraphFlow 当前 context／plan／单文件 index 的尝试返回 Transport closed；沿已知锚点静态工作，不记工具成功。
+本轮只完成源码与静态复审，全部 tests、collect-only、typecheck、build、CI、Runtime、Windows／GPU／真实模型与全流程验收均为 NOT_RUN — USER_DEFERRED。新增的契约/恢复定位用例仅编写，不能记通过。此前 GraphFlow 返回 Transport closed；本次子任务 context 恢复，plan 请求未完成。完整回执留在 Phase10 报告；不把失败／未完成工具请求写成成功。
+
+Graph 媒体的可替换视图为 `StudioGraphMediaExecutionPanel`，行为在 `useStudioGraphMediaExecution`、原 `useStudioGraphRunController` 与 `studioGraphClient`。原节点编辑器提供有限参数控件；运行选择和排他仍由原父控制器持有。Opus 可重排这些视图，须保留 run/node/job CAS、候选实际字节核验、source 审核、未知回执恢复和导航保护。
 
 工程和 UI 改动收束并恢复验证后，先做相关模块与权限/恢复/CAS检查，再刷新当前源码的 API catalog 与 V2 coverage manifest，跑里程碑 CI。独立修复提交 `776286f` 的 8 项 metadata 对应旧 `5ed1cbee` 快照，不能当作覆盖这批新 API／源码的最终元数据；冻结 V1 manifest 不改。
 

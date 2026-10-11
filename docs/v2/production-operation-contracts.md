@@ -36,7 +36,7 @@ rejected. No arbitrary executable registration is accepted.
 | `operations[].acceptance_status` | `LOCAL_REQUIRED`; does not erase historical partial evidence or promote a milestone |
 | `operations[].execution_available` | Always `false` in this advisory catalog |
 | `owner`, `actions` | Actual source owner and existing API metadata; reserved operations have `null` owner and no actions |
-| `blocked_reasons` | Remaining Graph media adapters, capability limits and ordered Windows product acceptance boundaries |
+| `blocked_reasons` | Capability limits and ordered Windows/Graph media product acceptance boundaries; source route wiring is not runtime acceptance |
 | `*_requirements`, `limitations` | Original input/source/version/asset/review obligations and precise gaps |
 | `interface_schemas` | Seven bounded, strict JSON Schemas generated only from this module's prospective interface models |
 | `interface_contracts` | Per-operation references to source/intent/result/rights/timing/track schema keys; not legacy dispatch payloads |

@@ -7,6 +7,7 @@ export type GraphModelAction = 'preview' | 'dispatch' | 'refresh';
 export type GraphModelActionEvidence = { route_id?: string; allow_synthetic?: boolean; reviewed_preview_digest?: string; archive_result?: true };
 export type StudioGraphModelExecutionPanelProps = {
   client: StudioGraphClient; run?: StudioGraphRun; locked: boolean; canMutate: boolean; uncertain: boolean;
+  archiveResultAllowed?: boolean;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>;
   perform: (action: GraphModelAction, evidence?: GraphModelActionEvidence) => Promise<boolean>; onUnavailable: () => void;
 };
@@ -100,7 +101,7 @@ export function useStudioGraphModelExecutionController(props: StudioGraphModelEx
     const request: Request = { id: ++epoch.current, kind: 'ACTION', client: source.client, runId: source.run.id, controller: new AbortController() };
     const evidence = kind === 'preview' ? { route_id: state.route!.route_id, allow_synthetic: choice.current.allowSynthetic }
       : kind === 'dispatch' ? { reviewed_preview_digest: state.preview!.preview_digest,
-        ...(capabilitiesRef.current?.result_storage ? { archive_result: true as const } : {}) } : undefined;
+        ...(source.archiveResultAllowed !== false && capabilitiesRef.current?.result_storage ? { archive_result: true as const } : {}) } : undefined;
     pending.current = request; setLoading(true); setError(''); clearConsent();
     try { await source.perform(kind, evidence); }
     catch (value) {

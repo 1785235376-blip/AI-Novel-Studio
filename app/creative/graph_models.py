@@ -8,8 +8,13 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from ..experimental.store import canonical
 from ..services.v1_capability_service import V1CapabilityService, WorkflowRunIn
+from .production_contracts import Name
+from .production_execution_models import MediaOperation, MediaParameters
 
 MAX_NODES = 16
+MAX_MEDIA_NODES = 24
+MAX_MEDIA_GENERATORS = 4
+MAX_MEDIA_HISTORY = 80
 MAX_EDGES = 40
 MAX_DEFINITION_BYTES = 96_000
 MAX_OUTPUT_BYTES = 64_000
@@ -73,6 +78,55 @@ class AssetParameters(Strict):
     kind: Literal["image", "video", "audio"]
 
 
+class MediaNodeParameters(Strict):
+    """Configuration only; the runtime constructs the original MediaCommand."""
+    operation_id: MediaOperation
+    provider_id: Name | None = None
+    model_id: Name | None = None
+    prompt: str = Field(default="", max_length=16000)
+    parameters: MediaParameters = Field(default_factory=MediaParameters)
+    allow_cloud: bool = False
+    license_note: str = Field(default="", max_length=2000)
+
+    @model_validator(mode="after")
+    def closed_operation(self):
+        parameters = self.parameters.model_dump(exclude_none=True)
+        allowed = {
+            "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m7.video.t2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
+            "m7.video.i2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
+            "m7.video.v2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
+            "m8.audio.speech": {"voice_id", "speech_rate"},
+            "m8.audio.music": {"duration_seconds", "seed"},
+            "m8.audio.effects": {"duration_seconds", "seed"},
+            "m8.audio.trim": {"in_ms", "out_ms"},
+        }[self.operation_id]
+        if set(parameters) - allowed:
+            raise ValueError("STUDIO_OPERATION_PARAMETER_UNSUPPORTED")
+        if (self.parameters.width is None) != (self.parameters.height is None):
+            raise ValueError("STUDIO_OPERATION_DIMENSIONS_PAIR_REQUIRED")
+        if self.operation_id.startswith("m5.") and any(parameters.get(key, 64) % 8 for key in ("width", "height")):
+            raise ValueError("STUDIO_IMAGE_DIMENSIONS_INVALID")
+        if self.operation_id == "m8.audio.trim":
+            if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt:
+                raise ValueError("STUDIO_AUDIO_TRIM_LOCAL_ONLY")
+            start, end = self.parameters.in_ms, self.parameters.out_ms
+            if start is None or end is None or not 0 < end - start <= 120000:
+                raise ValueError("STUDIO_AUDIO_TRIM_INPUT_REQUIRED")
+        elif not self.provider_id or not self.model_id or self.provider_id == "auto":
+            raise ValueError("STUDIO_EXPLICIT_PROVIDER_MODEL_PROMPT_REQUIRED")
+        return self
+
+
+class MediaCandidatePort(Strict):
+    owner: Literal["image", "video", "audio"]
+    job_id: str = Field(min_length=1, max_length=240)
+    job_version: int = Field(ge=1)
+    request_digest: Digest
+    asset: AssetParameters
+
+
 class PlanItem(Strict):
     sequence: int = Field(ge=1, le=100)
     beat: str = Field(min_length=1, max_length=8_000)
@@ -101,6 +155,10 @@ DEFINITIONS = {
 # Additive versioned model execution; the default seven-item catalog stays frozen.
 DEFINITIONS["text_generate"] = {"inputs": [port("text", "TEXT", True), port("direction", "DIRECTOR_NOTES")],
     "outputs": [port("draft", "DRAFT")], "parameters": ModelTextParameters}
+DEFINITIONS["media_generate"] = {"inputs": [port("text", "TEXT"), port("source", "ASSET_REF")],
+    "outputs": [port("candidate", "MEDIA_CANDIDATE")], "parameters": MediaNodeParameters}
+DEFINITIONS["media_review"] = {"inputs": [port("candidate", "MEDIA_CANDIDATE", True)],
+    "outputs": [port("asset", "ASSET_REF")], "parameters": EmptyParameters}
 
 DefinitionId = Literal["text_input", "text_reference", "draft_prepare", "manual_transform", "director_note", "human_review", "asset_reference"]
 
@@ -131,6 +189,11 @@ class NodeInstance(Strict):
 class ModelNodeInstance(NodeInstance):
     definition_id: Literal["text_input", "text_reference", "draft_prepare", "manual_transform",
         "director_note", "human_review", "asset_reference", "text_generate"]
+
+
+class MediaNodeInstance(NodeInstance):
+    definition_id: Literal["text_input", "text_reference", "draft_prepare", "manual_transform",
+        "director_note", "human_review", "asset_reference", "text_generate", "media_generate", "media_review"]
 
 
 class TypedEdge(Strict):
@@ -193,15 +256,28 @@ class GraphModelInput(GraphInput):
     nodes: list[ModelNodeInstance] = Field(default_factory=list, max_length=MAX_NODES)
 
 
+class GraphMediaInput(GraphInput):
+    # New schema owns the additive limits; old schemas and their catalogs stay fixed.
+    schema_version: Literal[3]
+    nodes: list[MediaNodeInstance] = Field(default_factory=list, max_length=MAX_MEDIA_NODES)
+
+    @model_validator(mode="after")
+    def media_capacity(self):
+        if sum(node.definition_id == "media_generate" for node in self.nodes) > MAX_MEDIA_GENERATORS:
+            raise ValueError("CREATIVE_GRAPH_MEDIA_NODE_CAPACITY")
+        return self
+
+
 def parse_graph(value):
     schema = value.get("schema_version", 1) if isinstance(value, dict) else value.schema_version
-    return (GraphModelInput if schema == 2 else GraphInput).model_validate(value)
+    model = GraphMediaInput if schema == 3 else GraphModelInput if schema == 2 else GraphInput
+    return model.model_validate(value)
 
 
 class GraphCreate(Strict):
     request_id: RequestId
     expected_version: Literal[0] = 0
-    definition: GraphInput | GraphModelInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput
 
     @field_validator("expected_version", mode="before")
     @classmethod
@@ -219,18 +295,18 @@ class GraphCreate(Strict):
 
 class GraphSave(Strict):
     expected_version: int = Field(ge=1)
-    definition: GraphInput | GraphModelInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput
 
 
 class GraphPreflight(Strict):
     expected_version: int = Field(ge=1)
-    target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_NODES)
+    target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_MEDIA_NODES)
 
 
 class GraphRunCreate(Strict):
     expected_graph_version: int = Field(ge=1)
     reviewed_preflight_digest: Digest
-    target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_NODES)
+    target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_MEDIA_NODES)
     request_id: RequestId
 
 
@@ -241,16 +317,21 @@ class GraphAction(Strict):
     note: str = Field(default="", max_length=1_000)
 
 
-def catalog_definitions(*, include_model=False):
+def catalog_definitions(*, include_model=False, include_media=False):
     return [{"id": key, "version": 1, "inputs": deepcopy(value["inputs"]),
         "outputs": deepcopy(value["outputs"]), "parameters_schema": value["parameters"].model_json_schema(),
-        "default_parameters": value["parameters"]().model_dump() if key != "asset_reference" else None,
-        "executable": key != "asset_reference", "model_called": False,
-        "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" else []}
-        for key, value in DEFINITIONS.items() if include_model or key != "text_generate"]
+        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate"} else None,
+        "executable": include_media or key != "asset_reference", "model_called": False,
+        "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" and not include_media else []}
+        for key, value in DEFINITIONS.items()
+        if (include_model or key != "text_generate") and (include_media or key not in {"media_generate", "media_review"})]
 
 
-def validate_output_ports(definition_id, value):
+def history_limit(row):
+    return MAX_MEDIA_HISTORY if row.get("graph_schema_version") == 3 or row.get("definition", {}).get("schema_version") == 3 else MAX_HISTORY
+
+
+def validate_output_ports(definition_id, value, *, schema_version=None):
     """Finite output types also apply to persisted/cached local receipts."""
     expected = DEFINITIONS[definition_id]["outputs"]
     if not isinstance(value, dict) or set(value) != {port["id"] for port in expected}:
@@ -270,6 +351,15 @@ def validate_output_ports(definition_id, value):
                     or (definition_id == "manual_transform" and (draft.origin != "MANUAL" or draft.plan is not None))):
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
             result[port["id"]] = draft.model_dump(exclude_none=True)
+        elif port["type"] == "ASSET_REF":
+            if definition_id == "asset_reference" and schema_version != 3:
+                raise ValueError("CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED")
+            result[port["id"]] = AssetParameters.model_validate(item).model_dump()
+        elif port["type"] == "MEDIA_CANDIDATE":
+            candidate = MediaCandidatePort.model_validate(item)
+            if candidate.owner != candidate.asset.kind:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
+            result[port["id"]] = candidate.model_dump()
         else:
             raise ValueError("CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED")
     if len(canonical(result).encode()) > MAX_OUTPUT_BYTES:

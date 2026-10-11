@@ -237,6 +237,11 @@ class AssetLibraryService:
                     or len(json.dumps(origin, ensure_ascii=False).encode()) > 24 * 1024):
                 raise ValueError("STUDIO_RESULT_AUTHORITY_REQUIRED")
             self._identifier(origin.get("job_id"), "job_id")
+            if "graph_binding" in origin:
+                from ..creative.graph_media_binding import validate_graph_binding
+                if origin["graph_binding"] is None:
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
+                validate_graph_binding(origin["graph_binding"], origin)
             if _initial_text_result is not None:
                 raise ValueError("STUDIO_RESULT_ORIGIN_CONFLICT")
             identity.update(_studio_result_origin=origin, source_job_id=origin["job_id"],

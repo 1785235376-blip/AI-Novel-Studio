@@ -558,8 +558,20 @@ def _operations():
             sources=["绑定原项目 incarnation、操作者与分支；来源 ID／版本／摘要在分派、保存结果、审核时重新核对。", "模型必须明确选择当前配置；云端须原全局开关、项目来源政策与本次显式同意同时有效。"],
             outputs=[owner_name + " 的原持久存储保存本次任务；真实结果字节通过原媒体校验器。", "候选保留原私有资产与不可变来源记录，人工确认输出摘要后才入素材库。"],
             review=["读取原任务与候选，确认准确版本／输出摘要后由 domain.review 显式审核。", "中断分派保持 UNKNOWN，显式 reconcile 不重发；丢弃本地采用权不代表远端计算已取消。"],
-            limitations=["本目录仅描述入口；实际命令另走可信 Host、权限、源版本与原执行开关校验。", "本批源码尚未执行测试、Windows／GPU／真实模型验收；异步音频尚无远端查询协议，保留 UNKNOWN。", "独立媒体命令不将 Graph 中预留的媒体节点自动变为可执行。"],
-            blockers=["M4_TO_M9_ORDERED_ACCEPTANCE_REQUIRED", "V2_GRAPH_MEDIA_EXECUTION_NOT_ENABLED"])
+            limitations=["本目录仅描述入口；实际命令另走可信 Host、权限、源版本与原执行开关校验。", "本批源码尚未执行测试、Windows／GPU／真实模型验收；异步音频尚无远端查询协议，保留 UNKNOWN。", "Graph 媒体只在显式 schema 3 原运行中预览、入队、执行与审核，不扩展原 TEXT Router allowlist。"],
+            blockers=["M4_TO_M9_ORDERED_ACCEPTANCE_REQUIRED", "GRAPH_MEDIA_RUNTIME_ACCEPTANCE_LOCAL_REQUIRED"])
+        descriptor = replacements[operation_id]
+        media_owner = "app.creative.graph_media_execution.CreativeGraphMediaRuntime."
+        descriptor.actions.extend([
+            _action("graph_preview", "POST", graph + "/media/preview", media_owner + "preview", "MediaNodeRequest", host=True),
+            _action("graph_queue", "POST", graph + "/media/dispatch", media_owner + "dispatch", "MediaDispatch", host=True),
+            _action("graph_execute", "POST", graph + "/media/execute", media_owner + "execute_job", "MediaJobRequest", host=True),
+            _action("graph_receipt", "GET", graph, "app.creative.graph.CreativeGraphService.get_run", permission="domain.read", host=True),
+            _action("graph_candidate", "GET", graph + "/media/candidate/{node_id}", media_owner + "candidate", permission="domain.read", host=True),
+            _action("graph_review", "POST", graph + "/media/review", media_owner + "review", "MediaGraphReview", permission="domain.review", host=True),
+        ])
+        descriptor.input_requirements.append("Graph schema 3 使用闭合媒体节点与原 ASSET_REF；准确绑定运行与节点版本，先仅入队再另行明确执行。")
+        descriptor.review_requirements.append("MEDIA_CANDIDATE 只可交给唯一 media_review；审核后原素材版本作为 ASSET_REF 下传。Graph 绑定任务不借独立媒体入口执行或审核。")
     replacements["m9.timeline.multitrack"] = _existing("m9.timeline.multitrack", "独立多轨编辑与审阅渲染",
         _owner("app.creative.production_execution", "ProductionExecutionService", "timeline_list", "timeline_get", "timeline_save", "timeline_render", "review", "reconcile"), [
             _action("save", "POST", production + "/timelines", "app.creative.production_execution.ProductionExecutionService.timeline_save", "TimelineSave", host=True),

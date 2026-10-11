@@ -13,6 +13,7 @@ export function studioGraphModelExecutionView(controller: StudioGraphModelExecut
   return <section className="studio-graph-model" aria-label="可选本地文字模型执行">
     <h3>可选本地文字模型执行</h3><p>先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。</p>
     <p>云端 API：预留，当前不可执行。实际推理质量验收：未运行。</p>
+    {props.archiveResultAllowed === false && <StatusMessage tone="warning">当前媒体图的文字档案接入尚未完成。此处文字结果只进入原节点提案与人工审核；需要文字资产档案时使用原文字图流程。</StatusMessage>}
     <Button disabled={!canRead} onClick={() => void load()}>读取本地模型能力</Button>
     {loading && <StatusMessage>正在核对模型执行信息…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}
     {capabilities && <><p>适配器：{capabilities.adapter_owner} · 路由：{capabilities.router_owner} · 调度：{capabilities.scheduler_owner}</p><p>每次运行最多 {capabilities.limits.model_nodes} 个模型节点，最长 {capabilities.limits.timeout_seconds} 秒，最多 {capabilities.limits.max_output_tokens} 输出 token。</p>

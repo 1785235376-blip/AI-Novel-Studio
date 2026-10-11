@@ -123,13 +123,18 @@ def _body(value):
 
 def _binding(value, body):
     required = {"scope_key", "incarnation", "actor", "request_id", "operation_id", "request_digest", "sources", "provider_binding", "rights"}
-    optional = {"license_note", "command", "execution_recipe"}
+    optional = {"license_note", "command", "execution_recipe", "graph_binding"}
     if (not isinstance(value, dict) or not required.issubset(value) or set(value) - required - optional
             or value["operation_id"] != body["operation_id"]):
         raise _error("STUDIO_AUDIO_BINDING_REQUIRED", "须由原项目 owner 提供当前音频绑定", 403)
     for key in ("scope_key", "incarnation", "actor", "request_id"):
         _name(value[key], 2048 if key == "scope_key" else 240)
     _sha(value["request_digest"])
+    if "graph_binding" in value:
+        from ..creative.graph_media_binding import validate_graph_binding
+        if value["graph_binding"] is None:
+            raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
+        validate_graph_binding(value["graph_binding"], value)
     if not isinstance(value["sources"], list) or value["sources"] != body["source_snapshots"]:
         raise _error("STUDIO_AUDIO_SOURCE_BINDING_MISMATCH", "当前来源与音频请求不一致", 409)
     if not isinstance(value["rights"], dict):
@@ -437,6 +442,12 @@ class StudioAudioExecution:
                                **{key: copy.deepcopy(binding[key]) for key in ("actor", "scope_key", "incarnation", "request_digest", "operation_id", "sources")},
                                "provider_id": provider_binding.get("provider_id"), "model_id": provider_binding.get("model_id"),
                                "license_note": binding.get("license_note", "")}
+            if "graph_binding" in binding:
+                from ..creative.graph_media_binding import validate_graph_binding
+                graph_binding = validate_graph_binding(binding["graph_binding"], binding)
+                if graph_binding is None:
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
+                expected_origin["graph_binding"] = copy.deepcopy(graph_binding)
             expected_project = {"novel_id": nid, "branch_id": self.branch_id,
                                 "scope_key": binding["scope_key"], "incarnation": binding["incarnation"]}
             if (not isinstance(candidate, dict) or candidate.get("novel_id") != nid or candidate.get("kind") != "audio"

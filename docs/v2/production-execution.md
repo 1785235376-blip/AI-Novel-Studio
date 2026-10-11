@@ -15,7 +15,7 @@
 | `m8.audio.trim` | 同一原音频 owner；原 FFmpeg | 仅一个已保存音频 Asset，起止毫秒位于实际来源时长内，片段最多 120 秒；输出 PCM S16LE WAV／48kHz／立体声。无 Provider、云端授权或 Prompt。 |
 | `m9.timeline.multitrack` | 原 `VideoAssemblyService.create_studio`；`studio_timeline_render.py` | 保存版本化时间线，确认版本／摘要后显式本地渲染；有界视频叠放、音频混音与手工字幕，输出仍先私有再人工审核。 |
 
-这 9 项 MediaCommand 与独立多轨命令不是 Graph 节点的执行适配。原文字图的队列、ModelBroker、Router、GraphTextAssets、审核与结算仍由原 owner 负责；Graph 媒体节点与 `ASSET_REF` 原子输入执行尚未接入。本批不实现完整 NLE、自动 ASR、自动音画对齐、高质量交付导出或跨剪辑软件往返验收。
+这 9 项 MediaCommand 现另由显式 schema 3 的 [Graph 媒体执行与原子输入](graph-media-execution.md) 接入原 WorkflowRun。原文字图的队列、ModelBroker、Router、GraphTextAssets、审核与结算仍由原 owner 负责；schema 1／2 的资产引用保持原阻塞。独立多轨命令仍是原版本化时间线入口。本批不实现完整 NLE、自动 ASR、自动音画对齐、高质量交付导出或跨剪辑软件往返验收。
 
 ## 可信会话、权限与隐私
 

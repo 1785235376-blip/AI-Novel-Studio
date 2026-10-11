@@ -84,9 +84,14 @@ def _payload(body):
 def _context(value, body, actor):
     fields = {"scope_key", "incarnation", "actor", "request_id", "operation_id", "request_digest",
               "sources", "provider_binding", "rights"}
-    if not isinstance(value, dict) or not fields.issubset(value) or set(value) - fields - {"license_note", "command", "execution_recipe"}:
+    if not isinstance(value, dict) or not fields.issubset(value) or set(value) - fields - {"license_note", "command", "execution_recipe", "graph_binding"}:
         raise ValueError("STUDIO_IMAGE_CONTEXT_INVALID")
     _require_digest(value["scope_key"]); _require_digest(value["request_digest"])
+    if "graph_binding" in value:
+        from ..creative.graph_media_binding import validate_graph_binding
+        if value["graph_binding"] is None:
+            raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
+        validate_graph_binding(value["graph_binding"], value)
     if (value["actor"] != actor or value["operation_id"] != body["operation_id"]
             or not isinstance(value["incarnation"], str)
             or not re.fullmatch(r"(?:file|postgres):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", value["incarnation"])):
@@ -327,6 +332,12 @@ def _candidate(asset, job, data, measured):
         **{key: job["context"][key] for key in ("scope_key", "incarnation", "actor", "request_digest", "operation_id", "sources")},
         "provider_id": job["body"]["provider_id"], "model_id": job["body"]["model_id"],
         "license_note": job["context"].get("license_note", "")}
+    if "graph_binding" in job["context"]:
+        from ..creative.graph_media_binding import validate_graph_binding
+        binding = validate_graph_binding(job["context"]["graph_binding"], job["context"])
+        if binding is None:
+            raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
+        expected_origin["graph_binding"] = copy.deepcopy(binding)
     if (not isinstance(asset, dict) or any(asset.get(key) != value for key, value in expected.items())
             or asset.get("_owner_actor_id") != job["owner_actor_id"] or asset.get("deleted_at")
             or asset.get("_project_binding") != expected_binding

@@ -125,6 +125,11 @@ class VideoAssemblyService:
                 or type(row.get("version")) is not int or row["version"] < 1
                 or row.get("receipt_digest") != self._studio_digest(row)):
             raise ValueError("STUDIO_TIMELINE_RECEIPT_INVALID")
+        if "graph_binding" in row.get("context", {}):
+            from ..creative.graph_media_binding import validate_graph_binding
+            if row["context"]["graph_binding"] is None:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
+            validate_graph_binding(row["context"]["graph_binding"], row["context"])
         return row
 
     def _studio_read(self, novel_id, branch_id, actor_id, job_id, *, context):
@@ -312,6 +317,12 @@ class VideoAssemblyService:
             expected_origin = {"contract": "studio-production-result/1", "job_id": job_id,
                 **{key: context[key] for key in ("scope_key", "incarnation", "actor", "request_digest", "operation_id", "sources")},
                 "provider_id": None, "model_id": None, "license_note": context.get("license_note", "")}
+            if "graph_binding" in context:
+                from ..creative.graph_media_binding import validate_graph_binding
+                graph_binding = validate_graph_binding(context["graph_binding"], context)
+                if graph_binding is None:
+                    raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
+                expected_origin["graph_binding"] = copy.deepcopy(graph_binding)
             if (not isinstance(asset, dict) or not isinstance(asset.get("id"), str)
                     or type(asset.get("version")) is not int or asset["version"] < 1
                     or asset.get("sha256") != hashlib.sha256(data).hexdigest() or asset.get("kind") != "video"

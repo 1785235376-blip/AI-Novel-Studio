@@ -1,11 +1,12 @@
 """Actor-private typed drafts over the existing incarnation-fenced scope owner.
 
-Asset references are nonexecuting. Asset reads occur only before/after scope
-transactions, never from workflow guards or original-host completion callbacks.
+Schemas 1 and 2 retain their nonexecuting asset reference contract. Schema 3
+uses an explicit original scope -> asset -> project phase for atomic inputs.
 """
 from __future__ import annotations
 
 from copy import deepcopy
+from contextlib import contextmanager
 import hashlib
 
 from ..experimental.common import StaleSourceError, change_row, check_version, new_row
@@ -17,6 +18,7 @@ from .graph_models import (
     MAX_NODES, MAX_EDGES, MAX_DEFINITION_BYTES, MAX_OUTPUT_BYTES, MAX_GRAPHS,
     MAX_RUNS, MAX_HISTORY, MAX_RECORD_BYTES, MAX_SCOPE_BYTES, catalog_definitions, parse_graph,
     RUN_TIMEOUT_SECONDS, NODE_TIMEOUT_SECONDS,
+    MAX_MEDIA_NODES, MAX_MEDIA_GENERATORS, MAX_MEDIA_HISTORY, history_limit,
 )
 
 GRAPHS = "creative_graph_definitions_v2"
@@ -43,14 +45,24 @@ class CreativeGraphService:
         from .graph_execution import CreativeGraphExecutor
         self.executor = CreativeGraphExecutor(self)
         self.model_runtime = None
+        self.media_runtime = None
+        from .graph_asset_inputs import GraphAssetInputs
+        self.asset_inputs = GraphAssetInputs(self)
 
     def configure_models(self, broker, manager):
         from .ai_execution import CreativeGraphNodeRuntime
         self.model_runtime = CreativeGraphNodeRuntime(self, broker, manager)
 
+    def configure_media(self, production):
+        from .graph_media_execution import CreativeGraphMediaRuntime
+        self.media_runtime = CreativeGraphMediaRuntime(self, production)
+
     @staticmethod
     def _model_authority(definition):
-        if definition.get("schema_version") == 2 or any(node["definition_id"] == "text_generate" for node in definition["nodes"]):
+        if (definition.get("schema_version") == 2
+                or any(node["definition_id"] == "text_generate" or
+                    (node["definition_id"] == "media_generate" and node["parameters"]["operation_id"] != "m8.audio.trim")
+                    for node in definition["nodes"])):
             from .ai_execution import require_execution
             require_execution()
 
@@ -84,7 +96,9 @@ class CreativeGraphService:
             if (value != row["definition"] or digest(value) != row.get("definition_digest")
                     or digest(execution_definition(value)) != row.get("execution_digest")):
                 raise ValueError("CREATIVE_GRAPH_RECORD_CORRUPT")
-        if name == RUNS and any(node.get("definition_id") == "text_generate" for node in row.get("typed_nodes", [])):
+        if name == RUNS and any(node.get("definition_id") == "text_generate" or
+                (node.get("definition_id") == "media_generate" and node.get("parameters", {}).get("operation_id") != "m8.audio.trim")
+                for node in row.get("typed_nodes", [])):
             from .ai_execution import require_execution
             require_execution()
         return row
@@ -96,7 +110,7 @@ class CreativeGraphService:
             raise ValueError("CREATIVE_GRAPH_COLLECTION_CAPACITY")
         for rows in collections.values():
             for row in rows.values():
-                if len(row.get("history", [])) > MAX_HISTORY or len(canonical(row).encode()) > MAX_RECORD_BYTES:
+                if len(row.get("history", [])) > history_limit(row) or len(canonical(row).encode()) > MAX_RECORD_BYTES:
                     raise ValueError("CREATIVE_GRAPH_HISTORY_CAPACITY")
         if len(canonical(collections).encode()) > MAX_SCOPE_BYTES:
             raise ValueError("CREATIVE_GRAPH_SCOPE_CAPACITY")
@@ -106,8 +120,12 @@ class CreativeGraphService:
         return {node["id"]: deepcopy(node["parameters"]) for node in definition["nodes"]
                 if node["definition_id"] == "asset_reference"}
 
-    def _reference_states(self, nid, scope, definition, guard):
-        """No caller may use this within a CreativeProjectStore transaction."""
+    def _reference_states(self, nid, scope, definition, guard, actor=None):
+        """Legacy reads stay outside transactions; schema 3 uses its asset phase."""
+        if definition.get("schema_version") == 3:
+            if not isinstance(actor, str):
+                raise ValueError("CREATIVE_GRAPH_ACTOR_REQUIRED")
+            return self.asset_inputs.states(nid, scope, actor, definition, guard)
         if self.store.key(nid, scope) in getattr(self.store._local, "active", {}):
             raise ValueError("CREATIVE_GRAPH_ASSET_READ_INSIDE_SCOPE_DENIED")
         result = []
@@ -135,7 +153,7 @@ class CreativeGraphService:
     def _view(self, nid, scope, row, guard):
         public = {key: deepcopy(row[key]) for key in ("id", "version", "definition", "definition_digest",
                   "execution_digest", "created_at", "updated_at")}
-        states = self._reference_states(nid, scope, row["definition"], guard)
+        states = self._reference_states(nid, scope, row["definition"], guard, row["created_by"])
         denied = {item["node_id"] for item in states if item["state"] == "UNAVAILABLE"}
         for node in public["definition"]["nodes"]:
             if node["id"] in denied:
@@ -149,7 +167,8 @@ class CreativeGraphService:
         _, current = self._context(nid, scope, actor, guard)
         from .ai_execution import execution_enabled, CONTRACT
         models = self.model_runtime is not None and execution_enabled()
-        result = {"definitions": catalog_definitions(include_model=models), "limits": {"nodes": MAX_NODES, "edges": MAX_EDGES,
+        media = self.media_runtime is not None
+        result = {"definitions": catalog_definitions(include_model=models, include_media=media), "limits": {"nodes": MAX_NODES, "edges": MAX_EDGES,
             "definition_bytes": MAX_DEFINITION_BYTES, "output_bytes": MAX_OUTPUT_BYTES,
             "graphs": MAX_GRAPHS, "runs": MAX_RUNS, "history": MAX_HISTORY,
             "runtime_timeout_seconds": RUN_TIMEOUT_SECONDS, "node_timeout_seconds": NODE_TIMEOUT_SECONDS},
@@ -159,7 +178,22 @@ class CreativeGraphService:
                 "actor_private": True, "cache_mode": "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"}}
         if models:
             result["capabilities"].update(model_execution=True, model_execution_contract=CONTRACT)
+        if media:
+            from .graph_media_execution import CONTRACT as MEDIA_CONTRACT
+            result["media_limits"] = {"nodes": MAX_MEDIA_NODES, "generators": MAX_MEDIA_GENERATORS, "history": MAX_MEDIA_HISTORY}
+            result["capabilities"].update(media_execution=True, media_execution_contract=MEDIA_CONTRACT,
+                external_reference_execution=True, media_evidence="LOCAL_REQUIRED",
+                media_cache=False, media_parallel_execution=False, automatic_media_dispatch=False)
         current(); return result
+
+    @contextmanager
+    def _definition_transaction(self, nid, scope, actor, definition, guard):
+        if definition.get("schema_version") == 3:
+            with self.asset_inputs.transaction(nid, scope, actor, guard) as state:
+                yield state
+        else:
+            with self.store.transaction(nid, scope) as state:
+                yield state
 
     def list(self, nid, scope, actor, guard=lambda: None):
         _, current = self._context(nid, scope, actor, guard)
@@ -180,11 +214,14 @@ class CreativeGraphService:
         incarnation, current = self._context(nid, scope, actor, guard)
         definition = body.definition.model_dump()
         self._model_authority(definition)
-        if any(row["state"] != "CURRENT" for row in self._reference_states(nid, scope, definition, current)):
+        if any(row["state"] != "CURRENT" for row in self._reference_states(nid, scope, definition, current, actor)):
             raise StaleSourceError("CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED")
         request_digest = digest(body.model_dump())
-        with self.store.transaction(nid, scope) as state:
+        with self._definition_transaction(nid, scope, actor, definition, current) as state:
             current()
+            if definition.get("schema_version") == 3 and any(
+                    row["state"] != "CURRENT" for row in self.asset_inputs.states(nid, scope, actor, definition, current)):
+                raise StaleSourceError("CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED")
             rows = state["collections"].setdefault(GRAPHS, {})
             found = next((row for row in rows.values() if row.get("created_by") == actor and row.get("request_id") == body.request_id), None)
             if found:
@@ -204,7 +241,7 @@ class CreativeGraphService:
         _, current = self._context(nid, scope, actor, guard)
         old = self._owned(nid, scope, actor, GRAPHS, rid)
         check_version(old, body.expected_version)
-        if any(row["state"] == "UNAVAILABLE" for row in self._reference_states(nid, scope, old["definition"], current)):
+        if any(row["state"] == "UNAVAILABLE" for row in self._reference_states(nid, scope, old["definition"], current, actor)):
             raise ValueError("CREATIVE_GRAPH_EXTERNAL_BINDING_READ_ONLY")
         definition = body.definition.model_dump()
         self._model_authority(definition)
@@ -212,18 +249,22 @@ class CreativeGraphService:
         if any(replacement.get(node_id) != binding for node_id, binding in previous.items()):
             raise ValueError("CREATIVE_GRAPH_EXTERNAL_DETACH_UNAVAILABLE")
         added = {node_id for node_id in replacement if node_id not in previous}
-        states = self._reference_states(nid, scope, definition, current)
+        states = self._reference_states(nid, scope, definition, current, actor)
         if any(item["node_id"] in added and item["state"] != "CURRENT" for item in states):
             raise StaleSourceError("CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED")
-        with self.store.transaction(nid, scope) as state:
+        with self._definition_transaction(nid, scope, actor, definition, current) as state:
             row = self._owned(nid, scope, actor, GRAPHS, rid, state)
             check_version(row, body.expected_version); current()
+            if definition.get("schema_version") == 3 and any(
+                    item["node_id"] in added and item["state"] != "CURRENT"
+                    for item in self.asset_inputs.states(nid, scope, actor, definition, current)):
+                raise StaleSourceError("CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED")
             change_row(row, actor, body.expected_version, lambda item: item.update(definition=definition,
                 definition_digest=digest(definition), execution_digest=digest(execution_definition(definition))))
             self._capacity(state); current(); saved = deepcopy(row)
         return self._view(nid, scope, saved, current)
 
-    def _preflight(self, row, body, actor):
+    def _preflight(self, row, body, actor, *, check_assets=True):
         definition = row["definition"]
         nodes = {node["id"]: node for node in definition["nodes"]}
         targets = body.target_node_ids or [node["id"] for node in definition["nodes"] if node["enabled"]]
@@ -248,7 +289,7 @@ class CreativeGraphService:
             node = nodes[node_id]
             if not node["enabled"]:
                 issues.append({"code": "CREATIVE_GRAPH_DISABLED_DEPENDENCY", "node_id": node_id})
-            if node["definition_id"] == "asset_reference":
+            if node["definition_id"] == "asset_reference" and definition["schema_version"] != 3:
                 issues.append({"code": "CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED", "node_id": node_id})
             for port in DEFINITIONS[node["definition_id"]]["inputs"]:
                 if port["required"] and not any(edge["target_port"] == port["id"] for edge in incoming[node_id]):
@@ -269,11 +310,65 @@ class CreativeGraphService:
                 if not downstream or any(edge["target_node_id"] not in closure or
                         nodes[edge["target_node_id"]]["definition_id"] != "human_review" for edge in downstream):
                     issues.append({"code": "CREATIVE_MODEL_HUMAN_REVIEW_REQUIRED", "node_id": model})
+        reference_states = []
+        if definition["schema_version"] == 3:
+            selected_definition = {"nodes": [nodes[key] for key in order]}
+            if check_assets:
+                reference_states = self.asset_inputs.states(row["novel_id"], row["scope"], actor,
+                    selected_definition, lambda: None)
+            for item in reference_states:
+                if item["state"] != "CURRENT":
+                    issues.append({"code": "CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED", "node_id": item["node_id"]})
+            generators = [key for key in order if nodes[key]["definition_id"] == "media_generate"]
+            reviews = [key for key in order if nodes[key]["definition_id"] == "media_review"]
+            if generators and self.media_runtime is None:
+                issues.append({"code": "CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE"})
+            if len(generators) > MAX_MEDIA_GENERATORS:
+                issues.append({"code": "CREATIVE_GRAPH_MEDIA_NODE_CAPACITY"})
+            for generator in generators:
+                node = nodes[generator]
+                operation = node["parameters"]["operation_id"]
+                outgoing = [edge for edge in definition["edges"] if edge["source_node_id"] == generator]
+                if (len(outgoing) != 1 or outgoing[0]["target_node_id"] not in closure
+                        or nodes[outgoing[0]["target_node_id"]]["definition_id"] != "media_review"):
+                    issues.append({"code": "CREATIVE_GRAPH_MEDIA_REVIEW_REQUIRED", "node_id": generator})
+                source = next((edge for edge in incoming[generator] if edge["target_port"] == "source"), None)
+                text = next((edge for edge in incoming[generator] if edge["target_port"] == "text"), None)
+                required_kind = {"m5.image.i2i": "image", "m7.video.i2v": "image",
+                    "m7.video.v2v": "video", "m8.audio.trim": "audio"}.get(operation)
+                if required_kind and source is None:
+                    issues.append({"code": "CREATIVE_GRAPH_MEDIA_SOURCE_REQUIRED", "node_id": generator})
+                if source is not None:
+                    source_node = nodes[source["source_node_id"]]
+                    source_kind = source_node["parameters"]["kind"] if source_node["definition_id"] == "asset_reference" else None
+                    if source_node["definition_id"] == "media_review":
+                        parent = next((edge for edge in incoming[source_node["id"]] if edge["target_port"] == "candidate"), None)
+                        if parent is not None:
+                            parent_node = nodes[parent["source_node_id"]]
+                            if parent_node["definition_id"] == "media_generate":
+                                parent_operation = parent_node["parameters"]["operation_id"]
+                                source_kind = "image" if parent_operation.startswith("m5.") else "video" if parent_operation.startswith("m7.") else "audio"
+                    if required_kind is None or source_kind != required_kind:
+                        issues.append({"code": "CREATIVE_GRAPH_MEDIA_SOURCE_KIND_INVALID", "node_id": generator})
+                if operation == "m8.audio.trim":
+                    if text is not None:
+                        issues.append({"code": "STUDIO_AUDIO_TRIM_LOCAL_ONLY", "node_id": generator})
+                elif not node["parameters"]["prompt"].strip() and text is None:
+                    issues.append({"code": "CREATIVE_GRAPH_MEDIA_PROMPT_REQUIRED", "node_id": generator})
+            for review in reviews:
+                sources = [edge for edge in incoming[review] if edge["target_port"] == "candidate"]
+                if len(sources) != 1 or sources[0]["source_node_id"] not in generators:
+                    issues.append({"code": "CREATIVE_GRAPH_MEDIA_REVIEW_BINDING_INVALID", "node_id": review})
         result = {"project_id": row["novel_id"], "scope": deepcopy(row["scope"]), "graph_id": row["id"],
             "valid": True, "executable": not issues, "issues": issues, "execution_order": order,
             "selected_closure": order, "definition_digest": row["definition_digest"],
             "expected_version": row["version"], "target_node_ids": list(targets),
             "model_called": False, "external_calls": 0}
+        if definition["schema_version"] == 3:
+            result.update(graph_schema_version=3, reference_states=reference_states,
+                media_execution="EXPLICIT_PREVIEW_DISPATCH_REVIEW", media_evidence="LOCAL_REQUIRED")
+            if not check_assets:
+                result["source_check"] = "DEFERRED_TO_LEASED_OWNER"
         result["preflight_digest"] = digest([row["id"], row[BINDING], row["scope"], actor, result])
         return result
 
@@ -282,7 +377,13 @@ class CreativeGraphService:
         _, current = self._context(nid, scope, actor, guard)
         row = self._owned(nid, scope, actor, GRAPHS, rid)
         check_version(row, body.expected_version)
-        result = self._preflight(row, body, actor)
+        if row["definition"]["schema_version"] == 3:
+            with self.asset_inputs.phase(nid, scope, actor, current) as state:
+                row = self._owned(nid, scope, actor, GRAPHS, rid, state)
+                check_version(row, body.expected_version)
+                result = self._preflight(row, body, actor)
+        else:
+            result = self._preflight(row, body, actor)
         current(); return result
 
     def create_run(self, nid, scope, actor, rid, value, guard=lambda: None):
@@ -295,13 +396,18 @@ class CreativeGraphService:
         rows = [row for row in state["collections"].get(RUNS, {}).values()
                 if row.get("created_by") == actor and row.get("graph_id") == rid]
         result = {"items": [self.get_run(nid, scope, actor, row["id"], current, reconcile=False)
-            if self.model_runtime and self.model_runtime.text_assets.enabled(row)
+            if (self.model_runtime and self.model_runtime.text_assets.enabled(row))
+                or (row.get("graph_schema_version") == 3 and row.get("media_execution_contract"))
             else self.executor.view(nid, scope, actor, row, current, state) for row in rows]}
         current(); return result
 
     def get_run(self, nid, scope, actor, rid, guard=lambda: None, *, reconcile=True):
         _, current = self._context(nid, scope, actor, guard)
         row = self._owned(nid, scope, actor, RUNS, rid)
+        if row.get("graph_schema_version") == 3 and row.get("media_execution_contract"):
+            if self.media_runtime is None:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
+            return self.media_runtime.read(nid, scope, actor, rid, current)
         if self.model_runtime and self.model_runtime.text_assets.enabled(row):
             return self.model_runtime.text_assets.read(nid, scope, actor, rid, current, reconcile=reconcile)
         result = self.executor.view(nid, scope, actor, row, current)
@@ -319,6 +425,13 @@ class CreativeGraphService:
         if action == "cancel" and self.model_runtime is not None:
             # Cancel the original worker only after the durable workflow fence.
             self.model_runtime.cancel(self._owned(nid, scope, actor, RUNS, rid))
+        if action in {"cancel", "reject"} and row.get("graph_schema_version") == 3 and row.get("media_execution_contract"):
+            if self.media_runtime is None:
+                raise ValueError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
+            # The workflow cancellation is durable before discarding its
+            # original provider candidates. No remote abort/resubmit is implied.
+            self.media_runtime.cancel(nid, scope, actor, self._owned(nid, scope, actor, RUNS, rid), guard)
+            return self.get_run(nid, scope, actor, rid, guard, reconcile=False)
         if archival and action == "cancel":
             result["asset_output"] = self.model_runtime.text_assets.pending("NO_ACCEPTED_RESULT")
         return result

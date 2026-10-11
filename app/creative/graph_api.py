@@ -3,7 +3,8 @@
 The parent router supplies its captured actor/scope/incarnation invocation guard.
 No route can submit provider outputs or dynamically register executable actions.
 """
-from fastapi import APIRouter, Header, HTTPException, Request
+from urllib.parse import quote
+from fastapi import APIRouter, Header, HTTPException, Request, Response
 
 from ..experimental.production_lineage_api import PrivateProductionRoute
 from .graph_models import GraphAction, GraphCreate, GraphPreflight, GraphRunCreate, GraphSave
@@ -13,6 +14,10 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     router = APIRouter(tags=["Creative Graph V2"], route_class=PrivateProductionRoute)
 
     from .ai_execution import ModelPreview, ModelDispatch, ModelRefresh, require_execution
+    from .graph_media_execution import MediaNodeRequest, MediaDispatch, MediaJobRequest, MediaGraphReview
+    from ..services.audiobook_service import AudiobookError
+    from ..audio_production_store import AudioStateVersionConflict
+    from ..services.v1_capability_service import CapabilityVersionConflict
     from ..model_provider_contracts import TaskRequirement
 
     def capture_host(request, token):
@@ -27,7 +32,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     def protected_result(value):
         if not isinstance(value, dict):
             return False
-        if value.get("model_runtime") or value.get("definition", {}).get("schema_version") == 2:
+        if value.get("model_runtime") or value.get("media_runtime") or value.get("definition", {}).get("schema_version") in {2, 3}:
             return True
         return any(protected_result(item) for item in value.get("items", []))
 
@@ -40,16 +45,19 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                     return False
                 if target[0] == "list":
                     records = service.store.read(nid, scope)["collections"].get(service.GRAPHS, {}).values()
-                    return any(record.get("created_by") == actor and record.get("definition", {}).get("schema_version") == 2
+                    return any(record.get("created_by") == actor and record.get("definition", {}).get("schema_version") in {2, 3}
                         for record in records)
                 record = service._owned(nid, scope, actor, target[0], target[1])
-                return bool(record.get("model_execution_contract")
-                    or record.get("definition", {}).get("schema_version") == 2)
+                return bool(record.get("model_execution_contract") or record.get("graph_schema_version") == 3
+                    or record.get("definition", {}).get("schema_version") in {2, 3})
             authority = capture_host(request, token) if host_required() else None
             def current():
                 guard()
                 if authority is not None:
-                    require_execution(); authority.guard()
+                    require_execution()
+                    if require_host_session is None:
+                        raise HTTPException(403, {"code": "CREATIVE_MODEL_HOST_REQUIRED"})
+                    require_host_session(token); authority.guard()
                 elif host_required():
                     # A concurrent schema-1 upgrade cannot borrow this request's
                     # earlier unhosted admission, including inside its commit.
@@ -85,6 +93,61 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                 raise
             current(); return result
         return invoke(nid, token, branch, permission, operation)
+
+    def media_call(request, nid, token, branch, permission, method, *args):
+        def operation(actor, scope, guard):
+            authority = capture_host(request, token)
+            def current():
+                guard(); require_execution()
+                if require_host_session is None:
+                    raise HTTPException(403, {"code": "CREATIVE_MODEL_HOST_REQUIRED"})
+                require_host_session(token); authority.guard()
+            current()
+            if service.media_runtime is None:
+                raise HTTPException(503, {"code": "CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE"})
+            try:
+                result = getattr(service.media_runtime, method)(nid, scope, actor, *args, current)
+            except AudiobookError as exc:
+                current(); raise HTTPException(exc.status, {"code": exc.code}) from None
+            except AudioStateVersionConflict as exc:
+                current(); raise HTTPException(409, {"code": exc.code}) from None
+            except CapabilityVersionConflict as exc:
+                current()
+                raise HTTPException(409, {"code": "CREATIVE_GRAPH_MEDIA_VERSION_CONFLICT", "current_version": exc.current.get("version")}) from None
+            except Exception:
+                current(); raise
+            current(); return result
+        return invoke(nid, token, branch, permission, operation)
+
+    @router.post("/projects/{nid}/studio/graph-runs/{rid}/media/preview")
+    def media_preview(nid: str, rid: str, request: Request, body: MediaNodeRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return media_call(request, nid, x_session_token, x_branch_id, "domain.write", "preview", rid, body)
+
+    @router.post("/projects/{nid}/studio/graph-runs/{rid}/media/dispatch")
+    def media_dispatch(nid: str, rid: str, request: Request, body: MediaDispatch, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return media_call(request, nid, x_session_token, x_branch_id, "domain.write", "dispatch", rid, body)
+
+    @router.post("/projects/{nid}/studio/graph-runs/{rid}/media/execute")
+    def media_execute(nid: str, rid: str, request: Request, body: MediaJobRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return media_call(request, nid, x_session_token, x_branch_id, "domain.write", "execute_job", rid, body)
+
+    @router.post("/projects/{nid}/studio/graph-runs/{rid}/media/refresh")
+    def media_refresh(nid: str, rid: str, request: Request, body: MediaNodeRequest | MediaJobRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return media_call(request, nid, x_session_token, x_branch_id, "domain.write", "refresh", rid, body)
+
+    @router.post("/projects/{nid}/studio/graph-runs/{rid}/media/reconcile")
+    def media_reconcile(nid: str, rid: str, request: Request, body: MediaJobRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return media_call(request, nid, x_session_token, x_branch_id, "domain.write", "reconcile", rid, body)
+
+    @router.post("/projects/{nid}/studio/graph-runs/{rid}/media/review")
+    def media_review(nid: str, rid: str, request: Request, body: MediaGraphReview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return media_call(request, nid, x_session_token, x_branch_id, "domain.review", "review", rid, body)
+
+    @router.get("/projects/{nid}/studio/graph-runs/{rid}/media/candidate/{node_id}")
+    def media_candidate(nid: str, rid: str, node_id: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        row, data = media_call(request, nid, x_session_token, x_branch_id, "domain.read", "candidate", rid, node_id)
+        return Response(data, media_type=row["media_type"], headers={"Cache-Control": "no-store", "X-Asset-SHA256": row["sha256"],
+            "X-Asset-Version": str(row["version"]), "Content-Disposition": f"attachment; filename*=UTF-8''{quote(row['filename'], safe='')}"})
 
     @router.get("/projects/{nid}/studio/graphs/model-capabilities")
     def models(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -124,7 +187,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     def create(nid: str, request: Request, body: GraphCreate,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.create(nid, scope, actor, body, guard=guard), request, model_input=body.definition.schema_version == 2)
+                      lambda actor, scope, guard: service.create(nid, scope, actor, body, guard=guard), request, model_input=body.definition.schema_version in {2, 3})
 
     @router.get("/projects/{nid}/studio/graphs/{gid}")
     def graph(nid: str, gid: str, request: Request,
@@ -136,7 +199,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     def save(nid: str, gid: str, request: Request, body: GraphSave,
              x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.save(nid, scope, actor, gid, body, guard=guard), request, model_input=body.definition.schema_version == 2, target=(service.GRAPHS, gid))
+                      lambda actor, scope, guard: service.save(nid, scope, actor, gid, body, guard=guard), request, model_input=body.definition.schema_version in {2, 3}, target=(service.GRAPHS, gid))
 
     @router.post("/projects/{nid}/studio/graphs/{gid}/preflight")
     def preflight(nid: str, gid: str, request: Request, body: GraphPreflight,

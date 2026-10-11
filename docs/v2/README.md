@@ -39,6 +39,12 @@ the actual entry points, protected behavior and deferred verification.
 Framework preparation does not advance milestone acceptance. Windows/GPU and
 real model acceptance continue in the original M4 → M9 order.
 
+Explicit schema 3 now wires [Graph media execution and atomic asset inputs](graph-media-execution.md)
+through the original WorkflowRun and modality job owners. Queueing, sending,
+candidate review and recovery remain separate actions. Original schemas 1/2,
+TEXT routing and ordered acceptance gates are preserved; schema-3 text archival
+is still explicitly blocked. Source publication is not release readiness.
+
 The eight catalog/coverage/receipt files in separate repair commit `776286f`
 describe the earlier `5ed1cbee` snapshot and do not inventory these new
 API/source changes. Synchronize

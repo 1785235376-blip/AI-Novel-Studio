@@ -4,15 +4,17 @@ import type { StudioGraphClient } from './studioGraphClient';
 import type { StudioGraphAction, StudioGraphPreflight, StudioGraphRecord, StudioGraphRun } from './studioGraphTypes';
 import { graphId } from './graphDraft';
 import type { GraphModelAction, GraphModelActionEvidence } from './useStudioGraphModelExecutionController';
+import type { GraphMediaAction, GraphMediaActionEvidence } from './useStudioGraphMediaExecution';
 
 export type StudioGraphRunPanelProps = {
   client: StudioGraphClient; graph?: StudioGraphRecord; targetNodeIds: string[]; dirty: boolean; busy: boolean;
-  canMutate: boolean; canReview: boolean; modelExecutionEnabled?: boolean;
+  canMutate: boolean; canReview: boolean; modelExecutionEnabled?: boolean; mediaExecutionEnabled?: boolean;
   requestedRunId?: string; onRunSelectionChange?: (runId?: string) => void;
+  onDirtyChange?: (dirty: boolean) => void;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
 };
 type ReadKind = 'INSPECT' | 'LIST' | 'OPEN' | 'RESTORE' | 'MODEL_READ';
-type OperationKind = ReadKind | 'CREATE' | 'ACTION' | 'MODEL';
+type OperationKind = ReadKind | 'CREATE' | 'ACTION' | 'MODEL' | 'MEDIA';
 type Operation = { id: number; kind: OperationKind; client: StudioGraphClient; owner: string; controller: AbortController };
 const targets = (ids: string[]) => JSON.stringify([...ids].sort());
 const terminalRun = (run?: StudioGraphRun) => !!run && ['SUCCEEDED', 'FAILED', 'CANCELLED', 'REJECTED'].includes(run.status);
@@ -196,7 +198,8 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     if (!source.canMutate) return false;
     if (kind === 'cancel') return true;
     if (uncertainRef.current || run.stale) return false;
-    const modelInFlight = !!run.model_runtime?.execution && ['ADMITTED', 'UNKNOWN'].includes(run.model_runtime.status);
+    const modelInFlight = !!run.model_runtime?.execution && ['ADMITTED', 'UNKNOWN'].includes(run.model_runtime.status)
+      || !!run.media_runtime && Object.values(run.node_states).some(node => node.status === 'WORKING');
     return kind === 'execute' ? !modelInFlight && run.status === 'QUEUED' : kind === 'pause'
       ? !modelInFlight && ['QUEUED', 'RUNNING', 'WAITING_APPROVAL'].includes(run.status) : !modelInFlight && run.status === 'PAUSED';
   }
@@ -215,6 +218,60 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     finally { finish(operation); }
   }
   const modelUnavailable = useCallback(() => unavailable(), []);
+  async function mediaAction(kind: GraphMediaAction, evidence?: GraphMediaActionEvidence): Promise<boolean> {
+    const source = latest.current, run = selectedRef.current;
+    if (!run?.media_runtime || source.busy || source.dirty || !current()) return false;
+    if (kind === 'get') {
+      const operation = begin('OPEN'); if (!operation) return false;
+      try {
+        const value = await source.read(() => source.client.getRun(run.id, operation.controller.signal));
+        if (live(operation)) { acceptRun(value, run.id); markUncertain(false); return true; }
+      } catch (value) { failure(value, operation); } finally { finish(operation); }
+      return false;
+    }
+    if (kind === 'cancel') { if (!canAction('cancel')) return false; await action('cancel'); return selectedRef.current?.status === 'CANCELLED'; }
+    if (kind === 'reject') {
+      if (!evidence || !source.canReview || run.status !== 'WAITING_APPROVAL' || run.stale || uncertainRef.current
+        || run.current_node_id !== evidence.node_id || !evidence.reviewed_output_digest) return false;
+      const operation = begin('MEDIA'); if (!operation) return false;
+      try {
+        const value = await source.mutate(() => source.client.action(run.id, 'reject', { expected_version: run.version,
+          node_id: evidence.node_id, reviewed_output_digest: evidence.reviewed_output_digest!, note: noteRef.current }));
+        if (live(operation)) { acceptRun(value, run.id); markUncertain(false); return true; }
+      } catch (value) { if (live(operation)) { if (uncertainFailure(value)) markUncertain(true); failure(value, operation); } }
+      finally { finish(operation); }
+      return false;
+    }
+    if (!evidence || run.stale || terminalRun(run) || run.status === 'PAUSED'
+      || (kind === 'review' ? !source.canReview : !source.canMutate)
+      || uncertainRef.current && !['refresh', 'reconcile'].includes(kind)) return false;
+    const { previewMedia, dispatchMedia, executeMedia, refreshMedia, reconcileMedia, reviewMedia } = source.client;
+    if (!previewMedia || !dispatchMedia || !executeMedia || !refreshMedia || !reconcileMedia || !reviewMedia) {
+      setError('当前入口缺少完整媒体操作客户端，请使用完整 Studio 工作区重新核对。'); return false;
+    }
+    const operation = begin('MEDIA'); if (!operation) return false; setError(''); resetReview();
+    const body = { expected_version: run.version, ...evidence };
+    try {
+      const value = await source.mutate(() => {
+        switch (kind) {
+          case 'preview': return previewMedia(run.id, body);
+          case 'dispatch': return dispatchMedia(run.id, { ...body, reviewed_preview_digest: evidence.reviewed_preview_digest! });
+          case 'execute': return executeMedia(run.id, { ...body, expected_job_version: evidence.expected_job_version!, expected_request_digest: evidence.expected_request_digest! });
+          case 'refresh': return refreshMedia(run.id, body);
+          case 'reconcile': return reconcileMedia(run.id, { ...body, expected_job_version: evidence.expected_job_version!, expected_request_digest: evidence.expected_request_digest! });
+          case 'review': return reviewMedia(run.id, { ...body, expected_job_version: evidence.expected_job_version!, expected_request_digest: evidence.expected_request_digest!, reviewed_output_digest: evidence.reviewed_output_digest! });
+          default: throw invalidRun();
+        }
+      });
+      if (live(operation)) { acceptRun(value, run.id); markUncertain(false); setNotice('图媒体运行回执已更新，请在媒体面板核对原任务与审核结果。'); return true; }
+    } catch (value) {
+      if (live(operation)) {
+        if (uncertainFailure(value)) markUncertain(true);
+        failure(value, operation); if (current() && value instanceof ApiError && value.status === 404) unavailable();
+      }
+    } finally { finish(operation); }
+    return false;
+  }
   async function modelAction(kind: GraphModelAction, evidence: GraphModelActionEvidence = {}): Promise<boolean> {
     const source = latest.current, run = selectedRef.current, model = run?.model_runtime;
     if (!source.modelExecutionEnabled || !run || !model || source.busy || source.dirty || !source.canMutate || !current()
@@ -267,6 +324,6 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     canReadRuns: !!props.graph && !props.busy && !pendingKind && current(),
     loading: ['INSPECT', 'LIST', 'OPEN', 'RESTORE'].includes(pendingKind ?? ''), pendingKind,
     terminal: terminalRun(selected), current, inspect, listRuns, openRun, createRun, action, canAction,
-    reviewPreflight, reviewOutput, changeNote, modelAction, modelUnavailable, readModel };
+    reviewPreflight, reviewOutput, changeNote, modelAction, mediaAction, modelUnavailable, readModel };
 }
 export type StudioGraphRunController = ReturnType<typeof useStudioGraphRunController>;

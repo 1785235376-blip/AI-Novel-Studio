@@ -18,7 +18,7 @@ from ..experimental.flags import enabled_flags, require_flag
 from ..experimental.model_broker import BrokerRequest
 from ..experimental.store import canonical
 from .generation import known_zero
-from .graph_models import Digest, Strict, MAX_HISTORY, validate_output_ports
+from .graph_models import Digest, Strict, history_limit, validate_output_ports
 from .graph_execution import digest
 from .project_store import BINDING
 
@@ -196,9 +196,32 @@ class CreativeGraphNodeRuntime:
         require_execution(); guard()
         row = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
         self.node(row)
-        self.service.executor._current(nid, scope, actor, row, guard, state)
+        if row.get("graph_schema_version") == 3 and not self.service.asset_inputs.in_phase(nid, scope, actor):
+            key = self.service.store.key(nid, scope)
+            raw_active = getattr(self.service.store.store._local, "active", {})
+            if key in raw_active:
+                # Broker policy and original archival callbacks already hold
+                # a scope owner. Do not acquire an asset lease in reverse order.
+                document = state if state is not None else self.service.store.read(nid, scope)
+                self.service.asset_inputs.validate_document(nid, scope, actor, row, document, guard)
+                self.service.executor._current(nid, scope, actor, row, guard, document, check_assets=False)
+            else:
+                with self.service.asset_inputs.phase(nid, scope, actor, guard) as document:
+                    return self.row(nid, scope, actor, rid, guard, document)
+        else:
+            self.service.executor._current(nid, scope, actor, row, guard, state)
         guard()
         return row
+
+    @contextmanager
+    def _transaction(self, nid, scope, actor, rid, guard):
+        row = self.service._owned(nid, scope, actor, self.service.RUNS, rid)
+        if row.get("graph_schema_version") == 3:
+            with self.service.asset_inputs.transaction(nid, scope, actor, guard) as state:
+                yield state
+        else:
+            with self.service.store.transaction(nid, scope) as state:
+                yield state
 
     def validate_snapshot(self, row):
         self.text_assets.validate_intent(row)
@@ -278,7 +301,7 @@ class CreativeGraphNodeRuntime:
         row = self.row(nid, scope, actor, rid, current)
         check_version(row, body.expected_version)
         self.active_deadline(row)
-        if len(row["history"]) >= MAX_HISTORY - 10:
+        if len(row["history"]) >= history_limit(row) - 10:
             raise ValueError("CREATIVE_MODEL_PREVIEW_HISTORY_CAPACITY")
         node = self.node(row)
         if row["status"] != "WAITING_APPROVAL" or row["current_node_id"] != node["id"] or row.get("model_execution"):
@@ -303,7 +326,7 @@ class CreativeGraphNodeRuntime:
             "broker_preview_id": decision["id"], "broker_preview_version": decision["version"],
             "allow_synthetic": body.allow_synthetic}
         preview["preview_digest"] = digest([CONTRACT, row[BINDING], scope, actor, row["graph_digest"], preview])
-        with self.service.store.transaction(nid, scope) as state:
+        with self._transaction(nid, scope, actor, rid, current) as state:
             stored = self.row(nid, scope, actor, rid, current, state)
             check_version(stored, body.expected_version)
             change_row(stored, actor, body.expected_version, lambda item: item.update(model_preview=preview))
@@ -319,6 +342,10 @@ class CreativeGraphNodeRuntime:
         body = ModelDispatch.model_validate(value)
         _, current = self.service._context(nid, scope, actor, guard)
         row = self.row(nid, scope, actor, rid, current)
+        if row.get("graph_schema_version") == 3 and body.archive_result:
+            # The existing text archive convergence has its own asset phase.
+            # Schema 3 does not silently nest or replace that authority seam.
+            raise ValueError("CREATIVE_GRAPH_SCHEMA3_TEXT_ARCHIVE_NOT_INTEGRATED")
         preview = row.get("model_preview")
         if not preview or preview["preview_digest"] != body.reviewed_preview_digest or not preview["execution_available"]:
             raise StaleSourceError("CREATIVE_MODEL_EXACT_PREVIEW_REQUIRED")
@@ -326,7 +353,7 @@ class CreativeGraphNodeRuntime:
             return self.service.get_run(nid, scope, actor, rid, current)
         check_version(row, body.expected_version)
         self.active_deadline(row)
-        if len(row["history"]) >= MAX_HISTORY - 8:
+        if len(row["history"]) >= history_limit(row) - 8:
             raise ValueError("CREATIVE_MODEL_ADMISSION_HISTORY_CAPACITY")
         node = self.node(row)
         if row["status"] != "WAITING_APPROVAL" or row["current_node_id"] != node["id"]:
@@ -381,7 +408,7 @@ class CreativeGraphNodeRuntime:
             "status": "ADMISSION_PENDING", "receipt_state": "UNKNOWN_NO_AUTOMATIC_REPLAY",
             "model_called": False, "synthetic": route["synthetic"], "usage_state": "UNKNOWN",
             "failure_code": None, "quality_verification": "NOT_RUN"}
-        with self.service.store.transaction(nid, scope) as state:
+        with self._transaction(nid, scope, actor, rid, current) as state:
             stored = self.row(nid, scope, actor, rid, current, state)
             check_version(stored, body.expected_version)
             if stored.get("model_execution") or stored.get("model_preview") != preview:
@@ -401,7 +428,7 @@ class CreativeGraphNodeRuntime:
             if reservation["job_id"] != job.id:
                 raise ValueError("CREATIVE_MODEL_ADMISSION_UNKNOWN")
             execution.update(reservation_id=reservation["id"], status="QUEUED", receipt_state="RECORDED")
-            with self.service.store.transaction(nid, scope) as state:
+            with self._transaction(nid, scope, actor, rid, current) as state:
                 stored = self.row(nid, scope, actor, rid, current, state)
                 live_authority()
                 change_row(stored, actor, stored["version"], lambda item: item.update(model_execution=deepcopy(execution)))
@@ -419,7 +446,7 @@ class CreativeGraphNodeRuntime:
         except Exception:
             # Preserve the durable original job identity even when the write or
             # start outcome is unknown. Do not release, replace or replay it.
-            with self.service.store.transaction(nid, scope) as state:
+            with self._transaction(nid, scope, actor, rid, lambda: None) as state:
                 stored = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
                 if stored.get("model_execution", {}).get("job_id") == job.id:
                     execution.update(status="UNKNOWN", receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY")
@@ -479,7 +506,7 @@ class CreativeGraphNodeRuntime:
             receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY" if restored or (job.status in self.manager.terminal and (job.terminal_hook_status != "COMPLETED" or not accounted)) else "RECORDED",
             model_called=bool(ledger and ledger["dispatched"]), usage_state=job.usage_status if job else "UNKNOWN",
             failure_code=job.error_code if job else None)
-        with self.service.store.transaction(nid, scope) as state:
+        with self._transaction(nid, scope, actor, rid, current) as state:
             stored = self.row(nid, scope, actor, rid, current, state)
             check_version(stored, body.expected_version)
             if stored.get("model_execution", {}).get("job_id") != execution["job_id"]:

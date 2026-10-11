@@ -1,8 +1,9 @@
 import type { StudioGraphResultStorage, StudioGraphTextAssetOutput } from './studioGraphTextAssetTypes';
+import type { MediaOperation, ProductionJob, ProductionPreview, RecordedMediaCommand } from './studioProductionClient';
 /** Finite, code-owned contracts. A catalog entry cannot register executable code. */
 export type StudioGraphDefinitionId = 'text_input' | 'text_reference' | 'draft_prepare'
-  | 'manual_transform' | 'director_note' | 'human_review' | 'asset_reference' | 'text_generate';
-export type StudioGraphPortType = 'TEXT' | 'DIRECTOR_NOTES' | 'DRAFT' | 'ASSET_REF';
+  | 'manual_transform' | 'director_note' | 'human_review' | 'asset_reference' | 'text_generate' | 'media_generate' | 'media_review';
+export type StudioGraphPortType = 'TEXT' | 'DIRECTOR_NOTES' | 'DRAFT' | 'ASSET_REF' | 'MEDIA_CANDIDATE';
 export type StudioGraphPort = { id: string; type: StudioGraphPortType; required: boolean; multiple: false };
 export type StudioGraphPosition = { x: number; y: number };
 export type StudioGraphViewport = StudioGraphPosition & { zoom: number };
@@ -17,6 +18,13 @@ export type StudioGraphParameters = {
   version?: number;
   digest?: string;
   kind?: 'image' | 'video' | 'audio';
+  operation_id?: MediaOperation;
+  provider_id?: string | null;
+  model_id?: string | null;
+  prompt?: string;
+  parameters?: Record<string, string | number | null>;
+  allow_cloud?: boolean;
+  license_note?: string;
 };
 export type StudioGraphNode = {
   id: string;
@@ -34,7 +42,7 @@ export type StudioGraphEdge = {
   target_port: string;
 };
 export type StudioGraphDefinition = {
-  schema_version: 1 | 2;
+  schema_version: 1 | 2 | 3;
   title: string;
   nodes: StudioGraphNode[];
   edges: StudioGraphEdge[];
@@ -60,9 +68,9 @@ export type StudioGraphParameterSchema = {
   type: 'object';
   additionalProperties: false;
   properties: Record<string, {
-    type: 'string' | 'integer';
+    type: 'string' | 'integer' | 'object' | 'boolean';
     title?: string;
-    default?: string | number;
+    default?: string | number | boolean | Record<string, string | number | null> | null;
     minLength?: number;
     maxLength?: number;
     minimum?: number;
@@ -87,12 +95,15 @@ export type StudioGraphCatalogDefinition = {
 export type StudioGraphCatalog = {
   definitions: StudioGraphCatalogDefinition[];
   limits: { nodes: 16; edges: 40; definition_bytes: 96000; output_bytes: 64000; graphs: 25; runs: 100; history: 20; runtime_timeout_seconds: 3600; node_timeout_seconds: 5 };
+  media_limits?: { nodes: 24; generators: 4; history: 80 };
   capabilities: {
     local_execution: true;
     chapter_required: false;
     model_execution: boolean;
     model_execution_contract?: 'creative-graph-model/1';
-    external_reference_execution: false;
+    media_execution?: boolean;
+    media_execution_contract?: 'creative-graph-media/1';
+    external_reference_execution: boolean;
     external_reference_detach: false;
     binary_cache: false;
     parallel_execution: false;
@@ -140,7 +151,9 @@ export type StudioGraphDraft = {
   plan?: { sequence: number; beat: string }[];
   direction?: StudioGraphDirection;
 };
-export type StudioGraphOutput = { text?: string; direction?: StudioGraphDirection; draft?: StudioGraphDraft };
+export type StudioGraphAssetRef = { asset_id: string; version: number; digest: string; kind: 'image' | 'video' | 'audio' };
+export type StudioGraphMediaCandidate = { owner: 'image' | 'video' | 'audio'; job_id: string; job_version: number; request_digest: string; asset: StudioGraphAssetRef };
+export type StudioGraphOutput = { text?: string; direction?: StudioGraphDirection; draft?: StudioGraphDraft; asset?: StudioGraphAssetRef; candidate?: StudioGraphMediaCandidate };
 export type StudioGraphNodeStatus = 'PENDING' | 'WAITING_APPROVAL' | 'QUEUED' | 'WORKING'
   | 'SUCCEEDED' | 'FAILED' | 'SKIPPED' | 'REJECTED';
 export type StudioGraphNodeState = {
@@ -162,6 +175,7 @@ export type StudioGraphRun = StudioGraphOwner & {
   updated_at: string;
   model_called: boolean;
   model_runtime?: StudioGraphModelRuntime;
+  media_runtime?: StudioGraphMediaRuntime;
   asset_output?: StudioGraphTextAssetOutput;
   external_calls: 0;
   applied: false;
@@ -203,3 +217,21 @@ export type StudioGraphModelRuntime = {
 export type StudioGraphModelPreviewInput = { expected_version: number; route_id: string; allow_synthetic: boolean };
 export type StudioGraphModelDispatchInput = { expected_version: number; reviewed_preview_digest: string; archive_result?: true };
 export type StudioGraphModelRefreshInput = { expected_version: number };
+
+/** Media receipts remain attached to the original run and original production owner. */
+export type StudioGraphMediaNodeRuntime = {
+  node_id: string; status: string; preview: StudioGraphMediaPreview | null; execution: StudioGraphMediaExecution | null;
+};
+export type StudioGraphMediaPreview = { node_id: string; input_digest: string; preview_digest: string; command: RecordedMediaCommand; production_preview: ProductionPreview };
+export type StudioGraphMediaJob = Pick<ProductionJob, 'id' | 'version' | 'status' | 'request_digest' | 'receipt_digest' | 'output_candidate' | 'approved_asset_version' | 'error_code' | 'needs_reconciliation' | 'execution_state' | 'remote_compute_may_continue'> & { cancellation_mode?: string };
+export type StudioGraphMediaExecution = { node_id: string; owner: 'image' | 'video' | 'audio'; job_id: string | null; status: string;
+  receipt_state: 'RECORDED' | 'UNKNOWN_NO_AUTOMATIC_REPLAY'; send_reserved: boolean; job: StudioGraphMediaJob | null;
+  review_state?: 'NONE' | 'REVIEW_RESERVED' | 'APPROVED' };
+export type StudioGraphMediaRuntime = {
+  schema_version: 1; contract: 'creative-graph-media/1'; nodes: StudioGraphMediaNodeRuntime[];
+  automatic_retry: false; automatic_poll: false; applied: false; product_acceptance: 'LOCAL_REQUIRED';
+};
+export type StudioGraphMediaPreviewInput = { expected_version: number; node_id: string };
+export type StudioGraphMediaDispatchInput = StudioGraphMediaPreviewInput & { reviewed_preview_digest: string };
+export type StudioGraphMediaJobInput = StudioGraphMediaPreviewInput & { expected_job_version: number; expected_request_digest: string };
+export type StudioGraphMediaReviewInput = StudioGraphMediaJobInput & { reviewed_output_digest: string };
