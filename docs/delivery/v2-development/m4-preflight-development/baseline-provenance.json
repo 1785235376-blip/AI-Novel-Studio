@@ -1,0 +1,28 @@
+{
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "feature/v2-narrative-platform",
+  "remote_head": "5af9bfc40abc305154a1a35e50f5e8e47c1c1322",
+  "files": [
+    {
+      "path": "scripts/run_v2_real_text_check.py",
+      "github_blob_sha1": "d0adc4e9ea896942cd7ac021a7b0f0a67a70a901",
+      "verified_original_size": 24597,
+      "verified_original_sha256": "b6c7711080537d26273e4e289b58da2540bb28f353b092096053fb1e8e97f2a8",
+      "materialization_note": "Initial apply_patch materialization added one final newline. Original initial bytes retained separately. Baseline corrected only after verified Git blob hash matched remote."
+    },
+    {
+      "path": "tests/test_v2_real_text_check.py",
+      "github_blob_sha1": "ae04a28acb47653e248b4da22fafe28643d36ebb",
+      "verified_original_size": 28603,
+      "verified_original_sha256": "837def70dc113e42483011ae21d9916f3df378e3d044030f2d8462750cb4d2de",
+      "materialization_note": "Initial apply_patch materialization added one final newline. Original initial bytes retained separately. Baseline corrected only after verified Git blob hash matched remote."
+    },
+    {
+      "path": "docs/v2/real-text-acceptance.md",
+      "github_blob_sha1": "d40d61a17daf716cc15e7210c98b8bfeefcb8028",
+      "verified_original_size": 5335,
+      "verified_original_sha256": "07b93165f939a2104d58555bb7f6182906230e38e4a391b9804a9b330307afe7",
+      "materialization_note": "Initial apply_patch materialization added one final newline. Original initial bytes retained separately. Baseline corrected only after verified Git blob hash matched remote."
+    }
+  ]
+}

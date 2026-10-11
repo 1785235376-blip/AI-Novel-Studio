@@ -1,9 +1,11 @@
-"""Opt-in, owned CPU acceptance through the original mounted Studio APIs.
+"""Opt-in, owned POSIX CPU acceptance through the original mounted Studio APIs.
 
 No downloads, credentials, external-service startup or mock provider. Supply
 already verified local llama.cpp/GGUF paths and an unused output directory.
 This is operational acceptance, not an automatic CI/pytest model dependency.
 All generated data is retained; only the child runtime we own is stopped.
+Windows is blocked before input/workspace work until owned process-tree cleanup
+is implemented and verified there. This harness does not establish GPU support.
 """
 from __future__ import annotations
 
@@ -32,6 +34,19 @@ INHERITED_ENV_KEYS = ("PATH", "LANG", "LC_ALL", "LC_CTYPE", "SYSTEMROOT")
 OWNED_ENV_FOLDERS = ("home", "data", "cache", "config", "local", "tmp")
 
 
+def validate_process_platform():
+    # Presence checks only: do not launch a process or signal any process here.
+    # Windows native descendants need their own verified containment lifecycle;
+    # a process-group flag or taskkill fallback is not equivalent to this owner.
+    if (os.name != "posix" or sys.platform.startswith(("win", "cygwin", "msys"))
+            or not callable(getattr(os, "setsid", None))
+            or not callable(getattr(os, "killpg", None))
+            or not callable(getattr(signal, "signal", None))
+            or not isinstance(getattr(signal, "SIGTERM", None), int)
+            or not isinstance(getattr(signal, "SIGKILL", None), int)):
+        raise ValueError("BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM")
+
+
 def sha256_file(path):
     digest = hashlib.sha256()
     with Path(path).open("rb") as handle:
@@ -41,6 +56,7 @@ def sha256_file(path):
 
 
 def validated_inputs(server, model, expected_sha, port):
+    validate_process_platform()
     if not re.fullmatch(r"[a-f0-9]{64}", expected_sha):
         raise ValueError("EXPLICIT_MODEL_SHA256_REQUIRED")
     for path in (server, model):
@@ -64,6 +80,7 @@ def required_child_environment(root):
         "XDG_DATA_HOME": str(root / "data"), "XDG_CACHE_HOME": str(root / "cache"),
         "XDG_CONFIG_HOME": str(root / "config"), "APPDATA": str(root / "local"),
         "LOCALAPPDATA": str(root / "local"), "TMPDIR": str(root / "tmp"),
+        "TEMP": str(root / "tmp"), "TMP": str(root / "tmp"),
         "PROJECT_ROOT": str(REPO), "NOVEL_DATA_PATH": str(root / "novel-data"),
         "STORAGE_BACKEND": "file", "ENABLE_COLLABORATION_RUNTIME": "false",
         "ENABLE_PACKAGED_RUNTIME": "false", "MOCK_PROVIDER": "false",
@@ -287,6 +304,7 @@ def mounted_acceptance(root, server, model, port, outcome):
 
 
 def execute(root, server, model, expected_sha, port, *, scenario="graph"):
+    validate_process_platform()
     validated_inputs(server, model, expected_sha, port)
     before = source_identity()
     write_json(root / "source-before.json", before)
@@ -366,6 +384,10 @@ def main():
     parser.add_argument("--scenario", choices=("graph", "adaptation"), default="graph")
     parser.add_argument("--isolated-child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    try:
+        validate_process_platform()
+    except ValueError as error:
+        parser.error(str(error))
     root = args.workspace.absolute()
     if args.isolated_child:
         validate_isolated_environment(root)

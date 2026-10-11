@@ -600,3 +600,119 @@ def test_adaptation_acceptance_reads_typed_binding_not_unset_generic_actor_scope
         changed = dict(binding); changed[key] = "different"
         with pytest.raises(AssertionError):
             archive_authority(proposal, SimpleNamespace(adaptation_binding=changed))
+
+
+@pytest.mark.parametrize("platform", ["win32", "cygwin"])
+@pytest.mark.parametrize("isolated_child", [False, True])
+def test_unsupported_platform_blocks_before_input_or_workspace_work(
+        tmp_path, inputs, monkeypatch, capsys, platform, isolated_child):
+    root = tmp_path / "must-not-be-created"
+    args = cli_args(inputs, root)
+    if isolated_child:
+        args.append("--isolated-child")
+    monkeypatch.setattr(runner.sys, "argv", args)
+    monkeypatch.setattr(runner.sys, "platform", platform)
+    validate = Mock(side_effect=AssertionError("MUST_NOT_READ_MODEL_OR_PROBE_PORT"))
+    identity = Mock(side_effect=AssertionError("MUST_NOT_INSPECT_SOURCE"))
+    execute = Mock(side_effect=AssertionError("MUST_NOT_START_ACCEPTANCE"))
+    monkeypatch.setattr(runner, "validated_inputs", validate)
+    monkeypatch.setattr(runner, "source_identity", identity)
+    monkeypatch.setattr(runner, "execute", execute)
+    with pytest.raises(SystemExit) as error:
+        runner.main()
+    assert error.value.code == 2
+    assert "BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM" in capsys.readouterr().err
+    assert not root.exists()
+    validate.assert_not_called()
+    identity.assert_not_called()
+    execute.assert_not_called()
+    inputs.socket_factory.assert_not_called()
+
+
+@pytest.mark.parametrize("owner,name", [
+    ("os", "killpg"), ("os", "setsid"),
+    ("signal", "SIGKILL"), ("signal", "SIGTERM"), ("signal", "signal"),
+])
+@pytest.mark.parametrize("unavailable", ["missing", "none"])
+def test_missing_process_group_api_blocks_before_any_owned_acceptance_work(
+        tmp_path, inputs, monkeypatch, owner, name, unavailable):
+    namespace = getattr(runner, owner)
+    if unavailable == "missing":
+        monkeypatch.delattr(namespace, name)
+    else:
+        monkeypatch.setattr(namespace, name, None)
+    validate = Mock(side_effect=AssertionError("MUST_NOT_READ_MODEL_OR_PROBE_PORT"))
+    monkeypatch.setattr(runner, "validated_inputs", validate)
+    root = tmp_path / "not-created"
+    with pytest.raises(ValueError, match="^BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM$"):
+        runner.execute(root, inputs.server, inputs.model, inputs.sha, inputs.port)
+    assert not root.exists()
+    validate.assert_not_called()
+    inputs.socket_factory.assert_not_called()
+
+
+def test_non_posix_os_blocks_even_when_process_group_api_names_exist(monkeypatch):
+    monkeypatch.setattr(runner, "os", SimpleNamespace(name="nt", killpg=Mock(), setsid=Mock()))
+    with pytest.raises(ValueError, match="^BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM$"):
+        runner.validate_process_platform()
+
+
+def test_supported_posix_process_platform_preflight_is_read_only():
+    assert runner.validate_process_platform() is None
+
+
+def test_all_temp_conventions_use_only_the_private_owned_directory(tmp_path, monkeypatch):
+    private = tmp_path / "owned"
+    private.mkdir()
+    foreign = tmp_path / "foreign-temp"
+    foreign.mkdir()
+    marker = foreign / "keep.txt"
+    marker.write_text("unchanged", encoding="utf-8")
+    inherited = {key: str(foreign) for key in ("TEMP", "TMP", "TMPDIR")}
+    monkeypatch.setattr(runner.os, "environ", inherited)
+    env = runner.isolated_environment(private)
+    for key in ("TEMP", "TMP", "TMPDIR"):
+        assert env[key] == str(private / "tmp")
+        assert Path(env[key]).is_dir()
+    assert inherited == {key: str(foreign) for key in ("TEMP", "TMP", "TMPDIR")}
+    assert list(foreign.iterdir()) == [marker]
+    assert marker.read_text(encoding="utf-8") == "unchanged"
+    monkeypatch.setattr(runner.os, "environ", env)
+    runner.validate_isolated_environment(private)
+
+
+@pytest.mark.parametrize("isolated_child", [False, True])
+def test_cli_missing_process_group_cleanup_api_blocks_before_workspace_creation(
+        tmp_path, inputs, monkeypatch, capsys, isolated_child):
+    root = tmp_path / "blocked-no-group-cleanup"
+    args = cli_args(inputs, root) + (["--isolated-child"] if isolated_child else [])
+    monkeypatch.setattr(runner.sys, "argv", args)
+    monkeypatch.delattr(runner.os, "killpg")
+    with pytest.raises(SystemExit) as error:
+        runner.main()
+    assert error.value.code == 2
+    assert "BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM" in capsys.readouterr().err
+    assert not root.exists()
+    inputs.socket_factory.assert_not_called()
+
+
+def test_platform_preflight_does_not_call_process_control_apis(monkeypatch):
+    platform_os = SimpleNamespace(name="posix", killpg=Mock(), setsid=Mock())
+    handler = Mock()
+    monkeypatch.setattr(runner, "os", platform_os)
+    monkeypatch.setattr(runner.sys, "platform", "linux")
+    monkeypatch.setattr(runner.signal, "signal", handler)
+    runner.validate_process_platform()
+    platform_os.killpg.assert_not_called()
+    platform_os.setsid.assert_not_called()
+    handler.assert_not_called()
+
+
+def test_direct_input_validation_rejects_unsupported_platform_before_model_read(inputs, monkeypatch):
+    monkeypatch.setattr(runner.sys, "platform", "win32")
+    model_read = Mock(side_effect=AssertionError("MUST_NOT_HASH_MODEL"))
+    monkeypatch.setattr(runner, "sha256_file", model_read)
+    with pytest.raises(ValueError, match="^BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM$"):
+        validate(inputs)
+    model_read.assert_not_called()
+    inputs.socket_factory.assert_not_called()

@@ -1,4 +1,4 @@
-# Opt-in real CPU text acceptance
+# Opt-in real POSIX CPU text acceptance
 
 This operational check exercises the existing Model Center discovery/validation,
 ModelRouter/ModelBroker, TextModelNode, JobManager, WorkflowRun and AssetLibrary
@@ -31,6 +31,21 @@ describes the existing OpenAI-compatible endpoint used by the original adapter.
 
 ## Explicit invocation
 
+This harness currently requires POSIX process-group APIs. Native Windows,
+Cygwin/MSYS and runtimes missing callable `setsid`, `killpg` or signal-handler
+APIs, or `SIGTERM`/`SIGKILL` constants, are
+explicitly **BLOCKED**, with `BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM` and
+CLI exit 2. After argument parsing, this read-only preflight runs before model
+hashing, port probing, workspace creation or child/runtime launch, including
+the isolated-child entry. It creates no evidence directory or acceptance receipt
+on a blocked invocation. API presence is not proof that OS policy will permit
+process creation or signaling on every POSIX host.
+
+Windows process-tree containment and native acceptance remain **NOT_RUN /
+LOCAL_REQUIRED**. This guard and its Linux contract tests do not add Windows
+support, validate a Windows model/runtime, or establish GPU acceptance. Do not
+remove the guard or substitute broad process-name termination to run there.
+
 After separately checking the executable/model provenance and licenses, provide
 absolute paths and a new, unused evidence directory. The script never downloads
 or installs anything and refuses a used output directory or occupied port.
@@ -47,6 +62,10 @@ or installs anything and refuses a used output directory or occupied port.
 The parent supplies a clean environment, isolated HOME/data/config/cache/temp,
 File persistence, memory vault, cloud/fallback/Mock/packaged/collaboration/V1
 acceptance disabled, and only the four existing text-execution feature flags.
+`TMPDIR`, `TEMP` and `TMP` all point to the same new owned `tmp` directory;
+inherited private temp locations are not retained, and the child verifies all
+three exact paths. These cross-platform environment names do not enable Windows
+process execution.
 The owned native host uses CPU only, two threads, 2,048 context tokens, one slot,
 128-token batches, offline mode and no web UI, agent or UI MCP proxy. CORS is
 restricted to its exact loopback origin with credentials disabled. This is a
