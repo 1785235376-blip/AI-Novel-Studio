@@ -29,7 +29,7 @@ export type GraphTimelineCommand = Omit<GraphTimelineParameters, 'source_binding
   source_bindings: (GraphTimelineBinding & { asset: { asset_id: string; version: number; digest: string; kind: 'image' | 'video' | 'audio' } })[] };
 export const graphTimelinePorts: GraphTimelinePort[] = ['source_1', 'source_2', 'source_3', 'source_4', 'source_5', 'source_6', 'source_7', 'source_8'];
 
-const invalid = (): never => { throw new Error('时间线节点的绑定或剪辑操作无效，请核对封闭字段、版本与摘要。'); };
+function invalid(): never { throw new Error('时间线节点的绑定或剪辑操作无效，请核对封闭字段、版本与摘要。'); }
 const row = (value: unknown): Record<string, unknown> => { if (!value || typeof value !== 'object' || Array.isArray(value)) invalid(); return value as Record<string, unknown>; };
 const fields = (value: unknown, required: readonly string[], optional: readonly string[] = []) => {
   const result = row(value); if (required.some(key => !Object.hasOwn(result, key)) || Object.keys(result).some(key => ![...required, ...optional].includes(key))) invalid(); return result;

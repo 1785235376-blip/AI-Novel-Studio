@@ -43,12 +43,12 @@ export function useStudioGraphMediaExecution(props: StudioGraphMediaExecutionPro
     clearCandidate(); clearConsent(); setDenied(true); setPendingKind(undefined); latest.current.onUnavailable();
   }
   function snapshot() {
-    const source = latest.current, run = source.run, nodes = run?.media_runtime?.nodes || [];
+    const source = latest.current, graph = source.graph, run = source.run, nodes = run?.media_runtime?.nodes || [];
     const node = nodes.find(item => item.node_id === selectedRef.current) || nodes.find(item => item.node_id === run?.current_node_id) || nodes[0];
     const execution = node?.execution, job = execution?.job, preview = node?.preview, reviewRecovery = execution?.review_recovery;
-    const reviewNodeId = source.graph?.id === run?.graph_id && source.graph?.version === run?.graph_version
-      ? source.graph.definition.edges.find(edge => edge.source_node_id === node?.node_id && edge.source_port === 'candidate'
-        && edge.target_port === 'candidate' && source.graph!.definition.nodes.some(item => item.id === edge.target_node_id && item.definition_id === 'media_review'))?.target_node_id : undefined;
+    const reviewNodeId = graph && run && graph.id === run.graph_id && graph.version === run.graph_version
+      ? graph.definition.edges.find(edge => edge.source_node_id === node?.node_id && edge.source_port === 'candidate'
+        && edge.target_port === 'candidate' && graph.definition.nodes.some(item => item.id === edge.target_node_id && item.definition_id === 'media_review'))?.target_node_id : undefined;
     const locked = source.locked || !!pending.current || denied || !current();
     const commandsAvailable = [source.client.previewMedia, source.client.dispatchMedia, source.client.executeMedia,
       source.client.refreshMedia, source.client.reconcileMedia, source.client.reviewMedia].every(method => typeof method === 'function');

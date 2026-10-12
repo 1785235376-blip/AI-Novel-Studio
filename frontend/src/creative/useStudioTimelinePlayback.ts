@@ -113,9 +113,6 @@ export function useStudioTimelinePlayback(options: Options) {
     const abort = new AbortController(); reading.current = abort;
     try { const result = await latest.current.props.read(() => method(source, abort.signal));
       if (!active(request) || !sourceCurrent(source)) return;
-      if (saved && (result.cache_key !== saved.preview.cache_key || result.playback_digest !== saved.preview.playback_digest || !result.job)) {
-        setNotice('尚未读到本次请求的准确原任务，继续保留 UNKNOWN。'); return;
-      }
       if (result.job) { attempt.current = undefined; setUnknown(undefined); latest.current.props.onJob(result.job); }
       adoptProof(result); setNotice('只读取原任务，没有编码、重试或自动核对候选。');
     } catch (reason) { if (active(request)) fail(reason); }

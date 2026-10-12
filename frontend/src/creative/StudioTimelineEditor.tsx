@@ -66,7 +66,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     <Button disabled={readLocked} onClick={() => void c.checkServer()}>核对当前服务端版本</Button>
     <Button disabled={locked || !!c.attempt && c.attempt.state === 'UNKNOWN' || c.inputDirty && !c.discardConfirmed} onClick={c.createNew}>新建时间线</Button>
     {!c.rows.length && !c.pending && <p>尚无已读取的时间线。可以先添加轨道与素材，再明确保存。</p>}
-    {c.pending && <StatusMessage>{({ LIST: '正在读取时间线列表…', GET: '正在读取服务端版本…', SAVE: '正在保存时间线…', RENDER: '正在执行原本地渲染任务…', JOB: '正在读取原渲染或导出任务回执…', EXPORT_PREVIEW: '正在核对导出方案，尚未执行…', EXPORT: '正在执行本次明确确认的导出渲染…' })[c.pending]}</StatusMessage>}
+    {c.pending && <StatusMessage>{({ LIST: '正在读取时间线列表…', GET: '正在读取服务端版本…', SAVE: '正在保存时间线…', RENDER: '正在执行原本地渲染任务…', JOB: '正在读取原渲染或导出任务回执…', EXPORT_PREVIEW: '正在核对导出方案，尚未执行…', EXPORT: '正在执行本次明确确认的导出渲染…', TRACK_LOCK: '正在保存轨道锁定状态…' })[c.pending]}</StatusMessage>}
     {c.failure && <StatusMessage tone="warning">{c.failure === 'CONFLICT' ? '服务端版本已变化。输入保留，请读取并核对版本后人工采用或保留草稿。' : '保存结果不确定，不能直接重复保存。请读取服务端版本；新建请求没有已知标识时，刷新列表并选择候选。'}</StatusMessage>}
     {c.error && <StatusMessage tone="error">{c.error}</StatusMessage>}{c.notice && <StatusMessage>{c.notice}</StatusMessage>}
     {c.candidate && <section aria-label="核对服务端时间线">

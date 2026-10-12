@@ -30,7 +30,7 @@ export function checkedTimelineExportProfile(value: unknown): TimelineExportProf
 }
 export const timelineExportKey = (profile: TimelineExportProfile) => JSON.stringify(checkedTimelineExportProfile(profile));
 export function checkedTimelineExportPreview(value: unknown, source: StudioTimelineRow, profile: TimelineExportProfile): TimelineExportPreview {
-  const invalid = (): never => { throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '导出预览与确认的时间线、素材或配置不一致，请重新读取核对。' }); };
+  function invalid(): never { throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '导出预览与确认的时间线、素材或配置不一致，请重新读取核对。' }); }
   if (!value || typeof value !== 'object' || Array.isArray(value)) invalid();
   const row = value as Record<string, unknown>, snapshot = row.timeline_snapshot as Record<string, unknown> | null;
   const limits = row.limits as Record<string, unknown> | null, expectedSources = timelineSources(source.timeline);
