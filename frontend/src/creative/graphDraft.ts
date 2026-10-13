@@ -4,9 +4,10 @@ import type { StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphEd
 export const graphId = (prefix = 'node') => `${prefix}_${crypto.randomUUID().replace(/-/g, '')}`;
 export const blankGraph = (): StudioGraphDefinition => ({ schema_version: 1, title: '独立创作图', nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } });
 export const imageGraphDefinitions = ['text_input', 'text_reference', 'asset_reference', 'image_reference', 'image_prompt', 'image_generate', 'media_review', ...productionGraphDefinitions] as const;
+export const videoGraphDefinitions = ['text_input', 'text_reference', 'asset_reference', 'director_plan', 'storyboard_plan', 'storyboard_shot', 'video_generate', 'media_review', 'timeline_export'] as const;
 export const graphCatalogForSchema = (catalog: readonly StudioGraphCatalogDefinition[], schema: number): StudioGraphCatalogDefinition[] => catalog
-  .filter(row => schema === 4 ? imageGraphDefinitions.some(kind => kind === row.id) : !['image_reference', 'image_prompt', 'image_generate', ...productionGraphDefinitions].includes(row.id)).map(row =>
-  row.id === 'human_review' && schema !== 3 ? { ...row, outputs: [] } : row);
+  .filter(row => schema === 5 ? videoGraphDefinitions.some(kind => kind === row.id) : schema === 4 ? imageGraphDefinitions.some(kind => kind === row.id) : !['image_reference', 'image_prompt', 'image_generate', ...productionGraphDefinitions, 'storyboard_shot', 'video_generate'].includes(row.id)).map(row =>
+  row.id === 'media_review' && schema === 5 ? { ...row, inputs: [{ id: 'candidate', type: 'VIDEO_CANDIDATE', required: true, multiple: false }] } : row.id === 'timeline_export' && schema === 5 ? { ...row, outputs: [{ id: 'candidate', type: 'VIDEO_CANDIDATE', required: false, multiple: false }] } : row.id === 'human_review' && schema !== 3 ? { ...row, outputs: [] } : row);
 
 /** Local authoring feedback mirrors the typed contract; server validation stays authoritative. */
 export function connectionIssue(definition: StudioGraphDefinition, catalog: readonly StudioGraphCatalogDefinition[], edge: StudioGraphEdge): string | undefined {
@@ -18,11 +19,13 @@ export function connectionIssue(definition: StudioGraphDefinition, catalog: read
   const input = descriptors.find(row => row.id === target.definition_id)?.inputs.find(port => port.id === edge.target_port);
   if (!output || !input) return '请选择真实的输出端口和输入端口。';
   if (output.type !== input.type) return `端口类型不匹配：${output.type} → ${input.type}。`;
-  if (['image_reference', 'image_prompt', 'image_generate', ...productionGraphDefinitions].includes(source.definition_id) || ['image_reference', 'image_prompt', 'image_generate', ...productionGraphDefinitions].includes(target.definition_id)) {
+  if (['image_reference', 'image_prompt', 'image_generate', 'image_style', 'image_upscale', 'storyboard_prompt'].includes(source.definition_id) || ['image_reference', 'image_prompt', 'image_generate', 'image_style', 'image_upscale', 'storyboard_prompt'].includes(target.definition_id)) {
     if (definition.schema_version !== 4) return '图片节点需要明确采用图片图 v4。';
   }
   if (['image_generate', 'image_upscale'].includes(source.definition_id) && (target.definition_id !== 'media_review' || edge.target_port !== 'candidate')) return '图片候选须连接原媒体审核节点，审核后才输出正式素材。';
-  if (target.definition_id === 'timeline_export' && definition.schema_version !== 3) return '时间线剪辑与导出需要明确升级为媒体图 v3。';
+  if (['storyboard_shot', 'video_generate'].includes(source.definition_id) || ['storyboard_shot', 'video_generate'].includes(target.definition_id)) { if (definition.schema_version !== 5) return '视频节点需要明确采用视频图 v5。'; }
+  if (source.definition_id === 'video_generate' && (target.definition_id !== 'media_review' || edge.target_port !== 'candidate')) return '视频候选必须通过原媒体审核节点。';
+  if (target.definition_id === 'timeline_export' && ![3, 5].includes(definition.schema_version)) return '时间线剪辑与导出需要明确升级为媒体图 v3。';
   if (source.definition_id === 'timeline_export' && (target.definition_id !== 'media_review' || edge.target_port !== 'candidate')) return '时间线导出候选须连接原媒体审核节点，审核后才可作为正式视频素材。';
   if (target.definition_id === 'media_generate' && ['text', 'draft'].includes(edge.target_port)) {
     if (definition.edges.some(row => row.target_node_id === target.id && row.target_port === (edge.target_port === 'draft' ? 'text' : 'draft'))) return '媒体节点的文本与已审核草稿输入互斥，请先明确移除另一条输入连接。';

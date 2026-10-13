@@ -1,11 +1,12 @@
+import type { StoryboardReceipt } from './studioStoryboardContract';
 import { productionGraphDefinitions, type PlanningDocument } from './studioProductionGraphContract';
 import { checkedImageReferenceMetadata } from './studioImageRuntimeContract';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView, type Asset } from '../api';
 import type { StudioAsset, StudioClient } from './studioClient';
 import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphRecord } from './studioGraphTypes';
-import { GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, type GraphImageOperation, type GraphMediaOperation } from './studioGraphTypes';
-import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, imageGraphDefinitions, retainsSavedAssetBindings } from './graphDraft';
+import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, type GraphImageOperation, type GraphMediaOperation } from './studioGraphTypes';
+import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, imageGraphDefinitions, videoGraphDefinitions, retainsSavedAssetBindings } from './graphDraft';
 import { useStudioGraphTimelineEditor } from './useStudioGraphTimelineEditor';
 
 export type StudioGraphEditorSelection = { graphId?: string; runId?: string };
@@ -31,6 +32,10 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const [pendingNavigation, setPendingNavigation] = useState<() => void>(), [discardConfirmed, setDiscardConfirmed] = useState(false);
   const [kind, setKind] = useState<StudioGraphDefinitionId>('text_input'), [sourcePort, setSourcePort] = useState(''), [targetPort, setTargetPort] = useState('');
   const [mediaSchemaConsent, setMediaSchemaConsent] = useState(false);
+  const [videoSchemaConsent, setVideoSchemaConsent] = useState('');
+  const [pendingVideoCatalog, setPendingVideoCatalog] = useState<StudioGraphCatalog>();
+  const schemaCatalogs = useRef(new Map<number, StudioGraphCatalog>());
+  const [shotParent, setShotParent] = useState(''), [shotChoice, setShotChoice] = useState(''), [shotReceipt, setShotReceipt] = useState<StoryboardReceipt>(), [shotLoading, setShotLoading] = useState(false); const shotEpoch = useRef(0);
   const [imageSchemaConsent, setImageSchemaConsent] = useState('');
   const [executionDirty, setExecutionDirty] = useState(false);
   const [assets, setAssets] = useState<StudioAsset[]>([]), [assetChoice, setAssetChoice] = useState(''), [assetLoading, setAssetLoading] = useState(false), [preview, setPreview] = useState<StudioAsset>();
@@ -51,6 +56,8 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === selectedNode.id ? { ...row, parameters } : row) }); } });
   const dirty = !same(draft, base?.definition || blankGraph()) || timelineEditor.formDirty;
   const replaceConfirmed = !!candidate && replaceConsent === candidateKey(candidate);
+  const videoSchemaConfirmed = videoSchemaConsent !== '' && videoSchemaConsent === JSON.stringify(draft);
+  const confirmVideoSchema = (value: boolean) => { if (editable && current() && !locked()) setVideoSchemaConsent(value ? JSON.stringify(draftRef.current) : ''); };
   const imageSchemaConfirmed = imageSchemaConsent !== '' && imageSchemaConsent === JSON.stringify(draft);
   const confirmImageSchema = (value: boolean) => { if (editable && current() && !locked()) setImageSchemaConsent(value ? JSON.stringify(draftRef.current) : ''); };
   const setReplaceConfirmed = (value: boolean) => { setReplaceConsent(value && current() && !locked() && !externalDirty && !checking ? candidateKey(candidate) : undefined); };
@@ -72,7 +79,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }, [invalidateCandidate]);
   const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty, timelineEditor.clearForm]);
   useEffect(() => { alive.current = true; return () => { alive.current = false; selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; candidateEpoch.current++; candidateRequest.current?.abort(); }; }, []);
-  useEffect(() => { planningEpoch.current++; setPlanningDocuments([]); setPlanningChoice(''); setPlanningLoading(false); setImageSchemaConsent(''); }, [identity, denied, canMutate, externalDirty, executionDirty]);
+  useEffect(() => { shotEpoch.current++; setShotReceipt(undefined); setShotChoice(''); setShotParent(''); setVideoSchemaConsent(''); planningEpoch.current++; setPlanningDocuments([]); setPlanningChoice(''); setPlanningLoading(false); setImageSchemaConsent(''); }, [identity, denied, canMutate, externalDirty, executionDirty]);
   useEffect(() => {
     if (denied) { timelineEditor.resetForm(); selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; invalidateCandidate(); setCatalog(undefined); setRecords([]); setBase(undefined); setDraft(blankGraph()); setPast([]); setFuture([]); setSelected([]); setAssets([]); setPreview(undefined); setPreviewState(undefined); setPendingNavigation(undefined); setMediaSchemaConsent(false); setExecutionDirty(false); setError(''); setNotice(''); }
   }, [denied, invalidateCandidate]);
@@ -82,7 +89,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     const epoch = ++catalogEpoch.current; setLoading(true); setError('');
     try {
       const [schema, values] = await read(() => Promise.all([client.graphs.catalog(), client.graphs.list()]));
-      if (current() && epoch === catalogEpoch.current) { setCatalog(schema); setRecords(values.items); }
+      if (current() && epoch === catalogEpoch.current) { [1, 2, 3].forEach(version => schemaCatalogs.current.set(version, schema)); setCatalog(schema); setRecords(values.items); }
     } catch (value) { if (current() && epoch === catalogEpoch.current) setError(apiErrorView(value, '创作图目录读取失败。').message); }
     finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
   }, [client, current, read]);
@@ -92,7 +99,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     const epoch = ++catalogEpoch.current; setLoading(true); setError('');
     const getCatalog = client.graphs.imageCatalog;
     try { const value = await read(() => getCatalog());
-      if (current() && epoch === catalogEpoch.current) { setCatalog(value); setNotice('已读取图片节点目录；当前图格式、输入与运行保持，尚未升级或执行。'); }
+      if (current() && epoch === catalogEpoch.current) { schemaCatalogs.current.set(4, value); setCatalog(value); setNotice('已读取图片节点目录；当前图格式、输入与运行保持，尚未升级或执行。'); }
     } catch (value) { if (current() && epoch === catalogEpoch.current) setError(apiErrorView(value, '图片节点目录读取失败。').message); }
     finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
   }
@@ -100,7 +107,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   async function loadProductionCatalog() {
     if (!current() || locked() || externalDirty || executionDirty || !client.graphs.productionCatalog) return;
     const epoch = ++catalogEpoch.current; setLoading(true); setError('');
-    try { const value = await read(() => client.graphs.productionCatalog!()); if (current() && epoch === catalogEpoch.current) { setCatalog(value); setNotice('已读取视觉制作节点目录；没有升级图格式、绑定文档或执行模型。'); } }
+    try { const value = await read(() => client.graphs.productionCatalog!()); if (current() && epoch === catalogEpoch.current) { schemaCatalogs.current.set(4, value); setCatalog(value); setNotice('已读取视觉制作节点目录；没有升级图格式、绑定文档或执行模型。'); } }
     catch (value) { if (current() && epoch === catalogEpoch.current) setError(apiErrorView(value, '视觉制作节点目录读取失败。').message); }
     finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
   }
@@ -113,11 +120,23 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   const choosePlanningDocument = (value: string) => { if (editable && current() && !locked()) setPlanningChoice(value); };
   async function graphCatalogForRecord(value: StudioGraphRecord, signal?: AbortSignal) {
-    if (value.definition.schema_version !== 4) return undefined;
+    if (value.definition.schema_version === 5) { if (!client.graphs.videoCatalog) throw new Error('视频图目录当前不可用。'); return client.graphs.videoCatalog(signal); }
+    if (value.definition.schema_version !== 4) return schemaCatalogs.current.get(value.definition.schema_version) || client.graphs.catalog(signal);
     const production = value.definition.nodes.some(node => productionGraphDefinitions.includes(node.definition_id as typeof productionGraphDefinitions[number]));
     const get = production ? client.graphs.productionCatalog : client.graphs.imageCatalog; if (!get) throw new Error('当前节点目录不可用，请重新打开工作区。');
     return get(signal);
   }
+  async function loadVideoCatalog() {
+    if (!current() || locked() || externalDirty || executionDirty || !client.graphs.videoCatalog) return; const epoch = ++catalogEpoch.current; setLoading(true);
+    try { const value = await read(() => client.graphs.videoCatalog!()); if (current() && epoch === catalogEpoch.current) { schemaCatalogs.current.set(5, value); if (draftRef.current.schema_version === 5) setCatalog(value); else setPendingVideoCatalog(value); setNotice('已读取视频图节点目录；旧图未升级，未执行媒体。'); } } catch (value) { if (current() && epoch === catalogEpoch.current) setError(apiErrorView(value, '视频图目录读取失败。').message); } finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
+  }
+  function upgradeVideoSchema() { const selectedCatalog = pendingVideoCatalog || schemaCatalogs.current.get(5); if (!editable || !current() || locked() || !videoSchemaConfirmed || !selectedCatalog?.capabilities.video_graph || draft.schema_version === 5) return; if (draft.nodes.some(node => !videoGraphDefinitions.includes(node.definition_id as typeof videoGraphDefinitions[number]))) { setError('当前图含视频图不支持的节点。请保留原图，明确新建空图；不会自动删除节点。'); return; } change({ ...draftRef.current, schema_version: 5 }); setCatalog(selectedCatalog); setPendingVideoCatalog(undefined); setVideoSchemaConsent(''); setKind('storyboard_plan'); }
+  function chooseShotParent(value: string) { if (!editable || !current() || locked()) return; shotEpoch.current++; setShotParent(value); setShotChoice(''); setShotReceipt(undefined); }
+  async function loadShotReceipt() {
+    if (!editable || !current() || locked() || !client.graphs.videoStoryboard) return; const parent = draftRef.current.nodes.find(node => node.id === shotParent && node.definition_id === 'storyboard_plan'), pin = parent?.parameters.document_snapshot; if (!pin) return; const epoch = ++shotEpoch.current, captured = JSON.stringify(pin); setShotLoading(true);
+    try { const receipt = await read(() => client.graphs.videoStoryboard!(pin.id)); if (current() && epoch === shotEpoch.current && captured === JSON.stringify(draftRef.current.nodes.find(node => node.id === shotParent)?.parameters.document_snapshot)) { if (captured !== JSON.stringify(receipt.document_snapshot)) throw new Error('分镜文档版本已经变化，请核对原绑定。'); setShotReceipt(receipt); setShotChoice(''); } } catch (value) { if (current() && epoch === shotEpoch.current) setError(apiErrorView(value, '分镜镜头读取失败。').message); } finally { if (current() && epoch === shotEpoch.current) setShotLoading(false); }
+  }
+  function chooseShot(value: string) { if (editable && current() && !locked()) setShotChoice(value); }
   const change = useCallback((next: StudioGraphDefinition, record = true) => {
     if (!editable || !current() || saving.current || isBusy?.()) return;
     if (!retainsSavedAssetBindings(baseRef.current?.definition.nodes || [], next.nodes)) { setError('已保存资产引用暂不能移除或重新绑定；可移动或禁用节点。原资产不会被删除。'); return; }
@@ -140,7 +159,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     }); if (current() && epoch === selectedEpoch.current) { if (result.imageCatalog) { catalogEpoch.current++; setCatalog(result.imageCatalog); } accept(result.value); } }
     catch (value) { if (current() && epoch === selectedEpoch.current) setError(apiErrorView(value, '创作图读取失败，当前草稿未替换。').message); }
   }
-  function newGraph() { if (!current() || locked() || externalDirty || executionDirty) return; timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setBase(undefined); setDraft(blankGraph()); setSelected([]); setPast([]); setFuture([]); setBlocked(false); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); reportSelection.current?.({}); }
+  function newGraph() { if (!current() || locked() || externalDirty || executionDirty) return; setCatalog(schemaCatalogs.current.get(1)); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setBase(undefined); setDraft(blankGraph()); setSelected([]); setPast([]); setFuture([]); setBlocked(false); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); reportSelection.current?.({}); }
   function confirmNavigation() {
     if (!discardConfirmed || !pendingNavigation || !current() || locked() || externalDirty || executionDirty) return;
     const work = pendingNavigation; setPendingNavigation(undefined); setDiscardConfirmed(false); work();
@@ -185,18 +204,22 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     const planning = planningDocuments.find(row => row.id === planningChoice && row.mode === (kind === 'director_plan' ? 'DIRECTOR' : 'STORYBOARD'));
     const spec = catalog?.definitions.find(row => row.id === kind), asset = assets.find(row => row.id === assetChoice);
     const media = kind === 'media_generate' || kind === 'media_review' || kind === 'timeline_export';
-    const image = draft.schema_version === 4;
+    const image = draft.schema_version === 4, video = draft.schema_version === 5, shot = shotReceipt?.shots.find(row => row.shot_id === shotChoice);
+    const shotParentNode = draft.nodes.find(node => node.id === shotParent && node.definition_id === 'storyboard_plan');
+    const shotFresh = !!shotReceipt && JSON.stringify(shotReceipt.document_snapshot) === JSON.stringify(shotParentNode?.parameters.document_snapshot);
     const schemaRequired = media || kind === 'asset_reference' && catalog?.capabilities.media_execution;
     const limit = draft.schema_version >= 3 ? catalog?.media_limits?.nodes || 24 : catalog!.limits.nodes;
-    if (!editable || !spec || draft.nodes.length >= limit || schemaRequired && draft.schema_version !== 3 && !image
-      || image && !imageGraphDefinitions.some(value => value === kind)
+    if (!editable || !spec || draft.nodes.length >= limit || schemaRequired && draft.schema_version !== 3 && !image && !video
+      || video && !videoGraphDefinitions.includes(kind as typeof videoGraphDefinitions[number]) || image && !imageGraphDefinitions.some(value => value === kind)
       || ['media_generate', 'timeline_export'].includes(kind) && draft.nodes.filter(row => ['media_generate', 'timeline_export'].includes(row.definition_id)).length >= 4
       || ['image_generate', 'image_upscale'].includes(kind) && draft.nodes.filter(row => ['image_generate', 'image_upscale'].includes(row.definition_id)).length >= 4
-      || ['director_plan', 'storyboard_plan'].includes(kind) && !planning || kind === 'asset_reference' && !asset || kind === 'timeline_export' && !timelineEditor.chosen) return;
+      || kind === 'storyboard_shot' && (!shot || !shotFresh) || ['video_generate', 'timeline_export'].includes(kind) && video && draft.nodes.filter(row => ['video_generate', 'timeline_export'].includes(row.definition_id)).length >= 4 || ['director_plan', 'storyboard_plan'].includes(kind) && !planning || kind === 'asset_reference' && !asset || kind === 'timeline_export' && !timelineEditor.chosen) return;
     if (image && kind === 'asset_reference' && asset?.kind !== 'image') { setError('图片图只接受图片素材引用。'); return; }
     const node = { id: graphId(), definition_id: kind, definition_version: 1 as const, enabled: true, position: { x: 24 + draft.nodes.length % 4 * 280, y: 24 + Math.floor(draft.nodes.length / 4) * 180 },
       parameters: kind === 'asset_reference' ? { asset_id: asset!.id, version: asset!.version, digest: asset!.sha256, kind: asset!.kind as 'image' | 'video' | 'audio' }
         : kind === 'media_generate' ? { operation_id: 'm5.image.t2i' as const, provider_id: '', model_id: '', prompt: '', parameters: {}, allow_cloud: false, license_note: '' }
+        : kind === 'storyboard_shot' ? { shot_id: shot!.shot_id, shot_version: shot!.shot_version, shot_digest: shot!.shot_digest }
+        : kind === 'video_generate' ? { operation_id: 'm7.video.t2v' as const, provider_id: '', model_id: '', prompt: '', parameters: {}, allow_cloud: false, license_note: '' }
         : ['director_plan', 'storyboard_plan'].includes(kind) ? { document_snapshot: { id: planning!.id, version: planning!.version, digest: planning!.digest } }
         : kind === 'storyboard_prompt' ? { shot_id: '' }
         : kind === 'image_upscale' ? { operation_id: 'm5.image.upscale' as const, provider_id: '', model_id: '', parameters: {}, allow_cloud: false, license_note: '' }
@@ -219,16 +242,16 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     change({ ...draftRef.current, schema_version: 4 }); setImageSchemaConsent(''); setKind('image_reference');
   }
   function updateMediaField(key: 'operation_id' | 'provider_id' | 'model_id' | 'prompt' | 'allow_cloud' | 'license_note', value: string | boolean) {
-    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || !['media_generate', 'image_generate', 'image_upscale'].includes(target.definition_id)) return;
+    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || !['media_generate', 'image_generate', 'image_upscale', 'video_generate'].includes(target.definition_id)) return;
     if (['image_generate', 'image_upscale'].includes(target.definition_id) && key === 'prompt') return;
     if (target.definition_id === 'image_upscale' && (key === 'operation_id' || key === 'allow_cloud')) return;
-    if (key === 'operation_id' && !(target.definition_id === 'image_generate' ? GRAPH_IMAGE_OPERATIONS.some(operation => operation === value) : GRAPH_MEDIA_OPERATIONS.some(operation => operation === value))
+    if (key === 'operation_id' && !(target.definition_id === 'video_generate' ? GRAPH_VIDEO_OPERATIONS.some(operation => operation === value) : target.definition_id === 'image_generate' ? GRAPH_IMAGE_OPERATIONS.some(operation => operation === value) : GRAPH_MEDIA_OPERATIONS.some(operation => operation === value))
       || (key === 'allow_cloud' ? typeof value !== 'boolean' : typeof value !== 'string')) return;
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value } } : row) });
   }
   function updateMediaParameter(key: string, value: string) {
     const target = draftRef.current.nodes.find(row => row.id === selected[0]), allowed = target?.parameters.operation_id && graphMediaParameterNames(target.parameters.operation_id, ['image_generate', 'image_upscale'].includes(target.definition_id));
-    if (!target || !['media_generate', 'image_generate', 'image_upscale'].includes(target.definition_id) || !allowed?.includes(key)) return;
+    if (!target || !['media_generate', 'image_generate', 'image_upscale', 'video_generate'].includes(target.definition_id) || !allowed?.includes(key)) return;
     const next = { ...target.parameters.parameters };
     if (value === '') delete next[key];
     else if (['negative_prompt', 'voice_id', 'size', 'quality'].includes(key)) next[key] = value;
@@ -236,7 +259,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, parameters: next } } : row) });
   }
   function clearUnsupportedMediaParameters() {
-    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || !['media_generate', 'image_generate', 'image_upscale'].includes(target.definition_id) || !target.parameters.operation_id) return;
+    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || !['media_generate', 'image_generate', 'image_upscale', 'video_generate'].includes(target.definition_id) || !target.parameters.operation_id) return;
     const allowed = graphMediaParameterNames(target.parameters.operation_id, target.definition_id === 'image_generate'), next = Object.fromEntries(Object.entries(target.parameters.parameters || {}).filter(([key]) => allowed.includes(key)));
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, parameters: next } } : row) });
   }
@@ -264,8 +287,9 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     const bindings = target.parameters.bindings?.map(binding => { if (binding.port !== port) return binding; const next = { ...binding }; if (value === '') delete next[key]; else Object.assign(next, checkedImageReferenceMetadata({ [key]: value }, true)); return next; });
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { bindings } } : row) });
   }
-  function updateProductionField(key: 'style' | 'atmosphere' | 'color_palette' | 'shot_id', value: string) {
-    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || (key === 'shot_id' ? target.definition_id !== 'storyboard_prompt' || value.length > 240 : target.definition_id !== 'image_style' || value.length > (key === 'style' ? 2000 : 1000))) return;
+  function updateProductionField(key: 'style' | 'atmosphere' | 'color_palette' | 'shot_id' | 'reference_purpose', value: string) {
+    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (key === 'reference_purpose') { if (target?.definition_id !== 'video_generate' || value !== '' && !['style', 'action', 'camera'].includes(value)) return; const parameters = { ...target.parameters }; if (value === '') delete parameters.reference_purpose; else parameters.reference_purpose = value as 'style' | 'action' | 'camera'; change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters } : row) }); return; }
+    if (!target || (key === 'shot_id' ? target.definition_id !== 'storyboard_prompt' || value.length > 240 : target.definition_id !== 'image_style' || value.length > (key === 'style' ? 2000 : 1000))) return;
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value } } : row) });
   }
   function connect() {
@@ -342,10 +366,11 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const retainedTitle = !base || draft.title !== base.definition.title ? draft.title : blankGraph().title;
   return {
     retired, retainedText, retainedTitle,
-    catalog: catalog ? { ...catalog, definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
+    catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true, automatic_video_dispatch: false } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
+    loadVideoCatalog, videoSchemaConfirmed, confirmVideoSchema, upgradeVideoSchema, shotParent, chooseShotParent, shotReceipt, shotChoice, chooseShot, shotLoading, loadShotReceipt,
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,

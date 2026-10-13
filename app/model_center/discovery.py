@@ -60,6 +60,8 @@ class LocalDiscoveryService:
         # New finite image recipes remain on this same discovery owner and are
         # frozen independently into the original explicit scan consent.
         self.image_workflow_adapters = copy.deepcopy(list(RECIPES[1:]))
+        from ..services.studio_video_provider_recipes import RECIPES as VIDEO_RECIPES
+        self.video_workflow_adapters = copy.deepcopy(list(VIDEO_RECIPES))
         self._load()
 
     def _load(self):
@@ -119,7 +121,7 @@ class LocalDiscoveryService:
         with self.lock:
             return copy.deepcopy({'scan': self.scan, 'registrations': list(self.registrations.values()),
                 'settings': self.settings, 'hardware': self.hardware,
-                'workflow_adapters': [*self.workflow_adapters, *self.image_workflow_adapters],
+                'workflow_adapters': [*self.workflow_adapters, *self.image_workflow_adapters, *self.video_workflow_adapters],
                 'persistence_error': self.persistence_error})
 
     def configure_roots(self, values: DiscoverySettingsInput, *, guard=None):
@@ -232,6 +234,7 @@ class LocalDiscoveryService:
                 definition_status, identities=plan['workflow_definition_identity'])
             plan['component_definition_identity'] = component_identity
             plan['image_recipe_definition_identity'] = copy.deepcopy(self.image_workflow_adapters)
+            plan['video_recipe_definition_identity'] = copy.deepcopy(self.video_workflow_adapters)
             check()
             return plan
 
@@ -572,10 +575,13 @@ class LocalDiscoveryService:
                     if bindings[name] == [{'node_class': 'UpscaleModelLoader', 'input_field': 'model_name'}]:
                         family = 'IMAGE_UPSCALE'
                     image_recipe = project_comfy_image_recipe(info, name, family)
+                    from ..services.studio_video_provider_recipes import project_comfy_video_recipe
+                    video_recipe = project_comfy_video_recipe(info, name, family)
                     candidate = self._candidate(runtime, name, family_hint=' '.join(loaders), evidence={
                         'model_listed': True, 'model_file_exists': None, 'loader_nodes': loaders, 'loader_bindings': bindings[name],
                         'node_classes': nodes, 'nodes_fingerprint': nodes_fingerprint, 'workflow_status': 'NOT_CONFIGURED', 'generation_verified': False,
-                        **({'image_recipe': image_recipe} if image_recipe else {})})
+                        **({'image_recipe': image_recipe} if image_recipe else {}),
+                        **({'video_recipe': video_recipe} if video_recipe else {})})
                     if family == 'IMAGE_UPSCALE':
                         candidate.update(family=family, modality='IMAGE', declared_capabilities=['IMAGE'])
                     found.append(candidate)
@@ -718,17 +724,22 @@ class LocalDiscoveryService:
                     if 'embedding' in capabilities and 'completion' not in capabilities: notes.append('TEXT_GENERATION_UNSUPPORTED')
             elif kind == 'AUTOMATIC1111': verified = ['IMAGE']
             elif kind == 'COMFYUI':
-                adapters = [*self.workflow_adapters, *self.image_workflow_adapters]
+                adapters = [*self.workflow_adapters, *self.image_workflow_adapters, *self.video_workflow_adapters]
                 adapter = next((a for a in adapters if a['id'] == candidate.get('workflow_adapter_id')), None)
                 image_recipe = evidence.get('image_recipe')
+                video_recipe = evidence.get('video_recipe')
                 if not adapter and image_recipe:
                     adapter = next((a for a in adapters if a['id'] == image_recipe['recipe_id']), None)
+                    if adapter: candidate['workflow_adapter_id'] = adapter['id']
+                if not adapter and video_recipe:
+                    adapter = next((a for a in adapters if a['id'] == video_recipe['recipe_id']), None)
                     if adapter: candidate['workflow_adapter_id'] = adapter['id']
                 if not adapter and candidate['family'] == 'STABLE_DIFFUSION':
                     adapter = self.workflow_adapters[0]; candidate['workflow_adapter_id'] = adapter['id']
                 bound = bool(adapter and {'node_class': adapter['model_loader'], 'input_field': adapter['model_input']} in evidence.get('loader_bindings', []))
                 exact_recipe = (adapter and (adapter['id'] == 'comfy-sd-checkpoint-v1' or
-                    image_recipe and image_recipe['recipe_id'] == adapter['id']))
+                    image_recipe and image_recipe['recipe_id'] == adapter['id'] or
+                    video_recipe and video_recipe['recipe_id'] == adapter['id']))
                 if adapter and bound and exact_recipe and adapter['family'] == candidate['family'] and set(adapter['required_nodes']) <= set(evidence.get('node_classes', [])):
                     verified = [adapter['capability']]; evidence['workflow_status'] = 'STRUCTURE_VALIDATED_NOT_GENERATED'
                 else: notes.append('WORKFLOW_ADAPTER_REQUIRED')
@@ -818,11 +829,11 @@ class LocalDiscoveryService:
             keys = ('file_exists', 'header_valid', 'size', 'modified_ns', 'general.architecture')
         elif kind == 'COMFYUI':
             if report['status'] != 'RUNNING': return 'MODEL_OR_RUNTIME_NOT_FOUND'
-            adapter = next((item for item in [*self.workflow_adapters, *self.image_workflow_adapters] if item['id'] == record.get('workflow_adapter_id')), None)
+            adapter = next((item for item in [*self.workflow_adapters, *self.image_workflow_adapters, *self.video_workflow_adapters] if item['id'] == record.get('workflow_adapter_id')), None)
             if (not adapter or not set(adapter['required_nodes']) <= set(evidence.get('node_classes', [])) or
                     {'node_class':adapter['model_loader'], 'input_field':adapter['model_input']} not in evidence.get('loader_bindings', [])):
                 return 'WORKFLOW_ADAPTER_REQUIRED'
-            keys = ('model_listed', 'nodes_fingerprint', 'loader_bindings', 'image_recipe')
+            keys = ('model_listed', 'nodes_fingerprint', 'loader_bindings', 'image_recipe', 'video_recipe')
         elif kind == 'AUTOMATIC1111':
             if report['status'] != 'RUNNING' or not evidence.get('model_listed'): return 'MODEL_OR_RUNTIME_NOT_FOUND'
             keys = ('model_listed', 'sha256', 'filename', 'image_recipe', 'image_api_fingerprint')
@@ -898,7 +909,7 @@ class LocalDiscoveryService:
         self._guard(guard)
         with self.lock:
             candidate = copy.deepcopy(self.registrations[identifier])
-            if value.workflow_adapter_id and not any(a['id'] == value.workflow_adapter_id for a in [*self.workflow_adapters, *self.image_workflow_adapters]):
+            if value.workflow_adapter_id and not any(a['id'] == value.workflow_adapter_id for a in [*self.workflow_adapters, *self.image_workflow_adapters, *self.video_workflow_adapters]):
                 raise ValueError('LOCAL_AI_WORKFLOW_ADAPTER_UNKNOWN')
             changed = candidate.get('workflow_adapter_id') != value.workflow_adapter_id
             candidate.update(**value.model_dump(), enabled=False)

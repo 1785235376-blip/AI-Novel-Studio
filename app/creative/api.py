@@ -11,6 +11,7 @@ from .models import (CreativeProductionDocumentIn, CreativeDocumentUpdate, Creat
                      DirectorModelDispatch, ProposalAction, MODES, USER_MODES, LEGACY_MODES)
 
 from .adaptation_models import AdaptationIn, AdaptationReview, AdaptationPreview
+from .storyboard import StoryboardApproval, ShotImageBinding, ShotImageRequest, StoryboardTimelineDraft
 
 FLAG = "narrative_production_v2"
 
@@ -55,6 +56,13 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
             raise HTTPException(403, {"code": "CREATIVE_MODEL_HOST_BINDING_REQUIRED"})
         authority.guard()
         return authority
+
+    def storyboard_call(request, nid, token, branch, permission, callback):
+        # Asset-backed production planning shares the original trusted Host
+        # invoker. This never enables model execution or starts a runtime.
+        from .production_execution_api import create_production_invoker
+        call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
+        return call(request, nid, token, branch, permission, callback)
 
     @router.get("/capabilities")
     def capabilities(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -113,6 +121,36 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.update(nid, scope, actor, rid, body.expected_version,
                           body.model_dump(exclude={"expected_version"}), reauthorize=guard))
+
+    @router.get("/documents/{rid}/director-advice")
+    def director_advice(nid: str, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.storyboards.director_advice(nid, scope, rid))
+
+    @router.get("/documents/{rid}/storyboard")
+    def storyboard(nid: str, rid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.storyboards.get(nid, scope, actor, rid, guard))
+
+    @router.post("/documents/{rid}/storyboard/approve")
+    def approve_storyboard(nid: str, rid: str, request: Request, body: StoryboardApproval, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.review",
+                      lambda actor, scope, guard: service.storyboards.approve(nid, scope, actor, rid, body, guard))
+
+    @router.post("/documents/{rid}/shots/{shot_id}/image-binding")
+    def bind_storyboard_image(nid: str, rid: str, shot_id: str, request: Request, body: ShotImageBinding, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.write",
+                      lambda actor, scope, guard: service.storyboards.bind_image(nid, scope, actor, rid, shot_id, body, guard))
+
+    @router.post("/documents/{rid}/shots/{shot_id}/image-request")
+    def storyboard_image_request(nid: str, rid: str, shot_id: str, request: Request, body: ShotImageRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.storyboards.image_request(nid, scope, actor, rid, shot_id, body, guard))
+
+    @router.post("/documents/{rid}/storyboard/timeline-draft", status_code=201)
+    def storyboard_timeline(nid: str, rid: str, request: Request, body: StoryboardTimelineDraft, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.write",
+                      lambda actor, scope, guard: service.storyboards.timeline_draft(nid, scope, actor, rid, body, guard))
 
     @router.delete("/documents/{rid}")
     def archive(nid: str, rid: str, expected_version: int = Query(ge=1), x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

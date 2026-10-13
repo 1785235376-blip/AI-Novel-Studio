@@ -1,4 +1,5 @@
 import { parseScreenplayPresets, type ScreenplayPresetCatalog } from './screenplayPresets';
+import { createStoryboardClient } from './studioStoryboardClient';
 import { ApiError, type CollaborationContext } from '../api';
 import { useLocalHostSession } from '../localHostSession';
 import { isPackagedDesktopHost } from '../packagedHost';
@@ -56,6 +57,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
     return { blob: new Blob([bytes], { type: mime }), filename: `creative-${kind === 'SCRIPT' ? 'script' : 'screenplay'}-v${source.version}.${extension}`, documentVersion: source.version, documentDigest: digest, sha256: hash };
   }
   return {
+    ...createStoryboardClient(novelId, base, branch ?? null, request),
     capabilities: (signal?: AbortSignal) => request<CreativeCapabilities>(`${base}/capabilities`, 'GET', undefined, signal),
     screenplayPresets: async (signal?: AbortSignal): Promise<ScreenplayPresetCatalog> => parseScreenplayPresets(await request<unknown>(`${base}/screenplay-presets`, 'GET', undefined, signal)),
     list: (signal?: AbortSignal) => request<{ items: CreativeDocument[] }>(`${base}/documents`, 'GET', undefined, signal),

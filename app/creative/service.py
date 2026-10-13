@@ -34,6 +34,8 @@ class CreativeService(DomainService):
         self.proposals = DirectorProposalService(self)
         from .adaptation import AdaptationService
         self.adaptations = AdaptationService(self)
+        from .storyboard import StoryboardWorkspace
+        self.storyboards = StoryboardWorkspace(self)
 
     @property
     def store(self):
@@ -53,6 +55,10 @@ class CreativeService(DomainService):
     def configure_adaptation_assets(self, workspace):
         from .adaptation_assets import AdaptationAssets
         self.adaptations.assets = AdaptationAssets(self.adaptations, workspace)
+
+    def configure_storyboard_production(self, production):
+        """Reuse the original production timeline/asset phase, never a new owner."""
+        self.storyboards.production = production
 
     @staticmethod
     def document_digest(row):
@@ -237,6 +243,8 @@ class CreativeService(DomainService):
                 raise ValueError("CREATIVE_MODE_IMMUTABLE")
             reauthorize()
             def replace_content(current):
+                from .storyboard import invalidate_storyboard
+                invalidate_storyboard(current, payload)
                 current.pop("visual_target", None)
                 current.update(payload)
             change_row(row, actor, expected_version, replace_content)
@@ -299,7 +307,8 @@ class CreativeService(DomainService):
                             "director_notes": [{key: note[key] for key in DirectorNote.model_fields if key in note} for note in linked_notes]}
                         # Preserve older default derivation exactly; rich,
                         # authored direction is copied only when present.
-                        for source_name, target_name in (("composition", "composition"), ("lens", "lens"), ("shot_suggestion", "frame_prompt")):
+                        for source_name, target_name in (("composition", "composition"), ("lens", "lens"), ("shot_suggestion", "frame_prompt"),
+                                                         ("lighting", "lighting"), ("color_palette", "color")):
                             if direction.get(source_name) is not None:
                                 shot[target_name] = direction[source_name]
                         if direction.get("performances") is not None:
@@ -308,6 +317,7 @@ class CreativeService(DomainService):
                             shot["characters"] = copy.deepcopy(scene.get("characters", []))
                         if body.shot_policy == "DIRECTOR_NOTES":
                             shot["emotion"] = direction.get("emotion") or scene.get("emotion", "")
+                            shot["director_note_ids"] = [note["id"] for note in linked_notes]
                         shots.append(shot)
                 content["shots"] = shots
             else:
@@ -350,6 +360,8 @@ class CreativeService(DomainService):
             payload = self.prepare_content(nid, scope, value, source_documents=row.get("source_documents", {}))
             reauthorize()
             def restore_content(current):
+                from .storyboard import invalidate_storyboard
+                invalidate_storyboard(current, payload)
                 current.pop("visual_target", None)
                 current.update(payload, status="DRAFT", restored_from_version=restore_version)
             change_row(row, actor, expected_version, restore_content)

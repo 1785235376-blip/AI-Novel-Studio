@@ -117,6 +117,7 @@ class VideoGenerationRequest:
     parameters: dict = field(default_factory=dict)
     source_video_uri: str | None = None
     dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
+    reference_purpose: str | None = None
 
 @dataclass(frozen=True)
 class VideoGenerationResult:
@@ -174,6 +175,10 @@ class HttpVideoProvider:
         if request.source_video_uri is not None:
             if not self.video_to_video: raise ValueError('VIDEO_TO_VIDEO_NOT_CONFIGURED')
             payload['source_video_uri']=request.source_video_uri
+        if request.reference_purpose is not None:
+            if request.source_video_uri is None or request.reference_purpose not in {'style','action','camera'}:
+                raise ValueError('VIDEO_REFERENCE_PURPOSE_INVALID')
+            payload['reference_purpose']=request.reference_purpose
         if request.dispatch_guard is not None:
             request.dispatch_guard()
         response=self.transport.post(self.endpoint+'/videos',headers=headers,json=payload,timeout=30)

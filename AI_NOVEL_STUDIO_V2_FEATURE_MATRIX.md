@@ -1221,3 +1221,17 @@ Baseline `a79b7f9d6fbacfd112ac42f2082798b2cd7f9233`; preceding checkpoints remai
 
 Model/Windows/GPU/final product remain NOT_RUN / LOCAL_REQUIRED. Full milestone CI,
 M4→M9, frozen V1, F00 INTEGRATED + 39 PARTIAL and independent review BLOCKED remain.
+
+
+### 2026-10-14 — Phase4 Storyboard + Video foundation
+
+| Capability | Source status | Actual boundary |
+|---|---|---|
+| Shot history, authored adjacency and Director Camera/Visual/Rhythm advice | IMPLEMENTED / bounded | Original Creative history/CAS, optional fields, same-scene notes; no measured semantic continuity or automatic edits. |
+| Storyboard image/approval/Timeline adapter | IMPLEMENTED / bounded | Exact formal Asset and Shot pins; original image job/review; approved image-based original Timeline draft with retained creation origin. UNKNOWN create remains fenced; persisted request reconciliation is Phase5. |
+| Video Graph schema5 | IMPLEMENTED / bounded | Explicit finite catalog and typed STORYBOARD_SHOT/VIDEO_CANDIDATE, current approval/source guards, original job/review; old schemas1–4 unchanged. |
+| LTX/Wan/Hunyuan Video provider execution | IMPLEMENTED / bounded | Fixed proved Comfy object_info recipes through enabled ModelCenter routes and original VideoJob. Private candidate, bounded output, cancel/source fencing, explicit review. Unsupported versions/local V2V NOT_CONFIGURED. |
+| Controller-backed Storyboard/Video UI | IMPLEMENTED / basic source UI | Exact pins, late/revoked source retirement, independent UNKNOWN fences and parent mutex; professional visual UX remains open for Opus. |
+| Whole Director/Storyboard/Video and product | PARTIAL | File/PG each616pass/1Windows privilege failure/321skip; frontend3167pass/8skip. No full CI or model/Windows/GPU acceptance claim. |
+
+See [Phase4 report](PHASE4_STORYBOARD_VIDEO_REPORT.md) and pinned summary. Original M4→M9, V1, Interop1.0, F00 and independent review gates remain.

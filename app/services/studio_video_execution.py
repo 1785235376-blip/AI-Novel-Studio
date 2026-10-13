@@ -89,7 +89,7 @@ class StudioVideoExecution:
         return self.owner._studio_mutate(nid, branch, actor, row["id"], row["version"], change, context=context)
 
     @exclusive
-    def execute(self, nid, branch, actor, jid, action, *, context, guard, source_guard, resolve, before_send, publish):
+    def execute(self, nid, branch, actor, jid, action, *, context, guard, source_guard, resolve, before_send, publish, inspect_source=None):
         row = self.get(nid, branch, actor, jid, context=context, guard=guard)
         if row["version"] != action.expected_version or row["request_digest"] != action.expected_request_digest or row["status"] != "QUEUED":
             raise ValueError("STUDIO_VIDEO_DISPATCH_VERSION_OR_STATE_CHANGED")
@@ -102,8 +102,13 @@ class StudioVideoExecution:
         if not provider.capabilities().get(capability):
             raise ValueError("STUDIO_VIDEO_CAPABILITY_UNSUPPORTED")
         start_frame, video_uri = "", None
+        def inspection_current():
+            guard()
+            current = self.owner._studio_read(nid, branch, actor, jid, context=context)
+            if current['version'] != row['version'] or current['status'] != row['status']:
+                raise ValueError('STUDIO_VIDEO_ATTEMPT_CHANGED')
         for snapshot in row["context"]["sources"]:
-            result = source_guard(snapshot)
+            result = (inspect_source(snapshot, inspection_guard=inspection_current) if inspect_source is not None else source_guard(snapshot))
             if snapshot["kind"] == "ASSET":
                 uri = "data:" + result["measured"]["media_type"] + ";base64," + base64.b64encode(result["data"]).decode("ascii")
                 if operation == "m7.video.i2v": start_frame = uri
@@ -123,7 +128,8 @@ class StudioVideoExecution:
                 raise ValueError("STUDIO_VIDEO_ATTEMPT_CHANGED")
         request = VideoGenerationRequest(body["provider_id"], body["model_id"], body["prompt"],
             start_frame, "", jid, idempotency_key=row["request_digest"], parameters=body["parameters"],
-            source_video_uri=video_uri, dispatch_guard=last_mile)
+            source_video_uri=video_uri, dispatch_guard=last_mile,
+            reference_purpose=(body.get('video_reference') or {}).get('purpose'))
         try:
             result = provider.generate(request)
             if not sent or result.provider_id != body["provider_id"] or result.model_id != body["model_id"]:
@@ -144,7 +150,7 @@ class StudioVideoExecution:
                 row = self._mutate(nid, branch, actor, row, context, remote_task_id=remote)
             before_send(row, provider)
             return self._complete(nid, branch, actor, row, context, result.video_uri, provider, guard, source_guard, publish, remote or None,
-                lambda: before_send(row, provider))
+                lambda: before_send(row, provider), inspect_source=inspect_source)
         except Exception:
             # Keep a known remote task or private asset if a later local commit
             # fails. The original receipt remains available for explicit reads.
@@ -154,7 +160,7 @@ class StudioVideoExecution:
                     error_code="STUDIO_VIDEO_SUBMISSION_UNKNOWN" if sent else "STUDIO_VIDEO_PREPARATION_FAILED")
             raise
 
-    def _complete(self, nid, branch, actor, row, context, uri, provider, guard, source_guard, publish, remote, route_guard):
+    def _complete(self, nid, branch, actor, row, context, uri, provider, guard, source_guard, publish, remote, route_guard, *, inspect_source=None):
         guard(); route_guard()
         if uri.startswith("data:video/"):
             if len(uri) > 36 * 1024 * 1024 or ";base64," not in uri:
@@ -164,10 +170,17 @@ class StudioVideoExecution:
             data = fetch_media_bytes(uri, self.owner.assets.MAX_BYTES, configured_provider_endpoint=provider.endpoint)
         if not data or len(data) > self.owner.assets.MAX_BYTES:
             raise ValueError("STUDIO_VIDEO_RESULT_SIZE_INVALID")
-        measured = inspect_media(data, "video")
+        def inspection_current():
+            guard(); route_guard()
+            current = self.owner._studio_read(nid, branch, actor, row['id'], context=context)
+            if current['version'] != row['version'] or current['status'] != row['status']:
+                raise ValueError('STUDIO_VIDEO_ATTEMPT_CHANGED')
+        measured = inspect_media(data, "video", guard=inspection_current)
         if measured["duration_ms"] > 600000:
             raise ValueError("STUDIO_VIDEO_DURATION_LIMIT")
-        for snapshot in row["context"]["sources"]: source_guard(snapshot)
+        for snapshot in row["context"]["sources"]:
+            if inspect_source is not None: inspect_source(snapshot, inspection_guard=inspection_current)
+            else: source_guard(snapshot)
         guard(); route_guard()
         current = self.get(nid, branch, actor, row["id"], context=context, guard=guard)
         if current["version"] != row["version"] or current["status"] != row["status"]:
@@ -204,39 +217,47 @@ class StudioVideoExecution:
             remote_task_id=remote, output_candidate={"id": candidate["id"], "version": candidate["version"], "digest": candidate["sha256"], "kind": "video"})
 
     @exclusive
-    def refresh(self, nid, branch, actor, jid, action, *, context, guard, source_guard, resolve, publish):
+    def refresh(self, nid, branch, actor, jid, action, *, context, guard, source_guard, resolve, publish, inspect_source=None):
         row = self.get(nid, branch, actor, jid, context=context, guard=guard)
         if row["version"] != action.expected_version or row["request_digest"] != action.expected_request_digest or row["status"] not in {"REMOTE_RUNNING", "RESULT_READY", "UNKNOWN"}:
             raise ValueError("STUDIO_VIDEO_REFRESH_STATE_CHANGED")
         provider = resolve(row["context"]["provider_binding"])
         def route_guard():
             guard()
+            current = self.owner._studio_read(nid, branch, actor, jid, context=context)
+            if current['version'] != row['version'] or current['status'] != row['status']:
+                raise ValueError('STUDIO_VIDEO_ATTEMPT_CHANGED')
             if resolve(row["context"]["provider_binding"]) is not provider:
                 raise ValueError("STUDIO_VIDEO_PROVIDER_CHANGED")
-        for snapshot in row["context"]["sources"]: source_guard(snapshot)
+        for snapshot in row["context"]["sources"]:
+            if inspect_source is not None: inspect_source(snapshot, inspection_guard=route_guard)
+            else: source_guard(snapshot)
         guard()
         if row["status"] == "RESULT_READY" and row.get("result_uri"):
-            return self._complete(nid, branch, actor, row, context, row["result_uri"], provider, guard, source_guard, publish, row.get("remote_task_id"), route_guard)
+            return self._complete(nid, branch, actor, row, context, row["result_uri"], provider, guard, source_guard, publish, row.get("remote_task_id"), route_guard, inspect_source=inspect_source)
         if not row.get("remote_task_id") or not provider.capabilities().get("polling") or not callable(getattr(provider, "get_status", None)):
             raise ValueError("STUDIO_VIDEO_REFRESH_UNSUPPORTED")
         route_guard()
-        result = provider.get_status(row["remote_task_id"])
+        result = (provider.get_status(row["remote_task_id"], dispatch_guard=route_guard)
+            if getattr(provider, 'supports_status_guard', False) else provider.get_status(row["remote_task_id"]))
         guard(); route_guard()
         status = str(result.get("status", "UNKNOWN")).upper()
         if status in {"SUCCEEDED", "COMPLETE", "COMPLETED"} and result.get("url"):
-            return self._complete(nid, branch, actor, row, context, result["url"], provider, guard, source_guard, publish, row["remote_task_id"], route_guard)
+            return self._complete(nid, branch, actor, row, context, result["url"], provider, guard, source_guard, publish, row["remote_task_id"], route_guard, inspect_source=inspect_source)
         if status in {"FAILED", "CANCELLED"}:
             return self._mutate(nid, branch, actor, row, context, status=status, error_code="STUDIO_VIDEO_REMOTE_TERMINAL")
         if status not in {"RUNNING", "PENDING", "QUEUED", "IN_PROGRESS"}:
             return self._mutate(nid, branch, actor, row, context, status="UNKNOWN", error_code="STUDIO_VIDEO_REMOTE_STATE_UNKNOWN")
         return row
 
-    @exclusive
     def cancel(self, nid, branch, actor, jid, action, *, context, guard):
+        # The production owner holds its existing raw scope -> Asset -> project
+        # phase. Do not wait for the executor during a guarded native probe or
+        # provider download; the original receipt CAS fences its next write.
         row = self.get(nid, branch, actor, jid, context=context, guard=guard)
         if row["version"] != action.expected_version or row["request_digest"] != action.expected_request_digest:
             raise ValueError("STUDIO_VIDEO_CANCEL_VERSION_CHANGED")
-        if row["status"] not in {"QUEUED", "REMOTE_RUNNING", "RESULT_READY", "UNKNOWN", "AWAITING_REVIEW"}:
+        if row["status"] not in {"QUEUED", "RUNNING", "SEND_RESERVED", "REMOTE_RUNNING", "RESULT_READY", "UNKNOWN", "AWAITING_REVIEW"}:
             raise ValueError("STUDIO_VIDEO_CANCEL_STATE_INVALID")
         # This explicitly discards local publication authority. A provider may
         # continue remotely; cancellation of remote compute is not asserted.

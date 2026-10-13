@@ -111,3 +111,8 @@ Director goals/performance, note-per-shot Storyboard derivation and exact saved
 document Graph inputs. Original owners, private review and Opus controllers remain.
 Whole modules PARTIAL; model/GPU/installed Windows LOCAL_REQUIRED; Control reserved.
 Current test failures and earlier historical failures are not erased by publication.
+
+
+### Phase4 Storyboard / Video foundation (2026-10-14)
+
+[Phase4 report](../../PHASE4_STORYBOARD_VIDEO_REPORT.md) and [pinned summary](phase4-storyboard-video-20261014.json) cover original-owner Shot/approval/image/Timeline operations, explicit schema5 Video Graph and finite enabled local provider execution. Whole modules remain PARTIAL; unsupported local V2V, model timing/quality, final installed Windows/GPU remain LOCAL_REQUIRED. Timeline UNKNOWN creation stays fenced until Phase5 original-owner idempotency. No source publication replaces real acceptance.

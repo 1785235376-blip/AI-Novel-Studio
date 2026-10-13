@@ -1,0 +1,91 @@
+{
+  "contract": "studio-storyboard/1",
+  "document_snapshot": {
+    "id": "89a4c387-9ff4-4b5b-919f-6755259868d5",
+    "version": 4,
+    "digest": "7a69da2cb03e50c417695077bbffbb3b3f83189a834311179d519674feef664b"
+  },
+  "content_digest": "8e2366299200eedd10c650a67756f37dc8028caf3f478a10c9164431bb42588e",
+  "approved": true,
+  "shots": [
+    {
+      "shot_id": "shot-1",
+      "shot_version": 1,
+      "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471",
+      "shot": {
+        "id": "shot-1",
+        "number": 1,
+        "scene_id": "scene-1",
+        "shot_size": "MEDIUM",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "duration_seconds": 3,
+        "frame_prompt": "Synthetic character in a blue jacket",
+        "composition": "",
+        "lens": "",
+        "lighting": "Soft key",
+        "environment": "",
+        "sound": "",
+        "color": "",
+        "action": "",
+        "dialogue": [],
+        "sound_effect": "",
+        "director_notes": [],
+        "continuity": {
+          "next_shot_id": "shot-2",
+          "characters": "visitor",
+          "outfit": "blue jacket",
+          "environment": "",
+          "camera": ""
+        }
+      },
+      "image_asset": {
+        "asset_id": "68bc2dce-60c3-4285-b8c4-aea92944588f",
+        "version": 2,
+        "digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4",
+        "kind": "image"
+      }
+    },
+    {
+      "shot_id": "shot-2",
+      "shot_version": 1,
+      "shot_digest": "88852c9688df3c33db9d828adba7675b26348e0790398b0c3908802a61716d29",
+      "shot": {
+        "id": "shot-2",
+        "number": 2,
+        "scene_id": "scene-1",
+        "shot_size": "MEDIUM",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "duration_seconds": 2,
+        "frame_prompt": "Same synthetic visitor looking up",
+        "composition": "",
+        "lens": "",
+        "lighting": "",
+        "environment": "",
+        "sound": "",
+        "color": "",
+        "action": "",
+        "dialogue": [],
+        "sound_effect": "",
+        "director_notes": [],
+        "continuity": {
+          "previous_shot_id": "shot-1",
+          "characters": "",
+          "outfit": "",
+          "environment": "",
+          "camera": ""
+        }
+      },
+      "image_asset": {
+        "asset_id": "68bc2dce-60c3-4285-b8c4-aea92944588f",
+        "version": 2,
+        "digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4",
+        "kind": "image"
+      }
+    }
+  ],
+  "director_sources": [],
+  "model_called": false,
+  "product_acceptance": "LOCAL_REQUIRED"
+}

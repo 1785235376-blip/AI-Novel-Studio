@@ -875,3 +875,8 @@ Image generation/review; Video execution and Control inference remain excluded.
 The [phase report](DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md) separates source/tests
 and retained failures from LOCAL_REQUIRED model/GPU/Windows/product acceptance.
 Source publication does not advance M4/M5 acceptance or frozen historical status.
+
+
+### 2026-10-14 — Phase4 Storyboard Enhancement / Video Runtime Foundation
+
+Baseline c67a3c3. Additive original-owner Shot versions/continuity/advice, formal image binding and approval-based Timeline draft, explicit video Graph5, fixed enabled Comfy Video adapters, guarded private output and cancellation. Prior two Director PostgreSQL timing defects fixed with per-checkpoint existing transaction reuse; original five-second assertions kept. File/realPG each616pass/1privilege fixture failure/321skip; full frontend3167pass/8originalskip; metadata44pass/2privilege failures, separate Linux3pass. Full milestone hosted CI and native/model acceptance remain separate. [Report](PHASE4_STORYBOARD_VIDEO_REPORT.md); historical failures and M4→M9 gates unchanged. Phase5 is authorized next, followed by Phase6.

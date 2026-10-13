@@ -58,6 +58,7 @@ class ProductionExecutionService:
         self.timeline_transfer = TimelineTransfer(self)
         from .timeline_playback import TimelinePlayback
         self.timeline_playback = TimelinePlayback(self)
+        self.workspace.creative.configure_storyboard_production(self)
 
     def timeline_playback_preview(self, nid, scope, actor, tid, value, guard):
         return self.timeline_playback.preview(nid, scope, actor, tid, value, guard)
@@ -283,6 +284,9 @@ class ProductionExecutionService:
             provider = self.video_providers.get(pid)
             if provider is None: raise ValueError("STUDIO_VIDEO_PROVIDER_NOT_CONFIGURED")
             config = self.video_configs.get(pid, {})
+            from ..model_center.discovery_bridge import LocalVideoAdapter
+            if type(provider) is LocalVideoAdapter:
+                config = provider.studio_configuration()
             capability = {"m7.video.t2v": "text_to_video", "m7.video.i2v": "image_to_video", "m7.video.v2v": "video_to_video"}[operation]
             if not provider.capabilities().get(capability): raise ValueError("STUDIO_VIDEO_CAPABILITY_UNSUPPORTED")
             model = getattr(provider, "default_model", "")
@@ -306,6 +310,8 @@ class ProductionExecutionService:
             "local": endpoint_local(endpoint, bool(config.get("local"))), "capability": capability}
         if operation.startswith("m5.") and type(provider) is LocalImageAdapter:
             binding["registration_digest"] = config["registration_digest"]
+        if operation.startswith("m7.") and type(provider) is LocalVideoAdapter:
+            binding["registration_digest"] = config["registration_digest"]
         if operation.startswith("m8."):
             # Match the original audio resolver without resolving credentials or
             # probing health while listing/previewing configuration.
@@ -316,6 +322,8 @@ class ProductionExecutionService:
             ("enabled", "local", "requires_credential", "default_model", "model_id", "api_style", "capabilities", "video_to_video")}
         if operation.startswith("m5.") and image_config:
             route_config["image_recipe"] = image_config
+        if operation.startswith("m7.") and type(provider) is LocalVideoAdapter:
+            route_config["video_recipe"] = config["video_recipe"]
         binding["route_digest"] = digest({**binding, "config": route_config})
         return binding
 
@@ -423,6 +431,14 @@ class ProductionExecutionService:
                 if not config and command.operation_id == "m5.image.i2i" and sum(s.kind == "ASSET" for s in command.source_snapshots) > getattr(provider, "edit_reference_limit", 0):
                     raise ValueError("STUDIO_PROVIDER_IMAGE_REFERENCE_LIMIT")
             return list(names)
+        if command.operation_id.startswith("m7."):
+            from ..model_center.discovery_bridge import LocalVideoAdapter
+            provider = self.video_providers.get(command.provider_id)
+            if type(provider) is LocalVideoAdapter:
+                from ..services.studio_video_provider_recipes import PARAMETERS, timing
+                config = provider.studio_configuration()
+                if isinstance(command, MediaCommand): timing(config["video_recipe"], command.parameters.model_dump(exclude_none=True))
+                return [name for name in PARAMETERS if name != "negative_prompt" or config["video_recipe"]["recipe_id"] != "comfy-hunyuan10-t2v-v1"]
         return {"m7.video.t2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
             "m7.video.i2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
             "m7.video.v2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
@@ -526,6 +542,18 @@ class ProductionExecutionService:
                 recipe["adapter"] = "AUTOMATIC1111_IMAGE"
                 recipe["defaults"] = {"width": 1024, "height": 1024, "steps": 28}
                 if command.operation_id == "m5.image.i2i": recipe["denoising_strength"] = 0.6
+        elif command.operation_id.startswith("m7."):
+            from ..model_center.discovery_bridge import LocalVideoAdapter
+            provider = self.video_providers.get(command.provider_id)
+            if type(provider) is LocalVideoAdapter:
+                from ..asset_providers import VideoGenerationRequest
+                # Symbolic source filename is never sent; execute resolves the
+                # current exact original Asset bytes under the existing owner.
+                request = VideoGenerationRequest(command.provider_id, command.model_id, command.prompt,
+                    "VERIFIED_SOURCE_UPLOAD_RECEIPT" if command.operation_id == "m7.video.i2v" else "", "", command.request_id,
+                    parameters=parameters)
+                recipe.update(adapter="COMFYUI_BUILTIN_VIDEO", **provider.execution_recipe(request))
+                recipe["recipe_digest"] = digest(recipe)
         elif command.operation_id == "m8.audio.trim":
             from ..services.studio_audio_execution import trim_output_profile
             recipe.update(adapter="LOCAL_FFMPEG", output_profile=trim_output_profile(parameters))
@@ -746,7 +774,11 @@ class ProductionExecutionService:
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
             raise CapabilityVersionConflict(self.view(row, owner))
         if owner == "video":
-            row = self.video.cancel(nid, scope.get("branch_id"), actor, jid, action, context=context, guard=guard)
+            # Publication and human promotion use these same original leases.
+            # Cancellation can fence out-of-lease inspection/transport without
+            # racing a formal Asset write or waiting for remote computation.
+            with self.timeline_inputs.phase(nid, scope, actor, guard):
+                row = self.video.cancel(nid, scope.get("branch_id"), actor, jid, action, context=context, guard=guard)
         elif owner == "audio": row = self._audio(scope, actor).cancel(nid, jid, action.expected_version, context, guard)
         elif owner == "image":
             row = self._image(actor).cancel_studio(nid, scope.get("branch_id"), actor, jid,
@@ -1120,7 +1152,7 @@ class ProductionExecutionService:
         return {"items": sorted(rows, key=lambda row: (row["updated_at"], row["id"]), reverse=True)}
 
     @staticmethod
-    def _timeline_view(row, scope):
+    def _timeline_view(row, scope, *, history=None):
         result = {**{k: copy.deepcopy(row[k]) for k in ("id", "novel_id", "title", "version", "timeline_digest", "timeline", "created_at", "updated_at")},
             "branch_id": scope.get("branch_id")}
         transfer = row.get("last_edit") or {}
@@ -1130,6 +1162,9 @@ class ProductionExecutionService:
             result["transfer_receipt"] = {key: copy.deepcopy(transfer[key]) for key in (
                 "operation", "request_id", "input_version", "input_digest", "output_digest", "preview_digest", "format",
                 "transfer_input_digest", "acknowledge_losses")}
+        if 'storyboard_origin' in row:
+            from .storyboard import validate_storyboard_timeline_origin
+            result['storyboard_origin'] = validate_storyboard_timeline_origin(row, history=history)
         return result
 
     def _callbacks(self, nid, scope, actor, context, guard, *, graph_source_guard=None):
@@ -1235,6 +1270,14 @@ class ProductionExecutionService:
             model = config.get("model_id", "")
             if model:
                 for operation in ("m7.video.t2v", "m7.video.i2v", "m7.video.v2v"): candidates.append((pid, model, operation))
+        from ..model_center.discovery_bridge import LocalVideoAdapter
+        for pid, provider in getattr(self, 'video_providers', {}).copy().items():
+            if type(provider) is not LocalVideoAdapter: continue
+            try: config = provider.studio_configuration()
+            except ValueError: continue
+            for operation in config['video_recipe']['operations']:
+                candidate = (pid, config['default_model'], 'm7.video.' + operation)
+                if candidate not in candidates: candidates.append(candidate)
         for config in provider_catalog():
             for capability, operation in (("TTS", "m8.audio.speech"), ("MUSIC", "m8.audio.music"), ("SFX", "m8.audio.effects")):
                 if capability in config.get("capabilities", []) and config.get("default_model"):
@@ -1255,6 +1298,13 @@ class ProductionExecutionService:
                 if image_config:
                     from ..services.studio_image_provider_recipes import public_capabilities
                     row["image_capabilities"] = public_capabilities(image_config)
+            elif operation.startswith("m7."):
+                from ..model_center.discovery_bridge import LocalVideoAdapter
+                provider = self.video_providers.get(pid)
+                if type(provider) is LocalVideoAdapter:
+                    config = provider.studio_configuration()
+                    row["video_capabilities"] = {key: copy.deepcopy(config["video_recipe"][key]) for key in
+                        ("recipe_id", "operations", "structural_only", "inference_verified", "reference_semantics", "reference_video_execution", "output_format")}
             rows.append(row)
         guard()
         return {"items": rows, "automatic_runtime_start": False, "health_probed": False, "credentials_read": False}
@@ -1323,7 +1373,7 @@ class ProductionExecutionService:
                 if self._binding(command) != binding: raise StaleSourceError("STUDIO_PROVIDER_ROUTE_CHANGED")
                 return self.video_providers[binding["provider_id"]]
             row = self.video.execute(nid, branch, actor, jid, action, context=context, guard=guard, source_guard=source_guard,
-                resolve=resolve, before_send=before_send, publish=publish)
+                resolve=resolve, before_send=before_send, publish=publish, inspect_source=source_guard)
         else:
             from ..audio_providers import resolve_provider
             def resolve(pid, capability):
@@ -1353,7 +1403,8 @@ class ProductionExecutionService:
             return self.video_providers[binding["provider_id"]]
         publish, _ = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
         row = self.video.refresh(nid, scope.get("branch_id"), actor, jid, action, context=context, guard=guard,
-            source_guard=self._source_guard(nid, scope, guard), resolve=resolve, publish=publish)
+            source_guard=self._source_guard(nid, scope, guard), resolve=resolve, publish=publish,
+            inspect_source=self._source_guard(nid, scope, guard))
         return self.view(row, "video")
 
     def timeline_get(self, nid, scope, actor, tid, guard):
@@ -1462,7 +1513,7 @@ class ProductionExecutionService:
         context = self._base(nid, scope, actor, guard)
         row = self._owned_timeline(nid, scope, actor, tid, context, self.store.read(nid, scope))
         result = {"timeline_id": tid, "current_version": row["version"],
-            "items": [self._timeline_view(version, scope) for version in reversed(row["history"])]}
+            "items": [self._timeline_view(version, scope, history=row["history"]) for version in reversed(row["history"])]}
         guard()
         return result
 

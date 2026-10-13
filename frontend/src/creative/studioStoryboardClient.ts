@@ -1,0 +1,27 @@
+import { checkedDirectorAdvice, checkedStoryboardImageRequest, checkedStoryboardReceipt, checkedStoryboardTimeline, storyboardInvalid,
+  type StoryboardReceipt, type StoryboardShot, type StoryboardImage, type ShotPin } from './studioStoryboardContract';
+import type { MediaCommand } from './studioProductionClient';
+type Request = <T>(url: string, method?: string, body?: unknown, signal?: AbortSignal) => Promise<T>;
+const pinFor = (receipt: StoryboardReceipt, shot: StoryboardShot): ShotPin => ({ document_snapshot: receipt.document_snapshot, shot_id: shot.shot_id, shot_version: shot.shot_version, shot_digest: shot.shot_digest });
+const action = (receipt: StoryboardReceipt, shot: StoryboardShot) => ({ expected_version: receipt.document_snapshot.version, shot_version: shot.shot_version, shot_digest: shot.shot_digest });
+export function createStoryboardClient(projectId: string, base: string, branchId: string | null, request: Request) {
+  const url = (id: string) => `${base}/documents/${encodeURIComponent(id)}`;
+  const advance = (value: unknown, old: StoryboardReceipt) => { const next = checkedStoryboardReceipt(value, old.document_snapshot.id); if (next.document_snapshot.version !== old.document_snapshot.version + 1) storyboardInvalid(); return next; };
+  return {
+    storyboardGet: (id: string, signal?: AbortSignal) => request(`${url(id)}/storyboard`, 'GET', undefined, signal).then(value => checkedStoryboardReceipt(value, id)),
+    directorAdvice: (id: string, signal?: AbortSignal) => request(`${url(id)}/director-advice`, 'GET', undefined, signal).then(value => checkedDirectorAdvice(value, id)),
+    storyboardApprove: (receipt: StoryboardReceipt) => request(`${url(receipt.document_snapshot.id)}/storyboard/approve`, 'POST', { expected_version: receipt.document_snapshot.version, reviewed_content_digest: receipt.content_digest }).then(value => { const next = advance(value, receipt); if (!next.approved || next.content_digest !== receipt.content_digest || JSON.stringify(next.shots) !== JSON.stringify(receipt.shots)) storyboardInvalid(); return next; }),
+    storyboardBindImage: (receipt: StoryboardReceipt, shot: StoryboardShot, asset: StoryboardImage) => request(`${url(receipt.document_snapshot.id)}/shots/${encodeURIComponent(shot.shot_id)}/image-binding`, 'POST', { ...action(receipt, shot), asset }).then(value => { const next = advance(value, receipt), bound = next.shots.find(row => row.shot_id === shot.shot_id); if (next.approved || !bound || bound.shot_version !== shot.shot_version || bound.shot_digest !== shot.shot_digest || JSON.stringify(bound.shot) !== JSON.stringify(shot.shot) || !bound.image_asset || ['asset_id', 'version', 'digest', 'kind'].some(key => bound.image_asset![key as keyof StoryboardImage] !== asset[key as keyof StoryboardImage])) storyboardInvalid(); return next; }),
+    storyboardImageRequest: (receipt: StoryboardReceipt, shot: StoryboardShot, operation: 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.reference', providerId: string, modelId: string, requestId: string, parameters: MediaCommand['parameters']) => request(`${url(receipt.document_snapshot.id)}/shots/${encodeURIComponent(shot.shot_id)}/image-request`, 'POST', { ...action(receipt, shot), operation_id: operation, provider: { operation_id: operation, provider_id: providerId, model_id: modelId }, request_id: requestId, parameters }).then(value => { const next = checkedStoryboardImageRequest(value, pinFor(receipt, shot)); if (next.command.operation_id !== operation || next.command.provider_id !== providerId || next.command.model_id !== modelId || next.command.request_id !== requestId || Object.entries(parameters).some(([key, item]) => next.command.parameters[key] !== item)) storyboardInvalid(); return next; }),
+    storyboardTimelineDraft: (receipt: StoryboardReceipt, shotIds: string[], title: string) => request(`${url(receipt.document_snapshot.id)}/storyboard/timeline-draft`, 'POST', { expected_version: receipt.document_snapshot.version, reviewed_content_digest: receipt.content_digest, shot_ids: shotIds, title, width: 1280, height: 720, fps: 24 }).then(value => {
+      const result = checkedStoryboardTimeline(value, projectId, branchId), selected = receipt.shots.filter(shot => shotIds.includes(shot.shot_id));
+      if (JSON.stringify(result.storyboard_origin.document_snapshot) !== JSON.stringify(receipt.document_snapshot) || result.storyboard_origin.content_digest !== receipt.content_digest || result.storyboard_origin.shots.length !== shotIds.length
+        || selected.length !== shotIds.length || result.storyboard_origin.shots.some((shot, index) => shot.shot_id !== selected[index].shot_id || shot.shot_version !== selected[index].shot_version || shot.shot_digest !== selected[index].shot_digest)) storyboardInvalid();
+      const clips = result.timeline.timeline.tracks.flatMap(track => track.clips); let start = 0;
+      clips.forEach((clip, index) => { const image = selected[index].image_asset, duration = selected[index].shot.duration_seconds * 1000;
+        if (!image || clip.source_snapshot.kind !== 'ASSET' || clip.source_snapshot.asset_kind !== 'image' || clip.source_snapshot.id !== image.asset_id || clip.source_snapshot.version !== image.version || clip.source_snapshot.digest !== image.digest
+          || clip.start_ms !== start || clip.in_ms !== 0 || clip.out_ms !== duration || clip.include_audio !== false) storyboardInvalid(); start += duration;
+      }); return result;
+    }),
+  };
+}

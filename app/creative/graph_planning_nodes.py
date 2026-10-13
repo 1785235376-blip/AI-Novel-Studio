@@ -10,7 +10,7 @@ from .service import document_digest
 from ..experimental.common import StaleSourceError
 
 PLANNING_REFERENCES = {"director_plan", "storyboard_plan"}
-PLANNING_LOCAL = PLANNING_REFERENCES | {"storyboard_prompt"}
+PLANNING_LOCAL = PLANNING_REFERENCES | {"storyboard_prompt", "storyboard_shot"}
 
 
 def read_document(service, nid, scope, node, guard, state=None):
@@ -41,7 +41,7 @@ def current_documents(service, nid, scope, nodes, guard, state=None):
     guard()
 
 
-def preflight_planning(service, nid, scope, nodes, incoming, order, guard, state=None):
+def preflight_planning(service, nid, scope, nodes, incoming, order, guard, state=None, *, schema_version=4, actor=None):
     """Check selected shot, exact Director ancestry and bounded typed output.
 
     Only passive planning nodes are evaluated. No provider, asset mutation,
@@ -50,12 +50,26 @@ def preflight_planning(service, nid, scope, nodes, incoming, order, guard, state
     outputs, issues = {}, []
     for node_id in order:
         node = nodes[node_id]
+        if schema_version == 5 and node["definition_id"] == "video_generate":
+            shot_edge = next((edge for edge in incoming[node_id] if edge["target_port"] == "shot"), None)
+            shot = outputs.get(shot_edge["source_node_id"], {}).get("shot") if shot_edge else None
+            if shot_edge and (shot is None or not shot["approved"]):
+                issues.append({"code": "STUDIO_STORYBOARD_APPROVAL_REQUIRED", "node_id": node_id})
+            if shot is not None:
+                duration = node["parameters"]["parameters"].get("duration_seconds")
+                if duration is not None and duration != shot["shot"]["duration_seconds"]:
+                    issues.append({"code": "CREATIVE_GRAPH_VIDEO_SHOT_DURATION_CONFLICT", "node_id": node_id})
+                if (node["parameters"]["operation_id"] == "m7.video.i2v" and shot["image_asset"] is None
+                        and not any(edge["target_port"] == "source" for edge in incoming[node_id])):
+                    issues.append({"code": "CREATIVE_GRAPH_VIDEO_SOURCE_REQUIRED", "node_id": node_id})
+            continue
         if node["definition_id"] not in PLANNING_LOCAL:
             continue
         inputs = {edge["target_port"]: outputs.get(edge["source_node_id"], {}).get(edge["source_port"])
             for edge in incoming[node_id]}
         try:
-            outputs[node_id] = execute_planning_local(service, nid, scope, node, inputs, guard, state)
+            outputs[node_id] = execute_planning_local(service, nid, scope, node, inputs, guard, state,
+                schema_version=schema_version, actor=actor)
         except (ValueError, FileNotFoundError):
             guard()
             issues.append({"code": "CREATIVE_GRAPH_PLANNING_INPUT_CHANGED_OR_INVALID", "node_id": node_id})
@@ -63,8 +77,13 @@ def preflight_planning(service, nid, scope, nodes, incoming, order, guard, state
     return issues
 
 
-def execute_planning_local(service, nid, scope, node, ports, guard, state=None):
+def execute_planning_local(service, nid, scope, node, ports, guard, state=None, *, schema_version=4, actor=None, check_images=True):
     kind = node["definition_id"]
+    if kind == "storyboard_shot":
+        if schema_version != 5:
+            raise ValueError("CREATIVE_GRAPH_VIDEO_SCHEMA_REQUIRED")
+        from .graph_video_nodes import execute_shot
+        return execute_shot(service, nid, scope, node, ports, guard, state, actor=actor, check_images=check_images)
     if kind in PLANNING_REFERENCES:
         if set(ports) - ({"direction"} if kind == "storyboard_plan" else set()):
             raise ValueError("CREATIVE_GRAPH_PLANNING_INPUT_INVALID")
@@ -110,4 +129,4 @@ def execute_planning_local(service, nid, scope, node, ports, guard, state=None):
     else:
         raise ValueError("CREATIVE_GRAPH_PLANNING_NODE_REQUIRED")
     guard()
-    return validate_output_ports(kind, output, schema_version=4)
+    return validate_output_ports(kind, output, schema_version=schema_version)

@@ -6,6 +6,7 @@ An admission is durable before dispatch; unknown/restarted work never replays.
 from __future__ import annotations
 
 from copy import deepcopy
+from contextlib import contextmanager, nullcontext
 from datetime import datetime, timedelta, timezone
 import json
 
@@ -32,7 +33,8 @@ def director_output_schema(*, production=False):
     schema = DirectorModelOutput.model_json_schema()
     if not production:
         properties = schema["$defs"]["DirectorModelNote"]["properties"]
-        for name in ("shot_suggestion", "composition", "lens", "character_state", "performances"):
+        for name in ("shot_suggestion", "composition", "lens", "character_state", "performances",
+                     "lighting", "color_palette", "material", "transition"):
             properties.pop(name, None)
         schema["$defs"].pop("DirectorPerformance", None)
     return schema
@@ -96,6 +98,31 @@ class DirectorModelCoordinator:
                 or budget["unpriced_count"] or budget["overrun_count"]):
             raise StaleSourceError("CREATIVE_MODEL_ROUTE_PRICE_OR_BUDGET_CHANGED")
         return route
+
+    @contextmanager
+    def _authority_read(self, ctx):
+        """One current scope snapshot per checkpoint, never between callbacks.
+
+        Director's original guard checks its proposal, source documents, broker
+        decision, budget and price repeatedly. PostgreSQL used to open a new
+        scope/project connection for every one of those reads. Keep the raw
+        source lease and then the original project lease for this read-only
+        checkpoint, so the existing owners reuse their active snapshot. Route,
+        Host and original author authorization still run on every checkpoint.
+        No provider execution or asset lock is entered under this lease.
+
+        Broker admission already owns its raw scope transaction; Creative
+        admission also owns the project lease. Reuse either explicit outer
+        transaction instead of opening a nested transaction or reversing locks.
+        """
+        store = self.store
+        key = store.key(ctx.novel_id, ctx.scope)
+        shared = (key in getattr(store._local, "active", {})
+                  or key in getattr(store.store._local, "active", {}))
+        phase = nullcontext() if shared else store.source_lease(ctx.novel_id, ctx.scope)
+        with phase:
+            with store.owner_lease(ctx.novel_id):
+                yield
 
     def _author(self, ctx, row, route):
         source = self.proposals._current(ctx.novel_id, ctx.scope, row)
@@ -175,16 +202,21 @@ class DirectorModelCoordinator:
         bounds = (job.generation_max_output_bytes, job.generation_deadline)
         original = job.request_authorization
         def current():
-            active = self._current(ctx, rid, guard)
-            execution = active.get("model_execution") or {}
-            if (active["source_digest"] != preview["input_digest"] or active.get("model_preview") != preview
-                    or execution.get("job_id") != job.id or execution.get("status") in {"CANCELLED", "UNKNOWN", "DISCARDED"}
-                    or (job.generation_max_output_bytes, job.generation_deadline) != bounds):
-                raise ValueError("CREATIVE_MODEL_ADMISSION_CHANGED")
-            self._policy(ctx, active)
-            if not callable(original):
-                raise ValueError("CREATIVE_MODEL_ORIGINAL_AUTHORITY_REQUIRED")
-            original()
+            # Deny a revoked Host or disabled feature before even opening the
+            # private read lease, then recheck both inside the leased snapshot.
+            guard()
+            self._flags()
+            with self._authority_read(ctx):
+                active = self._current(ctx, rid, guard)
+                execution = active.get("model_execution") or {}
+                if (active["source_digest"] != preview["input_digest"] or active.get("model_preview") != preview
+                        or execution.get("job_id") != job.id or execution.get("status") in {"CANCELLED", "UNKNOWN", "DISCARDED"}
+                        or (job.generation_max_output_bytes, job.generation_deadline) != bounds):
+                    raise ValueError("CREATIVE_MODEL_ADMISSION_CHANGED")
+                self._policy(ctx, active)
+                if not callable(original):
+                    raise ValueError("CREATIVE_MODEL_ORIGINAL_AUTHORITY_REQUIRED")
+                original()
         job.request_authorization = current
         execution = {"job_id": job.id, "reservation_id": None, "status": "ADMISSION_PENDING",
             "receipt_state": "UNKNOWN_NO_AUTOMATIC_REPLAY", "model_called": False, "usage_state": "UNKNOWN",

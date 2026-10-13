@@ -103,3 +103,14 @@ These are development stages on `feature/v2-narrative-platform`, not releases.
 - Added controller-backed goal/shot/node/preview controls without shell redesign.
 - [Report](../../DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md) separates selected
   verification, retained failed attempts and remaining LOCAL_REQUIRED gates.
+
+
+## 2026-10-14 — Phase4 Storyboard and Video foundation
+
+- Add retained-history Shot versions, same-scene Director references, authored adjacency, Camera/Visual/Rhythm advice and exact formal image binding/approval.
+- Connect approved Storyboards to original Timeline drafts and retain historical creation provenance during edit/history/restore.
+- Add explicit Graphschema5 VideoCandidate ports and original VideoJob/review; retain schemas1–4/default request identities.
+- Connect enabled, structurally proved LTX/Wan/Hunyuan Comfy adapters with bounded same-origin output, source/task/route guards and native cancellation. Unsupported versions/local V2V remain closed.
+- Fix repeated PostgreSQL authority reads per checkpoint; preserve exact original checks/timeouts and earlier failures.
+- Add source-fenced Storyboard/Video controllers, strict captured DTOs and basic canvas/Inspector/preview; Opus presentation seams retained.
+- [Report](../../PHASE4_STORYBOARD_VIDEO_REPORT.md) records actual tests, Windows privilege failures, overlap and remaining LOCAL_REQUIRED gates.

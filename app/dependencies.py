@@ -115,6 +115,7 @@ local_ai_discovery=LocalDiscoveryService(model_center_service, settings.data_pat
 local_ai_discovery.route_bridge=LocalDiscoveryBridge(local_ai_discovery, runtime, asset_provider_registry)
 
 screenplay_service=ScreenplayService(repositories.novels,repositories.chapters,asset_provider_registry)
+local_ai_discovery.route_bridge.video_registry=screenplay_service.video_providers
 def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True, *, video_to_video: bool = False) -> bool:
     if provider_id == 'deterministic' or not endpoint or (requires_credential and not credential_vault.has(provider_id)):
         return False

@@ -157,3 +157,8 @@ UNKNOWN、不自动重发及人工审核。复杂参数可折叠，不能让界�
 preview/create/execute/private candidate/review 分开，实际证明只读原回执。
 Reference 用途/来源说明是作者元数据，不宣称人物一致性；Control 无执行入口。
 专业视觉美化及产品验收仍开放，详见 [阶段报告](../../DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md)。
+
+
+## Phase4（2026-10-14）
+
+Opus 可重构 StoryboardProductionPanel、CreativeCanvas、视频Graph Inspector/Preview及原 StudioMediaExecutionPanel 视图。保留 useStoryboardProductionController、useStudioGraphEditorController、useStudioMediaExecution、Host transport、父级 mutex、dirty/CAS、精确文档/Shot/Asset pin、撤权/迟到响应及原人工审核。图片准备仅生成原请求，Timeline底稿不自动生成视频；schema5目录读取与采用分别明确操作，旧schema1–4目录不被预加载替换。409或无效成功回执清退旧来源与已验证Blob授权。Timeline UNKNOWN独立于分镜读取，原timelineList只读检查不解锁重复创建；Phase5通过原后端owner补核对，UI不能自行推断成功。真实图字节使用原下载/尺寸/摘要证明及objectURL清理；高级参数/证明可折叠。专业布局/视觉与新工作区真实安装体验尚未验收。

@@ -89,7 +89,8 @@ def infer_family(name: str) -> tuple[str, list[str]]:
         (r'qwen[-_. ]?image', 'QWEN_IMAGE', 'IMAGE'), (r'minimax[-_. ]?h3', 'MINIMAX_H3', 'VIDEO'),
         (r'seedvr2', 'SEEDVR2', 'RESTORATION'), (r'rife', 'RIFE', 'INTERPOLATION'),
         (r'z[-_. ]?image', 'ZIMAGE', 'IMAGE'), (r'flux', 'FLUX', 'IMAGE'),
-        (r'wan(?=\d|[_ .-]|$)', 'WAN', 'VIDEO'), (r'ltx', 'LTX', 'VIDEO'), (r'qwen', 'QWEN', 'TEXT'),
+        (r'wan(?=\d|[_ .-]|$)', 'WAN', 'VIDEO'), (r'ltx', 'LTX', 'VIDEO'),
+        (r'hunyuan[-_. ]?video', 'HUNYUAN_VIDEO', 'VIDEO'), (r'qwen', 'QWEN', 'TEXT'),
         (r'stable[-_. ]?diffusion', 'STABLE_DIFFUSION', 'IMAGE'), (r'sdxl', 'STABLE_DIFFUSION', 'IMAGE'),
     ):
         if re.search(r'(?<![a-z])' + pattern, normalized):

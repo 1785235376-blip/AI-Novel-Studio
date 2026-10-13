@@ -592,3 +592,8 @@ uses the original source→Asset→Project leases and original ImageJob/private
 Asset/review/version. Upscale consumes a positively proved, enabled local Comfy
 registration; the provider never discovers/downloads a model itself. Control
 types remain reserved. See [phase report](DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md).
+
+
+## 2026-10-14 — Phase4 original-owner Storyboard and Video
+
+StoryboardWorkspace stores approval and formal-image references on original Creative rows; Shot versions come from retained authored history. It prepares original MediaCommands and creates original TIMELINES records with immutable creation provenance. No new collection, queue or permission owner. Graph schema5 is explicitly selected; saved Director/Storyboard projections and pinned Shots feed original VideoJob/private Asset/review. ModelCenter explicitly validates/registers/enables fixed local Video recipes; providers do not install/start/download. Source→Asset→project lease order and native probing outside Asset leases remain. Director authorization coalesces original reads per current checkpoint without caching authority between callbacks. [Source/test boundaries](PHASE4_STORYBOARD_VIDEO_REPORT.md).

@@ -60,7 +60,7 @@ class Dialogue(StrictCreativeModel):
 
 
 class DirectorNote(OptionalProductionFields):
-    production_optional_fields = ("shot_suggestion", "composition", "lens", "character_state", "performances")
+    production_optional_fields = ("shot_suggestion", "composition", "lens", "character_state", "performances", "lighting", "color_palette", "material", "transition")
     id: Identifier = Field(default_factory=identifier)
     note: str = Field(default="", max_length=8000, strict=True)
     shot_size: str = Field(default="", max_length=80, strict=True)
@@ -76,6 +76,10 @@ class DirectorNote(OptionalProductionFields):
     lens: str | None = Field(default=None, max_length=1000, strict=True)
     character_state: str | None = Field(default=None, max_length=4000, strict=True)
     performances: list[DirectorPerformance] | None = Field(default=None, max_length=100)
+    lighting: str | None = Field(default=None, max_length=4000, strict=True)
+    color_palette: str | None = Field(default=None, max_length=2000, strict=True)
+    material: str | None = Field(default=None, max_length=4000, strict=True)
+    transition: str | None = Field(default=None, max_length=2000, strict=True)
 
     @model_validator(mode="after")
     def distinct_performers(self):
@@ -104,8 +108,19 @@ class Scene(StrictCreativeModel):
     director_notes: list[DirectorNote] = Field(default_factory=list, max_length=100)
 
 
+class ShotContinuity(OptionalProductionFields):
+    """Authored continuity constraints, never inferred identity guarantees."""
+    production_optional_fields = ("previous_shot_id", "next_shot_id")
+    previous_shot_id: Identifier | None = None
+    next_shot_id: Identifier | None = None
+    characters: str = Field(default="", max_length=4000, strict=True)
+    outfit: str = Field(default="", max_length=4000, strict=True)
+    environment: str = Field(default="", max_length=4000, strict=True)
+    camera: str = Field(default="", max_length=4000, strict=True)
+
+
 class ShotCard(OptionalProductionFields):
-    production_optional_fields = ("characters", "emotion")
+    production_optional_fields = ("characters", "emotion", "continuity", "director_note_ids")
     id: Identifier = Field(default_factory=identifier)
     number: int = Field(ge=1, le=10000, strict=True)
     scene_id: Identifier
@@ -126,11 +141,15 @@ class ShotCard(OptionalProductionFields):
     director_notes: list[DirectorNote] = Field(default_factory=list, max_length=100)
     characters: list[Identifier] | None = Field(default=None, max_length=100)
     emotion: str | None = Field(default=None, max_length=4000, strict=True)
+    continuity: ShotContinuity | None = None
+    director_note_ids: list[Identifier] | None = Field(default=None, max_length=100)
 
     @model_validator(mode="after")
     def distinct_characters(self):
         if self.characters is not None and len(set(self.characters)) != len(self.characters):
             raise ValueError("CREATIVE_DUPLICATE_SHOT_CHARACTER")
+        if self.director_note_ids is not None and len(set(self.director_note_ids)) != len(self.director_note_ids):
+            raise ValueError("CREATIVE_DUPLICATE_SHOT_DIRECTOR_NOTE")
         return self
 
 
@@ -198,6 +217,18 @@ class CreativeDocumentIn(StrictCreativeModel):
             raise ValueError("CREATIVE_SCENE_SOURCE_NOT_BOUND")
         if any(shot.scene_id not in {scene.id for scene in self.scenes} for shot in self.shots):
             raise ValueError("CREATIVE_UNKNOWN_SCENE")
+        ordered_shots = sorted(self.shots, key=lambda shot: shot.number)
+        notes = {note.id: note for note in self.director_notes}
+        for index, shot in enumerate(ordered_shots):
+            if shot.director_note_ids is not None and any(
+                    note_id not in notes or notes[note_id].scene_id != shot.scene_id for note_id in shot.director_note_ids):
+                raise ValueError("CREATIVE_SHOT_DIRECTOR_NOTE_INVALID")
+            if shot.continuity is not None:
+                previous = ordered_shots[index - 1].id if index else None
+                following = ordered_shots[index + 1].id if index + 1 < len(ordered_shots) else None
+                if (shot.continuity.previous_shot_id not in (None, previous)
+                        or shot.continuity.next_shot_id not in (None, following)):
+                    raise ValueError("CREATIVE_SHOT_RELATIONSHIP_NOT_ADJACENT")
         if self.video_plan and any(segment.shot_id not in {shot.id for shot in self.shots} for segment in self.video_plan.segments):
             raise ValueError("CREATIVE_UNKNOWN_SHOT")
         if self.mode == "SCREENPLAY" and (self.shots or self.video_plan is not None):

@@ -90,6 +90,18 @@ def image_snapshot(value):
     return value.model_dump(exclude_none=True, exclude={"reference_only"})
 
 
+class VideoReference(ExecutionModel):
+    """Authored reference purpose; never claims semantic model conditioning."""
+    source: ProductionSourceSnapshot
+    purpose: Literal["style", "action", "camera"]
+
+    @model_validator(mode="after")
+    def original_video(self):
+        if self.source.kind != "ASSET" or self.source.asset_kind != "video":
+            raise ValueError("STUDIO_VIDEO_REFERENCE_KIND_INVALID")
+        return self
+
+
 class MediaCommand(ExecutionModel):
     operation_id: MediaOperation
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
@@ -103,11 +115,12 @@ class MediaCommand(ExecutionModel):
     image_source: ProductionSourceSnapshot | None = None
     image_references: list[ImageReference] | None = Field(default=None, max_length=5)
     mask_source: ProductionSourceSnapshot | None = None
+    video_reference: VideoReference | None = None
 
     @model_serializer(mode="wrap")
     def legacy_image_identity(self, handler):
         value = handler(self)
-        for key in ("image_source", "image_references", "mask_source"):
+        for key in ("image_source", "image_references", "mask_source", "video_reference"):
             if value.get(key) is None or (key == "image_references" and value[key] == []):
                 value.pop(key, None)
         return value
@@ -171,6 +184,10 @@ class MediaCommand(ExecutionModel):
             raise ValueError("STUDIO_MEDIA_REFERENCE_KIND_INVALID")
         if self.operation_id in {"m7.video.i2v", "m7.video.v2v"} and len(assets) != 1:
             raise ValueError("STUDIO_VIDEO_SINGLE_REFERENCE_REQUIRED")
+        if self.video_reference is not None:
+            if (self.operation_id != "m7.video.v2v" or len(assets) != 1
+                    or image_snapshot(assets[0]) != image_snapshot(self.video_reference.source)):
+                raise ValueError("STUDIO_VIDEO_REFERENCE_SNAPSHOT_MISMATCH")
         if self.operation_id == "m5.image.i2i" and len(assets) > 5:
             raise ValueError("STUDIO_IMAGE_REFERENCE_LIMIT")
         if not required and self.operation_id not in {"m8.audio.trim", "m5.image.cutout"} and assets:

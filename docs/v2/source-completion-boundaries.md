@@ -66,3 +66,8 @@ Control 的 Depth/Pose/Edge/Mask/Layout 仍 RESERVED / NOT_CONFIGURED。
 Graph 读取精确已保存文档，保留来源与隐私，连接 Style/Image/Review，不自动改稿。
 独立导演/分镜手工创作无章节要求；原导演模型协调器仍要求章节锚点。模块 PARTIAL，
 Windows/GPU/真实模型与 M4→M9 门禁不变，详见 [本批报告](../../DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md)。
+
+
+## Phase4（2026-10-14）
+
+新增原 Creative 历史镜头版本、相邻关系、导演建议、正式图片绑定与明确审核；已审核分镜可创建原 Timeline 图片底稿。schema5 是明确选择的视频图，沿原 VideoJob、ModelCenter、私有候选和人工审核。固定 Comfy LTX/Wan/Hunyuan 配方是有界执行源码，非真实模型质量证明；本地 V2V/视频参考条件与未知版本 NOT_CONFIGURED。实际输出尚未证明与配方尺寸/帧数完全一致。Timeline 未知创建保持独立围栏，Phase5 补持久化请求核对。File/PG 各616通过但各有1Windows权限前提失败；前端3167通过/8跳过；不能称完整CI或产品验收。原 M4→M9、F00、独立复审 BLOCKED 不变，Windows/GPU/真实模型 NOT_RUN/LOCAL_REQUIRED。

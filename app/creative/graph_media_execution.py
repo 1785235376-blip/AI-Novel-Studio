@@ -67,7 +67,7 @@ class CreativeGraphMediaRuntime:
 
     @staticmethod
     def nodes(row):
-        return {node["id"]: node for node in row["typed_nodes"] if node["definition_id"] in {"media_generate", "timeline_export", "image_generate", "image_upscale"}}
+        return {node["id"]: node for node in row["typed_nodes"] if node["definition_id"] in {"media_generate", "timeline_export", "image_generate", "image_upscale", "video_generate"}}
 
     def _node(self, row, node_id):
         node = self.nodes(row).get(node_id)
@@ -145,7 +145,7 @@ class CreativeGraphMediaRuntime:
         # Bound only still-pending local outputs; modality references/receipts and
         # original transition traces receive an additional finite 16 KiB margin.
         pending_local = sum(MAX_OUTPUT_BYTES for node in row["typed_nodes"]
-            if node["definition_id"] not in {"media_generate", "media_review", "timeline_export", "image_generate", "image_upscale"}
+            if node["definition_id"] not in {"media_generate", "media_review", "timeline_export", "image_generate", "image_upscale", "video_generate"}
             and row["node_states"][node["id"]]["status"] != "SUCCEEDED")
         future = min(256000, pending_local) + 16384
         addition = updates * (len(canonical(snapshot).encode("utf-8")) + future)
@@ -157,6 +157,15 @@ class CreativeGraphMediaRuntime:
     def _inputs(self, row, node):
         ports = self.service.executor._inputs(row, node["id"], row["typed_outputs"])
         command = deepcopy(node["parameters"])
+        if node["definition_id"] == "video_generate":
+            if row.get("graph_schema_version") != 5:
+                raise ValueError("CREATIVE_GRAPH_VIDEO_SCHEMA_REQUIRED")
+            from .graph_video_nodes import video_command_fields
+            command = video_command_fields(node, ports)
+            command["request_id"] = "graph-media-" + digest([CONTRACT, row[BINDING], row["scope"], row["created_by"],
+                row["id"], row["graph_id"], row["graph_version"], row["request_digest"], node["id"]])
+            body = MediaCommand.model_validate(command)
+            return ports, body, digest([row[BINDING], row["scope"], row["created_by"], row["graph_digest"], node, ports])
         if node["definition_id"] in {"image_generate", "image_upscale"}:
             if row.get("graph_schema_version") != 4:
                 raise ValueError("CREATIVE_GRAPH_IMAGE_SCHEMA_REQUIRED")
@@ -657,7 +666,7 @@ class CreativeGraphMediaRuntime:
         """
         current()
         row = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
-        if row.get("graph_schema_version") not in {3, 4} or row.get("media_execution_contract") != CONTRACT:
+        if row.get("graph_schema_version") not in {3, 4, 5} or row.get("media_execution_contract") != CONTRACT:
             raise ValueError("CREATIVE_GRAPH_MEDIA_CONTRACT_REQUIRED")
         # The current Graph can have been edited/deleted after reservation.
         # Validate the durable original run snapshot; never revive that Graph

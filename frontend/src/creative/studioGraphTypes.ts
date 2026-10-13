@@ -1,3 +1,4 @@
+import type { StoryboardShot } from './studioStoryboardContract';
 import type { PlanningSnapshot, PlanningProjection } from './studioProductionGraphContract';
 import type { ImageReferencePurpose } from './studioImageRuntimeContract';
 import type { StudioGraphResultStorage, StudioGraphTextAssetOutput } from './studioGraphTextAssetTypes';
@@ -9,12 +10,14 @@ export const GRAPH_MEDIA_OPERATIONS = ['m5.image.t2i', 'm5.image.i2i', 'm7.video
 export type GraphMediaOperation = typeof GRAPH_MEDIA_OPERATIONS[number];
 export const GRAPH_IMAGE_OPERATIONS = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint'] as const;
 export type GraphImageOperation = typeof GRAPH_IMAGE_OPERATIONS[number];
+export const GRAPH_VIDEO_OPERATIONS = ['m7.video.t2v', 'm7.video.i2v', 'm7.video.v2v'] as const;
+export type GraphVideoOperation = typeof GRAPH_VIDEO_OPERATIONS[number];
 export type GraphUpscaleOperation = 'm5.image.upscale';
 /** Finite, code-owned contracts. A catalog entry cannot register executable code. */
 export type StudioGraphDefinitionId = 'text_input' | 'text_reference' | 'draft_prepare'
   | 'manual_transform' | 'director_note' | 'human_review' | 'asset_reference' | 'text_generate' | 'media_generate' | 'media_review' | 'timeline_export'
-  | 'image_reference' | 'image_prompt' | 'image_generate' | 'image_style' | 'image_upscale' | 'director_plan' | 'storyboard_plan' | 'storyboard_prompt';
-export type StudioGraphPortType = 'TEXT' | 'DIRECTOR_NOTES' | 'DRAFT' | 'ASSET_REF' | 'MEDIA_CANDIDATE' | 'IMAGE_REFERENCES' | 'IMAGE_PROMPT' | 'DIRECTOR_PLAN' | 'STORYBOARD_DATA';
+  | 'image_reference' | 'image_prompt' | 'image_generate' | 'image_style' | 'image_upscale' | 'director_plan' | 'storyboard_plan' | 'storyboard_prompt' | 'storyboard_shot' | 'video_generate';
+export type StudioGraphPortType = 'TEXT' | 'DIRECTOR_NOTES' | 'DRAFT' | 'ASSET_REF' | 'MEDIA_CANDIDATE' | 'IMAGE_REFERENCES' | 'IMAGE_PROMPT' | 'DIRECTOR_PLAN' | 'STORYBOARD_DATA' | 'STORYBOARD_SHOT' | 'VIDEO_CANDIDATE';
 export type StudioGraphPort = { id: string; type: StudioGraphPortType; required: boolean; multiple: false };
 export type StudioGraphPosition = { x: number; y: number };
 export type StudioGraphViewport = StudioGraphPosition & { zoom: number };
@@ -30,7 +33,7 @@ export type StudioGraphParameters = {
   digest?: string;
   kind?: 'image' | 'video' | 'audio';
   operation_id?: GraphMediaOperation | GraphImageOperation | GraphUpscaleOperation;
-  style?: string; atmosphere?: string; color_palette?: string; document_snapshot?: PlanningSnapshot; shot_id?: string;
+  style?: string; atmosphere?: string; color_palette?: string; document_snapshot?: PlanningSnapshot; shot_id?: string; shot_version?: number; shot_digest?: string; reference_purpose?: 'style' | 'action' | 'camera';
   bindings?: { port: 'source_1' | 'source_2' | 'source_3' | 'source_4' | 'source_5'; weight: number; purpose?: ImageReferencePurpose; source_note?: string }[];
   provider_id?: string | null;
   model_id?: string | null;
@@ -59,7 +62,7 @@ export type StudioGraphEdge = {
   target_port: string;
 };
 export type StudioGraphDefinition = {
-  schema_version: 1 | 2 | 3 | 4;
+  schema_version: 1 | 2 | 3 | 4 | 5;
   title: string;
   nodes: StudioGraphNode[];
   edges: StudioGraphEdge[];
@@ -129,6 +132,7 @@ export type StudioGraphCatalog = {
     image_reference_semantics?: 'WEIGHTED_PIXEL_INITIALIZATION';
     image_upscale_execution?: boolean;
     production_graph?: true; production_graph_schema_version?: 4; planning_evidence?: 'SOURCE_BOUND'; image_control_execution?: false;
+    video_graph?: true; video_graph_schema_version?: 5; video_graph_evidence?: 'LOCAL_REQUIRED'; storyboard_video_approval_required?: true; automatic_video_dispatch?: false;
     external_reference_execution: boolean;
     external_reference_detach: false;
     binary_cache: false;
@@ -181,7 +185,7 @@ export type StudioGraphAssetRef = { asset_id: string; version: number; digest: s
 export type StudioGraphImageReference = { asset: StudioGraphAssetRef & { kind: 'image' }; weight: number; purpose?: ImageReferencePurpose; source_note?: string };
 export type StudioGraphImagePrompt = { prompt: string; references: StudioGraphImageReference[]; document_sources?: RecordedMediaCommand['source_snapshots'] };
 export type StudioGraphMediaCandidate = { owner: 'image' | 'video' | 'audio' | 'timeline'; job_id: string; job_version: number; request_digest: string; asset: StudioGraphAssetRef };
-export type StudioGraphOutput = { text?: string; direction?: StudioGraphDirection | PlanningProjection; storyboard?: PlanningProjection; draft?: StudioGraphDraft; reviewed_draft?: StudioGraphDraft; asset?: StudioGraphAssetRef; candidate?: StudioGraphMediaCandidate;
+export type StudioGraphOutput = { text?: string; direction?: StudioGraphDirection | PlanningProjection; storyboard?: PlanningProjection; shot?: StoryboardShot & { document_snapshot: PlanningSnapshot; approved: boolean }; draft?: StudioGraphDraft; reviewed_draft?: StudioGraphDraft; asset?: StudioGraphAssetRef; candidate?: StudioGraphMediaCandidate;
   references?: StudioGraphImageReference[]; prompt?: StudioGraphImagePrompt };
 export type StudioGraphNodeStatus = 'PENDING' | 'WAITING_APPROVAL' | 'QUEUED' | 'WORKING'
   | 'SUCCEEDED' | 'FAILED' | 'SKIPPED' | 'REJECTED';

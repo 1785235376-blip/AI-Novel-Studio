@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from ..experimental.store import canonical
 from ..services.v1_capability_service import V1CapabilityService, WorkflowRunIn
 from .production_contracts import Name, ProductionSourceSnapshot
-from .models import CreativeProductionDocumentIn
+from .models import CreativeProductionDocumentIn, ShotCard
 from .production_execution_models import GraphMediaOperation, MediaParameters
 
 MAX_NODES = 16
@@ -211,6 +211,24 @@ class StoryboardPromptParameters(Strict):
     shot_id: str = Field(min_length=1, max_length=240)
 
 
+class StoryboardShotParameters(StoryboardPromptParameters):
+    shot_version: int = Field(ge=1)
+    shot_digest: Digest
+
+
+class StoryboardShotPort(StoryboardShotParameters):
+    document_snapshot: PlanningDocumentSnapshot
+    shot: ShotCard
+    image_asset: GraphImageAsset | None = None
+    approved: bool
+
+    @model_validator(mode="after")
+    def exact_shot(self):
+        if self.shot.id != self.shot_id:
+            raise ValueError("CREATIVE_GRAPH_STORYBOARD_SHOT_BINDING_INVALID")
+        return self
+
+
 class GraphImageParameters(MediaParameters):
     denoising_strength: float | None = Field(default=None, gt=0, le=1)
 
@@ -296,6 +314,18 @@ class MediaCandidatePort(Strict):
         if self.asset.kind != ("video" if self.owner == "timeline" else self.owner):
             raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
         return self
+
+
+class VideoNodeParameters(MediaNodeParameters):
+    operation_id: Literal["m7.video.t2v", "m7.video.i2v", "m7.video.v2v"]
+    reference_purpose: Literal["style", "action", "camera"] | None = None
+
+    @model_serializer(mode="wrap")
+    def legacy_identity(self, handler):
+        value = handler(self)
+        if value.get("reference_purpose") is None:
+            value.pop("reference_purpose", None)
+        return value
 
 
 class TimelineSnapshotParameters(Strict):
@@ -459,6 +489,14 @@ DEFINITIONS["storyboard_plan"] = {"inputs": [port("direction", "DIRECTOR_PLAN")]
     "outputs": [port("storyboard", "STORYBOARD_DATA")], "parameters": PlanningNodeParameters}
 DEFINITIONS["storyboard_prompt"] = {"inputs": [port("storyboard", "STORYBOARD_DATA", True)],
     "outputs": [port("prompt", "IMAGE_PROMPT")], "parameters": StoryboardPromptParameters}
+VIDEO_DEFINITION_IDS = {"storyboard_shot", "video_generate"}
+VIDEO_SCHEMA_DEFINITION_IDS = {"text_input", "text_reference", "asset_reference", "director_plan",
+    "storyboard_plan", "storyboard_shot", "video_generate", "media_review", "timeline_export"}
+DEFINITIONS["storyboard_shot"] = {"inputs": [port("storyboard", "STORYBOARD_DATA", True)],
+    "outputs": [port("shot", "STORYBOARD_SHOT")], "parameters": StoryboardShotParameters}
+DEFINITIONS["video_generate"] = {"inputs": [port("text", "TEXT"), port("shot", "STORYBOARD_SHOT"),
+    port("source", "ASSET_REF"), port("reference", "ASSET_REF")],
+    "outputs": [port("candidate", "VIDEO_CANDIDATE")], "parameters": VideoNodeParameters}
 
 
 def definition_for(definition_id, *, schema_version=None):
@@ -468,6 +506,11 @@ def definition_for(definition_id, *, schema_version=None):
     the original empty human-review output contract.
     """
     definition = DEFINITIONS[definition_id]
+    if schema_version == 5:
+        if definition_id == "media_review":
+            return {**definition, "inputs": [port("candidate", "VIDEO_CANDIDATE", True)]}
+        if definition_id == "timeline_export":
+            return {**definition, "outputs": [port("candidate", "VIDEO_CANDIDATE")]}
     if definition_id == "human_review" and schema_version == 3:
         return {**definition, "outputs": [port("reviewed_draft", "DRAFT")]}
     return definition
@@ -604,16 +647,33 @@ class GraphImageInput(GraphInput):
         return self
 
 
+class VideoNodeInstance(NodeInstance):
+    definition_id: Literal["text_input", "text_reference", "asset_reference", "director_plan",
+        "storyboard_plan", "storyboard_shot", "video_generate", "media_review", "timeline_export"]
+
+
+class GraphVideoInput(GraphInput):
+    # Explicit opt-in; persisted schemas 1-4 keep their original finite contracts.
+    schema_version: Literal[5]
+    nodes: list[VideoNodeInstance] = Field(default_factory=list, max_length=MAX_MEDIA_NODES)
+
+    @model_validator(mode="after")
+    def video_capacity(self):
+        if sum(node.definition_id in {"video_generate", "timeline_export"} for node in self.nodes) > MAX_MEDIA_GENERATORS:
+            raise ValueError("CREATIVE_GRAPH_MEDIA_NODE_CAPACITY")
+        return self
+
+
 def parse_graph(value):
     schema = value.get("schema_version", 1) if isinstance(value, dict) else value.schema_version
-    model = GraphImageInput if schema == 4 else GraphMediaInput if schema == 3 else GraphModelInput if schema == 2 else GraphInput
+    model = GraphVideoInput if schema == 5 else GraphImageInput if schema == 4 else GraphMediaInput if schema == 3 else GraphModelInput if schema == 2 else GraphInput
     return model.model_validate(value)
 
 
 class GraphCreate(Strict):
     request_id: RequestId
     expected_version: Literal[0] = 0
-    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput
 
     @field_validator("expected_version", mode="before")
     @classmethod
@@ -631,7 +691,7 @@ class GraphCreate(Strict):
 
 class GraphSave(Strict):
     expected_version: int = Field(ge=1)
-    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput
 
 
 class GraphPreflight(Strict):
@@ -656,14 +716,14 @@ class GraphMediaRunCreate(GraphRunCreate):
 
 
 def parse_graph_preflight(value, definition):
-    model = GraphMediaPreflight if definition["schema_version"] in {3, 4} else GraphPreflight
+    model = GraphMediaPreflight if definition["schema_version"] in {3, 4, 5} else GraphPreflight
     # Pydantic can trust subclass instances without revalidating their fields.
     # Revalidate the wire fields against the authoritative saved definition.
     return model.model_validate(value.model_dump() if isinstance(value, GraphPreflight) else value)
 
 
 def parse_graph_run_create(value, definition):
-    model = GraphMediaRunCreate if definition["schema_version"] in {3, 4} else GraphRunCreate
+    model = GraphMediaRunCreate if definition["schema_version"] in {3, 4, 5} else GraphRunCreate
     return model.model_validate(value.model_dump() if isinstance(value, GraphRunCreate) else value)
 
 
@@ -674,21 +734,23 @@ class GraphAction(Strict):
     note: str = Field(default="", max_length=1_000)
 
 
-def catalog_definitions(*, include_model=False, include_media=False, include_image=False, include_production=False):
+def catalog_definitions(*, include_model=False, include_media=False, include_image=False, include_production=False, include_video=False):
     return [{"id": key, "version": 1, "inputs": deepcopy(value["inputs"]),
         "outputs": deepcopy(value["outputs"]), "parameters_schema": value["parameters"].model_json_schema(),
-        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate", "timeline_export", "image_generate", "image_upscale", "director_plan", "storyboard_plan", "storyboard_prompt"} else None,
+        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate", "timeline_export", "image_generate", "image_upscale", "video_generate", "director_plan", "storyboard_plan", "storyboard_prompt", "storyboard_shot", "video_generate"} else None,
         "executable": include_media or key != "asset_reference", "model_called": False,
         "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" and not include_media else []}
         for key in DEFINITIONS
-        for value in [definition_for(key, schema_version=3 if include_media else None)]
+        for value in [definition_for(key, schema_version=5 if include_video else 3 if include_media else None)]
+        if not include_video or key in VIDEO_SCHEMA_DEFINITION_IDS
         if (include_model or key != "text_generate") and (include_media or key not in {"media_generate", "media_review", "timeline_export"})
         and (include_image or key not in NEW_IMAGE_DEFINITION_IDS)
-        and (include_production or key not in PRODUCTION_DEFINITION_IDS)]
+        and (include_production or key not in PRODUCTION_DEFINITION_IDS)
+        and (include_video or key not in VIDEO_DEFINITION_IDS)]
 
 
 def history_limit(row):
-    return MAX_MEDIA_HISTORY if row.get("graph_schema_version") in {3, 4} or row.get("definition", {}).get("schema_version") in {3, 4} else MAX_HISTORY
+    return MAX_MEDIA_HISTORY if row.get("graph_schema_version") in {3, 4, 5} or row.get("definition", {}).get("schema_version") in {3, 4, 5} else MAX_HISTORY
 
 
 def validate_output_ports(definition_id, value, *, schema_version=None):
@@ -706,9 +768,13 @@ def validate_output_ports(definition_id, value, *, schema_version=None):
         elif port["type"] == "DIRECTOR_NOTES":
             result[port["id"]] = DirectorParameters.model_validate(item).model_dump()
         elif port["type"] in {"DIRECTOR_PLAN", "STORYBOARD_DATA"}:
-            if schema_version != 4:
+            if schema_version not in {4, 5}:
                 raise ValueError("CREATIVE_GRAPH_PLANNING_SCHEMA_REQUIRED")
             result[port["id"]] = (DirectorPlanPort if port["type"] == "DIRECTOR_PLAN" else StoryboardDataPort).model_validate(item).model_dump()
+        elif port["type"] == "STORYBOARD_SHOT":
+            if schema_version != 5:
+                raise ValueError("CREATIVE_GRAPH_VIDEO_SCHEMA_REQUIRED")
+            result[port["id"]] = StoryboardShotPort.model_validate(item).model_dump()
         elif port["type"] == "DRAFT":
             model_draft = definition_id == "text_generate" or (definition_id == "human_review"
                 and schema_version == 3 and isinstance(item, dict) and item.get("origin") == "MODEL_PROPOSAL")
@@ -718,9 +784,11 @@ def validate_output_ports(definition_id, value, *, schema_version=None):
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
             result[port["id"]] = draft.model_dump(exclude_none=True)
         elif port["type"] == "ASSET_REF":
-            if definition_id == "asset_reference" and schema_version not in {3, 4}:
+            if definition_id == "asset_reference" and schema_version not in {3, 4, 5}:
                 raise ValueError("CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED")
             result[port["id"]] = (GraphImageAsset if schema_version == 4 else AssetParameters).model_validate(item).model_dump()
+            if definition_id == "media_review" and schema_version == 5 and result[port["id"]]["kind"] != "video":
+                raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
         elif port["type"] == "IMAGE_REFERENCES":
             if schema_version != 4 or not isinstance(item, list) or not 1 <= len(item) <= 5:
                 raise ValueError("CREATIVE_GRAPH_IMAGE_REFERENCES_INVALID")
@@ -732,12 +800,16 @@ def validate_output_ports(definition_id, value, *, schema_version=None):
             if schema_version != 4:
                 raise ValueError("CREATIVE_GRAPH_IMAGE_PROMPT_INVALID")
             result[port["id"]] = ImagePromptPort.model_validate(item).model_dump()
-        elif port["type"] == "MEDIA_CANDIDATE":
+        elif port["type"] in {"MEDIA_CANDIDATE", "VIDEO_CANDIDATE"}:
             candidate = MediaCandidatePort.model_validate(item)
+            if port["type"] == "VIDEO_CANDIDATE" and (schema_version != 5 or candidate.owner not in {"video", "timeline"}):
+                raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
+            if definition_id == "video_generate" and candidate.owner != "video":
+                raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
             if definition_id in {"image_generate", "image_upscale"} and (schema_version != 4 or candidate.owner != "image"):
                 raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
             if candidate.owner == "timeline":
-                if schema_version != 3 or definition_id != "timeline_export" or candidate.asset.kind != "video":
+                if schema_version not in {3, 5} or definition_id != "timeline_export" or candidate.asset.kind != "video":
                     raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
             elif definition_id == "timeline_export" or candidate.owner != candidate.asset.kind:
                 raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")

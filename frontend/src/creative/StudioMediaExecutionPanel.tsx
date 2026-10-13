@@ -42,7 +42,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     {state.uncertain && <StatusMessage tone="warning">操作结果尚未确认，已阻止继续发送。请读取原任务核对；不会自动重试。</StatusMessage>}
     {state.repeatBlocked && <StatusMessage tone="warning">当前版本已有发送记录。相同动作不会再次发送，请继续读取原记录核对。</StatusMessage>}
     {state.uncertainRequestId && <p>待核对的原请求：<code>{state.uncertainRequestId}</code>。使用“读取任务列表”寻找已保存回执。</p>}
-    <section aria-label="媒体制作输入">
+    <section aria-label="媒体制作输入">{props.preparedCommand ? <><h3>原分镜图片请求</h3><p>输入来自已核对的分镜与镜头版本；更换参数须返回原分镜明确准备新请求。预览、入队、执行与审核仍分别确认。</p><details><summary>核对完整来源与输入</summary><pre>{JSON.stringify(props.preparedCommand, null, 2)}</pre></details><Button disabled={!state.canRead || state.providerLoading} onClick={() => void state.loadProviders()}>明确读取当前请求服务配置</Button><Button disabled={!state.canInspect} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canClosePrepared} onClick={state.clearInputs}>关闭当前请求视图，保留原任务</Button></> : <>
       <h3>制作输入</h3>
       <label>操作<select disabled={!state.canEdit} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
         {Object.entries(MEDIA_OPERATION_LABELS).map(([id, title]) => <option key={id} value={id}>{title}</option>)}
@@ -80,6 +80,8 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {!!draft.sources.length && <><Button disabled={!state.canEdit} onClick={state.refreshSources}>明确选取当前参考版本</Button><Button disabled={!state.canEdit} onClick={state.clearSources}>移除图片输入绑定</Button></>}
         {!state.freshSources && draft.imageReferences.length > 0 && <StatusMessage tone="warning">已绑定的图片版本变化；旧预览与确认失效，请明确重新选择。</StatusMessage>}
       </fieldset>}
+      {draft.operation === 'm7.video.v2v' && <label>参考视频用途<select value={draft.videoReferencePurpose || ''} disabled={!state.canEdit} onChange={event => state.changeField('videoReferencePurpose', event.target.value)}><option value="">普通视频来源</option><option value="style">风格参考</option><option value="action">动作参考</option><option value="camera">摄影机参考</option></select></label>}
+      {state.provider?.video_capabilities && <p>本地视频配方 {state.provider.video_capabilities.recipe_id}：已核对节点结构，真实推理尚未验证。64–1024、宽高为 32 的倍数，1–10 秒、1–30 fps；输出按模型帧步长取整后的 VP9 WebM。当前本地路线不执行参考视频。</p>}
       {upscale && <p>原图片版本进入已启用的本地超分模型，再统一到所选倍率的 PNG 尺寸。输出最大 4096×4096、25 MiB，仍需人工审核。不会下载或启动模型；模型质量与本机推理尚未验收。</p>}
       {draft.operation.startsWith('m5.image.') && <p>Depth / Pose / Edge / Mask / Layout 控制 Adapter 已保留边界，尚未提供执行能力。</p>}
       {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{state.parameterNames.map(parameter)}
@@ -88,6 +90,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       <label>来源与授权说明<input maxLength={2000} disabled={!state.canEdit} value={draft.licenseNote} onChange={event => state.changeField('licenseNote', event.target.value)} /></label>
       {state.inputError && <p>{state.inputError}</p>}
       <div className="studio-graph-actions"><Button disabled={!state.canInspect} loading={state.pending === 'PREVIEW'} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canEdit} onClick={state.clearInputs}>清空本地输入</Button></div>
+    </>}
       {state.preview && <section aria-label="制作预览确认"><h4>确认本次预览</h4><p>{MEDIA_OPERATION_LABELS[state.preview.operation_id]} · {state.preview.provider ? `${state.preview.provider.provider_id} / ${state.preview.provider.model_id} · ${state.preview.provider.local ? '本地' : '云端'}` : state.preview.operation_id === 'm5.image.cutout' ? '本地 CPU 二值遮罩抠图' : '本地截取'}</p>
         <p>预览绑定当前输入、来源版本与处理接口。创建仅保存任务，尚不执行。</p>
         <details><summary>核对本次执行接口、默认参数与工作流</summary><p>本次预览的接口记录，不代表处理已成功执行。</p><pre>{JSON.stringify(state.preview.execution_recipe, null, 2)}</pre></details>

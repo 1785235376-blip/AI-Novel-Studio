@@ -33,7 +33,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     def protected_result(value):
         if not isinstance(value, dict):
             return False
-        if value.get("model_runtime") or value.get("media_runtime") or value.get("definition", {}).get("schema_version") in {2, 3, 4}:
+        if value.get("model_runtime") or value.get("media_runtime") or value.get("definition", {}).get("schema_version") in {2, 3, 4, 5}:
             return True
         return any(protected_result(item) for item in value.get("items", []))
 
@@ -46,11 +46,11 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                     return False
                 if target[0] == "list":
                     records = service.store.read(nid, scope)["collections"].get(service.GRAPHS, {}).values()
-                    return any(record.get("created_by") == actor and record.get("definition", {}).get("schema_version") in {2, 3, 4}
+                    return any(record.get("created_by") == actor and record.get("definition", {}).get("schema_version") in {2, 3, 4, 5}
                         for record in records)
                 record = service._owned(nid, scope, actor, target[0], target[1])
-                return bool(record.get("model_execution_contract") or record.get("graph_schema_version") in {3, 4}
-                    or record.get("definition", {}).get("schema_version") in {2, 3, 4})
+                return bool(record.get("model_execution_contract") or record.get("graph_schema_version") in {3, 4, 5}
+                    or record.get("definition", {}).get("schema_version") in {2, 3, 4, 5})
             authority = capture_host(request, token) if host_required() else None
             def current():
                 guard()
@@ -175,12 +175,12 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
         return model_call(request, nid, x_session_token, x_branch_id, "domain.write", "refresh", rid, body)
 
     @router.get("/projects/{nid}/studio/graphs/catalog")
-    def catalog(nid: str, request: Request, include_image: bool = False, include_production: bool = False,
+    def catalog(nid: str, request: Request, include_image: bool = False, include_production: bool = False, include_video: bool = False,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: service.catalog(nid, scope, actor, guard=guard,
-                          include_image=include_image, include_production=include_production), request,
-                          model_input=include_image or include_production)
+                          include_image=include_image, include_production=include_production, include_video=include_video), request,
+                          model_input=include_image or include_production or include_video)
 
     @router.get("/projects/{nid}/studio/graphs/planning-documents")
     def planning_documents(nid: str, request: Request,
@@ -198,7 +198,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     def create(nid: str, request: Request, body: GraphCreate,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.create(nid, scope, actor, body, guard=guard), request, model_input=body.definition.schema_version in {2, 3, 4})
+                      lambda actor, scope, guard: service.create(nid, scope, actor, body, guard=guard), request, model_input=body.definition.schema_version in {2, 3, 4, 5})
 
     @router.get("/projects/{nid}/studio/graphs/{gid}")
     def graph(nid: str, gid: str, request: Request,
@@ -210,7 +210,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     def save(nid: str, gid: str, request: Request, body: GraphSave,
              x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.save(nid, scope, actor, gid, body, guard=guard), request, model_input=body.definition.schema_version in {2, 3, 4}, target=(service.GRAPHS, gid))
+                      lambda actor, scope, guard: service.save(nid, scope, actor, gid, body, guard=guard), request, model_input=body.definition.schema_version in {2, 3, 4, 5}, target=(service.GRAPHS, gid))
 
     @router.post("/projects/{nid}/studio/graphs/{gid}/preflight")
     def preflight(nid: str, gid: str, request: Request, body: GraphPreflight | GraphMediaPreflight,

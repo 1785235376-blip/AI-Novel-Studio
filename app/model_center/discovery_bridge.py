@@ -417,9 +417,93 @@ class LocalImageAdapter:
         return replace(result, model_id=candidate['id'])
 
 
+class LocalVideoAdapter:
+    """Explicit Model Center enable projects into the original video registry."""
+    supports_dispatch_guard = True
+    supports_status_guard = True
+    _STUDIO_IDENTITY_FIELDS = LocalImageAdapter._STUDIO_IDENTITY_FIELDS
+
+    def __init__(self, bridge, candidate):
+        from ..services.studio_video_provider import ComfyUIVideoProvider
+        self.bridge, self.candidate = bridge, candidate
+        self._studio_identity = copy.deepcopy({key: candidate.get(key) for key in self._STUDIO_IDENTITY_FIELDS})
+        self.endpoint, self.default_model = candidate['runtime_config']['endpoint'], candidate['id']
+        transport = _LocalImageTransport(self.endpoint)
+        transport.max_wire_bytes = transport.max_response_bytes = 25 * 1024 * 1024
+        self.delegate = ComfyUIVideoProvider(transport, self.endpoint, candidate['evidence']['video_recipe'])
+
+    def studio_configuration(self):
+        from ..services.studio_video_provider import ComfyUIVideoProvider
+        error = 'STUDIO_DISCOVERED_VIDEO_REGISTRATION_CHANGED'
+        if type(self.bridge) is not LocalDiscoveryBridge: raise ValueError(error)
+        with self.bridge.service.lock:
+            try:
+                candidate = self.bridge.guard(self.candidate['id'])
+                identity = {key: candidate.get(key) for key in self._STUDIO_IDENTITY_FIELDS}
+                recipe = candidate.get('evidence', {}).get('video_recipe')
+                adapter = next((item for item in self.bridge.service.video_workflow_adapters
+                    if item['id'] == candidate.get('workflow_adapter_id')), None)
+                if (identity != self._studio_identity or self.bridge.video_registry is None
+                        or self.bridge.video_registry.get(candidate['provider_id']) is not self
+                        or candidate['runtime_type'] != 'COMFYUI' or 'VIDEO' not in candidate.get('verified_capabilities', [])
+                        or not candidate.get('validated_at') or local_endpoint(candidate['runtime_config']['endpoint']) != self.endpoint
+                        or type(self.delegate) is not ComfyUIVideoProvider or self.delegate.endpoint != self.endpoint
+                        or not recipe or self.delegate.recipe != recipe or not adapter or recipe['recipe_id'] != adapter['id']
+                        or recipe['components']['model'] != candidate['model_name']
+                        or not set(adapter['required_nodes']) <= set(candidate['evidence'].get('node_classes', []))
+                        or {'node_class': adapter['model_loader'], 'input_field': adapter['model_input']}
+                            not in candidate['evidence'].get('loader_bindings', [])):
+                    raise ValueError(error)
+                epoch = self.bridge.service._control_epochs.get(candidate['id'], 0)
+                registration = hashlib.sha256(json.dumps({'registration': identity, 'control_epoch': epoch}, sort_keys=True, default=str).encode()).hexdigest()
+                return {'enabled': True, 'local': True, 'requires_credential': False, 'api_style': 'comfyui-video',
+                    'endpoint': self.endpoint, 'default_model': candidate['id'], 'registration_digest': registration,
+                    'runtime_model_id': candidate['model_name'], 'video_recipe': copy.deepcopy(recipe)}
+            except (KeyError, TypeError, ModelRuntimeError, ValueError):
+                raise ValueError(error) from None
+
+    def capabilities(self):
+        self.studio_configuration()
+        return self.delegate.capabilities()
+
+    def health_check(self):
+        try: self.studio_configuration(); return self.delegate.health_check()
+        except (ValueError, KeyError, ModelRuntimeError): return False
+
+    def execution_recipe(self, request):
+        config = self.studio_configuration()
+        return self.delegate.execution_recipe(replace(request, model_id=config['runtime_model_id']))
+
+    def _guarded(self, guard):
+        expected = self.studio_configuration()['registration_digest']
+        def current():
+            if guard is not None: guard()
+            if self.studio_configuration()['registration_digest'] != expected:
+                raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
+        current()
+        return current
+
+    def generate(self, request):
+        config = self.studio_configuration()
+        if request.model_id != config['default_model']: raise ValueError('LOCAL_AI_MODEL_MISMATCH')
+        guard = self._guarded(request.dispatch_guard)
+        self.bridge.service.check_model_dispatch(self.bridge.guard(self.candidate['id']))
+        guard()
+        result = self.delegate.generate(replace(request, model_id=config['runtime_model_id'], dispatch_guard=guard))
+        guard()
+        return replace(result, model_id=config['default_model'])
+
+    def get_status(self, remote_task_id, *, dispatch_guard=None):
+        guard = self._guarded(dispatch_guard)
+        result = self.delegate.get_status(remote_task_id, dispatch_guard=guard)
+        guard()
+        return result
+
+
 class LocalDiscoveryBridge:
-    def __init__(self, service, runtime, asset_registry):
+    def __init__(self, service, runtime, asset_registry, video_registry=None):
         self.service, self.runtime, self.asset_registry = service, runtime, asset_registry
+        self.video_registry = video_registry
         self.launch_lock = threading.RLock()
         # Reuse already-saved legacy runtime endpoints without probing them.
         # Non-loopback historical configurations are excluded, never broadened.
@@ -462,6 +546,13 @@ class LocalDiscoveryBridge:
             self.asset_registry.register(provider_id, LocalImageAdapter(self, candidate))
         else:
             self.asset_registry.unregister(provider_id)
+        if self.video_registry is not None:
+            if enabled and 'VIDEO' in candidate['verified_capabilities']:
+                if candidate['runtime_type'] != 'COMFYUI' or not candidate.get('evidence', {}).get('video_recipe'):
+                    raise ValueError('LOCAL_AI_VIDEO_ADAPTER_REQUIRED')
+                self.video_registry[provider_id] = LocalVideoAdapter(self, candidate)
+            else:
+                self.video_registry.pop(provider_id, None)
 
     def launch_on_demand(self, candidate):
         config = candidate['runtime_config']

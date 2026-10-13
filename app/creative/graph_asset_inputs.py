@@ -177,7 +177,7 @@ class GraphAssetInputs:
                 if set(output) != {"asset"}:
                     raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
                 AssetParameters.model_validate(output["asset"])
-            elif node["definition_id"] in {"media_generate", "timeline_export", "image_generate", "image_upscale"}:
+            elif node["definition_id"] in {"media_generate", "timeline_export", "image_generate", "image_upscale", "video_generate"}:
                 if set(output) != {"candidate"}:
                     raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
                 validate_output_ports(node["definition_id"], output, schema_version=row.get("graph_schema_version"))
@@ -185,10 +185,11 @@ class GraphAssetInputs:
                 from .graph_image_nodes import execute_image_local
                 if output != execute_image_local(node, self.service.executor._inputs(row, node_id, row["typed_outputs"])):
                     raise StaleSourceError("CREATIVE_GRAPH_IMAGE_TRANSFORM_CHANGED")
-            elif node["definition_id"] in {"director_plan", "storyboard_plan", "storyboard_prompt"}:
+            elif node["definition_id"] in {"director_plan", "storyboard_plan", "storyboard_prompt", "storyboard_shot"}:
                 from .graph_planning_nodes import execute_planning_local
                 if output != execute_planning_local(self.service, nid, scope, node,
-                        self.service.executor._inputs(row, node_id, row["typed_outputs"]), guard, state):
+                        self.service.executor._inputs(row, node_id, row["typed_outputs"]), guard, state,
+                        schema_version=row.get("graph_schema_version", 4), actor=actor, check_images=False):
                     raise StaleSourceError("CREATIVE_GRAPH_PLANNING_OUTPUT_CHANGED")
         guard()
         return saved
@@ -261,6 +262,11 @@ class GraphAssetInputs:
                 self._read(nid, scope, node["parameters"], guard)
         for node_id, output in row.get("typed_outputs", {}).items():
             node = nodes.get(node_id)
+            if node is not None and node["definition_id"] == "storyboard_shot":
+                from .graph_models import StoryboardShotPort
+                shot = StoryboardShotPort.model_validate(output.get("shot"))
+                if shot.image_asset is not None:
+                    self._read(nid, scope, shot.image_asset.model_dump(), guard)
             if node is not None and node["definition_id"] == "media_review":
                 if set(output) != {"asset"}:
                     raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
