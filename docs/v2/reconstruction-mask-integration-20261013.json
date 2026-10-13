@@ -1,0 +1,102 @@
+{
+  "baseline_sha": "4534bed9129bcf2a549b44a91f062c79a77e173b",
+  "published_parent": "de23bb50b96f07dac3e96dc0f9a1df9940e494b3",
+  "integrated_local_source_commit": "40e79a5cc37e90084840f3f571f6388fa4032826",
+  "source_sha256": {
+    "app/creative/production_execution_api.py": "a0bcd00ecc520fabf042219129e9dc1b7a87b1875ed356398979af05a2f9012f",
+    "app/creative/workspace.py": "f796772b21007d902625370e1c6b2177f3658c6b80bdba3dd204d4d477c43cca",
+    "app/creative/workspace_api.py": "dafcd4e8a83eba0ca68f29655d71c59aa8b5bcd85e11ff40339fb7f606d62c01",
+    "app/creative/workspace_models.py": "5f38c1d510dfeca63d0372782a5076f10589984386d0c8680b0feea13ccdb9b3",
+    "app/services/asset_library_service.py": "3dbaa70db6caf50d4fee32e11f5a3e20a7dcfadbf4dfeffd0448450728ea0bfe",
+    "app/services/studio_image_mask_authoring.py": "d6f61fabfbb4233d99c0c2be8216e0be017f3db11009249adf640717e6a5fcb5",
+    "frontend/src/creative/IndependentStudioManualMask.test.tsx": "a89a8e599838239ac8f78cf72945db648812c5d5d8f81fe501c6161ad06f438b",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "71e214dab55a6af07c84fdcd28ff9b6bb3362e5da1a3334851bc4da637940209",
+    "frontend/src/creative/StudioBinaryMaskCanvas.test.tsx": "3667d974e22039046e1a4397ecc368c767c43c27dffcae05b35d006219d11bb4",
+    "frontend/src/creative/StudioBinaryMaskCanvas.tsx": "1fd9c9201d2592ec0a0abf69196096d2485189a965e0f62de656b61db043e82b",
+    "frontend/src/creative/StudioManualMaskAuthoring.test.tsx": "52d043ff7f2d0d9816633124d68db5f53cbd8e3edea0cfd9699d8f5e6499132b",
+    "frontend/src/creative/StudioManualMaskPanel.tsx": "e74b351f1e4631276ffe61b146e6792959048d7e0ed78bf1de6a3136e0ba94f3",
+    "frontend/src/creative/studioBinaryMask.test.ts": "7074315ad23325651bdc73ab7ce11f2836937e6fd1be41e0f324600851e9a852",
+    "frontend/src/creative/studioBinaryMask.ts": "5ddbe8383730ff6cece044789c11aa1ec692c1907139eb2edcfc1755d04feaa0",
+    "frontend/src/creative/studioClient.ts": "a436385c31815edf7a5d970ee15b3e42c0a46cc6b304e6caa26fd76e8d86ab9a",
+    "frontend/src/creative/studioManualMaskContract.test.ts": "c4a7cd1bc0b18ea315d4d8246df9ee44d2ea69c809fee0fb1e2dac1e0a1838ea",
+    "frontend/src/creative/studioManualMaskContract.ts": "1b479077cd0ce1b848691279525bd12f2211c7e5d23081ae365497a9b616b76b",
+    "frontend/src/creative/useStudioManualMask.ts": "537aaecbbc51e9589f10fde4b61dea76c895d47194f0bd38929cb7bb6906d637",
+    "tests/test_v2_manual_mask_api.py": "ebc643a1306b54143c30ffe1ab23037dca908f94258f0a80f5db89be349bf339",
+    "tests/test_v2_manual_mask_owner.py": "67eefe580fb8488380c17da3726caa5549d04c6cc4c5bc9721cf57dc6f73a04e",
+    "tests/test_v2_manual_mask_pixels.py": "b902cb8606f9949d5510dda353e6fab2940e2df04061bed6ceac7279f15c7cb9"
+  },
+  "results": {
+    "integrated_file": {
+      "passed": 119,
+      "deselected": 86
+    },
+    "integrated_frontend": {
+      "passed": 260,
+      "files": 12
+    },
+    "integrated_typescript": "PASS",
+    "backend_exact_source_pg": {
+      "passed": 86,
+      "runtime": "PostgreSQL 17.11",
+      "original_migrations": 20,
+      "fresh_empty_database": true,
+      "shutdown": "completed"
+    },
+    "original_owner_file": {
+      "passed": 340,
+      "deselected": 208
+    },
+    "original_owner_pg": {
+      "passed": 208,
+      "deselected": 340
+    },
+    "mounted_response_decoder": "PASS with actual mounted response and fetch stub; not live browser",
+    "api_catalog_tests": {
+      "passed": 3
+    },
+    "api_catalog": {
+      "operations": 2219,
+      "removed": 0,
+      "added_since_previous_inventory": 72,
+      "note": "Includes prior baseline inventory lag; only two mask aliases are new in this slice"
+    },
+    "collection": {
+      "nodes": 12499,
+      "frozen_nodes": 9151,
+      "historical_skips_unchanged": true,
+      "tests_executed": false
+    },
+    "browser": "BLOCKED before page execution; official archive invalid, system browser socket EPERM",
+    "windows_gpu_real_models": "NOT_RUN / LOCAL_REQUIRED"
+  },
+  "generated_sha256": {
+    "API_CATALOG.json": "a2544797efa133398eeda733ce8b3c3bab850dbbc79b248faddddbc7c26ea82b",
+    "API_CATALOG.md": "5cc6ff164b6e05a0f71a2c1cd273d8718b0280d17d053f7c46f428f407b0fa65",
+    "API_CATALOG_DETAIL.json.gz": "8ba7e68b9f23c9dec7ae72401a74fdbebe376e0a6c74404468c1d6793db4781e",
+    "API_OPENAPI.json.gz": "fa1e1eb8218fc9fa13e144b7382414cf60b7414fee947a6537518e8f44f78287",
+    ".github/ci/coverage_manifest_v2.json.gz": "27a35c4e35c7036d73c8db8882adec36537b61199993b4e699f3e52ffc606fb3"
+  },
+  "private_evidence_sha256": {
+    "catalog-prefetched.log": "6a2098ac4bfee28424206d1b577570042db015dcc066b50c1e88c294adea13cb",
+    "catalog.log": "f61dbe725c2501e1fd74c8bac647f736dc116889f5db6a5d584e9a3f83b45dfd",
+    "collection-final.log": "2ff7c3e688e7fdfa7de5a53f4b49e9d979ae800ed7cc66091f59db1ffff06486",
+    "collection-review.log": "0e16808553c0cc76d612a247a33974479015019693e417a6b81b251bda2a25d3",
+    "collection-review2.log": "a9abdc42223c166b3da446ef119df9427542781c6d37968e73324b8314411a77",
+    "collection-stable.log": "3a1c59c6ff636bce871c93033d7563f10ea0154304462ac29fbed93a7ff56c92",
+    "frontend.log": "c0b4717edbf13a05fed7836079a8e9f11c78a6d1c9c81f8db9c72d36e46daad3",
+    "initdb.log": "b8223bb678cfecb9a50d29d609e59d51fecdc3b1e81da97a59250d9bb3170138",
+    "integrated-frontend.log": "8d6f8868da8ad6f84aa3cf801ef3fc1809449e6829ff2fd3f08763b276e8e153",
+    "integrated-types.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "playwright-install.log": "930214e191ebb56b2f018acd35829976962765f54557b1a1ce4b990dbb36dfce",
+    "prefetch-tree.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "system-chromium-probe.log": "79bb33d8a93cca13c0485b2cf8e118fe5e4213e22322cd00697831a42811c6c9",
+    "tsc.log": "8ce27412eb5c77068090d674f346ef4a809f8f7043f440b7e30efc6205ed4ab3"
+  },
+  "known_limits": [
+    "Closed PNG admission; common ancillary chunks unsupported",
+    "Manual Asset save only; CPU cutout not implemented here",
+    "Same23 baseline frontend failures remain",
+    "Hosted runner unavailable; no hosted acceptance",
+    "Missing previous workspace and artifacts are not claimed restored"
+  ]
+}

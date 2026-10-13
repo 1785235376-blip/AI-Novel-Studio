@@ -14,9 +14,7 @@ from .production_execution_models import (MediaCommand, MediaCreate, MediaJobAct
 Owner = Literal["image", "audio", "video", "timeline"]
 
 
-def create_production_execution_router(service, invoke, *, require_host_session, model_host_authority):
-    router = APIRouter(tags=["Studio Production Execution V2"], route_class=PrivateProductionRoute)
-
+def create_production_invoker(invoke, *, require_host_session, model_host_authority):
     def call(request, nid, token, branch, permission, callback, *, model=False):
         def operation(actor, scope, guard):
             if require_host_session is None or model_host_authority is None:
@@ -46,6 +44,14 @@ def create_production_execution_router(service, invoke, *, require_host_session,
             current()
             return result
         return invoke(nid, token, branch, permission, operation)
+
+    return call
+
+
+def create_production_execution_router(service, invoke, *, require_host_session, model_host_authority):
+    router = APIRouter(tags=["Studio Production Execution V2"], route_class=PrivateProductionRoute)
+
+    call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
 
     @router.get("/projects/{nid}/studio/production/providers")
     def providers(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

@@ -56,7 +56,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -140,6 +140,11 @@ class AssetLibraryService:
 
     def _in_scope(self, meta: dict, branch_id: str | None, actor_id: str | None = None) -> bool:
         binding, active = meta.get("_project_binding"), getattr(self._scope, "binding", None)
+        if "_manual_mask_origin" in meta:
+            try:
+                self._manual_record(meta)
+            except (ValueError, TypeError, KeyError):
+                return False
         from ..creative import adaptation_receipt as adaptation_contract
         origin, receipt = meta.get("_text_result_origin"), meta.get(adaptation_contract.PRIVATE_FIELD)
         if ((isinstance(origin, dict) and origin.get("contract") == adaptation_contract.ASSET_CONTRACT)
@@ -179,7 +184,8 @@ class AssetLibraryService:
                media_type: str | None = None, kind: str = "image",
                idempotency_key: str | None = None, *, branch_id: str | None = None,
                required_features: tuple[str, ...] = (), owner_actor_id: str | None = None, guard=None,
-               _initial_text_result: dict | None = None, _initial_studio_result: dict | None = None):
+               _initial_text_result: dict | None = None, _initial_studio_result: dict | None = None,
+               _initial_manual_mask: dict | None = None, _manual_expected_retry_id: str | None = None):
         from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
         if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
@@ -222,6 +228,34 @@ class AssetLibraryService:
         if required_features or owner_actor_id:
             identity.update(_required_features=sorted(set(required_features)), _owner_actor_id=owner_actor_id)
         initial_review = None
+        manual_lineage = None
+        if _initial_manual_mask is not None:
+            if (_initial_text_result is not None or _initial_studio_result is not None or binding is None
+                    or owner_actor_id is not None or not callable(guard) or kind != "image" or media_type != "image/png"
+                    or not {"narrative_production_v2", "asset_lineage_v2"}.issubset(required_features)):
+                raise ValueError("IMAGE_MASK_ORIGIN_CONFLICT")
+            origin = self._manual_marker(_initial_manual_mask)
+            if (origin["scope_key"], origin["incarnation"]) != (binding["scope_key"], binding["incarnation"]):
+                raise ValueError("IMAGE_MASK_ORIGIN_INVALID")
+            from .studio_image_mask_authoring import verify_mask, validate_source_png
+            proof = verify_mask(data)
+            if any(origin[key] != value for key, value in proof.items()):
+                raise ValueError("IMAGE_MASK_ORIGIN_INVALID")
+            source = self._manual_source(origin, novel_id, branch_id)
+            if not set(source.get("_required_features", [])).issubset(required_features):
+                raise ValueError("IMAGE_MASK_SOURCE_FEATURES_REQUIRED")
+            validate_source_png(self._verified_content(source), origin["width"], origin["height"])
+            identity.update(_manual_mask_origin=origin, source_asset_ids=[origin["source"]["id"]],
+                            source_job_id=None, provider_id=None, model_id=None)
+            manual_lineage = {"schema": "asset-lineage-v2", "origin": "MANUAL_EDIT",
+                "license": {"label": "UNSPECIFIED", "source": "", "note": ""},
+                "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+                "operation": "Manual binary mask: white KEEP, black REMOVE", "declared_by": origin["actor"],
+                "declared_at": now(), "sources": {}, "parents": {origin["source"]["id"]:
+                    {"version": origin["source"]["version"], "digest": origin["source"]["sha256"]}},
+                "output_digest": origin["mask_sha256"]}
+        elif _manual_expected_retry_id is not None:
+            raise ValueError("IMAGE_MASK_ORIGIN_INVALID")
         if _initial_studio_result is not None:
             # Server-only media origin. Generic metadata/lineage inputs cannot
             # mint this immutable authority marker or adopt legacy job assets.
@@ -261,8 +295,14 @@ class AssetLibraryService:
             identity.update(initial)
             initial_review = {"status": "DRAFT", "receipt": None, "history": []}
         with self._lock, workspace_mutation(self.root, "asset-library"):
+            manual_prior = None
+            if manual_lineage is not None:
+                manual_prior = self.manual_mask_retry(novel_id, idempotency_key, branch_id=branch_id)
+                if _manual_expected_retry_id is not None and (manual_prior is None or manual_prior["id"] != _manual_expected_retry_id):
+                    raise ValueError("IMAGE_MASK_RETRY_CHANGED")
             if idempotency_key:
-                for existing in self.list(novel_id, branch_id=branch_id, include_deleted=True, actor_id=owner_actor_id):
+                candidates = ([manual_prior] if manual_prior is not None else []) if manual_lineage is not None else self.list(novel_id, branch_id=branch_id, include_deleted=True, actor_id=owner_actor_id)
+                for existing in candidates:
                     if existing.get("idempotency_key") != idempotency_key:
                         continue
                     if any(existing.get(key) != value for key, value in identity.items()):
@@ -272,12 +312,16 @@ class AssetLibraryService:
                     self.content(existing["id"], branch_id=branch_id, actor_id=owner_actor_id)
                     if guard:
                         guard()
+                    if manual_lineage is not None:
+                        self._manual_source(origin, novel_id, branch_id)
                     return existing
             asset_id = str(uuid.uuid4())
             meta = {"id": asset_id, "novel_id": novel_id, **identity, "created_at": now(), "updated_at": now(),
                     "version": 1, "deleted_at": None, "idempotency_key": idempotency_key}
             if initial_review is not None:
                 meta["_text_result_review"] = initial_review
+            if manual_lineage is not None:
+                meta["parameters"] = {"asset_lineage_v2": manual_lineage}
             target = self._bin_path(asset_id)
             fd, temporary = tempfile.mkstemp(dir=self.root, prefix=asset_id + ".", suffix=".tmp")
             try:
@@ -287,6 +331,8 @@ class AssetLibraryService:
                     os.fsync(stream.fileno())
                 if guard:
                     guard()
+                if manual_lineage is not None:
+                    self._manual_source(origin, novel_id, branch_id)
                 os.replace(temporary, target)
                 self._write_meta(meta)
             except Exception:
@@ -301,6 +347,89 @@ class AssetLibraryService:
                 if os.path.exists(temporary):
                     os.unlink(temporary)
             return meta
+
+    @staticmethod
+    def _manual_marker(value):
+        from .studio_image_mask_authoring import CONTRACT, DIGEST, dimensions
+        fields = {"contract", "actor", "scope_key", "incarnation", "source", "width", "height",
+                  "bitplane_sha256", "keep_pixels", "remove_pixels", "mask_sha256"}
+        if not isinstance(value, dict) or set(value) != fields or value.get("contract") != CONTRACT:
+            raise ValueError("IMAGE_MASK_ORIGIN_INVALID")
+        dimensions(value["width"], value["height"])
+        source = value["source"]
+        if (not isinstance(source, dict) or set(source) != {"id", "version", "sha256"}
+                or not isinstance(source["id"], str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,239}", source["id"])
+                or type(source["version"]) is not int or not 1 <= source["version"] <= 2**53 - 1
+                or not isinstance(value["actor"], str) or not 1 <= len(value["actor"]) <= 240
+                or any(ord(c) < 32 or ord(c) == 127 for c in value["actor"])
+                or not isinstance(value["incarnation"], str) or not re.fullmatch(r"(?:file|postgres):[a-f0-9-]{36}", value["incarnation"])
+                or any(not isinstance(v, str) or not DIGEST.fullmatch(v) for v in
+                       (source["sha256"], value["scope_key"], value["bitplane_sha256"], value["mask_sha256"]))
+                or any(type(value[k]) is not int or value[k] <= 0 for k in ("keep_pixels", "remove_pixels"))
+                or value["keep_pixels"] + value["remove_pixels"] != value["width"] * value["height"]):
+            raise ValueError("IMAGE_MASK_ORIGIN_INVALID")
+        return copy.deepcopy(value)
+
+    def _manual_source(self, origin, novel_id, branch_id):
+        from ..experimental.common import StaleSourceError
+        source = self.get(origin["source"]["id"], branch_id=branch_id)
+        if (source.get("novel_id") != novel_id or source.get("branch_id") != branch_id
+                or source.get("kind") != "image" or source.get("media_type") != "image/png"
+                or type(source.get("version")) is not int
+                or source.get("version") != origin["source"]["version"] or source.get("sha256") != origin["source"]["sha256"]):
+            raise StaleSourceError("IMAGE_MASK_SOURCE_STALE")
+        self._verified_content(source)
+        return source
+
+    def _manual_record(self, meta):
+        origin = self._manual_marker(meta.get("_manual_mask_origin"))
+        binding = meta.get("_project_binding")
+        features, parameters = meta.get("_required_features"), meta.get("parameters")
+        if (not isinstance(binding, dict) or origin["scope_key"] != binding.get("scope_key")
+                or origin["incarnation"] != binding.get("incarnation") or meta.get("_owner_actor_id") is not None
+                or not isinstance(features, list) or any(not isinstance(f, str) for f in features)
+                or not {"narrative_production_v2", "asset_lineage_v2"}.issubset(features)
+                or not isinstance(parameters, dict)
+                or meta.get("kind") != "image" or meta.get("media_type") != "image/png"
+                or meta.get("sha256") != origin["mask_sha256"] or type(meta.get("version")) is not int or not 1 <= meta["version"] <= 2**53 - 1
+                or meta.get("source_asset_ids") != [origin["source"]["id"]]
+                or any(meta.get(k) is not None for k in ("provider_id", "model_id", "source_job_id", "approved_at"))):
+            raise ValueError("IMAGE_MASK_ORIGIN_INVALID")
+        self._manual_lineage(parameters.get("asset_lineage_v2"), origin)
+        return origin
+
+    @staticmethod
+    def _manual_lineage(lineage, origin):
+        source = origin["source"]
+        if (not isinstance(lineage, dict) or lineage.get("schema") != "asset-lineage-v2"
+                or lineage.get("origin") != "MANUAL_EDIT" or lineage.get("sources") != {}
+                or lineage.get("parents") != {source["id"]: {"version": source["version"], "digest": source["sha256"]}}
+                or lineage.get("output_digest") != origin["mask_sha256"]):
+            raise ValueError("IMAGE_MASK_SOURCE_IMMUTABLE")
+
+    def manual_mask_retry(self, novel_id, key, *, branch_id):
+        """Strict original-owner lookup; never skip damaged receipt metadata.
+
+        This new action conservatively fails on unreadable metadata whose scope
+        cannot be established. It does not change the legacy list contract.
+        """
+        binding = getattr(self._scope, "binding", None)
+        if binding is None or (binding["novel_id"], binding["branch_id"]) != (novel_id, branch_id) or not isinstance(key, str):
+            raise ValueError("IMAGE_MASK_ORIGIN_INVALID")
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+            found = None
+            for path in self.root.glob("*.json"):
+                try:
+                    row = self._load(path.stem)
+                except (ValueError, OSError, RecursionError):
+                    raise ValueError("IMAGE_MASK_RECEIPT_UNAVAILABLE") from None
+                if (row.get("idempotency_key"), row.get("_project_binding")) != (key, binding):
+                    continue
+                if ((row.get("novel_id"), row.get("branch_id")) != (novel_id, branch_id)
+                        or found is not None or not self._in_scope(row, branch_id) or "_manual_mask_origin" not in row):
+                    raise ValueError("IMAGE_MASK_RECEIPT_UNAVAILABLE")
+                found = row
+            return found
 
     @staticmethod
     def _text_stamp(value):
@@ -658,6 +787,13 @@ class AssetLibraryService:
                     key in fields and fields[key] != meta.get(key)
                     for key in ("source_job_id", "provider_id", "model_id", "parameters", "approved_at", "source_asset_ids")):
                 raise ValueError("TEXT_RESULT_PROVENANCE_IMMUTABLE")
+            if "_manual_mask_origin" in meta:
+                origin = self._manual_record(meta)
+                if any(key in fields and fields[key] != meta.get(key) for key in
+                       ("source_asset_ids", "source_job_id", "provider_id", "model_id", "approved_at")):
+                    raise ValueError("IMAGE_MASK_SOURCE_IMMUTABLE")
+                if "parameters" in fields and _lineage_write:
+                    self._manual_lineage(fields["parameters"].get("asset_lineage_v2"), origin)
             if "parameters" in fields:
                 # Legacy generation parameters are caller-controlled. They
                 # cannot manufacture or erase the gated provenance authority.
@@ -737,13 +873,20 @@ class AssetLibraryService:
         """
         with self._lock, workspace_mutation(self.root, "asset-library"):
             meta = self.get(asset_id, branch_id=branch_id)
+            manual = self._manual_record(meta) if "_manual_mask_origin" in meta else None
+            if manual is not None and (parent_ids != [manual["source"]["id"]]
+                    or declaration.get("origin") != "MANUAL_EDIT" or declaration.get("sources") != {}):
+                raise ValueError("IMAGE_MASK_SOURCE_IMMUTABLE")
             parents = {}
             for parent_id in dict.fromkeys(parent_ids):
                 parent = self.get(parent_id, branch_id=branch_id)
                 if parent.get("novel_id") != meta.get("novel_id") or parent.get("branch_id") != meta.get("branch_id"):
                     raise FileNotFoundError(parent_id)
                 self._verified_content(parent)
-                parents[parent_id] = {"version": parent["version"], "digest": parent["sha256"]}
+                # A manual mask always refers to the revision painted by its
+                # author. Annotation never silently refreshes a stale source.
+                parents[parent_id] = ({"version": manual["source"]["version"], "digest": manual["source"]["sha256"]}
+                                      if manual is not None else {"version": parent["version"], "digest": parent["sha256"]})
             lineage = {**declaration, "parents": parents, "output_digest": meta["sha256"]}
             previous = meta.get("parameters", {}).get("asset_lineage_v2")
             if isinstance(previous, dict):

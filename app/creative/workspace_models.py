@@ -5,7 +5,7 @@ execution decision may be based on them.
 """
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import ConfigDict, Field, model_validator
 
 from ..experimental.media import StrictModel
 from ..experimental.production_lineage import LineageInput
@@ -42,6 +42,17 @@ class ManualAssetImport(StrictModel):
     kind: Literal["image", "video", "audio"] = "image"
     content_base64: str = Field(min_length=1, max_length=4 * ((25 * 1024 * 1024 + 2) // 3))
     idempotency_key: str = Field(min_length=1, max_length=120)
+
+
+class ManualBinaryMask(StrictModel):
+    model_config = ConfigDict(extra="forbid", strict=True, str_strip_whitespace=False)
+    contract: Literal["manual-binary-mask/1"]
+    source_version: int = Field(ge=1, le=2**53 - 1)
+    source_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    width: int = Field(ge=64, le=1024, multiple_of=8)
+    height: int = Field(ge=64, le=1024, multiple_of=8)
+    bitplane_base64: str = Field(min_length=1, max_length=174764)
+    idempotency_key: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$")
 
 
 class AssetVersion(StrictModel):

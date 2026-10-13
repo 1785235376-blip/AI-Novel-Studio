@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import base64
 import copy
+import hashlib
+import json
 from contextlib import contextmanager
 import shutil
 import errno
@@ -18,7 +20,7 @@ from ..experimental.production_lineage import LicenseDeclaration
 from ..media_files import inspect_image, inspect_media
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .project_store import BINDING
-from .workspace_models import ManualAssetImport, StudioLineageInput, WorkspacePreferences, WorkspacePreferencesUpdate
+from .workspace_models import ManualAssetImport, ManualBinaryMask, StudioLineageInput, WorkspacePreferences, WorkspacePreferencesUpdate
 
 PREFERENCES = "creative_project_preferences_v2"
 FLAG = "narrative_production_v2"
@@ -284,6 +286,10 @@ class IndependentWorkspaceService:
         body = StudioLineageInput.model_validate(value)
         with self._asset_scope(nid, scope):
             row = self._row(nid, scope, aid)
+            if "_manual_mask_origin" in row:
+                origin = self.assets._manual_record(row)
+                if body.origin != "MANUAL_EDIT" or body.chapter_ids or body.parent_asset_ids != [origin["source"]["id"]]:
+                    raise ValueError("IMAGE_MASK_SOURCE_IMMUTABLE")
             if row.get("_studio_result_origin"):
                 origin = copy.deepcopy(row["_studio_result_origin"])
                 parent_ids = self._production_asset_ids(origin)
@@ -312,6 +318,81 @@ class IndependentWorkspaceService:
                 self.lineage.annotate(nid, scope, actor, aid, body, guard, include_impact=False)
             guard()
             return self._view(nid, scope, self._row(nid, scope, aid))
+
+    def author_mask(self, nid, scope, actor, source_id, value, guard):
+        """One original-Asset creation; no job, model or second annotation write."""
+        from ..experimental.common import StaleSourceError
+        from ..services.studio_image_mask_authoring import CONTRACT, SOURCE_MAX_BYTES, encode_mask, validate_source_png
+        from ..services.asset_library_service import AssetIdempotencyConflict
+        body = ManualBinaryMask.model_validate(value)
+        if not callable(guard) or not isinstance(actor, str) or not actor:
+            raise ValueError("IMAGE_MASK_AUTHORITY_REQUIRED")
+        guard()
+        scope_key = self.store.key(nid, scope)
+        key = 'studio-manual-mask:' + hashlib.sha256(json.dumps([scope_key, body.idempotency_key], separators=(',', ':')).encode()).hexdigest()
+
+        def source_current():
+            row = self._row(nid, scope, source_id)
+            if (row["kind"], row["media_type"], row["version"], row["sha256"]) != ('image', 'image/png', body.source_version, body.source_sha256):
+                raise StaleSourceError("IMAGE_MASK_SOURCE_STALE")
+            if not 0 < row["size"] <= SOURCE_MAX_BYTES:
+                raise ValueError("IMAGE_MASK_SOURCE_LIMIT")
+            view = self._view(nid, scope, row)
+            if view["provenance"]["integrity"] != "VERIFIED" or view["provenance"]["stale"]:
+                raise StaleSourceError("IMAGE_MASK_SOURCE_STALE")
+            return row
+
+        with self._asset_scope(nid, scope):
+            source = source_current()
+            data = self.assets.content(source_id, branch_id=scope.get("branch_id"))
+            observed = self.assets.manual_mask_retry(nid, key, branch_id=scope.get("branch_id"))
+            observed_id = observed["id"] if observed else None
+            incarnation = self.store.incarnation(nid)
+            guard(); source_current()
+        callbacks = 0
+        def sampled_guard():
+            nonlocal callbacks
+            callbacks += 1
+            if callbacks % 64 == 0: guard()
+        guard()
+        validate_source_png(data, body.width, body.height, checkpoint=sampled_guard)
+        guard()
+        png, proof = encode_mask(body.width, body.height, body.bitplane_base64, checkpoint=sampled_guard)
+        guard()
+        origin = {"contract": CONTRACT, "actor": actor, "scope_key": scope_key, "incarnation": incarnation,
+                  "source": {"id": source_id, "version": body.source_version, "sha256": body.source_sha256}, **proof}
+        with self._asset_scope(nid, scope):
+            if self.store.incarnation(nid) != incarnation:
+                raise StaleSourceError("IMAGE_MASK_SOURCE_STALE")
+            source = source_current()
+            prior = self.assets.manual_mask_retry(nid, key, branch_id=scope.get("branch_id"))
+            if observed_id is not None and (prior is None or prior["id"] != observed_id):
+                raise ValueError("IMAGE_MASK_RETRY_CHANGED")
+            if prior is not None and prior.get("_manual_mask_origin") != origin:
+                raise AssetIdempotencyConflict("IMAGE_MASK_IDEMPOTENCY_CONFLICT")
+            usage = self.assets.project_usage(nid, branch_id=scope.get("branch_id"))
+            if prior is None:
+                if usage["count"] >= self.MAX_ASSETS or usage["bytes"] + len(png) > self.MAX_PROJECT_BYTES:
+                    raise ValueError("CREATIVE_PROJECT_ASSET_QUOTA")
+                self.storage_admission.require(len(png))
+            def before_commit():
+                guard(); source_current()
+                if prior is None: self.storage_admission.require(1)
+            features = tuple(sorted({FLAG, "asset_lineage_v2", *source.get("_required_features", [])}))
+            try:
+                row = self.assets.create(nid, "manual-mask.png", base64.b64encode(png).decode('ascii'), 'image/png', 'image', key,
+                    branch_id=scope.get("branch_id"), required_features=features, guard=before_commit,
+                    _initial_manual_mask=origin, _manual_expected_retry_id=prior["id"] if prior else None)
+            except OSError as exc:
+                if exc.errno == errno.ENOSPC:
+                    from .storage_admission import StudioStorageCapacityError
+                    raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE") from None
+                raise
+            before_commit()
+            result = {"asset": self._view(nid, scope, row), "receipt": {"contract": CONTRACT,
+                "source_asset_id": source_id, "source_version": body.source_version, "source_sha256": body.source_sha256, **proof}}
+            guard(); source_current()
+            return result
 
     def download(self, nid, scope, aid, guard=lambda: None):
         with self._asset_scope(nid, scope):

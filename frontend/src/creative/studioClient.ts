@@ -4,6 +4,7 @@ import { isPackagedDesktopHost } from '../packagedHost';
 import { createStudioGraphClient } from './studioGraphClient';
 import { createStudioWorkspaceOperationClient } from './studioWorkspaceOperationClient';
 import { checkedStudioPreferences } from './studioWorkspacePreferences';
+import { checkedMaskInput, checkedMaskResult, maskSha256, type StudioMaskInput } from './studioManualMaskContract';
 
 export type CreativeIntent = 'NOVEL_WRITING' | 'NOVEL_ADAPTATION' | 'AI_SHORT_FILM' | 'COMMERCIAL_CG'
   | 'ADVERTISEMENT' | 'MUSIC_VIDEO' | 'GAME_PREVIS' | 'IMAGE_DESIGN' | 'PODCAST_VOICE' | 'BLANK' | 'CUSTOM';
@@ -328,7 +329,17 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     importAsset: (body: StudioImportInput) => transport.json<StudioAsset>(`${base}/assets`, 'POST', body, undefined, body.idempotency_key).then(checkedAsset),
     asset: (id: string, signal?: AbortSignal) => transport.json<StudioAsset>(assetUrl(id), 'GET', undefined, signal).then(checkedAsset),
     lineage: (id: string, body: StudioLineageInput) => transport.json<StudioAsset>(`${assetUrl(id)}/lineage`, 'PUT', { ...body, expected_version: version(body.expected_version, 1) }).then(checkedAsset),
-    download: (id: string) => transport.blob(`${assetUrl(id)}/download`),
+    download: (id: string, signal?: AbortSignal) => transport.blob(`${assetUrl(id)}/download`, 'GET', undefined, signal),
+    createMask: async (sourceId: string, input: StudioMaskInput, signal?: AbortSignal) => {
+      if (signal?.aborted) throw new DOMException('请求已取消。', 'AbortError');
+      const id = relationText(sourceId, 240, true);
+      const { body, bytes, keep } = checkedMaskInput(input);
+      const sha = await maskSha256(bytes);
+      if (signal?.aborted) throw new DOMException('请求已取消。', 'AbortError');
+      const value = await transport.json<unknown>(`${assetUrl(id)}/mask`, 'POST', body, signal, body.idempotency_key);
+      if (signal?.aborted) throw new DOMException('请求已取消。', 'AbortError');
+      return checkedMaskResult(value, id, body, sha, keep, projectId, branch);
+    },
     remove: (id: string, expectedVersion: number) => transport.json<StudioAsset>(`${assetUrl(id)}?expected_version=${version(expectedVersion, 1)}`, 'DELETE').then(checkedAsset),
     restore: (id: string, expectedVersion: number) => transport.json<StudioAsset>(`${assetUrl(id)}/restore`, 'POST', { expected_version: version(expectedVersion, 1) }).then(checkedAsset),
     storage: (signal?: AbortSignal) => transport.json<StudioStorage>(`${base}/storage`, 'GET', undefined, signal).then(checkedStorage),

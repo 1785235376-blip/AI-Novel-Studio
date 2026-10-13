@@ -20,6 +20,7 @@ import { StudioWorkspacePreferencesForm } from './StudioWorkspacePreferencesForm
 import { studioProductionClient, type ProductionJob } from './studioProductionClient';
 import { StudioMediaExecutionPanel } from './StudioMediaExecutionPanel';
 import { StudioTimelineEditor } from './StudioTimelineEditor';
+import { StudioManualMaskPanel } from './StudioManualMaskPanel';
 import './independentStudio.css';
 
 export const isManualStudioModule = (module: StudioModule): module is LocalStudioModule => ['IMAGE', 'ASSETS', 'VIDEO', 'AUDIO'].includes(module);
@@ -66,6 +67,9 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [mediaDirty, setMediaDirty] = useState(false), [timelineDirty, setTimelineDirty] = useState(false), [productionRevision, setProductionRevision] = useState(0);
   const [productionJob, setProductionJob] = useState<{ client: typeof productionClient; job: ProductionJob }>();
   const mediaDirtyRef = useRef(false), timelineDirtyRef = useRef(false), assetReadEpoch = useRef(0);
+  const [maskDirty, setMaskDirty] = useState(false);
+  const maskDirtyRef = useRef(false);
+  const maskDraftChanged = useCallback((value: boolean) => { maskDirtyRef.current = value; setMaskDirty(value); }, []);
   const mediaDraftChanged = useCallback((value: boolean) => { mediaDirtyRef.current = value; setMediaDirty(value); }, []);
   const timelineDraftChanged = useCallback((value: boolean) => { timelineDirtyRef.current = value; setTimelineDirty(value); }, []);
   const verifiedCallback = useRef(onVerified); verifiedCallback.current = onVerified;
@@ -89,9 +93,9 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     finally { busyRef.current = false; if (alive.current) setBusy(false); }
   }, [current, guarded]);
   const adoptPreferences = useCallback((value: StudioPreferences) => { setOverview(previous => previous && { ...previous, preferences: value }); }, []);
-  const graphDraftBlocked = useCallback(() => graphDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current, []);
+  const graphDraftBlocked = useCallback(() => graphDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current, []);
   const operationPending = useCallback(() => busyRef.current, []);
-  const preferenceController = useStudioWorkspacePreferences({ initial: overview?.preferences, denied, canMutate: writable, busy, externalDirty: lineageDirty || relationshipDirty || mediaDirty || timelineDirty,
+  const preferenceController = useStudioWorkspacePreferences({ initial: overview?.preferences, denied, canMutate: writable, busy, externalDirty: lineageDirty || relationshipDirty || mediaDirty || timelineDirty || maskDirty,
     client, isCurrent: current, read: guarded, mutate: graphMutation, onAdopt: adoptPreferences, isExternallyDirty: graphDraftBlocked });
   const preferenceDirty = preferenceController.dirty || preferenceController.blocked;
   const rememberGraphLocation = useCallback((selection: { graphId?: string; runId?: string }) => {
@@ -100,7 +104,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const graph = useStudioGraphEditor({ active: graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
     requestedGraphId: graphLocation.graphId, requestedRunId: graphLocation.runId, onSelectionChange: rememberGraphLocation, isBusy: operationPending });
   graphDirtyRef.current = graph.dirty;
-  const dirty = preferenceDirty || lineageDirty || relationshipDirty || graph.dirty || mediaDirty || timelineDirty;
+  const dirty = preferenceDirty || lineageDirty || relationshipDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty;
   const dirtyRef = useRef(dirty); dirtyRef.current = dirty;
   const lineageDirtyRef = useRef(lineageDirty); lineageDirtyRef.current = lineageDirty;
   const relationshipDirtyRef = useRef(relationshipDirty); relationshipDirtyRef.current = relationshipDirty;
@@ -197,7 +201,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const navigate = (action: () => void) => {
     if (!current()) return;
     if (busyRef.current) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
-    if (dirty || mediaDirtyRef.current || timelineDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
+    if (dirty || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
     action();
   };
   const confirmNavigation = () => {
@@ -205,10 +209,10 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     if (busyRef.current || preferenceController.pending) { setNotice('当前操作尚未结束，未放弃输入或离开。请先核对结果。'); return; }
     const action = pendingNavigation; setPendingNavigation(undefined); setDiscard(false);
     setLineageDirty(false); setRelationshipDirty(false); setFormRevision(value => value + 1); preferenceController.discard(); graph.discard();
-    mediaDraftChanged(false); timelineDraftChanged(false); setProductionRevision(value => value + 1); setProductionJob(undefined); action();
+    mediaDraftChanged(false); timelineDraftChanged(false); maskDraftChanged(false); setProductionRevision(value => value + 1); setProductionJob(undefined); action();
   };
   const sidebar = <div className="independent-studio-sidebar"><h2>独立创作</h2><p>图片、视频和声音共享项目资产。连接其它模块由你决定。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button>
-    <StudioWorkspacePreferencesForm controller={preferenceController} locked={graph.dirty || mediaDirty || timelineDirty} />
+    <StudioWorkspacePreferencesForm controller={preferenceController} locked={graph.dirty || mediaDirty || timelineDirty || maskDirty} />
     <details onToggle={event => { if (event.currentTarget.open && !storage && overview) void loadStorage(); }}><summary>项目存储</summary>{storageLoading && <StatusMessage>正在核对项目存储…</StatusMessage>}{storage ? <><p>有效资产 {storage.assets.count} 项 · {storage.assets.bytes} 字节</p><p>回收站 {storage.trash.count} 项 · {storage.trash.bytes} 字节</p>
       {storage.admission?.state === 'READY' && <p>当前可导入容量估算：{storage.admission.available_import_bytes} 字节；已扣除安全预留空间和项目配额。</p>}
       {storage.admission?.state === 'LOW_SPACE_OR_QUOTA' && <StatusMessage tone="warning">空间或项目配额不足，当前无法继续导入。已有资产仍可查看和导出。</StatusMessage>}
@@ -216,6 +220,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
       {!storage.admission && <p>容量校验状态尚未提供，上传仍由服务端核对。</p>}
       <p>以上为查询时估算；实际上传会再次校验。回收站仍占用空间，不会自动清理。</p><p>模型目录仅引用；缓存单独管理；导出位置由下载时选择。</p><p>本入口不清理或移动任何外部模型文件。</p></> : <p>展开后读取服务端统计。</p>}<Button disabled={!overview || storageLoading} onClick={() => void loadStorage()}>刷新存储统计</Button></details>
   </div>;
+  const maskEpoch = selectionEpoch.current;
   const main = <div className="independent-studio">
     {overview && !denied && <div className="studio-graph-actions" aria-label="独立工作区内容"><Button aria-pressed={workspaceView === 'ASSETS'} onClick={() => navigate(() => setWorkspaceView('ASSETS'))}>素材工作区</Button><Button aria-pressed={graphView} onClick={() => navigate(() => setWorkspaceView('GRAPH'))}>创作图</Button><Button aria-pressed={productionView} onClick={() => navigate(() => setWorkspaceView('PRODUCTION'))}>制作操作</Button></div>}
     {workspaceView === 'ASSETS' && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
@@ -239,13 +244,22 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
         onJob={job => { if (current()) setProductionJob({ client: productionClient, job }); }} />
     </>}
     {workspaceView === 'ASSETS' && overview && !denied && <AssetLibraryPanel novelId={projectId} adapter={adapter} selectedAssetId={selected?.id} onSelectAsset={asset => navigate(() => { selectionEpoch.current += 1; setSelected(asset); setLineageDirty(false); setRelationshipDirty(false); })} />}
+    {module === 'IMAGE' && workspaceView === 'ASSETS' && overview && !denied && selected && <StudioManualMaskPanel
+      key={`mask:${cacheKey}:${maskEpoch}:${selected.id}:${selected.version}:${selected.sha256}:${formRevision}`} asset={selected} client={client}
+      canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}
+      isCurrent={current} isSourceCurrent={() => selectionEpoch.current === maskEpoch} watchHost={watchHost} read={guarded} mutate={graphMutation}
+      onDirtyChange={maskDraftChanged} onUnavailable={deny} onSaved={result => {
+        if (!current() || selectionEpoch.current !== maskEpoch) return;
+        setRows(previous => [...previous.filter(row => row.id !== result.asset.id), result.asset]); invalidateStorage();
+        void query.invalidateQueries({ queryKey: [cacheKey, projectId, 'assets'] });
+      }} onOpenAsset={id => navigate(() => { void refreshSelectedAsset(id); })} onRefreshAssets={() => { void loadProductionAssets(); }} />}
   </div>;
   const extra = selected && <>{selected.provenance && <section className="independent-studio-lineage" aria-label="独立资产来源"><p>版本 v{selected.version} · {selected.provenance.origin} · {selected.provenance.integrity}</p><p>许可：{selected.provenance.license.label}（作者声明，未作法律验证）</p>{selected.provenance.stale && <StatusMessage tone="warning">来源已变化或不可用，请核对后再复用。</StatusMessage>}
-    <StudioAssetDeclarationForm key={`${selected.id}:${selected.version}:${formRevision}`} row={lineageAsset(selected)} assets={rows.map(lineageAsset)} readOnly={!writable || busy || relationshipDirty} onDirtyChange={setLineageDirty} saved={() => {}} saveLineage={async body => { if (busyRef.current || !writable || relationshipDirtyRef.current) throw new Error('请先保存或放弃关联输入，再保存来源声明。'); busyRef.current = true; setBusy(true); try { const value = await guarded(() => client.lineage(selected.id, body)); refreshedAsset(value); setNotice('来源声明已保存。'); return value; } finally { busyRef.current = false; if (alive.current) setBusy(false); } }} />
+    <StudioAssetDeclarationForm key={`${selected.id}:${selected.version}:${formRevision}`} row={lineageAsset(selected)} assets={rows.map(lineageAsset)} readOnly={!writable || busy || relationshipDirty || maskDirty} onDirtyChange={setLineageDirty} saved={() => {}} saveLineage={async body => { if (busyRef.current || !writable || relationshipDirtyRef.current || maskDirtyRef.current) throw new Error('请先保存或放弃关联输入，再保存来源声明。'); busyRef.current = true; setBusy(true); try { const value = await guarded(() => client.lineage(selected.id, body)); refreshedAsset(value); setNotice('来源声明已保存。'); return value; } finally { busyRef.current = false; if (alive.current) setBusy(false); } }} />
     <Button disabled={busy} onClick={() => navigate(() => { void refreshSelectedAsset(selected.id); })}>重新读取当前资产</Button>
   </section>}
-    <AssetRelationshipsPanel key={`${selected.id}:${selected.version}:${formRevision}`} asset={selected} client={client} canMutate={writable} canReview={overview?.capabilities.can_review === true && !denied} blocked={lineageDirty} busy={busy} isCurrent={current} read={guarded} onDirtyChange={setRelationshipDirty} mutate={async operation => {
-      if (busyRef.current || lineageDirtyRef.current || !current()) throw new Error('请先保存或放弃来源输入，再修改关联。');
+    <AssetRelationshipsPanel key={`${selected.id}:${selected.version}:${formRevision}`} asset={selected} client={client} canMutate={writable} canReview={overview?.capabilities.can_review === true && !denied} blocked={lineageDirty || maskDirty} busy={busy} isCurrent={current} read={guarded} onDirtyChange={setRelationshipDirty} mutate={async operation => {
+      if (busyRef.current || lineageDirtyRef.current || maskDirtyRef.current || !current()) throw new Error('请先保存或放弃来源输入，再修改关联。');
       busyRef.current = true; setBusy(true);
       try { const asset = await guarded(operation); refreshedAsset(asset); setNotice('关联已保存，原文件和引用内容未改变。'); return asset; }
       finally { busyRef.current = false; if (alive.current) setBusy(false); }

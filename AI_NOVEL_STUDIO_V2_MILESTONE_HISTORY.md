@@ -677,3 +677,32 @@ Frozen V1
 manifest/assets, PoemSeed Local Interop 1.0, source-bound PG/CI failures and
 cancellations, F00 INTEGRATED + 39 PARTIAL and independent-review BLOCKED are
 unchanged. Earlier milestone text and original evidence are preserved verbatim.
+
+## 2026-10-13 — Reconstruct from verified remote after workspace loss
+
+The user authorized rebuilding unavailable local work instead of waiting for
+platform recovery. The start remains remote `4534bed9129bcf2a549b44a91f062c79a77e173b`;
+local `1134f8de...` and its old raw evidence are not claimed recovered. An exact
+historical matrix document is requirements evidence only.
+
+The first new published repair is `de23bb50b96f07dac3e96dc0f9a1df9940e494b3`:
+five existing timeline/Graph implementations regain type correctness, with 35
+additive regressions and sanitized evidence. Type/build/token checks and 102
+focused tests pass; 23 broader frontend failures are identical before and after.
+Hosted checks terminated without runner steps and do not establish acceptance.
+
+The next reconstruction adds explicit manual binary-mask editing and saving to
+the original independent IMAGE workspace and Asset owner. Source/version/digest,
+Host authority, revoked/stale callbacks, exact retry and immutable manual parent
+provenance are enforced. No cutout job or model is invoked. Fresh new-backend
+checks pass 119 File/pixel + 86 real PG; unchanged owner regressions pass 340 File
++ 208 PG. The integrated frontend union passes 260 tests and typechecking.
+Actual mounted response decoding is tested with a fetch stub, not a browser.
+Original twenty migrations run on proven-empty disposable PostgreSQL databases;
+server shutdown completes and databases/evidence are retained privately.
+
+Current browser verification is blocked before page execution by unavailable
+valid downloaded Chromium and a socket-denied system Chromium launch. Windows,
+GPU, real models and final product acceptance remain NOT_RUN / LOCAL_REQUIRED.
+Small source-only bounds repairs may continue in isolated worktrees; their tests
+and publication will be recorded separately. QingJian remains paused.

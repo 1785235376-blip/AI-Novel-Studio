@@ -3,12 +3,13 @@ from urllib.parse import quote
 import re
 from typing import Literal
 
-from fastapi import APIRouter, Header, HTTPException, Query, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
+from fastapi.exceptions import RequestValidationError
 
 from ..experimental.production_lineage_api import PrivateProductionRoute, api_call
 from .workspace import FLAG
 from .storage_admission import StudioStorageCapacityError
-from .workspace_models import (AssetRelationshipIn, AssetVersion, BlankProjectIn, ManualAssetImport,
+from .workspace_models import (AssetRelationshipIn, AssetVersion, BlankProjectIn, ManualAssetImport, ManualBinaryMask,
                                StudioLineageInput, WorkspacePreferencesUpdate)
 
 
@@ -17,7 +18,7 @@ def is_independent_studio_route(method, normalized_path):
     root = r"/api/projects/[^/]+/studio"
     patterns = {
         "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|assets(?:/[^/]+(?:/download)?)?))?",
-        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|assets(?:/[^/]+/(?:restore|relationships))?))",
+        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|assets(?:/[^/]+/(?:restore|relationships|mask))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
@@ -40,6 +41,33 @@ def is_independent_studio_route(method, normalized_path):
         "PUT": root + r"/graphs/[^/]+",
     }
     return method in graph_patterns and re.fullmatch(graph_patterns[method], normalized_path) is not None
+
+
+class ManualMaskRoute(PrivateProductionRoute):
+    """Bound the one new bitmap body and never echo private validation input."""
+    MAX_BODY = 192 * 1024
+
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+        async def checked(request):
+            headers = {"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"}
+            try:
+                parts = []; total = 0
+                async for part in request.stream():
+                    total += len(part)
+                    if total > self.MAX_BODY:
+                        raise HTTPException(413, {"code": "IMAGE_MASK_REQUEST_LIMIT"}, headers=headers)
+                    parts.append(part)
+                # Preserve exactly the bounded stream for FastAPI's ordinary
+                # JSON/DTO decoder. Content-Length is never the admission proof.
+                request._body = b''.join(parts)
+                return await handler(request)
+            except RequestValidationError:
+                raise HTTPException(422, {"code": "IMAGE_MASK_REQUEST_INVALID"}, headers=headers) from None
+            except HTTPException as exc:
+                exc.headers = {**(exc.headers or {}), **headers}
+                raise
+        return checked
 
 
 def create_independent_workspace_router(service, authorize, require_flag, *, create_project, workspace_writer,
@@ -73,6 +101,27 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             guard()
             return result
         return api_call(operation)
+
+    from .production_execution_api import create_production_invoker
+    mask_call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
+    mask_router = APIRouter(route_class=ManualMaskRoute)
+
+    @mask_router.post("/projects/{nid}/studio/assets/{aid}/mask", status_code=201)
+    def author_mask(nid: str, aid: str, request: Request, body: ManualBinaryMask,
+                    x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        def operation(actor, scope, current):
+            def guard():
+                current(); require_flag("asset_lineage_v2")
+            guard()
+            from ..services.asset_library_service import AssetIdempotencyConflict
+            try:
+                return service.author_mask(nid, scope, actor, aid, body, guard)
+            except AssetIdempotencyConflict:
+                guard()
+                raise HTTPException(409, {"code": "IMAGE_MASK_IDEMPOTENCY_CONFLICT"}) from None
+        return mask_call(request, nid, x_session_token, x_branch_id, "domain.write", operation, model=False)
+
+    router.include_router(mask_router)
 
     @router.post("/experimental/projects", status_code=201)
     def blank_project(body: BlankProjectIn, x_session_token: str | None = Header(None)):

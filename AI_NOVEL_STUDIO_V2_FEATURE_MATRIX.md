@@ -1053,3 +1053,25 @@ e6ff/899 FAILED_OBSERVED remains. See the exact
 `docs/delivery/v2-development/ci-3a-private-archive/handoff-summary.json`.
 The EPUB/starter final source has separate selected verification and pending hosted
 CI; this baseline result is not its full-source acceptance.
+
+## 2026-10-13 — Fresh reconstruction checkpoint (not historical recovery)
+
+The current reconstruction starts from published `4534bed9129bcf2a549b44a91f062c79a77e173b`.
+Unavailable local `1134f8de...` source and test archives are not claimed restored.
+Earlier matrix rows remain historical evidence; new observations below do not
+retroactively upgrade their acceptance.
+
+| Capability | Current source status | Verification / boundary |
+|---|---|---|
+| Baseline timeline/Graph type safety | IMPLEMENTED | Published `de23bb50b96f07dac3e96dc0f9a1df9940e494b3`; type/build/token pass; 102 focused tests pass. The same 23 broader frontend failures remain before/after. |
+| Explicit manual binary-mask authoring | IMPLEMENTED, bounded | Original IMAGE surface, paint/erase/rectangle/undo and explicit Asset save. 64–1024 dimensions in multiples of eight; only closed 8-bit noninterlaced PNG admission. |
+| Exact mask provenance and save authority | CONTRACT_VERIFIED | Original Asset owner, source CAS/hash, immutable MANUAL_EDIT parent, scoped idempotency, Host/session/revoke guards; new 119 File/pixel and 86 real PostgreSQL tests pass. |
+| Mask integration | PARTIAL | Combined frontend 260 tests and TypeScript pass; actual mounted response passes the strict client decoder using a fetch stub. Browser/native image decoding is not verified. |
+| CPU cutout using the authored mask | MISSING from this reconstructed slice | No cutout job, segmentation/model call or automatic execution is provided by the mask save. |
+| Remaining lost post-baseline increments | PARTIAL / reconstruction pending | Recover requirements from historical matrix and inspect actual owners; do not count historical source/test claims as current implementation. |
+| Hosted CI | BLOCKED / not accepted | Type-repair CI terminated without executed steps, runner ID zero. Exact infrastructure cause unestablished. |
+| Windows/GPU/real-model/full-product acceptance | NOT_RUN / LOCAL_REQUIRED | No user-machine access, paid model call, merge or release. |
+
+See `docs/v2/reconstruction-20261013.md` and the separate backend/frontend mask
+reports. Original V1 evidence, F00 INTEGRATED + 39 PARTIAL, historical independent
+review BLOCKED and frozen Local Interop contracts retain their prior boundaries.
