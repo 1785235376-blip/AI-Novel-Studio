@@ -9,6 +9,7 @@ import { checkedTimeline, checkedTimelineRow, type StudioTimeline, type StudioTi
 import { checkedTimelineTransferInput, checkedTimelineTransferPreview, timelineTransferInputDigest, type TimelineTransferInput, type TimelineTransferPreview } from './studioTimelineTransferTypes';
 import { checkedTimelineExportPreview, checkedTimelineExportProfile, type TimelineExportProfile } from './studioTimelineExportTypes';
 import { checkedTimelinePlayback, type TimelinePlayback } from './studioTimelinePlaybackTypes';
+import { checkedTimelineSourceRequest, checkedTimelineSourceEffect, type TimelineSourceEditRequest } from './studioTimelineSourceEditContract';
 
 export type ProductionOwner = 'image' | 'audio' | 'video' | 'timeline';
 export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.reference' | 'm5.image.inpaint' | 'm5.image.upscale' | 'm5.image.cutout' | 'm7.video.t2v' | 'm7.video.i2v' | 'm7.video.v2v' | 'm8.audio.speech' | 'm8.audio.music' | 'm8.audio.effects' | 'm8.audio.trim';
@@ -29,11 +30,13 @@ export type ProductionRecipe = { contract: 'studio-execution-recipe/1'; operatio
 // Shared receipt projection retains the existing timeline consumer type name.
 // The decoder validates the two owners independently; WAV fields are trim-only.
 export type TimelineMediaMeasurement = { duration_ms?: number; byte_count?: number; width?: number; height?: number; fps?: number;
-  video_codec?: string; audio_codec?: string; sample_rate?: number; channels?: number; container?: 'mp4' | 'webm' | 'wav';
-  profile_validation?: 'NATIVE_FFPROBE_EXACT' | 'PCM_DECODED'; render_profile?: string; export_profile?: TimelineExportProfile;
-  sample_width?: 2; output_sha256?: string };
+  video_codec?: string; audio_codec?: string; sample_rate?: number; channels?: number; container?: 'mp4' | 'webm' | 'wav' | 'flac';
+  profile_validation?: 'NATIVE_FFPROBE_EXACT' | 'PCM_DECODED' | 'FLAC_STREAMINFO_PCM_VERIFIED'; render_profile?: string; export_profile?: TimelineExportProfile;
+  sample_width?: 2; output_sha256?: string; total_samples?: number; decoded_pcm_bytes?: number; streaminfo_md5?: string; decoded_pcm_sha256?: string };
 export type AudioWavMeasurement = { duration_ms: number; byte_count: number; sample_rate: number; channels: 1 | 2; sample_width: 2;
   container: 'wav'; audio_codec: 'pcm_s16le'; profile_validation: 'PCM_DECODED'; output_sha256: string };
+export type AudioFlacMeasurement = Omit<AudioWavMeasurement, 'container' | 'audio_codec' | 'profile_validation'> & { container: 'flac'; audio_codec: 'flac'; profile_validation: 'FLAC_STREAMINFO_PCM_VERIFIED';
+  total_samples: number; decoded_pcm_bytes: number; streaminfo_md5: string; decoded_pcm_sha256: string };
 export type ProductionJob = { contract: 'studio-production-job/1'; owner: ProductionOwner; id: string; novel_id: string; branch_id: string | null; version: number;
   operation_id: string; request_id: string; status: 'QUEUED' | 'RUNNING' | 'SEND_RESERVED' | 'REMOTE_RUNNING' | 'RESULT_READY' | 'AWAITING_REVIEW' | 'SUCCEEDED' | 'REVIEWING' | 'APPROVED' | 'UNKNOWN' | 'FAILED' | 'CANCELLED';
   request_digest: string; receipt_digest: string | null; output_candidate: { id: string; version: number; digest: string; kind: 'image' | 'video' | 'audio' } | null;
@@ -50,8 +53,8 @@ export type ProductionAction = { expected_version: number; expected_request_dige
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
 const states = ['QUEUED', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED', 'UNKNOWN', 'FAILED', 'CANCELLED'];
-const parameterKeys = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels'];
-const trimControlKeys = ['gain_db', 'sample_rate', 'channels'];
+const parameterKeys = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format'];
+const trimControlKeys = ['gain_db', 'sample_rate', 'channels', 'output_format'];
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
 const identifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(v);
@@ -80,13 +83,15 @@ function sameCutoutCommand(expected: RecordedMediaCommand, value: RecordedMediaC
       ['id', 'kind', 'version', 'digest', 'asset_kind'].every(key => (source as Record<string, unknown>)[key]
         === (expected.source_snapshots[index] as Record<string, unknown>)[key]));
 }
-function trimParameters(v: unknown, projected = false): Record<string, number> {
+type TrimParameters = Record<string, string | number> & { in_ms: number; out_ms: number; sample_rate?: number; channels?: number; output_format?: 'FLAC' };
+function trimParameters(v: unknown, projected = false): TrimParameters {
   if (!record(v)) invalid();
-  const result: Record<string, number> = {};
+  const result = {} as TrimParameters;
   for (const [key, value] of Object.entries(v)) {
     // Original preview projections include known null defaults. Never treat
     // those placeholders as requested controls or synthesize default values.
     if (projected && value === null && parameterKeys.includes(key)) continue;
+    if (key === 'output_format') { if (value !== 'FLAC') invalid(); result.output_format = value; continue; }
     if (!['in_ms', 'out_ms', ...trimControlKeys].includes(key) || typeof value !== 'number' || !Number.isFinite(value)) invalid();
     if (key === 'gain_db' ? value < -60 || value > 12 : !Number.isSafeInteger(value)) invalid();
     if (key === 'sample_rate' && (value < 8000 || value > 96000) || key === 'channels' && value !== 1 && value !== 2) invalid();
@@ -96,7 +101,7 @@ function trimParameters(v: unknown, projected = false): Record<string, number> {
     || result.in_ms < 0 || result.out_ms > 600000 || result.out_ms <= result.in_ms || result.out_ms - result.in_ms > 120000) invalid();
   return result;
 }
-function sameTrimParameters(a: Record<string, number>, b: Record<string, number>) {
+function sameTrimParameters(a: Record<string, string | number>, b: Record<string, string | number>) {
   return Object.keys(a).length === Object.keys(b).length && Object.entries(a).every(([key, value]) => b[key] === value);
 }
 function trimCommand(v: unknown, projected = false): asserts v is MediaCommand {
@@ -113,7 +118,7 @@ function trimRecipe(v: ProductionRecipe, command: unknown) {
   trimCommand(command, true);
   const parameters = trimParameters(command.parameters, true), keys = ['contract', 'operation_id', 'adapter', 'parameters', 'automatic_fallback', 'recipe_digest', 'output_profile'];
   if (Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key)) || v.adapter !== 'LOCAL_FFMPEG'
-    || v.output_profile !== `PCM_S16LE_WAV_${parameters.sample_rate ?? 48000}_${parameters.channels === 1 ? 'MONO' : 'STEREO'}`
+    || v.output_profile !== (parameters.output_format === 'FLAC' ? `FLAC_S16_${parameters.sample_rate ?? 48000}_${parameters.channels === 1 ? 'MONO' : 'STEREO'}_COMPRESSION5` : `PCM_S16LE_WAV_${parameters.sample_rate ?? 48000}_${parameters.channels === 1 ? 'MONO' : 'STEREO'}`)
     || !sameTrimParameters(parameters, trimParameters(v.parameters))) invalid();
   return parameters;
 }
@@ -132,18 +137,22 @@ function commandScope(command: MediaCommand) {
   if (command.operation_id === 'm8.audio.trim') trimCommand(command);
   else if (Object.keys(command.parameters).some(key => trimControlKeys.includes(key))) invalid();
 }
-function audioMeasurement(v: unknown, executionRecipe: ProductionRecipe, command: unknown, candidate: unknown): AudioWavMeasurement {
-  const keys = ['duration_ms', 'byte_count', 'sample_rate', 'channels', 'sample_width', 'container', 'audio_codec', 'profile_validation', 'output_sha256'];
+function audioMeasurement(v: unknown, executionRecipe: ProductionRecipe, command: unknown, candidate: unknown): AudioWavMeasurement | AudioFlacMeasurement {
+  const parameters = trimRecipe(executionRecipe, command), flac = parameters.output_format === 'FLAC';
+  const keys = ['duration_ms', 'byte_count', 'sample_rate', 'channels', 'sample_width', 'container', 'audio_codec', 'profile_validation', 'output_sha256', ...(flac ? ['total_samples', 'decoded_pcm_bytes', 'streaminfo_md5', 'decoded_pcm_sha256'] : [])];
   if (!record(v) || Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key))
-    || v.profile_validation !== 'PCM_DECODED' || v.container !== 'wav' || v.audio_codec !== 'pcm_s16le' || v.sample_width !== 2
+    || v.profile_validation !== (flac ? 'FLAC_STREAMINFO_PCM_VERIFIED' : 'PCM_DECODED') || v.container !== (flac ? 'flac' : 'wav') || v.audio_codec !== (flac ? 'flac' : 'pcm_s16le') || v.sample_width !== 2
     || !hex(v.output_sha256)) invalid();
-  const parameters = trimRecipe(executionRecipe, command);
   if (typeof v.duration_ms !== 'number' || !Number.isSafeInteger(v.duration_ms) || v.duration_ms < 1
     || Math.abs(v.duration_ms - (parameters.out_ms - parameters.in_ms)) > 2
     || typeof v.byte_count !== 'number' || !Number.isSafeInteger(v.byte_count) || v.byte_count < 1 || v.byte_count > 25 * 1024 * 1024
     || v.sample_rate !== (parameters.sample_rate ?? 48000) || v.channels !== (parameters.channels ?? 2)
     || candidate !== null && (!record(candidate) || candidate.kind !== 'audio' || candidate.digest !== v.output_sha256)) invalid();
-  return v as AudioWavMeasurement;
+  if (flac && (typeof v.total_samples !== 'number' || !Number.isSafeInteger(v.total_samples) || v.total_samples < 1 || typeof v.decoded_pcm_bytes !== 'number' || !Number.isSafeInteger(v.decoded_pcm_bytes)
+    || v.decoded_pcm_bytes !== v.total_samples * Number(v.channels) * 2 || v.decoded_pcm_bytes > 25 * 1024 * 1024 || Math.round(v.total_samples * 1000 / Number(v.sample_rate)) !== v.duration_ms
+    || Math.abs(v.total_samples * 1000 - (parameters.out_ms - parameters.in_ms) * Number(v.sample_rate)) > 1000
+    || typeof v.streaminfo_md5 !== 'string' || !/^[a-f0-9]{32}$/.test(v.streaminfo_md5) || /^0+$/.test(v.streaminfo_md5) || !hex(v.decoded_pcm_sha256))) invalid();
+  return v as AudioWavMeasurement | AudioFlacMeasurement;
 }
 function recipe(v: unknown, operation: unknown): ProductionRecipe {
   if (operation === 'm5.image.cutout') {
@@ -400,6 +409,10 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const v = await transport.json<unknown>(`${base}/timelines`, 'GET', undefined, signal); if (!record(v) || !Array.isArray(v.items) || v.items.length > 25) invalid(); return { items: v.items.map(timeline) };
     },
     async timelineGet(id: string, signal?: AbortSignal) { return timeline(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(id)}`, 'GET', undefined, signal)); },
+    async timelineEdit(source: StudioTimelineRow, body: TimelineSourceEditRequest): Promise<StudioTimelineRow> {
+      const input = checkedTimelineSourceRequest(source, body), row = timeline(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/edit`, 'POST', input, undefined, input.request_id));
+      return checkedTimelineSourceEffect(row, source, input);
+    },
     async timelineSave(id: string | undefined, body: { title: string; timeline: StudioTimeline; expected_version: number }) {
       return timeline(await transport.json<unknown>(id ? `${base}/timelines/${encodeURIComponent(id)}` : `${base}/timelines`, id ? 'PUT' : 'POST', body));
     },
@@ -489,7 +502,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
   };
 }
 type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
-type TimelineExportMethods = 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation';
+type TimelineExportMethods = 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
 export type StudioProductionClient = Omit<CompleteProductionClient, TimelineExportMethods> & Partial<Pick<CompleteProductionClient, TimelineExportMethods>>;

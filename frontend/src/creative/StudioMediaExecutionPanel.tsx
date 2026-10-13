@@ -8,7 +8,7 @@ import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 export type { StudioMediaExecutionProps } from './useStudioMediaExecution';
 const labels: Record<MediaParameter, string> = { scale: '超分倍率', width: '宽度（64–2048）', height: '高度（64–2048）', steps: '采样步数（1–150）', seed: '种子（0–2147483647）',
   negative_prompt: '负向提示词', size: '图片规格', quality: '图片质量', denoising_strength: '重绘强度（大于 0 至 1，可选）', duration_seconds: '时长（1–600 秒）', frame_rate: '帧率（1–60）', voice_id: '语音标识',
-  speech_rate: '语速（0.5–2）', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）', gain_db: '增益（-60–12 dB，可选）', sample_rate: '输出采样率（8000–96000 Hz，可选）', channels: '输出声道（可选）' };
+  speech_rate: '语速（0.5–2）', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）', gain_db: '增益（-60–12 dB，可选）', sample_rate: '输出采样率（8000–96000 Hz，可选）', channels: '输出声道（可选）', output_format: '独立音频交付格式（可选）' };
 const ranges: Partial<Record<MediaParameter, [number, number, number]>> = { width: [64, 2048, 8], height: [64, 2048, 8], steps: [1, 150, 1], seed: [0, 2147483647, 1],
   denoising_strength: [0.01, 1, 0.01], duration_seconds: [1, 600, 1], frame_rate: [1, 60, 1], speech_rate: [0.5, 2, 0.1], in_ms: [0, 600000, 1], out_ms: [1, 600000, 1], gain_db: [-60, 12, 0.1], sample_rate: [8000, 96000, 1] };
 const kindLabels = { image: '图片', video: '视频', audio: '音频' };
@@ -24,6 +24,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const selectedIds = draft.sources.map(source => source.id), trim = draft.operation === 'm8.audio.trim';
   function parameter(name: MediaParameter) {
     const value = draft.parameters[name];
+    if (name === 'output_format') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">默认 WAV，保持原请求</option><option value="FLAC">FLAC · 处理后 S16 无损压缩</option></select></label>;
     if (name === 'negative_prompt') return <label key={name}>{labels[name]}<textarea maxLength={8000} disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)} /></label>;
     if (name === 'scale') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">明确选择倍率</option><option value="2">2 倍</option><option value="4">4 倍</option></select></label>;
     if (name === 'channels') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">默认双声道（2）</option><option value="1">单声道（1）</option><option value="2">双声道（2）</option></select></label>;
@@ -84,7 +85,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       {state.provider?.video_capabilities && <p>本地视频配方 {state.provider.video_capabilities.recipe_id}：已核对节点结构，真实推理尚未验证。64–1024、宽高为 32 的倍数，1–10 秒、1–30 fps；输出按模型帧步长取整后的 VP9 WebM。当前本地路线不执行参考视频。</p>}
       {upscale && <p>原图片版本进入已启用的本地超分模型，再统一到所选倍率的 PNG 尺寸。输出最大 4096×4096、25 MiB，仍需人工审核。不会下载或启动模型；模型质量与本机推理尚未验收。</p>}
       {draft.operation.startsWith('m5.image.') && <p>Depth / Pose / Edge / Mask / Layout 控制 Adapter 已保留边界，尚未提供执行能力。</p>}
-      {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{state.parameterNames.map(parameter)}
+      {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? draft.parameters.output_format === 'FLAC' ? '本地截取输出处理后的 S16 FLAC。片段最长 120 秒，起止点须在真实来源时长内；先按所选增益、采样率与声道处理，再无损压缩。' : '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{state.parameterNames.map(parameter)}
         {!!state.unsupportedParameters.length && <><StatusMessage tone="warning">所选配置不支持已填写的参数：{state.unsupportedParameters.map(name => labels[name]).join('、')}。这些输入不会自动丢弃。</StatusMessage><Button disabled={!state.canEdit} onClick={state.clearUnsupportedParameters}>明确清空不支持的参数</Button></>}
       </fieldset>}
       <label>来源与授权说明<input maxLength={2000} disabled={!state.canEdit} value={draft.licenseNote} onChange={event => state.changeField('licenseNote', event.target.value)} /></label>
@@ -128,11 +129,12 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         </details>
         {job.timeline_snapshot && <details><summary>来源时间线 {job.timeline_snapshot.id} · v{job.timeline_snapshot.version}</summary><p>原执行入口会再次核对摘要：<code>{job.timeline_snapshot.digest}</code></p></details>}
         {job.owner === 'timeline' && <StudioTimelineMeasurement measurement={job.media_measurement} />}
-        {job.operation_id === 'm8.audio.trim' && (job.media_measurement?.profile_validation === 'PCM_DECODED' ? <section aria-label="音频实际输出测量"><h4>实际输出测量</h4><Badge>原服务 PCM 解码测量回执</Badge>
+        {job.operation_id === 'm8.audio.trim' && (job.media_measurement && ['PCM_DECODED', 'FLAC_STREAMINFO_PCM_VERIFIED'].includes(job.media_measurement.profile_validation ?? '') ? <section aria-label="音频实际输出测量"><h4>实际输出测量</h4><Badge>{job.media_measurement.container === 'flac' ? '原服务 FLAC 流信息与 PCM 解码核对' : '原服务 PCM 解码测量回执'}</Badge>
           <dl><dt>媒体时长</dt><dd>{job.media_measurement.duration_ms} 毫秒</dd><dt>实际大小</dt><dd>{job.media_measurement.byte_count} 字节</dd>
-            <dt>实际声音</dt><dd>{job.media_measurement.sample_rate} Hz · {job.media_measurement.channels} 声道 · 16 位 PCM WAV</dd>
+            <dt>实际声音</dt><dd>{job.media_measurement.sample_rate} Hz · {job.media_measurement.channels} 声道 · {job.media_measurement.container === 'flac' ? '16 位 S16 FLAC' : '16 位 PCM WAV'}</dd>
             <dt>输出摘要</dt><dd><code>{job.media_measurement.output_sha256}</code></dd></dl>
-          <p>以上为服务端解码实际 WAV 的测量，不代表增益已测量。候选仍须读取实际字节、核对摘要并人工审核。</p>
+          {job.media_measurement.container === 'flac' && <details><summary>FLAC 样本与解码证明</summary><p>{job.media_measurement.total_samples} 个样本 · 解码 {job.media_measurement.decoded_pcm_bytes} 字节 S16</p><p>PCM SHA256：<code>{job.media_measurement.decoded_pcm_sha256}</code></p><p>流信息 MD5：<code>{job.media_measurement.streaminfo_md5}</code></p></details>}
+          <p>{job.media_measurement.container === 'flac' ? '以上为服务端解码实际 FLAC 的测量；S16 处理后的无损压缩不代表原作未经变更。候选仍须读取实际字节、核对摘要并人工审核。' : '以上为服务端解码实际 WAV 的测量，不代表增益已测量。候选仍须读取实际字节、核对摘要并人工审核。'}</p>
         </section> : <p>尚未读取到已核对的 WAV 输出测量；原请求参数与执行配方不代表实际输出。</p>)}
         {job.processing_proof?.contract === 'studio-image-upscale-proof/1' && <details><summary>图片超分尺寸与摘要证明</summary><p>{job.processing_proof.source_width} × {job.processing_proof.source_height} → {job.processing_proof.output_width} × {job.processing_proof.output_height} · {job.processing_proof.scale} 倍 · PNG {job.processing_proof.output_bytes} 字节</p><code>{job.processing_proof.output_sha256}</code></details>}
         {job.processing_proof?.contract === 'cpu-binary-mask-cutout/1' && <details><summary>本地 CPU 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · PNG {job.processing_proof.output_bytes} 字节</p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}

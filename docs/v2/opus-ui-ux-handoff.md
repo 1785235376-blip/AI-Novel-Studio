@@ -167,3 +167,9 @@ Opus 可重构 StoryboardProductionPanel、CreativeCanvas、视频Graph Inspecto
 ## Phase5（2026-10-14）
 
 Opus可重构StoryPanel/视频任务与候选/Shot卡片/Timeline状态/模型观察视图，保留原useStoryboardProductionController、useStudioMediaExecution、Graph controller、Host/client/current/retired epoch、parentmutex/dirty/CAS及人工Review。新Video准备不派发；绑定原APPROVED任务/正式Asset并明确重新审核。创建request_id与完整input只读GET核对，creationv1与当前Timelinev2可并存；采用UNKNOWN要匹配完整request/job/Shot/clip effect/原last_edit，不能靠表面相同或列表解除。旧schema5不自动补bind_shot，新节点可明确关闭该可选绑定独立TEXT生产；schemas1–4不自动升级。模型观察只显示文件名和未知尺寸/显存，不新增控制权限。基础UI已接执行操作，专业视觉/原生体验仍LOCAL_REQUIRED。
+
+## Phase6 Audio / Timeline 操作边界
+
+Opus 可替换 StudioMediaExecutionPanel 的格式选择、StudioTimelineSourceEditPanel 的素材操作以及 Canvas/Inspector/Preview。useStudioMediaExecution、useStudioTimelineEditor、useStudioTimelineSourceEdit、studioAudio/Timeline contract 和原 Studio client 属于操作边界：保留默认 WAV 参数省略、FLAC actual-proof、正式 Asset ID/version/digest、原 Timeline CAS/锁轨/dirty、全局 mutation mutex、Host/client/epoch、完整 edit receipt/fullbody SHA/actual effect、UNKNOWN只读恢复和零自动重放。
+
+新增 SOURCE_EDIT 仅是原轨道/片段来源操作 seam；非零abs<1e-4在发送前拒绝，不舍入或改写请求，原一般草稿小数控制保持。不要以 UI 重构重新发送已知无法核对的数值。旧 embedded client 缺少 timelineEdit 时保留原路径。Private Candidate 需原显式 Review 才能成为正式来源，禁止视图自行赋权或提升。专业 UX 与 native/GPU/model acceptance 仍未完成；[阶段报告](../../PHASE6_AUDIO_EDITING_REPORT.md)。

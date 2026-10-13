@@ -1249,3 +1249,15 @@ See [Phase4 report](PHASE4_STORYBOARD_VIDEO_REPORT.md) and pinned summary. Origi
 | Whole Video/Storyboard/Editing | PARTIAL | Source and selected isolated tests in [Phase5 report](PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md). No native/GPU/model/full product acceptance. |
 
 File/realPG each317pass/2oldWindows privilege failures/137profile skips; wholefrontend3250pass/8oldskip. Full hosted checks unexecuted by account/platform block. Frozen V1/Interop/F00/independent review and M4→M9 gates unchanged; Phase6 source expansion follows.
+
+### 2026-10-14 — Phase6 Audio / Editing
+
+| Capability | Source status | Actual boundary |
+| --- | --- | --- |
+| AUDIO-12 standalone FLAC trim delivery | IMPLEMENTED / bounded | Original Job/private Candidate/Review/Asset; fixed FLAC S16/level5, actual STREAMINFO+decoded PCM/sample/hash proof. Default WAV and Graph identity retained. MP3 remains open. |
+| Original Timeline formal-source operations | IMPLEMENTED / bounded | Atomic original track.insert+clip.insert, existingtrack insertion and clip source replacement; exact formal Asset, original CAS/locks/history. |
+| Original ordinary edit settlement | IMPLEMENTED / bounded | Current optional last_edit proof, fullbody SHA + exact effect, read-only UNKNOWN recovery/no replay; new source seam rejects tiny nonzero numbers before sending. |
+| Real CPU postproduction proof | IMPLEMENTED / exercised small synthetic path | Audio review→formal source→actual original render/export→private result→review→formal Asset→reopen. Not native/GPU/model quality acceptance. |
+| Whole Audio / Editing / AUDIO-12 | PARTIAL | Full codecs/editor/provider/proNLE/interop/native and quality remain under original gates. |
+
+[Report](PHASE6_AUDIO_EDITING_REPORT.md): frozen File/realPG each377pass/178profileskip; finalfrontend3289pass/8oldskip. Metadata44pass/2unchangedWindowsprivilegefailures. Hosted checks unexecuted under account/platform block; historical statuses and M4→M9 unchanged.

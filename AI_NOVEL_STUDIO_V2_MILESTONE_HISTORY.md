@@ -885,3 +885,7 @@ Baseline c67a3c3. Additive original-owner Shot versions/continuity/advice, forma
 ### 2026-10-14 — Phase5 Video / Storyboard production pipeline
 
 Baseline8e4f028: optional hint/ShotPin, original reviewed historical Video binding, original Timeline request-identified creation/read and exact clip adoption/settlement. Explicit Graph5 provenance retains legacy commands; original owners/review/permissions and ModelCenter registry remain. File/realPG each317pass/2Windows fixture privilege failures/137skip; fullfrontend3250pass/8oldskip; metadata44pass/2privilege failures with Linux4 original assertions separately passing. Hosted account/platform block prevents actual CI execution. [Report](PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md); source expansion is not M7 acceptance. Phase6 follows without a new confirmation; native/GPU/model/gates remain unchanged.
+
+### 2026-10-14 — Phase6 Audio / Editing source expansion
+
+Baselinea590bad: standalone measured FLAC/private Review/formal Asset; original Timeline atomic source operations/current edit settlement; actual small CPU audio/video render/export/review/reopen. File/realPG each377pass/178skip; frontend3289pass/8oldskip, types/build/tokens/original7shellsnapshots pass; metadata44pass/2Windowsprerequisites retained. Original generators2243API/14225collected/9151frozen retained. Hosted execution blocked; Windows/GPU/model NOT_RUN/LOCAL_REQUIRED. [Report](PHASE6_AUDIO_EDITING_REPORT.md). Whole modules PARTIAL, original gates preserved.

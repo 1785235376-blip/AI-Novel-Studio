@@ -14,8 +14,9 @@ export type StudioTimeline = { schema_version?: 2; duration_ms: number; width: n
 export type StudioTimelineDraft = { title: string; timeline: StudioTimeline };
 export type TimelineTransferReceipt = { operation: 'TRANSFER_IMPORT'; request_id: string; input_version: number; input_digest: string;
   output_digest: string; preview_digest: string; format: 'OTIO' | 'SRT' | 'VTT'; transfer_input_digest: string; acknowledge_losses: boolean };
+export type TimelineEditReceipt = { request_id: string; request_digest: string; input_version: number; input_digest: string; output_digest: string };
 export type StudioTimelineRow = StudioTimelineDraft & { id: string; version: number; timeline_digest: string; created_at: string; updated_at: string;
-  transfer_receipt?: TimelineTransferReceipt };
+  transfer_receipt?: TimelineTransferReceipt; edit_receipt?: TimelineEditReceipt };
 export const TIMELINE_LIMITS = { duration: 600000, tracks: 8, kindTracks: 4, clips: 30, captions: 500, captionCharacters: 32000 } as const;
 const identity = /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/, digest = /^[a-f0-9]{64}$/;
 
@@ -174,8 +175,16 @@ export function checkedTimelineRow(value: unknown, expectedId?: string): StudioT
         || typeof r.acknowledge_losses !== 'boolean' || integer(r.input_version, 1, Number.MAX_SAFE_INTEGER) + 1 !== version) throw new Error();
       receipt = r as unknown as TimelineTransferReceipt;
     }
+    let edit: TimelineEditReceipt | undefined;
+    if (row.edit_receipt !== undefined) {
+      const r = object(row.edit_receipt, ['request_id', 'request_digest', 'input_version', 'input_digest', 'output_digest']);
+      if (Object.keys(r).length !== 5 || typeof r.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(r.request_id)
+        || ['request_digest', 'input_digest', 'output_digest'].some(key => typeof r[key] !== 'string' || !digest.test(r[key] as string))
+        || r.output_digest !== row.timeline_digest || integer(r.input_version, 1, Number.MAX_SAFE_INTEGER) + 1 !== version || receipt) throw new Error();
+      edit = r as unknown as TimelineEditReceipt;
+    }
     return { id: rowId, version, timeline_digest: row.timeline_digest, created_at: row.created_at, updated_at: row.updated_at, ...input,
-      ...(receipt ? { transfer_receipt: receipt } : {}) };
+      ...(receipt ? { transfer_receipt: receipt } : {}), ...(edit ? { edit_receipt: edit } : {}) };
   } catch {
     throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '时间线回执字段无效，请读取服务端核对。' });
   }

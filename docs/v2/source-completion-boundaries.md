@@ -76,3 +76,7 @@ Windows/GPU/真实模型与 M4→M9 门禁不变，详见 [本批报告](../../D
 ## Phase5（2026-10-14）
 
 视频来源精确pin贯穿原任务/Asset；正式审核结果按原获批历史绑定镜头，元数据更新不伪造新的作者ShotVersion。原Timeline创建幂等/只读恢复、正式视频片段采用及完整last_edit effect证明已执行，不新建owner；实际范围超出已解码媒体会拒绝。Graph5新pin需bind_shot:true，旧无pin结果不能冒认新镜头归属。模型路径/文件大小观察仅旧授权扫描投影，不授运行资格；VRAM/模型总bytes未知。File/PG各317pass但各有2原Windows权限前提failure；frontend3250pass/8skip；metadata44pass/2failure，Linux4原断言单独pass。Hosted平台账户阻塞未执行，全产品/native/GPU/model与原M4→M9/历史失败保持原门禁。
+
+## Phase6（2026-10-14）
+
+原独立audio.trim明确FLAC有真实固定编码与STREAMINFO/实际PCM/frame/MD5/SHA证明，原WAV默认及Graph闭合身份不变；MP3和完整AUDIO-12仍未完成。原Timeline有正式素材原子加入/替换、当前普通edit_receipt及完整请求/效果UNKNOWN只读恢复。实际小CPU混音/render/export→私有→Review→正式Asset→重开已执行，不代表完整NLE/音频工具/模型质量/native验收。新SOURCE_EDIT发送前拒非零abs<1e-4，不舍入不改原后端摘要或一般草稿小数控制。File/PG各377pass/178skip；frontend3289pass/8oldskip；metadata44pass/2原Win1314失败保留。Hosted平台阻塞无执行；历史M4→M9、F00、独立review和Windows/GPU/model门禁不变。详见[报告](../../PHASE6_AUDIO_EDITING_REPORT.md)。

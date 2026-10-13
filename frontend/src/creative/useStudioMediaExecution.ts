@@ -30,7 +30,7 @@ export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
   RESULT_READY: '已有结果，等待本地核对', AWAITING_REVIEW: '等待人工审核', SUCCEEDED: '处理完成，需核对审核',
   REVIEWING: '审核提交待核对', APPROVED: '已审核入库', UNKNOWN: '分派结果不确定', FAILED: '执行失败', CANCELLED: '已丢弃本地结果',
 };
-export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels';
+export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels' | 'output_format';
 type Draft = { operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
   imageSource?: ProductionSource; imageReferences: { source: ProductionSource; weight: string; purpose?: ImageReferencePurpose; source_note?: string }[]; maskSource?: ProductionSource; videoReferencePurpose?: VideoReference['purpose'] };
 type Preview = { value: ProductionPreview; command: MediaCommand; input: string };
@@ -38,7 +38,7 @@ type Candidate = { url: string; kind: 'image' | 'video' | 'audio'; binding: stri
 type Kind = 'PREVIEW' | 'CREATE' | 'LIST' | 'GET' | 'CANDIDATE' | 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review';
 type Operation = { id: number; kind: Kind; client: StudioProductionClient; controller: AbortController; canMutate: boolean; canReview: boolean };
 type Creation = { requestId: string; requestDigest: string; operation: MediaOperation; input: string; uncertain: boolean };
-const parameterNames: MediaParameter[] = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels'];
+const parameterNames: MediaParameter[] = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format'];
 const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm5.image.t2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
   'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
@@ -49,7 +49,7 @@ const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm8.audio.speech': ['voice_id', 'speech_rate'], 'm8.audio.music': ['duration_seconds', 'seed'],
-  'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels'],
+  'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format'],
 };
 const initialDraft = (): Draft => ({ operation: 'm5.image.t2i', providerKey: '', prompt: '',
   parameters: Object.fromEntries(parameterNames.map(name => [name, ''])) as Record<MediaParameter, string>, sources: [], imageReferences: [], allowCloud: false, licenseNote: '' });
@@ -89,7 +89,8 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
   const ranges: Partial<Record<MediaParameter, [number, number]>> = { width: [64, 2048], height: [64, 2048], steps: [1, 150], seed: [0, 2147483647], duration_seconds: [1, 600], frame_rate: [1, 60], in_ms: [0, 600000], out_ms: [1, 600000], sample_rate: [8000, 96000], channels: [1, 2] };
   for (const name of parametersByOperation[draft.operation]) {
     const value = draft.parameters[name]; if (value === '') continue;
-    if (name === 'negative_prompt') { if (value.length > 8000) throw new Error('负向提示超过长度限制。'); result[name] = value; }
+    if (name === 'output_format') { if (value !== 'FLAC') throw new Error('独立音频格式请选择 FLAC，或留空保留默认 WAV。'); result[name] = value; }
+    else if (name === 'negative_prompt') { if (value.length > 8000) throw new Error('负向提示超过长度限制。'); result[name] = value; }
     else if (name === 'voice_id') { if (value.length > 240 || !value.trim() || /[\x00-\x1f\x7f]/.test(value)) throw new Error('请填写有效的语音标识。'); result[name] = value; }
     else if (name === 'size') { if (!['auto', '1024x1024', '1536x1024', '1024x1536'].includes(value)) throw new Error('图片规格不受支持。'); result[name] = value; }
     else if (name === 'quality') { if (!['auto', 'low', 'medium', 'high', 'standard', 'hd'].includes(value)) throw new Error('图片质量不受支持。'); result[name] = value; }
@@ -469,6 +470,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (job.operation_id === 'm5.image.cutout' && (blob.type !== 'image/png' || blob.size !== job.processing_proof?.output_bytes)) throw invalid('本地抠图候选与处理证明不一致，不可审核。');
       if (job.operation_id === 'm8.audio.trim' && job.media_measurement?.profile_validation === 'PCM_DECODED'
         && (blob.size !== job.media_measurement.byte_count || !['audio/wav', 'audio/x-wav', 'audio/wave'].includes(blob.type))) throw invalid('本地 WAV 候选与实际输出测量不一致，不可审核。');
+      if (job.operation_id === 'm8.audio.trim' && job.media_measurement?.profile_validation === 'FLAC_STREAMINFO_PCM_VERIFIED'
+        && (blob.size !== job.media_measurement.byte_count || !['audio/flac', 'audio/x-flac'].includes(blob.type))) throw invalid('本地 FLAC 候选与实际输出测量不一致，不可审核。');
       if (digest !== job.output_candidate.digest) throw invalid('候选字节摘要与任务回执不符，不可审核。');
       const next = { url: URL.createObjectURL(blob), kind: job.output_candidate.kind, binding }; candidateRef.current = next; setCandidate(next);
     } catch (reason) { if (live(value)) failure(reason, '候选媒体读取失败。', true); } finally { finish(value); }

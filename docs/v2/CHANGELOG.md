@@ -125,3 +125,9 @@ These are development stages on `feature/v2-narrative-platform`, not releases.
 - Project last authorized video file observations/current registration; no qualification, model start/download, credential read or guessed size/VRAM.
 - Connect headless controllers/basic views with exact captured DTOs, original mutex/Host/late/dirty/review and Opus seams.
 - [Actual report](../../PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md) retains failed evidence and distinguishes isolated tests from native/GPU/model/full CI acceptance.
+
+## 2026-10-14 — Phase6 Audio / Editing
+
+- Add explicit original standalone FLAC trim, fixed S16/level5 and bounded decoded samples/MD5/SHA/profile proof; preserve default WAV and Graph commands.
+- Expose original current ordinary Timeline edit receipt; connect explicit atomic formal-source insertion/replacement and full request/effect recovery through original controllers, no automatic replay.
+- Exercise real small CPU video/audio rendering, export, private Review, formal promotion and reopen. Fix new source-action numeric mismatch before POST; retain failure evidence and original native/model/product gates.

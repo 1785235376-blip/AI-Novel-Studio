@@ -1,0 +1,153 @@
+{
+  "contract": "studio-phase6-source-evidence/1",
+  "baseline_sha": "a590bad645a9e230cc70c2122dfb1cca624a9d65",
+  "backend_test_input_tree": "fc78b1c986f29f7d36b7931616c4f7a606879f70",
+  "frontend_test_input_tree": "f19d9cf53363d9f9dfea744e878d4b38a11b6d19",
+  "source_hashes": {
+    "app/services/studio_audio_execution.py": "489281e2ee2fbc229aff831268835269fa357034749ee4f49531a1bdc4a941ac",
+    "app/creative/production_execution_models.py": "250c74068d15d71d6e3305af8f59582bd054b43e74babe4bb496f1fde7b7e93e",
+    "app/creative/production_execution.py": "153794f0de25e6b62516074fe7b7c952cdae710465307f7511ede717e5dd6851",
+    "app/services/studio_audio_trim_profiles.py": "b81e54cb2edc1ded89b75e4c9d6a39d55ba5b401fff685e1021382e9ef0fa6f5",
+    "tests/test_v2_audio_flac.py": "cda2870e6112f593186055c4c17579c6d0e73ccb332e2ed0bb964ffb5d37b88c",
+    "tests/test_v2_audio_flac_api.py": "6f0318e347ad4d6c857c4c760e0696225d101eb0b7bf45f902a350e3da3ebc81",
+    "tests/test_v2_audio_editing_pipeline.py": "69dc46ac541d0ff4240d75d660ee998f47cf6a94f02b5ceb428327a2e8856a85",
+    "tests/test_v2_audio_editing_pipeline_api.py": "14c2091cd59902cf083f275c3ce4f7de110ce24c16f31cabe44c8ffcc5f43d24",
+    "frontend/src/creative/fixtures/phase6.capture.editing-pipeline.json": "fee98633bbe1da7d2689b4b904fec605edddf950ae4567ceea48902a703153be",
+    "frontend/src/creative/studioAudioFlacContract.phase6.test.tsx": "4ff56d7828b78fbcae16119d5f1cc6d69e9e5f4d5c9c8e32d28745d5cbc6718b",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx": "13127e5adc65aa02b23ce376e731f63248830ebc93e61bdfc0bfed78fb8fb1f8",
+    "frontend/src/creative/studioProductionClient.ts": "56c3b2c4ef9fe46afac7b6bd8f17184dc220b8db40516fb8982433586f5190c7",
+    "frontend/src/creative/StudioTimelineEditor.tsx": "d345d55951a4babe0c87e9ce94615a2dd8aad91991346d075b2b1971783de1d5",
+    "frontend/src/creative/studioTimelineSourceEditContract.ts": "e006f6580111c09ffdf551d277db0ae83ac4b458714a3557612c182933b6a686",
+    "frontend/src/creative/StudioTimelineSourceEditPanel.tsx": "10e98f3dbe9a99e46be5d2f5d305117b18ba93d41ea814de685bc0a02bd3d008",
+    "frontend/src/creative/studioTimelineTypes.ts": "7d43e70da14680d7501e62a5ee543326e499c73b17184cb7eeda8a8da422129d",
+    "frontend/src/creative/TimelineSourceEditing.phase6.test.tsx": "cd125acfb78e19bc8b946d9c7c75f2fbdd5fb23c69f1b600415af79676cfe3f9",
+    "frontend/src/creative/useStudioMediaExecution.ts": "322bd8a8d2203891d1b4caed05a98e7c34fa40bfcebc8526760a92fa5afc86ed",
+    "frontend/src/creative/useStudioTimelineEditor.ts": "5113b8c2d70195550407308386c97992423c2103e0b0041b708327edd6b16334",
+    "frontend/src/creative/useStudioTimelineSourceEdit.ts": "07bf6d7c23904dbcf0eb705301799231f2c8cb55ba896f004c7037f5bb50d856"
+  },
+  "verification": {
+    "file": {
+      "counts": {
+        "tests": 555,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 178,
+        "passed": 377
+      },
+      "exit_code": 0,
+      "source_unchanged": true,
+      "receipt_sha256": "ae5884aed37e212bcc0ff437f925e7a2090088eba07fd164366b149dd2c5f7eb",
+      "failures": [],
+      "new_modules_subset": {
+        "passed": 52,
+        "failure": 0,
+        "error": 0,
+        "skipped": 44
+      }
+    },
+    "postgres": {
+      "counts": {
+        "tests": 555,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 178,
+        "passed": 377
+      },
+      "exit_code": 0,
+      "source_unchanged": true,
+      "receipt_sha256": "3173b9b0e2f636db861f0076e822ffbfd4f3aa34e225dcd22e9f20f2f5ce964e",
+      "failures": [],
+      "new_modules_subset": {
+        "passed": 52,
+        "failure": 0,
+        "error": 0,
+        "skipped": 44
+      },
+      "owned_server_stopped": true,
+      "evidence_database_retained": true
+    },
+    "frontend": {
+      "counts": {
+        "tests": 3297,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 8,
+        "passed": 3289
+      },
+      "exit_code": 0,
+      "source_unchanged": true,
+      "receipt_sha256": "8978f6fb34f96710cc1b261f0efdd8c50d1df402c11db37c73ca005c6a8cebc6",
+      "failures": []
+    },
+    "metadata": {
+      "counts": {
+        "tests": 46,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 44
+      },
+      "exit_code": 1,
+      "source_unchanged": true,
+      "receipt_sha256": "7096dcac3454df4efe31b85771ad5da18095469f9fd349ec553937e0622a2cd2",
+      "failures": [
+        {
+          "node": ".github.ci.test_compact_staged_catalog::test_retained_symlink_is_rejected_before_generator",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        },
+        {
+          "node": ".github.ci.test_compact_staged_catalog::test_excluded_evidence_symlink_is_not_followed",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        }
+      ]
+    },
+    "types_tokens_build_visual": {
+      "passed": true,
+      "token_files": 52,
+      "original_shell_snapshots": 7,
+      "snapshot_updates": false
+    },
+    "prior_linux_supporting_evidence": {
+      "counts": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "receipt_sha256": "2f208d3af0d4fba61c618bbfcda7e8606ee01ed478255ab600eb802b36497b58",
+      "reexecuted_phase6": false,
+      "windows_failures_reclassified": false,
+      "same_original_source_hashes_verified": true
+    }
+  },
+  "product_status": "PARTIAL",
+  "native_windows": "NOT_RUN",
+  "gpu_models": "LOCAL_REQUIRED",
+  "raw_evidence_published": false,
+  "suite_overlap_not_added": true,
+  "protected_gates_unchanged": true,
+  "collection": {
+    "status": "INVENTORY_ONLY",
+    "api_operations": 2243,
+    "collected_nodes": 14225,
+    "frozen_nodes_retained": 9151
+  },
+  "hosted_checkpoint": {
+    "sha": "a590bad645a9e230cc70c2122dfb1cca624a9d65",
+    "jobs": 29,
+    "runner_id_zero": 29,
+    "without_steps": 29,
+    "status": "BLOCKED_ACCOUNT_PLATFORM",
+    "product_tests_executed": false,
+    "reruns_requested": false
+  },
+  "review": {
+    "source_edit_numeric_p2": "CLOSED_PRE_SEND_BOUNDARY",
+    "remaining_concrete_p1_p2_in_reviewed_scope": 0,
+    "frontend_receipt_sha256": "da9cc09210d8b95e0e52edc62af8576abdcac5f83e3eac0598216bbe8e52177f"
+  },
+  "graphflow": {
+    "context": "SUCCESS",
+    "index": "NOT_CONFIRMED_TRANSPORT_CLOSED"
+  }
+}

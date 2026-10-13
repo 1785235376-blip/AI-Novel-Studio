@@ -121,3 +121,7 @@ Current test failures and earlier historical failures are not erased by publicat
 ### Phase5 reviewed Storyboard / Video / Timeline production (2026-10-14)
 
 [Report](../../PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md) and [source-bound summary](phase5-storyboard-video-pipeline-20261014.json): exact historical Shot inputs, original VideoJob/Review/Asset result binding, durable Timeline creation/adoption proof and read-only UNKNOWN recovery. Passive existing-model observation preserves discovery/enable separation. Whole modules PARTIAL; hosted checks BLOCKED_ACCOUNT_PLATFORM, native/GPU/model LOCAL_REQUIRED. Phase6 original Audio/Editing expansion follows.
+
+### Phase6 Audio / Editing (2026-10-14)
+
+[Report](../../PHASE6_AUDIO_EDITING_REPORT.md) and [source evidence](phase6-audio-editing-20261014.json): explicit standalone FLAC with actual PCM proof, original Timeline formal-source batch operations and exact UNKNOWN recovery; actual small CPU mix/render/export/Review/reopen. Whole modules remain PARTIAL; native/GPU/model/full CI acceptance is not claimed.

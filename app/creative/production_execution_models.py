@@ -43,6 +43,7 @@ class MediaExecutionParameters(MediaParameters):
     gain_db: float | None = Field(default=None, ge=-60, le=12)
     sample_rate: int | None = Field(default=None, ge=8000, le=96000)
     channels: int | None = Field(default=None, ge=1, le=2)
+    output_format: Literal["FLAC"] | None = None
     denoising_strength: float | None = Field(default=None, gt=0, le=1)
     scale: Literal[2, 4] | None = None
 
@@ -58,7 +59,7 @@ class MediaExecutionParameters(MediaParameters):
         # Original preview and job identities include the old null fields.
         # Omit only the new unset controls, including in nested model_dump().
         value = handler(self)
-        for key in ("gain_db", "sample_rate", "channels", "denoising_strength", "scale"):
+        for key in ("gain_db", "sample_rate", "channels", "output_format", "denoising_strength", "scale"):
             if value.get(key) is None:
                 value.pop(key, None)
         return value
@@ -162,7 +163,7 @@ class MediaCommand(ExecutionModel):
             "m8.audio.speech": {"voice_id", "speech_rate"},
             "m8.audio.music": {"duration_seconds", "seed"},
             "m8.audio.effects": {"duration_seconds", "seed"},
-            "m8.audio.trim": {"in_ms", "out_ms", "gain_db", "sample_rate", "channels"},
+            "m8.audio.trim": {"in_ms", "out_ms", "gain_db", "sample_rate", "channels", "output_format"},
         }[self.operation_id]
         if set(p) - allowed:
             raise ValueError("STUDIO_OPERATION_PARAMETER_UNSUPPORTED")

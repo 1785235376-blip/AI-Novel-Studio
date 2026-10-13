@@ -6,6 +6,7 @@ import { StudioTimelineExportPanel } from './StudioTimelineExportPanel';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 import { StudioTimelineTransferPanel } from './StudioTimelineTransferPanel';
 import { StudioTimelinePlaybackPanel } from './StudioTimelinePlaybackPanel';
+import { StudioTimelineSourceEditPanel } from './StudioTimelineSourceEditPanel';
 export type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
 
 const numeric = (value: string) => value === '' ? Number.NaN : Number(value);
@@ -56,7 +57,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
         ...(track.kind === 'VIDEO' ? { opacity: 1, include_audio: false } : {}) } : {}) });
   });
   const locked = !c.canEdit || props.busy;
-  const readLocked = c.denied || props.busy || !!c.pending || c.transfer.locked || c.playback.locked;
+  const readLocked = c.denied || props.busy || !!c.pending || c.transfer.locked || c.playback.locked || c.sourceEdit.locked;
   const clipsCount = draft.timeline.tracks.reduce((sum, track) => sum + track.clips.length, 0);
   return <Panel title="多轨时间线" aria-label="Studio 多轨时间线编辑器" actions={<Button loading={c.pending === 'LIST'} disabled={readLocked} onClick={() => void c.reload()}>刷新时间线列表</Button>}>
     <p>选择已有视频和音频素材，设定裁剪与摆放。视频按轨道顺序叠放，音频轨道混音；视频自身声音只在扩展编辑中明确加入。总长最多十分钟，产物仍须在制作任务中预览和人工审核。</p>
@@ -81,6 +82,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       <Button disabled={readLocked || !c.adoptConfirmed || c.attempt?.state === 'UNKNOWN'} onClick={() => c.adoptCandidate(false)}>采用服务端时间线</Button>
       <Button disabled={readLocked || !c.adoptConfirmed || !props.canMutate || c.attempt?.state === 'UNKNOWN'} onClick={() => c.adoptCandidate(true)}>保留草稿并基于此版本编辑</Button>
     </section>}
+    <StudioTimelineSourceEditPanel controller={c.sourceEdit} source={c.base} assets={props.assets} />
     <fieldset disabled={locked}><legend>时间线参数</legend>
       <p>{extended ? '扩展编辑版本 2：可使用静态画面、速度、淡入淡出和片段音量。' : '原时间线版本：保存与渲染保持原有字段和行为。'}</p>
       {!extended && <Button onClick={c.upgradeTimeline}>明确采用扩展编辑（版本 2，需重新保存）</Button>}

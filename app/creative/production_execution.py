@@ -449,12 +449,12 @@ class ProductionExecutionService:
             "m7.video.i2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
             "m7.video.v2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
             "m8.audio.speech": ["voice_id", "speech_rate"], "m8.audio.music": ["duration_seconds", "seed"],
-            "m8.audio.effects": ["duration_seconds", "seed"], "m8.audio.trim": ["in_ms", "out_ms", "gain_db", "sample_rate", "channels"]}[command.operation_id]
+            "m8.audio.effects": ["duration_seconds", "seed"], "m8.audio.trim": ["in_ms", "out_ms", "gain_db", "sample_rate", "channels", "output_format"]}[command.operation_id]
 
     def preview(self, nid, scope, actor, value, guard, *, graph_binding=None):
         command = MediaCommand.model_validate(value)
         if (graph_binding is not None and command.operation_id == "m8.audio.trim"
-                and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels"))):
+                and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels", "output_format"))):
             raise ValueError("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY")
         if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
         context = self._base(nid, scope, actor, guard)
@@ -1174,6 +1174,15 @@ class ProductionExecutionService:
             result["transfer_receipt"] = {key: copy.deepcopy(transfer[key]) for key in (
                 "operation", "request_id", "input_version", "input_digest", "output_digest", "preview_digest", "format",
                 "transfer_input_digest", "acknowledge_losses")}
+        elif transfer:
+            from .storyboard import OriginalTimelineEditReceipt
+            try:
+                proof = OriginalTimelineEditReceipt.model_validate(transfer).model_dump()
+            except ValueError:
+                raise ValueError("STUDIO_TIMELINE_EDIT_RECEIPT_CORRUPT") from None
+            if row["version"] != proof["input_version"] + 1 or row["timeline_digest"] != proof["output_digest"]:
+                raise ValueError("STUDIO_TIMELINE_EDIT_RECEIPT_CORRUPT")
+            result["edit_receipt"] = proof
         if 'storyboard_origin' in row:
             from .storyboard import validate_storyboard_timeline_origin
             result['storyboard_origin'] = validate_storyboard_timeline_origin(row, history=history)

@@ -192,7 +192,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/creative/documents/{rid}/screenplay-export` | `app/creative/api.py:210` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/documents/{rid}/script-export` | `app/creative/api.py:224` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/documents/{rid}/storyboard` | `app/creative/api.py:131` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-creations/{request_id}` | `app/creative/api.py:171` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-creations/{request_id}` | `app/creative/api.py:171` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/screenplay-presets` | `app/creative/api.py:100` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/declarative-agents/catalog` | `app/experimental/declarative_agents_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -624,7 +624,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/screenplay-export` | `app/creative/api.py:210` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/script-export` | `app/creative/api.py:224` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/storyboard` | `app/creative/api.py:131` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-creations/{request_id}` | `app/creative/api.py:171` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-creations/{request_id}` | `app/creative/api.py:171` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/screenplay-presets` | `app/creative/api.py:100` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/declarative-agents/catalog` | `app/experimental/declarative_agents_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1106,11 +1106,11 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/restore` | `app/creative/api.py:191` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/image-binding` | `app/creative/api.py:141` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/image-request` | `app/creative/api.py:146` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/timelines/{tid}/video-adoption` | `app/creative/api.py:176` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/video-binding` | `app/creative/api.py:161` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/video-request` | `app/creative/api.py:156` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/timelines/{tid}/video-adoption` | `app/creative/api.py:176` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/video-binding` | `app/creative/api.py:161` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/video-request` | `app/creative/api.py:156` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/storyboard/approve` | `app/creative/api.py:136` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-create` | `app/creative/api.py:166` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-create` | `app/creative/api.py:166` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-draft` | `app/creative/api.py:151` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/declarative-agents/definitions/{rid}/runs` | `app/experimental/declarative_agents_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1654,11 +1654,11 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/restore` | `app/creative/api.py:191` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/image-binding` | `app/creative/api.py:141` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/image-request` | `app/creative/api.py:146` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/timelines/{tid}/video-adoption` | `app/creative/api.py:176` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/video-binding` | `app/creative/api.py:161` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/video-request` | `app/creative/api.py:156` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/timelines/{tid}/video-adoption` | `app/creative/api.py:176` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/video-binding` | `app/creative/api.py:161` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/video-request` | `app/creative/api.py:156` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/storyboard/approve` | `app/creative/api.py:136` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-create` | `app/creative/api.py:166` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-create` | `app/creative/api.py:166` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/storyboard/timeline-draft` | `app/creative/api.py:151` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions/{rid}/runs` | `app/experimental/declarative_agents_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |

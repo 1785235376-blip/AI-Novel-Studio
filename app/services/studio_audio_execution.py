@@ -29,21 +29,32 @@ STUDIO_ORIGIN = "studio-audio-execution/1"
 CAPABILITIES = {"m8.audio.speech": "TTS", "m8.audio.music": "MUSIC", "m8.audio.effects": "SFX", "m8.audio.trim": "TRIM"}
 _ACTIVE: set[tuple[str, str, str]] = set()
 _ACTIVE_LOCK = threading.RLock()
-TRIM_CONTROLS = {"gain_db", "sample_rate", "channels"}
+TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format"}
 
 
 def trim_output_profile(parameters):
+    if "output_format" in parameters and parameters["output_format"] != "FLAC":
+        raise _error("STUDIO_AUDIO_TRIM_FORMAT_INVALID", "仅支持明确选择 FLAC，默认输出仍为 WAV", 400)
     # Reserve bounded WAV header space before accepting a reviewed recipe.
     # Encoding never silently lowers requested rate, channels or duration.
     if (math.ceil((parameters["out_ms"] - parameters["in_ms"]) * parameters.get("sample_rate", 48000) / 1000)
             * parameters.get("channels", 2) * 2 + 4096 > 25 * 1024 * 1024):
-        raise _error("STUDIO_AUDIO_TRIM_BYTES_BUDGET_EXCEEDED", "所选 PCM WAV 参数超过原资产大小上限", 400)
+        message = "所选 FLAC 解码 PCM 参数超过原资产大小上限" if parameters.get("output_format") == "FLAC" else "所选 PCM WAV 参数超过原资产大小上限"
+        raise _error("STUDIO_AUDIO_TRIM_BYTES_BUDGET_EXCEEDED", message, 400)
     channels = "MONO" if parameters.get("channels", 2) == 1 else "STEREO"
+    if parameters.get("output_format") == "FLAC":
+        return f"FLAC_S16_{parameters.get('sample_rate', 48000)}_{channels}_COMPRESSION5"
     return f"PCM_S16LE_WAV_{parameters.get('sample_rate', 48000)}_{channels}"
 
 
 def _trim_measurement(value, parameters):
     """Validate persisted actual-byte proof, never synthesize it from settings."""
+    if parameters.get("output_format") == "FLAC":
+        from .studio_audio_trim_profiles import validate_flac_measurement
+        try:
+            return validate_flac_measurement(value, parameters)
+        except MediaValidationError:
+            raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "原 FLAC 实际输出证明不一致", 409) from None
     fields = {"duration_ms", "byte_count", "sample_rate", "channels", "sample_width", "container",
               "audio_codec", "profile_validation", "output_sha256"}
     if (not isinstance(value, dict) or set(value) != fields
@@ -131,6 +142,8 @@ def _body(value):
                 or type(rate) is not int or not 8000 <= rate <= 96000
                 or type(channels) is not int or channels not in {1, 2}):
             raise _error("STUDIO_AUDIO_TRIM_PARAMETERS_INVALID", "音频增益、采样率或声道超出本地 WAV 参数范围", 400)
+        if "output_format" in parameters and parameters["output_format"] != "FLAC":
+            raise _error("STUDIO_AUDIO_TRIM_FORMAT_INVALID", "仅支持明确选择 FLAC，默认输出仍为 WAV", 400)
         trim_output_profile(parameters)
         if prompt:
             raise _error("STUDIO_AUDIO_TRIM_PROMPT_INVALID", "本地裁剪不使用生成提示词", 400)
@@ -295,8 +308,8 @@ class StudioAudioExecution:
             ready = row.get("publication_ready")
             receipt = copy.deepcopy(row); self._receipt(receipt)
             if (not isinstance(ready, dict) or ready.get("output_digest") != measured["output_sha256"]
-                    or ready.get("output_bytes") != measured["byte_count"] or ready.get("media_type") != "audio/wav"
-                    or row.get("duration_ms") != measured["duration_ms"] or row.get("media_validation") != "PCM_DECODED"
+                    or ready.get("output_bytes") != measured["byte_count"] or ready.get("media_type") != "audio/" + measured["container"]
+                    or row.get("duration_ms") != measured["duration_ms"] or row.get("media_validation") != measured["profile_validation"]
                     or row.get("output_digest") not in {None, measured["output_sha256"]}
                     or row.get("receipt_digest") != receipt["receipt_digest"]):
                 raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "原音频实际输出证明与持久回执不一致", 409)
@@ -510,10 +523,14 @@ class StudioAudioExecution:
             output_digest = hashlib.sha256(content).hexdigest()
             output_proof = {}
             if body["operation_id"] == "m8.audio.trim" and "graph_binding" not in binding:
-                output_proof["measured"] = _trim_measurement({"duration_ms": measured["duration_ms"],
+                proof = {"duration_ms": measured["duration_ms"],
                     "byte_count": len(content), "sample_rate": measured["sample_rate"], "channels": measured["channels"],
                     "sample_width": measured["sample_width"], "container": "wav", "audio_codec": "pcm_s16le",
-                    "profile_validation": measured["validation"], "output_sha256": output_digest}, body["parameters"])
+                    "profile_validation": measured["validation"], "output_sha256": output_digest}
+                if body["parameters"].get("output_format") == "FLAC":
+                    proof.update(container="flac", audio_codec="flac", **{key: measured[key] for key in
+                        ("total_samples", "decoded_pcm_bytes", "streaminfo_md5", "decoded_pcm_sha256")})
+                output_proof["measured"] = _trim_measurement(proof, body["parameters"])
             # Persist uncertainty before crossing from the audio owner to the
             # original source/asset owners. Never acquire those leases while
             # holding AudioProductionStore's mutation lock.
@@ -609,21 +626,30 @@ class StudioAudioExecution:
         if not executable: raise _error("STUDIO_AUDIO_TRIM_TOOL_UNAVAILABLE", "本地裁剪需要原配置 ffmpeg", 501)
         if self._attempt(nid, claim, context, guard, source_guard) is None: raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
         duration = parameters["out_ms"] - parameters["in_ms"]
-        with tempfile.TemporaryDirectory(prefix="studio-audio-trim-") as directory:
-            source_path, target = Path(directory) / ("source." + measured["extension"]), Path(directory) / "candidate.wav"
+        flac = parameters.get("output_format") == "FLAC"
+        from ..media_files import _media_inspection_directory
+        temporary = _media_inspection_directory() if flac else tempfile.TemporaryDirectory(prefix="studio-audio-trim-")
+        with temporary as directory:
+            source_path, target = Path(directory) / ("source." + measured["extension"]), Path(directory) / ("candidate.flac" if flac else "candidate.wav")
             source_path.write_bytes(data)
             if self._attempt(nid, claim, context, guard, source_guard) is None: raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
             from .studio_timeline_export import run_guarded_process
             filters = ["-af", f"volume={parameters['gain_db']:.17g}dB"] if "gain_db" in parameters else []
+            codec = ["-c:a", "flac", "-sample_fmt", "s16", "-compression_level", "5"] if flac else ["-c:a", "pcm_s16le"]
             run_guarded_process([executable, "-nostdin", "-v", "error", "-xerror", "-threads", "1", "-protocol_whitelist", "file,pipe",
                 "-ss", f"{parameters['in_ms'] / 1000:.3f}", "-i", str(source_path), "-map", "0:a:0", "-vn", "-sn", "-dn",
                 "-t", f"{duration / 1000:.3f}", *filters, "-ar", str(parameters.get("sample_rate", 48000)),
-                "-ac", str(parameters.get("channels", 2)), "-c:a", "pcm_s16le", "-fs", str(self.assets.MAX_BYTES + 1),
-                "-f", "wav", str(target)], cwd=directory, guard=inspection_current, timeout=50)
+                "-ac", str(parameters.get("channels", 2)), *codec, "-fs", str(self.assets.MAX_BYTES + 1),
+                "-f", "flac" if flac else "wav", str(target)], cwd=directory, guard=inspection_current, timeout=50)
             inspection_current()
             if not target.is_file() or not 0 < target.stat().st_size <= self.assets.MAX_BYTES:
                 raise MediaValidationError("trim output exceeds asset limit")
             with target.open("rb") as stream: output = stream.read(self.assets.MAX_BYTES + 1)
+            if flac:
+                from .studio_audio_trim_profiles import prove_flac
+                result = prove_flac(target, output, parameters, guard=inspection_current, max_bytes=self.assets.MAX_BYTES)
+                inspection_current()
+                return output, result
         if not 0 < len(output) <= self.assets.MAX_BYTES: raise MediaValidationError("trim output exceeds asset limit")
         result = inspect_media(output, "audio", guard=inspection_current)
         if abs(result["duration_ms"] - duration) > 2: raise MediaValidationError("trim output duration does not match the reviewed interval")
