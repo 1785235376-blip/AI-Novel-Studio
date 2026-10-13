@@ -1,5 +1,5 @@
 import { checkedCutoutProof, type CutoutProcessingProof } from './studioCutoutContract';
-import { checkedImageRecipeCommand, checkedImageRecipeFields, checkedImageRuntimeInputs, sameImageRuntimeInputs, type ImageReference } from './studioImageRuntimeContract';
+import { checkedImageUpscaleProof, type ImageUpscaleProof, checkedImageRecipeCommand, checkedImageRecipeFields, checkedImageRuntimeInputs, sameImageRuntimeInputs, type ImageReference } from './studioImageRuntimeContract';
 import { maskDimension } from './studioManualMaskContract';
 import { ApiError, type CollaborationContext } from '../api';
 import { studioTransport } from './studioClient';
@@ -9,7 +9,7 @@ import { checkedTimelineExportPreview, checkedTimelineExportProfile, type Timeli
 import { checkedTimelinePlayback, type TimelinePlayback } from './studioTimelinePlaybackTypes';
 
 export type ProductionOwner = 'image' | 'audio' | 'video' | 'timeline';
-export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.reference' | 'm5.image.inpaint' | 'm5.image.cutout' | 'm7.video.t2v' | 'm7.video.i2v' | 'm7.video.v2v' | 'm8.audio.speech' | 'm8.audio.music' | 'm8.audio.effects' | 'm8.audio.trim';
+export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.reference' | 'm5.image.inpaint' | 'm5.image.upscale' | 'm5.image.cutout' | 'm7.video.t2v' | 'm7.video.i2v' | 'm7.video.v2v' | 'm8.audio.speech' | 'm8.audio.music' | 'm8.audio.effects' | 'm8.audio.trim';
 export type ProductionSource = { id: string; kind: 'ASSET'; version: number; digest: string; asset_kind: 'image' | 'video' | 'audio'; reference_only?: true };
 export type MediaCommand = { operation_id: MediaOperation; request_id: string; provider_id?: string | null; model_id?: string | null; prompt: string;
   parameters: Record<string, string | number>; source_snapshots: ProductionSource[]; allow_cloud: boolean; license_note: string;
@@ -18,7 +18,7 @@ export type RecordedProductionSource = ProductionSource | { id: string; kind: 'C
 export type RecordedMediaCommand = Omit<MediaCommand, 'source_snapshots'> & { source_snapshots: RecordedProductionSource[] };
 export type ProductionProvider = { operation_id: MediaOperation; provider_id: string; model_id: string; local: boolean; route_digest: string; capability: string; supported_parameters: string[]; readiness: 'CONFIGURED_NOT_VERIFIED';
   image_capabilities?: { recipe_id: string; reference_limit: number; reference_semantics: 'WEIGHTED_PIXEL_INITIALIZATION' | 'SINGLE_IMAGE_INITIALIZATION';
-    mask_semantics: 'WHITE_KEEP_BLACK_REPAINT' | null; structural_only: true; inference_verified: false } };
+    mask_semantics: 'WHITE_KEEP_BLACK_REPAINT' | null; structural_only: true; inference_verified: false; upscaling?: { scales: [2, 4]; output_format: 'PNG'; output_size_limit: 4096; output_pixel_limit: 16777216 } } };
 export type ProductionPreview = { contract: 'studio-production-preview/1'; novel_id: string; branch_id: string | null; request_id: string; operation_id: MediaOperation;
   preview_digest: string; request_digest: string; command: MediaCommand; provider: { provider_id: string; model_id: string; local: boolean; route_digest: string } | null;
   sources?: { snapshot: ProductionSource; measured: Record<string, unknown> }[];
@@ -41,14 +41,14 @@ export type ProductionJob = { contract: 'studio-production-job/1'; owner: Produc
   command: RecordedMediaCommand | null;
   provider: { provider_id: string; model_id: string; local: boolean; route_digest: string } | null;
   execution_recipe: ProductionRecipe; approved_asset_version: number | null;
-  media_measurement?: TimelineMediaMeasurement | null; processing_proof?: CutoutProcessingProof | null;
+  media_measurement?: TimelineMediaMeasurement | null; processing_proof?: CutoutProcessingProof | ImageUpscaleProof | null;
   needs_reconciliation?: boolean; execution_state?: string; created_at: string; updated_at: string };
 export type ProductionAction = { expected_version: number; expected_request_digest: string };
 
-const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.cutout', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
+const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
 const states = ['QUEUED', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED', 'UNKNOWN', 'FAILED', 'CANCELLED'];
-const parameterKeys = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels'];
+const parameterKeys = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels'];
 const trimControlKeys = ['gain_db', 'sample_rate', 'channels'];
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
@@ -121,6 +121,7 @@ function sameTrimCommand(expected: RecordedMediaCommand, value: RecordedMediaCom
 }
 function commandScope(command: MediaCommand) {
   checkedImageRuntimeInputs(command, command.source_snapshots, command.operation_id, true);
+  if (command.operation_id === 'm5.image.upscale' ? command.prompt !== '' || command.allow_cloud || Object.keys(command.parameters).length !== 1 || ![2, 4].includes(command.parameters.scale as number) : command.parameters.scale !== undefined) invalid();
   if (command.parameters.denoising_strength !== undefined && (!['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint'].includes(command.operation_id)
     || typeof command.parameters.denoising_strength !== 'number' || !Number.isFinite(command.parameters.denoising_strength)
     || command.parameters.denoising_strength <= 0 || command.parameters.denoising_strength > 1)) invalid();
@@ -151,7 +152,7 @@ function recipe(v: unknown, operation: unknown): ProductionRecipe {
   }
   if (!record(v) || v.contract !== 'studio-execution-recipe/1' || v.operation_id !== operation || !hex(v.recipe_digest)
     || v.automatic_fallback !== false || !['ORIGINAL_HTTP_PROVIDER', 'COMFYUI_BUILTIN_IMAGE', 'AUTOMATIC1111_IMAGE', 'LOCAL_FFMPEG'].includes(String(v.adapter))
-    || Object.keys(v).some(k => !['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline', 'export_profile', 'image_recipe_id', 'reference_weights', 'reference_semantics', 'mask_semantics'].includes(k))
+    || Object.keys(v).some(k => !['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline', 'export_profile', 'image_recipe_id', 'reference_weights', 'reference_semantics', 'mask_semantics', ...(operation === 'm5.image.upscale' ? ['source_dimensions', 'target_dimensions'] : [])].includes(k))
     || JSON.stringify(v).length > 131072) invalid();
   checkedImageRecipeFields(v, String(operation));
   return v as ProductionRecipe;
@@ -242,6 +243,11 @@ export function studioProductionClient(projectId: string, context: Collaboration
       sources(c.source_snapshots, 8);
       checkedImageRuntimeInputs(c, c.source_snapshots, String(c.operation_id));
       checkedImageRecipeCommand(executionRecipe, c);
+      if (c.operation_id === 'm5.image.upscale' ? c.prompt !== '' || c.allow_cloud || Object.keys(c.parameters).length !== 1 || ![2, 4].includes(c.parameters.scale as number) : c.parameters.scale !== undefined) invalid();
+      if (c.operation_id === 'm5.image.upscale') {
+        if (v.output_candidate !== null && v.processing_proof == null) invalid();
+        if (v.processing_proof != null) checkedImageUpscaleProof(v.processing_proof, c as unknown as RecordedMediaCommand, v.output_candidate as { digest: string; kind: string } | null);
+      }
       if (c.parameters.denoising_strength !== undefined && c.parameters.denoising_strength !== null && (!['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint'].includes(String(c.operation_id))
         || typeof c.parameters.denoising_strength !== 'number' || !Number.isFinite(c.parameters.denoising_strength) || c.parameters.denoising_strength <= 0 || c.parameters.denoising_strength > 1)) invalid();
       if (c.source_snapshots.length !== v.sources.length || c.source_snapshots.some((s, index) => ['id', 'kind', 'version', 'digest', 'asset_kind'].some(key =>
@@ -266,7 +272,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
         || v.provider.provider_id !== c.provider_id || v.provider.model_id !== c.model_id || !hex(v.provider.route_digest) || typeof v.provider.local !== 'boolean'
         || Object.keys(v.provider).some(key => !['provider_id', 'model_id', 'route_digest', 'local'].includes(key))) invalid();
     }
-    if (v.operation_id !== 'm5.image.cutout' && v.processing_proof != null) invalid();
+    if (!['m5.image.cutout', 'm5.image.upscale'].includes(String(v.operation_id)) && v.processing_proof != null) invalid();
     return v as unknown as ProductionJob;
   }
   function timeline(v: unknown): StudioTimelineRow {
@@ -295,15 +301,21 @@ export function studioProductionClient(projectId: string, context: Collaboration
         if (!record(row) || row.operation_id === 'm5.image.cutout' || !operations.includes(row.operation_id as MediaOperation) || typeof row.provider_id !== 'string' || !row.provider_id || row.provider_id.length > 240
           || typeof row.model_id !== 'string' || !row.model_id || row.model_id.length > 240 || typeof row.local !== 'boolean' || !hex(row.route_digest) || row.readiness !== 'CONFIGURED_NOT_VERIFIED'
           || !Array.isArray(row.supported_parameters) || row.supported_parameters.length > 14 || row.supported_parameters.some(p => typeof p !== 'string'
-            || !['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms'].includes(p))) invalid();
+            || !['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms'].includes(p))) invalid();
         if (row.image_capabilities !== undefined) {
           const image = row.image_capabilities;
-          const keys = ['recipe_id', 'reference_limit', 'reference_semantics', 'mask_semantics', 'structural_only', 'inference_verified'];
+          const keys = ['recipe_id', 'reference_limit', 'reference_semantics', 'mask_semantics', 'structural_only', 'inference_verified', ...(row.operation_id === 'm5.image.upscale' ? ['upscaling'] : [])];
           if (!String(row.operation_id).startsWith('m5.image.') || !record(image) || Object.keys(image).length !== keys.length || keys.some(key => !Object.hasOwn(image, key))
             || typeof image.recipe_id !== 'string' || !image.recipe_id.trim() || image.recipe_id.length > 240 || /[\x00-\x1f\x7f]/.test(image.recipe_id)
             || typeof image.reference_limit !== 'number' || !Number.isSafeInteger(image.reference_limit) || image.reference_limit < 0 || image.reference_limit > 5
             || !['WEIGHTED_PIXEL_INITIALIZATION', 'SINGLE_IMAGE_INITIALIZATION'].includes(String(image.reference_semantics))
             || image.mask_semantics !== null && image.mask_semantics !== 'WHITE_KEEP_BLACK_REPAINT' || image.structural_only !== true || image.inference_verified !== false) invalid();
+        }
+        if (row.operation_id === 'm5.image.upscale') {
+          const capability = record(row.image_capabilities) ? row.image_capabilities : invalid(), upscaling = record(capability.upscaling) ? capability.upscaling : invalid();
+          if (row.local !== true || capability.reference_limit !== 1 || capability.reference_semantics !== 'SINGLE_IMAGE_INITIALIZATION' || capability.mask_semantics !== null
+            || Object.keys(upscaling).length !== 4 || JSON.stringify(upscaling.scales) !== '[2,4]' || upscaling.output_format !== 'PNG' || upscaling.output_size_limit !== 4096 || upscaling.output_pixel_limit !== 16777216
+            || JSON.stringify(row.supported_parameters) !== '["scale"]') invalid();
         }
         return row as unknown as ProductionProvider;
       });

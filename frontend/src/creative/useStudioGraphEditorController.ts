@@ -1,3 +1,5 @@
+import { productionGraphDefinitions, type PlanningDocument } from './studioProductionGraphContract';
+import { checkedImageReferenceMetadata } from './studioImageRuntimeContract';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView, type Asset } from '../api';
 import type { StudioAsset, StudioClient } from './studioClient';
@@ -33,6 +35,8 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const [executionDirty, setExecutionDirty] = useState(false);
   const [assets, setAssets] = useState<StudioAsset[]>([]), [assetChoice, setAssetChoice] = useState(''), [assetLoading, setAssetLoading] = useState(false), [preview, setPreview] = useState<StudioAsset>();
   const [previewState, setPreviewState] = useState<'READING' | 'CURRENT' | 'STALE' | 'UNAVAILABLE'>(), [previewRequest, setPreviewRequest] = useState(0);
+  const [planningDocuments, setPlanningDocuments] = useState<PlanningDocument[]>([]), [planningChoice, setPlanningChoice] = useState(''), [planningLoading, setPlanningLoading] = useState(false);
+  const planningEpoch = useRef(0);
   const alive = useRef(true), selectedEpoch = useRef(0), catalogEpoch = useRef(0), assetEpoch = useRef(0), saving = useRef(false);
   const candidateEpoch = useRef(0), candidateRequest = useRef<AbortController>();
   const draftRef = useRef(draft); draftRef.current = draft;
@@ -51,7 +55,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const confirmImageSchema = (value: boolean) => { if (editable && current() && !locked()) setImageSchemaConsent(value ? JSON.stringify(draftRef.current) : ''); };
   const setReplaceConfirmed = (value: boolean) => { setReplaceConsent(value && current() && !locked() && !externalDirty && !checking ? candidateKey(candidate) : undefined); };
   const invalidateCandidate = useCallback(() => { candidateEpoch.current++; candidateRequest.current?.abort(); setCandidate(undefined); setReplaceConsent(undefined); setChecking(false); }, []);
-  const protectedNodes = base?.definition.nodes.filter(node => node.definition_id === 'asset_reference').map(node => node.id) || [];
+  const protectedNodes = base?.definition.nodes.filter(node => ['asset_reference', 'director_plan', 'storyboard_plan'].includes(node.definition_id)).map(node => node.id) || [];
 
   const restoreRequest = useRef<string>();
   const reportSelection = useRef(onSelectionChange); reportSelection.current = onSelectionChange;
@@ -68,7 +72,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }, [invalidateCandidate]);
   const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty, timelineEditor.clearForm]);
   useEffect(() => { alive.current = true; return () => { alive.current = false; selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; candidateEpoch.current++; candidateRequest.current?.abort(); }; }, []);
-  useEffect(() => { setImageSchemaConsent(''); }, [identity, denied, canMutate, externalDirty, executionDirty]);
+  useEffect(() => { planningEpoch.current++; setPlanningDocuments([]); setPlanningChoice(''); setPlanningLoading(false); setImageSchemaConsent(''); }, [identity, denied, canMutate, externalDirty, executionDirty]);
   useEffect(() => {
     if (denied) { timelineEditor.resetForm(); selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; invalidateCandidate(); setCatalog(undefined); setRecords([]); setBase(undefined); setDraft(blankGraph()); setPast([]); setFuture([]); setSelected([]); setAssets([]); setPreview(undefined); setPreviewState(undefined); setPendingNavigation(undefined); setMediaSchemaConsent(false); setExecutionDirty(false); setError(''); setNotice(''); }
   }, [denied, invalidateCandidate]);
@@ -93,6 +97,27 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
   }
 
+  async function loadProductionCatalog() {
+    if (!current() || locked() || externalDirty || executionDirty || !client.graphs.productionCatalog) return;
+    const epoch = ++catalogEpoch.current; setLoading(true); setError('');
+    try { const value = await read(() => client.graphs.productionCatalog!()); if (current() && epoch === catalogEpoch.current) { setCatalog(value); setNotice('已读取视觉制作节点目录；没有升级图格式、绑定文档或执行模型。'); } }
+    catch (value) { if (current() && epoch === catalogEpoch.current) setError(apiErrorView(value, '视觉制作节点目录读取失败。').message); }
+    finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
+  }
+  async function loadPlanningDocuments() {
+    if (!current() || locked() || externalDirty || executionDirty || !client.graphs.planningDocuments) return;
+    const epoch = ++planningEpoch.current; setPlanningLoading(true); setError('');
+    try { const value = await read(() => client.graphs.planningDocuments!()); if (current() && epoch === planningEpoch.current) { setPlanningDocuments(value.documents); setPlanningChoice(''); } }
+    catch (value) { if (current() && epoch === planningEpoch.current) setError(apiErrorView(value, '导演与分镜文档引用读取失败。').message); }
+    finally { if (current() && epoch === planningEpoch.current) setPlanningLoading(false); }
+  }
+  const choosePlanningDocument = (value: string) => { if (editable && current() && !locked()) setPlanningChoice(value); };
+  async function graphCatalogForRecord(value: StudioGraphRecord, signal?: AbortSignal) {
+    if (value.definition.schema_version !== 4) return undefined;
+    const production = value.definition.nodes.some(node => productionGraphDefinitions.includes(node.definition_id as typeof productionGraphDefinitions[number]));
+    const get = production ? client.graphs.productionCatalog : client.graphs.imageCatalog; if (!get) throw new Error('当前节点目录不可用，请重新打开工作区。');
+    return get(signal);
+  }
   const change = useCallback((next: StudioGraphDefinition, record = true) => {
     if (!editable || !current() || saving.current || isBusy?.()) return;
     if (!retainsSavedAssetBindings(baseRef.current?.definition.nodes || [], next.nodes)) { setError('已保存资产引用暂不能移除或重新绑定；可移动或禁用节点。原资产不会被删除。'); return; }
@@ -110,8 +135,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     const epoch = ++selectedEpoch.current; setError('');
     try { const result = await mutate(async () => {
       const value = await client.graphs.get(id);
-      if (value.definition.schema_version === 4 && !client.graphs.imageCatalog) throw new Error('图片节点目录当前不可用，请重新打开工作区。');
-      const imageCatalog = value.definition.schema_version === 4 ? await client.graphs.imageCatalog!() : undefined;
+      const imageCatalog = await graphCatalogForRecord(value);
       return { value, imageCatalog };
     }); if (current() && epoch === selectedEpoch.current) { if (result.imageCatalog) { catalogEpoch.current++; setCatalog(result.imageCatalog); } accept(result.value); } }
     catch (value) { if (current() && epoch === selectedEpoch.current) setError(apiErrorView(value, '创作图读取失败，当前草稿未替换。').message); }
@@ -158,6 +182,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     finally { if (current() && epoch === assetEpoch.current) setAssetLoading(false); }
   }
   function addNode() {
+    const planning = planningDocuments.find(row => row.id === planningChoice && row.mode === (kind === 'director_plan' ? 'DIRECTOR' : 'STORYBOARD'));
     const spec = catalog?.definitions.find(row => row.id === kind), asset = assets.find(row => row.id === assetChoice);
     const media = kind === 'media_generate' || kind === 'media_review' || kind === 'timeline_export';
     const image = draft.schema_version === 4;
@@ -166,12 +191,15 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (!editable || !spec || draft.nodes.length >= limit || schemaRequired && draft.schema_version !== 3 && !image
       || image && !imageGraphDefinitions.some(value => value === kind)
       || ['media_generate', 'timeline_export'].includes(kind) && draft.nodes.filter(row => ['media_generate', 'timeline_export'].includes(row.definition_id)).length >= 4
-      || kind === 'image_generate' && draft.nodes.filter(row => row.definition_id === 'image_generate').length >= 4
-      || kind === 'asset_reference' && !asset || kind === 'timeline_export' && !timelineEditor.chosen) return;
+      || ['image_generate', 'image_upscale'].includes(kind) && draft.nodes.filter(row => ['image_generate', 'image_upscale'].includes(row.definition_id)).length >= 4
+      || ['director_plan', 'storyboard_plan'].includes(kind) && !planning || kind === 'asset_reference' && !asset || kind === 'timeline_export' && !timelineEditor.chosen) return;
     if (image && kind === 'asset_reference' && asset?.kind !== 'image') { setError('图片图只接受图片素材引用。'); return; }
     const node = { id: graphId(), definition_id: kind, definition_version: 1 as const, enabled: true, position: { x: 24 + draft.nodes.length % 4 * 280, y: 24 + Math.floor(draft.nodes.length / 4) * 180 },
       parameters: kind === 'asset_reference' ? { asset_id: asset!.id, version: asset!.version, digest: asset!.sha256, kind: asset!.kind as 'image' | 'video' | 'audio' }
         : kind === 'media_generate' ? { operation_id: 'm5.image.t2i' as const, provider_id: '', model_id: '', prompt: '', parameters: {}, allow_cloud: false, license_note: '' }
+        : ['director_plan', 'storyboard_plan'].includes(kind) ? { document_snapshot: { id: planning!.id, version: planning!.version, digest: planning!.digest } }
+        : kind === 'storyboard_prompt' ? { shot_id: '' }
+        : kind === 'image_upscale' ? { operation_id: 'm5.image.upscale' as const, provider_id: '', model_id: '', parameters: {}, allow_cloud: false, license_note: '' }
         : kind === 'image_generate' ? { operation_id: 'm5.image.t2i' as const, provider_id: '', model_id: '', parameters: {}, allow_cloud: false, license_note: '' }
         : kind === 'timeline_export' ? { timeline_snapshot: { id: timelineEditor.chosen!.id, version: timelineEditor.chosen!.version, digest: timelineEditor.chosen!.timeline_digest },
           edit_operations: [], source_bindings: [], export_profile: { preset: 'REVIEW_MP4' as const } }
@@ -191,15 +219,16 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     change({ ...draftRef.current, schema_version: 4 }); setImageSchemaConsent(''); setKind('image_reference');
   }
   function updateMediaField(key: 'operation_id' | 'provider_id' | 'model_id' | 'prompt' | 'allow_cloud' | 'license_note', value: string | boolean) {
-    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || !['media_generate', 'image_generate'].includes(target.definition_id)) return;
-    if (target.definition_id === 'image_generate' && key === 'prompt') return;
+    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || !['media_generate', 'image_generate', 'image_upscale'].includes(target.definition_id)) return;
+    if (['image_generate', 'image_upscale'].includes(target.definition_id) && key === 'prompt') return;
+    if (target.definition_id === 'image_upscale' && (key === 'operation_id' || key === 'allow_cloud')) return;
     if (key === 'operation_id' && !(target.definition_id === 'image_generate' ? GRAPH_IMAGE_OPERATIONS.some(operation => operation === value) : GRAPH_MEDIA_OPERATIONS.some(operation => operation === value))
       || (key === 'allow_cloud' ? typeof value !== 'boolean' : typeof value !== 'string')) return;
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value } } : row) });
   }
   function updateMediaParameter(key: string, value: string) {
-    const target = draftRef.current.nodes.find(row => row.id === selected[0]), allowed = target?.parameters.operation_id && graphMediaParameterNames(target.parameters.operation_id, target.definition_id === 'image_generate');
-    if (!target || !['media_generate', 'image_generate'].includes(target.definition_id) || !allowed?.includes(key)) return;
+    const target = draftRef.current.nodes.find(row => row.id === selected[0]), allowed = target?.parameters.operation_id && graphMediaParameterNames(target.parameters.operation_id, ['image_generate', 'image_upscale'].includes(target.definition_id));
+    if (!target || !['media_generate', 'image_generate', 'image_upscale'].includes(target.definition_id) || !allowed?.includes(key)) return;
     const next = { ...target.parameters.parameters };
     if (value === '') delete next[key];
     else if (['negative_prompt', 'voice_id', 'size', 'quality'].includes(key)) next[key] = value;
@@ -207,7 +236,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, parameters: next } } : row) });
   }
   function clearUnsupportedMediaParameters() {
-    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || !['media_generate', 'image_generate'].includes(target.definition_id) || !target.parameters.operation_id) return;
+    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || !['media_generate', 'image_generate', 'image_upscale'].includes(target.definition_id) || !target.parameters.operation_id) return;
     const allowed = graphMediaParameterNames(target.parameters.operation_id, target.definition_id === 'image_generate'), next = Object.fromEntries(Object.entries(target.parameters.parameters || {}).filter(([key]) => allowed.includes(key)));
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, parameters: next } } : row) });
   }
@@ -221,13 +250,23 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   function updateImageReference(port: string, value: string) {
     const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || target.definition_id !== 'image_reference' || !/^source_[1-5]$/.test(port)) return;
+    const original = target.parameters.bindings?.find(binding => binding.port === port);
     const bindings = (target.parameters.bindings || []).filter(binding => binding.port !== port);
     if (value !== '') {
       const weight = Number(value); if (!Number.isFinite(weight) || weight <= 0 || weight > 1) return;
-      bindings.push({ port: port as NonNullable<typeof target.parameters.bindings>[number]['port'], weight });
+      bindings.push({ ...original, port: port as NonNullable<typeof target.parameters.bindings>[number]['port'], weight });
     }
     bindings.sort((left, right) => left.port.localeCompare(right.port));
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { bindings } } : row) });
+  }
+  function updateReferenceMetadata(port: string, key: 'purpose' | 'source_note', value: string) {
+    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (target?.definition_id !== 'image_reference') return;
+    const bindings = target.parameters.bindings?.map(binding => { if (binding.port !== port) return binding; const next = { ...binding }; if (value === '') delete next[key]; else Object.assign(next, checkedImageReferenceMetadata({ [key]: value }, true)); return next; });
+    change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { bindings } } : row) });
+  }
+  function updateProductionField(key: 'style' | 'atmosphere' | 'color_palette' | 'shot_id', value: string) {
+    const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || (key === 'shot_id' ? target.definition_id !== 'storyboard_prompt' || value.length > 240 : target.definition_id !== 'image_style' || value.length > (key === 'style' ? 2000 : 1000))) return;
+    change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value } } : row) });
   }
   function connect() {
     if (!editable || !sourcePort || !targetPort || draft.edges.length >= catalog!.limits.edges) return;
@@ -270,8 +309,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     let valid = true, settled = false; const abort = new AbortController(); setError('');
     void read(async () => {
       const value = await client.graphs.get(requestedGraphId, abort.signal);
-      if (value.definition.schema_version === 4 && !client.graphs.imageCatalog) throw new Error('图片节点目录当前不可用，请重新打开工作区。');
-      const imageCatalog = value.definition.schema_version === 4 ? await client.graphs.imageCatalog!(abort.signal) : undefined;
+      const imageCatalog = await graphCatalogForRecord(value, abort.signal);
       return { value, imageCatalog };
     }).then(({ value, imageCatalog }) => {
       if (valid && current() && epoch === selectedEpoch.current) {
@@ -308,6 +346,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
+    planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
     setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
@@ -317,9 +356,10 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
 }
 export type StudioGraphEditorController = ReturnType<typeof useStudioGraphEditorController>;
 export const GRAPH_MEDIA_PARAMETER_LABELS: Record<string, string> = { width: '宽度', height: '高度', steps: '采样步数', seed: '种子', negative_prompt: '负向提示词', size: '图片规格', quality: '图片质量',
-  denoising_strength: '重绘强度（大于 0 至 1）',
+  scale: '超分倍率（2 或 4）', denoising_strength: '重绘强度（大于 0 至 1）',
   duration_seconds: '时长（秒）', frame_rate: '帧率', voice_id: '语音标识', speech_rate: '语速', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）' };
-export function graphMediaParameterNames(operation: GraphMediaOperation | GraphImageOperation, image = false): string[] {
+export function graphMediaParameterNames(operation: GraphMediaOperation | GraphImageOperation | 'm5.image.upscale', image = false): string[] {
+  if (operation === 'm5.image.upscale') return image ? ['scale'] : [];
   const imageParameters = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'];
   if (image && ['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint'].includes(operation)) return ['steps', 'seed', 'negative_prompt', 'denoising_strength'];
   return ({ 'm5.image.t2i': imageParameters, 'm5.image.i2i': imageParameters, 'm5.image.reference': imageParameters, 'm5.image.inpaint': imageParameters,

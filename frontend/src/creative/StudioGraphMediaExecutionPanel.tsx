@@ -46,6 +46,7 @@ export function StudioGraphMediaExecutionPanel(props: StudioGraphMediaExecutionP
         <Badge>{job ? MEDIA_STATUS_LABELS[job.status] : execution.status}</Badge>
         <p>原任务：{execution.job_id || '任务入队回执待核对'}{job ? ` · v${job.version}` : ''}</p>
         <p>回执：{execution.receipt_state} · {execution.send_reserved ? '已记录执行意图' : '尚未记录执行意图'}</p>
+        {job?.processing_proof && <details><summary>超分输出尺寸与摘要</summary><p>{job.processing_proof.source_width} × {job.processing_proof.source_height} → {job.processing_proof.output_width} × {job.processing_proof.output_height} · {job.processing_proof.scale} 倍 · PNG {job.processing_proof.output_bytes} 字节</p><code>{job.processing_proof.output_sha256}</code></details>}
         {job?.error_code && <StatusMessage tone="warning">{job.error_code}</StatusMessage>}
         {job?.remote_compute_may_continue && <StatusMessage tone="warning">远端计算可能仍在继续。本地丢弃不代表远端服务已停止。</StatusMessage>}
         <div className="studio-graph-actions">

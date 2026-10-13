@@ -157,6 +157,20 @@ class ProductionExecutionService:
                 self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
                 yield
 
+    @contextmanager
+    def _upscale_queue_phase(self, nid, scope, context, guard):
+        # Reuse the original queue -> source -> asset -> project order. No
+        # metadata probe, provider or image decoding runs under this lease.
+        with self.store.source_lease(nid, scope):
+            with self.workspace._asset_scope(nid, scope):
+                guard()
+                snapshot = context["sources"][0]
+                row = self.workspace._row(nid, scope, snapshot["id"])
+                if (row["version"], row["sha256"], row["kind"]) != (snapshot["version"], snapshot["digest"], "image"):
+                    raise StaleSourceError("STUDIO_ASSET_SOURCE_CHANGED")
+                self.workspace.assets.content(row["id"], branch_id=scope.get("branch_id"))
+                yield
+
     def _cutout_inputs(self, nid, scope, context, guard, *, under_asset_lease=False):
         """Original formal assets only; never probe media or resolve a provider.
 
@@ -252,7 +266,9 @@ class ProductionExecutionService:
             image_config = self._image_configuration(provider)
             image_operation = operation.rsplit(".", 1)[-1]
             capability = "TEXT_TO_IMAGE" if image_operation == "t2i" else "IMAGE_EDIT"
-            if image_operation in {"reference", "inpaint"} or self._image_runtime(command):
+            if image_operation == "upscale" and (type(provider) is not LocalImageAdapter or not config.get("local")):
+                raise ValueError("STUDIO_IMAGE_UPSCALE_DISCOVERED_LOCAL_PROVIDER_REQUIRED")
+            if image_operation in {"reference", "inpaint", "upscale"} or self._image_runtime(command):
                 if (not image_config or image_operation not in image_config["operations"]
                         or not callable(getattr(provider, "generate_image", None))):
                     raise ValueError("STUDIO_IMAGE_RUNTIME_PROVIDER_UNSUPPORTED")
@@ -440,7 +456,9 @@ class ProductionExecutionService:
         self._egress(nid, scope, command, binding, guard)
         body = command.model_dump()
         if command.operation_id == "m5.image.cutout": body["parameters"] = {}
-        recipe = self._recipe(command)
+        source_dimensions = ({key: evidence[0]["measured"][key] for key in ("width", "height")}
+            if command.operation_id == "m5.image.upscale" else None)
+        recipe = self._recipe(command, source_dimensions=source_dimensions)
         context.update(request_id=command.request_id, operation_id=command.operation_id, sources=sources,
             provider_binding=binding, license_note=command.license_note, rights={"license_note": command.license_note}, execution_recipe=recipe)
         context["request_digest"] = digest({"context": context, "command": body})
@@ -454,7 +472,7 @@ class ProductionExecutionService:
         guard()
         return preview, context, command
 
-    def _recipe(self, command):
+    def _recipe(self, command, *, source_dimensions=None):
         parameters = command.parameters.model_dump(exclude_none=True)
         recipe = {"contract": "studio-execution-recipe/1", "operation_id": command.operation_id,
             "adapter": "ORIGINAL_HTTP_PROVIDER", "parameters": parameters, "automatic_fallback": False}
@@ -469,9 +487,10 @@ class ProductionExecutionService:
                 operation = command.operation_id.rsplit(".", 1)[-1]
                 weights = [reference.weight for reference in command.image_references or []]
                 if command.image_source is not None: weights.insert(0, 1.0)
+                arguments = {"source_dimensions": source_dimensions} if operation == "upscale" else {}
                 result = provider.image_recipe(AssetGenerationRequest(command.provider_id, command.model_id,
                     command.prompt, command.request_id, parameters), operation=operation,
-                    reference_weights=weights, mask=command.mask_source is not None)
+                    reference_weights=weights, mask=command.mask_source is not None, **arguments)
                 recipe.update(adapter="COMFYUI_BUILTIN_IMAGE" if image_config["recipe_id"].startswith("comfy-") else "AUTOMATIC1111_IMAGE",
                     image_recipe_id=image_config["recipe_id"], reference_weights=weights,
                     reference_semantics=image_config["reference_semantics"],
@@ -480,6 +499,10 @@ class ProductionExecutionService:
                 else:
                     recipe["defaults"] = {"width": 1024, "height": 1024, "steps": 28} if operation == "t2i" else {"steps": 28}
                     if operation != "t2i": recipe["denoising_strength"] = parameters.get("denoising_strength", 0.6)
+                if operation == "upscale":
+                    from ..services.studio_image_provider_recipes import upscale_dimensions
+                    recipe.update(source_dimensions=copy.deepcopy(source_dimensions),
+                        target_dimensions=upscale_dimensions(source_dimensions, parameters["scale"]))
                 recipe["recipe_digest"] = digest(recipe)
                 return recipe
             from ..model_center.discovery_bridge import LocalImageAdapter
@@ -522,7 +545,7 @@ class ProductionExecutionService:
             candidate = {"id": row["output_asset_id"], "version": row.get("candidate_asset_version", row.get("output_asset_version")), "digest": row.get("output_digest"),
                 "kind": "image" if owner == "image" else "audio"}
         return {"contract": "studio-production-job/1", "owner": owner,
-            **({"processing_proof": copy.deepcopy(row.get("processing_proof"))} if context.get("operation_id") == "m5.image.cutout" else {}),
+            **({"processing_proof": copy.deepcopy(row.get("processing_proof"))} if context.get("operation_id") in {"m5.image.cutout", "m5.image.upscale"} else {}),
             **{key: copy.deepcopy(row.get(key)) for key in ("id", "novel_id", "branch_id", "version", "status", "request_digest", "receipt_digest", "attempt", "created_at", "updated_at", "error_code", "review_state", "cancellation_mode", "needs_reconciliation", "execution_state")},
             "operation_id": row.get("context", {}).get("operation_id"), "output_candidate": candidate,
             "timeline_snapshot": copy.deepcopy(row.get("context", {}).get("timeline_snapshot")),
@@ -555,6 +578,9 @@ class ProductionExecutionService:
                 guard = self._cutout_guard(guard)
                 row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard,
                     source_phase=lambda: self._cutout_queue_phase(nid, scope, context, guard))
+            elif command.operation_id == "m5.image.upscale":
+                row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard,
+                    source_phase=lambda: self._upscale_queue_phase(nid, scope, context, guard))
             else:
                 row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard)
             owner = "image"
@@ -1276,7 +1302,9 @@ class ProductionExecutionService:
             binding = self._binding(command)
             self._parameters(command)
             if binding != context["provider_binding"]: raise StaleSourceError("STUDIO_PROVIDER_ROUTE_CHANGED")
-            if self._recipe(command) != context.get("execution_recipe"):
+            dimensions = (context.get("execution_recipe", {}).get("source_dimensions")
+                if command.operation_id == "m5.image.upscale" else None)
+            if self._recipe(command, source_dimensions=dimensions) != context.get("execution_recipe"):
                 raise StaleSourceError("STUDIO_EXECUTION_RECIPE_CHANGED")
             if owner == "video" and args and self.video_providers.get(binding["provider_id"]) is not args[-1]:
                 raise StaleSourceError("STUDIO_PROVIDER_INSTANCE_CHANGED")

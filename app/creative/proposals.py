@@ -12,11 +12,16 @@ from fastapi import HTTPException
 
 from ..experimental.common import StaleSourceError, check_version, change_row, new_row, now
 from ..experimental.store import canonical
-from .models import CreativeDocumentIn, DirectorProposalIn, DirectorProposalReview, ProposalAction
+from .models import CreativeProductionDocumentIn, DirectorProposalIn, DirectorProposalReview, ProposalAction
 
 
 def digest(value):
     return hashlib.sha256(canonical(value).encode("utf-8")).hexdigest()
+
+
+def director_output_digest(notes, visual_target=None):
+    """Include opt-in visual goals in exact review; keep legacy note identity."""
+    return digest(notes if visual_target is None else {"director_notes": notes, "visual_target": visual_target})
 
 
 class DirectorProposalService:
@@ -112,9 +117,11 @@ class DirectorProposalService:
                     "performance": "；".join(dialogue["delivery"] for dialogue in scene.get("dialogue", []) if dialogue.get("delivery"))[:4000],
                     "blocking": "待人工确认人物位置、视线和出入方向；文字不足以确定实际空间。"})
             title = body.title or (source["title"][:220] + " · 导演方案")
-            candidate = CreativeDocumentIn(mode="DIRECTOR", title=title,
-                source_chapter_ids=source["source_chapter_ids"], scenes=source["scenes"], director_notes=notes)
+            candidate = CreativeProductionDocumentIn(mode="DIRECTOR", title=title,
+                source_chapter_ids=source["source_chapter_ids"], scenes=source["scenes"], director_notes=notes,
+                visual_target=body.visual_target)
             notes = [note.model_dump() for note in candidate.director_notes]
+            visual_target = candidate.visual_target.model_dump() if candidate.visual_target is not None else None
             provenance = {"method": "RULE_ASSISTED", "model_called": False, "provider_id": None,
                 "model_id": None, "model_version": None, "parameters": {"rule_version": "director-planning-v1"},
                 "input_digest": self.documents.document_digest(source), "quality_verification": "HUMAN_REVIEW_REQUIRED"}
@@ -122,8 +129,10 @@ class DirectorProposalService:
                 "project_incarnation": self.documents.store.incarnation(nid),
                 "source_document_id": source["id"], "source_version": source["version"],
                 "source_digest": self.documents.document_digest(source), "director_notes": notes,
-                "output_digest": digest(notes), "provenance": provenance, "model_preview": None,
+                "output_digest": director_output_digest(notes, visual_target), "provenance": provenance, "model_preview": None,
                 "model_execution": None, "document_id": None})
+            if visual_target is not None:
+                row["visual_target"] = visual_target
             state["collections"].setdefault(self.COLLECTION, {})[row["id"]] = row
             self._current(nid, scope, row)
             self._capacity(state)
@@ -138,7 +147,7 @@ class DirectorProposalService:
             check_version(row, body.expected_version)
             if row["status"] != "NEEDS_REVIEW" or row.get("document_id"):
                 raise ValueError("CREATIVE_PROPOSAL_NOT_REVIEWABLE")
-            if row["output_digest"] != body.reviewed_output_digest or digest(row["director_notes"]) != row["output_digest"]:
+            if row["output_digest"] != body.reviewed_output_digest or director_output_digest(row["director_notes"], row.get("visual_target")) != row["output_digest"]:
                 raise ValueError("CREATIVE_PROPOSAL_EXACT_REVIEW_REQUIRED")
             guard()
             if row.get("model_execution"):
@@ -146,14 +155,17 @@ class DirectorProposalService:
                     raise StaleSourceError("CREATIVE_MODEL_LIVE_AUTHORITY_REQUIRED")
                 from ..experimental.ux import ReadContext
                 self.generation.validate_result(ReadContext(nid, scope, actor), row)
-            candidate = CreativeDocumentIn(mode="DIRECTOR", title=body.title,
+            # Omitting the review extension preserves an authored visual goal;
+            # an explicit null is the user's choice to clear it before adoption.
+            visual_target = body.visual_target if "visual_target" in body.model_fields_set else row.get("visual_target")
+            candidate = CreativeProductionDocumentIn(mode="DIRECTOR", title=body.title,
                 source_chapter_ids=source["source_chapter_ids"], scenes=source["scenes"],
-                director_notes=body.director_notes)
+                director_notes=body.director_notes, visual_target=visual_target)
             payload = self.documents.prepare_content(nid, scope, candidate,
                 source_documents={source["id"]: {"version": row["source_version"], "digest": row["source_digest"]}})
             provenance = {**deepcopy(row["provenance"]), "proposal_id": row["id"],
                 "proposal_version": row["version"], "output_digest": row["output_digest"],
-                "reviewed_output_digest": digest(payload["director_notes"]), "reviewed_by": actor, "reviewed_at": now()}
+                "reviewed_output_digest": director_output_digest(payload["director_notes"], payload.get("visual_target")), "reviewed_by": actor, "reviewed_at": now()}
             document = new_row(nid, scope, actor, {**payload, "provenance": provenance})
             state["collections"].setdefault(self.documents.COLLECTION, {})[document["id"]] = document
             self.documents.assert_current(nid, scope, document)
@@ -177,7 +189,7 @@ class DirectorProposalService:
             if execution:
                 execution["status"] = "CANCELLED"
             change_row(row, actor, body.expected_version, lambda current: current.update(
-                status="CANCELLED", model_execution=execution, director_notes=[], output_digest=digest([])))
+                status="CANCELLED", model_execution=execution, director_notes=[], output_digest=director_output_digest([], current.get("visual_target"))))
             self._capacity(state)
             guard()
             result = self._public(row)

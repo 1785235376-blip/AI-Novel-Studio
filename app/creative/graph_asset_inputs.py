@@ -166,6 +166,8 @@ class GraphAssetInputs:
         for node in nodes:
             if node["definition_id"] == "asset_reference":
                 AssetParameters.model_validate(node["parameters"])
+        from .graph_planning_nodes import current_documents
+        current_documents(self.service, nid, scope, nodes, guard, state)
         by_id = {node["id"]: node for node in nodes}
         for node_id, output in row.get("typed_outputs", {}).items():
             node = by_id.get(node_id)
@@ -175,20 +177,36 @@ class GraphAssetInputs:
                 if set(output) != {"asset"}:
                     raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
                 AssetParameters.model_validate(output["asset"])
-            elif node["definition_id"] in {"media_generate", "timeline_export", "image_generate"}:
+            elif node["definition_id"] in {"media_generate", "timeline_export", "image_generate", "image_upscale"}:
                 if set(output) != {"candidate"}:
                     raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
                 validate_output_ports(node["definition_id"], output, schema_version=row.get("graph_schema_version"))
-            elif node["definition_id"] in {"image_reference", "image_prompt"}:
+            elif node["definition_id"] in {"image_reference", "image_prompt", "image_style"}:
                 from .graph_image_nodes import execute_image_local
                 if output != execute_image_local(node, self.service.executor._inputs(row, node_id, row["typed_outputs"])):
                     raise StaleSourceError("CREATIVE_GRAPH_IMAGE_TRANSFORM_CHANGED")
+            elif node["definition_id"] in {"director_plan", "storyboard_plan", "storyboard_prompt"}:
+                from .graph_planning_nodes import execute_planning_local
+                if output != execute_planning_local(self.service, nid, scope, node,
+                        self.service.executor._inputs(row, node_id, row["typed_outputs"]), guard, state):
+                    raise StaleSourceError("CREATIVE_GRAPH_PLANNING_OUTPUT_CHANGED")
         guard()
         return saved
 
     def states(self, nid, scope, actor, definition, guard):
         result = []
         for node in definition["nodes"]:
+            if node["definition_id"] in {"director_plan", "storyboard_plan"}:
+                from .graph_planning_nodes import read_document
+                try:
+                    read_document(self.service, nid, scope, node, guard)
+                    state = "CURRENT"
+                except StaleSourceError:
+                    state = "STALE"
+                except (FileNotFoundError, ValueError, KeyError):
+                    state = "UNAVAILABLE"
+                result.append({"node_id": node["id"], "state": state})
+                continue
             if node["definition_id"] != "asset_reference":
                 continue
             try:

@@ -101,3 +101,13 @@ Changelog: added bounded image runtime source and basic controller-backed
 selection/weight/Mask/Graph controls; preserved original default contracts,
 capability-gated parameters, private review and UNKNOWN recovery. No Video,
 QingJian, automatic model installation or final Windows acceptance.
+
+
+### Production Expansion Phase 2 (2026-10-14)
+
+[Image + Director + Storyboard report](../../DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md)
+records authored reference roles/Style, actual enabled-local-provider Upscale,
+Director goals/performance, note-per-shot Storyboard derivation and exact saved
+document Graph inputs. Original owners, private review and Opus controllers remain.
+Whole modules PARTIAL; model/GPU/installed Windows LOCAL_REQUIRED; Control reserved.
+Current test failures and earlier historical failures are not erased by publication.

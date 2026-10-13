@@ -1,7 +1,7 @@
-"""Non-executable upscale extension contract; no owner, route or model loader.
+"""Upscale adapter contract on the existing ImageJob/Asset/review pipeline.
 
-An eventual implementation must delegate to the existing ImageJob/Asset/review
-pipeline. This request is deliberately not part of MediaOperation or Graph.
+The former reservation remains readable for old callers. Execution uses an
+explicit Model Center registration and the closed Comfy upscale recipe.
 """
 from typing import Literal, Protocol
 
@@ -29,8 +29,31 @@ class ReservedImageUpscaleAdapter(Protocol):
                 parameters: ReservedImageUpscaleInput) -> AssetGenerationResult: ...
 
 
+ImageUpscaleInput = ReservedImageUpscaleInput
+
+
+class ImageUpscaleAdapter(Protocol):
+    """Fixed provider entry points used by the original execution owner."""
+    def image_recipe(self, request: AssetGenerationRequest, *, operation: str,
+                     reference_weights: tuple, mask: bool,
+                     source_dimensions: dict | None = None) -> dict: ...
+
+    def generate_image(self, request: AssetGenerationRequest, *, operation: str,
+                       images: list[str], reference_weights: list[float],
+                       mask: str | None = None) -> AssetGenerationResult: ...
+
+
 def reservation():
     return {"contract": "studio-image-upscale-reservation/1", "status": "NOT_CONFIGURED",
         "execution_available": False, "automatic_download": False,
+        "owner": "ImageJobService", "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+        "product_acceptance": "LOCAL_REQUIRED"}
+
+
+def execution_contract():
+    return {"contract": "studio-image-upscale-execution/1", "status": "IMPLEMENTED",
+        "operation_id": "m5.image.upscale", "recipe_id": "comfy-upscale-model-v1",
+        "scales": [2, 4], "output_format": "PNG", "automatic_download": False,
+        "provider_policy": "EXPLICIT_ENABLED_LOCAL_MODEL_CENTER_REGISTRATION",
         "owner": "ImageJobService", "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
         "product_acceptance": "LOCAL_REQUIRED"}

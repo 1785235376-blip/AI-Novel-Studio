@@ -1,0 +1,443 @@
+{
+  "schema": "studio-image-director-storyboard-phase2/1",
+  "date": "2026-10-14",
+  "timezone": "Asia/Shanghai",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "feature/v2-narrative-platform",
+  "baseline_sha": "a79b7f9d6fbacfd112ac42f2082798b2cd7f9233",
+  "code_test_input_tree": "f37fd76f6c07fdc4f0e405ab708dc1c485dff288",
+  "source_map_sha256": "a9e6dd08c5a92a0af404894722b1e4ea5c1799293353d5808bd64cdb4d0d8821",
+  "source_files": 1942,
+  "stage_source_status": "IMPLEMENTED_BOUNDED",
+  "module_status": "PARTIAL",
+  "postgres_director_gate": "BLOCKED",
+  "product_acceptance": "LOCAL_REQUIRED",
+  "code_test_hashes": [
+    {
+      "path": "app/asset_providers.py",
+      "sha256": "3b65abb5e7b548b128a98854030b2ffaa003f0b12284929b5ddaea7faf424191"
+    },
+    {
+      "path": "app/creative/api.py",
+      "sha256": "b2c2f971922a8fdb8b91d8e71d25e696a1ac8d750b7d2a651a0f5e94ddb17a3e"
+    },
+    {
+      "path": "app/creative/generation.py",
+      "sha256": "d6cc974c6d3683c1527367e57e312213a1e7ff3a8a5bf3cc533ecb94ef9c59ef"
+    },
+    {
+      "path": "app/creative/graph_api.py",
+      "sha256": "d35981617c9262642634c0c94273b488de51b008021d30f500081745e182e8a0"
+    },
+    {
+      "path": "app/creative/graph_asset_inputs.py",
+      "sha256": "3cc1da7aeb1a9853a9843dd99f0869031ffdd94724af936b45b3a212db2ad8e5"
+    },
+    {
+      "path": "app/creative/graph_execution.py",
+      "sha256": "236ccdbc8c67b4785b6dc72ce8cf29d42f921b110af336d720bf3b3aa1a97009"
+    },
+    {
+      "path": "app/creative/graph_image_nodes.py",
+      "sha256": "85aec65641c179dcb9d17311e2720b2be88eac85b0887a01fd964f13d8940de1"
+    },
+    {
+      "path": "app/creative/graph_media_execution.py",
+      "sha256": "0949e81bda4e21b1b966a4500c248160ca02bc0328701197c2d3fd3c342dbf14"
+    },
+    {
+      "path": "app/creative/graph_models.py",
+      "sha256": "7b9a18160cf561832e70c95a7ddc1ab126829c628f93b6f6722d3fe89cd7c29f"
+    },
+    {
+      "path": "app/creative/graph_planning_nodes.py",
+      "sha256": "91961dd2a2065ab478bf709e61cda95bce67b573743c19234df49cd29c6f00aa"
+    },
+    {
+      "path": "app/creative/graph.py",
+      "sha256": "ff3219227a6cc21e3c334e0bc0fcb4f34b5fae61e62cb816c62eb80852124703"
+    },
+    {
+      "path": "app/creative/models.py",
+      "sha256": "a94811ff6c2701ae436b46a00264442def7458aebc447290cf0fd90bfc4d4707"
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "sha256": "03d490dd85b0aff12eb30ca2871959451e91a542a6ccda565bc925fced7d5fde"
+    },
+    {
+      "path": "app/creative/production_execution.py",
+      "sha256": "809110a65a79686c704507e2ef71ffef1d93c30842f7d27f6991a9400908d55d"
+    },
+    {
+      "path": "app/creative/proposals.py",
+      "sha256": "6d2e755f89ba7e99a1fdfc82c8abbf06efd8417d970e2b0bace685e4874cb1e2"
+    },
+    {
+      "path": "app/creative/service.py",
+      "sha256": "2a77e4f74688bd1b7940a77085b364abee922e9818dafcca37bb480f1ea481f2"
+    },
+    {
+      "path": "app/model_center/discovery_bridge.py",
+      "sha256": "878d18dddf184f2031454e9de281c66324431b73833a34d4e13e5908ec269e53"
+    },
+    {
+      "path": "app/model_center/discovery.py",
+      "sha256": "776e7dd9536244e5df0bb0c176206c4f84c5b62280772292f3726ce983a1c46c"
+    },
+    {
+      "path": "app/services/studio_image_control_contract.py",
+      "sha256": "48534f0b626b769474bb8a7d0fa86cf2189b3c8a0599eb54e9d54450a1bdf32b"
+    },
+    {
+      "path": "app/services/studio_image_execution.py",
+      "sha256": "ed2a733ac99a337e6a9a680621db61e03fa153ea50254d3f7a7d0d0b47bb2dec"
+    },
+    {
+      "path": "app/services/studio_image_provider_recipes.py",
+      "sha256": "c3f44701a1fb988c51e6785cf41cc4e80d88bb8e5478e5f332409517e767a5e9"
+    },
+    {
+      "path": "app/services/studio_image_upscale_contract.py",
+      "sha256": "aad27a9d6a3ec9e25d25d3246d0fdde712356f037772a74926176e776eb1e626"
+    },
+    {
+      "path": "frontend/src/creative/AIDirectorPanel.tsx",
+      "sha256": "d8b15c74dfa359ea6b7221dd4145b47e2781ceedc3763ed6edd60d44669420d4"
+    },
+    {
+      "path": "frontend/src/creative/client.ts",
+      "sha256": "b7c640e9b9fa96360d063607b1cead0bef40839ee26f673b2030e6a63ca57c60"
+    },
+    {
+      "path": "frontend/src/creative/creative.css",
+      "sha256": "8dbbd5e5fcddb1329d8553e7b5bc0b9160d6ec4e8f40faff75180463d2e6f379"
+    },
+    {
+      "path": "frontend/src/creative/CreativeCanvas.tsx",
+      "sha256": "c24909c84795e734a4078118d87fbe5fdecd0d576d147c3e3e89f71e643cd9b9"
+    },
+    {
+      "path": "frontend/src/creative/CreativeProductionCanvas.test.tsx",
+      "sha256": "49b81051da6ac090d20d4faf0fc0dc114a125ef48eedb1d24bda4c13c5215c0b"
+    },
+    {
+      "path": "frontend/src/creative/creativeProductionClient.test.ts",
+      "sha256": "3b43616a8aa6b39a80c8b17086f576279982cb8fc09ef7212e66682ab7894be6"
+    },
+    {
+      "path": "frontend/src/creative/CreativeWorkspace.tsx",
+      "sha256": "ce3283420fb2cceb2b69b29cb35f269ccf313744d92c162396dde5d53eda7c57"
+    },
+    {
+      "path": "frontend/src/creative/DirectorTargetPanel.tsx",
+      "sha256": "cac8f87adf38ee47d281b4f683eaca01cf121605da78b9733c868f28588a5aa9"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/productionGraph.catalog.json",
+      "sha256": "817b4f4999564348447e35e2708686cff09594f7c7c28022e51bf3c0b736150b"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/productionGraph.planning-run.json",
+      "sha256": "3486217b1944812cd4706ae5a45ed693699e10c052d238d505804476b78044be"
+    },
+    {
+      "path": "frontend/src/creative/graphDraft.ts",
+      "sha256": "b86e19d939cbb5da6f6bfe611ab42707affc095aa58aae33edc11920812a6be3"
+    },
+    {
+      "path": "frontend/src/creative/ProductionGraphOutputPreview.tsx",
+      "sha256": "8f6f642603657455c521c603922ae0110407b59749bc7aa34e1e47856b10b7fb"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "sha256": "5e4e93430c31f84fa9dc2ec6ce1dc882d439955693f82772846a59e1ab3a2a84"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "sha256": "9aeef1a0c2bb91505d114e57398b1500ea5dfd0db91895646d323e499f4c22ef"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphLabels.ts",
+      "sha256": "54a160d17d1b7f1382c6a367c70614f8685b3b96cff5a08a553886a0a4bbbed5"
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphMediaExecutionPanel.tsx",
+      "sha256": "54e15a18ac55189b3490d485529103c412a7ebf4b38a0928ad142f45ec3b7fb2"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphRunView.tsx",
+      "sha256": "8f71fa944ca15547363d1371fbf28faf850c36f49fdc98ec737c83532077fae3"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphTypes.ts",
+      "sha256": "294c6c1342d3374f0ba198e6e66a858231a2b28c318b35544eb55d65da22c612"
+    },
+    {
+      "path": "frontend/src/creative/studioImageRuntimeContract.ts",
+      "sha256": "700c085fbd01cb1db5c102dab7dbe746290170aea996d9e50944187ac00b91b0"
+    },
+    {
+      "path": "frontend/src/creative/StudioImageUpscaleProduction.test.tsx",
+      "sha256": "a90c71ca2391cf1fd54ff6fa3a1badbbe56e876d46a562fab3e3ff773423a114"
+    },
+    {
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "sha256": "347d12787f1ddeb5e58e04546f809f46e1f9edc4497064589b23df55119702fd"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "sha256": "23c7e12c72782f76062de4c137644e8d34f78d2373237f64eeba738a882c4e37"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionGraphClient.test.ts",
+      "sha256": "f96961cd73ed6127eda8bd9caf84409e88d40f2bb6b990138ce7080560f3543f"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionGraphContract.ts",
+      "sha256": "2720e6f23dd8afd354d4dcd9d4895e8eb17c19740607397af12cb4b7dbf15347"
+    },
+    {
+      "path": "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+      "sha256": "9e9afde3db090b7bbe4249dc9a0b4ceb6dfe36306fb9912743d4c867ea67acdf"
+    },
+    {
+      "path": "frontend/src/creative/types.ts",
+      "sha256": "dcea7815a3021728eb55cce4ff61dd62f002df75b21f01fcfd92b4d1bb51a909"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "sha256": "f5fff9fa68e88f77a14df17c8a4d43e9152db7d919b3d75bf71b4de543d15a1c"
+    },
+    {
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "sha256": "820124694752d17bdd61facb3c4793d6511fef423146f6949dd2e81b27e926cf"
+    },
+    {
+      "path": "tests/test_v2_director_storyboard_production.py",
+      "sha256": "f18c3cd57cc2599ad993425865f9842584219b993ec7b1b0cc5916712a1b5064"
+    },
+    {
+      "path": "tests/test_v2_graph_production_api.py",
+      "sha256": "002bb596d01397cb9a0c364e5c3a6b518ed3a220cccd470bd852adc14d486bfb"
+    },
+    {
+      "path": "tests/test_v2_graph_production_execution.py",
+      "sha256": "694e969534fb599eac371b158db161634a3dfad7841c24ae8b14df6d675a89c4"
+    },
+    {
+      "path": "tests/test_v2_graph_production_planning.py",
+      "sha256": "ff694fa0f87c1cb8895ae488d58f3f6bad7f508b94572931371c15e4eec45147"
+    },
+    {
+      "path": "tests/test_v2_image_upscale_api.py",
+      "sha256": "333d345c20b4e5fee56641ac4bfcef758a661c56079258a00d37473de6a777bc"
+    },
+    {
+      "path": "tests/test_v2_image_upscale.py",
+      "sha256": "f1848aad61ff7b2992d89837d35a2fee28769d72d9ae5c936f1e2b871c160643"
+    }
+  ],
+  "checks": {
+    "file": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 186,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 67,
+        "passed": 119
+      },
+      "started_utc": "2026-10-13T17:01:05.834588+00:00",
+      "finished_utc": "2026-10-13T17:02:33.760870+00:00",
+      "private_log_sha256": "a9a6ff1ebc559e2e87f8a72506c168309c17f4dd3e6e9f14e100b561b9e4486f",
+      "private_junit_sha256": "d9a3650c7174ef01ff60c55533624e79d1cc1f761ccf38a34b5651c66e7c46b6"
+    },
+    "pg": {
+      "exit_code": 1,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 186,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 67,
+        "passed": 117
+      },
+      "started_utc": "2026-10-13T17:11:53.487154+00:00",
+      "finished_utc": "2026-10-13T17:14:54.259054+00:00",
+      "private_log_sha256": "41ef1bf68e9c6b2d1911c694cf7891c4e6dce1b112bf86aaa3b5d7f8e856ca6b",
+      "private_junit_sha256": "8584f258f6c6167a4899ed42f6944344a48dad5e2819efc6070ec532206ed0c9",
+      "failed_nodes": [
+        "tests.test_v2_director_storyboard_production::test_original_synthetic_director_executor_carries_goal_rich_notes_and_review[postgres-/api]",
+        "tests.test_v2_director_storyboard_production::test_original_synthetic_director_executor_carries_goal_rich_notes_and_review[postgres-/api/v1]"
+      ]
+    },
+    "frontend": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 3008,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 8,
+        "passed": 3000
+      },
+      "started_utc": "2026-10-13T17:01:05.832967+00:00",
+      "finished_utc": "2026-10-13T17:01:44.624671+00:00",
+      "private_log_sha256": "d5970fccd1d48957ab68b30c23b24d8c99c3cbb91769981a09536cd1978795d3",
+      "private_junit_sha256": "ef6322e489160049793c7f75f019979263d50303834f823174b0a833bb7f91e9"
+    },
+    "types": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "counts": null,
+      "started_utc": "2026-10-13T17:01:05.820318+00:00",
+      "finished_utc": "2026-10-13T17:01:32.902528+00:00",
+      "private_log_sha256": "b07656adbbdad4ab78cfa24671b30a4e6c06e3634519adebcba808c2152e3ab5",
+      "private_junit_sha256": null
+    },
+    "tokens": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "counts": null,
+      "started_utc": "2026-10-13T17:01:33.529759+00:00",
+      "finished_utc": "2026-10-13T17:01:35.261627+00:00",
+      "private_log_sha256": "27b30282e48fdacbcde282f3eca97d95cec739ce33b499583cc32af7a9afaad5",
+      "private_junit_sha256": null
+    },
+    "build": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "counts": null,
+      "started_utc": "2026-10-13T17:12:32.741330+00:00",
+      "finished_utc": "2026-10-13T17:12:37.713332+00:00",
+      "private_log_sha256": "3b47bf6eac2780b188736add8df59dd0f51244f164321d34a150135d8c7febf4",
+      "private_junit_sha256": null
+    },
+    "metadata": {
+      "exit_code": 1,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 46,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 44
+      },
+      "started_utc": "2026-10-13T17:12:03.645510+00:00",
+      "finished_utc": "2026-10-13T17:12:11.705413+00:00",
+      "private_log_sha256": "1d234283f34dfb1cfde6de51270f15016d949e7be936856248a561f7ed43ce48",
+      "private_junit_sha256": "f6a9cc59d917a9951b89819f12964e86692addeadf1357efc1e2de0b2a686d71",
+      "failed_nodes": [
+        ".github.ci.test_compact_staged_catalog::test_retained_symlink_is_rejected_before_generator",
+        ".github.ci.test_compact_staged_catalog::test_excluded_evidence_symlink_is_not_followed"
+      ]
+    },
+    "original_visual": {
+      "passed": 7,
+      "skipped": 0,
+      "failed": 0,
+      "source_unchanged": true,
+      "private_log_sha256": "d392c81b9f7501feb765fe3ae01e0dc4c96df161df25520d257b746f0ea91a13",
+      "scope": "3 frozen shell snapshots and 4 geometry; no snapshot update"
+    },
+    "linux_symlink_supplement": {
+      "counts": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "source_unchanged": true,
+      "windows_failures_reclassified": false,
+      "existing_runtime_only": true,
+      "private_log_sha256": "53e8e00a0ff97ff9af56647df589b302d8d48d11ceec3294b35a99231b3404d2"
+    },
+    "related_file_incremental": {
+      "counts": {
+        "tests": 548,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 205,
+        "passed": 343
+      },
+      "final_frozen_source_verdict": false,
+      "scope": "14 related modules before final contract fixes; preserved, not summed",
+      "private_log_sha256": "fdd87c012a508dc688f941caf032e53423bb7a7d15fcee094c057b970db30121"
+    },
+    "related_pg_incremental": {
+      "counts": {
+        "tests": 548,
+        "failures": 20,
+        "errors": 0,
+        "skipped": 205,
+        "passed": 323
+      },
+      "final_frozen_source_verdict": false,
+      "scope": "14 related modules before final contract fixes; preserved, not summed",
+      "private_log_sha256": "04cd023df11274549fd983d05787e2b8a10d657a99aca930b4e655dd03b4e199"
+    }
+  },
+  "counts_overlap": true,
+  "collected_nodes_are_execution": false,
+  "inventory": {
+    "api_operations": 2221,
+    "removed_operations": 0,
+    "collected_nodes": 13813,
+    "frozen_nodes": 9151,
+    "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+    "application_source_fingerprint": "3b4568774230886b767ef8cb0b2b484b2e5c2d3b128dab646fd9ce401e3cc552",
+    "generated_hashes": {
+      "API_CATALOG.json": "52df7fb486157cbe4e400cdb95866191b2a33e3286c921154b3953990692ccb3",
+      "API_CATALOG.md": "021c76cbd3d09c6c96aab8487db87a062bcecc9ba2d914e9cc51516e930e0a97",
+      "API_CATALOG_DETAIL.json.gz": "9d82c23677d2829e49b62903877fe0835401ad610aaf05aba28a02526b96b1a6",
+      "API_OPENAPI.json.gz": "f9be1b9093516666a9ff4619106e9a763c3f0918ddaa2992c9090c47ba9135d5",
+      ".github/ci/coverage_manifest_v2.json.gz": "64ead03e60679b2da13e0704ce994b4303d6cf20a57ed4a013b6a9d3e349836d"
+    }
+  },
+  "postgres_differential": {
+    "representative_original_test": "test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api-not json]",
+    "baseline_sha": "a79b7f9d6fbacfd112ac42f2082798b2cd7f9233",
+    "baseline_result": "FAIL",
+    "current_result": "FAIL",
+    "current_raw_generation_ms": 5750,
+    "baseline_raw_generation_ms": 5844,
+    "original_polling_deadline_seconds": 5,
+    "observed_database_lock_waits": 0,
+    "interpretation": "Representative original case predates this increment; finite generation exceeds the unchanged polling deadline. Other failed cases remain failed and are not individually attributed.",
+    "assertions_or_timeouts_changed": false,
+    "no_rerun_until_green": true,
+    "private_summary_sha256": "bdfb51b8a47f03bfff8617180710f94c71c28232d2c63a3341cc597d1d34dc0f"
+  },
+  "not_run": [
+    "full_milestone_CI",
+    "installed_Windows_application_acceptance",
+    "real_model_inference",
+    "GPU_acceptance",
+    "new_control_visual_acceptance"
+  ],
+  "limits": [
+    "Control adapters reserved",
+    "scene-free Director model execution not implemented",
+    "Video Graph consumer not added",
+    "native model quality and intermediate memory unverified"
+  ],
+  "tools": {
+    "python": "3.12.9",
+    "node": "22.14.0",
+    "postgres": "16.15",
+    "playwright": "1.62.1"
+  },
+  "boundaries": {
+    "new_owner": false,
+    "model_download_or_launch": false,
+    "paid_api": false,
+    "V1_credentials_read": false,
+    "merge_or_release": false,
+    "qingjian_work": false,
+    "original_tests_or_generators_changed": false,
+    "interop_semantics_changed": false
+  },
+  "publication": "Actual remote SHA/PR Draft receipt is recorded after normal push in PR47; no self-referential SHA invented"
+}

@@ -34,6 +34,13 @@ OWNER_STATUSES = {"QUEUED", "RUNNING", "SEND_RESERVED", "REMOTE_RUNNING", "RESUL
 EXECUTION_STATUSES = OWNER_STATUSES | {"ADMISSION_RESERVED", "ADMISSION_UNKNOWN", "JOB_NOT_FOUND"}
 
 
+def project_job_receipt(job):
+    value = {key: deepcopy(job.get(key)) for key in RECEIPT_FIELDS}
+    if job.get("operation_id") == "m5.image.upscale":
+        value["processing_proof"] = deepcopy(job.get("processing_proof"))
+    return value
+
+
 class MediaNodeRequest(Strict):
     expected_version: int = Field(ge=1)
     node_id: Id
@@ -60,7 +67,7 @@ class CreativeGraphMediaRuntime:
 
     @staticmethod
     def nodes(row):
-        return {node["id"]: node for node in row["typed_nodes"] if node["definition_id"] in {"media_generate", "timeline_export", "image_generate"}}
+        return {node["id"]: node for node in row["typed_nodes"] if node["definition_id"] in {"media_generate", "timeline_export", "image_generate", "image_upscale"}}
 
     def _node(self, row, node_id):
         node = self.nodes(row).get(node_id)
@@ -138,7 +145,7 @@ class CreativeGraphMediaRuntime:
         # Bound only still-pending local outputs; modality references/receipts and
         # original transition traces receive an additional finite 16 KiB margin.
         pending_local = sum(MAX_OUTPUT_BYTES for node in row["typed_nodes"]
-            if node["definition_id"] not in {"media_generate", "media_review", "timeline_export", "image_generate"}
+            if node["definition_id"] not in {"media_generate", "media_review", "timeline_export", "image_generate", "image_upscale"}
             and row["node_states"][node["id"]]["status"] != "SUCCEEDED")
         future = min(256000, pending_local) + 16384
         addition = updates * (len(canonical(snapshot).encode("utf-8")) + future)
@@ -150,7 +157,7 @@ class CreativeGraphMediaRuntime:
     def _inputs(self, row, node):
         ports = self.service.executor._inputs(row, node["id"], row["typed_outputs"])
         command = deepcopy(node["parameters"])
-        if node["definition_id"] == "image_generate":
+        if node["definition_id"] in {"image_generate", "image_upscale"}:
             if row.get("graph_schema_version") != 4:
                 raise ValueError("CREATIVE_GRAPH_IMAGE_SCHEMA_REQUIRED")
             from .graph_image_nodes import image_command_fields
@@ -260,10 +267,12 @@ class CreativeGraphMediaRuntime:
                     self._validate_job(row, node_id, execution, execution["job"], small=True)
 
     def _validate_job(self, row, node_id, execution, job, *, small=False):
+        upscale = row["media_previews"][node_id]["command"]["operation_id"] == "m5.image.upscale"
+        fields = set(RECEIPT_FIELDS) | ({"processing_proof"} if upscale else set())
         if (not isinstance(job, dict) or job.get("id") != execution["job_id"]
                 or job.get("request_digest") != execution["request_digest"]
                 or type(job.get("version")) is not int or job["version"] < 1
-                or job.get("status") not in OWNER_STATUSES or (small and set(job) != set(RECEIPT_FIELDS))):
+                or job.get("status") not in OWNER_STATUSES or (small and set(job) != fields)):
             raise StaleSourceError("CREATIVE_GRAPH_MEDIA_OWNER_RECEIPT_CHANGED")
         if not small and (job.get("owner") != execution["owner"]
                 or job.get("novel_id") != row["novel_id"] or job.get("branch_id") != row["scope"].get("branch_id")
@@ -285,6 +294,8 @@ class CreativeGraphMediaRuntime:
             # owner version, especially the candidate bytes/digest.
             immutable = ("id", "version", "status", "request_digest", "receipt_digest", "output_candidate",
                 "approved_asset_version", "error_code", "cancellation_mode")
+            if upscale:
+                immutable += ("processing_proof",)
             if job["version"] == recorded["version"] and any(job.get(key) != recorded.get(key) for key in immutable):
                 raise StaleSourceError("CREATIVE_GRAPH_MEDIA_OWNER_SAME_VERSION_CHANGED")
         if job.get("output_candidate"):
@@ -521,7 +532,7 @@ class CreativeGraphMediaRuntime:
         self._validate_job(captured, node_id, execution, job)
         updated = {**deepcopy(execution), "status": job["status"],
             "receipt_state": UNKNOWN if job["status"] in {"UNKNOWN", "RUNNING", "SEND_RESERVED"} else "RECORDED",
-            "job": {key: deepcopy(job.get(key)) for key in RECEIPT_FIELDS}}
+            "job": project_job_receipt(job)}
         with self._phase(nid, scope, actor, captured["id"], current, writable=True) as state:
             row = self._row(nid, scope, actor, captured["id"], current, state)
             check_version(row, captured["version"])
@@ -696,7 +707,7 @@ class CreativeGraphMediaRuntime:
             if states[node_id]["status"] != "SUCCEEDED":
                 raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_OUTPUT_CHANGED")
             validate_output_ports(by_id[node_id]["definition_id"], output, schema_version=row["graph_schema_version"])
-            if by_id[node_id]["definition_id"] in {"image_reference", "image_prompt"}:
+            if by_id[node_id]["definition_id"] in {"image_reference", "image_prompt", "image_style"}:
                 from .graph_image_nodes import execute_image_local
                 if output != execute_image_local(by_id[node_id], self.service.executor._inputs(row, node_id, outputs)):
                     raise StaleSourceError("CREATIVE_GRAPH_IMAGE_TRANSFORM_CHANGED")
@@ -778,7 +789,7 @@ class CreativeGraphMediaRuntime:
         if job["status"] not in {"REVIEWING", "AWAITING_REVIEW"} or job.get("output_candidate") != original_job.get("output_candidate"):
             raise StaleSourceError("CREATIVE_GRAPH_MEDIA_REVIEW_RECOVERY_OUTCOME_CHANGED")
         updated = {**deepcopy(execution), "status": job["status"], "receipt_state": "RECORDED",
-            "job": {key: deepcopy(job.get(key)) for key in RECEIPT_FIELDS}}
+            "job": project_job_receipt(job)}
         with self.service.asset_inputs.transaction(nid, scope, actor, current) as state:
             row = self._bookkeeping_row(nid, scope, actor, captured["id"], current, state)
             check_version(row, captured["version"])
@@ -854,7 +865,7 @@ class CreativeGraphMediaRuntime:
             if reviewed["status"] != "APPROVED" or type(reviewed.get("approved_asset_version")) is not int:
                 raise StaleSourceError("CREATIVE_GRAPH_MEDIA_OWNER_APPROVAL_RECEIPT_REQUIRED")
             updated = {**execution, "status": "APPROVED", "receipt_state": "RECORDED", "review_state": "APPROVED",
-                "job": {key: deepcopy(reviewed.get(key)) for key in RECEIPT_FIELDS}}
+                "job": project_job_receipt(reviewed)}
             asset = {**candidate["asset"], "version": reviewed["approved_asset_version"]}
             with self._phase(nid, scope, actor, rid, current, writable=True) as state:
                 stored = self._row(nid, scope, actor, rid, current, state)
@@ -995,7 +1006,7 @@ class CreativeGraphMediaRuntime:
                 by_id[node_id]["status"] = "UNKNOWN"
                 continue
             public = by_id[node_id]["execution"]
-            public["job"] = {key: deepcopy(job.get(key)) for key in RECEIPT_FIELDS}
+            public["job"] = project_job_receipt(job)
             # Preserve Graph review/admission consent, rather than implying that
             # an owner's approval already completed the Graph review node.
             if execution["review_state"] != "REVIEW_RESERVED":

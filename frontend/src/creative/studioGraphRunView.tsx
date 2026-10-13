@@ -2,6 +2,7 @@ import { Badge, Button, StatusMessage } from '../ui/primitives';
 import { GRAPH_STATUS_LABELS } from './studioGraphLabels';
 import { GraphModelExecutionPanel } from './GraphModelExecutionPanel';
 import { StudioGraphMediaExecutionPanel } from './StudioGraphMediaExecutionPanel';
+import { ProductionGraphOutputPreview } from './ProductionGraphOutputPreview';
 import type { StudioGraphRunController, StudioGraphRunPanelProps } from './useStudioGraphRunController';
 
 /** Rendering consumes the controller's grants; it never owns execution or digest checks. */
@@ -24,6 +25,7 @@ export function studioGraphRunView(controller: StudioGraphRunController, props: 
       <Button disabled={!canReadRuns} onClick={() => void openRun(selected.id)}>重新读取当前运行</Button>
       <ul>{Object.entries(selected.node_states).map(([id, state]) => <li key={id}>{id} · {GRAPH_STATUS_LABELS[state.status] || state.status}{state.error && <span> · {state.error.code}</span>}
         {state.output?.reviewed_draft && <details><summary>此节点已批准的文字输出</summary><pre>{state.output.reviewed_draft.text}</pre>{state.output.reviewed_draft.direction && <p>{state.output.reviewed_draft.direction.note}</p>}<p>这是原人工审核节点的回执。媒体输入仍须核对对应私有文字档案与原任务，不能据此认定整张图已验收。</p></details>}
+        <ProductionGraphOutputPreview output={state.output} />
       </li>)}</ul>
       <label>运行备注<input maxLength={1000} disabled={locked} value={note} onChange={event => changeNote(event.target.value)} /></label>
       {!terminal && <div className="studio-graph-actions"><Button disabled={!canAction('execute')} onClick={() => void action('execute')}>{selected.model_runtime ? '执行前置本地节点' : '执行本地节点'}</Button><Button disabled={!canAction('pause')} onClick={() => void action('pause')}>暂停运行</Button><Button disabled={!canAction('resume')} onClick={() => void action('resume')}>恢复运行</Button><Button variant="danger" disabled={!canAction('cancel')} onClick={() => void action('cancel')}>取消运行</Button></div>}

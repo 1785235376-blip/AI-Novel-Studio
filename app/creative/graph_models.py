@@ -6,11 +6,12 @@ import re
 from copy import deepcopy
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator, model_serializer
 
 from ..experimental.store import canonical
 from ..services.v1_capability_service import V1CapabilityService, WorkflowRunIn
-from .production_contracts import Name
+from .production_contracts import Name, ProductionSourceSnapshot
+from .models import CreativeProductionDocumentIn
 from .production_execution_models import GraphMediaOperation, MediaParameters
 
 MAX_NODES = 16
@@ -87,6 +88,13 @@ class GraphImageAsset(AssetParameters):
 class ImageReferenceBinding(Strict):
     port: Literal["source_1", "source_2", "source_3", "source_4", "source_5"]
     weight: float = Field(default=1.0, gt=0, le=1)
+    purpose: Literal["character", "outfit", "environment", "style", "composition"] | None = None
+    source_note: str | None = Field(default=None, min_length=1, max_length=500)
+
+    @model_serializer(mode="wrap")
+    def legacy_identity(self, handler):
+        return {key: value for key, value in handler(self).items()
+                if key not in {"purpose", "source_note"} or value is not None}
 
 
 class ImageReferenceParameters(Strict):
@@ -102,6 +110,13 @@ class ImageReferenceParameters(Strict):
 class ImageReferencePort(Strict):
     asset: GraphImageAsset
     weight: float = Field(gt=0, le=1)
+    purpose: Literal["character", "outfit", "environment", "style", "composition"] | None = None
+    source_note: str | None = Field(default=None, min_length=1, max_length=500)
+
+    @model_serializer(mode="wrap")
+    def legacy_identity(self, handler):
+        return {key: value for key, value in handler(self).items()
+                if key not in {"purpose", "source_note"} or value is not None}
 
 
 class ImagePromptParameters(Strict):
@@ -111,12 +126,89 @@ class ImagePromptParameters(Strict):
 class ImagePromptPort(Strict):
     prompt: str = Field(min_length=1, max_length=16000)
     references: list[ImageReferencePort] = Field(default_factory=list, max_length=5)
+    document_sources: list[ProductionSourceSnapshot] | None = Field(default=None, min_length=1, max_length=2)
+
+    @model_serializer(mode="wrap")
+    def legacy_identity(self, handler):
+        value = handler(self)
+        if value.get("document_sources") is None:
+            value.pop("document_sources", None)
+        return value
 
     @model_validator(mode="after")
     def exact_unique_references(self):
         if not self.prompt.strip() or len({value.asset.asset_id for value in self.references}) != len(self.references):
             raise ValueError("CREATIVE_GRAPH_IMAGE_PROMPT_INVALID")
+        if self.document_sources is not None and (any(source.kind != "CREATIVE_DOCUMENT" for source in self.document_sources)
+                or len({source.id for source in self.document_sources}) != len(self.document_sources)):
+            raise ValueError("CREATIVE_GRAPH_PLANNING_SOURCE_INVALID")
         return self
+
+
+class ImageStyleParameters(Strict):
+    style: str = Field(default="", max_length=2000)
+    atmosphere: str = Field(default="", max_length=1000)
+    color_palette: str = Field(default="", max_length=1000)
+
+
+class ImageUpscaleParameters(Strict):
+    scale: Literal[2, 4] = 2
+
+    @field_validator("scale", mode="before")
+    @classmethod
+    def integer_scale(cls, value):
+        if type(value) is not int:
+            raise ValueError("STUDIO_IMAGE_UPSCALE_SCALE_INVALID")
+        return value
+
+
+class ImageUpscaleNodeParameters(Strict):
+    operation_id: Literal["m5.image.upscale"] = "m5.image.upscale"
+    provider_id: Name
+    model_id: Name
+    parameters: ImageUpscaleParameters = Field(default_factory=ImageUpscaleParameters)
+    allow_cloud: Literal[False] = False
+    license_note: str = Field(default="", max_length=2000)
+
+    @model_validator(mode="after")
+    def explicit_provider(self):
+        if self.provider_id == "auto":
+            raise ValueError("STUDIO_EXPLICIT_PROVIDER_MODEL_PROMPT_REQUIRED")
+        return self
+
+
+class PlanningDocumentSnapshot(Strict):
+    id: str = Field(min_length=1, max_length=240)
+    version: int = Field(ge=1)
+    digest: Digest
+
+
+class PlanningNodeParameters(Strict):
+    document_snapshot: PlanningDocumentSnapshot
+
+
+class DirectorPlanPort(PlanningNodeParameters):
+    content: CreativeProductionDocumentIn
+
+    @model_validator(mode="after")
+    def director_only(self):
+        if self.content.mode != "DIRECTOR":
+            raise ValueError("CREATIVE_GRAPH_DIRECTOR_DOCUMENT_REQUIRED")
+        return self
+
+
+class StoryboardDataPort(PlanningNodeParameters):
+    content: CreativeProductionDocumentIn
+
+    @model_validator(mode="after")
+    def storyboard_only(self):
+        if self.content.mode != "STORYBOARD":
+            raise ValueError("CREATIVE_GRAPH_STORYBOARD_DOCUMENT_REQUIRED")
+        return self
+
+
+class StoryboardPromptParameters(Strict):
+    shot_id: str = Field(min_length=1, max_length=240)
 
 
 class GraphImageParameters(MediaParameters):
@@ -350,12 +442,23 @@ DEFINITIONS["timeline_export"] = {"inputs": [port(f"source_{index}", "ASSET_REF"
 IMAGE_DEFINITION_IDS = {"text_input", "text_reference", "asset_reference", "image_reference",
     "image_prompt", "image_generate", "media_review"}
 NEW_IMAGE_DEFINITION_IDS = {"image_reference", "image_prompt", "image_generate"}
+PRODUCTION_DEFINITION_IDS = {"image_style", "image_upscale", "director_plan", "storyboard_plan", "storyboard_prompt"}
+IMAGE_DEFINITION_IDS |= PRODUCTION_DEFINITION_IDS
 DEFINITIONS["image_reference"] = {"inputs": [port(f"source_{index}", "ASSET_REF") for index in range(1, 6)],
     "outputs": [port("references", "IMAGE_REFERENCES")], "parameters": ImageReferenceParameters}
 DEFINITIONS["image_prompt"] = {"inputs": [port("text", "TEXT"), port("references", "IMAGE_REFERENCES")],
     "outputs": [port("prompt", "IMAGE_PROMPT")], "parameters": ImagePromptParameters}
 DEFINITIONS["image_generate"] = {"inputs": [port("prompt", "IMAGE_PROMPT", True), port("source", "ASSET_REF"),
     port("mask", "ASSET_REF")], "outputs": [port("candidate", "MEDIA_CANDIDATE")], "parameters": ImageNodeParameters}
+DEFINITIONS["image_style"] = {"inputs": [port("prompt", "IMAGE_PROMPT", True)],
+    "outputs": [port("prompt", "IMAGE_PROMPT")], "parameters": ImageStyleParameters}
+DEFINITIONS["image_upscale"] = {"inputs": [port("source", "ASSET_REF", True)],
+    "outputs": [port("candidate", "MEDIA_CANDIDATE")], "parameters": ImageUpscaleNodeParameters}
+DEFINITIONS["director_plan"] = {"inputs": [], "outputs": [port("direction", "DIRECTOR_PLAN")], "parameters": PlanningNodeParameters}
+DEFINITIONS["storyboard_plan"] = {"inputs": [port("direction", "DIRECTOR_PLAN")],
+    "outputs": [port("storyboard", "STORYBOARD_DATA")], "parameters": PlanningNodeParameters}
+DEFINITIONS["storyboard_prompt"] = {"inputs": [port("storyboard", "STORYBOARD_DATA", True)],
+    "outputs": [port("prompt", "IMAGE_PROMPT")], "parameters": StoryboardPromptParameters}
 
 
 def definition_for(definition_id, *, schema_version=None):
@@ -407,7 +510,8 @@ class MediaNodeInstance(NodeInstance):
 
 class ImageNodeInstance(NodeInstance):
     definition_id: Literal["text_input", "text_reference", "asset_reference", "image_reference",
-        "image_prompt", "image_generate", "media_review"]
+        "image_prompt", "image_generate", "media_review", "image_style", "image_upscale",
+        "director_plan", "storyboard_plan", "storyboard_prompt"]
 
     @model_validator(mode="after")
     def image_asset_kind(self):
@@ -495,7 +599,7 @@ class GraphImageInput(GraphInput):
 
     @model_validator(mode="after")
     def image_capacity(self):
-        if sum(node.definition_id == "image_generate" for node in self.nodes) > MAX_MEDIA_GENERATORS:
+        if sum(node.definition_id in {"image_generate", "image_upscale"} for node in self.nodes) > MAX_MEDIA_GENERATORS:
             raise ValueError("CREATIVE_GRAPH_MEDIA_NODE_CAPACITY")
         return self
 
@@ -570,16 +674,17 @@ class GraphAction(Strict):
     note: str = Field(default="", max_length=1_000)
 
 
-def catalog_definitions(*, include_model=False, include_media=False, include_image=False):
+def catalog_definitions(*, include_model=False, include_media=False, include_image=False, include_production=False):
     return [{"id": key, "version": 1, "inputs": deepcopy(value["inputs"]),
         "outputs": deepcopy(value["outputs"]), "parameters_schema": value["parameters"].model_json_schema(),
-        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate", "timeline_export", "image_generate"} else None,
+        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate", "timeline_export", "image_generate", "image_upscale", "director_plan", "storyboard_plan", "storyboard_prompt"} else None,
         "executable": include_media or key != "asset_reference", "model_called": False,
         "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" and not include_media else []}
         for key in DEFINITIONS
         for value in [definition_for(key, schema_version=3 if include_media else None)]
         if (include_model or key != "text_generate") and (include_media or key not in {"media_generate", "media_review", "timeline_export"})
-        and (include_image or key not in NEW_IMAGE_DEFINITION_IDS)]
+        and (include_image or key not in NEW_IMAGE_DEFINITION_IDS)
+        and (include_production or key not in PRODUCTION_DEFINITION_IDS)]
 
 
 def history_limit(row):
@@ -600,6 +705,10 @@ def validate_output_ports(definition_id, value, *, schema_version=None):
             result[port["id"]] = item
         elif port["type"] == "DIRECTOR_NOTES":
             result[port["id"]] = DirectorParameters.model_validate(item).model_dump()
+        elif port["type"] in {"DIRECTOR_PLAN", "STORYBOARD_DATA"}:
+            if schema_version != 4:
+                raise ValueError("CREATIVE_GRAPH_PLANNING_SCHEMA_REQUIRED")
+            result[port["id"]] = (DirectorPlanPort if port["type"] == "DIRECTOR_PLAN" else StoryboardDataPort).model_validate(item).model_dump()
         elif port["type"] == "DRAFT":
             model_draft = definition_id == "text_generate" or (definition_id == "human_review"
                 and schema_version == 3 and isinstance(item, dict) and item.get("origin") == "MODEL_PROPOSAL")
@@ -625,7 +734,7 @@ def validate_output_ports(definition_id, value, *, schema_version=None):
             result[port["id"]] = ImagePromptPort.model_validate(item).model_dump()
         elif port["type"] == "MEDIA_CANDIDATE":
             candidate = MediaCandidatePort.model_validate(item)
-            if definition_id == "image_generate" and (schema_version != 4 or candidate.owner != "image"):
+            if definition_id in {"image_generate", "image_upscale"} and (schema_version != 4 or candidate.owner != "image"):
                 raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
             if candidate.owner == "timeline":
                 if schema_version != 3 or definition_id != "timeline_export" or candidate.asset.kind != "video":

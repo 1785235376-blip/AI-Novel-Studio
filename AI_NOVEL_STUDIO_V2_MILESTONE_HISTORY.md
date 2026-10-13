@@ -863,3 +863,15 @@ Upscale is a closed non-executable reservation. See [report](docs/v2/production-
 for source pins, actual tests, retained failures and boundaries. This is a
 development increment, not M5 or whole-product acceptance. Draft47/no merge/no
 release, QingJian pause, Video exclusion and original milestone order remain.
+
+
+### 2026-10-14 — Production Expansion Phase 2
+
+Baseline a79b7f9: additive reference-purpose/Style, actual local-provider upscale,
+structured Director visual target/performance and independent Storyboard shot
+derivation. Original Creative/ImageJob/Asset/WorkflowRun owners and explicit review
+remain. Opt-in schema4 planning projections connect exact saved documents to
+Image generation/review; Video execution and Control inference remain excluded.
+The [phase report](DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md) separates source/tests
+and retained failures from LOCAL_REQUIRED model/GPU/Windows/product acceptance.
+Source publication does not advance M4/M5 acceptance or frozen historical status.

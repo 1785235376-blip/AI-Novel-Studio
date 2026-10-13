@@ -5,10 +5,10 @@ records. Source evidence and ownership are exclusively added by the service.
 """
 from __future__ import annotations
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
 
 CreativeMode = Literal["SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING", "SCRIPT"]
 MODES = ("SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING", "SCRIPT")
@@ -25,13 +25,42 @@ class StrictCreativeModel(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
 
+class OptionalProductionFields(StrictCreativeModel):
+    """Opt-in extensions must not change existing serialized draft identities."""
+    production_optional_fields: ClassVar[tuple[str, ...]] = ()
+
+    @model_serializer(mode="wrap")
+    def omit_unset_production_fields(self, handler):
+        value = handler(self)
+        for name in self.production_optional_fields:
+            if value.get(name) is None:
+                value.pop(name, None)
+        return value
+
+
+class DirectorVisualTarget(StrictCreativeModel):
+    style: str = Field(default="", max_length=2000, strict=True)
+    atmosphere: str = Field(default="", max_length=2000, strict=True)
+    reference_works: list[Annotated[str, Field(min_length=1, max_length=1000, strict=True)]] = Field(default_factory=list, max_length=20)
+    color: str = Field(default="", max_length=2000, strict=True)
+    rhythm: str = Field(default="", max_length=2000, strict=True)
+
+
+class DirectorPerformance(StrictCreativeModel):
+    character: Identifier
+    action: str = Field(default="", max_length=4000, strict=True)
+    expression: str = Field(default="", max_length=2000, strict=True)
+    state: str = Field(default="", max_length=2000, strict=True)
+
+
 class Dialogue(StrictCreativeModel):
     speaker: str = Field(min_length=1, max_length=240, strict=True)
     text: str = Field(min_length=1, max_length=16000, strict=True)
     delivery: str = Field(default="", max_length=2000, strict=True)
 
 
-class DirectorNote(StrictCreativeModel):
+class DirectorNote(OptionalProductionFields):
+    production_optional_fields = ("shot_suggestion", "composition", "lens", "character_state", "performances")
     id: Identifier = Field(default_factory=identifier)
     note: str = Field(default="", max_length=8000, strict=True)
     shot_size: str = Field(default="", max_length=80, strict=True)
@@ -42,6 +71,17 @@ class DirectorNote(StrictCreativeModel):
     pacing: str = Field(default="", max_length=2000, strict=True)
     performance: str = Field(default="", max_length=4000, strict=True)
     blocking: str = Field(default="", max_length=4000, strict=True)
+    shot_suggestion: str | None = Field(default=None, max_length=8000, strict=True)
+    composition: str | None = Field(default=None, max_length=4000, strict=True)
+    lens: str | None = Field(default=None, max_length=1000, strict=True)
+    character_state: str | None = Field(default=None, max_length=4000, strict=True)
+    performances: list[DirectorPerformance] | None = Field(default=None, max_length=100)
+
+    @model_validator(mode="after")
+    def distinct_performers(self):
+        if self.performances is not None and len({item.character for item in self.performances}) != len(self.performances):
+            raise ValueError("CREATIVE_DUPLICATE_PERFORMER")
+        return self
 
 
 class DirectorSceneNote(DirectorNote):
@@ -64,7 +104,8 @@ class Scene(StrictCreativeModel):
     director_notes: list[DirectorNote] = Field(default_factory=list, max_length=100)
 
 
-class ShotCard(StrictCreativeModel):
+class ShotCard(OptionalProductionFields):
+    production_optional_fields = ("characters", "emotion")
     id: Identifier = Field(default_factory=identifier)
     number: int = Field(ge=1, le=10000, strict=True)
     scene_id: Identifier
@@ -83,6 +124,14 @@ class ShotCard(StrictCreativeModel):
     dialogue: list[Dialogue] = Field(default_factory=list, max_length=200)
     sound_effect: str = Field(default="", max_length=4000, strict=True)
     director_notes: list[DirectorNote] = Field(default_factory=list, max_length=100)
+    characters: list[Identifier] | None = Field(default=None, max_length=100)
+    emotion: str | None = Field(default=None, max_length=4000, strict=True)
+
+    @model_validator(mode="after")
+    def distinct_characters(self):
+        if self.characters is not None and len(set(self.characters)) != len(self.characters):
+            raise ValueError("CREATIVE_DUPLICATE_SHOT_CHARACTER")
+        return self
 
 
 class VideoSegment(StrictCreativeModel):
@@ -158,7 +207,19 @@ class CreativeDocumentIn(StrictCreativeModel):
         return self
 
 
-class CreativeDocumentUpdate(CreativeDocumentIn):
+class CreativeProductionDocumentIn(CreativeDocumentIn, OptionalProductionFields):
+    """Same document owner and endpoint, with explicitly authored visual goals."""
+    production_optional_fields = ("visual_target",)
+    visual_target: DirectorVisualTarget | None = None
+
+    @model_validator(mode="after")
+    def visual_target_mode(self):
+        if self.visual_target is not None and self.mode not in {"DIRECTOR", "STORYBOARD", "PRODUCTION"}:
+            raise ValueError("CREATIVE_VISUAL_TARGET_MODE_REQUIRED")
+        return self
+
+
+class CreativeDocumentUpdate(CreativeProductionDocumentIn):
     expected_version: int = Field(ge=1, strict=True)
 
 
@@ -167,20 +228,24 @@ class CreativeDocumentRestore(StrictCreativeModel):
     restore_version: int = Field(ge=1, strict=True)
 
 
-class DirectorProposalIn(StrictCreativeModel):
+class DirectorProposalIn(OptionalProductionFields):
+    production_optional_fields = ("visual_target",)
     source_document_id: Identifier
     expected_source_version: int = Field(ge=1, strict=True)
     title: str | None = Field(default=None, min_length=1, max_length=240, strict=True)
+    visual_target: DirectorVisualTarget | None = None
 
 
 class ProposalAction(StrictCreativeModel):
     expected_version: int = Field(ge=1, strict=True)
 
 
-class DirectorProposalReview(ProposalAction):
+class DirectorProposalReview(ProposalAction, OptionalProductionFields):
+    production_optional_fields = ("visual_target",)
     reviewed_output_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
     title: str = Field(min_length=1, max_length=240, strict=True)
     director_notes: list[DirectorSceneNote] = Field(min_length=1, max_length=200)
+    visual_target: DirectorVisualTarget | None = None
 
 
 class DirectorModelPreview(ProposalAction):
@@ -204,3 +269,10 @@ class CreativeDocumentDerive(StrictCreativeModel):
     expected_version: int = Field(ge=1, strict=True)
     mode: Literal["STORYBOARD", "PRODUCTION"]
     title: str | None = Field(default=None, min_length=1, max_length=240, strict=True)
+    shot_policy: Literal["SCENE", "DIRECTOR_NOTES"] = "SCENE"
+
+    @model_validator(mode="after")
+    def shot_policy_mode(self):
+        if self.shot_policy != "SCENE" and self.mode != "STORYBOARD":
+            raise ValueError("CREATIVE_SHOT_POLICY_MODE_REQUIRED")
+        return self

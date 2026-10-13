@@ -89,3 +89,17 @@ These are development stages on `feature/v2-narrative-platform`, not releases.
   NewUI9/types/metadata19pass. Profile skips/overlap/failed evidence retained.
 - [Full stage report](production-expansion-image-local-20261013.md),
   [source-bound summary](production-expansion-image-local-20261013.json).
+
+
+## 2026-10-14 — Production Expansion Phase 2
+
+- Added typed reference purpose/source note, Style and independent Upscale node
+  through original ModelCenter/ImageJob/private Asset/review/version owners.
+- Added opt-in Director visual targets, structured performance and independent
+  Storyboard details/explicit note-per-shot derivation; original scene/default
+  serialization, source evidence, CAS/history and model review retained.
+- Added passive Host-protected planning snapshot picker and finite Graph
+  Director→Storyboard→shot prompt→Image flow, source guards and strict UI decoding.
+- Added controller-backed goal/shot/node/preview controls without shell redesign.
+- [Report](../../DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md) separates selected
+  verification, retained failed attempts and remaining LOCAL_REQUIRED gates.

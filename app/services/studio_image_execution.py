@@ -21,7 +21,7 @@ CONTRACT = "studio-image-execution/1"
 MAX_BYTES = 25 * 1024 * 1024
 MAX_VERSION = 2**53 - 1
 STATES = {"QUEUED", "RUNNING", "FAILED", "UNKNOWN", "AWAITING_REVIEW", "REVIEWING", "APPROVED", "CANCELLED"}
-OPERATIONS = {"m5.image.t2i", "m5.image.i2i", "m5.image.cutout", "m5.image.reference", "m5.image.inpaint"}
+OPERATIONS = {"m5.image.t2i", "m5.image.i2i", "m5.image.cutout", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}
 IMAGE_RUNTIME_FIELDS = {"image_source", "image_references", "mask_source"}
 IDENTITY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$")
 DIGEST = re.compile(r"^[a-f0-9]{64}$")
@@ -81,6 +81,12 @@ def _payload(body):
             raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
         return copy.deepcopy(body)
     _text(body["provider_id"]); _text(body["model_id"])
+    if body["operation_id"] == "m5.image.upscale":
+        if (body["prompt"] != "" or not isinstance(body["parameters"], dict) or set(body["parameters"]) != {"scale"}
+                or "image_source" not in body or set(body) & {"image_references", "mask_source"}
+                or type(body["parameters"].get("scale")) is not int or body["parameters"]["scale"] not in (2, 4)):
+            raise ValueError("STUDIO_IMAGE_UPSCALE_INPUT_INVALID")
+        return copy.deepcopy(body)
     if not isinstance(body["prompt"], str) or not body["prompt"].strip() or len(body["prompt"]) > 16_000:
         raise ValueError("STUDIO_IMAGE_PROMPT_INVALID")
     parameters = body["parameters"]
@@ -173,7 +179,7 @@ def _context(value, body, actor):
         if references != sources:
             raise ValueError("STUDIO_IMAGE_REVIEWED_SOURCE_CHANGED")
         if (IMAGE_RUNTIME_FIELDS.intersection(body) or IMAGE_RUNTIME_FIELDS.intersection(command)
-                or body["operation_id"] in {"m5.image.reference", "m5.image.inpaint"}
+                or body["operation_id"] in {"m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}
                 or "denoising_strength" in body["parameters"]):
             from ..creative.production_execution_models import MediaCommand
             checked = MediaCommand.model_validate(command)
@@ -181,7 +187,7 @@ def _context(value, body, actor):
             checked_body["parameters"] = checked.parameters.model_dump(exclude_none=True)
             if checked.operation_id not in OPERATIONS or checked_body != body:
                 raise ValueError("STUDIO_IMAGE_RUNTIME_CONTEXT_INVALID")
-    elif (IMAGE_RUNTIME_FIELDS.intersection(body) or body["operation_id"] in {"m5.image.reference", "m5.image.inpaint"}
+    elif (IMAGE_RUNTIME_FIELDS.intersection(body) or body["operation_id"] in {"m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}
             or "denoising_strength" in body["parameters"]):
         raise ValueError("STUDIO_IMAGE_RUNTIME_CONTEXT_REQUIRED")
     _no_secrets(value)
@@ -220,6 +226,32 @@ def _binding(row):
     return _digest({key: row[key] for key in ("id", "novel_id", "branch_id", "owner_actor_id", "body", "context", "request_digest")})
 
 
+def _upscale_proof(row):
+    proof, ready = row.get("processing_proof"), row.get("publication_ready")
+    if proof is None:
+        if ready is not None or row.get("output_asset_id"):
+            raise ValueError("STUDIO_IMAGE_UPSCALE_PROOF_REQUIRED")
+        return
+    from .studio_image_provider_recipes import upscale_dimensions
+    fields = {"contract", "source_sha256", "source_width", "source_height", "scale",
+        "output_width", "output_height", "output_sha256", "output_bytes"}
+    if not isinstance(proof, dict) or set(proof) != fields or proof["contract"] != "studio-image-upscale-proof/1":
+        raise ValueError("STUDIO_IMAGE_UPSCALE_PROOF_INVALID")
+    source = {"width": proof["source_width"], "height": proof["source_height"]}
+    target = upscale_dimensions(source, proof["scale"])
+    _require_digest(proof["source_sha256"]); _require_digest(proof["output_sha256"])
+    recipe = row["context"].get("execution_recipe", {})
+    if (type(proof["output_width"]) is not int or type(proof["output_height"]) is not int
+            or target != {"width": proof["output_width"], "height": proof["output_height"]}
+            or recipe.get("source_dimensions") != source or recipe.get("target_dimensions") != target
+            or proof["scale"] != row["body"]["parameters"]["scale"]
+            or len(row["context"]["sources"]) != 1 or row["context"]["sources"][0]["digest"] != proof["source_sha256"]
+            or type(proof["output_bytes"]) is not int or not 0 < proof["output_bytes"] <= MAX_BYTES
+            or ready != {"kind": "image", "output_digest": proof["output_sha256"], "output_bytes": proof["output_bytes"], "media_type": "image/png"}
+            or row.get("output_digest") is not None and row["output_digest"] != proof["output_sha256"]):
+        raise ValueError("STUDIO_IMAGE_UPSCALE_PROOF_INVALID")
+
+
 def _owned(service, row, nid, branch, actor):
     if (row.get("contract") != CONTRACT or service.owner_actor_id != actor or not actor
             or row.get("owner_actor_id") != actor or row.get("novel_id") != nid or row.get("branch_id") != branch):
@@ -230,6 +262,7 @@ def _owned(service, row, nid, branch, actor):
     if row["request_digest"] != context["request_digest"]:
         raise ValueError("STUDIO_IMAGE_REQUEST_BINDING_CHANGED")
     if body["operation_id"] == "m5.image.cutout": _cutout_proof(row)
+    if body["operation_id"] == "m5.image.upscale": _upscale_proof(row)
     if row.get("status") not in STATES or row.get("binding_digest") != _binding(row):
         raise ValueError("STUDIO_IMAGE_JOB_BINDING_CHANGED")
     return row
@@ -297,8 +330,10 @@ def create(service, nid, branch, actor, body, context, guard, *, source_phase=No
         row["binding_digest"] = _binding(row)
         rows.append(row)
         return copy.deepcopy(row)
-    if body["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}:
-        if not callable(source_phase): raise ValueError("STUDIO_IMAGE_CUTOUT_SOURCE_PHASE_REQUIRED")
+    if body["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.upscale"}:
+        if not callable(source_phase):
+            raise ValueError("STUDIO_IMAGE_UPSCALE_SOURCE_PHASE_REQUIRED" if body["operation_id"] == "m5.image.upscale"
+                else "STUDIO_IMAGE_CUTOUT_SOURCE_PHASE_REQUIRED")
         # Original queue -> source -> asset -> project order; hold the input
         # lease through atomic queue persistence, including idempotent retries.
         with service._lock, workspace_mutation(service.root, "image-jobs"), source_phase():
@@ -552,7 +587,7 @@ def _receipt(job):
         "candidate_asset_id": job["output_asset_id"], "candidate_asset_version": job["candidate_asset_version"],
         "output_digest": job["output_digest"], "product_acceptance": "LOCAL_REQUIRED",
         **({"processing_proof": copy.deepcopy(job.get("processing_proof"))}
-           if job["body"]["operation_id"] == "m5.image.cutout" else {})}
+           if job["body"]["operation_id"] in {"m5.image.cutout", "m5.image.upscale"} else {})}
 
 
 def execute(service, nid, branch, actor, job_id, registry, *, expected_version, expected_request_digest,
@@ -669,6 +704,19 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                 if registry.get(job["body"]["provider_id"]) is not provider:
                     raise ValueError("STUDIO_IMAGE_PROVIDER_CHANGED")
                 data, measured = _decode(result.asset_uri, provider)
+                if job["body"]["operation_id"] == "m5.image.upscale":
+                    recipe = job["context"]["execution_recipe"]
+                    source = recipe["source_dimensions"]
+                    target = recipe["target_dimensions"]
+                    if (measured["media_type"] != "image/png"
+                            or {key: measured.get(key) for key in ("width", "height")} != target):
+                        raise ValueError("STUDIO_IMAGE_UPSCALE_OUTPUT_CHANGED")
+                    proof = {"contract": "studio-image-upscale-proof/1",
+                        "source_sha256": job["context"]["sources"][0]["digest"],
+                        "source_width": source["width"], "source_height": source["height"],
+                        "scale": job["body"]["parameters"]["scale"],
+                        "output_width": target["width"], "output_height": target["height"],
+                        "output_sha256": hashlib.sha256(data).hexdigest(), "output_bytes": len(data)}
                 guard(); source_guard(); dispatch_guard(job, provider); current()
             def publication_ready(rows):
                 row = _owned(service, service._find(rows, job_id), nid, branch, actor)
@@ -676,8 +724,9 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                 if row["status"] != "RUNNING" or row.get("execution_token") != job["execution_token"]:
                     raise ValueError("STUDIO_IMAGE_ATTEMPT_CHANGED")
                 fields = {"publication_ready": {"kind": "image", "output_digest": hashlib.sha256(data).hexdigest(),
-                    "output_bytes": len(data), "media_type": measured["media_type"]}, **({"processing_proof": proof} if cpu else {})}
+                    "output_bytes": len(data), "media_type": measured["media_type"]}, **({"processing_proof": proof} if proof is not None else {})}
                 if cpu: _cutout_proof({**row, **fields})
+                if row["body"]["operation_id"] == "m5.image.upscale": _upscale_proof({**row, **fields})
                 return copy.deepcopy(_advance(row, **fields))
             job = service._mutate(nid, branch, publication_ready)
             # No image-job mutex is held while entering source -> asset -> project.

@@ -20,6 +20,9 @@ RECIPES = (
     {'id': 'comfy-qwen-image-v1', 'display_name': 'Qwen Image fixed image recipe', 'family': 'QWEN_IMAGE',
      'capability': 'IMAGE', 'model_loader': 'UNETLoader', 'model_input': 'unet_name',
      'required_nodes': ['UNETLoader', 'CLIPLoader', 'VAELoader', 'ModelSamplingAuraFlow', 'KSampler', 'EmptySD3LatentImage', 'CLIPTextEncode', 'VAEDecode', 'SaveImage']},
+    {'id': 'comfy-upscale-model-v1', 'display_name': 'Compatible image upscale model', 'family': 'IMAGE_UPSCALE',
+     'capability': 'IMAGE', 'model_loader': 'UpscaleModelLoader', 'model_input': 'model_name',
+     'required_nodes': ['UpscaleModelLoader', 'ImageUpscaleWithModel', 'ImageScale', 'LoadImage', 'SaveImage']},
 )
 FILE_NAME = re.compile(r'^[^\x00-\x1f\x7f]{1,256}$')
 UPLOAD_NAME = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.-]{0,239}$')
@@ -103,10 +106,13 @@ def validate_workflow(info, graph):
     return graph
 
 
-def build_workflow(recipe, prompt, parameters, *, operation='t2i', uploads=(), weights=(), mask=None):
+def build_workflow(recipe, prompt, parameters, *, operation='t2i', uploads=(), weights=(), mask=None, source_dimensions=None):
     """Build one fixed graph; weights alter actual normalized pixel blending."""
     if operation not in recipe['operations']:
         raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
+    if operation == 'upscale':
+        return build_upscale_workflow(recipe, prompt, parameters, uploads=uploads,
+            weights=weights, mask=mask, source_dimensions=source_dimensions)
     p = dict(parameters)
     if set(p) - {'width', 'height', 'steps', 'seed', 'negative_prompt', 'denoising_strength'}:
         raise ValueError('IMAGE_PARAMETER_UNSUPPORTED')
@@ -183,6 +189,8 @@ def build_workflow(recipe, prompt, parameters, *, operation='t2i', uploads=(), w
 def project_comfy_image_recipe(info, model_name, family):
     """Return only positively validated operations and exact component names."""
     try:
+        if family == 'IMAGE_UPSCALE':
+            return project_comfy_upscale_recipe(info, model_name)
         template = next(r for r in RECIPES if r['family'] == family)
         if model_name not in _options(info, template['model_loader'], template['model_input']): return None
         c = {'model': model_name}
@@ -217,8 +225,62 @@ def project_comfy_image_recipe(info, model_name, family):
 
 
 def public_capabilities(recipe):
-    return {key: copy.deepcopy(recipe[key]) for key in ('recipe_id', 'reference_limit', 'reference_semantics',
+    result = {key: copy.deepcopy(recipe[key]) for key in ('recipe_id', 'reference_limit', 'reference_semantics',
         'mask_semantics', 'structural_only', 'inference_verified')}
+    if recipe['recipe_id'] == 'comfy-upscale-model-v1':
+        result['upscaling'] = {'scales': [2, 4], 'output_format': 'PNG',
+            'output_size_limit': 4096, 'output_pixel_limit': 16777216}
+    return result
+
+
+def upscale_dimensions(source_dimensions, scale):
+    if (type(scale) is not int or scale not in (2, 4) or not isinstance(source_dimensions, dict)
+            or set(source_dimensions) != {'width', 'height'}
+            or any(type(source_dimensions[k]) is not int or not 1 <= source_dimensions[k] <= 2048
+                   for k in ('width', 'height'))):
+        raise ValueError('STUDIO_IMAGE_UPSCALE_DIMENSIONS_INVALID')
+    target = {key: source_dimensions[key] * scale for key in ('width', 'height')}
+    if max(target.values()) > 4096 or target['width'] * target['height'] > 16777216:
+        raise ValueError('STUDIO_IMAGE_UPSCALE_OUTPUT_LIMIT')
+    return target
+
+
+def build_upscale_workflow(recipe, prompt, parameters, *, uploads, weights, mask, source_dimensions):
+    if (recipe['recipe_id'] != 'comfy-upscale-model-v1' or prompt != '' or set(parameters) != {'scale'}
+            or len(uploads) != 1 or len(weights) != 1 or type(weights[0]) not in {int, float}
+            or weights[0] != 1 or mask is not None):
+        raise ValueError('STUDIO_IMAGE_UPSCALE_INPUT_INVALID')
+    target = upscale_dimensions(source_dimensions, parameters['scale'])
+    # The model's intrinsic scale may differ from the delivery scale. A fixed
+    # Lanczos resize makes the reviewed target exact; it never selects a model.
+    return {
+        '20': {'class_type': 'LoadImage', 'inputs': {'image': uploads[0]}},
+        '4': {'class_type': 'UpscaleModelLoader', 'inputs': {'model_name': recipe['components']['model']}},
+        '8': {'class_type': 'ImageUpscaleWithModel', 'inputs': {'upscale_model': ['4', 0], 'image': ['20', 0]}},
+        '28': {'class_type': 'ImageScale', 'inputs': {'image': ['8', 0], 'upscale_method': 'lanczos',
+            'width': target['width'], 'height': target['height'], 'crop': 'disabled'}},
+        '9': {'class_type': 'SaveImage', 'inputs': {'filename_prefix': 'AI-Novel-Studio', 'images': ['28', 0]}},
+    }
+
+
+def project_comfy_upscale_recipe(info, model_name):
+    """Exact advertised loader + typed fixed nodes, including RealESRGAN/SwinIR.
+
+    Architecture support belongs to the installed Comfy loader. Filename family
+    labels never grant compatibility, infer native scale or download anything.
+    """
+    try:
+        if model_name not in _options(info, 'UpscaleModelLoader', 'model_name'):
+            return None
+        recipe = {'recipe_id': 'comfy-upscale-model-v1', 'components': {'model': model_name},
+            'operations': ['upscale'], 'reference_limit': 1, 'reference_semantics': 'SINGLE_IMAGE_INITIALIZATION',
+            'mask_semantics': None, 'structural_only': True, 'inference_verified': False}
+        for scale in (2, 4):
+            validate_workflow(info, build_workflow(recipe, '', {'scale': scale}, operation='upscale',
+                uploads=('source.png',), weights=(1,), source_dimensions={'width': 64, 'height': 64}))
+        return copy.deepcopy(recipe)
+    except (ValueError, TypeError, KeyError, IndexError, AttributeError):
+        return None
 
 
 def project_automatic1111_image_recipe(info, model_name):

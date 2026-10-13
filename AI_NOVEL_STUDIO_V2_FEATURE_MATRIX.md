@@ -1202,3 +1202,22 @@ model/quality/Windows/GPU acceptance LOCAL_REQUIRED. Selected actual verificatio
 and all failed attempts are separated in the [stage report](docs/v2/production-expansion-image-runtime-20261013.md)
 and same-name JSON. These results do not replace original M4→M9, F00, independent
 review or CI gates. No Video/QingJian development, download or paid model call.
+
+
+### 2026-10-14 — Production Expansion Phase 2: Image + Director + Storyboard
+
+Baseline `a79b7f9d6fbacfd112ac42f2082798b2cd7f9233`; preceding checkpoints remain historical.
+
+| Capability | Source status | Actual boundary |
+|---|---|---|
+| Reference purpose/source note and Style node | IMPLEMENTED / bounded | Original Asset version/SHA/weight; unset additions omitted; explicit schema4, finite prompt. Reference purpose does not claim learned identity conditioning. |
+| Image upscale provider and independent Graph node | IMPLEMENTED / bounded | Enabled local Comfy registration and fixed declared-model recipe; Real-ESRGAN/SwinIR/compatible nodes, 2×/4× target, actual PNG dimensions/SHA proof, original private candidate/review/version. Native quality/GPU LOCAL_REQUIRED. |
+| Depth/Pose/Edge/Mask/Layout Control Adapter | RESERVED / NOT_CONFIGURED | Typed model-agnostic inputs; no execution or download authority. Original authored-mask inpaint remains separate. |
+| Director visual target and typed performance | IMPLEMENTED / bounded | Original Creative owner/CAS/history/restore/review; goal changes stale exact model preview. Original model coordinator retains chapter anchor; scene-free model execution remains PARTIAL. |
+| Independent Storyboard and note-per-shot derivation | IMPLEMENTED / bounded | Stable shots, characters/emotion and original camera/lens/duration/sound; explicit DIRECTOR_NOTES derive and source version/digest; editable HUMAN_REVIEW_REQUIRED draft. |
+| Director→Storyboard→Style→Image→Review Graph | IMPLEMENTED / bounded | Opt-in production catalog, original WorkflowRun, saved-document projections, selected shot and exact source guards. No automatic author-content mutation. |
+| Canvas/Inspector/shot preview and Opus seams | IMPLEMENTED / basic source UI | Shared primitives/controllers, strict actual DTOs and original authority/CAS/UNKNOWN/late-response guards. Professional UI/UX refinement and product acceptance remain open. |
+| Whole Image/Director/Storyboard modules | PARTIAL | Tests, source pins and remaining limits in [phase report](DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md). No Video execution or whole-product completion. |
+
+Model/Windows/GPU/final product remain NOT_RUN / LOCAL_REQUIRED. Full milestone CI,
+M4→M9, frozen V1, F00 INTEGRATED + 39 PARTIAL and independent review BLOCKED remain.

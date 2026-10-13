@@ -6,7 +6,7 @@ from ..experimental.flags import enabled_flags
 from ..experimental.production_lineage_api import PrivateProductionRoute, api_call
 from ..experimental.store import canonical
 from ..experimental.ux import ReadContext
-from .models import (CreativeDocumentIn, CreativeDocumentUpdate, CreativeDocumentRestore, CreativeDocumentDerive,
+from .models import (CreativeProductionDocumentIn, CreativeDocumentUpdate, CreativeDocumentRestore, CreativeDocumentDerive,
                      DirectorProposalIn, DirectorProposalReview, DirectorModelPreview,
                      DirectorModelDispatch, ProposalAction, MODES, USER_MODES, LEGACY_MODES)
 
@@ -99,7 +99,7 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
                       lambda actor, scope, guard: {"items": service.list(nid, scope)})
 
     @router.post("/documents", status_code=201)
-    def create(nid: str, body: CreativeDocumentIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+    def create(nid: str, body: CreativeProductionDocumentIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.create(nid, scope, actor, body, reauthorize=guard))
 

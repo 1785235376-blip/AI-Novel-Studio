@@ -297,6 +297,8 @@ class LocalImageAdapter:
     @property
     def supported_parameters(self):
         if getattr(self.delegate, 'image_recipe_descriptor', None):
+            if self.delegate.image_recipe_descriptor['operations'] == ['upscale']:
+                return self.delegate.image_parameters('upscale')
             return self.delegate.image_parameters('t2i')
         return self.delegate.supported_parameters
 
@@ -369,10 +371,11 @@ class LocalImageAdapter:
     def image_parameters(self, operation):
         self.studio_configuration()
         return self.delegate.image_parameters(operation)
-    def image_recipe(self, request, *, operation, reference_weights=(), mask=False):
+    def image_recipe(self, request, *, operation, reference_weights=(), mask=False, source_dimensions=None):
         config = self.studio_configuration()
+        arguments = {'source_dimensions': source_dimensions} if operation == 'upscale' else {}
         return self.delegate.image_recipe(replace(request, model_id=config['runtime_model_id']),
-            operation=operation, reference_weights=reference_weights, mask=mask)
+            operation=operation, reference_weights=reference_weights, mask=mask, **arguments)
     def generate(self, request):
         if self.candidate.get('evidence', {}).get('image_recipe'):
             return self.generate_image(request, operation='t2i', images=[], reference_weights=[])

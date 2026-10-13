@@ -1,3 +1,4 @@
+import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './studioImageRuntimeContract';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import { MEDIA_OPERATION_LABELS, MEDIA_STATUS_LABELS, mediaProviderKey, useStudioMediaExecution, type MediaParameter, type StudioMediaExecutionProps } from './useStudioMediaExecution';
 import type { MediaOperation } from './studioProductionClient';
@@ -5,7 +6,7 @@ import { usableCutoutSource } from './studioCutoutContract';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 
 export type { StudioMediaExecutionProps } from './useStudioMediaExecution';
-const labels: Record<MediaParameter, string> = { width: '宽度（64–2048）', height: '高度（64–2048）', steps: '采样步数（1–150）', seed: '种子（0–2147483647）',
+const labels: Record<MediaParameter, string> = { scale: '超分倍率', width: '宽度（64–2048）', height: '高度（64–2048）', steps: '采样步数（1–150）', seed: '种子（0–2147483647）',
   negative_prompt: '负向提示词', size: '图片规格', quality: '图片质量', denoising_strength: '重绘强度（大于 0 至 1，可选）', duration_seconds: '时长（1–600 秒）', frame_rate: '帧率（1–60）', voice_id: '语音标识',
   speech_rate: '语速（0.5–2）', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）', gain_db: '增益（-60–12 dB，可选）', sample_rate: '输出采样率（8000–96000 Hz，可选）', channels: '输出声道（可选）' };
 const ranges: Partial<Record<MediaParameter, [number, number, number]>> = { width: [64, 2048, 8], height: [64, 2048, 8], steps: [1, 150, 1], seed: [0, 2147483647, 1],
@@ -16,6 +17,7 @@ const kindLabels = { image: '图片', video: '视频', audio: '音频' };
 export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const state = useStudioMediaExecution(props), draft = state.draft, job = state.selected;
   const providers = state.providers.filter(row => row.operation_id === draft.operation);
+  const upscale = draft.operation === 'm5.image.upscale';
   const cutout = draft.operation === 'm5.image.cutout';
   const inpaint = draft.operation === 'm5.image.inpaint', reference = draft.operation === 'm5.image.reference';
   const sourceAssets = props.assets.filter(asset => asset.kind === state.requiredSourceKind && !asset.deleted_at && (!(cutout || inpaint) || usableCutoutSource(asset) && !asset.manual_mask));
@@ -23,6 +25,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   function parameter(name: MediaParameter) {
     const value = draft.parameters[name];
     if (name === 'negative_prompt') return <label key={name}>{labels[name]}<textarea maxLength={8000} disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)} /></label>;
+    if (name === 'scale') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">明确选择倍率</option><option value="2">2 倍</option><option value="4">4 倍</option></select></label>;
     if (name === 'channels') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">默认双声道（2）</option><option value="1">单声道（1）</option><option value="2">双声道（2）</option></select></label>;
     if (name === 'size' || name === 'quality') {
       const options = name === 'size' ? ['auto', '1024x1024', '1536x1024', '1024x1536'] : ['auto', 'low', 'medium', 'high', 'standard', 'hd'];
@@ -52,7 +55,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && '暂无对应配置，请先完成服务商与模型配置。'}</p>
         {state.provider?.image_capabilities && <p>当前图片配方：{state.provider.image_capabilities.recipe_id}。输入结构已核对，真实推理尚未验证。参考图最多 {state.provider.image_capabilities.reference_limit} 张；{state.provider.image_capabilities.reference_semantics === 'WEIGHTED_PIXEL_INITIALIZATION' ? '权重用于归一化混合参考像素后初始化生成，不代表角色或风格识别质量。' : '当前路线采用单图初始化。'}</p>}
         <Button disabled={!state.canRead || state.providerLoading} loading={state.providerLoading} onClick={() => void state.loadProviders()}>重新读取配置</Button>
-        <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>
+        {!upscale && <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>}
         {state.provider && !state.provider.local && <label><input type="checkbox" disabled={!state.canEdit} checked={draft.allowCloud} onChange={event => state.changeField('allowCloud', event.target.checked)} />确认本次允许将提示词及选中的参考素材发送到该云端服务，可能产生费用</label>}
       </>}
       {state.requiredSourceKind && !reference && <fieldset disabled={!state.canEdit}><legend>{kindLabels[state.requiredSourceKind]}来源 · {draft.operation === 'm5.image.i2i' && !state.imageInputs ? '选取 1–5 张' : '选取 1 个'}</legend>
@@ -70,14 +73,15 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {!draft.sources.length ? <p>先选取 PNG 来源，再选择为该来源版本保存的遮罩。</p> : !state.eligibleMasks.length && <p>当前没有匹配此来源版本的可用手绘遮罩。请在素材工作区选择来源、绘制并保存二值遮罩，再读取当前素材版本。</p>}
         {draft.sources[1] && !state.freshSources && <StatusMessage tone="warning">来源或遮罩已变化、删除或失去核对信息。原预览与确认已失效；重新读取并明确选择当前版本。</StatusMessage>}
       </fieldset>}
-      {state.imageInputs && !inpaint && <fieldset disabled={!state.canEdit}><legend>图片参考与权重 · 绑定确切版本</legend>
+      {state.imageInputs && !inpaint && !upscale && <fieldset disabled={!state.canEdit}><legend>图片参考与权重 · 绑定确切版本</legend>
         <p>{reference ? '选择 1–5 张参考图；当前服务的上限见配方说明。' : '基础图独立绑定；可再明确选择配方支持的辅助参考。'}权重须大于 0 且不超过 1；按当前配方初始化像素，不保证语义或风格一致性。</p>
         {props.assets.filter(asset => asset.kind === 'image' && !asset.deleted_at && !asset.manual_mask).map(asset => <label key={asset.id}><input type="checkbox" checked={draft.imageReferences.some(row => row.source.id === asset.id)} onChange={event => state.selectReference(asset.id, event.target.checked)} />参考 {asset.filename} · v{asset.version}</label>)}
-        {draft.imageReferences.map(row => <label key={row.source.id}>参考权重 · {props.assets.find(asset => asset.id === row.source.id)?.filename || row.source.id} · v{row.source.version}<input aria-label={`参考权重 · ${props.assets.find(asset => asset.id === row.source.id)?.filename || row.source.id} · v${row.source.version}`} type="number" min={0.01} max={1} step={0.01} value={row.weight} onChange={event => state.changeReferenceWeight(row.source.id, event.target.value)} /><code>{row.source.digest}</code></label>)}
+        {draft.imageReferences.map(row => <section key={row.source.id}><label>参考权重 · {props.assets.find(asset => asset.id === row.source.id)?.filename || row.source.id} · v{row.source.version}<input aria-label={`参考权重 · ${props.assets.find(asset => asset.id === row.source.id)?.filename || row.source.id} · v${row.source.version}`} type="number" min={0.01} max={1} step={0.01} value={row.weight} onChange={event => state.changeReferenceWeight(row.source.id, event.target.value)} /><code>{row.source.digest}</code></label><label>参考用途 · {row.source.id}<select value={row.purpose || ''} onChange={event => state.changeReferenceMetadata(row.source.id, 'purpose', event.target.value)}><option value="">未指定用途</option>{IMAGE_REFERENCE_PURPOSES.map(purpose => <option key={purpose} value={purpose}>{IMAGE_REFERENCE_PURPOSE_LABELS[purpose]}</option>)}</select></label><label>参考来源说明 · {row.source.id}<input maxLength={500} value={row.source_note || ''} onChange={event => state.changeReferenceMetadata(row.source.id, 'source_note', event.target.value)} /></label></section>)}
         {!!draft.sources.length && <><Button disabled={!state.canEdit} onClick={state.refreshSources}>明确选取当前参考版本</Button><Button disabled={!state.canEdit} onClick={state.clearSources}>移除图片输入绑定</Button></>}
         {!state.freshSources && draft.imageReferences.length > 0 && <StatusMessage tone="warning">已绑定的图片版本变化；旧预览与确认失效，请明确重新选择。</StatusMessage>}
       </fieldset>}
-      {draft.operation.startsWith('m5.image.') && <p>超分：接口预留，当前没有可执行入口；不会自动下载或启动模型。</p>}
+      {upscale && <p>原图片版本进入已启用的本地超分模型，再统一到所选倍率的 PNG 尺寸。输出最大 4096×4096、25 MiB，仍需人工审核。不会下载或启动模型；模型质量与本机推理尚未验收。</p>}
+      {draft.operation.startsWith('m5.image.') && <p>Depth / Pose / Edge / Mask / Layout 控制 Adapter 已保留边界，尚未提供执行能力。</p>}
       {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{state.parameterNames.map(parameter)}
         {!!state.unsupportedParameters.length && <><StatusMessage tone="warning">所选配置不支持已填写的参数：{state.unsupportedParameters.map(name => labels[name]).join('、')}。这些输入不会自动丢弃。</StatusMessage><Button disabled={!state.canEdit} onClick={state.clearUnsupportedParameters}>明确清空不支持的参数</Button></>}
       </fieldset>}
@@ -127,7 +131,8 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
             <dt>输出摘要</dt><dd><code>{job.media_measurement.output_sha256}</code></dd></dl>
           <p>以上为服务端解码实际 WAV 的测量，不代表增益已测量。候选仍须读取实际字节、核对摘要并人工审核。</p>
         </section> : <p>尚未读取到已核对的 WAV 输出测量；原请求参数与执行配方不代表实际输出。</p>)}
-        {job.processing_proof && <details><summary>本地 CPU 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · PNG {job.processing_proof.output_bytes} 字节</p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
+        {job.processing_proof?.contract === 'studio-image-upscale-proof/1' && <details><summary>图片超分尺寸与摘要证明</summary><p>{job.processing_proof.source_width} × {job.processing_proof.source_height} → {job.processing_proof.output_width} × {job.processing_proof.output_height} · {job.processing_proof.scale} 倍 · PNG {job.processing_proof.output_bytes} 字节</p><code>{job.processing_proof.output_sha256}</code></details>}
+        {job.processing_proof?.contract === 'cpu-binary-mask-cutout/1' && <details><summary>本地 CPU 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · PNG {job.processing_proof.output_bytes} 字节</p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
         {!!job.sources.length && <details><summary>本任务绑定的来源版本</summary><ul>{job.sources.map(source => <li key={`${source.kind}:${source.id}`}>{source.kind === 'ASSET' ? props.assets.find(row => row.id === source.id)?.filename || source.id : source.id} · v{source.version}<p>来源摘要：<code>{source.digest}</code></p></li>)}</ul></details>}
         {!state.jobSourcesFresh && <StatusMessage tone="warning">本任务的素材来源已变化，当前不可继续执行或审核。保留原记录供读取核对。</StatusMessage>}
         {job.status === 'UNKNOWN' && <StatusMessage tone="warning">无法确认先前分派结果，禁止再次执行。同一原任务只能继续读取核对或丢弃本地结果。</StatusMessage>}

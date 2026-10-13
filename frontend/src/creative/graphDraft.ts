@@ -1,10 +1,11 @@
+import { productionGraphDefinitions } from './studioProductionGraphContract';
 import type { StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphEdge, StudioGraphNode } from './studioGraphTypes';
 
 export const graphId = (prefix = 'node') => `${prefix}_${crypto.randomUUID().replace(/-/g, '')}`;
 export const blankGraph = (): StudioGraphDefinition => ({ schema_version: 1, title: '独立创作图', nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } });
-export const imageGraphDefinitions = ['text_input', 'text_reference', 'asset_reference', 'image_reference', 'image_prompt', 'image_generate', 'media_review'] as const;
+export const imageGraphDefinitions = ['text_input', 'text_reference', 'asset_reference', 'image_reference', 'image_prompt', 'image_generate', 'media_review', ...productionGraphDefinitions] as const;
 export const graphCatalogForSchema = (catalog: readonly StudioGraphCatalogDefinition[], schema: number): StudioGraphCatalogDefinition[] => catalog
-  .filter(row => schema === 4 ? imageGraphDefinitions.some(kind => kind === row.id) : !['image_reference', 'image_prompt', 'image_generate'].includes(row.id)).map(row =>
+  .filter(row => schema === 4 ? imageGraphDefinitions.some(kind => kind === row.id) : !['image_reference', 'image_prompt', 'image_generate', ...productionGraphDefinitions].includes(row.id)).map(row =>
   row.id === 'human_review' && schema !== 3 ? { ...row, outputs: [] } : row);
 
 /** Local authoring feedback mirrors the typed contract; server validation stays authoritative. */
@@ -17,10 +18,10 @@ export function connectionIssue(definition: StudioGraphDefinition, catalog: read
   const input = descriptors.find(row => row.id === target.definition_id)?.inputs.find(port => port.id === edge.target_port);
   if (!output || !input) return '请选择真实的输出端口和输入端口。';
   if (output.type !== input.type) return `端口类型不匹配：${output.type} → ${input.type}。`;
-  if (['image_reference', 'image_prompt', 'image_generate'].includes(source.definition_id) || ['image_reference', 'image_prompt', 'image_generate'].includes(target.definition_id)) {
+  if (['image_reference', 'image_prompt', 'image_generate', ...productionGraphDefinitions].includes(source.definition_id) || ['image_reference', 'image_prompt', 'image_generate', ...productionGraphDefinitions].includes(target.definition_id)) {
     if (definition.schema_version !== 4) return '图片节点需要明确采用图片图 v4。';
   }
-  if (source.definition_id === 'image_generate' && (target.definition_id !== 'media_review' || edge.target_port !== 'candidate')) return '图片候选须连接原媒体审核节点，审核后才输出正式素材。';
+  if (['image_generate', 'image_upscale'].includes(source.definition_id) && (target.definition_id !== 'media_review' || edge.target_port !== 'candidate')) return '图片候选须连接原媒体审核节点，审核后才输出正式素材。';
   if (target.definition_id === 'timeline_export' && definition.schema_version !== 3) return '时间线剪辑与导出需要明确升级为媒体图 v3。';
   if (source.definition_id === 'timeline_export' && (target.definition_id !== 'media_review' || edge.target_port !== 'candidate')) return '时间线导出候选须连接原媒体审核节点，审核后才可作为正式视频素材。';
   if (target.definition_id === 'media_generate' && ['text', 'draft'].includes(edge.target_port)) {
@@ -43,8 +44,9 @@ export function connectionIssue(definition: StudioGraphDefinition, catalog: read
 }
 
 export function retainsSavedAssetBindings(previous: readonly StudioGraphNode[], next: readonly StudioGraphNode[]): boolean {
-  return previous.filter(node => node.definition_id === 'asset_reference').every(node => {
+  return previous.filter(node => ['asset_reference', 'director_plan', 'storyboard_plan'].includes(node.definition_id)).every(node => {
     const candidate = next.find(row => row.id === node.id);
+    if (node.definition_id !== 'asset_reference') return candidate?.definition_id === node.definition_id && JSON.stringify(candidate.parameters.document_snapshot) === JSON.stringify(node.parameters.document_snapshot);
     return candidate?.definition_id === 'asset_reference' && (['asset_id', 'version', 'digest', 'kind'] as const).every(key => candidate.parameters[key] === node.parameters[key]);
   });
 }

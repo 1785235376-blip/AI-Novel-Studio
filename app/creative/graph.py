@@ -62,7 +62,7 @@ class CreativeGraphService:
     def _model_authority(definition):
         if (definition.get("schema_version") == 2
                 or any(node["definition_id"] == "text_generate" or
-                    node["definition_id"] == "image_generate" or
+                    node["definition_id"] in {"image_generate", "image_upscale"} or
                     (node["definition_id"] == "media_generate" and node["parameters"]["operation_id"] != "m8.audio.trim")
                     for node in definition["nodes"])):
             from .ai_execution import require_execution
@@ -99,7 +99,7 @@ class CreativeGraphService:
                     or digest(execution_definition(value)) != row.get("execution_digest")):
                 raise ValueError("CREATIVE_GRAPH_RECORD_CORRUPT")
         if name == RUNS and any(node.get("definition_id") == "text_generate" or
-                node.get("definition_id") == "image_generate" or
+                node.get("definition_id") in {"image_generate", "image_upscale"} or
                 (node.get("definition_id") == "media_generate" and node.get("parameters", {}).get("operation_id") != "m8.audio.trim")
                 for node in row.get("typed_nodes", [])):
             from .ai_execution import require_execution
@@ -121,7 +121,7 @@ class CreativeGraphService:
     @staticmethod
     def _asset_bindings(definition):
         return {node["id"]: deepcopy(node["parameters"]) for node in definition["nodes"]
-                if node["definition_id"] == "asset_reference"}
+                if node["definition_id"] in {"asset_reference", "director_plan", "storyboard_plan"}}
 
     def _reference_states(self, nid, scope, definition, guard, actor=None):
         """Legacy reads stay outside transactions; schema 3 uses its asset phase."""
@@ -166,16 +166,30 @@ class CreativeGraphService:
         guard()
         return public
 
-    def catalog(self, nid, scope, actor, guard=lambda: None, *, include_image=False):
+    def planning_documents(self, nid, scope, actor, guard=lambda: None):
+        """Passive exact-snapshot picker over the original Creative authority."""
+        _, current = self._context(nid, scope, actor, guard)
+        from .ai_execution import require_execution
+        from .service import document_digest
+        require_execution()
+        rows = self.workspace.creative.list(nid, scope)
+        result = {"project_id": nid, "scope": deepcopy(scope), "documents": [
+            {"id": row["id"], "title": row["title"], "mode": row["mode"],
+                "version": row["version"], "digest": document_digest(row)}
+            for row in rows if row["mode"] in {"DIRECTOR", "STORYBOARD"}]}
+        current()
+        return result
+
+    def catalog(self, nid, scope, actor, guard=lambda: None, *, include_image=False, include_production=False):
         _, current = self._context(nid, scope, actor, guard)
         from .ai_execution import execution_enabled, CONTRACT
         models = self.model_runtime is not None and execution_enabled()
         media = self.media_runtime is not None
-        if include_image:
+        if include_image or include_production:
             from .ai_execution import require_execution
             require_execution()
         result = {"definitions": catalog_definitions(include_model=models, include_media=media,
-            include_image=include_image and media), "limits": {"nodes": MAX_NODES, "edges": MAX_EDGES,
+            include_image=include_image and media, include_production=include_production and media), "limits": {"nodes": MAX_NODES, "edges": MAX_EDGES,
             "definition_bytes": MAX_DEFINITION_BYTES, "output_bytes": MAX_OUTPUT_BYTES,
             "graphs": MAX_GRAPHS, "runs": MAX_RUNS, "history": MAX_HISTORY,
             "runtime_timeout_seconds": RUN_TIMEOUT_SECONDS, "node_timeout_seconds": NODE_TIMEOUT_SECONDS},
@@ -196,6 +210,9 @@ class CreativeGraphService:
             result["capabilities"].update(image_graph=media, image_graph_schema_version=4,
                 image_graph_evidence="LOCAL_REQUIRED", image_reference_semantics="WEIGHTED_PIXEL_INITIALIZATION",
                 image_upscale_execution=False)
+        if include_production:
+            result["capabilities"].update(production_graph=media, production_graph_schema_version=4,
+                planning_evidence="SOURCE_BOUND", image_upscale_execution=media, image_control_execution=False)
         current(); return result
 
     @contextmanager
@@ -221,7 +238,7 @@ class CreativeGraphService:
                 if generator["definition_id"] == "media_generate":
                     operation = generator["parameters"]["operation_id"]
                     return "image" if operation.startswith("m5.") else "video" if operation.startswith("m7.") else "audio"
-                if generator["definition_id"] == "image_generate":
+                if generator["definition_id"] in {"image_generate", "image_upscale"}:
                     return "image"
         return None
 
@@ -373,7 +390,7 @@ class CreativeGraphService:
             for item in reference_states:
                 if item["state"] != "CURRENT":
                     issues.append({"code": "CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED", "node_id": item["node_id"]})
-            generators = [key for key in order if nodes[key]["definition_id"] in {"media_generate", "timeline_export", "image_generate"}]
+            generators = [key for key in order if nodes[key]["definition_id"] in {"media_generate", "timeline_export", "image_generate", "image_upscale"}]
             reviews = [key for key in order if nodes[key]["definition_id"] == "media_review"]
             if generators and self.media_runtime is None:
                 issues.append({"code": "CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE"})
@@ -385,7 +402,7 @@ class CreativeGraphService:
                 if (len(outgoing) != 1 or outgoing[0]["target_node_id"] not in closure
                         or nodes[outgoing[0]["target_node_id"]]["definition_id"] != "media_review"):
                     issues.append({"code": "CREATIVE_GRAPH_MEDIA_REVIEW_REQUIRED", "node_id": generator})
-                if node["definition_id"] == "image_generate":
+                if node["definition_id"] in {"image_generate", "image_upscale"}:
                     continue
                 if node["definition_id"] == "timeline_export":
                     bindings = {binding["port"]: binding["clip_id"] for binding in node["parameters"]["source_bindings"]}
@@ -436,6 +453,10 @@ class CreativeGraphService:
                 from .graph_image_nodes import preflight_image_nodes
                 issues.extend(preflight_image_nodes(nodes, incoming, order,
                     lambda edge: self._source_kind(nodes, incoming, edge)))
+                if check_assets:
+                    from .graph_planning_nodes import preflight_planning
+                    issues.extend(preflight_planning(self, row["novel_id"], row["scope"], nodes,
+                        incoming, order, guard, state))
         result = {"project_id": row["novel_id"], "scope": deepcopy(row["scope"]), "graph_id": row["id"],
             "valid": True, "executable": not issues, "issues": issues, "execution_order": order,
             "selected_closure": order, "definition_digest": row["definition_digest"],

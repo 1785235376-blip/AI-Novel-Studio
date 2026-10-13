@@ -119,10 +119,15 @@ class CreativeGraphExecutor:
             if row["node_states"][node_id]["status"] != "SUCCEEDED":
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_STATE_INVALID")
             validate_output_ports(by_id[node_id]["definition_id"], output, schema_version=schema)
-            if by_id[node_id]["definition_id"] in {"image_reference", "image_prompt"}:
+            if by_id[node_id]["definition_id"] in {"image_reference", "image_prompt", "image_style"}:
                 from .graph_image_nodes import execute_image_local
                 if output != execute_image_local(by_id[node_id], self._inputs(row, node_id, row["typed_outputs"])):
                     raise StaleSourceError("CREATIVE_GRAPH_IMAGE_TRANSFORM_CHANGED")
+            if by_id[node_id]["definition_id"] in {"director_plan", "storyboard_plan", "storyboard_prompt"}:
+                from .graph_planning_nodes import execute_planning_local
+                if output != execute_planning_local(self.service, nid, scope, by_id[node_id],
+                        self._inputs(row, node_id, row["typed_outputs"]), guard, state):
+                    raise StaleSourceError("CREATIVE_GRAPH_PLANNING_OUTPUT_CHANGED")
             receipt = row.get("cache_keys", {}).get(node_id, {})
             engine_output = (row["node_states"][node_id].get("output") or {}).get("result") or {}
             if (engine_output.get("ports") != output or receipt.get("output_digest") != digest(output)
@@ -141,9 +146,11 @@ class CreativeGraphExecutor:
                 raise StaleSourceError("CREATIVE_MODEL_RUNTIME_UNAVAILABLE")
             self.service.model_runtime.validate_snapshot(row)
         if schema in {3, 4}:
+            from .graph_planning_nodes import current_documents
+            current_documents(self.service, nid, scope, expected, guard, state)
             if check_assets:
                 self.service.asset_inputs.current(nid, scope, actor, row, guard, state)
-            if any(node["definition_id"] in {"media_generate", "timeline_export", "image_generate"} for node in expected):
+            if any(node["definition_id"] in {"media_generate", "timeline_export", "image_generate", "image_upscale"} for node in expected):
                 if self.service.media_runtime is None:
                     raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
                 self.service.media_runtime.validate_snapshot(row)
@@ -206,7 +213,7 @@ class CreativeGraphExecutor:
                 payload.update(model_execution_contract=CONTRACT, model_preview=None, model_execution=None)
             if graph["definition"]["schema_version"] in {3, 4}:
                 payload["graph_schema_version"] = graph["definition"]["schema_version"]
-                if any(node["definition_id"] in {"media_generate", "timeline_export", "image_generate"} for node in typed_nodes):
+                if any(node["definition_id"] in {"media_generate", "timeline_export", "image_generate", "image_upscale"} for node in typed_nodes):
                     payload.update(media_execution_contract="creative-graph-media/1", media_previews={}, media_executions={})
             row = new_row(nid, scope, actor, payload)
             rows[row["id"]] = row
@@ -314,7 +321,7 @@ class CreativeGraphExecutor:
             if current["status"] != "WAITING_APPROVAL" or node_id is None:
                 break
             node = nodes[node_id]
-            if node["definition_id"] in {"human_review", "text_generate", "media_generate", "media_review", "timeline_export", "image_generate"}:
+            if node["definition_id"] in {"human_review", "text_generate", "media_generate", "media_review", "timeline_export", "image_generate", "image_upscale"}:
                 break
             guard()
             host.trigger_agent_node(row["id"], node_id, actor)
@@ -327,11 +334,14 @@ class CreativeGraphExecutor:
                 if output is None:
                     if node["definition_id"] == "asset_reference" and row.get("graph_schema_version") in {3, 4}:
                         output = self.service.asset_inputs.execute_reference(row["novel_id"], row["scope"], actor, node, guard)
-                    elif node["definition_id"] in {"image_reference", "image_prompt"} and row.get("graph_schema_version") == 4:
+                    elif node["definition_id"] in {"image_reference", "image_prompt", "image_style"} and row.get("graph_schema_version") == 4:
                         from .graph_image_nodes import execute_image_local
                         guard()
                         output = execute_image_local(node, inputs)
                         guard()
+                    elif node["definition_id"] in {"director_plan", "storyboard_plan", "storyboard_prompt"} and row.get("graph_schema_version") == 4:
+                        from .graph_planning_nodes import execute_planning_local
+                        output = execute_planning_local(self.service, row["novel_id"], row["scope"], node, inputs, guard, state)
                     else:
                         receipt = run_trusted_local(self.adapter, AdapterRequest(node["definition_id"],
                             {"parameters": deepcopy(node["parameters"]), "ports": inputs},

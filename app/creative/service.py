@@ -8,7 +8,7 @@ import re
 from ..experimental.common import DomainService, StaleSourceError, change_row, new_row
 from ..experimental.store import canonical
 from ..source_privacy import source_privacy_status
-from .models import CreativeDocumentIn, CreativeDocumentDerive, DirectorNote
+from .models import CreativeProductionDocumentIn, CreativeDocumentDerive, DirectorNote
 
 COLLECTION = "creative_documents_v2"
 MAX_DOCUMENTS = 100
@@ -104,7 +104,11 @@ class CreativeService(DomainService):
         """
         self.novels.get(nid)
         self.store.key(nid, scope)
-        body = CreativeDocumentIn.model_validate(value)
+        # Accept the additive production DTO without normalizing older stored
+        # snapshots or changing the legacy CreativeDocumentIn field contract.
+        if hasattr(value, "model_dump"):
+            value = value.model_dump()
+        body = CreativeProductionDocumentIn.model_validate(value)
         payload = body.model_dump()
         # Author-assigned order is persistent and independent of input array order.
         payload["scenes"].sort(key=lambda item: item["sequence"])
@@ -137,7 +141,7 @@ class CreativeService(DomainService):
         if _budget[0] < 0:
             raise StaleSourceError("CREATIVE_SOURCE_GRAPH_CAPACITY")
         try:
-            body = CreativeDocumentIn.model_validate({key: row[key] for key in CreativeDocumentIn.model_fields if key in row})
+            body = CreativeProductionDocumentIn.model_validate({key: row[key] for key in CreativeProductionDocumentIn.model_fields if key in row})
         except (ValueError, KeyError):
             raise ValueError("CREATIVE_DOCUMENT_CORRUPT") from None
         if not isinstance(row.get("source_evidence"), dict) or set(row["source_evidence"]) != set(body.source_chapter_ids):
@@ -232,7 +236,10 @@ class CreativeService(DomainService):
             if payload["mode"] != row["mode"]:
                 raise ValueError("CREATIVE_MODE_IMMUTABLE")
             reauthorize()
-            change_row(row, actor, expected_version, lambda current: current.update(payload))
+            def replace_content(current):
+                current.pop("visual_target", None)
+                current.update(payload)
+            change_row(row, actor, expected_version, replace_content)
             self.assert_current(nid, scope, row)
             self.assert_capacity(state)
             reauthorize()
@@ -268,22 +275,40 @@ class CreativeService(DomainService):
                 raise ValueError("CREATIVE_DERIVATION_STAGE_INVALID")
             if not source.get("scenes") or (body.mode == "PRODUCTION" and not source.get("shots")):
                 raise ValueError("CREATIVE_DERIVATION_ASSETS_REQUIRED")
+            if body.shot_policy == "DIRECTOR_NOTES" and (source["mode"] != "DIRECTOR" or not source.get("director_notes")):
+                raise ValueError("CREATIVE_DIRECTOR_SHOT_NOTES_REQUIRED")
             title = body.title or (source["title"][:220] + (" · 分镜" if body.mode == "STORYBOARD" else " · 制作"))
             content = {"mode": body.mode, "title": title, "source_chapter_ids": source["source_chapter_ids"],
                        "scenes": source["scenes"], "director_notes": source.get("director_notes", [])}
+            if source.get("visual_target") is not None:
+                content["visual_target"] = copy.deepcopy(source["visual_target"])
             if body.mode == "STORYBOARD":
                 shots = []
-                for number, scene in enumerate(sorted(source["scenes"], key=lambda item: item["sequence"]), 1):
+                for scene in sorted(source["scenes"], key=lambda item: item["sequence"]):
                     notes = sorted((note for note in source.get("director_notes", []) if note["scene_id"] == scene["id"]),
                                    key=lambda note: note["number"])
-                    direction = notes[0] if notes else {}
-                    shots.append({"number": number, "scene_id": scene["id"], "action": scene["action"],
-                        "dialogue": scene["dialogue"], "environment": scene["location"][:4000],
-                        "shot_size": direction.get("shot_size") or "MEDIUM",
-                        "camera_angle": direction.get("camera_angle") or "EYE_LEVEL",
-                        "camera_motion": direction.get("camera_motion") or "STATIC",
-                        "duration_seconds": direction.get("duration_seconds", 5),
-                        "director_notes": [{key: note[key] for key in DirectorNote.model_fields if key in note} for note in notes]})
+                    directions = notes if body.shot_policy == "DIRECTOR_NOTES" else [notes[0] if notes else {}]
+                    for direction in directions:
+                        linked_notes = [direction] if body.shot_policy == "DIRECTOR_NOTES" else notes
+                        shot = {"number": len(shots) + 1, "scene_id": scene["id"], "action": scene["action"],
+                            "dialogue": scene["dialogue"], "environment": scene["location"][:4000],
+                            "shot_size": direction.get("shot_size") or "MEDIUM",
+                            "camera_angle": direction.get("camera_angle") or "EYE_LEVEL",
+                            "camera_motion": direction.get("camera_motion") or "STATIC",
+                            "duration_seconds": direction.get("duration_seconds", 5),
+                            "director_notes": [{key: note[key] for key in DirectorNote.model_fields if key in note} for note in linked_notes]}
+                        # Preserve older default derivation exactly; rich,
+                        # authored direction is copied only when present.
+                        for source_name, target_name in (("composition", "composition"), ("lens", "lens"), ("shot_suggestion", "frame_prompt")):
+                            if direction.get(source_name) is not None:
+                                shot[target_name] = direction[source_name]
+                        if direction.get("performances") is not None:
+                            shot["characters"] = [item["character"] for item in direction["performances"]]
+                        elif body.shot_policy == "DIRECTOR_NOTES":
+                            shot["characters"] = copy.deepcopy(scene.get("characters", []))
+                        if body.shot_policy == "DIRECTOR_NOTES":
+                            shot["emotion"] = direction.get("emotion") or scene.get("emotion", "")
+                        shots.append(shot)
                 content["shots"] = shots
             else:
                 content["shots"] = source["shots"]
@@ -295,7 +320,9 @@ class CreativeService(DomainService):
             payload["provenance"] = {"method": "STRUCTURED_DERIVATION", "model_called": False,
                 "source_mode": source["mode"], "source_document_id": source["id"],
                 "source_version": source["version"], "input_digest": source_digest,
-                "parameters": {"rule_version": "creative-stage-copy-v1"}, "quality_verification": "HUMAN_REVIEW_REQUIRED"}
+                "parameters": ({"rule_version": "creative-director-shots-v1", "shot_policy": "DIRECTOR_NOTES"}
+                               if body.shot_policy == "DIRECTOR_NOTES" else {"rule_version": "creative-stage-copy-v1"}),
+                "quality_verification": "HUMAN_REVIEW_REQUIRED"}
             row = new_row(nid, scope, actor, payload)
             state["collections"].setdefault(self.COLLECTION, {})[row["id"]] = row
             self.assert_current(nid, scope, row)
@@ -319,11 +346,13 @@ class CreativeService(DomainService):
             self.assert_current(nid, scope, target)
             if target.get("mode") != row.get("mode") or target.get("source_documents", {}) != row.get("source_documents", {}):
                 raise ValueError("CREATIVE_RESTORE_SOURCE_BINDING_CHANGED")
-            value = {key: target[key] for key in CreativeDocumentIn.model_fields if key in target}
+            value = {key: target[key] for key in CreativeProductionDocumentIn.model_fields if key in target}
             payload = self.prepare_content(nid, scope, value, source_documents=row.get("source_documents", {}))
             reauthorize()
-            change_row(row, actor, expected_version, lambda current: current.update(
-                payload, status="DRAFT", restored_from_version=restore_version))
+            def restore_content(current):
+                current.pop("visual_target", None)
+                current.update(payload, status="DRAFT", restored_from_version=restore_version)
+            change_row(row, actor, expected_version, restore_content)
             self.assert_current(nid, scope, row)
             self.assert_capacity(state)
             reauthorize()

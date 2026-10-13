@@ -2,14 +2,14 @@
 from __future__ import annotations
 
 from typing import Literal
-from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_serializer, model_validator
 from .production_contracts import ProductionSourceSnapshot, Name, Digest
 
 GraphMediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m7.video.i2v",
     "m7.video.v2v", "m8.audio.speech", "m8.audio.music", "m8.audio.effects", "m8.audio.trim"]
 
-ImageRuntimeOperation = Literal["m5.image.t2i", "m5.image.i2i", "m5.image.reference", "m5.image.inpaint"]
-MediaOperation = Literal[GraphMediaOperation, "m5.image.cutout", "m5.image.reference", "m5.image.inpaint"]
+ImageRuntimeOperation = Literal["m5.image.t2i", "m5.image.i2i", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"]
+MediaOperation = Literal[GraphMediaOperation, "m5.image.cutout", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"]
 
 
 class ExecutionModel(BaseModel):
@@ -17,7 +17,7 @@ class ExecutionModel(BaseModel):
 
 
 class ProviderSelection(ExecutionModel):
-    operation_id: Literal[GraphMediaOperation, "m5.image.reference", "m5.image.inpaint"]
+    operation_id: Literal[GraphMediaOperation, "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"]
     provider_id: Name
     model_id: Name
 
@@ -44,13 +44,21 @@ class MediaExecutionParameters(MediaParameters):
     sample_rate: int | None = Field(default=None, ge=8000, le=96000)
     channels: int | None = Field(default=None, ge=1, le=2)
     denoising_strength: float | None = Field(default=None, gt=0, le=1)
+    scale: Literal[2, 4] | None = None
+
+    @field_validator("scale", mode="before")
+    @classmethod
+    def exact_scale(cls, value):
+        if value is not None and type(value) is not int:
+            raise ValueError("STUDIO_IMAGE_UPSCALE_SCALE_INVALID")
+        return value
 
     @model_serializer(mode="wrap")
     def preserve_legacy_identity(self, handler):
         # Original preview and job identities include the old null fields.
         # Omit only the new unset controls, including in nested model_dump().
         value = handler(self)
-        for key in ("gain_db", "sample_rate", "channels", "denoising_strength"):
+        for key in ("gain_db", "sample_rate", "channels", "denoising_strength", "scale"):
             if value.get(key) is None:
                 value.pop(key, None)
         return value
@@ -60,6 +68,16 @@ class ImageReference(ExecutionModel):
     """Weighted reference to the existing Asset owner, never copied pixels."""
     source: ProductionSourceSnapshot
     weight: float = Field(gt=0, le=1)
+    purpose: Literal["character", "outfit", "environment", "style", "composition"] | None = None
+    source_note: str | None = Field(default=None, min_length=1, max_length=500)
+
+    @model_serializer(mode="wrap")
+    def preserve_reference_identity(self, handler):
+        value = handler(self)
+        for key in ("purpose", "source_note"):
+            if value.get(key) is None:
+                value.pop(key, None)
+        return value
 
     @model_validator(mode="after")
     def original_image(self):
@@ -103,6 +121,7 @@ class MediaCommand(ExecutionModel):
             "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality", "denoising_strength"},
             "m5.image.reference": {"width", "height", "steps", "seed", "negative_prompt", "denoising_strength"},
             "m5.image.inpaint": {"steps", "seed", "negative_prompt", "denoising_strength"},
+            "m5.image.upscale": {"scale"},
             "m7.video.t2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
             "m7.video.i2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
             "m7.video.v2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
@@ -113,6 +132,8 @@ class MediaCommand(ExecutionModel):
         }[self.operation_id]
         if set(p) - allowed:
             raise ValueError("STUDIO_OPERATION_PARAMETER_UNSUPPORTED")
+        if self.parameters.scale is not None and type(self.parameters.scale) is not int:
+            raise ValueError("STUDIO_IMAGE_UPSCALE_SCALE_INVALID")
         if (self.parameters.width is None) != (self.parameters.height is None):
             raise ValueError("STUDIO_OPERATION_DIMENSIONS_PAIR_REQUIRED")
         if self.operation_id.startswith("m5.") and any(p.get(k, 64) % 8 for k in ("width", "height")):
@@ -122,13 +143,17 @@ class MediaCommand(ExecutionModel):
             raise ValueError("STUDIO_OPERATION_SOURCE_DUPLICATE")
         advanced = (self.image_source is not None or bool(self.image_references) or self.mask_source is not None
             or self.parameters.denoising_strength is not None)
-        if advanced or self.operation_id in {"m5.image.reference", "m5.image.inpaint"}:
+        if advanced or self.operation_id in {"m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}:
             self._image_runtime_inputs()
         if self.operation_id == "m5.image.cutout":
             if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt or p:
                 raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
             if (len(self.source_snapshots) != 2 or any(s.kind != "ASSET" or s.asset_kind != "image" for s in self.source_snapshots)):
                 raise ValueError("STUDIO_IMAGE_CUTOUT_INPUT_REQUIRED")
+        elif self.operation_id == "m5.image.upscale":
+            if (not self.provider_id or not self.model_id or self.provider_id == "auto" or self.prompt
+                    or self.allow_cloud or self.parameters.scale is None or len(self.source_snapshots) != 1):
+                raise ValueError("STUDIO_IMAGE_UPSCALE_EXPLICIT_LOCAL_SOURCE_REQUIRED")
         elif self.operation_id == "m8.audio.trim":
             if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt:
                 raise ValueError("STUDIO_AUDIO_TRIM_LOCAL_ONLY")
@@ -139,7 +164,7 @@ class MediaCommand(ExecutionModel):
                 raise ValueError("STUDIO_AUDIO_TRIM_INPUT_REQUIRED")
         elif not self.provider_id or not self.model_id or not self.prompt.strip() or self.provider_id == "auto":
             raise ValueError("STUDIO_EXPLICIT_PROVIDER_MODEL_PROMPT_REQUIRED")
-        required = {"m5.image.i2i": "image", "m5.image.reference": "image", "m5.image.inpaint": "image",
+        required = {"m5.image.i2i": "image", "m5.image.reference": "image", "m5.image.inpaint": "image", "m5.image.upscale": "image",
             "m7.video.i2v": "image", "m7.video.v2v": "video"}.get(self.operation_id)
         assets = [s for s in self.source_snapshots if s.kind == "ASSET"]
         if required and (not assets or any(s.asset_kind != required for s in assets)):
@@ -155,14 +180,17 @@ class MediaCommand(ExecutionModel):
         return self
 
     def _image_runtime_inputs(self):
-        if self.operation_id not in {"m5.image.i2i", "m5.image.reference", "m5.image.inpaint"}:
+        if self.operation_id not in {"m5.image.i2i", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}:
             raise ValueError("STUDIO_IMAGE_RUNTIME_OPERATION_INVALID")
         refs = self.image_references or []
         snapshots = []
         for snapshot in (self.image_source, self.mask_source):
             if snapshot is not None and (snapshot.kind != "ASSET" or snapshot.asset_kind != "image"):
                 raise ValueError("STUDIO_IMAGE_RUNTIME_SOURCE_KIND_INVALID")
-        if self.operation_id == "m5.image.reference":
+        if self.operation_id == "m5.image.upscale":
+            if self.image_source is None or self.mask_source is not None or refs:
+                raise ValueError("STUDIO_IMAGE_UPSCALE_SOURCE_REQUIRED")
+        elif self.operation_id == "m5.image.reference":
             if not refs or self.image_source is not None or self.mask_source is not None:
                 raise ValueError("STUDIO_IMAGE_REFERENCE_INPUT_REQUIRED")
         elif self.operation_id == "m5.image.i2i":

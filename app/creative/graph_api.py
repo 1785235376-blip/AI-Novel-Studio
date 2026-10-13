@@ -175,11 +175,19 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
         return model_call(request, nid, x_session_token, x_branch_id, "domain.write", "refresh", rid, body)
 
     @router.get("/projects/{nid}/studio/graphs/catalog")
-    def catalog(nid: str, request: Request, include_image: bool = False,
+    def catalog(nid: str, request: Request, include_image: bool = False, include_production: bool = False,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: service.catalog(nid, scope, actor, guard=guard,
-                          include_image=include_image), request, model_input=include_image)
+                          include_image=include_image, include_production=include_production), request,
+                          model_input=include_image or include_production)
+
+    @router.get("/projects/{nid}/studio/graphs/planning-documents")
+    def planning_documents(nid: str, request: Request,
+                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.planning_documents(nid, scope, actor, guard),
+                      request, model_input=True)
 
     @router.get("/projects/{nid}/studio/graphs")
     def graphs(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

@@ -567,11 +567,18 @@ class LocalDiscoveryService:
                 for name, loaders in names.items():
                     from ..services.studio_image_provider_recipes import project_comfy_image_recipe
                     family, _ = infer_family(name)
+                    # A loader advertisement, never a filename guess, chooses
+                    # the structural upscale contract. Generation is not run.
+                    if bindings[name] == [{'node_class': 'UpscaleModelLoader', 'input_field': 'model_name'}]:
+                        family = 'IMAGE_UPSCALE'
                     image_recipe = project_comfy_image_recipe(info, name, family)
-                    found.append(self._candidate(runtime, name, family_hint=' '.join(loaders), evidence={
+                    candidate = self._candidate(runtime, name, family_hint=' '.join(loaders), evidence={
                         'model_listed': True, 'model_file_exists': None, 'loader_nodes': loaders, 'loader_bindings': bindings[name],
                         'node_classes': nodes, 'nodes_fingerprint': nodes_fingerprint, 'workflow_status': 'NOT_CONFIGURED', 'generation_verified': False,
-                        **({'image_recipe': image_recipe} if image_recipe else {})}))
+                        **({'image_recipe': image_recipe} if image_recipe else {})})
+                    if family == 'IMAGE_UPSCALE':
+                        candidate.update(family=family, modality='IMAGE', declared_capabilities=['IMAGE'])
+                    found.append(candidate)
             elif kind == 'AUTOMATIC1111':
                 payload = get('/sdapi/v1/sd-models')
                 if not isinstance(payload, list): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')

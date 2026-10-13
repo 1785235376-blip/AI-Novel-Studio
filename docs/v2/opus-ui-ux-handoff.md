@@ -140,3 +140,20 @@ Provider supported_parameters过滤。加权参考是像素初始化，不是身
 图片Graph目录及schema4升级均需明确动作；旧1/2/3图不自动转换或删除不兼容节点。
 Opus可替换画布、Inspector、素材与参数布局，保留原父级mutex/CAS/client/审核门禁。
 超分仅预留，不提供执行按钮；新增控件的专业视觉与实际Windows验收未完成。
+
+
+## Production Expansion Phase 2（2026-10-14）
+
+Opus 可替换 DirectorTargetPanel、CreativeCanvas 镜头列表/卡片/预览、
+ProductionGraphOutputPreview 和 Graph Inspector 视图；保留原 workspace/
+graph/media headless controllers、Host transport、父级 mutex、CAS、dirty、
+UNKNOWN、不自动重发及人工审核。复杂参数可折叠，不能让界面授予执行权。
+
+新增制作目录需明确读取（include_image=true&include_production=true）；旧图不自动
+升级。导演/分镜选择来自原权威的版本/摘要投影，保存后不可自动刷新绑定、删除或
+借禁用掩盖来源变化。DIRECTOR_PLAN/STORYBOARD_DATA/IMAGE_PROMPT 是闭合数据，
+场景原字符列表保持旧契约；新的角色/表演唯一性和各上下文字段上限严格对齐后端。
+图片超分独立选择已启用本地路线/正式源图/2×或4×，无需提示词或云许可；原
+preview/create/execute/private candidate/review 分开，实际证明只读原回执。
+Reference 用途/来源说明是作者元数据，不宣称人物一致性；Control 无执行入口。
+专业视觉美化及产品验收仍开放，详见 [阶段报告](../../DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md)。

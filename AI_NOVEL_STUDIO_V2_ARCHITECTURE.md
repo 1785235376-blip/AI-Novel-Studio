@@ -575,3 +575,20 @@ image-only extension; schemas1/2/3 keep their original closed contracts. See
 [stage report](docs/v2/production-expansion-image-runtime-20261013.md). Upscale
 is a non-executable reserved adapter contract. Model quality and installed
 Windows/GPU acceptance remain LOCAL_REQUIRED.
+
+
+## 2026-10-14 — Production Expansion Phase 2 owner reuse
+
+Original CreativeService now accepts an opt-in production DTO for visual targets,
+rich director notes and shot details. No second document/asset/project/permission
+owner. DirectorModelCoordinator keeps the original broker/author job and review;
+its chapter anchor remains required. Explicit note-per-shot derivation binds the
+same source version/digest and creates an editable, unverified visual draft.
+
+Graph schema4 adds finite saved-document projections and Image Style/Upscale;
+new definitions require the explicit production catalog. Planning reads the
+original source/privacy/incarnation under existing scope authority. Publication
+uses the original source→Asset→Project leases and original ImageJob/private
+Asset/review/version. Upscale consumes a positively proved, enabled local Comfy
+registration; the provider never discovers/downloads a model itself. Control
+types remain reserved. See [phase report](DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md).

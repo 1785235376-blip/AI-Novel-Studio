@@ -54,3 +54,15 @@ a40df115 历史 CI 29 jobs 的 20 success／5 failure／4 cancelled、两个 Clo
 超分仅保留闭合输入／adapter协议和不可执行标记，不能据此宣称超分已实现。
 Opus可重构视图，必须保留原controllers、Host/CAS/来源版本/dirty/UNKNOWN/明确审核。
 没有进入Video、QingJian、Windows最终验收、GPU压力测试或真实模型全面推理。
+
+
+## Production Expansion Phase 2（2026-10-14）
+
+上文仅预留超分的状态属于旧基线。本批新增实际已启用本地 Comfy 超分路径：原
+Model Center 注册、固定配方、实际 PNG 尺寸/摘要证明、原 ImageJob 私有候选与
+明确审核入库；源图 <=2048、目标 <=4096、2×/4×，不得当成真实模型效果验收。
+Control 的 Depth/Pose/Edge/Mask/Layout 仍 RESERVED / NOT_CONFIGURED。
+导演视觉目标/表演及分镜角色/情绪沿原 Creative 文档，明确逐导演调度派生镜头；
+Graph 读取精确已保存文档，保留来源与隐私，连接 Style/Image/Review，不自动改稿。
+独立导演/分镜手工创作无章节要求；原导演模型协调器仍要求章节锚点。模块 PARTIAL，
+Windows/GPU/真实模型与 M4→M9 门禁不变，详见 [本批报告](../../DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md)。

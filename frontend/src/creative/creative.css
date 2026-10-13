@@ -77,3 +77,8 @@
 .creative-workbench-entry>.ui-button{width:100%}
 
 .creative-adaptation-slot{flex:0 1 auto;max-height:calc(var(--space-12)*8);overflow:auto}
+
+.creative-visual-target,.creative-shot-preview{border:var(--border-default);border-radius:var(--radius-md);padding:var(--space-3);display:flex;flex-direction:column;gap:var(--space-2);background:var(--color-bg-subtle)}
+.creative-shot-list{display:flex;flex-direction:column;gap:var(--space-2)}
+.creative-shot-list .creative-shot-entry{display:flex;align-items:center;gap:var(--space-3)}
+.creative-shot-list .creative-shot-card{flex:1}

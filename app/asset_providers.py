@@ -16,6 +16,7 @@ DEFAULT_IMAGE_MODELS={key:value["default_model"] for key,value in IMAGE_PROVIDER
 
 def validate_image_parameters(parameters: dict, allowed=None) -> dict:
     known={'size','quality','width','height','steps','seed','negative_prompt','denoising_strength'}
+    if allowed is not None and 'scale' in allowed:known.add('scale')
     if set(parameters)-known or (allowed is not None and set(parameters)-set(allowed)):
         raise ValueError('IMAGE_PARAMETER_UNSUPPORTED')
     for key in ('width','height'):
@@ -29,6 +30,8 @@ def validate_image_parameters(parameters: dict, allowed=None) -> dict:
         import math
         value=parameters['denoising_strength']
         if type(value) not in {int,float} or not math.isfinite(value) or not 0<value<=1:raise ValueError('invalid denoising strength')
+    if 'scale' in parameters and (type(parameters['scale']) is not int or parameters['scale'] not in (2,4)):
+        raise ValueError('invalid upscale scale')
     return dict(parameters)
 
 @dataclass(frozen=True)
@@ -318,17 +321,18 @@ class ComfyUIImageProvider:
     def image_parameters(self, operation):
         recipe=getattr(self,'image_recipe_descriptor',None)
         if not recipe or operation not in recipe['operations']:raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
+        if operation=='upscale':return ('scale',)
         parameters=self.supported_parameters if operation=='t2i' else self.edit_supported_parameters+('denoising_strength',)
         if recipe['recipe_id']=='comfy-flux1-v1':parameters=tuple(k for k in parameters if k!='negative_prompt')
         return parameters
-    def image_recipe(self, request, *, operation, reference_weights=(), mask=False):
+    def image_recipe(self, request, *, operation, reference_weights=(), mask=False, source_dimensions=None):
         from .services.studio_image_provider_recipes import build_workflow
         recipe=self.image_configuration()
         if not recipe:raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
         parameters=validate_image_parameters(request.parameters,self.image_parameters(operation))
         return build_workflow(recipe,request.prompt,parameters,operation=operation,
             uploads=tuple('source-'+str(i)+'.png' for i in range(len(reference_weights))),weights=reference_weights,
-            mask='mask.png' if mask else None)
+            mask='mask.png' if mask else None,source_dimensions=source_dimensions)
     def generate_image(self, request, *, operation, images, reference_weights, mask=None):
         import hashlib
         import re
@@ -353,6 +357,7 @@ class ComfyUIImageProvider:
             raise ValueError('IMAGE_EDIT_REFERENCE_LIMIT')
         values=[_verified_inline_image(value) for value in images]
         mask_value=_verified_inline_image(mask) if mask is not None else None
+        source_dimensions=({key:values[0][1][key] for key in ('width','height')} if operation=='upscale' and values else None)
         if operation=='inpaint' and (len(values)!=1 or mask_value is None):raise ValueError('IMAGE_RECIPE_INPAINT_INPUT_INVALID')
         if operation!='inpaint' and mask_value is not None:raise ValueError('IMAGE_RECIPE_INPAINT_INPUT_INVALID')
         if mask_value is not None and (values[0][1].get('width'),values[0][1].get('height'))!=(mask_value[1].get('width'),mask_value[1].get('height')):
@@ -362,7 +367,7 @@ class ComfyUIImageProvider:
             verify_mask(mask_value[0],checkpoint=request.dispatch_guard or (lambda:None))
         preflight=build_workflow(descriptor,request.prompt,parameters,operation=operation,
             uploads=tuple('source-'+str(i)+'.png' for i in range(len(values))),weights=reference_weights,
-            mask='mask.png' if mask_value is not None else None)
+            mask='mask.png' if mask_value is not None else None,source_dimensions=source_dimensions)
         validate_workflow(observed(),preflight)
         names=[];mask_name=None
         for index,(data,measured) in enumerate([*values,*([mask_value] if mask_value is not None else [])]):
@@ -380,7 +385,7 @@ class ComfyUIImageProvider:
             else:names.append(name)
         info=observed()
         workflow=build_workflow(descriptor,request.prompt,parameters,operation=operation,uploads=names,
-            weights=reference_weights,mask=mask_name)
+            weights=reference_weights,mask=mask_name,source_dimensions=source_dimensions)
         validate_workflow(info,workflow)
         if request.dispatch_guard is not None:request.dispatch_guard()
         response=self.transport.post(self.endpoint+'/prompt',json={'prompt':workflow},timeout=15,dispatch_guard=request.dispatch_guard)
