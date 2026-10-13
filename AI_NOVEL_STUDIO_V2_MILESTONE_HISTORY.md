@@ -835,3 +835,19 @@ Windows/GPU/real model acceptance remains NOT_RUN/LOCAL_REQUIRED. M4 PARTIAL,
 ordered M5-M9 gates, F00 INTEGRATED+39 PARTIAL, independent-review BLOCKED and
 old PG/CI failures remain. Audit publication is bound to actual remote receipts;
 no self-referential end SHA is invented here.
+
+### Production Expansion 1 — bounded Image T2I integration
+
+Start audit39a38ed8b90f0a0f74d2a16d245f6315b0f7a21e; code/test inputtree
+90b4a3681b57bc0b33ce850a3790136f35ec5fee. Enabled discovered local image routes
+now enter original productionpreview/queue/execute/privateAsset/review/reopen;
+no new registry/job/core/API schema, no models launched/downloaded.
+See [report](docs/v2/production-expansion-image-local-20261013.md) for exact5pins,
+actual test selection, RED/R1 failures and corrected NEW test premises.
+RelatedFile506pass/1original Windows symlink fixturefailure/192profile skips;
+PG506pass/192profile skips/1explicit platformNOT_RUN; Linux3original assertions
+pass separately. Newfrontend9/typecheck/metadata19pass. Counts overlap, neither
+Windows failure nor historical failures are erased. API2219, inventory13442,
+frozen9151 order/skips/gates unchanged. Original owners/assertions protected.
+Image staysPARTIAL/LOCAL_REQUIRED; actual M4→M9 gates and Draft/noRelease remain.
+Actual publication/CI status is recorded after push from real remote receipts.

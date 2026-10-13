@@ -1164,3 +1164,23 @@ Current Director/Storyboard, Video, Audio and bounded multitrack execution/gaps
 are detailed in the audit; old rows retain their historical identities.
 M4 PARTIAL and M5-M9 real acceptance LOCAL_REQUIRED remain. New audit tests NOT_RUN;
 727 CI is BLOCKED before execution by account billing lock. PR47 remains Draft.
+
+### Production Expansion 1 — original enabled local Image route
+
+IMAGE-01/06/15: bounded discovered T2I integration **IMPLEMENTED / CONTRACT_VERIFIED**
+on existing ModelCenter/AssetProviderRegistry/ProductionExecution/ImageJob/Asset
+owners. Passive configuration listing, exact enable/control epoch and model/runtime
+evidence binding, original delegate recipe/model remap and per-request caller
+guards are wired. Public DTO/configured legacy identity unchanged; discovered
+I2I/FLUX/Qwen workflows, AI inpaint/repair/upscale and Router finance remain open.
+Image whole module stays PARTIAL / real capability LOCAL_REQUIRED.
+
+Source inputtree90b4a3681b57bc0b33ce850a3790136f35ec5fee; exact checks/failures
+in [stage report](docs/v2/production-expansion-image-local-20261013.md).
+Focused File48/30profile skips; related File506pass/1WinError1314 fixturefail/
+192profile skips; PG506pass/192profile skips/1explicit platform NOT_RUN;
+Linux3original assertions pass separately. Newfrontend9/typecheck and19metadata
+checks pass. No complete Windows/CI/model/product verdict follows.
+Original generators produce2219API operations and13442collected nodes, all9151
+frozen nodes/order/skips/gates retained. No original test/generator/freeze/Interop
+modification; M4 and ordered M5-M9 acceptance, QingJian pause and Opus seams remain.

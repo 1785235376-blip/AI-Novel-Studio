@@ -230,6 +230,9 @@ class ProductionExecutionService:
             from ..asset_providers import IMAGE_PROVIDER_CATALOG
             config = {**IMAGE_PROVIDER_CATALOG.get(pid, {}), **load().get(pid, {})}
             provider = self.image_registry.get(pid)
+            from ..model_center.discovery_bridge import LocalImageAdapter
+            if type(provider) is LocalImageAdapter:
+                config = provider.studio_configuration()
             capability = "IMAGE_EDIT" if operation.endswith("i2i") else "TEXT_TO_IMAGE"
             if capability == "IMAGE_EDIT" and not callable(getattr(provider, "edit", None)):
                 raise ValueError("STUDIO_IMAGE_EDIT_PROVIDER_UNSUPPORTED")
@@ -259,6 +262,8 @@ class ProductionExecutionService:
             raise ValueError("STUDIO_PROVIDER_LAST_MILE_AUTHORITY_REQUIRED")
         binding = {"provider_id": pid, "model_id": mid, "endpoint": endpoint,
             "local": endpoint_local(endpoint, bool(config.get("local"))), "capability": capability}
+        if operation.startswith("m5.") and type(provider) is LocalImageAdapter:
+            binding["registration_digest"] = config["registration_digest"]
         if operation.startswith("m8."):
             # Match the original audio resolver without resolving credentials or
             # probing health while listing/previewing configuration.
@@ -422,9 +427,15 @@ class ProductionExecutionService:
         elif command.operation_id.startswith("m5."):
             from ..asset_providers import AssetGenerationRequest, ComfyUIImageProvider, Automatic1111ImageProvider
             provider = self.image_registry.get(command.provider_id)
+            from ..model_center.discovery_bridge import LocalImageAdapter
+            model_id = command.model_id
+            if type(provider) is LocalImageAdapter:
+                config = provider.studio_configuration()
+                model_id = config["runtime_model_id"]
+                provider = provider.delegate
             if isinstance(provider, ComfyUIImageProvider):
                 recipe["adapter"] = "COMFYUI_BUILTIN_IMAGE"
-                workflow = provider._workflow(AssetGenerationRequest(command.provider_id, command.model_id,
+                workflow = provider._workflow(AssetGenerationRequest(command.provider_id, model_id,
                     command.prompt, command.request_id, parameters))
                 if command.operation_id == "m5.image.i2i":
                     # The transport upload receipt supplies the input basename
@@ -1121,6 +1132,19 @@ class ProductionExecutionService:
             model = config.get("default_model", "")
             if model:
                 for operation in ("m5.image.t2i", "m5.image.i2i"): candidates.append((pid, model, operation))
+        from ..model_center.discovery_bridge import LocalImageAdapter
+        for pid, provider in self.image_registry._providers.copy().items():
+            if type(provider) is not LocalImageAdapter:
+                continue
+            try:
+                config = provider.studio_configuration()
+            except ValueError:
+                continue
+            # Discovery currently proves only the shipped checkpoint T2I
+            # structure. I2I and other families need their own actual evidence.
+            candidate = (pid, config["default_model"], "m5.image.t2i")
+            if candidate not in candidates:
+                candidates.append(candidate)
         for pid, config in self.video_configs.items():
             model = config.get("model_id", "")
             if model:

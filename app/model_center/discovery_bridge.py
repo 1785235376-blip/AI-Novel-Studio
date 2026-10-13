@@ -9,6 +9,8 @@ import threading
 import time
 import json
 import zlib
+import copy
+import hashlib
 from dataclasses import replace
 from urllib.parse import urlsplit
 
@@ -269,12 +271,72 @@ class LocalTextAdapter:
 
 
 class LocalImageAdapter:
+    # The original generate() passes the caller's dispatch guard to the shipped
+    # delegate before each request. This does not authorize discovered models.
+    supports_dispatch_guard = True
+    _STUDIO_IDENTITY_FIELDS = ('id', 'provider_id', 'model_name', 'family', 'runtime_type',
+        'enabled', 'enable_eligible', 'enabled_at', 'verified_capabilities', 'runtime_config',
+        'runtime_fingerprint', 'model_evidence_fingerprint', 'evidence', 'validated_at',
+        'license_required', 'license_confirmed', 'workflow_adapter_id')
+
     def __init__(self, bridge, candidate):
         self.bridge, self.candidate = bridge, candidate
+        self._studio_identity = copy.deepcopy({key: candidate.get(key) for key in self._STUDIO_IDENTITY_FIELDS})
         self.endpoint = candidate['runtime_config']['endpoint']
         self.default_model = candidate['id']
         cls = Automatic1111ImageProvider if candidate['runtime_type'] == 'AUTOMATIC1111' else ComfyUIImageProvider
         self.delegate = cls(_LocalImageTransport(self.endpoint), self.endpoint)
+
+    @property
+    def supported_parameters(self):
+        return self.delegate.supported_parameters
+
+    def studio_configuration(self):
+        """Passive projection of one exact original enabled T2I registration.
+
+        No probe, credential resolution or lifecycle action belongs here. The
+        production owner's existing last-mile guard rechecks this identity on
+        every delegate send/poll and immediately before its guarded download.
+        """
+        error = 'STUDIO_DISCOVERED_IMAGE_REGISTRATION_CHANGED'
+        if type(self.bridge) is not LocalDiscoveryBridge:
+            raise ValueError(error)
+        with self.bridge.service.lock:
+            try:
+                candidate = self.bridge.guard(self.candidate['id'])
+                identity = {key: candidate.get(key) for key in self._STUDIO_IDENTITY_FIELDS}
+                if (identity != self._studio_identity
+                        or self.bridge.asset_registry.get(candidate['provider_id']) is not self
+                        or candidate['runtime_type'] not in {'COMFYUI', 'AUTOMATIC1111'}
+                        or 'IMAGE' not in candidate.get('verified_capabilities', [])
+                        or not candidate.get('validated_at')
+                        or local_endpoint(candidate['runtime_config']['endpoint']) != self.endpoint):
+                    raise ValueError(error)
+                expected = Automatic1111ImageProvider if candidate['runtime_type'] == 'AUTOMATIC1111' else ComfyUIImageProvider
+                if type(self.delegate) is not expected or self.delegate.endpoint != self.endpoint:
+                    raise ValueError(error)
+                if candidate['runtime_type'] == 'COMFYUI':
+                    template = next((item for item in self.bridge.service.workflow_adapters
+                        if item['id'] == candidate.get('workflow_adapter_id')), None)
+                    evidence = candidate.get('evidence', {})
+                    if (not template or template['id'] != 'comfy-sd-checkpoint-v1'
+                            or candidate.get('family') != 'STABLE_DIFFUSION'
+                            or template['model_loader'] != 'CheckpointLoaderSimple'
+                            or template['model_input'] != 'ckpt_name'
+                            or not set(template['required_nodes']) <= set(evidence.get('node_classes', []))
+                            or {'node_class': 'CheckpointLoaderSimple', 'input_field': 'ckpt_name'}
+                                not in evidence.get('loader_bindings', [])):
+                        raise ValueError(error)
+                epoch = self.bridge.service._control_epochs.get(candidate['id'], 0)
+                registration_digest = hashlib.sha256(json.dumps({'registration': identity, 'control_epoch': epoch},
+                    sort_keys=True, default=str).encode()).hexdigest()
+                return {'enabled': True, 'local': True, 'requires_credential': False,
+                    'default_model': candidate['id'], 'endpoint': self.endpoint,
+                    'api_style': 'automatic1111' if candidate['runtime_type'] == 'AUTOMATIC1111' else 'comfyui',
+                    'registration_digest': registration_digest, 'runtime_model_id': candidate['model_name']}
+            except (KeyError, TypeError, ModelRuntimeError, ValueError):
+                raise ValueError(error) from None
+
     def health_check(self):
         try: self.bridge.guard(self.candidate['id']); return self.delegate.health_check()
         except (ValueError, KeyError, ModelRuntimeError): return False

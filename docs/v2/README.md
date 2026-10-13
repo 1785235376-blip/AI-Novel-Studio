@@ -80,3 +80,10 @@ precedes the first Image-local-route integration. The module priority is Image,
 Director, Storyboard, Video, Audio and Editing; actual acceptance retains its
 original ordered gates. No automatic download/runtime start, QingJian work,
 Windows final acceptance, GPU pressure test or release is part of this stage.
+
+The [first bounded Image stage](production-expansion-image-local-20261013.md)
+connects existing explicitly enabled local discovered T2I adapters to the original
+productionjobs/privateAsset/review pipeline. It preserves the strict public
+client and Opus UI boundaries; source/contract results and Windows prerequisite
+failure are reported separately. This does not complete Image Studio, M5, fullCI
+or actual installed-model acceptance. Current inventory13442 is collection only.

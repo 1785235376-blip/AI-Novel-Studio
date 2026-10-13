@@ -1,0 +1,152 @@
+{
+  "schema": "studio-production-expansion-image-local/1",
+  "date": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "feature/v2-narrative-platform",
+  "baseline_sha": "72765972b3bf81ba6959754c33b827294a63fb3f",
+  "audit_sha": "39a38ed8b90f0a0f74d2a16d245f6315b0f7a21e",
+  "code_test_input_tree": "90b4a3681b57bc0b33ce850a3790136f35ec5fee",
+  "code_test_sha256": [
+    {
+      "Path": "app/model_center/discovery_bridge.py",
+      "SHA256": "813d2f740ce7c0f0536d2de3fae036615a9a0633e6d59441e35c49eb9f31358a",
+      "Bytes": 27171
+    },
+    {
+      "Path": "app/creative/production_execution.py",
+      "SHA256": "8ab4849a124ae8db7509638f552e5c49a137bbee4d870464c023d60ef411d842",
+      "Bytes": 102889
+    },
+    {
+      "Path": "tests/test_v2_discovered_image_production.py",
+      "SHA256": "97d3fee7563480828668d7fbad427779f0f658ba44d27482f5e39923687bde12",
+      "Bytes": 18656
+    },
+    {
+      "Path": "tests/test_v2_discovered_image_production_api.py",
+      "SHA256": "8f076b39ffe8fe29019c7457da1bb9856217dda477f19f92a73409bb64c4b559",
+      "Bytes": 13731
+    },
+    {
+      "Path": "frontend/src/creative/StudioDiscoveredImageProduction.test.tsx",
+      "SHA256": "c1b49b8bbf72ab922839e54266a0f3b10dd92396e919c4b83597ae897d9daabd",
+      "Bytes": 17038
+    }
+  ],
+  "stage_status": "IMPLEMENTED_BOUNDED_T2I_SELECTED_CONTRACT_VERIFICATION",
+  "module_status": "PARTIAL",
+  "product_acceptance": "LOCAL_REQUIRED",
+  "original_product_generate_body_unchanged": true,
+  "public_api_dto_unchanged": true,
+  "original_tests_and_generators_unchanged": true,
+  "results": [
+    {
+      "skipped": 2,
+      "passed": 3,
+      "failed": 13,
+      "result": "FAIL_RETAINED",
+      "source": "PRE_FIX",
+      "scope": "pre-fix additive unit RED"
+    },
+    {
+      "scope": "first File unit and mounted API",
+      "result": "FAIL_NEW_TEST_HEADER_PREMISE_RETAINED",
+      "passed": 27,
+      "failed": 18,
+      "skipped": 30
+    },
+    {
+      "scope": "corrected final focused File",
+      "result": "PASS_SELECTED",
+      "passed": 48,
+      "failed": 0,
+      "skipped": 30
+    },
+    {
+      "scope": "twelve related File modules",
+      "result": "FAIL_WINDOWS_SYMLINK_FIXTURE_PREREQUISITE",
+      "passed": 506,
+      "failed": 1,
+      "skipped": 192
+    },
+    {
+      "skipped": 192,
+      "passed": 506,
+      "failed": 0,
+      "deselected": 1,
+      "result": "PASS_SELECTED_ONE_PLATFORM_NODE_NOT_RUN",
+      "scope": "twelve related PostgreSQL modules applicable selection"
+    },
+    {
+      "python": "3.12.3",
+      "skipped": 0,
+      "passed": 3,
+      "failed": 0,
+      "result": "PASS_SUPPLEMENT_NOT_WINDOWS",
+      "scope": "independent Ubuntu original assertions"
+    },
+    {
+      "scope": "new mounted frontend",
+      "result": "PASS_UNCHANGED_FRONTEND_BYTES",
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "scope": "TypeScript",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "scope": "original API and V2 manifest tests",
+      "result": "PASS_SELECTED_NOT_ENTIRE_47",
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "inventory": {
+    "frozen_order_skips_gates_preserved": true,
+    "api_operations": 2219,
+    "frozen_baseline_nodes": 9151,
+    "application_source_fingerprint_sha256": "4d112a7d0a544d6ceee7deef60d9f8d0677d2f980d7dc57f7d02762dff4ca356",
+    "collected_nodes": 13442,
+    "api_removed": 0,
+    "v2_manifest_sha256": "975a304daeb03d48f1267888fc3f7d8e2391eb773d4b5e08a910082e04513b49",
+    "api_added": 0,
+    "new_collected_nodes_this_stage": 78,
+    "collection_is_execution": false
+  },
+  "postgres": {
+    "database_before_objects": 0,
+    "original_migrations": 20,
+    "owned_cluster_stopped": true,
+    "version": "16.15"
+  },
+  "wsl": {
+    "distribution": "Ubuntu-24.04",
+    "originally_stopped": true,
+    "system_security_changed": false,
+    "owned_supplement_stopped": true
+  },
+  "deferred": [
+    "discovered I2I",
+    "FLUX and Qwen Image execution",
+    "AI inpaint/outpaint/repair/upscale",
+    "ModelRouter finance unification",
+    "full CI",
+    "installed Windows acceptance",
+    "GPU pressure",
+    "real models and quality",
+    "professional UI/UX",
+    "QingJian development"
+  ],
+  "opus_headless_actions_unchanged": true,
+  "model_weights_downloaded_or_loaded": false,
+  "paid_api_called": false,
+  "main_merge_or_release": false,
+  "failed_evidence_preserved": true,
+  "raw_logs_database_environment_credentials_or_private_paths_published": false,
+  "publication_identity": "Verified separately after ordinary push via remote and PR47 Draft receipt"
+}

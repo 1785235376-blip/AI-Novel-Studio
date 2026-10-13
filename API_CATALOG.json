@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "66aa6bb368c9f06b6f2f84ccd0b96a71567af77bbe2eb98fad54582ae1625305",
+  "application_source_fingerprint_sha256": "4d112a7d0a544d6ceee7deef60d9f8d0677d2f980d7dc57f7d02762dff4ca356",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -67,7 +67,7 @@
     "app/creative/models.py": "3a11215e442a1ca53e5784221e3ecb797eda1b110f415a346ea0e3e3bafe2a7a",
     "app/creative/production_contract_api.py": "9d3c228ca86578e7f9fbbeacf74b552a9010e2c66c66e049b086e4edbfa2229b",
     "app/creative/production_contracts.py": "281607b57ae46b242e1f581fe9d69900f73b58608820df83632b1a1df6ab34a1",
-    "app/creative/production_execution.py": "f61a436750b4104b8e865320a11c7ecb073d59c46fcff6c682a15d7c5dacae82",
+    "app/creative/production_execution.py": "8ab4849a124ae8db7509638f552e5c49a137bbee4d870464c023d60ef411d842",
     "app/creative/production_execution_api.py": "da27d71614ac89a1ddff72790336ad563a6e89ecdea626b26e8ee54b82bbb303",
     "app/creative/production_execution_models.py": "ab97143ca95a438e96ee31048412b82f8c2521ffdc43f438e637853f60b97d95",
     "app/creative/project_store.py": "17eaef6b7a9c382d24f59e85850c0b2a9ed8334b69c10c47ee0959084dac3cbd",
@@ -248,7 +248,7 @@
     "app/model_center/discovery.py": "0e54c8c934921785a710c8cbcf4e1cb61d6cdd3ee616b23315e06a498c128c31",
     "app/model_center/discovery_api.py": "9e1f85d34a9e7df8d0e3faeace6cbbb82c5fa7129a522240a50a3cb2e75b51f6",
     "app/model_center/discovery_authority.py": "752a810dad0001d4239516a4e76ae08dfd0f5a74e0fffe15236a6fe125c605c9",
-    "app/model_center/discovery_bridge.py": "45c8991a5cd64d2b2c9ea53b4c165fb8870fe5a500a4d76529ef8cbfd0b6119f",
+    "app/model_center/discovery_bridge.py": "813d2f740ce7c0f0536d2de3fae036615a9a0633e6d59441e35c49eb9f31358a",
     "app/model_center/discovery_environment.py": "eef9b1c4f0910ad9468b1e5fb6a54a8a6814a7a28dcd9bc4d2ee6b07f57d07c6",
     "app/model_center/discovery_onboarding_types.py": "51b65d835b8414220d4790417a97889410914a488b9df04382c9952d53f12cce",
     "app/model_center/discovery_prerequisites.py": "8e9f6910e0ad39e4ec46602278f3cb7de5501a180937e92271bd06a5668dfd80",
@@ -452,7 +452,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "000bbd180ca55031a668cd8ecbd2786c4f39d5e15ed376d7c58648482e654514",
+    "sha256": "b7bab35f66f19f0d5b125aac24e55bc10ac91048efceb408dc20fe79f8e05bd4",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",

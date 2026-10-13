@@ -75,3 +75,17 @@ These are development stages on `feature/v2-narrative-platform`, not releases.
 - Audit is documentation only: new module tests NOT_RUN, no model launch/download.
   Previous selected results and billing-blocked CI stay separately identified.
 - Full audit: [Codex handover audit](../../AI_NOVEL_STUDIO_V2_CODEX_HANDOVER_AUDIT.md).
+
+## 2026-10-13 — Production Expansion 1: enabled local Image T2I
+
+- Connect explicitly validated/registered/enabled local image adapters to original
+  Studio productionjobs/assets/review. Passive listing, lifecycle/model binding,
+  real checkpoint recipe and existing per-request guards; public DTO unchanged.
+- Preserve configured legacy digests, original generate function, Graph fields,
+  all original assertions and no implicit cloud/model start. Discovered I2I and
+  unimplemented image tools remain closed; Image real acceptance LOCAL_REQUIRED.
+- Focused File48pass; relatedFile506pass/1platform symlink fixturefailure,
+  PG506pass/1platform node NOT_RUN; Linux3original assertions separately pass.
+  NewUI9/types/metadata19pass. Profile skips/overlap/failed evidence retained.
+- [Full stage report](production-expansion-image-local-20261013.md),
+  [source-bound summary](production-expansion-image-local-20261013.json).
