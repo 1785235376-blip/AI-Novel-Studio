@@ -260,7 +260,7 @@ class IndependentWorkspaceService:
             raise ValueError("CREATIVE_ASSET_SIZE_INVALID")
         # Decode bounded local bytes before acquiring persistence locks. This
         # neither contacts a provider nor loads a model nor trusts MIME labels.
-        measured = inspect_image(data) if body.kind == "image" else inspect_media(data, body.kind)
+        measured = inspect_image(data) if body.kind == "image" else inspect_media(data, body.kind, guard=guard)
         guard()
         with self._asset_scope(nid, scope):
             rows = self.assets.list(nid, branch_id=scope.get("branch_id"), include_deleted=True)

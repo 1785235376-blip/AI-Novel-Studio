@@ -122,6 +122,14 @@ class VideoAssemblyService:
             return (value.st_dev, value.st_ino, value.st_size,
                     value.st_mtime_ns, value.st_ctime_ns)
 
+        def cross_snapshot(value):
+            # Windows path stat and descriptor fstat can expose different
+            # ctime meanings after the original atomic rename. Compare their
+            # stable file identity/size/mtime, while retaining full ctime
+            # checks within each family below. POSIX keeps every cross field.
+            observed = snapshot(value)
+            return observed[:-1] if os.name == "nt" else observed
+
         before = path.stat()
         if before.st_size > limit:
             raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
@@ -133,13 +141,13 @@ class VideoAssemblyService:
             opened = os.fstat(source.fileno())
             if opened.st_size > limit:
                 raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
-            if snapshot(opened) != snapshot(before):
+            if cross_snapshot(opened) != cross_snapshot(before):
                 raise ValueError("STUDIO_TIMELINE_RECEIPT_INVALID")
             data = source.read(limit + 1)
             after = os.fstat(source.fileno())
             if len(data) > limit or after.st_size > limit:
                 raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
-            if (len(data) != before.st_size or snapshot(after) != snapshot(before)
+            if (len(data) != before.st_size or snapshot(after) != snapshot(opened)
                     or snapshot(path.stat()) != snapshot(before)):
                 raise ValueError("STUDIO_TIMELINE_RECEIPT_INVALID")
         return data
@@ -233,19 +241,20 @@ class VideoAssemblyService:
         guard()
         return [self._studio_projection(row) for row in sorted(rows, key=lambda row: (row["created_at"], row["id"]), reverse=True)]
 
-    def create_studio(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish, export_profile=None):
+    def create_studio(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish, export_profile=None, inspect_source=None):
         """Lease one original execution; callbacks never hold the queue lock."""
         self._studio_context(novel_id, branch_id, actor_id, context)
         request_id = context.get("request_id")
         if not isinstance(request_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,99}", request_id):
             raise ValueError("STUDIO_TIMELINE_REQUEST_INVALID")
-        if not all(callable(callback) for callback in (guard, source_guard, publish)):
+        if (not all(callable(callback) for callback in (guard, source_guard, publish))
+                or (inspect_source is not None and not callable(inspect_source))):
             raise ValueError("STUDIO_TIMELINE_OWNER_CALLBACKS_REQUIRED")
         job_id = hashlib.sha256(json.dumps([context["scope_key"], context["incarnation"], actor_id, request_id], separators=(",", ":")).encode()).hexdigest()
         guard()
         with workspace_mutation(self.root, "studio-timeline-execution:" + job_id):
             return self._create_studio_locked(novel_id, branch_id, actor_id, timeline, context=context,
-                guard=guard, source_guard=source_guard, publish=publish, export_profile=export_profile)
+                guard=guard, source_guard=source_guard, publish=publish, export_profile=export_profile, inspect_source=inspect_source)
 
     def queue_studio(self, novel_id, branch_id, actor_id, timeline, *, context, guard, export_profile=None):
         """Persist one original QUEUED receipt without inspecting or rendering.
@@ -283,7 +292,7 @@ class VideoAssemblyService:
         return self._studio_projection(row)
 
     def execute_studio(self, novel_id, branch_id, actor_id, job_id, expected_version, expected_request_digest, *,
-                       context, guard, source_guard, publish):
+                       context, guard, source_guard, publish, inspect_source=None):
         """Execute an exact QUEUED receipt once under its original lease.
 
         RUNNING/UNKNOWN/final receipts are never retried by this method. All
@@ -295,7 +304,8 @@ class VideoAssemblyService:
         if (type(expected_version) is not int or expected_version < 1
                 or not isinstance(expected_request_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", expected_request_digest)):
             raise ValueError("STUDIO_TIMELINE_EXECUTE_VERSION_INVALID")
-        if not all(callable(callback) for callback in (guard, source_guard, publish)):
+        if (not all(callable(callback) for callback in (guard, source_guard, publish))
+                or (inspect_source is not None and not callable(inspect_source))):
             raise ValueError("STUDIO_TIMELINE_OWNER_CALLBACKS_REQUIRED")
         guard()
         with workspace_mutation(self.root, "studio-timeline-execution:" + job_id):
@@ -334,7 +344,7 @@ class VideoAssemblyService:
             row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, expected_version, reserve, context=captured)
             self._studio_active.add(key)
             return self._render_studio_receipt(novel_id, branch_id, actor_id, row, context=captured,
-                guard=guard, source_guard=source_guard, publish=publish, export_profile=prepared["export_profile"])
+                guard=guard, source_guard=source_guard, publish=publish, export_profile=prepared["export_profile"], inspect_source=inspect_source)
 
     def cancel_studio(self, novel_id, branch_id, actor_id, job_id, expected_version, expected_request_digest, *, context, guard):
         """Fence the original queue; the active local process observes this CAS.
@@ -499,9 +509,10 @@ class VideoAssemblyService:
         return {"definition": definition, "snapshot": snapshot, "sources": sources, "export_profile": export_profile,
                 "request_id": request_id, "request_digest": request_digest, "input_digest": input_digest, "job_id": job_id}
 
-    def _create_studio_locked(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish, export_profile=None):
+    def _create_studio_locked(self, novel_id, branch_id, actor_id, timeline, *, context, guard, source_guard, publish, export_profile=None, inspect_source=None):
         """Keep synchronous original create behavior; existing receipts never execute."""
-        if not all(callable(callback) for callback in (guard, source_guard, publish)):
+        if (not all(callable(callback) for callback in (guard, source_guard, publish))
+                or (inspect_source is not None and not callable(inspect_source))):
             raise ValueError("STUDIO_TIMELINE_OWNER_CALLBACKS_REQUIRED")
         prepared = self._prepare_studio_inputs(novel_id, branch_id, actor_id, timeline, context=context,
                                                export_profile=export_profile)
@@ -537,9 +548,9 @@ class VideoAssemblyService:
             guard()
             return self.get_studio(novel_id, branch_id, actor_id, job_id, context=context, guard=guard)
         return self._render_studio_receipt(novel_id, branch_id, actor_id, row, context=context,
-            guard=guard, source_guard=source_guard, publish=publish, export_profile=export_profile)
+            guard=guard, source_guard=source_guard, publish=publish, export_profile=export_profile, inspect_source=inspect_source)
 
-    def _render_studio_receipt(self, novel_id, branch_id, actor_id, row, *, context, guard, source_guard, publish, export_profile=None):
+    def _render_studio_receipt(self, novel_id, branch_id, actor_id, row, *, context, guard, source_guard, publish, export_profile=None, inspect_source=None):
         """One real renderer/publication path, always under the original execution lease.
 
         publish(data, kind, filename, measured, job_id, job_guard) remains the
@@ -556,6 +567,10 @@ class VideoAssemblyService:
             if (current.get("status") != "RUNNING" or current.get("request_digest") != request_digest
                     or current.get("version") != row["version"] or current.get("receipt_digest") != row["receipt_digest"]):
                 raise ValueError("STUDIO_TIMELINE_EXECUTION_FENCED")
+        if inspect_source is not None:
+            # The original source owner invokes this fence only outside its
+            # asset lease. Execution/Graph/job checks never run under that lease.
+            source_guard = lambda snapshot: inspect_source(snapshot, inspection_guard=execution_current)
         candidate = None
         try:
             data, measured = render_studio_timeline(definition, source_guard=source_guard, guard=execution_current,

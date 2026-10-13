@@ -162,6 +162,7 @@ def run_guarded_process(command, *, cwd, guard, timeout, stdout_path=None):
     guard()
     target = None
     process = None
+    reaped = False
     stderr = bytearray()
     try:
         if stdout_path is not None:
@@ -210,13 +211,27 @@ def run_guarded_process(command, *, cwd, guard, timeout, stdout_path=None):
         try:
             if process is not None:
                 _reap_guarded_process(process)
+                reaped = True
         finally:
-            if process is not None:
-                for stream in (process.stdout, process.stderr):
-                    if stream is not None:
-                        stream.close()
-            if target is not None:
-                target.close()
+            try:
+                if process is not None:
+                    try:
+                        if process.stdout is not None:
+                            process.stdout.close()
+                    finally:
+                        if process.stderr is not None:
+                            process.stderr.close()
+            finally:
+                try:
+                    if target is not None:
+                        target.close()
+                finally:
+                    if reaped and os.name == "nt":
+                        # wait() caches exit status but CPython otherwise holds
+                        # this native HANDLE until Popen is garbage-collected.
+                        # Guard/error tracebacks can retain Popen after exit;
+                        # release our known-reaped handle before caller cleanup.
+                        process._handle.Close()
 
 
 def require_encoders(decoder, compiled, *, cwd, guard):

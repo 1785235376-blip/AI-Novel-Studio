@@ -46,7 +46,9 @@ candidate review and recovery remain separate actions. Original schemas 1/2,
 TEXT routing and ordered acceptance gates are preserved. Schema-3 text archival
 uses the original text archive owner, and explicit timeline_export now composes
 original edits, queue admission, native export and human review. Source publication
-is not release readiness; all current execution evidence remains USER_DEFERRED.
+is not release readiness. Historical source phases below deferred execution;
+the current isolated media-security checks are recorded in the 2026-10-13
+changelog entry. Installed application and real-model acceptance remain open.
 
 The eight catalog/coverage/receipt files in separate repair commit `776286f`
 describe the earlier `5ed1cbee` snapshot and do not inventory these new
@@ -55,7 +57,14 @@ current metadata with the original tools after verification resumes; preserve
 the frozen V1 manifest, original failures and source-bound historical receipts.
 QingJian work is paused.
 
+The 2026-10-13 media-security increment now regenerates the four API artifacts
+and separate V2 inventory with the original tools. Their exact source mapping,
+counts and remaining Windows metadata-test prerequisite are recorded below;
+the older `776286f` receipt remains historical evidence.
+
 ## Changelog
+
+- 2026-10-13: [verified non-WAV handoff and Windows lifecycle fixes](../delivery/v2-development/nonwav-windows-integration-20261013.md); final related CPU/File checks 750 passed and real PostgreSQL checks 762 passed, each with 14 original skips. API inventory is 2219 operations; 13364 collected nodes retain the frozen 9151. Original Windows metadata checks are 45 passed / 2 symlink-permission setup failures; the two original assertions passed separately on Ubuntu. Counts overlap; CI, installed Windows, GPU and real-model acceptance remain separate gates. Existing Opus UI/UX controller boundaries are unchanged.
 
 - 2026-10-11: actual independent media commands, private result/review flow and bounded multitrack review rendering added in source; media/timeline headless UI seams and original public JSON receipts are prepared. All execution validation remains NOT_RUN — USER_DEFERRED.
 

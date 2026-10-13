@@ -113,7 +113,7 @@ class ProductionExecutionService:
         store = self.audio_store.for_branch(scope.get("branch_id")).for_actor(actor)
         return StudioAudioExecution(AudiobookService(store, self.workspace.assets, branch_id=scope.get("branch_id")))
 
-    def source(self, nid, scope, snapshot, guard):
+    def source(self, nid, scope, snapshot, guard, *, inspection_guard=None):
         guard()
         if snapshot["kind"] == "CREATIVE_DOCUMENT":
             row = self.workspace.creative.get(nid, scope, snapshot["id"])
@@ -129,12 +129,19 @@ class ProductionExecutionService:
                 raise StaleSourceError("STUDIO_ASSET_SOURCE_CHANGED")
             data = self.workspace.assets.content(row["id"], branch_id=scope.get("branch_id"))
             guard()
-        measured = inspect_image(data) if row["kind"] == "image" else inspect_media(data, row["kind"])
+        def inspect_current():
+            guard()
+            # Job/Graph stores must never be acquired under the asset lease.
+            # The inspection-only fence also must not call source() recursively.
+            if inspection_guard is not None:
+                inspection_guard()
+        measured = inspect_image(data) if row["kind"] == "image" else inspect_media(data, row["kind"], guard=inspect_current)
         guard()
         return {"data": data, "measured": measured, "snapshot": copy.deepcopy(snapshot), "row": row}
 
     def _source_guard(self, nid, scope, guard):
-        return lambda snapshot: self.source(nid, scope, snapshot, guard)
+        return lambda snapshot, *, inspection_guard=None: self.source(
+            nid, scope, snapshot, guard, inspection_guard=inspection_guard)
 
     @staticmethod
     def _cutout_guard(guard):
@@ -1154,7 +1161,8 @@ class ProductionExecutionService:
                 # source() already holds its asset lease during its final guard;
                 # only Host authority is safe there. Original executor guards
                 # fence Graph before/after reads; publication takes raw first.
-                source_guard=self._source_guard(nid, scope, guard), publish=publish)
+                source_guard=self._source_guard(nid, scope, guard), publish=publish,
+                inspect_source=self._source_guard(nid, scope, guard))
             return self.view(rendered, owner)
         command = MediaCommand.model_validate(context["command"])
         host_guard = guard
@@ -1209,7 +1217,8 @@ class ProductionExecutionService:
                     raise ValueError("CREATIVE_GRAPH_MEDIA_DISPATCH_GUARD_REQUIRED")
                 def execution_guard():
                     guard(); graph_guard()
-            row = self._audio(scope, actor).execute(nid, jid, action.expected_version, context, execution_guard, source_guard, resolve, publish, before_send)
+            row = self._audio(scope, actor).execute(nid, jid, action.expected_version, context, execution_guard, source_guard, resolve, publish, before_send,
+                inspect_source=source_guard)
         guard()
         return self.view(row, owner)
 
@@ -1401,14 +1410,15 @@ class ProductionExecutionService:
             reviewed_export_digest=preview["preview_digest"])
         context["request_digest"] = digest(context)
         def current():
-            guard()
+            # timeline_get checks live authority before any read and again
+            # afterwards; avoid an adjacent duplicate PostgreSQL connection.
             actual = self.timeline_get(nid, scope, actor, tid, guard)
             if (actual["version"], actual["timeline_digest"]) != (body.expected_version, body.reviewed_timeline_digest):
                 raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
         publish, _ = self._callbacks(nid, scope, actor, context, guard)
         rendered = self.video_owner.create_studio(nid, scope.get("branch_id"), actor, preview["execution_recipe"]["timeline"],
             context=context, guard=current, source_guard=self._source_guard(nid, scope, guard), publish=publish,
-            export_profile=preview["export_profile"])
+            export_profile=preview["export_profile"], inspect_source=self._source_guard(nid, scope, guard))
         return self.view(rendered, "timeline")
 
     def timeline_render(self, nid, scope, actor, tid, value, guard):
@@ -1426,10 +1436,11 @@ class ProductionExecutionService:
         context["execution_recipe"] = recipe
         context["request_digest"] = digest(context)
         def current():
-            guard()
+            # Keep the original live checks at both sides of timeline_get.
             actual = self.timeline_get(nid, scope, actor, tid, guard)
             if (actual["version"], actual["timeline_digest"]) != (row["version"], row["timeline_digest"]): raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
         publish, _ = self._callbacks(nid, scope, actor, context, guard)
         rendered = self.video_owner.create_studio(nid, scope.get("branch_id"), actor, row["timeline"], context=context,
-            guard=current, source_guard=self._source_guard(nid, scope, guard), publish=publish)
+            guard=current, source_guard=self._source_guard(nid, scope, guard), publish=publish,
+            inspect_source=self._source_guard(nid, scope, guard))
         return self.view(rendered, "timeline")

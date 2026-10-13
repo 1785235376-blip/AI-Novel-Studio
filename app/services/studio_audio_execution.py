@@ -418,15 +418,16 @@ class StudioAudioExecution:
                               error_code=error.code, error=str(error), execution_token=None)
         return self.store.mutate(nid, fail)
 
-    def execute(self, nid, job_id, expected_version, context, guard, source_guard, resolve, publish, before_send=None, *, expected_request_digest=None):
+    def execute(self, nid, job_id, expected_version, context, guard, source_guard, resolve, publish, before_send=None, *, expected_request_digest=None, inspect_source=None):
         self._authority(context); guard()
         with self._lease(nid, job_id):
             return self._execute(nid, job_id, expected_version, context, guard, source_guard, resolve, publish, before_send,
-                                 expected_request_digest=expected_request_digest)
+                                 expected_request_digest=expected_request_digest, inspect_source=inspect_source)
 
-    def _execute(self, nid, job_id, expected_version, context, guard, source_guard, resolve, publish, before_send=None, *, expected_request_digest=None):
+    def _execute(self, nid, job_id, expected_version, context, guard, source_guard, resolve, publish, before_send=None, *, expected_request_digest=None, inspect_source=None):
         _version(expected_version); self._authority(context)
-        if not callable(guard) or not callable(source_guard) or not callable(publish):
+        if (not callable(guard) or not callable(source_guard) or not callable(publish)
+                or (inspect_source is not None and not callable(inspect_source))):
             raise _error("STUDIO_AUDIO_EXECUTION_AUTHORITY_REQUIRED", "缺少原执行、来源或资产发布 owner", 403)
         guard()
         key = self._active_key(nid, job_id)
@@ -441,8 +442,17 @@ class StudioAudioExecution:
             claim = self.store.mutate(nid, claim_job); _ACTIVE.add(key)
         try:
             binding, body = claim["context"], claim["_studio_body"]
+            def inspection_current():
+                # Poll only original Host/attempt authority. Passing source_guard
+                # here would recursively probe the same media on every poll.
+                if self._attempt(nid, claim, context, guard) is None:
+                    raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "当前音频执行已取消或失效", 409)
+            if inspect_source is not None:
+                # This optional original resolver runs the attempt fence only
+                # after releasing its asset lease; legacy callbacks stay valid.
+                source_guard = lambda snapshot: inspect_source(snapshot, inspection_guard=inspection_current)
             if body["operation_id"] == "m8.audio.trim":
-                content, measured = self._trim(nid, claim, context, guard, source_guard)
+                content, measured = self._trim(nid, claim, context, guard, source_guard, inspection_current)
             else:
                 if not callable(resolve) or not callable(before_send):
                     raise _error("STUDIO_AUDIO_DISPATCH_AUTHORITY_REQUIRED", "缺少原 Provider 解析、外发审核或费用授权", 403)
@@ -496,7 +506,7 @@ class StudioAudioExecution:
                 # before fetching or publishing the returned private result.
                 before_send(copy.deepcopy(claim), provider_id, default_model, provider)
                 content = self._provider_bytes(result.audio_uri, provider)
-                measured = inspect_media(content, "audio")
+                measured = inspect_media(content, "audio", guard=inspection_current)
             output_digest = hashlib.sha256(content).hexdigest()
             output_proof = {}
             if body["operation_id"] == "m8.audio.trim" and "graph_binding" not in binding:
@@ -583,7 +593,7 @@ class StudioAudioExecution:
         if not 0 < len(data) <= self.assets.MAX_BYTES: raise MediaValidationError("audio exceeds asset limit")
         return data
 
-    def _trim(self, nid, claim, context, guard, source_guard):
+    def _trim(self, nid, claim, context, guard, source_guard, inspection_current):
         binding, parameters = claim["context"], claim["_studio_body"]["parameters"]
         source = binding["sources"][0]; value = source_guard(copy.deepcopy(source)); guard()
         if not isinstance(value, dict) or value.get("snapshot") != source or not isinstance(value.get("data"), bytes) or not isinstance(value.get("row"), dict):
@@ -593,7 +603,7 @@ class StudioAudioExecution:
                 or row.get("novel_id") != nid or row.get("kind") != "audio" or row.get("branch_id") != self.branch_id
                 or not 0 < len(data) <= self.assets.MAX_BYTES or hashlib.sha256(data).hexdigest() != source["digest"]):
             raise _error("STUDIO_AUDIO_TRIM_SOURCE_CHANGED", "原音频资产或字节已变化", 409)
-        measured = inspect_media(data, "audio")
+        measured = inspect_media(data, "audio", guard=inspection_current)
         if parameters["out_ms"] > measured["duration_ms"]: raise _error("STUDIO_AUDIO_TRIM_RANGE_INVALID", "裁剪终点超过原音频时长", 400)
         executable = shutil.which("ffmpeg")
         if not executable: raise _error("STUDIO_AUDIO_TRIM_TOOL_UNAVAILABLE", "本地裁剪需要原配置 ffmpeg", 501)
@@ -604,24 +614,18 @@ class StudioAudioExecution:
             source_path.write_bytes(data)
             if self._attempt(nid, claim, context, guard, source_guard) is None: raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
             from .studio_timeline_export import run_guarded_process
-            def trim_current():
-                # Poll the original Host/token fence without repeatedly probing
-                # audio bytes. Exact source checks occur before native work and
-                # again in the original publication source/asset phase.
-                if self._attempt(nid, claim, context, guard) is None:
-                    raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
             filters = ["-af", f"volume={parameters['gain_db']:.17g}dB"] if "gain_db" in parameters else []
             run_guarded_process([executable, "-nostdin", "-v", "error", "-xerror", "-threads", "1", "-protocol_whitelist", "file,pipe",
                 "-ss", f"{parameters['in_ms'] / 1000:.3f}", "-i", str(source_path), "-map", "0:a:0", "-vn", "-sn", "-dn",
                 "-t", f"{duration / 1000:.3f}", *filters, "-ar", str(parameters.get("sample_rate", 48000)),
                 "-ac", str(parameters.get("channels", 2)), "-c:a", "pcm_s16le", "-fs", str(self.assets.MAX_BYTES + 1),
-                "-f", "wav", str(target)], cwd=directory, guard=trim_current, timeout=50)
-            trim_current()
+                "-f", "wav", str(target)], cwd=directory, guard=inspection_current, timeout=50)
+            inspection_current()
             if not target.is_file() or not 0 < target.stat().st_size <= self.assets.MAX_BYTES:
                 raise MediaValidationError("trim output exceeds asset limit")
             with target.open("rb") as stream: output = stream.read(self.assets.MAX_BYTES + 1)
         if not 0 < len(output) <= self.assets.MAX_BYTES: raise MediaValidationError("trim output exceeds asset limit")
-        result = inspect_media(output, "audio")
+        result = inspect_media(output, "audio", guard=inspection_current)
         if abs(result["duration_ms"] - duration) > 2: raise MediaValidationError("trim output duration does not match the reviewed interval")
         if (result.get("media_type") != "audio/wav" or result.get("validation") != "PCM_DECODED"
                 or result.get("sample_rate") != parameters.get("sample_rate", 48000)

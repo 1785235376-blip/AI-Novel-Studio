@@ -287,7 +287,7 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
         total_bytes += len(data)
         if total_bytes > MAX_SOURCE_BYTES:
             raise ValueError("STUDIO_TIMELINE_SOURCE_BYTES_LIMIT")
-        measured = inspect_image(data) if snapshot["asset_kind"] == "image" else inspect_media(data, snapshot["asset_kind"])
+        measured = inspect_image(data) if snapshot["asset_kind"] == "image" else inspect_media(data, snapshot["asset_kind"], guard=guard)
         verified[snapshot["id"]] = {"data": data, "measured": measured}
     for track in timeline["tracks"]:
         for clip in track["clips"]:
@@ -454,8 +454,8 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
         if not output.is_file() or output.stat().st_size > max_bytes:
             raise MediaValidationError("STUDIO_TIMELINE_OUTPUT_BYTES_LIMIT")
         data = output.read_bytes()
-        measured = inspect_media(data, "video")
-        audio_measurement = inspect_media(data, "audio")
+        measured = inspect_media(data, "video", guard=guard)
+        audio_measurement = inspect_media(data, "audio", guard=guard)
         tolerance = max(100, math.ceil(2000 / timeline["fps"]))
         if (abs(measured["duration_ms"] - timeline["duration_ms"]) > tolerance
                 or abs(audio_measurement["duration_ms"] - timeline["duration_ms"]) > tolerance):

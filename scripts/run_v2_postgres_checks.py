@@ -14,6 +14,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import shlex
 import subprocess
 import sys
 
@@ -68,6 +69,22 @@ def validate_owned_cluster(root: Path, pg_bin: Path, data: Path) -> tuple[Path, 
 def validate_database_name(database: str) -> None:
     if not re.fullmatch(r"v2_[a-zA-Z0-9_]+", database) or len(database.encode("utf-8")) > 63:
         raise ValueError("database must be a V2-owned v2_* name of at most 63 bytes")
+
+
+def postgres_start_options(port: int, *, platform: str | None = None) -> str:
+    """Quote the fixed server arguments for pg_ctl's native command parser.
+
+    Windows defaults to an empty Unix socket directory. Passing POSIX ``-k ''`` there
+    makes the single quotes a literal directory name instead of an empty
+    argument. Keep the original empty socket directory on POSIX only.
+    """
+    windows = (sys.platform if platform is None else platform) == "win32"
+    options = ["-h", "127.0.0.1", "-p", str(port)]
+    if not windows:
+        options.extend(["-k", ""])
+    options.extend(["-c", "shared_buffers=32MB", "-c", "max_connections=50",
+                    "-c", "timezone=UTC", "-c", "log_timezone=UTC"])
+    return subprocess.list2cmdline(options) if windows else shlex.join(options)
 
 
 def load_migrations(root: Path) -> list[tuple[dict, str]]:
@@ -206,8 +223,7 @@ def main(argv: list[str] | None = None) -> int:
         "startup_ownership": "unconfirmed", "cleanup_status": "pending",
     }
     write_receipt(receipt_path, receipt)
-    options = (f"-h 127.0.0.1 -p {args.port} -k '' -c shared_buffers=32MB "
-               "-c max_connections=50 -c timezone=UTC -c log_timezone=UTC")
+    options = postgres_start_options(args.port)
     primary_error = None
     startup_confirmed = False
     try:

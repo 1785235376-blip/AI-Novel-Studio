@@ -1,0 +1,232 @@
+{
+  "schema": "v2-reconstructed-media-inspection-verification/1",
+  "date": "2026-10-13",
+  "base_commit": "8a9b1038330977305c3574617548e72b03fc71ed",
+  "scope": "Existing non-WAV inspection prerequisite; no new output formats, wire fields, queue or state owner.",
+  "state": "Paused at user request. Completed changes captured locally only; no integration or push.",
+  "environment": {
+    "python": "3.12.14",
+    "ffmpeg": "7.1.5",
+    "platform": "Linux CPU",
+    "model_calls": 0,
+    "external_provider_calls": 0,
+    "downloads": 0
+  },
+  "final_source_sha256": {
+    "app/media_files.py": "68e0640b2df226e65cfd9491d602c62be1e300ec1edf7137929963080fbf5f43",
+    "app/creative/production_execution.py": "ba7df3f8ba7d78d7fad3cffc4c38cd96fc8a6b46fdb63f61aaa6cdcf431f8723",
+    "app/creative/workspace.py": "5ad030e162575e2ac35c728ac769c5e6bb9423c82dd4bc5cb51427f5bcc37d63",
+    "app/services/studio_audio_execution.py": "32e1d2c9e54b6dae158cee6dc28a9659eb0d9dc7684e1ba4c8b0ec70379ce990",
+    "app/services/studio_timeline_render.py": "dcf6d7d336084850eda636cbad877b07e184adc72e80e28291c8fb04a80820a1",
+    "app/services/video_assembly_service.py": "33dd6e3e9bf9dd3680bdeb03478ac578934f093b738ac10b1358c788d6256ef0",
+    "tests/test_v2_media_probe_bounds.py": "0dd6d07ad06e3cee85df3daa4328874bf3b5ca844521a028388a200e6379782c",
+    "tests/test_v2_media_probe_lifecycle.py": "7047e5aee8c50a301348fedeca0ea288ca5db1282c81b2c6717dc46d157a4526"
+  },
+  "unchanged_original_runner_sha256": "9f317160bceef4de6abc6eecdd230b9beaa37ed21d78e41e3f20b8c4e41fcfdc",
+  "unchanged_original_native_test_sha256": "b2ffbc6d42e62ad4a7e43ac49f025c31ea813068f7fabb0da51438adacc16198",
+  "runs": [
+    {
+      "phase": "broad_before_test_prerequisite_assertion",
+      "backend": "File",
+      "status": "PASS",
+      "exit_code": 0,
+      "passed": 725,
+      "skipped": 12,
+      "deselected": 307,
+      "failed": 0,
+      "started_utc": "2026-10-13T09:33:43.825467+00:00",
+      "finished_utc": "2026-10-13T09:36:13.659313+00:00",
+      "sources_changed_during_check": false,
+      "production_source_sha256": {
+        "app/media_files.py": "68e0640b2df226e65cfd9491d602c62be1e300ec1edf7137929963080fbf5f43",
+        "app/creative/production_execution.py": "ba7df3f8ba7d78d7fad3cffc4c38cd96fc8a6b46fdb63f61aaa6cdcf431f8723",
+        "app/creative/workspace.py": "5ad030e162575e2ac35c728ac769c5e6bb9423c82dd4bc5cb51427f5bcc37d63",
+        "app/services/studio_audio_execution.py": "32e1d2c9e54b6dae158cee6dc28a9659eb0d9dc7684e1ba4c8b0ec70379ce990",
+        "app/services/studio_timeline_render.py": "dcf6d7d336084850eda636cbad877b07e184adc72e80e28291c8fb04a80820a1",
+        "app/services/video_assembly_service.py": "33dd6e3e9bf9dd3680bdeb03478ac578934f093b738ac10b1358c788d6256ef0"
+      },
+      "additive_test_sha256": {
+        "tests/test_v2_media_probe_bounds.py": "400f1fc8bacd10e4069064487420b8bbaf9a4dab4417ba2836b54b77481312f9",
+        "tests/test_v2_media_probe_lifecycle.py": "7047e5aee8c50a301348fedeca0ea288ca5db1282c81b2c6717dc46d157a4526"
+      },
+      "test_files": [
+        "tests/test_v2_media_probe_bounds.py",
+        "tests/test_v2_media_probe_lifecycle.py",
+        "tests/test_v2_reconstructed_native_process_bounds.py",
+        "tests/test_r2_media_lifecycle.py",
+        "tests/test_v2_independent_workspace.py",
+        "tests/test_v2_audio_wav_controls.py",
+        "tests/test_v2_audio_wav_controls_api.py",
+        "tests/test_audio_production_api.py",
+        "tests/test_r3_media_support.py",
+        "tests/test_r3_audiobook_preparation.py",
+        "tests/test_r5_pause_aware_audio.py",
+        "tests/test_v2_graph_target_budgets.py",
+        "tests/test_v2_graph_target_budgets_api.py",
+        "tests/test_v2_graph_target_budgets_recovery.py",
+        "tests/test_v2_creative_graph_contracts.py",
+        "tests/test_v2_creative_graph_execution.py",
+        "tests/test_v2_creative_graph_api.py",
+        "tests/test_phase4_timeline.py",
+        "tests/test_r4_timeline_exchange.py",
+        "tests/test_surface_continuity_timeline_identity.py"
+      ],
+      "evidence_sha256": "713f8dcd07c9d7be22eb7d797c0e68702b7e1946bf439b8c122719f3dadafbb0",
+      "log_sha256": "7d2b11bf1b6948172dfaf9c54359a670d0a0768280fa0fb5b272650589176a4d"
+    },
+    {
+      "phase": "broad_before_test_prerequisite_assertion",
+      "backend": "PostgreSQL",
+      "status": "PASS",
+      "exit_code": 0,
+      "passed": 737,
+      "skipped": 12,
+      "deselected": 295,
+      "failed": 0,
+      "started_utc": "2026-10-13T09:33:45.727386+00:00",
+      "finished_utc": "2026-10-13T09:39:33.746514+00:00",
+      "sources_changed_during_check": false,
+      "production_source_sha256": {
+        "app/media_files.py": "68e0640b2df226e65cfd9491d602c62be1e300ec1edf7137929963080fbf5f43",
+        "app/creative/production_execution.py": "ba7df3f8ba7d78d7fad3cffc4c38cd96fc8a6b46fdb63f61aaa6cdcf431f8723",
+        "app/creative/workspace.py": "5ad030e162575e2ac35c728ac769c5e6bb9423c82dd4bc5cb51427f5bcc37d63",
+        "app/services/studio_audio_execution.py": "32e1d2c9e54b6dae158cee6dc28a9659eb0d9dc7684e1ba4c8b0ec70379ce990",
+        "app/services/studio_timeline_render.py": "dcf6d7d336084850eda636cbad877b07e184adc72e80e28291c8fb04a80820a1",
+        "app/services/video_assembly_service.py": "33dd6e3e9bf9dd3680bdeb03478ac578934f093b738ac10b1358c788d6256ef0"
+      },
+      "additive_test_sha256": {
+        "tests/test_v2_media_probe_bounds.py": "400f1fc8bacd10e4069064487420b8bbaf9a4dab4417ba2836b54b77481312f9",
+        "tests/test_v2_media_probe_lifecycle.py": "7047e5aee8c50a301348fedeca0ea288ca5db1282c81b2c6717dc46d157a4526"
+      },
+      "test_files": [
+        "tests/test_v2_media_probe_bounds.py",
+        "tests/test_v2_media_probe_lifecycle.py",
+        "tests/test_v2_reconstructed_native_process_bounds.py",
+        "tests/test_r2_media_lifecycle.py",
+        "tests/test_v2_independent_workspace.py",
+        "tests/test_v2_audio_wav_controls.py",
+        "tests/test_v2_audio_wav_controls_api.py",
+        "tests/test_audio_production_api.py",
+        "tests/test_r3_media_support.py",
+        "tests/test_r3_audiobook_preparation.py",
+        "tests/test_r5_pause_aware_audio.py",
+        "tests/test_v2_graph_target_budgets.py",
+        "tests/test_v2_graph_target_budgets_api.py",
+        "tests/test_v2_graph_target_budgets_recovery.py",
+        "tests/test_v2_creative_graph_contracts.py",
+        "tests/test_v2_creative_graph_execution.py",
+        "tests/test_v2_creative_graph_api.py",
+        "tests/test_phase4_timeline.py",
+        "tests/test_r4_timeline_exchange.py",
+        "tests/test_surface_continuity_timeline_identity.py"
+      ],
+      "evidence_sha256": "4d984696a2e8eb400f2eeeabbc55b7bb82eb52029852de4f923132610a4dfd9f",
+      "log_sha256": "a1f05d2444be76e45d945e11ff35a9ce5d74b0cc7b5d6a7b32e47e348ec4cffa",
+      "postgres": {
+        "version": "17.11",
+        "fresh_database": true,
+        "empty_before_migrations": true,
+        "migration_count": 20,
+        "migration_status": "applied",
+        "startup_ownership": "confirmed",
+        "server_stop": "stopped",
+        "cleanup_status": "completed",
+        "runtime_evidence_sha256": "e8c185e1aefcbd506409e7b6b2014c741f24668e1518c20e5db807b3e01ddf6e"
+      }
+    },
+    {
+      "phase": "final_frozen_source_and_tests",
+      "backend": "File",
+      "status": "PASS",
+      "exit_code": 0,
+      "passed": 261,
+      "skipped": 0,
+      "deselected": 80,
+      "failed": 0,
+      "started_utc": "2026-10-13T09:40:44.019107+00:00",
+      "finished_utc": "2026-10-13T09:42:09.543924+00:00",
+      "sources_changed_during_check": false,
+      "production_source_sha256": {
+        "app/media_files.py": "68e0640b2df226e65cfd9491d602c62be1e300ec1edf7137929963080fbf5f43",
+        "app/creative/production_execution.py": "ba7df3f8ba7d78d7fad3cffc4c38cd96fc8a6b46fdb63f61aaa6cdcf431f8723",
+        "app/creative/workspace.py": "5ad030e162575e2ac35c728ac769c5e6bb9423c82dd4bc5cb51427f5bcc37d63",
+        "app/services/studio_audio_execution.py": "32e1d2c9e54b6dae158cee6dc28a9659eb0d9dc7684e1ba4c8b0ec70379ce990",
+        "app/services/studio_timeline_render.py": "dcf6d7d336084850eda636cbad877b07e184adc72e80e28291c8fb04a80820a1",
+        "app/services/video_assembly_service.py": "33dd6e3e9bf9dd3680bdeb03478ac578934f093b738ac10b1358c788d6256ef0"
+      },
+      "additive_test_sha256": {
+        "tests/test_v2_media_probe_bounds.py": "0dd6d07ad06e3cee85df3daa4328874bf3b5ca844521a028388a200e6379782c",
+        "tests/test_v2_media_probe_lifecycle.py": "7047e5aee8c50a301348fedeca0ea288ca5db1282c81b2c6717dc46d157a4526"
+      },
+      "test_files": [
+        "tests/test_v2_media_probe_bounds.py",
+        "tests/test_v2_media_probe_lifecycle.py",
+        "tests/test_v2_reconstructed_native_process_bounds.py",
+        "tests/test_v2_audio_wav_controls.py",
+        "tests/test_v2_audio_wav_controls_api.py",
+        "tests/test_v2_graph_target_budgets_recovery.py"
+      ],
+      "evidence_sha256": "c7ac85b84abe7b4bbdc7cac1c867bffacf519ce6c98a623e70416210d765f206",
+      "log_sha256": "caa45a5234a61560a94aa0d323c45021f103f29245b06b520e30d7d2f9fe713e"
+    },
+    {
+      "phase": "final_frozen_source_and_tests",
+      "backend": "PostgreSQL",
+      "status": "PASS",
+      "exit_code": 0,
+      "passed": 261,
+      "skipped": 0,
+      "deselected": 80,
+      "failed": 0,
+      "started_utc": "2026-10-13T09:40:45.871868+00:00",
+      "finished_utc": "2026-10-13T09:43:08.141612+00:00",
+      "sources_changed_during_check": false,
+      "production_source_sha256": {
+        "app/media_files.py": "68e0640b2df226e65cfd9491d602c62be1e300ec1edf7137929963080fbf5f43",
+        "app/creative/production_execution.py": "ba7df3f8ba7d78d7fad3cffc4c38cd96fc8a6b46fdb63f61aaa6cdcf431f8723",
+        "app/creative/workspace.py": "5ad030e162575e2ac35c728ac769c5e6bb9423c82dd4bc5cb51427f5bcc37d63",
+        "app/services/studio_audio_execution.py": "32e1d2c9e54b6dae158cee6dc28a9659eb0d9dc7684e1ba4c8b0ec70379ce990",
+        "app/services/studio_timeline_render.py": "dcf6d7d336084850eda636cbad877b07e184adc72e80e28291c8fb04a80820a1",
+        "app/services/video_assembly_service.py": "33dd6e3e9bf9dd3680bdeb03478ac578934f093b738ac10b1358c788d6256ef0"
+      },
+      "additive_test_sha256": {
+        "tests/test_v2_media_probe_bounds.py": "0dd6d07ad06e3cee85df3daa4328874bf3b5ca844521a028388a200e6379782c",
+        "tests/test_v2_media_probe_lifecycle.py": "7047e5aee8c50a301348fedeca0ea288ca5db1282c81b2c6717dc46d157a4526"
+      },
+      "test_files": [
+        "tests/test_v2_media_probe_bounds.py",
+        "tests/test_v2_media_probe_lifecycle.py",
+        "tests/test_v2_reconstructed_native_process_bounds.py",
+        "tests/test_v2_audio_wav_controls.py",
+        "tests/test_v2_audio_wav_controls_api.py",
+        "tests/test_v2_graph_target_budgets_recovery.py"
+      ],
+      "evidence_sha256": "6043d906321ab4f592197b334b99793a3d9663605f1d41833d23faca96a554ee",
+      "log_sha256": "6ae195a3d1ad39a44edeb09ffac4044c93dabc4658992208d3de98d5d8421fed",
+      "postgres": {
+        "version": "17.11",
+        "fresh_database": true,
+        "empty_before_migrations": true,
+        "migration_count": 20,
+        "migration_status": "applied",
+        "startup_ownership": "confirmed",
+        "server_stop": "stopped",
+        "cleanup_status": "completed",
+        "runtime_evidence_sha256": "c42b59d9efdfa52a722ed2307b152648adbae364512368bcfcc75277ad59901c"
+      }
+    }
+  ],
+  "evidence_mapping": "All six production files are identical across these runs. After both broad runs completed, the only test change replaced the new real-codec prerequisite skip with an assertion. The two confirmed focused runs cover the final exact source and test bytes.",
+  "existing_skips": "Twelve unchanged optional OpenTimelineIO cases were not run in each broad suite because the pinned optional parser is absent. No new-codec prerequisite skips remain.",
+  "independent_observations": [
+    "Six-file source review found no remaining lock-order, recursion, privacy, shape or identity blocker.",
+    "Real CPU differential versus the baseline returned exact dictionaries for WAV, FLAC, MP3, OGG, MP4 video, MP4 AAC audio and WebM VP9."
+  ],
+  "remaining": [
+    "Integration and publication were not performed; hand off the local selected commit to the requested local Codex task.",
+    "Selectable FLAC/MP3 delivery profiles are not implemented by this prerequisite.",
+    "Windows/device playback, real provider/model execution and product acceptance are not verified."
+  ],
+  "active_runs": [],
+  "owned_postgres_servers": "stopped"
+}

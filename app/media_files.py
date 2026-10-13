@@ -6,14 +6,17 @@ are resolved once and pinned for the connection, including HTTPS SNI validation.
 """
 from __future__ import annotations
 
+from contextlib import contextmanager
 import http.client
 import io
 import ipaddress
 import json
 import math
+import os
 from pathlib import Path
 import shutil
 import socket
+import stat
 import subprocess
 import tempfile
 import time
@@ -112,12 +115,74 @@ def fetch_media_bytes(url: str, max_bytes: int, timeout: int = 30, *, configured
         connection.close()
 
 
-def inspect_media(data: bytes, kind: str) -> dict:
+def _owned_empty_media_directory(path, identity):
+    """Only the same private, ordinary empty directory can await sharing release."""
+    try:
+        current = path.lstat()
+        if (identity is None or not current.st_ino or
+                (current.st_dev, current.st_ino) != identity or
+                not stat.S_ISDIR(current.st_mode) or
+                getattr(current, "st_file_attributes", 0) &
+                getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)):
+            return False
+        with os.scandir(path) as entries:
+            return next(entries, None) is None
+    except OSError:
+        return False
+
+
+def _cleanup_media_directory(temporary, identity):
+    path = Path(temporary.name)
+    previous_error = None
+    for attempt in range(3):
+        # The bounded wait is an interleaving boundary. Revalidate immediately
+        # before retrying so a replaced directory or later content is untouched.
+        if attempt and not _owned_empty_media_directory(path, identity):
+            raise previous_error
+        try:
+            temporary.cleanup()
+            return
+        except OSError as error:
+            # Reaped Windows children can leave a briefly shared empty CWD.
+            # No other failure, replaced directory or nonempty tree retries.
+            if (attempt == 2 or os.name != "nt" or getattr(error, "winerror", None) != 32
+                    or not _owned_empty_media_directory(path, identity)):
+                raise
+            previous_error = error
+            time.sleep((0.025, 0.05)[attempt])
+
+
+@contextmanager
+def _media_inspection_directory():
+    temporary = tempfile.TemporaryDirectory(prefix="novel-media-")
+    identity = None
+    try:
+        created = Path(temporary.name).lstat()
+        identity = (created.st_dev, created.st_ino)
+        yield temporary.name
+    finally:
+        _cleanup_media_directory(temporary, identity)
+
+
+def inspect_media(data: bytes, kind: str, *, guard=None) -> dict:
     """Verify actual local bytes, return measured duration and container MIME.
 
     WAV requires no optional program. Other codecs need the installed ffprobe
     and ffmpeg tools and fail closed if the tools are absent.
     """
+    # A guard may raise ValueError (including AudiobookError), OSError or a
+    # process exception itself. Preserve its exact exception rather than
+    # reporting revocation/cancellation as malformed media.
+    guard_failure = None
+    def current():
+        nonlocal guard_failure
+        if guard is not None:
+            try:
+                guard()
+            except BaseException as error:
+                guard_failure = error
+                raise
+    current()
     if not data:
         raise MediaValidationError("media is empty")
     if kind == "audio" and data[:4] == b"RIFF" and data[8:12] == b"WAVE":
@@ -127,8 +192,11 @@ def inspect_media(data: bytes, kind: str) -> dict:
                 actual = audio.readframes(frames)
                 if not frames or rate <= 0 or len(actual) != frames * channels * width:
                     raise MediaValidationError("WAV data is truncated or empty")
+                current()
                 return {"media_type": "audio/wav", "extension": "wav", "duration_ms": round(frames * 1000 / rate), "sample_rate": rate, "channels": channels, "sample_width": width, "validation": "PCM_DECODED"}
         except (wave.Error, EOFError) as exc:
+            if exc is guard_failure:
+                raise
             raise MediaValidationError("invalid WAV media") from exc
     mp4 = len(data) >= 12 and data[4:8] == b"ftyp"
     webm = data[:4] == b"\x1aE\xdf\xa3"
@@ -141,23 +209,59 @@ def inspect_media(data: bytes, kind: str) -> dict:
     if not probe or not decoder:
         raise MediaValidationError("MEDIA_VALIDATOR_NOT_CONFIGURED: ffprobe and ffmpeg are required")
     extension = "mp4" if mp4 else "webm" if webm else "mp3" if mp3 else "ogg" if data[:4] == b"OggS" else "flac"
-    with tempfile.TemporaryDirectory(prefix="novel-media-") as directory:
-        path = Path(directory) / ("input." + extension)
-        path.write_bytes(data)
-        try:
-            result = subprocess.run([probe, "-v", "error", "-protocol_whitelist", "file,pipe", "-show_streams", "-show_format", "-of", "json", str(path)], capture_output=True, timeout=20, check=True)
-            details = json.loads(result.stdout)
-            streams = [row for row in details.get("streams", []) if row.get("codec_type") == kind]
-            duration = float(details.get("format", {}).get("duration") or (streams[0].get("duration") if streams else 0) or 0)
+    # Local import avoids the original export owner's MediaValidationError
+    # dependency creating a top-level circular import. Do not duplicate its
+    # bounded capture, cancellation, termination or reaping implementation.
+    from .services.studio_timeline_export import run_guarded_process
+    try:
+        with _media_inspection_directory() as directory:
+            path = Path(directory) / ("input." + extension)
+            output = Path(directory) / "probe.json"
+            path.write_bytes(data)
+            run_guarded_process([probe, "-v", "error", "-protocol_whitelist", "file,pipe", "-show_streams", "-show_format", "-of", "json", str(path)],
+                cwd=directory, guard=current, timeout=20, stdout_path=output)
+            # JSON, its shape and all fields used below are untrusted native
+            # output. Validate before indexing/converting or starting decode.
+            def invalid_constant(value):
+                raise ValueError("non-finite JSON constant")
+            details = json.loads(output.read_text(encoding="utf-8"), parse_constant=invalid_constant)
+            if (not isinstance(details, dict) or not isinstance(details.get("streams"), list)
+                    or not isinstance(details.get("format", {}), dict)
+                    or any(not isinstance(row, dict) for row in details["streams"])):
+                raise ValueError("invalid media probe structure")
+            streams = [row for row in details["streams"] if row.get("codec_type") == kind]
+            durations = [details.get("format", {}).get("duration"), streams[0].get("duration") if streams else None]
+            if any(value is not None and type(value) not in (str, int, float) for value in durations):
+                raise ValueError("invalid media duration")
+            raw_duration = durations[0] or durations[1] or 0
+            if type(raw_duration) not in (str, int, float):
+                raise ValueError("invalid media duration")
+            duration = float(raw_duration)
             if not streams or not math.isfinite(duration) or duration <= 0 or duration > 36000:
-                raise MediaValidationError("media has no valid playable stream or duration")
-            if kind=='video':
-                width,height=int(streams[0].get('width',0)),int(streams[0].get('height',0))
-                if not 1<=width<=4096 or not 1<=height<=4096 or width*height>16*1024*1024:
-                    raise MediaValidationError('video dimensions exceed decoding limit')
-            subprocess.run([decoder, "-nostdin", "-v", "error", "-xerror", "-threads", "1", "-protocol_whitelist", "file,pipe", "-i", str(path), "-map", "0:v:0" if kind == "video" else "0:a:0", "-f", "null", "-"], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, timeout=30, check=True)
-        except (subprocess.SubprocessError, ValueError, OSError) as exc:
-            raise MediaValidationError("media decoding failed") from exc
+                raise ValueError("media has no valid playable stream or duration")
+            if streams[0].get("codec_name") is not None and not isinstance(streams[0]["codec_name"], str):
+                raise ValueError("invalid media codec")
+            if kind == "video":
+                dimensions = [streams[0].get(name, 0) for name in ("width", "height")]
+                if any(type(value) not in (str, int) for value in dimensions):
+                    raise ValueError("invalid video dimensions")
+                width, height = map(int, dimensions)
+                if not 1 <= width <= 4096 or not 1 <= height <= 4096 or width * height > 16 * 1024 * 1024:
+                    raise ValueError("video dimensions exceed decoding limit")
+            current()
+            run_guarded_process([decoder, "-nostdin", "-v", "error", "-xerror", "-threads", "1", "-protocol_whitelist", "file,pipe", "-i", str(path), "-map", "0:v:0" if kind == "video" else "0:a:0", "-f", "null", "-"],
+                cwd=directory, guard=current, timeout=30)
+            current()
+    except (subprocess.SubprocessError, ValueError, OSError, RecursionError, OverflowError) as exc:
+        if exc is guard_failure:
+            raise
+        if guard_failure is not None:
+            # Preserve the original authority exception even when strict
+            # cleanup also fails. Record that failure without exposing paths.
+            guard_failure.add_note("Media inspection temporary directory cleanup did not complete.")
+            raise guard_failure from MediaValidationError("media temporary directory cleanup failed")
+        # Never expose private paths, argv or captured native diagnostics.
+        raise MediaValidationError("media decoding failed") from None
     mime = f"{kind}/{extension}" if extension != "mp3" else "audio/mpeg"
     return {"media_type": mime, "extension": extension, "duration_ms": round(duration * 1000), "validation": "DECODED", "codec": streams[0].get("codec_name")}
 
