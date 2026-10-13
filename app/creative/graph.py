@@ -14,7 +14,7 @@ from ..experimental.store import canonical
 from ..services.v1_capability_service import V1CapabilityService
 from .project_store import CreativeProjectStore, BINDING
 from .graph_models import (
-    DEFINITIONS, GraphInput, GraphCreate, GraphSave, GraphPreflight, GraphRunCreate,
+    DEFINITIONS, GraphInput, GraphCreate, GraphSave, GraphPreflight, GraphMediaPreflight, parse_graph_preflight,
     MAX_NODES, MAX_EDGES, MAX_DEFINITION_BYTES, MAX_OUTPUT_BYTES, MAX_GRAPHS,
     MAX_RUNS, MAX_HISTORY, MAX_RECORD_BYTES, MAX_SCOPE_BYTES, catalog_definitions, parse_graph,
     RUN_TIMEOUT_SECONDS, NODE_TIMEOUT_SECONDS,
@@ -306,6 +306,7 @@ class CreativeGraphService:
 
     def _preflight(self, row, body, actor, *, check_assets=True, guard=lambda: None, state=None):
         definition = row["definition"]
+        body = parse_graph_preflight(body, definition)
         nodes = {node["id"]: node for node in definition["nodes"]}
         targets = body.target_node_ids or [node["id"] for node in definition["nodes"] if node["enabled"]]
         if len(set(targets)) != len(targets) or any(target not in nodes for target in targets):
@@ -430,7 +431,9 @@ class CreativeGraphService:
         return result
 
     def preflight(self, nid, scope, actor, rid, value, guard=lambda: None):
-        body = GraphPreflight.model_validate(value)
+        # Admit the bounded wire envelope, then retain CAS precedence over the
+        # saved-schema allowance (including a concurrent schema downgrade).
+        body = GraphMediaPreflight.model_validate(value.model_dump() if isinstance(value, GraphPreflight) else value)
         _, current = self._context(nid, scope, actor, guard)
         row = self._owned(nid, scope, actor, GRAPHS, rid)
         check_version(row, body.expected_version)
@@ -444,7 +447,7 @@ class CreativeGraphService:
         current(); return result
 
     def create_run(self, nid, scope, actor, rid, value, guard=lambda: None):
-        return self.executor.create(nid, scope, actor, rid, GraphRunCreate.model_validate(value), guard)
+        return self.executor.create(nid, scope, actor, rid, value, guard)
 
     def runs(self, nid, scope, actor, rid, guard=lambda: None):
         _, current = self._context(nid, scope, actor, guard)

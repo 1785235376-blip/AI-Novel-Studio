@@ -17,7 +17,7 @@ from ..experimental.common import StaleSourceError, change_row, check_version
 from ..experimental.declarative_agents import _ScopedOriginalWorkflowHost
 from .graph_execution import ADAPTER_VERSION, digest
 from .graph_models import (Digest, Id, Strict, history_limit, validate_output_ports,
-    GraphPreflight, MAX_NODES, MAX_RECORD_BYTES, MAX_SCOPE_BYTES, MAX_OUTPUT_BYTES, parse_graph)
+    MAX_NODES, MAX_RECORD_BYTES, MAX_SCOPE_BYTES, MAX_OUTPUT_BYTES, parse_graph)
 from .graph_media_binding import make_graph_binding_digest
 from .production_execution_models import MediaCommand, MediaCreate, MediaJobAction, MediaReview
 from .graph_timeline_execution import GraphTimelineCommand
@@ -662,7 +662,7 @@ class CreativeGraphMediaRuntime:
         # it does not look up current assets/timeline/model routes or jobs.
         preflight = self.service._preflight({"id": row["graph_id"], "novel_id": nid, "scope": scope,
             BINDING: row[BINDING], "version": row["graph_version"], "definition_digest": row["graph_digest"],
-            "definition": definition}, GraphPreflight(expected_version=row["graph_version"], target_node_ids=selected),
+            "definition": definition}, {"expected_version": row["graph_version"], "target_node_ids": selected},
             actor, check_assets=False)
         pairs = list(dict.fromkeys((edge["source_node_id"], edge["target_node_id"]) for edge in edges))
         expected_snapshot = {"title": definition["title"],

@@ -15,7 +15,8 @@ from ..experimental.declarative_agents import _ScopedOriginalWorkflowHost
 from ..experimental.declarative_adapter_sdk import AdapterCapabilities, AdapterRequest, run_trusted_local
 from ..experimental.store import canonical
 from ..workflow_recipes import execute_local_recipe_node
-from .graph_models import (GraphAction, GraphPreflight, MAX_OUTPUT_BYTES, MAX_NODES, MAX_HISTORY, MAX_MEDIA_HISTORY,
+from .graph_models import (GraphAction, GraphRunCreate, GraphMediaRunCreate, parse_graph_run_create,
+                          MAX_OUTPUT_BYTES, MAX_NODES, MAX_HISTORY, MAX_MEDIA_HISTORY,
                           RUN_TIMEOUT_SECONDS, NODE_TIMEOUT_SECONDS, validate_output_ports)
 from .project_store import BINDING
 
@@ -96,8 +97,8 @@ class CreativeGraphExecutor:
         # Schema 3's static topology remains reviewed after an explicit timeline
         # edit advances its base. Original asset inputs are checked below; the
         # actual edited timeline snapshot is fenced by its original runtime.
-        preflight = self.service._preflight(graph, GraphPreflight(expected_version=graph["version"],
-            target_node_ids=selected), actor, check_assets=False if schema == 3 else check_assets)
+        preflight = self.service._preflight(graph, {"expected_version": graph["version"],
+            "target_node_ids": selected}, actor, check_assets=False if schema == 3 else check_assets)
         pairs = list(dict.fromkeys((edge["source_node_id"], edge["target_node_id"]) for edge in row["typed_edges"]))
         snapshot = {"title": graph["definition"]["title"],
             "nodes": [{"id": node["id"], "name": node["id"], "config": {},
@@ -148,6 +149,7 @@ class CreativeGraphExecutor:
         return graph
 
     def create(self, nid, scope, actor, rid, body, guard):
+        body = GraphMediaRunCreate.model_validate(body.model_dump() if isinstance(body, GraphRunCreate) else body)
         incarnation, current = self.service._context(nid, scope, actor, guard)
         original = self.service._owned(nid, scope, actor, self.service.GRAPHS, rid)
         phase = (self.service.asset_inputs.transaction(nid, scope, actor, current)
@@ -155,8 +157,9 @@ class CreativeGraphExecutor:
         with phase as state:
             graph = self.service._owned(nid, scope, actor, self.service.GRAPHS, rid, state)
             check_version(graph, body.expected_graph_version)
-            preflight = self.service._preflight(graph, GraphPreflight(expected_version=body.expected_graph_version,
-                target_node_ids=body.target_node_ids), actor, guard=current, state=state)
+            body = parse_graph_run_create(body, graph["definition"])
+            preflight = self.service._preflight(graph, {"expected_version": body.expected_graph_version,
+                "target_node_ids": body.target_node_ids}, actor, guard=current, state=state)
             if not preflight["executable"]:
                 raise ValueError("CREATIVE_GRAPH_EXECUTION_BLOCKED")
             if preflight["preflight_digest"] != body.reviewed_preflight_digest:

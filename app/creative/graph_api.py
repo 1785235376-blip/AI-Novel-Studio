@@ -7,7 +7,8 @@ from urllib.parse import quote
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 
 from ..experimental.production_lineage_api import PrivateProductionRoute
-from .graph_models import GraphAction, GraphCreate, GraphPreflight, GraphRunCreate, GraphSave
+from .graph_models import (GraphAction, GraphCreate, GraphPreflight, GraphRunCreate, GraphSave,
+    GraphMediaPreflight, GraphMediaRunCreate)
 
 
 def create_creative_graph_router(service, invoke, *, require_host_session=None, model_host_authority=None):
@@ -202,7 +203,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                       lambda actor, scope, guard: service.save(nid, scope, actor, gid, body, guard=guard), request, model_input=body.definition.schema_version in {2, 3}, target=(service.GRAPHS, gid))
 
     @router.post("/projects/{nid}/studio/graphs/{gid}/preflight")
-    def preflight(nid: str, gid: str, request: Request, body: GraphPreflight,
+    def preflight(nid: str, gid: str, request: Request, body: GraphPreflight | GraphMediaPreflight,
                   x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: service.preflight(nid, scope, actor, gid, body, guard=guard), request, target=(service.GRAPHS, gid))
@@ -214,7 +215,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                       lambda actor, scope, guard: service.runs(nid, scope, actor, gid, guard=guard), request, target=(service.GRAPHS, gid))
 
     @router.post("/projects/{nid}/studio/graphs/{gid}/runs", status_code=201)
-    def create_run(nid: str, gid: str, request: Request, body: GraphRunCreate,
+    def create_run(nid: str, gid: str, request: Request, body: GraphRunCreate | GraphMediaRunCreate,
                    x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.create_run(nid, scope, actor, gid, body, guard=guard), request, target=(service.GRAPHS, gid))

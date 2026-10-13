@@ -429,14 +429,35 @@ class GraphSave(Strict):
 
 class GraphPreflight(Strict):
     expected_version: int = Field(ge=1)
+    target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_NODES)
+
+
+class GraphMediaPreflight(GraphPreflight):
+    # Same wire fields; only a saved schema-3 definition grants this allowance.
     target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_MEDIA_NODES)
 
 
 class GraphRunCreate(Strict):
     expected_graph_version: int = Field(ge=1)
     reviewed_preflight_digest: Digest
-    target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_MEDIA_NODES)
+    target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_NODES)
     request_id: RequestId
+
+
+class GraphMediaRunCreate(GraphRunCreate):
+    target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_MEDIA_NODES)
+
+
+def parse_graph_preflight(value, definition):
+    model = GraphMediaPreflight if definition["schema_version"] == 3 else GraphPreflight
+    # Pydantic can trust subclass instances without revalidating their fields.
+    # Revalidate the wire fields against the authoritative saved definition.
+    return model.model_validate(value.model_dump() if isinstance(value, GraphPreflight) else value)
+
+
+def parse_graph_run_create(value, definition):
+    model = GraphMediaRunCreate if definition["schema_version"] == 3 else GraphRunCreate
+    return model.model_validate(value.model_dump() if isinstance(value, GraphRunCreate) else value)
 
 
 class GraphAction(Strict):

@@ -772,3 +772,31 @@ still have2 Graph target-budget failures, reproduced on untouched3cd94a4; origin
 assertions were not changed. This is not all-green/full-product acceptance.
 See reconstruction-cpu-mask-cutout, cpu-mask-cutout-frontend and the integrated
 JSON reports under docs/v2. Browser-native/Windows/GPU acceptance remains unrun.
+
+### Generated inventory publication completed
+
+Published source `adc1f35b6c71dc556978f72a1b9172b57f61dff2` is followed by
+`c01bdc5dc020ec0bb10f9a2ef68b01aec7834084`, which synchronizes all five generated
+API/OpenAPI/coverage files. Their Git blob hashes were verified against local
+bytes; no generator or frozen baseline was changed. Original inventory checks
+passed 47 tests in isolation and 16 targeted checks at root integration.
+The catalog contains 2219 operations; test collection contains 12935 nodes,
+including all 9151 frozen baseline nodes. These counts are not execution results.
+The earlier upload/approval blocker is resolved. Exact-head Cloud CI run
+38370156137 ended with 11 failed jobs, runner_id 0 and no executed steps.
+This preserves the failed infrastructure evidence without claiming product
+acceptance or attributing an unverified platform cause. PR #47 remains Draft.
+
+### Shared Graph request-budget compatibility
+
+The original legacy DTO16 assertions are restored without restricting schema-3
+media graphs to 16 targets. Same-field media envelopes support 24, selected and
+revalidated from the authoritative saved definition. Stale CAS conflict
+precedence, request hashes, frontend expanded selections, durable closure
+validation and stopped review recovery remain intact. The real local audio
+recovery fixture covers 24-node runs after current graph modification/deletion
+without replay or promotion. File and fresh PostgreSQL each passed 848 tests
+with 393 existing backend/feature skips. All 20 original migrations and original
+assertions are unchanged; independent focused review approved the repair.
+Historical failures remain documented above. No Windows/model/full-product
+acceptance is claimed. See the dedicated Graph target-budget report.
