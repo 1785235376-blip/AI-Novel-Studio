@@ -230,7 +230,10 @@ class StudioAudioExecution:
 
     def _job(self, state, job_id, context):
         self._authority(context)
-        row = self.service.find(state, job_id)
+        return self._validated_job(self.service.find(state, job_id), context)
+
+    def _validated_job(self, row, context):
+        """Validate an already located original-owner row without rescanning."""
         if not self._matches(row, context):
             raise _error("STUDIO_AUDIO_JOB_NOT_FOUND", "当前原项目 owner 中没有此音频任务", 404)
         body = _body(row.get("_studio_body")); binding = _binding(row.get("context"), body)
@@ -258,7 +261,30 @@ class StudioAudioExecution:
     def list(self, nid, context, guard):
         self._authority(context); guard()
         state = self.store.load(nid, include_studio=True)
-        rows = [copy.deepcopy(self._job(state, row["id"], context)) for row in state["jobs"] if self._matches(row, context)]
+        rows, first_by_id = [], {}
+        missing_id = False
+        # load() already applies the original feature/visibility rules. Keep
+        # the complete history and validate every matching row, including the
+        # tail, without the former per-row find() scan of this same snapshot.
+        for row in state["jobs"]:
+            missing_id = missing_id or "id" not in row
+            job_id = row.get("id")
+            first = first_by_id.setdefault(job_id, row) if isinstance(job_id, str) else None
+            if not self._matches(row, context):
+                continue
+            # Owner-generated IDs are strings. Preserve the old lookup/error
+            # behavior for malformed legacy IDs rather than add ID migration
+            # or validation rules as part of this listing optimization.
+            if missing_id or not isinstance(job_id, str):
+                first = self._job(state, row["id"], context)
+            else:
+                self._validated_job(first, context)
+            # Retain the existing denial when a foreign row owns the first
+            # occurrence. A second matching receipt must not be silently
+            # shadowed by that first occurrence, even if its bytes are equal.
+            if first is not row:
+                raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频任务绑定已变化，不能继续执行", 409)
+            rows.append(copy.deepcopy(row))
         guard(); return rows
 
     def get(self, nid, job_id, context, guard):
