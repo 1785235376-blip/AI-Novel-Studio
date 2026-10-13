@@ -128,6 +128,68 @@ export type EnvironmentModelFile = {
   notes: string[];
   inference_verified: false;
 };
+export type VideoFileAssociation = {
+  status: 'MATCHED' | 'AMBIGUOUS' | 'NOT_OBSERVED' | 'UNKNOWN'; reason: string;
+  file_id: string | null; path: string | null; root: string | null; observed_file_bytes: number | null;
+  size_semantics: 'WEIGHT_FILE' | 'INDEX_METADATA' | null; runtime_path_verified: false; eligibility_derived: false;
+};
+export type VideoModelObservation = {
+  candidate_id: string; provider_id: string; model_name: string; family: string; runtime_id: string; runtime_type: string;
+  registered: boolean; enabled: boolean; enable_eligible: boolean; route_state: 'REGISTERED' | 'NOT_REGISTERED' | 'UNKNOWN';
+  structure_validated: boolean; structural_only: true; inference_verified: false; file_association: VideoFileAssociation;
+  model_total_bytes: null; required_vram_bytes: null;
+};
+export type VideoFileObservation = {
+  file_id: string; path: string; root: string; source: 'CONFIGURED' | 'COMMON'; format: 'GGUF' | 'SAFETENSORS' | 'DIFFUSERS';
+  family: string; header_valid: boolean; observed_file_bytes: number; size_semantics: 'WEIGHT_FILE' | 'INDEX_METADATA';
+  model_total_bytes: null; required_vram_bytes: null; inference_verified: false;
+};
+export type VideoObservationReport = {
+  contract: 'local-video-observation/1'; scan_id: string | null; scan_status: 'NOT_SCANNED' | 'RUNNING' | 'COMPLETED' | 'PARTIAL' | 'CANCELLED';
+  models: VideoModelObservation[]; files: VideoFileObservation[]; notes: string[];
+  health_probed: false; credentials_read: false; automatic_runtime_start: false;
+};
+/** Only the additive observation is decoded here. Original transports and
+ * default-off responses retain their existing compatibility contract. */
+export function checkedVideoObservations(value: unknown): VideoObservationReport {
+  const invalid = (): never => {throw new ApiError({status: 200, code: 'LOCAL_AI_VIDEO_OBSERVATION_INVALID', message: '视频模型观察回执不可用，请重新读取原记录。'});};
+  const record = (value: unknown): Record<string, unknown> => {if (!value || typeof value !== 'object' || Array.isArray(value)) invalid(); return value as Record<string, unknown>;};
+  const closed = (value: Record<string, unknown>, keys: string[]) => {if (Object.keys(value).length !== keys.length || keys.some(key => !Object.hasOwn(value, key))) invalid();};
+  const text = (value: unknown, maximum = 1024): string => {if (typeof value !== 'string' || !value.trim() || value.length > maximum || /[\u0000-\u001f\u007f]/.test(value)) invalid(); return value as string;};
+  const bytes = (value: unknown): number => {if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0) invalid(); return value as number;};
+  const list = (value: unknown, maximum: number): unknown[] => {if (!Array.isArray(value) || value.length > maximum) invalid(); return value as unknown[];};
+  const flags = (value: Record<string, unknown>) => {if (value.model_total_bytes !== null || value.required_vram_bytes !== null || value.inference_verified !== false) invalid();};
+  const row = record(value); closed(row, ['contract', 'scan_id', 'scan_status', 'models', 'files', 'notes', 'health_probed', 'credentials_read', 'automatic_runtime_start']);
+  if (row.contract !== 'local-video-observation/1' || row.health_probed !== false || row.credentials_read !== false || row.automatic_runtime_start !== false
+    || !['NOT_SCANNED', 'RUNNING', 'COMPLETED', 'PARTIAL', 'CANCELLED'].includes(String(row.scan_status))) invalid();
+  if (row.scan_id !== null) text(row.scan_id, 64);
+  const models = list(row.models, 2048).map(value => {
+    const model = record(value); closed(model, ['candidate_id', 'provider_id', 'model_name', 'family', 'runtime_id', 'runtime_type', 'registered', 'enabled', 'enable_eligible', 'route_state', 'structure_validated', 'structural_only', 'inference_verified', 'file_association', 'model_total_bytes', 'required_vram_bytes']);
+    flags(model); ['candidate_id', 'provider_id', 'model_name', 'family', 'runtime_id', 'runtime_type'].forEach(key => text(model[key]));
+    if (model.structural_only !== true || ['registered', 'enabled', 'enable_eligible', 'structure_validated'].some(key => typeof model[key] !== 'boolean')
+      || !['REGISTERED', 'NOT_REGISTERED', 'UNKNOWN'].includes(String(model.route_state)) || model.enabled && !model.registered
+      || model.route_state === 'REGISTERED' && (!model.registered || !model.enabled || !model.enable_eligible)) invalid();
+    const association = record(model.file_association); closed(association, ['status', 'reason', 'file_id', 'path', 'root', 'observed_file_bytes', 'size_semantics', 'runtime_path_verified', 'eligibility_derived']);
+    if (!['MATCHED', 'AMBIGUOUS', 'NOT_OBSERVED', 'UNKNOWN'].includes(String(association.status)) || association.runtime_path_verified !== false || association.eligibility_derived !== false) invalid(); text(association.reason, 100);
+    if (association.status === 'MATCHED') {text(association.file_id); text(association.path, 32768); text(association.root, 32768); bytes(association.observed_file_bytes); if (association.size_semantics !== 'WEIGHT_FILE') invalid();}
+    else if (['file_id', 'path', 'root', 'observed_file_bytes', 'size_semantics'].some(key => association[key] !== null)) invalid();
+    return model as unknown as VideoModelObservation;
+  });
+  const files = list(row.files, 2000).map(value => {
+    const file = record(value); closed(file, ['file_id', 'path', 'root', 'source', 'format', 'family', 'header_valid', 'observed_file_bytes', 'size_semantics', 'model_total_bytes', 'required_vram_bytes', 'inference_verified']);
+    flags(file); text(file.file_id); text(file.path, 32768); text(file.root, 32768); text(file.family); bytes(file.observed_file_bytes);
+    if (!['CONFIGURED', 'COMMON'].includes(String(file.source)) || !['GGUF', 'SAFETENSORS', 'DIFFUSERS'].includes(String(file.format)) || typeof file.header_valid !== 'boolean'
+      || file.size_semantics !== (file.format === 'DIFFUSERS' ? 'INDEX_METADATA' : 'WEIGHT_FILE')) invalid();
+    return file as unknown as VideoFileObservation;
+  });
+  if (new Set(models.map(model => model.candidate_id)).size !== models.length || new Set(files.map(file => file.file_id)).size !== files.length) invalid();
+  list(row.notes, 16).forEach(value => text(value, 100));
+  return {...row, models, files} as unknown as VideoObservationReport;
+}
+function checkedOptionalVideoObservation<T extends {video_observations?: VideoObservationReport}>(value: T): T {
+  if (value?.video_observations === undefined) return value;
+  return {...value, video_observations: checkedVideoObservations(value.video_observations)};
+}
 export type AIEnvironmentReport = {
   schema_version: 2;
   execution_scope: 'BACKEND_HOST';
@@ -156,6 +218,7 @@ export type AIEnvironmentReport = {
   }[];
   model_files: EnvironmentModelFile[];
   workflow_prerequisites?: WorkflowPrerequisiteReport | null;
+  video_observations?: VideoObservationReport;
   roots: {
     path: string; source: 'CONFIGURED' | 'COMMON';
     status: 'PENDING' | 'SCANNED' | 'NOT_FOUND' | 'UNREADABLE' | 'REJECTED' | 'BOUNDED' | 'CANCELLED';
@@ -175,6 +238,7 @@ export type LocalDiscoverySnapshot = {
   hardware: Record<string, unknown>;
   persistence_error?: string | null;
   workflow_adapters?: {id: string; display_name?: string; family?: string; capability?: string}[];
+  video_observations?: VideoObservationReport;
 };
 
 const BASE = '/api/model-center/local-ai';
@@ -215,8 +279,8 @@ async function call<T>(path: string, method = 'GET', body?: unknown, signal?: Ab
 }
 const id = encodeURIComponent;
 export const localAiDiscoveryApi = {
-  environment: (signal?: AbortSignal) => call<AIEnvironmentReport>('/environment', 'GET', undefined, signal),
-  snapshot: (signal?: AbortSignal) => call<LocalDiscoverySnapshot>('', 'GET', undefined, signal),
+  environment: (signal?: AbortSignal) => call<AIEnvironmentReport>('/environment', 'GET', undefined, signal).then(checkedOptionalVideoObservation),
+  snapshot: (signal?: AbortSignal) => call<LocalDiscoverySnapshot>('', 'GET', undefined, signal).then(checkedOptionalVideoObservation),
   scan: () => call<LocalDiscoveryScan>('/scan', 'POST', {}),
   scanStatus: (scanId: string, signal?: AbortSignal) => call<LocalDiscoveryScan>(`/scan/${id(scanId)}`, 'GET', undefined, signal),
   cancelScan: (scanId: string) => call<LocalDiscoveryScan>(`/scan/${id(scanId)}/cancel`, 'POST', {}),
@@ -279,8 +343,8 @@ export function localAiDiscoveryClient(context: CollaborationContext, isCurrent:
     return result;
   }
   return {
-    environment: (signal?: AbortSignal) => request<AIEnvironmentReport>('/environment', 'GET', undefined, signal),
-    snapshot: (signal?: AbortSignal) => request<LocalDiscoverySnapshot>('', 'GET', undefined, signal),
+    environment: (signal?: AbortSignal) => request<AIEnvironmentReport>('/environment', 'GET', undefined, signal).then(checkedOptionalVideoObservation),
+    snapshot: (signal?: AbortSignal) => request<LocalDiscoverySnapshot>('', 'GET', undefined, signal).then(checkedOptionalVideoObservation),
     previewScope: async (includeCommon: boolean, signal?: AbortSignal) => checkedScope(await request<LocalAiScanScope>(`/onboarding/scan-scope?include_common_model_dirs=${includeCommon ? 'true' : 'false'}`, 'GET', undefined, signal), includeCommon),
     confirmScan: (scopeDigest: string, signal?: AbortSignal) => request<LocalDiscoveryScan>('/onboarding/scan', 'POST', {scope_digest: scopeDigest, confirmed: true}, signal),
     scanStatus: (scanId: string, signal?: AbortSignal) => request<LocalDiscoveryScan>(`/scan/${id(scanId)}`, 'GET', undefined, signal),

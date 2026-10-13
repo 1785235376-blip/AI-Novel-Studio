@@ -116,3 +116,8 @@ Current test failures and earlier historical failures are not erased by publicat
 ### Phase4 Storyboard / Video foundation (2026-10-14)
 
 [Phase4 report](../../PHASE4_STORYBOARD_VIDEO_REPORT.md) and [pinned summary](phase4-storyboard-video-20261014.json) cover original-owner Shot/approval/image/Timeline operations, explicit schema5 Video Graph and finite enabled local provider execution. Whole modules remain PARTIAL; unsupported local V2V, model timing/quality, final installed Windows/GPU remain LOCAL_REQUIRED. Timeline UNKNOWN creation stays fenced until Phase5 original-owner idempotency. No source publication replaces real acceptance.
+
+
+### Phase5 reviewed Storyboard / Video / Timeline production (2026-10-14)
+
+[Report](../../PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md) and [source-bound summary](phase5-storyboard-video-pipeline-20261014.json): exact historical Shot inputs, original VideoJob/Review/Asset result binding, durable Timeline creation/adoption proof and read-only UNKNOWN recovery. Passive existing-model observation preserves discovery/enable separation. Whole modules PARTIAL; hosted checks BLOCKED_ACCOUNT_PLATFORM, native/GPU/model LOCAL_REQUIRED. Phase6 original Audio/Editing expansion follows.

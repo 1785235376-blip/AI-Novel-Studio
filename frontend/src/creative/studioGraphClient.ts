@@ -1,5 +1,5 @@
 import { checkedStoryboardShot, checkedStoryboardReceipt } from './studioStoryboardContract';
-import { checkedVideoReference, checkedVideoRecipe, sameVideoReference } from './studioVideoRuntimeContract';
+import { checkedVideoReference, checkedVideoRecipe, storyboardShotFields, sameVideoReference } from './studioVideoRuntimeContract';
 import { videoGraphDefinitions } from './graphDraft';
 import { checkedPlanningSnapshot, checkedPlanningDocument, checkedPlanningProjection, productionGraphDefinitions, type PlanningDocument } from './studioProductionGraphContract';
 import { ApiError, type CollaborationContext } from '../api';
@@ -50,7 +50,7 @@ const parameterKeys: Record<StudioGraphDefinitionId, readonly string[]> = {
   timeline_export: ['timeline_snapshot', 'edit_operations', 'source_bindings', 'export_profile'],
   image_reference: ['bindings'], image_prompt: ['prompt'],
   image_style: ['style', 'atmosphere', 'color_palette'], image_upscale: ['operation_id', 'provider_id', 'model_id', 'parameters', 'allow_cloud', 'license_note'],
-  storyboard_shot: ['shot_id', 'shot_version', 'shot_digest'], video_generate: ['operation_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'allow_cloud', 'license_note', 'reference_purpose'],
+  storyboard_shot: ['shot_id', 'shot_version', 'shot_digest'], video_generate: ['operation_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'allow_cloud', 'license_note', 'reference_purpose', 'bind_shot'],
   director_plan: ['document_snapshot'], storyboard_plan: ['document_snapshot'], storyboard_prompt: ['shot_id'],
   image_generate: ['operation_id', 'provider_id', 'model_id', 'parameters', 'allow_cloud', 'license_note'],
 };
@@ -212,8 +212,9 @@ function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false
   if (kind === 'video_generate') {
     if (Object.keys(row).some(key => !parameterKeys[kind].includes(key)) || !GRAPH_VIDEO_OPERATIONS.includes(row.operation_id as typeof GRAPH_VIDEO_OPERATIONS[number])) invalid(input);
     const operation = row.operation_id as typeof GRAPH_VIDEO_OPERATIONS[number];
+    if (row.bind_shot !== undefined && row.bind_shot !== true) invalid(input);
     if (row.reference_purpose !== undefined && !['style', 'action', 'camera'].includes(String(row.reference_purpose))) invalid(input);
-    return { operation_id: operation, provider_id: resourceId(row.provider_id, input), model_id: resourceId(row.model_id, input), prompt: text(row.prompt ?? '', 16000, input, true), parameters: mediaParameterValues(row.parameters ?? {}, operation, input), allow_cloud: bool(row.allow_cloud ?? false, input), license_note: text(row.license_note ?? '', 2000, input, true), ...(row.reference_purpose === undefined ? {} : { reference_purpose: row.reference_purpose as 'style' | 'action' | 'camera' }) };
+    return { operation_id: operation, provider_id: resourceId(row.provider_id, input), model_id: resourceId(row.model_id, input), prompt: text(row.prompt ?? '', 16000, input, true), parameters: mediaParameterValues(row.parameters ?? {}, operation, input), allow_cloud: bool(row.allow_cloud ?? false, input), license_note: text(row.license_note ?? '', 2000, input, true), ...(row.reference_purpose === undefined ? {} : { reference_purpose: row.reference_purpose as 'style' | 'action' | 'camera' }), ...(row.bind_shot === true ? { bind_shot: true as const } : {}) };
   }
   if (kind === 'storyboard_prompt') return { shot_id: resourceId(row.shot_id, input) };
   if (kind === 'image_style') return { style: text(row.style ?? '', 2000, input, true), atmosphere: text(row.atmosphere ?? '', 1000, input, true), color_palette: text(row.color_palette ?? '', 1000, input, true) };
@@ -343,7 +344,14 @@ function schema(value: unknown, kind: StudioGraphDefinitionId): StudioGraphParam
       source_bindings: { type: 'array' }, export_profile: { type: 'object' } }, required: ['timeline_snapshot', 'export_profile'] };
   }
   if (kind === 'storyboard_shot') { if (Object.keys(properties).length !== 3 || parameterKeys[kind].some(key => !Object.hasOwn(properties, key))) invalid(); return { type: 'object', additionalProperties: false, properties: { shot_id: { type: 'string', maxLength: 240 }, shot_version: { type: 'integer', minimum: 1 }, shot_digest: { type: 'string' } }, required: ['shot_id', 'shot_version', 'shot_digest'] }; }
-  if (kind === 'video_generate') { if (JSON.stringify(row).length > 100000 || Object.keys(properties).length !== parameterKeys[kind].length || Object.keys(properties).some(key => !parameterKeys[kind].includes(key))) invalid(); return { type: 'object', additionalProperties: false, properties: { operation_id: { type: 'string', enum: [...GRAPH_VIDEO_OPERATIONS] }, provider_id: { type: 'string', maxLength: 240 }, model_id: { type: 'string', maxLength: 240 }, prompt: { type: 'string', maxLength: 16000 }, parameters: { type: 'object' }, allow_cloud: { type: 'boolean' }, license_note: { type: 'string', maxLength: 2000 }, reference_purpose: { type: 'string', enum: ['style', 'action', 'camera'] } }, required: ['operation_id'] }; }
+  if (kind === 'video_generate') {
+    if (JSON.stringify(row).length > 100000 || ![8, 9].includes(Object.keys(properties).length) || Object.keys(properties).some(key => !parameterKeys[kind].includes(key)) || parameterKeys[kind].filter(key => key !== 'bind_shot').some(key => !Object.hasOwn(properties, key))) invalid();
+    if (properties.bind_shot !== undefined) {
+      const binding = record(properties.bind_shot), variants = list(binding.anyOf, 2).map(value => record(value));
+      if (variants.length !== 2 || !variants.some(value => Object.keys(value).length === 2 && value.type === 'boolean' && value.const === true) || !variants.some(value => Object.keys(value).length === 1 && value.type === 'null') || binding.default !== null) invalid();
+    }
+    return { type: 'object', additionalProperties: false, properties: { operation_id: { type: 'string', enum: [...GRAPH_VIDEO_OPERATIONS] }, provider_id: { type: 'string', maxLength: 240 }, model_id: { type: 'string', maxLength: 240 }, prompt: { type: 'string', maxLength: 16000 }, parameters: { type: 'object' }, allow_cloud: { type: 'boolean' }, license_note: { type: 'string', maxLength: 2000 }, reference_purpose: { type: 'string', enum: ['style', 'action', 'camera'] }, ...(properties.bind_shot === undefined ? {} : { bind_shot: { type: 'boolean', const: true } }) }, required: ['operation_id'] };
+  }
   if (productionGraphDefinitions.includes(kind as typeof productionGraphDefinitions[number])) {
     if (JSON.stringify(row).length > 100000 || Object.keys(properties).length !== parameterKeys[kind].length || Object.keys(properties).some(key => !parameterKeys[kind].includes(key))) invalid();
     if (kind === 'director_plan' || kind === 'storyboard_plan') return { type: 'object', additionalProperties: false, properties: { document_snapshot: { type: 'object' } }, required: ['document_snapshot'] };
@@ -498,7 +506,7 @@ function mediaSource(value: unknown): RecordedProductionSource {
   return { ...base, kind: 'ASSET', asset_kind: row.asset_kind as 'image' | 'video' | 'audio' };
 }
 function recordedMediaCommand(value: unknown): RecordedGraphMediaCommand {
-  const row = record(value); closed(row, ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference']);
+  const row = record(value); closed(row, ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference', 'storyboard_shot']);
   const operation = mediaOperation(row.operation_id, false, true), resolved = mediaParameterValues(row.parameters, operation, false,
     operation === 'm5.image.upscale' || row.image_source !== undefined || row.image_references !== undefined || row.mask_source !== undefined || operation === 'm5.image.reference' || operation === 'm5.image.inpaint');
   if (operation === 'm5.image.upscale' && (row.prompt !== '' || row.allow_cloud !== false)) invalid();
@@ -509,7 +517,7 @@ function recordedMediaCommand(value: unknown): RecordedGraphMediaCommand {
     model_id: row.model_id == null ? null : resourceId(row.model_id), prompt: text(row.prompt, 16000, false, true),
     parameters: Object.fromEntries(Object.entries(resolved).filter((item): item is [string, string | number] => item[1] !== null)),
     source_snapshots: sourceSnapshots, allow_cloud: bool(row.allow_cloud), license_note: text(row.license_note, 2000, false, true),
-    ...checkedImageRuntimeInputs(row, sourceSnapshots, operation), ...checkedVideoReference(row.video_reference, sourceSnapshots, operation) };
+    ...checkedImageRuntimeInputs(row, sourceSnapshots, operation), ...checkedVideoReference(row.video_reference, sourceSnapshots, operation), ...storyboardShotFields(row.storyboard_shot, sourceSnapshots, operation) };
 }
 function productionRecipe(value: unknown, operation: string): ProductionRecipe {
   const row = record(value); closed(row, ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline',

@@ -530,6 +530,19 @@ class LocalDiscoveryBridge:
                 raise ModelRuntimeError(RuntimeErrorCode.MODEL_DISABLED, '本地模型尚未启用或需要重新验证')
             return candidate
 
+    def video_observation_state(self, candidate):
+        """Passive registry identity only; never calls adapter health/configuration."""
+        if self.video_registry is None:
+            return 'UNKNOWN'
+        with self.service.lock:
+            original = self.service.registrations.get(candidate['id'])
+            adapter = self.video_registry.get(candidate['provider_id'])
+            if (not original or original.get('enabled') is not True or original.get('enable_eligible') is not True
+                    or type(adapter) is not LocalVideoAdapter or adapter.bridge is not self
+                    or adapter._studio_identity != {key: original.get(key) for key in adapter._STUDIO_IDENTITY_FIELDS}):
+                return 'NOT_REGISTERED'
+            return 'REGISTERED'
+
     def __call__(self, candidate):
         provider_id = candidate['provider_id']
         enabled = bool(candidate.get('enabled'))

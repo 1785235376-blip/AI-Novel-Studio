@@ -162,3 +162,8 @@ Reference 用途/来源说明是作者元数据，不宣称人物一致性；Con
 ## Phase4（2026-10-14）
 
 Opus 可重构 StoryboardProductionPanel、CreativeCanvas、视频Graph Inspector/Preview及原 StudioMediaExecutionPanel 视图。保留 useStoryboardProductionController、useStudioGraphEditorController、useStudioMediaExecution、Host transport、父级 mutex、dirty/CAS、精确文档/Shot/Asset pin、撤权/迟到响应及原人工审核。图片准备仅生成原请求，Timeline底稿不自动生成视频；schema5目录读取与采用分别明确操作，旧schema1–4目录不被预加载替换。409或无效成功回执清退旧来源与已验证Blob授权。Timeline UNKNOWN独立于分镜读取，原timelineList只读检查不解锁重复创建；Phase5通过原后端owner补核对，UI不能自行推断成功。真实图字节使用原下载/尺寸/摘要证明及objectURL清理；高级参数/证明可折叠。专业布局/视觉与新工作区真实安装体验尚未验收。
+
+
+## Phase5（2026-10-14）
+
+Opus可重构StoryPanel/视频任务与候选/Shot卡片/Timeline状态/模型观察视图，保留原useStoryboardProductionController、useStudioMediaExecution、Graph controller、Host/client/current/retired epoch、parentmutex/dirty/CAS及人工Review。新Video准备不派发；绑定原APPROVED任务/正式Asset并明确重新审核。创建request_id与完整input只读GET核对，creationv1与当前Timelinev2可并存；采用UNKNOWN要匹配完整request/job/Shot/clip effect/原last_edit，不能靠表面相同或列表解除。旧schema5不自动补bind_shot，新节点可明确关闭该可选绑定独立TEXT生产；schemas1–4不自动升级。模型观察只显示文件名和未知尺寸/显存，不新增控制权限。基础UI已接执行操作，专业视觉/原生体验仍LOCAL_REQUIRED。

@@ -205,6 +205,8 @@ class StudioVideoExecution:
             if graph_binding is None:
                 raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
             expected_origin["graph_binding"] = copy.deepcopy(graph_binding)
+        if row["context"].get("storyboard_shot") is not None:
+            expected_origin["storyboard_shot"] = copy.deepcopy(row["context"]["storyboard_shot"])
         expected_binding = {"novel_id": nid, "branch_id": branch,
             "scope_key": row["context"]["scope_key"], "incarnation": row["context"]["incarnation"]}
         if (candidate.get("kind") != "video" or candidate.get("sha256") != hashlib.sha256(data).hexdigest()

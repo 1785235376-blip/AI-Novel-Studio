@@ -1,0 +1,133 @@
+{
+  "baseline_sha": "8e4f028680f885d7bc9e040609c5c1b5d2a48e13",
+  "synthetic_only": true,
+  "parameters": {
+    "operation_id": "m7.video.t2v",
+    "provider_id": "configured",
+    "model_id": "owned-model",
+    "prompt": "SYNTHETIC original request"
+  },
+  "normalized_parameters": {
+    "operation_id": "m7.video.t2v",
+    "provider_id": "configured",
+    "model_id": "owned-model",
+    "prompt": "SYNTHETIC original request",
+    "parameters": {
+      "width": null,
+      "height": null,
+      "steps": null,
+      "seed": null,
+      "negative_prompt": null,
+      "size": null,
+      "quality": null,
+      "duration_seconds": null,
+      "frame_rate": null,
+      "voice_id": null,
+      "speech_rate": null,
+      "in_ms": null,
+      "out_ms": null
+    },
+    "allow_cloud": false,
+    "license_note": ""
+  },
+  "ports": {
+    "shot": {
+      "document_snapshot": {
+        "id": "board-1",
+        "version": 2,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "shot_id": "shot-1",
+      "shot_version": 1,
+      "shot_digest": "09ccc44a3d6b74fad87ed49cb26e5c1ebc6be7ce3dcd4b41454fdf3c63ee7ab2",
+      "shot": {
+        "id": "shot-1",
+        "number": 1,
+        "scene_id": "scene-1",
+        "shot_size": "MEDIUM",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "duration_seconds": 5,
+        "frame_prompt": "SYNTHETIC quiet scene",
+        "composition": "",
+        "lens": "",
+        "lighting": "",
+        "environment": "",
+        "sound": "",
+        "color": "",
+        "action": "",
+        "dialogue": [],
+        "sound_effect": "",
+        "director_notes": []
+      },
+      "image_asset": null,
+      "approved": true
+    }
+  },
+  "command_fields": {
+    "operation_id": "m7.video.t2v",
+    "provider_id": "configured",
+    "model_id": "owned-model",
+    "prompt": "SYNTHETIC original request\n\nSTORYBOARD_SHOT\nSYNTHETIC quiet scene\nshot_size: MEDIUM\ncamera_angle: EYE_LEVEL\ncamera_motion: STATIC",
+    "parameters": {
+      "width": null,
+      "height": null,
+      "steps": null,
+      "seed": null,
+      "negative_prompt": null,
+      "size": null,
+      "quality": null,
+      "duration_seconds": 5,
+      "frame_rate": null,
+      "voice_id": null,
+      "speech_rate": null,
+      "in_ms": null,
+      "out_ms": null
+    },
+    "allow_cloud": false,
+    "license_note": "",
+    "source_snapshots": [
+      {
+        "kind": "CREATIVE_DOCUMENT",
+        "id": "board-1",
+        "version": 2,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  },
+  "command": {
+    "operation_id": "m7.video.t2v",
+    "request_id": "phase5-legacy-identity",
+    "provider_id": "configured",
+    "model_id": "owned-model",
+    "prompt": "SYNTHETIC original request\n\nSTORYBOARD_SHOT\nSYNTHETIC quiet scene\nshot_size: MEDIUM\ncamera_angle: EYE_LEVEL\ncamera_motion: STATIC",
+    "parameters": {
+      "width": null,
+      "height": null,
+      "steps": null,
+      "seed": null,
+      "negative_prompt": null,
+      "size": null,
+      "quality": null,
+      "duration_seconds": 5,
+      "frame_rate": null,
+      "voice_id": null,
+      "speech_rate": null,
+      "in_ms": null,
+      "out_ms": null
+    },
+    "source_snapshots": [
+      {
+        "id": "board-1",
+        "kind": "CREATIVE_DOCUMENT",
+        "version": 2,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "asset_kind": null,
+        "reference_only": true
+      }
+    ],
+    "allow_cloud": false,
+    "license_note": ""
+  },
+  "command_digest": "95720e35e11455ec7bb1c13a008a11d67e250b2002bd2f88d25fc5856992fba9"
+}

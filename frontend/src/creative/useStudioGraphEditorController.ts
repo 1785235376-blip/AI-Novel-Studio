@@ -219,7 +219,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       parameters: kind === 'asset_reference' ? { asset_id: asset!.id, version: asset!.version, digest: asset!.sha256, kind: asset!.kind as 'image' | 'video' | 'audio' }
         : kind === 'media_generate' ? { operation_id: 'm5.image.t2i' as const, provider_id: '', model_id: '', prompt: '', parameters: {}, allow_cloud: false, license_note: '' }
         : kind === 'storyboard_shot' ? { shot_id: shot!.shot_id, shot_version: shot!.shot_version, shot_digest: shot!.shot_digest }
-        : kind === 'video_generate' ? { operation_id: 'm7.video.t2v' as const, provider_id: '', model_id: '', prompt: '', parameters: {}, allow_cloud: false, license_note: '' }
+        : kind === 'video_generate' ? { operation_id: 'm7.video.t2v' as const, provider_id: '', model_id: '', prompt: '', parameters: {}, allow_cloud: false, license_note: '', bind_shot: true as const }
         : ['director_plan', 'storyboard_plan'].includes(kind) ? { document_snapshot: { id: planning!.id, version: planning!.version, digest: planning!.digest } }
         : kind === 'storyboard_prompt' ? { shot_id: '' }
         : kind === 'image_upscale' ? { operation_id: 'm5.image.upscale' as const, provider_id: '', model_id: '', parameters: {}, allow_cloud: false, license_note: '' }
@@ -292,6 +292,8 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (!target || (key === 'shot_id' ? target.definition_id !== 'storyboard_prompt' || value.length > 240 : target.definition_id !== 'image_style' || value.length > (key === 'style' ? 2000 : 1000))) return;
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value } } : row) });
   }
+  function updateShotBinding(value: boolean) { const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || target.definition_id !== 'video_generate' || !editable || !current() || locked() || value && !draftRef.current.edges.some(edge => edge.target_node_id === target.id && edge.target_port === 'shot')) return;
+    const parameters = { ...target.parameters }; if (value) parameters.bind_shot = true; else delete parameters.bind_shot; change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters } : row) }); }
   function connect() {
     if (!editable || !sourcePort || !targetPort || draft.edges.length >= catalog!.limits.edges) return;
     const [source_node_id, source_port] = JSON.parse(sourcePort), [target_node_id, target_port] = JSON.parse(targetPort);
@@ -371,7 +373,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
     loadVideoCatalog, videoSchemaConfirmed, confirmVideoSchema, upgradeVideoSchema, shotParent, chooseShotParent, shotReceipt, shotChoice, chooseShot, shotLoading, loadShotReceipt,
-    planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateReferenceMetadata,
+    planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
     setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,

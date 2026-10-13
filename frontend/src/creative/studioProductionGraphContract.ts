@@ -52,9 +52,10 @@ function note(value: unknown, ordered = false) {
 }
 export function checkedCreativeShot(value: unknown): CreativeShot {
     const shot = row(value); const required = ['id', 'number', 'scene_id', 'shot_size', 'camera_angle', 'camera_motion', 'duration_seconds', 'frame_prompt', 'composition', 'lens', 'lighting', 'environment', 'sound', 'color', 'action', 'dialogue', 'sound_effect', 'director_notes'];
-    closed(shot, required, ['characters', 'emotion', 'continuity', 'director_note_ids']); fields(shot, required.filter(key => !['number', 'duration_seconds', 'dialogue', 'director_notes'].includes(key)));
+    closed(shot, required, ['characters', 'emotion', 'continuity', 'director_note_ids', 'video_generation_hint']); fields(shot, required.filter(key => !['number', 'duration_seconds', 'dialogue', 'director_notes'].includes(key)));
     string(shot.action, 16000); integer(shot.number, 1, 10000); integer(shot.duration_seconds, 1, 600);
     if (shot.characters != null) strings(shot.characters, 100); if (shot.emotion != null) string(shot.emotion, 4000);
+    if (shot.video_generation_hint != null) string(shot.video_generation_hint, 4000);
     array(shot.dialogue, 200).forEach(dialogue); array(shot.director_notes, 100).forEach(value => note(value)); if (shot.director_note_ids != null) strings(shot.director_note_ids, 100);
     if (shot.continuity != null) { const continuity = row(shot.continuity); closed(continuity, ['characters', 'outfit', 'environment', 'camera'], ['previous_shot_id', 'next_shot_id']);
       for (const key of ['characters', 'outfit', 'environment', 'camera']) string(continuity[key], 4000);

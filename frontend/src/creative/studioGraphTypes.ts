@@ -33,7 +33,7 @@ export type StudioGraphParameters = {
   digest?: string;
   kind?: 'image' | 'video' | 'audio';
   operation_id?: GraphMediaOperation | GraphImageOperation | GraphUpscaleOperation;
-  style?: string; atmosphere?: string; color_palette?: string; document_snapshot?: PlanningSnapshot; shot_id?: string; shot_version?: number; shot_digest?: string; reference_purpose?: 'style' | 'action' | 'camera';
+  style?: string; atmosphere?: string; color_palette?: string; document_snapshot?: PlanningSnapshot; shot_id?: string; shot_version?: number; shot_digest?: string; reference_purpose?: 'style' | 'action' | 'camera'; bind_shot?: true;
   bindings?: { port: 'source_1' | 'source_2' | 'source_3' | 'source_4' | 'source_5'; weight: number; purpose?: ImageReferencePurpose; source_note?: string }[];
   provider_id?: string | null;
   model_id?: string | null;
@@ -96,6 +96,7 @@ export type StudioGraphParameterSchema = {
     minimum?: number;
     maximum?: number;
     pattern?: string;
+    const?: true;
     enum?: string[];
   }>;
   required?: string[];

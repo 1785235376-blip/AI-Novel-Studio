@@ -19,6 +19,81 @@ MAX_METADATA_BYTES = 256 * 1024
 MAX_ROOTS = 32
 
 
+def video_file_observations(job):
+    """Project observed bytes without interpreting an index as model weights."""
+    return [{'file_id': item['id'], 'path': item['path'], 'root': item['root'], 'source': item['source'],
+             'format': item['format'], 'family': item.get('family', 'UNKNOWN'), 'header_valid': item['header_valid'],
+             'observed_file_bytes': item['size_bytes'],
+             'size_semantics': 'INDEX_METADATA' if item['format'] == 'DIFFUSERS' else 'WEIGHT_FILE',
+             'model_total_bytes': None, 'required_vram_bytes': None, 'inference_verified': False}
+            for item in job.get('model_files', [])[:2000]
+            if 'VIDEO' in item.get('declared_capabilities', [])]
+
+
+def video_file_associations(job, configured_roots):
+    """Build a lexical lookup from the last explicit scan, with no file I/O.
+
+    ComfyUI exposes relative loader filenames, not installed absolute paths.
+    A unique configured-root observation can be displayed, but cannot change
+    candidate identity, validation, enable eligibility or runtime bindings.
+    Incomplete root enumeration cannot rule out another exact match.
+    """
+    configured = {os.path.normcase(root) for root in configured_roots}
+    roots = {os.path.normcase(row['path']): row for row in job.get('roots', []) if row.get('source') == 'CONFIGURED'}
+    complete = (bool(configured) and job.get('status') in {'COMPLETED', 'PARTIAL'}
+                and all(roots.get(root, {}).get('status') == 'SCANNED' for root in configured))
+    lookup = {}
+    for item in job.get('model_files', [])[:2000]:
+        root = os.path.normcase(item['root'])
+        if item.get('source') != 'CONFIGURED' or root not in configured or item.get('format') != 'SAFETENSORS':
+            continue
+        try:
+            relative = Path(os.path.normcase(item['path'])).relative_to(Path(root))
+        except ValueError:
+            continue
+        if not relative.parts or any(part in {'.', '..'} for part in relative.parts):
+            continue
+        lookup.setdefault((root, '/'.join(relative.parts)), {})[item['id']] = item
+
+    def association(candidate):
+        empty = {'status': 'UNKNOWN', 'reason': 'NO_COMPLETE_CONFIGURED_ROOT_OBSERVATION',
+                 'file_id': None, 'path': None, 'root': None, 'observed_file_bytes': None, 'size_semantics': None,
+                 'runtime_path_verified': False, 'eligibility_derived': False}
+        if not complete or candidate.get('runtime_type') != 'COMFYUI':
+            return empty
+        filename = candidate.get('model_name', '').replace('\\', '/')
+        if (not filename or filename.startswith('/') or ':' in filename or '\x00' in filename
+                or any(part in {'', '.', '..'} for part in filename.split('/'))):
+            return {**empty, 'reason': 'LOADER_FILENAME_UNUSABLE'}
+        loaders = {('CheckpointLoaderSimple', 'ckpt_name'): ('checkpoints',),
+                   ('UNETLoader', 'unet_name'): ('diffusion_models', 'unet')}
+        bindings = candidate.get('evidence', {}).get('loader_bindings', [])
+        directories = {directory for binding in bindings if isinstance(binding, dict)
+                       for directory in loaders.get((binding.get('node_class'), binding.get('input_field')), ())}
+        if not directories:
+            return {**empty, 'reason': 'EXACT_VIDEO_LOADER_NOT_OBSERVED'}
+        # The root itself may explicitly be the loader folder. Never match a
+        # basename against arbitrary descendant paths or infer a Comfy install.
+        names = {os.path.normcase(filename).replace('\\', '/'),
+                 *[os.path.normcase(directory + '/' + filename).replace('\\', '/') for directory in directories]}
+        matches = {}
+        for root in configured:
+            for name in names:
+                matches.update(lookup.get((root, name), {}))
+        if len(matches) > 1:
+            return {**empty, 'status': 'AMBIGUOUS', 'reason': 'MULTIPLE_EXACT_CONFIGURED_ROOT_OBSERVATIONS'}
+        if not matches:
+            return {**empty, 'status': 'NOT_OBSERVED', 'reason': 'EXACT_LOADER_FILE_NOT_OBSERVED'}
+        item = next(iter(matches.values()))
+        if item.get('header_valid') is not True:
+            return {**empty, 'reason': 'OBSERVED_WEIGHT_HEADER_NOT_VERIFIED'}
+        return {**empty, 'status': 'MATCHED', 'reason': 'CONFIGURED_ROOT_OBSERVATION_NOT_RUNTIME_BINDING',
+                'file_id': item['id'], 'path': item['path'], 'root': item['root'],
+                'observed_file_bytes': item['size_bytes'], 'size_semantics': 'WEIGHT_FILE'}
+
+    return association
+
+
 def common_model_roots(*, home: Path | None = None, environ=None, system: str | None = None) -> list[str]:
     """Fixed Windows model locations, never drives, registry, PATH or recursive home scans."""
     if (system or platform.system()) != 'Windows':

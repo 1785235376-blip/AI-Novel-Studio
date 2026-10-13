@@ -114,3 +114,14 @@ These are development stages on `feature/v2-narrative-platform`, not releases.
 - Fix repeated PostgreSQL authority reads per checkpoint; preserve exact original checks/timeouts and earlier failures.
 - Add source-fenced Storyboard/Video controllers, strict captured DTOs and basic canvas/Inspector/preview; Opus presentation seams retained.
 - [Report](../../PHASE4_STORYBOARD_VIDEO_REPORT.md) records actual tests, Windows privilege failures, overlap and remaining LOCAL_REQUIRED gates.
+
+
+## 2026-10-14 — Phase5 Video / Storyboard production operations
+
+- Carry optional authored video hint and exact ShotPin through original command/job/immutable Asset origin; preserve default legacy identity.
+- Prepare original T2V/I2V requests; bind only original APPROVED VideoJob/formal Asset to unchanged historical Shot content and require new Storyboard review.
+- Add original Timeline atomic create request identity/read recovery and formal Video clip adoption through existing edit/CAS/locks/history; durable exact settlement, no UNKNOWN replay.
+- Add explicit Graph5 Shot binding, preserving existing nodes/requests and independent text/video use.
+- Project last authorized video file observations/current registration; no qualification, model start/download, credential read or guessed size/VRAM.
+- Connect headless controllers/basic views with exact captured DTOs, original mutex/Host/late/dirty/review and Opus seams.
+- [Actual report](../../PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md) retains failed evidence and distinguishes isolated tests from native/GPU/model/full CI acceptance.

@@ -102,6 +102,20 @@ class VideoReference(ExecutionModel):
         return self
 
 
+class StoryboardDocumentSnapshot(ExecutionModel):
+    id: Name
+    version: int = Field(ge=1)
+    digest: Digest
+
+
+class StoryboardShotPin(ExecutionModel):
+    """Exact original authored shot input, never a client approval grant."""
+    document_snapshot: StoryboardDocumentSnapshot
+    shot_id: Name
+    shot_version: int = Field(ge=1)
+    shot_digest: Digest
+
+
 class MediaCommand(ExecutionModel):
     operation_id: MediaOperation
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
@@ -116,17 +130,24 @@ class MediaCommand(ExecutionModel):
     image_references: list[ImageReference] | None = Field(default=None, max_length=5)
     mask_source: ProductionSourceSnapshot | None = None
     video_reference: VideoReference | None = None
+    storyboard_shot: StoryboardShotPin | None = None
 
     @model_serializer(mode="wrap")
     def legacy_image_identity(self, handler):
         value = handler(self)
-        for key in ("image_source", "image_references", "mask_source", "video_reference"):
+        for key in ("image_source", "image_references", "mask_source", "video_reference", "storyboard_shot"):
             if value.get(key) is None or (key == "image_references" and value[key] == []):
                 value.pop(key, None)
         return value
 
     @model_validator(mode="after")
     def operation_inputs(self):
+        if self.storyboard_shot is not None:
+            pin = self.storyboard_shot.document_snapshot
+            if (not self.operation_id.startswith("m7.") or not any(
+                    source.kind == "CREATIVE_DOCUMENT" and (source.id, source.version, source.digest) ==
+                    (pin.id, pin.version, pin.digest) for source in self.source_snapshots)):
+                raise ValueError("STUDIO_STORYBOARD_SOURCE_PIN_REQUIRED")
         p = self.parameters.model_dump(exclude_none=True)
         allowed = {
             "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},

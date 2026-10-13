@@ -271,6 +271,15 @@ class AssetLibraryService:
                     or len(json.dumps(origin, ensure_ascii=False).encode()) > 24 * 1024):
                 raise ValueError("STUDIO_RESULT_AUTHORITY_REQUIRED")
             self._identifier(origin.get("job_id"), "job_id")
+            if "storyboard_shot" in origin:
+                from ..creative.production_execution_models import StoryboardShotPin
+                pin = StoryboardShotPin.model_validate(origin["storyboard_shot"])
+                if (not str(origin.get("operation_id", "")).startswith("m7.") or not any(
+                        source.get("kind") == "CREATIVE_DOCUMENT"
+                        and (source.get("id"), source.get("version"), source.get("digest")) ==
+                        (pin.document_snapshot.id, pin.document_snapshot.version, pin.document_snapshot.digest)
+                        for source in origin.get("sources", []))):
+                    raise ValueError("STUDIO_STORYBOARD_SOURCE_PIN_REQUIRED")
             if "graph_binding" in origin:
                 from ..creative.graph_media_binding import validate_graph_binding
                 if origin["graph_binding"] is None:

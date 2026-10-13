@@ -38,6 +38,7 @@ def video_command_fields(node, ports):
         raise ValueError("CREATIVE_GRAPH_VIDEO_INPUT_INVALID")
     values = parameters.model_dump()
     purpose = values.pop("reference_purpose", None)
+    bind_shot = values.pop("bind_shot", None)
     prompt = values["prompt"]
     text = ports.get("text")
     if text is not None:
@@ -46,12 +47,14 @@ def video_command_fields(node, ports):
         prompt += ("\n\n" if prompt else "") + "GRAPH_SOURCE_TEXT\n" + text
     sources = []
     shot = StoryboardShotPort.model_validate(ports["shot"]) if "shot" in ports else None
+    if bind_shot and shot is None:
+        raise ValueError("CREATIVE_GRAPH_VIDEO_SHOT_BINDING_INPUT_REQUIRED")
     if shot is not None:
         if not shot.approved:
             raise ValueError("STUDIO_STORYBOARD_APPROVAL_REQUIRED")
         authored = [shot.shot.frame_prompt]
         for key in ("shot_size", "camera_angle", "camera_motion", "lens", "composition", "action",
-                "emotion", "lighting", "environment", "color", "sound", "sound_effect"):
+                "emotion", "lighting", "environment", "color", "sound", "sound_effect", "video_generation_hint"):
             value = getattr(shot.shot, key, None)
             if value and value.strip():
                 authored.append(key + ": " + value.strip())
@@ -64,6 +67,12 @@ def video_command_fields(node, ports):
         values["parameters"]["duration_seconds"] = shot.shot.duration_seconds
         pin = shot.document_snapshot
         sources.append({"kind": "CREATIVE_DOCUMENT", "id": pin.id, "version": pin.version, "digest": pin.digest})
+        # Explicit opt-in preserves already-published schema5 command identities.
+        # This pin is original history evidence; MediaCommand's owner validates
+        # current approval and later publication/review keep the original fences.
+        if bind_shot:
+            values["storyboard_shot"] = {"document_snapshot": pin.model_dump(),
+                "shot_id": shot.shot_id, "shot_version": shot.shot_version, "shot_digest": shot.shot_digest}
     source = AssetParameters.model_validate(ports["source"]) if "source" in ports else None
     reference = AssetParameters.model_validate(ports["reference"]) if "reference" in ports else None
     if reference is not None:
@@ -98,7 +107,9 @@ def preflight_video(nodes, incoming, order, source_kind):
         edges = {edge["target_port"]: edge for edge in incoming[key]}
         operation = node["parameters"]["operation_id"]
         code = None
-        if "source" in edges and "reference" in edges:
+        if node["parameters"].get("bind_shot") and "shot" not in edges:
+            code = "CREATIVE_GRAPH_VIDEO_SHOT_BINDING_INPUT_REQUIRED"
+        elif "source" in edges and "reference" in edges:
             code = "CREATIVE_GRAPH_VIDEO_SOURCE_EXCLUSIVE"
         elif "reference" in edges and (operation != "m7.video.v2v" or source_kind(edges["reference"]) != "video"
                 or node["parameters"].get("reference_purpose") is None):

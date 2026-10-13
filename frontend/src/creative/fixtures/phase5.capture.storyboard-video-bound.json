@@ -1,0 +1,110 @@
+{
+  "contract": "studio-storyboard/1",
+  "document_snapshot": {
+    "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+    "version": 4,
+    "digest": "892b5130330d7b9027646d30bdd96c77eb3dde2b509905e92d96d25369d392d1"
+  },
+  "content_digest": "8e2366299200eedd10c650a67756f37dc8028caf3f478a10c9164431bb42588e",
+  "approved": false,
+  "shots": [
+    {
+      "shot_id": "shot-1",
+      "shot_version": 1,
+      "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471",
+      "shot": {
+        "id": "shot-1",
+        "number": 1,
+        "scene_id": "scene-1",
+        "shot_size": "MEDIUM",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "duration_seconds": 3,
+        "frame_prompt": "Synthetic character in a blue jacket",
+        "composition": "",
+        "lens": "",
+        "lighting": "Soft key",
+        "environment": "",
+        "sound": "",
+        "color": "",
+        "action": "",
+        "dialogue": [],
+        "sound_effect": "",
+        "director_notes": [],
+        "continuity": {
+          "next_shot_id": "shot-2",
+          "characters": "visitor",
+          "outfit": "blue jacket",
+          "environment": "",
+          "camera": ""
+        }
+      },
+      "image_asset": {
+        "asset_id": "d8fb2ab4-9bc0-4b95-9f93-b529acc2714d",
+        "version": 1,
+        "digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4",
+        "kind": "image"
+      },
+      "video_result": {
+        "asset": {
+          "asset_id": "2a93e0f1-7720-40cf-8944-04e69c00ad8c",
+          "version": 2,
+          "digest": "c88175c01023ea4fca4bfab35c6953943bd0518de50bfb117225afb96c7e6a23",
+          "kind": "video"
+        },
+        "source_shot": {
+          "document_snapshot": {
+            "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+            "version": 3,
+            "digest": "5f0b7b7734a502f2b0e4625e12b7432f22c06a529b8b7c71e711c709082bd68e"
+          },
+          "shot_id": "shot-1",
+          "shot_version": 1,
+          "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+        },
+        "job": {
+          "id": "c484583f599fb7b5608b81a44ebf8de52ddf67d2e8747160adeb68936c392a55",
+          "version": 8,
+          "request_digest": "32a4d460c69b9265fbda4741e3b877b8021e9bfa06af4903f366ae14d0fd389b",
+          "receipt_digest": "74ea5b99ef7ba33e175d616ce487131b86164e07dd599a397ea1d3c75c116208"
+        }
+      }
+    },
+    {
+      "shot_id": "shot-2",
+      "shot_version": 1,
+      "shot_digest": "88852c9688df3c33db9d828adba7675b26348e0790398b0c3908802a61716d29",
+      "shot": {
+        "id": "shot-2",
+        "number": 2,
+        "scene_id": "scene-1",
+        "shot_size": "MEDIUM",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "duration_seconds": 2,
+        "frame_prompt": "Same synthetic visitor looking up",
+        "composition": "",
+        "lens": "",
+        "lighting": "",
+        "environment": "",
+        "sound": "",
+        "color": "",
+        "action": "",
+        "dialogue": [],
+        "sound_effect": "",
+        "director_notes": [],
+        "continuity": {
+          "previous_shot_id": "shot-1",
+          "characters": "",
+          "outfit": "",
+          "environment": "",
+          "camera": ""
+        }
+      },
+      "image_asset": null
+    }
+  ],
+  "director_sources": [],
+  "model_called": false,
+  "product_acceptance": "LOCAL_REQUIRED"
+}

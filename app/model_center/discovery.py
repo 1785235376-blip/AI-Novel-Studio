@@ -20,8 +20,8 @@ from typing import Any, Callable
 from uuid import uuid4
 
 from .discovery_probes import LocalProbeClient, ProbeFailure, candidate_id, executable_metadata, gguf_metadata, host_hardware, infer_family, scan_gguf_roots, ollama_remote_declaration, ollama_locality_evidence, read_ollama_local_metadata
-from .discovery_types import AIEnvironmentReport, DiscoverySettingsInput, LocalRuntimeInput, RegistrationInput, local_endpoint, safe_local_path
-from .discovery_environment import environment_roots, scan_environment_files
+from .discovery_types import AIEnvironmentReport, VideoObservationReport, DiscoverySettingsInput, LocalRuntimeInput, RegistrationInput, local_endpoint, safe_local_path
+from .discovery_environment import environment_roots, scan_environment_files, video_file_associations, video_file_observations
 from .discovery_prerequisites import (catalog_requirements, prerequisite_template, observe_object_info,
     unknown_observations, failed_evidence_status)
 from .discovery_scope import (PREVIEW_LIMIT, PREVIEW_TTL_SECONDS, SCAN_BUDGET_SECONDS, PLANNING_BUDGET_SECONDS,
@@ -119,10 +119,46 @@ class LocalDiscoveryService:
 
     def snapshot(self):
         with self.lock:
-            return copy.deepcopy({'scan': self.scan, 'registrations': list(self.registrations.values()),
+            result = copy.deepcopy({'scan': self.scan, 'registrations': list(self.registrations.values()),
                 'settings': self.settings, 'hardware': self.hardware,
                 'workflow_adapters': [*self.workflow_adapters, *self.image_workflow_adapters, *self.video_workflow_adapters],
                 'persistence_error': self.persistence_error})
+            if self._environment_enabled():
+                result['video_observations'] = self._video_observations()
+            return result
+
+    def _video_observations(self):
+        """Caller holds the original lock; projection never validates or probes."""
+        from .discovery_bridge import LocalDiscoveryBridge
+        job = self.scan or {}
+        scanned = {row['id']: row for row in job.get('candidates', [])}
+        original = {**scanned, **self.registrations}
+        rows = [row for row in original.values() if 'VIDEO' in row.get('declared_capabilities', [])
+                or 'VIDEO' in row.get('verified_capabilities', [])]
+        association = video_file_associations(job, self.settings['scan_roots'])
+        models = []
+        for row in sorted(rows, key=lambda row: row['id'])[:2048]:
+            registered = row['id'] in self.registrations
+            route_state = (self.route_bridge.video_observation_state(row)
+                           if type(self.route_bridge) is LocalDiscoveryBridge else 'UNKNOWN')
+            observed = scanned.get(row['id'])
+            same_runtime = observed is not None and all(observed.get(key) == row.get(key)
+                for key in ('runtime_id', 'runtime_type', 'model_name')) and (
+                observed.get('runtime_config', {}).get('endpoint') == row.get('runtime_config', {}).get('endpoint'))
+            file_association = association(observed if same_runtime else {'runtime_type': 'UNKNOWN'})
+            if not same_runtime:
+                file_association['reason'] = 'RUNTIME_MODEL_NOT_OBSERVED_IN_LAST_SCAN'
+            models.append({**{key: row[key] for key in ('provider_id', 'model_name', 'family', 'runtime_id', 'runtime_type')},
+                'candidate_id': row['id'], 'registered': registered, 'enabled': registered and row.get('enabled') is True,
+                'enable_eligible': row.get('enable_eligible') is True, 'route_state': route_state,
+                'structure_validated': bool(row.get('validated_at') and 'VIDEO' in row.get('verified_capabilities', [])),
+                'structural_only': True, 'inference_verified': False, 'file_association': file_association,
+                'model_total_bytes': None, 'required_vram_bytes': None})
+        notes = ['LAST_EXPLICIT_SCAN_ONLY', 'FILE_ASSOCIATIONS_DO_NOT_AUTHORIZE_RUNTIME', 'MODEL_TOTAL_AND_VRAM_UNKNOWN']
+        if len(rows) > 2048:
+            notes.append('VIDEO_OBSERVATIONS_BOUNDED')
+        return VideoObservationReport(scan_id=job.get('id'), scan_status=job.get('status', 'NOT_SCANNED'),
+            models=models, files=video_file_observations(job), notes=notes).model_dump()
 
     def configure_roots(self, values: DiscoverySettingsInput, *, guard=None):
         self._guard(guard)
@@ -175,6 +211,7 @@ class LocalDiscoveryService:
                 started_at=job.get('started_at'), finished_at=job.get('finished_at'), hardware=copy.deepcopy(self.hardware),
                 services=services, model_files=copy.deepcopy(job.get('model_files', [])),
                 workflow_prerequisites=copy.deepcopy(job.get('workflow_prerequisites')),
+                video_observations=self._video_observations() if self._environment_enabled() else None,
                 roots=copy.deepcopy(job.get('roots', [])), errors=copy.deepcopy(job.get('errors', []))).model_dump()
 
     def _runtimes(self, *, center_runtimes=None, settings=None, configured_sources=None, environment=None, plan_check=None):

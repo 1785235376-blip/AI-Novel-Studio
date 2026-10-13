@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Annotated, Literal
 from urllib.parse import urlsplit, urlunsplit
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_serializer, model_validator
 
 LOCAL_TYPES = Literal['OLLAMA', 'LLAMA_CPP', 'COMFYUI', 'AUTOMATIC1111', 'OPENAI_COMPATIBLE_LOCAL', 'CUSTOM_HTTP']
 MODALITIES = Literal['TEXT', 'VISION', 'IMAGE', 'VIDEO', 'AUDIO', 'TTS', 'RESTORATION', 'INTERPOLATION', 'UNKNOWN']
@@ -255,6 +255,70 @@ class WorkflowPrerequisiteReport(BaseModel):
     components: list[CatalogComponentRequirement] = Field(default_factory=list, max_length=512)
 
 
+class VideoFileAssociation(BaseModel):
+    """A cached file observation is never proof of a runtime's loaded path."""
+    model_config = ConfigDict(extra='forbid', strict=True)
+    status: Literal['MATCHED', 'AMBIGUOUS', 'NOT_OBSERVED', 'UNKNOWN']
+    reason: str = Field(max_length=100)
+    file_id: str | None = None
+    path: str | None = None
+    root: str | None = None
+    observed_file_bytes: int | None = Field(default=None, ge=0)
+    size_semantics: Literal['WEIGHT_FILE', 'INDEX_METADATA'] | None = None
+    runtime_path_verified: Literal[False] = False
+    eligibility_derived: Literal[False] = False
+
+
+class VideoModelObservation(BaseModel):
+    model_config = ConfigDict(extra='forbid', strict=True)
+    candidate_id: str
+    provider_id: str
+    model_name: str
+    family: str
+    runtime_id: str
+    runtime_type: str
+    registered: bool
+    enabled: bool
+    enable_eligible: bool
+    route_state: Literal['REGISTERED', 'NOT_REGISTERED', 'UNKNOWN'] = 'UNKNOWN'
+    structure_validated: bool = False
+    structural_only: Literal[True] = True
+    inference_verified: Literal[False] = False
+    file_association: VideoFileAssociation
+    model_total_bytes: None = None
+    required_vram_bytes: None = None
+
+
+class VideoFileObservation(BaseModel):
+    model_config = ConfigDict(extra='forbid', strict=True)
+    file_id: str
+    path: str
+    root: str
+    source: Literal['CONFIGURED', 'COMMON']
+    format: Literal['GGUF', 'SAFETENSORS', 'DIFFUSERS']
+    family: str
+    header_valid: bool
+    observed_file_bytes: int = Field(ge=0)
+    size_semantics: Literal['WEIGHT_FILE', 'INDEX_METADATA']
+    model_total_bytes: None = None
+    required_vram_bytes: None = None
+    inference_verified: Literal[False] = False
+
+
+class VideoObservationReport(BaseModel):
+    """Finite, Host-private projection of observations and original controls."""
+    model_config = ConfigDict(extra='forbid', strict=True)
+    contract: Literal['local-video-observation/1'] = 'local-video-observation/1'
+    scan_id: str | None = None
+    scan_status: Literal['NOT_SCANNED', 'RUNNING', 'COMPLETED', 'PARTIAL', 'CANCELLED'] = 'NOT_SCANNED'
+    models: list[VideoModelObservation] = Field(default_factory=list, max_length=2048)
+    files: list[VideoFileObservation] = Field(default_factory=list, max_length=2000)
+    notes: list[str] = Field(default_factory=list, max_length=16)
+    health_probed: Literal[False] = False
+    credentials_read: Literal[False] = False
+    automatic_runtime_start: Literal[False] = False
+
+
 class AIEnvironmentReport(BaseModel):
     """Host-session-only display contract; cannot serve as routing authority."""
     model_config = ConfigDict(extra='forbid')
@@ -270,7 +334,15 @@ class AIEnvironmentReport(BaseModel):
     services: list[EnvironmentService] = Field(default_factory=list)
     model_files: list[EnvironmentModelFile] = Field(default_factory=list)
     workflow_prerequisites: WorkflowPrerequisiteReport | None = None
+    video_observations: VideoObservationReport | None = None
     roots: list[EnvironmentScanRoot] = Field(default_factory=list)
     errors: list[EnvironmentError] = Field(default_factory=list)
     limits: EnvironmentScanLimits = Field(default_factory=EnvironmentScanLimits)
     notes: list[str] = Field(default_factory=lambda: ['BACKEND_HOST_ONLY', 'NO_MODEL_LOADED', 'NO_INFERENCE_RUN', 'WINDOWS_NATIVE_ACCEPTANCE_NOT_RUN'])
+
+    @model_serializer(mode='wrap')
+    def preserve_default_observation_contract(self, handler):
+        value = handler(self)
+        if value.get('video_observations') is None:
+            value.pop('video_observations', None)
+        return value

@@ -319,12 +319,21 @@ class MediaCandidatePort(Strict):
 class VideoNodeParameters(MediaNodeParameters):
     operation_id: Literal["m7.video.t2v", "m7.video.i2v", "m7.video.v2v"]
     reference_purpose: Literal["style", "action", "camera"] | None = None
+    bind_shot: Literal[True] | None = None
+
+    @field_validator("bind_shot", mode="before")
+    @classmethod
+    def explicit_shot_binding(cls, value):
+        if value is not None and value is not True:
+            raise ValueError("CREATIVE_GRAPH_VIDEO_SHOT_BINDING_INVALID")
+        return value
 
     @model_serializer(mode="wrap")
     def legacy_identity(self, handler):
         value = handler(self)
-        if value.get("reference_purpose") is None:
-            value.pop("reference_purpose", None)
+        for key in ("reference_purpose", "bind_shot"):
+            if value.get(key) is None:
+                value.pop(key, None)
         return value
 
 

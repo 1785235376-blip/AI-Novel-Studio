@@ -1235,3 +1235,17 @@ M4→M9, frozen V1, F00 INTEGRATED + 39 PARTIAL and independent review BLOCKED r
 | Whole Director/Storyboard/Video and product | PARTIAL | File/PG each616pass/1Windows privilege failure/321skip; frontend3167pass/8skip. No full CI or model/Windows/GPU acceptance claim. |
 
 See [Phase4 report](PHASE4_STORYBOARD_VIDEO_REPORT.md) and pinned summary. Original M4→M9, V1, Interop1.0, F00 and independent review gates remain.
+
+
+### 2026-10-14 — Phase5 Storyboard production pipeline
+
+| Capability | Source status | Actual boundary |
+|---|---|---|
+| Authored video hint and explicit Shot provenance | IMPLEMENTED / bounded | Optional4k hint and exact original document/Shot pin enter original MediaCommand/VideoJob/Asset origin; legacy unset identity retained. |
+| Reviewed Video result → Shot | IMPLEMENTED / bounded | Original APPROVED job/formal Asset/retained approved source history; Graph server Review proof; metadata revisions do not change authored ShotVersion. Explicit reapproval required. |
+| Timeline create/recovery and reviewed Video adoption | IMPLEMENTED / bounded | Original TIMELINES transaction, exact request body/actor/incarnation namespace, original clip.update/CAS/lock/range/last_edit/history, durable settlement proofs. UNKNOWN GET only/no replay. |
+| Existing video model observations | IMPLEMENTED / bounded | Last explicit scan/exact configured-root filename association and original current registration state; no loading/qualification grant. Total model size/VRAM unknown. |
+| Video/Storyboard/Timeline controller operation UI | IMPLEMENTED / basic source UI | Exact job/Asset/source pins, independent recovery fences, original mutex/Host/late/dirty. Independent video remains; Opus view seams retained. |
+| Whole Video/Storyboard/Editing | PARTIAL | Source and selected isolated tests in [Phase5 report](PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md). No native/GPU/model/full product acceptance. |
+
+File/realPG each317pass/2oldWindows privilege failures/137profile skips; wholefrontend3250pass/8oldskip. Full hosted checks unexecuted by account/platform block. Frozen V1/Interop/F00/independent review and M4→M9 gates unchanged; Phase6 source expansion follows.

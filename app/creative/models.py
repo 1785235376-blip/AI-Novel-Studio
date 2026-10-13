@@ -120,7 +120,7 @@ class ShotContinuity(OptionalProductionFields):
 
 
 class ShotCard(OptionalProductionFields):
-    production_optional_fields = ("characters", "emotion", "continuity", "director_note_ids")
+    production_optional_fields = ("characters", "emotion", "continuity", "director_note_ids", "video_generation_hint")
     id: Identifier = Field(default_factory=identifier)
     number: int = Field(ge=1, le=10000, strict=True)
     scene_id: Identifier
@@ -143,6 +143,7 @@ class ShotCard(OptionalProductionFields):
     emotion: str | None = Field(default=None, max_length=4000, strict=True)
     continuity: ShotContinuity | None = None
     director_note_ids: list[Identifier] | None = Field(default=None, max_length=100)
+    video_generation_hint: str | None = Field(default=None, max_length=4000, strict=True)
 
     @model_validator(mode="after")
     def distinct_characters(self):

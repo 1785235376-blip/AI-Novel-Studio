@@ -57,6 +57,9 @@ class CreativeGraphService:
     def configure_media(self, production):
         from .graph_media_execution import CreativeGraphMediaRuntime
         self.media_runtime = CreativeGraphMediaRuntime(self, production)
+        # Server-owned reference for reviewed Shot-result adoption; callers
+        # cannot supply a Graph owner or grant by attaching a binding field.
+        production.graph_service = self
 
     @staticmethod
     def _model_authority(definition):

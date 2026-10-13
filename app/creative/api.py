@@ -11,7 +11,8 @@ from .models import (CreativeProductionDocumentIn, CreativeDocumentUpdate, Creat
                      DirectorModelDispatch, ProposalAction, MODES, USER_MODES, LEGACY_MODES)
 
 from .adaptation_models import AdaptationIn, AdaptationReview, AdaptationPreview
-from .storyboard import StoryboardApproval, ShotImageBinding, ShotImageRequest, StoryboardTimelineDraft
+from .storyboard import (StoryboardApproval, ShotImageBinding, ShotImageRequest, StoryboardTimelineDraft,
+    ShotVideoRequest, ShotVideoBinding, StoryboardTimelineCreate, StoryboardVideoAdoption)
 
 FLAG = "narrative_production_v2"
 
@@ -151,6 +152,31 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
     def storyboard_timeline(nid: str, rid: str, request: Request, body: StoryboardTimelineDraft, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.storyboards.timeline_draft(nid, scope, actor, rid, body, guard))
+
+    @router.post("/documents/{rid}/shots/{shot_id}/video-request")
+    def storyboard_video_request(nid: str, rid: str, shot_id: str, request: Request, body: ShotVideoRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.storyboards.video_request(nid, scope, actor, rid, shot_id, body, guard))
+
+    @router.post("/documents/{rid}/shots/{shot_id}/video-binding")
+    def storyboard_video_binding(nid: str, rid: str, shot_id: str, request: Request, body: ShotVideoBinding, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.write",
+                      lambda actor, scope, guard: service.storyboards.bind_video(nid, scope, actor, rid, shot_id, body, guard))
+
+    @router.post("/documents/{rid}/storyboard/timeline-create", status_code=201)
+    def storyboard_timeline_create(nid: str, rid: str, request: Request, body: StoryboardTimelineCreate, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.write",
+                      lambda actor, scope, guard: service.storyboards.timeline_create(nid, scope, actor, rid, body, guard))
+
+    @router.get("/documents/{rid}/storyboard/timeline-creations/{request_id}")
+    def storyboard_timeline_creation(nid: str, rid: str, request_id: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.storyboards.timeline_creation(nid, scope, actor, rid, request_id, guard))
+
+    @router.post("/documents/{rid}/shots/{shot_id}/timelines/{tid}/video-adoption")
+    def storyboard_video_adoption(nid: str, rid: str, shot_id: str, tid: str, request: Request, body: StoryboardVideoAdoption, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.write",
+                      lambda actor, scope, guard: service.storyboards.adopt_video(nid, scope, actor, rid, shot_id, tid, body, guard))
 
     @router.delete("/documents/{rid}")
     def archive(nid: str, rid: str, expected_version: int = Query(ge=1), x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

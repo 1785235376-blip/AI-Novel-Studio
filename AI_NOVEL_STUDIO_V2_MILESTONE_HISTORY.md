@@ -880,3 +880,8 @@ Source publication does not advance M4/M5 acceptance or frozen historical status
 ### 2026-10-14 — Phase4 Storyboard Enhancement / Video Runtime Foundation
 
 Baseline c67a3c3. Additive original-owner Shot versions/continuity/advice, formal image binding and approval-based Timeline draft, explicit video Graph5, fixed enabled Comfy Video adapters, guarded private output and cancellation. Prior two Director PostgreSQL timing defects fixed with per-checkpoint existing transaction reuse; original five-second assertions kept. File/realPG each616pass/1privilege fixture failure/321skip; full frontend3167pass/8originalskip; metadata44pass/2privilege failures, separate Linux3pass. Full milestone hosted CI and native/model acceptance remain separate. [Report](PHASE4_STORYBOARD_VIDEO_REPORT.md); historical failures and M4→M9 gates unchanged. Phase5 is authorized next, followed by Phase6.
+
+
+### 2026-10-14 — Phase5 Video / Storyboard production pipeline
+
+Baseline8e4f028: optional hint/ShotPin, original reviewed historical Video binding, original Timeline request-identified creation/read and exact clip adoption/settlement. Explicit Graph5 provenance retains legacy commands; original owners/review/permissions and ModelCenter registry remain. File/realPG each317pass/2Windows fixture privilege failures/137skip; fullfrontend3250pass/8oldskip; metadata44pass/2privilege failures with Linux4 original assertions separately passing. Hosted account/platform block prevents actual CI execution. [Report](PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md); source expansion is not M7 acceptance. Phase6 follows without a new confirmation; native/GPU/model/gates remain unchanged.

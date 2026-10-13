@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {ApiError} from './api';
-import {localAiDiscoveryApi, type AIEnvironmentReport, type HardwareComponentEvidence, type LocalAiDiscoveryClient} from './localAiDiscoveryApi';
+import {localAiDiscoveryApi, type VideoObservationReport, type AIEnvironmentReport, type HardwareComponentEvidence, type LocalAiDiscoveryClient} from './localAiDiscoveryApi';
 import {Badge, Button, Panel, StatusMessage} from './ui/primitives';
 import './AIEnvironmentSummary.css';
 import {useLocalAiDiscoveryOwner, useLocalAiOwnerKey, type LocalAiOnboardingOwner} from './localAiDiscoveryOwner';
@@ -11,6 +11,21 @@ const statuses: Record<AIEnvironmentReport['status'], string> = {
 const memory = (bytes: number | null) => bytes === null ? '未确认' : `${(bytes / 1024 ** 3).toFixed(1)} GiB`;
 const component = (value: HardwareComponentEvidence) => value.status === 'COMPONENT_FOUND_NOT_VERIFIED'
   ? '发现组件，未实测' : value.status === 'NOT_FOUND' ? '未发现系统组件' : '未确认';
+/** Observation presentation has no requests, routing or model control. Paths
+ * remain in the protected owner report; the normal view shows filenames only. */
+export function VideoModelObservationSummary({report}: {report?: VideoObservationReport}) {
+  if (!report) return null;
+  const association = {MATCHED: '配置目录已观察，运行时路径未确认', AMBIGUOUS: '同名观察有歧义，未关联', NOT_OBSERVED: '精确文件未观察', UNKNOWN: '文件关联未确认'};
+  return <details aria-label="视频模型观察"><summary>视频模型观察 · {report.models.length} 个服务模型 · {report.files.length} 个文件</summary>
+    <p>最后一次明确检测的文件观察与本次读取的启用开关分别记录；文件关联不授予运行资格。模型总量与所需显存均未确认。</p>
+    {report.models.length > 0 && <ul>{report.models.map(model => <li key={model.candidate_id}><strong>{model.model_name.split(/[\\/]/).at(-1)}</strong> · {model.family}
+      <p>{model.registered ? '已登记' : '未登记'} · {model.enabled ? '启用开关已开启' : '未启用'} · {model.route_state === 'REGISTERED' ? '原路由已登记' : model.route_state === 'NOT_REGISTERED' ? '原路由未登记' : '原路由未确认'}</p>
+      <p>{model.structure_validated ? '结构已核对' : '结构未核对'} · 真实推理未验收 · {association[model.file_association.status]}</p></li>)}</ul>}
+    {report.files.length > 0 && <ul>{report.files.map(file => <li key={file.file_id}>{file.path.split(/[\\/]/).at(-1)} · {file.family} · {file.size_semantics === 'INDEX_METADATA' ? '目录索引元数据' : '观察到的单个权重文件'} {(file.observed_file_bytes / 1024).toFixed(1)} KiB；模型总大小未确认</li>)}</ul>}
+    {!report.models.length && !report.files.length && <p>尚无视频模型观察；请在原模型中心明确检测范围。</p>}
+    <p>仅展示元数据；不会检测健康状态、读取凭据、加载模型或启动运行时。</p>
+  </details>;
+}
 const failure = (error: unknown) => error instanceof ApiError && error.problem.code === 'LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE'
   ? '此后端未提供本地 AI 主机授权，无法读取主机环境；可继续手动创作。'
   : error instanceof ApiError && ['SESSION_REQUIRED', 'INVALID_SESSION', 'FORBIDDEN'].includes(error.problem.code)
@@ -82,6 +97,7 @@ function EnvironmentSummaryContent({enabled, onOpenModels, client, currentOwner,
       </li>)}</ul>}
       {report.status === 'PARTIAL' && <p className="ai-environment-summary__note">部分服务或目录尚未确认，已保留其余结果。</p>}
       {report.status === 'CANCELLED' && <p className="ai-environment-summary__note">检测已取消，仅显示取消前的结果。</p>}
+      <VideoModelObservationSummary report={report.video_observations}/>
     </div>}
     <p className="ai-environment-summary__note">真实推理：NOT_RUN。Windows 实机验收：NOT_RUN。发现模型不会自动启用或加载。</p>
     <div className="ai-environment-summary__actions">

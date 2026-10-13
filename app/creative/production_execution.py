@@ -234,6 +234,12 @@ class ProductionExecutionService:
             raise ValueError("STUDIO_IMAGE_CUTOUT_PROOF_CHANGED")
 
     def _sources_current(self, nid, scope, context, guard):
+        if context.get("storyboard_shot") is not None:
+            from .storyboard import validate_shot_pin
+            pin = context["storyboard_shot"]
+            row = self.workspace.creative.get(nid, scope, pin["document_snapshot"]["id"])
+            validate_shot_pin(row, pin)
+            guard()
         if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}:
             images = self._cutout_inputs(nid, scope, context, guard)
             by_id = {item["snapshot"]["id"]: item for item in images}
@@ -452,6 +458,10 @@ class ProductionExecutionService:
             raise ValueError("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY")
         if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
         context = self._base(nid, scope, actor, guard)
+        if command.storyboard_shot is not None:
+            context["storyboard_shot"] = command.storyboard_shot.model_dump()
+            from .storyboard import validate_video_command
+            validate_video_command(self.workspace.creative.get(nid, scope, command.storyboard_shot.document_snapshot.id), command)
         if graph_binding is not None:
             from .graph_media_binding import validate_graph_binding
             context["graph_binding"] = validate_graph_binding(graph_binding, context)
@@ -832,6 +842,8 @@ class ProductionExecutionService:
             "provider_id": binding.get("provider_id"), "model_id": binding.get("model_id"), "license_note": context.get("license_note", "")}
         if context.get("graph_binding") is not None:
             origin["graph_binding"] = copy.deepcopy(context["graph_binding"])
+        if context.get("storyboard_shot") is not None:
+            origin["storyboard_shot"] = copy.deepcopy(context["storyboard_shot"])
         return origin
 
     def _private_media_candidate(self, nid, scope, actor, context, jid, candidate):
@@ -1165,6 +1177,14 @@ class ProductionExecutionService:
         if 'storyboard_origin' in row:
             from .storyboard import validate_storyboard_timeline_origin
             result['storyboard_origin'] = validate_storyboard_timeline_origin(row, history=history)
+        if 'storyboard_create_receipt' in row:
+            from .storyboard import validate_creation_receipt
+            result['creation_receipt'] = validate_creation_receipt(row, history=history)
+        if 'storyboard_video_adoption' in row:
+            from .storyboard import validate_adoption_receipt
+            receipt = validate_adoption_receipt(row, history=history)
+            if receipt is not None:
+                result['video_adoption_receipt'] = receipt
         return result
 
     def _callbacks(self, nid, scope, actor, context, guard, *, graph_source_guard=None):
@@ -1209,6 +1229,8 @@ class ProductionExecutionService:
                         "job_id": jid, "provider_id": binding.get("provider_id"), "model_id": binding.get("model_id"), "license_note": context.get("license_note", "")}
                     if context.get("graph_binding") is not None:
                         origin["graph_binding"] = copy.deepcopy(context["graph_binding"])
+                    if context.get("storyboard_shot") is not None:
+                        origin["storyboard_shot"] = copy.deepcopy(context["storyboard_shot"])
                     def commit():
                         guard(); job_guard()
                         if prior is None: self.workspace.storage_admission.require(1)

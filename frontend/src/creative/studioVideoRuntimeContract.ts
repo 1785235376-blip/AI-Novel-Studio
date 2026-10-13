@@ -1,5 +1,7 @@
 import { ApiError } from '../api';
 import type { RecordedProductionSource, ProductionSource } from './studioProductionClient';
+import { checkedPlanningSnapshot } from './studioProductionGraphContract';
+import type { ShotPin } from './studioStoryboardContract';
 export const VIDEO_REFERENCE_PURPOSES = ['style', 'action', 'camera'] as const;
 export type VideoReference = { source: ProductionSource; purpose: typeof VIDEO_REFERENCE_PURPOSES[number] };
 export const VIDEO_RECIPE_IDS = ['comfy-ltx095-video-v1', 'comfy-wan22-ti2v5b-v1', 'comfy-hunyuan10-t2v-v1'] as const;
@@ -8,6 +10,20 @@ export type VideoCapabilities = { recipe_id: typeof VIDEO_RECIPE_IDS[number]; op
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 function fail(): never { throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '视频配方或参考版本不完整，请重新读取核对。' }); }
 function exact(v: Record<string, unknown>, keys: string[]) { if (Object.keys(v).length !== keys.length || keys.some(k => !Object.hasOwn(v, k))) fail(); }
+export function checkedStoryboardShotContext(value: unknown, sources?: RecordedProductionSource[], operation?: string): ShotPin {
+  if (!object(value)) fail(); exact(value, ['document_snapshot', 'shot_id', 'shot_version', 'shot_digest']);
+  const document_snapshot = checkedPlanningSnapshot(value.document_snapshot);
+  if (typeof value.shot_id !== 'string' || !value.shot_id.trim() || value.shot_id.length > 240 || /[\u0000-\u001f\u007f]/.test(value.shot_id)
+    || typeof value.shot_version !== 'number' || !Number.isSafeInteger(value.shot_version) || value.shot_version < 1 || typeof value.shot_digest !== 'string' || !/^[a-f0-9]{64}$/.test(value.shot_digest)) fail();
+  if (sources && (!['m7.video.t2v', 'm7.video.i2v', 'm7.video.v2v'].includes(operation || '') || sources.filter(source => source.kind === 'CREATIVE_DOCUMENT' && source.id === document_snapshot.id && source.version === document_snapshot.version && source.digest === document_snapshot.digest).length !== 1)) fail();
+  return { document_snapshot, shot_id: value.shot_id, shot_version: value.shot_version, shot_digest: value.shot_digest };
+}
+export function storyboardShotFields(value: unknown, sources: RecordedProductionSource[], operation: string): { storyboard_shot?: ShotPin } {
+  return value === undefined ? {} : { storyboard_shot: checkedStoryboardShotContext(value, sources, operation) };
+}
+export function sameStoryboardShot(expected: { storyboard_shot?: ShotPin }, value: unknown): boolean {
+  if (!object(value)) return false; try { return JSON.stringify(expected.storyboard_shot === undefined ? undefined : checkedStoryboardShotContext(expected.storyboard_shot)) === JSON.stringify(value.storyboard_shot === undefined ? undefined : checkedStoryboardShotContext(value.storyboard_shot)); } catch { return false; }
+}
 export function checkedVideoReference(value: unknown, sources: RecordedProductionSource[], operation: string): { video_reference?: VideoReference } {
   if (value === undefined) return {};
   if (!object(value)) fail(); exact(value, ['source', 'purpose']);
