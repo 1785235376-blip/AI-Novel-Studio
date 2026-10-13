@@ -54,8 +54,12 @@ class LocalDiscoveryService:
         self._scope_previews: dict[str, dict] = {}
         self.hardware = {'status': 'NOT_VERIFIED', 'notes': ['SCAN_REQUIRED'], 'gpus': []}
         self.persistence_error = None
-        self.workflow_adapters = [{'id': 'comfy-sd-checkpoint-v1', 'display_name': 'Stable Diffusion checkpoint (T2I)',
-            'family': 'STABLE_DIFFUSION', 'capability': 'IMAGE', 'model_loader': 'CheckpointLoaderSimple', 'model_input': 'ckpt_name', 'required_nodes': ['CheckpointLoaderSimple', 'KSampler', 'EmptyLatentImage', 'CLIPTextEncode', 'VAEDecode', 'SaveImage']}]
+        from ..services.studio_image_provider_recipes import RECIPES
+        self.workflow_adapters = copy.deepcopy([RECIPES[0]])
+        # Preserve the versioned prerequisite report's original adapter surface.
+        # New finite image recipes remain on this same discovery owner and are
+        # frozen independently into the original explicit scan consent.
+        self.image_workflow_adapters = copy.deepcopy(list(RECIPES[1:]))
         self._load()
 
     def _load(self):
@@ -114,7 +118,8 @@ class LocalDiscoveryService:
     def snapshot(self):
         with self.lock:
             return copy.deepcopy({'scan': self.scan, 'registrations': list(self.registrations.values()),
-                'settings': self.settings, 'hardware': self.hardware, 'workflow_adapters': self.workflow_adapters,
+                'settings': self.settings, 'hardware': self.hardware,
+                'workflow_adapters': [*self.workflow_adapters, *self.image_workflow_adapters],
                 'persistence_error': self.persistence_error})
 
     def configure_roots(self, values: DiscoverySettingsInput, *, guard=None):
@@ -226,6 +231,7 @@ class LocalDiscoveryService:
             plan['prerequisite_template'] = prerequisite_template(runtimes, self.workflow_adapters, component_rows,
                 definition_status, identities=plan['workflow_definition_identity'])
             plan['component_definition_identity'] = component_identity
+            plan['image_recipe_definition_identity'] = copy.deepcopy(self.image_workflow_adapters)
             check()
             return plan
 
@@ -395,7 +401,11 @@ class LocalDiscoveryService:
                 try:
                     prerequisites = [row for row in job.get('workflow_prerequisites', {}).get('workflows', [])
                                      if row['runtime_id'] == runtime['id']]
-                    report, found = self._probe(runtime, cancel, deadline=deadline, prerequisites=prerequisites)
+                    with self.lock:
+                        include_image_recipes = any(record.get('enabled') and record.get('evidence', {}).get('image_recipe')
+                            and record['runtime_id'] == runtime['id'] for record in self.registrations.values())
+                    report, found = self._probe(runtime, cancel, deadline=deadline, prerequisites=prerequisites,
+                        include_image_recipes=include_image_recipes)
                 except Exception:
                     report = {key: runtime[key] for key in ('id', 'name', 'type', 'endpoint', 'management')}
                     report.update(status='NOT_FOUND', version=None, notes=['LOCAL_AI_PROBE_INVALID'])
@@ -494,7 +504,7 @@ class LocalDiscoveryService:
             'license_status': 'REVIEW_REQUIRED', 'license_confirmed': False, 'workflow_adapter_id': '', 'enable_eligible': False,
             'enable_blockers': ['VALIDATION_REQUIRED']}
 
-    def _probe(self, runtime, cancel, *, deadline=None, prerequisites=None):
+    def _probe(self, runtime, cancel, *, deadline=None, prerequisites=None, include_image_recipes=False):
         report = {key: runtime[key] for key in ('id', 'name', 'type', 'endpoint', 'management')}
         report.update(status='NOT_FOUND', version=None, notes=[])
         found = []
@@ -555,16 +565,28 @@ class LocalDiscoveryService:
                                 bindings.setdefault(name, []).append({'node_class': str(node), 'input_field': field})
                 nodes_fingerprint = digest(info)
                 for name, loaders in names.items():
+                    from ..services.studio_image_provider_recipes import project_comfy_image_recipe
+                    family, _ = infer_family(name)
+                    image_recipe = project_comfy_image_recipe(info, name, family)
                     found.append(self._candidate(runtime, name, family_hint=' '.join(loaders), evidence={
                         'model_listed': True, 'model_file_exists': None, 'loader_nodes': loaders, 'loader_bindings': bindings[name],
-                        'node_classes': nodes, 'nodes_fingerprint': nodes_fingerprint, 'workflow_status': 'NOT_CONFIGURED', 'generation_verified': False}))
+                        'node_classes': nodes, 'nodes_fingerprint': nodes_fingerprint, 'workflow_status': 'NOT_CONFIGURED', 'generation_verified': False,
+                        **({'image_recipe': image_recipe} if image_recipe else {})}))
             elif kind == 'AUTOMATIC1111':
                 payload = get('/sdapi/v1/sd-models')
                 if not isinstance(payload, list): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                from ..services.studio_image_provider_recipes import project_automatic1111_image_recipe
+                try:
+                    image_api = get('/openapi.json') if payload and include_image_recipes else None
+                except ProbeFailure as exc:
+                    if str(exc) in {'LOCAL_AI_CANCELLED', 'LOCAL_AI_SCAN_BUDGET_REACHED'}: raise
+                    image_api = None
                 for model in payload[:512]:
                     name = model.get('title') or model.get('model_name') if isinstance(model, dict) else None
                     if isinstance(name, str) and 0 < len(name) <= 256:
-                        found.append(self._candidate(runtime, name, evidence={'model_listed': True, 'sha256': model.get('sha256'), 'filename': model.get('filename')}))
+                        image_recipe = project_automatic1111_image_recipe(image_api, name) if image_api else None
+                        found.append(self._candidate(runtime, name, evidence={'model_listed': True, 'sha256': model.get('sha256'), 'filename': model.get('filename'),
+                            **({'image_recipe': image_recipe, 'image_api_fingerprint': digest(image_api)} if image_recipe else {})}))
             elif kind == 'LLAMA_CPP':
                 path = runtime.get('model_path')
                 executable = runtime.get('executable')
@@ -634,7 +656,7 @@ class LocalDiscoveryService:
         # Metadata-only validation; never generation or --version.
         validation_cancel = ScopeCancellation(guard, None, self.client, self.hardware_probe) if guard is not None else threading.Event()
         self._guard(guard)
-        report, detected = self._probe(runtime, validation_cancel)
+        report, detected = self._probe(runtime, validation_cancel, include_image_recipes=True)
         self._guard(guard)
         current = next((item for item in detected if item['id'] == identifier), None)
         evidence = current['evidence'] if current else {}
@@ -689,11 +711,18 @@ class LocalDiscoveryService:
                     if 'embedding' in capabilities and 'completion' not in capabilities: notes.append('TEXT_GENERATION_UNSUPPORTED')
             elif kind == 'AUTOMATIC1111': verified = ['IMAGE']
             elif kind == 'COMFYUI':
-                adapter = next((a for a in self.workflow_adapters if a['id'] == candidate.get('workflow_adapter_id')), None)
+                adapters = [*self.workflow_adapters, *self.image_workflow_adapters]
+                adapter = next((a for a in adapters if a['id'] == candidate.get('workflow_adapter_id')), None)
+                image_recipe = evidence.get('image_recipe')
+                if not adapter and image_recipe:
+                    adapter = next((a for a in adapters if a['id'] == image_recipe['recipe_id']), None)
+                    if adapter: candidate['workflow_adapter_id'] = adapter['id']
                 if not adapter and candidate['family'] == 'STABLE_DIFFUSION':
                     adapter = self.workflow_adapters[0]; candidate['workflow_adapter_id'] = adapter['id']
                 bound = bool(adapter and {'node_class': adapter['model_loader'], 'input_field': adapter['model_input']} in evidence.get('loader_bindings', []))
-                if adapter and bound and adapter['family'] == candidate['family'] and set(adapter['required_nodes']) <= set(evidence.get('node_classes', [])):
+                exact_recipe = (adapter and (adapter['id'] == 'comfy-sd-checkpoint-v1' or
+                    image_recipe and image_recipe['recipe_id'] == adapter['id']))
+                if adapter and bound and exact_recipe and adapter['family'] == candidate['family'] and set(adapter['required_nodes']) <= set(evidence.get('node_classes', [])):
                     verified = [adapter['capability']]; evidence['workflow_status'] = 'STRUCTURE_VALIDATED_NOT_GENERATED'
                 else: notes.append('WORKFLOW_ADAPTER_REQUIRED')
             elif kind == 'OPENAI_COMPATIBLE_LOCAL': notes.append('CAPABILITY_UNVERIFIED')
@@ -782,14 +811,14 @@ class LocalDiscoveryService:
             keys = ('file_exists', 'header_valid', 'size', 'modified_ns', 'general.architecture')
         elif kind == 'COMFYUI':
             if report['status'] != 'RUNNING': return 'MODEL_OR_RUNTIME_NOT_FOUND'
-            adapter = next((item for item in self.workflow_adapters if item['id'] == record.get('workflow_adapter_id')), None)
+            adapter = next((item for item in [*self.workflow_adapters, *self.image_workflow_adapters] if item['id'] == record.get('workflow_adapter_id')), None)
             if (not adapter or not set(adapter['required_nodes']) <= set(evidence.get('node_classes', [])) or
                     {'node_class':adapter['model_loader'], 'input_field':adapter['model_input']} not in evidence.get('loader_bindings', [])):
                 return 'WORKFLOW_ADAPTER_REQUIRED'
-            keys = ('model_listed', 'nodes_fingerprint', 'loader_bindings')
+            keys = ('model_listed', 'nodes_fingerprint', 'loader_bindings', 'image_recipe')
         elif kind == 'AUTOMATIC1111':
             if report['status'] != 'RUNNING' or not evidence.get('model_listed'): return 'MODEL_OR_RUNTIME_NOT_FOUND'
-            keys = ('model_listed', 'sha256', 'filename')
+            keys = ('model_listed', 'sha256', 'filename', 'image_recipe', 'image_api_fingerprint')
         else:
             return 'ADAPTER_REQUIRED'
         if any(evidence.get(key) != previous.get(key) for key in keys): return 'LOCAL_MODEL_EVIDENCE_CHANGED'
@@ -811,7 +840,8 @@ class LocalDiscoveryService:
 
     def check_model_dispatch(self, candidate):
         if candidate['runtime_type'] == 'OLLAMA': return self.check_ollama_dispatch(candidate)
-        report, found = self._probe(candidate['runtime_config'], threading.Event())
+        report, found = self._probe(candidate['runtime_config'], threading.Event(),
+            include_image_recipes=bool(candidate.get('evidence', {}).get('image_recipe')))
         current = self._observed_registration(candidate, found)
         reason = self._observation_problem(candidate, report, current)
         if reason:
@@ -861,7 +891,7 @@ class LocalDiscoveryService:
         self._guard(guard)
         with self.lock:
             candidate = copy.deepcopy(self.registrations[identifier])
-            if value.workflow_adapter_id and not any(a['id'] == value.workflow_adapter_id for a in self.workflow_adapters):
+            if value.workflow_adapter_id and not any(a['id'] == value.workflow_adapter_id for a in [*self.workflow_adapters, *self.image_workflow_adapters]):
                 raise ValueError('LOCAL_AI_WORKFLOW_ADAPTER_UNKNOWN')
             changed = candidate.get('workflow_adapter_id') != value.workflow_adapter_id
             candidate.update(**value.model_dump(), enabled=False)

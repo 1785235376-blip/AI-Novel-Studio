@@ -80,6 +80,77 @@ class AssetParameters(Strict):
     kind: Literal["image", "video", "audio"]
 
 
+class GraphImageAsset(AssetParameters):
+    kind: Literal["image"]
+
+
+class ImageReferenceBinding(Strict):
+    port: Literal["source_1", "source_2", "source_3", "source_4", "source_5"]
+    weight: float = Field(default=1.0, gt=0, le=1)
+
+
+class ImageReferenceParameters(Strict):
+    bindings: list[ImageReferenceBinding] = Field(default_factory=list, max_length=5)
+
+    @model_validator(mode="after")
+    def unique_ports(self):
+        if len({binding.port for binding in self.bindings}) != len(self.bindings):
+            raise ValueError("CREATIVE_GRAPH_IMAGE_REFERENCE_DUPLICATE")
+        return self
+
+
+class ImageReferencePort(Strict):
+    asset: GraphImageAsset
+    weight: float = Field(gt=0, le=1)
+
+
+class ImagePromptParameters(Strict):
+    prompt: str = Field(default="", max_length=8000)
+
+
+class ImagePromptPort(Strict):
+    prompt: str = Field(min_length=1, max_length=16000)
+    references: list[ImageReferencePort] = Field(default_factory=list, max_length=5)
+
+    @model_validator(mode="after")
+    def exact_unique_references(self):
+        if not self.prompt.strip() or len({value.asset.asset_id for value in self.references}) != len(self.references):
+            raise ValueError("CREATIVE_GRAPH_IMAGE_PROMPT_INVALID")
+        return self
+
+
+class GraphImageParameters(MediaParameters):
+    denoising_strength: float | None = Field(default=None, gt=0, le=1)
+
+
+class ImageNodeParameters(Strict):
+    operation_id: Literal["m5.image.t2i", "m5.image.i2i", "m5.image.reference", "m5.image.inpaint"]
+    provider_id: Name
+    model_id: Name
+    parameters: GraphImageParameters = Field(default_factory=GraphImageParameters)
+    allow_cloud: bool = False
+    license_note: str = Field(default="", max_length=2000)
+
+    @model_validator(mode="after")
+    def image_only_parameters(self):
+        values = self.parameters.model_dump(exclude_none=True)
+        allowed = {
+            "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality", "denoising_strength"},
+            "m5.image.reference": {"width", "height", "steps", "seed", "negative_prompt", "denoising_strength"},
+            "m5.image.inpaint": {"steps", "seed", "negative_prompt", "denoising_strength"},
+        }[self.operation_id]
+        if set(values) - allowed:
+            raise ValueError("STUDIO_OPERATION_PARAMETER_UNSUPPORTED")
+        if self.provider_id == "auto":
+            raise ValueError("STUDIO_EXPLICIT_PROVIDER_MODEL_PROMPT_REQUIRED")
+        if (self.parameters.width is None) != (self.parameters.height is None):
+            raise ValueError("STUDIO_OPERATION_DIMENSIONS_PAIR_REQUIRED")
+        if any(values.get(key, 64) % 8 for key in ("width", "height")):
+            raise ValueError("STUDIO_IMAGE_DIMENSIONS_INVALID")
+        return self
+
+
 class MediaNodeParameters(Strict):
     """Configuration only; the runtime constructs the original MediaCommand."""
     operation_id: GraphMediaOperation
@@ -276,6 +347,15 @@ DEFINITIONS["media_review"] = {"inputs": [port("candidate", "MEDIA_CANDIDATE", T
     "outputs": [port("asset", "ASSET_REF")], "parameters": EmptyParameters}
 DEFINITIONS["timeline_export"] = {"inputs": [port(f"source_{index}", "ASSET_REF") for index in range(1, 9)],
     "outputs": [port("candidate", "MEDIA_CANDIDATE")], "parameters": TimelineNodeParameters}
+IMAGE_DEFINITION_IDS = {"text_input", "text_reference", "asset_reference", "image_reference",
+    "image_prompt", "image_generate", "media_review"}
+NEW_IMAGE_DEFINITION_IDS = {"image_reference", "image_prompt", "image_generate"}
+DEFINITIONS["image_reference"] = {"inputs": [port(f"source_{index}", "ASSET_REF") for index in range(1, 6)],
+    "outputs": [port("references", "IMAGE_REFERENCES")], "parameters": ImageReferenceParameters}
+DEFINITIONS["image_prompt"] = {"inputs": [port("text", "TEXT"), port("references", "IMAGE_REFERENCES")],
+    "outputs": [port("prompt", "IMAGE_PROMPT")], "parameters": ImagePromptParameters}
+DEFINITIONS["image_generate"] = {"inputs": [port("prompt", "IMAGE_PROMPT", True), port("source", "ASSET_REF"),
+    port("mask", "ASSET_REF")], "outputs": [port("candidate", "MEDIA_CANDIDATE")], "parameters": ImageNodeParameters}
 
 
 def definition_for(definition_id, *, schema_version=None):
@@ -323,6 +403,17 @@ class ModelNodeInstance(NodeInstance):
 class MediaNodeInstance(NodeInstance):
     definition_id: Literal["text_input", "text_reference", "draft_prepare", "manual_transform",
         "director_note", "human_review", "asset_reference", "text_generate", "media_generate", "media_review", "timeline_export"]
+
+
+class ImageNodeInstance(NodeInstance):
+    definition_id: Literal["text_input", "text_reference", "asset_reference", "image_reference",
+        "image_prompt", "image_generate", "media_review"]
+
+    @model_validator(mode="after")
+    def image_asset_kind(self):
+        if self.definition_id == "asset_reference":
+            GraphImageAsset.model_validate(self.parameters)
+        return self
 
 
 class TypedEdge(Strict):
@@ -397,16 +488,28 @@ class GraphMediaInput(GraphInput):
         return self
 
 
+class GraphImageInput(GraphInput):
+    # Image-only expansion is explicit; schema 3 retains its original catalog.
+    schema_version: Literal[4]
+    nodes: list[ImageNodeInstance] = Field(default_factory=list, max_length=MAX_MEDIA_NODES)
+
+    @model_validator(mode="after")
+    def image_capacity(self):
+        if sum(node.definition_id == "image_generate" for node in self.nodes) > MAX_MEDIA_GENERATORS:
+            raise ValueError("CREATIVE_GRAPH_MEDIA_NODE_CAPACITY")
+        return self
+
+
 def parse_graph(value):
     schema = value.get("schema_version", 1) if isinstance(value, dict) else value.schema_version
-    model = GraphMediaInput if schema == 3 else GraphModelInput if schema == 2 else GraphInput
+    model = GraphImageInput if schema == 4 else GraphMediaInput if schema == 3 else GraphModelInput if schema == 2 else GraphInput
     return model.model_validate(value)
 
 
 class GraphCreate(Strict):
     request_id: RequestId
     expected_version: Literal[0] = 0
-    definition: GraphInput | GraphModelInput | GraphMediaInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput
 
     @field_validator("expected_version", mode="before")
     @classmethod
@@ -424,7 +527,7 @@ class GraphCreate(Strict):
 
 class GraphSave(Strict):
     expected_version: int = Field(ge=1)
-    definition: GraphInput | GraphModelInput | GraphMediaInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput
 
 
 class GraphPreflight(Strict):
@@ -449,14 +552,14 @@ class GraphMediaRunCreate(GraphRunCreate):
 
 
 def parse_graph_preflight(value, definition):
-    model = GraphMediaPreflight if definition["schema_version"] == 3 else GraphPreflight
+    model = GraphMediaPreflight if definition["schema_version"] in {3, 4} else GraphPreflight
     # Pydantic can trust subclass instances without revalidating their fields.
     # Revalidate the wire fields against the authoritative saved definition.
     return model.model_validate(value.model_dump() if isinstance(value, GraphPreflight) else value)
 
 
 def parse_graph_run_create(value, definition):
-    model = GraphMediaRunCreate if definition["schema_version"] == 3 else GraphRunCreate
+    model = GraphMediaRunCreate if definition["schema_version"] in {3, 4} else GraphRunCreate
     return model.model_validate(value.model_dump() if isinstance(value, GraphRunCreate) else value)
 
 
@@ -467,19 +570,20 @@ class GraphAction(Strict):
     note: str = Field(default="", max_length=1_000)
 
 
-def catalog_definitions(*, include_model=False, include_media=False):
+def catalog_definitions(*, include_model=False, include_media=False, include_image=False):
     return [{"id": key, "version": 1, "inputs": deepcopy(value["inputs"]),
         "outputs": deepcopy(value["outputs"]), "parameters_schema": value["parameters"].model_json_schema(),
-        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate", "timeline_export"} else None,
+        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate", "timeline_export", "image_generate"} else None,
         "executable": include_media or key != "asset_reference", "model_called": False,
         "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" and not include_media else []}
         for key in DEFINITIONS
         for value in [definition_for(key, schema_version=3 if include_media else None)]
-        if (include_model or key != "text_generate") and (include_media or key not in {"media_generate", "media_review", "timeline_export"})]
+        if (include_model or key != "text_generate") and (include_media or key not in {"media_generate", "media_review", "timeline_export"})
+        and (include_image or key not in NEW_IMAGE_DEFINITION_IDS)]
 
 
 def history_limit(row):
-    return MAX_MEDIA_HISTORY if row.get("graph_schema_version") == 3 or row.get("definition", {}).get("schema_version") == 3 else MAX_HISTORY
+    return MAX_MEDIA_HISTORY if row.get("graph_schema_version") in {3, 4} or row.get("definition", {}).get("schema_version") in {3, 4} else MAX_HISTORY
 
 
 def validate_output_ports(definition_id, value, *, schema_version=None):
@@ -505,11 +609,24 @@ def validate_output_ports(definition_id, value, *, schema_version=None):
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
             result[port["id"]] = draft.model_dump(exclude_none=True)
         elif port["type"] == "ASSET_REF":
-            if definition_id == "asset_reference" and schema_version != 3:
+            if definition_id == "asset_reference" and schema_version not in {3, 4}:
                 raise ValueError("CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED")
-            result[port["id"]] = AssetParameters.model_validate(item).model_dump()
+            result[port["id"]] = (GraphImageAsset if schema_version == 4 else AssetParameters).model_validate(item).model_dump()
+        elif port["type"] == "IMAGE_REFERENCES":
+            if schema_version != 4 or not isinstance(item, list) or not 1 <= len(item) <= 5:
+                raise ValueError("CREATIVE_GRAPH_IMAGE_REFERENCES_INVALID")
+            references = [ImageReferencePort.model_validate(value).model_dump() for value in item]
+            if len({value["asset"]["asset_id"] for value in references}) != len(references):
+                raise ValueError("CREATIVE_GRAPH_IMAGE_REFERENCE_DUPLICATE")
+            result[port["id"]] = references
+        elif port["type"] == "IMAGE_PROMPT":
+            if schema_version != 4:
+                raise ValueError("CREATIVE_GRAPH_IMAGE_PROMPT_INVALID")
+            result[port["id"]] = ImagePromptPort.model_validate(item).model_dump()
         elif port["type"] == "MEDIA_CANDIDATE":
             candidate = MediaCandidatePort.model_validate(item)
+            if definition_id == "image_generate" and (schema_version != 4 or candidate.owner != "image"):
+                raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")
             if candidate.owner == "timeline":
                 if schema_version != 3 or definition_id != "timeline_export" or candidate.asset.kind != "video":
                     raise ValueError("CREATIVE_GRAPH_MEDIA_CANDIDATE_KIND_INVALID")

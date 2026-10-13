@@ -1,7 +1,8 @@
 import { ApiError, type CollaborationContext } from '../api';
-import { GRAPH_MEDIA_OPERATIONS } from './studioGraphTypes';
+import { GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS } from './studioGraphTypes';
+import { checkedImageRecipeCommand, checkedImageRecipeFields, checkedImageRuntimeInputs, sameImageRuntimeInputs } from './studioImageRuntimeContract';
 import type {
-  RecordedGraphMediaCommand, GraphMediaOperation, StudioGraphAction, StudioGraphActionInput, StudioGraphCatalogDefinition, StudioGraphDefinition,
+  RecordedGraphMediaCommand, GraphImageOperation, GraphMediaOperation, StudioGraphAction, StudioGraphActionInput, StudioGraphCatalogDefinition, StudioGraphDefinition,
   StudioGraphDefinitionId, StudioGraphDraft, StudioGraphNode, StudioGraphOutput, StudioGraphParameters,
   StudioGraphParameterSchema, StudioGraphPort, StudioGraphPosition, StudioGraphPreflight,
   StudioGraphPreflightInput, StudioGraphCreateInput, StudioGraphSaveInput, StudioGraphRunCreateInput,
@@ -30,17 +31,21 @@ export type StudioGraphTransport = {
 const localDefinitionIds: readonly StudioGraphDefinitionId[] = ['text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review', 'asset_reference'];
 const modelDefinitionIds: readonly StudioGraphDefinitionId[] = [...localDefinitionIds, 'text_generate'];
 const mediaDefinitionIds: readonly StudioGraphDefinitionId[] = ['media_generate', 'media_review'];
-const definitionIds: readonly StudioGraphDefinitionId[] = [...modelDefinitionIds, ...mediaDefinitionIds, 'timeline_export'];
+const imageDefinitionIds: readonly StudioGraphDefinitionId[] = ['image_reference', 'image_prompt', 'image_generate'];
+const imageSchemaDefinitionIds: readonly StudioGraphDefinitionId[] = ['text_input', 'text_reference', 'asset_reference', ...imageDefinitionIds, 'media_review'];
+const definitionIds: readonly StudioGraphDefinitionId[] = [...modelDefinitionIds, ...mediaDefinitionIds, 'timeline_export', ...imageDefinitionIds];
 const statuses: readonly StudioGraphRunStatus[] = ['QUEUED', 'RUNNING', 'WAITING_APPROVAL', 'PAUSED', 'SUCCEEDED', 'FAILED', 'CANCELLED', 'REJECTED'];
 const nodeStatuses: readonly StudioGraphNodeStatus[] = ['PENDING', 'WAITING_APPROVAL', 'QUEUED', 'WORKING', 'SUCCEEDED', 'FAILED', 'SKIPPED', 'REJECTED'];
 const actions: readonly StudioGraphAction[] = ['execute', 'approve', 'reject', 'cancel', 'pause', 'resume'];
-const portKinds = ['TEXT', 'DIRECTOR_NOTES', 'DRAFT', 'ASSET_REF', 'MEDIA_CANDIDATE'] as const;
+const portKinds = ['TEXT', 'DIRECTOR_NOTES', 'DRAFT', 'ASSET_REF', 'MEDIA_CANDIDATE', 'IMAGE_REFERENCES', 'IMAGE_PROMPT'] as const;
 const parameterKeys: Record<StudioGraphDefinitionId, readonly string[]> = {
   text_input: ['text'], text_reference: [], draft_prepare: [], manual_transform: ['result'],
   director_note: ['note'], human_review: [], asset_reference: ['asset_id', 'version', 'digest', 'kind'],
   text_generate: ['instruction', 'max_output_tokens'],
   media_generate: ['operation_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'allow_cloud', 'license_note'], media_review: [],
   timeline_export: ['timeline_snapshot', 'edit_operations', 'source_bindings', 'export_profile'],
+  image_reference: ['bindings'], image_prompt: ['prompt'],
+  image_generate: ['operation_id', 'provider_id', 'model_id', 'parameters', 'allow_cloud', 'license_note'],
 };
 const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; outputs: Record<string, string> }> = {
   text_input: { inputs: {}, outputs: { text: 'TEXT' } },
@@ -54,6 +59,9 @@ const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; o
   media_generate: { inputs: { text: 'TEXT', source: 'ASSET_REF' }, outputs: { candidate: 'MEDIA_CANDIDATE' } },
   media_review: { inputs: { candidate: 'MEDIA_CANDIDATE' }, outputs: { asset: 'ASSET_REF' } },
   timeline_export: { inputs: Object.fromEntries(graphTimelinePorts.map(port => [port, 'ASSET_REF'])), outputs: { candidate: 'MEDIA_CANDIDATE' } },
+  image_reference: { inputs: Object.fromEntries(Array.from({ length: 5 }, (_, index) => [`source_${index + 1}`, 'ASSET_REF'])), outputs: { references: 'IMAGE_REFERENCES' } },
+  image_prompt: { inputs: { text: 'TEXT', references: 'IMAGE_REFERENCES' }, outputs: { prompt: 'IMAGE_PROMPT' } },
+  image_generate: { inputs: { prompt: 'IMAGE_PROMPT', source: 'ASSET_REF', mask: 'ASSET_REF' }, outputs: { candidate: 'MEDIA_CANDIDATE' } },
 };
 function nodePorts(kind: StudioGraphDefinitionId, mediaSchema: boolean): { inputs: Record<string, string>; outputs: Record<string, string> } {
   if (mediaSchema && kind === 'human_review') return { inputs: { draft: 'DRAFT' }, outputs: { reviewed_draft: 'DRAFT' } };
@@ -143,15 +151,20 @@ function position(value: unknown, input = false): StudioGraphPosition {
   const row = record(value, input);
   return { x: number(row.x, -100_000, 100_000, input), y: number(row.y, -100_000, 100_000, input) };
 }
-function mediaOperation(value: unknown, input = false): GraphMediaOperation {
-  if (!mediaOperations.includes(value as GraphMediaOperation)) invalid(input); return value as GraphMediaOperation;
+function mediaOperation(value: unknown, input = false, image = false): GraphMediaOperation | GraphImageOperation {
+  if (!(image ? [...mediaOperations, ...GRAPH_IMAGE_OPERATIONS] : mediaOperations).includes(value as GraphMediaOperation)) invalid(input);
+  return value as GraphMediaOperation | GraphImageOperation;
 }
-function mediaParameterValues(value: unknown, operation: GraphMediaOperation, input = false): NonNullable<StudioGraphParameters['parameters']> {
+function mediaParameterValues(value: unknown, operation: GraphMediaOperation | GraphImageOperation, input = false, image = false): NonNullable<StudioGraphParameters['parameters']> {
   const row = record(value, input), result: NonNullable<StudioGraphParameters['parameters']> = {};
-  if (Object.keys(row).some(key => !mediaParameterKeys.includes(key))) invalid(input);
+  if (Object.keys(row).some(key => !mediaParameterKeys.includes(key) && !(image && key === 'denoising_strength'))) invalid(input);
   for (const [key, value] of Object.entries(row)) {
     if (value === null) { result[key] = null; continue; }
-    if (!parametersForOperation[operation].includes(key)) invalid(input);
+    if (image && key === 'denoising_strength') {
+      if (!['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint'].includes(operation)) invalid(input);
+      result[key] = number(value, Number.MIN_VALUE, 1, input); continue;
+    }
+    if (!(['m5.image.inpaint', 'm5.image.reference'].includes(operation) ? parametersForOperation['m5.image.i2i'] : parametersForOperation[operation as GraphMediaOperation]).includes(key)) invalid(input);
     if (key === 'negative_prompt') result[key] = text(value, 8000, input, true);
     else if (key === 'voice_id') result[key] = resourceId(value, input);
     else if (key === 'size' || key === 'quality') {
@@ -173,6 +186,25 @@ function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false
   const row = record(value, input);
   // Redacted references never expose identifiers even if a malformed response includes them.
   if (unavailable && kind === 'asset_reference') return {};
+  if (imageDefinitionIds.includes(kind) && Object.keys(row).some(key => !parameterKeys[kind].includes(key))) invalid(input);
+  if (kind === 'image_prompt') return { prompt: text(row.prompt ?? '', 8000, input, true) };
+  if (kind === 'image_reference') {
+    const bindings = list(row.bindings ?? [], 5, input).map(value => {
+      const binding = record(value, input); if (Object.keys(binding).length !== 2 || !Object.hasOwn(binding, 'port') || !Object.hasOwn(binding, 'weight')
+        || typeof binding.port !== 'string' || !/^source_[1-5]$/.test(binding.port)) invalid(input);
+      const weight = number(binding.weight, Number.MIN_VALUE, 1, input);
+      return { port: binding.port as NonNullable<StudioGraphParameters['bindings']>[number]['port'], weight };
+    });
+    if (new Set(bindings.map(binding => binding.port)).size !== bindings.length) invalid(input);
+    return { bindings };
+  }
+  if (kind === 'image_generate') {
+    const operation = mediaOperation(row.operation_id, input, true);
+    if (!GRAPH_IMAGE_OPERATIONS.includes(operation as GraphImageOperation)) invalid(input);
+    return { operation_id: operation, provider_id: resourceId(row.provider_id, input), model_id: resourceId(row.model_id, input),
+      parameters: mediaParameterValues(row.parameters ?? {}, operation, input, true), allow_cloud: bool(row.allow_cloud ?? false, input),
+      license_note: text(row.license_note ?? '', 2000, input, true) };
+  }
   if (kind === 'timeline_export') { try { return checkedGraphTimelineParameters(row); } catch { return invalid(input); } }
   if (kind === 'text_input') return { text: text(row.text, 8_000, input, true) };
   if (kind === 'manual_transform') return { result: text(row.result, 8_000, input, true) };
@@ -196,14 +228,16 @@ function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false
 }
 function definition(value: unknown, input = false, unavailable = new Set<string>()): StudioGraphDefinition {
   const row = record(value, input);
-  if (row.schema_version !== 1 && row.schema_version !== 2 && row.schema_version !== 3) invalid(input);
-  const nodes: StudioGraphNode[] = list(row.nodes, row.schema_version === 3 ? 24 : 16, input).map(item => {
+  if (row.schema_version !== 1 && row.schema_version !== 2 && row.schema_version !== 3 && row.schema_version !== 4) invalid(input);
+  const nodes: StudioGraphNode[] = list(row.nodes, row.schema_version >= 3 ? 24 : 16, input).map(item => {
     const node = record(item, input), nodeId = id(node.id, input), kind = definitionId(node.definition_id, input);
-    if (kind === 'text_generate' && row.schema_version === 1 || [...mediaDefinitionIds, 'timeline_export'].includes(kind) && row.schema_version !== 3) invalid(input);
+    if (row.schema_version === 4 ? !imageSchemaDefinitionIds.includes(kind)
+      : imageDefinitionIds.includes(kind) || kind === 'text_generate' && row.schema_version === 1 || [...mediaDefinitionIds, 'timeline_export'].includes(kind) && row.schema_version !== 3) invalid(input);
     if (node.definition_version !== 1) invalid(input);
     return { id: nodeId, definition_id: kind, definition_version: 1, enabled: bool(node.enabled, input),
       position: position(node.position, input), parameters: parameters(node.parameters, kind, input, unavailable.has(nodeId)) };
   });
+  if (row.schema_version === 4 && nodes.some(node => node.definition_id === 'asset_reference' && node.parameters.kind !== undefined && node.parameters.kind !== 'image')) invalid(input);
   const nodeMap = new Map(nodes.map(node => [node.id, node]));
   if (nodeMap.size !== nodes.length) invalid(input);
   const targets = new Set<string>(), edgeIds = new Set<string>();
@@ -222,6 +256,15 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
     targets.add(targetKey); edgeIds.add(result.id);
     return result;
   });
+  if (row.schema_version === 4) {
+    if (nodes.filter(node => node.definition_id === 'image_generate').length > 4) invalid(input);
+    for (const node of nodes) {
+      const incoming = edges.filter(edge => edge.target_node_id === node.id);
+      if (node.definition_id === 'image_reference' && incoming.some(edge => !node.parameters.bindings?.some(binding => binding.port === edge.target_port))) invalid(input);
+      if (node.definition_id === 'image_generate' && edges.some(edge => edge.source_node_id === node.id
+        && (nodeMap.get(edge.target_node_id)?.definition_id !== 'media_review' || edge.target_port !== 'candidate'))) invalid(input);
+    }
+  }
   if (row.schema_version === 3) {
     if (nodes.filter(node => ['media_generate', 'timeline_export'].includes(node.definition_id)).length > 4) invalid(input);
     for (const node of nodes.filter(item => item.definition_id === 'timeline_export')) {
@@ -262,6 +305,19 @@ function schema(value: unknown, kind: StudioGraphDefinitionId): StudioGraphParam
     if (JSON.stringify(row).length > 128000 || Object.keys(properties).length !== 4 || Object.keys(properties).some(key => !parameterKeys[kind].includes(key))) invalid();
     return { type: 'object', additionalProperties: false, properties: { timeline_snapshot: { type: 'object' }, edit_operations: { type: 'array' },
       source_bindings: { type: 'array' }, export_profile: { type: 'object' } }, required: ['timeline_snapshot', 'export_profile'] };
+  }
+  if (imageDefinitionIds.includes(kind)) {
+    if (JSON.stringify(row).length > 100000 || Object.keys(properties).length !== parameterKeys[kind].length
+      || Object.keys(properties).some(key => !parameterKeys[kind].includes(key))) invalid();
+    if (kind === 'image_reference') return { type: 'object', additionalProperties: false, properties: { bindings: { type: 'array' } } };
+    if (kind === 'image_prompt') return { type: 'object', additionalProperties: false, properties: { prompt: { type: 'string', maxLength: 8000, default: '' } } };
+    const operation = record(properties.operation_id);
+    if (operation.type !== 'string' || !Array.isArray(operation.enum) || operation.enum.length !== GRAPH_IMAGE_OPERATIONS.length
+      || operation.enum.some(item => !GRAPH_IMAGE_OPERATIONS.includes(item as GraphImageOperation))) invalid();
+    return { type: 'object', additionalProperties: false, properties: {
+      operation_id: { type: 'string', enum: [...GRAPH_IMAGE_OPERATIONS] }, provider_id: { type: 'string', maxLength: 240 }, model_id: { type: 'string', maxLength: 240 },
+      parameters: { type: 'object', default: {} }, allow_cloud: { type: 'boolean', default: false }, license_note: { type: 'string', maxLength: 2000, default: '' },
+    }, required: ['operation_id', 'provider_id', 'model_id'] };
   }
   if (kind === 'media_generate') {
     if (JSON.stringify(row).length > 100000 || Object.keys(properties).length !== parameterKeys[kind].length
@@ -307,19 +363,21 @@ function catalogDefinition(value: unknown, mediaEnabled = false): StudioGraphCat
   if (row.version !== 1 || row.model_called !== false || row.executable !== executable) invalid();
   function checkedPorts(value: unknown, side: 'inputs' | 'outputs'): StudioGraphPort[] {
     const expected = nodePorts(kind, mediaEnabled)[side];
-    const result = list(value, kind === 'timeline_export' ? 8 : 3).map(item => {
+    const result = list(value, kind === 'timeline_export' ? 8 : kind === 'image_reference' ? 5 : 3).map(item => {
       const port = record(item), portId = id(port.id), required = bool(port.required);
       if (!portKinds.includes(port.type as StudioGraphPort['type']) || expected[portId] !== port.type || port.multiple !== false) invalid();
-      if (required !== (side === 'inputs' && portId !== 'direction' && kind !== 'media_generate' && kind !== 'timeline_export')) invalid();
+      const expectedRequired = side === 'inputs' && (kind === 'image_generate' ? portId === 'prompt'
+        : ['image_reference', 'image_prompt'].includes(kind) ? false : portId !== 'direction' && kind !== 'media_generate' && kind !== 'timeline_export');
+      if (required !== expectedRequired) invalid();
       return { id: portId, type: port.type as StudioGraphPort['type'], required, multiple: false as const };
     });
     if (new Set(result.map(port => port.id)).size !== Object.keys(expected).length || result.length !== Object.keys(expected).length) invalid();
     return result;
   }
-  if (['asset_reference', 'media_generate', 'timeline_export'].includes(kind) && row.default_parameters !== null) invalid();
+  if (['asset_reference', 'media_generate', 'timeline_export', 'image_generate'].includes(kind) && row.default_parameters !== null) invalid();
   return { id: kind, version: 1, inputs: checkedPorts(row.inputs, 'inputs'), outputs: checkedPorts(row.outputs, 'outputs'),
     parameters_schema: schema(row.parameters_schema, kind),
-    default_parameters: ['asset_reference', 'media_generate', 'timeline_export'].includes(kind) ? null : parameters(row.default_parameters, kind),
+    default_parameters: ['asset_reference', 'media_generate', 'timeline_export', 'image_generate'].includes(kind) ? null : parameters(row.default_parameters, kind),
     executable, model_called: false, blockers: list(row.blockers, 16).map(code) };
 }
 
@@ -335,14 +393,32 @@ function draft(value: unknown, allowModel = false): StudioGraphDraft {
   if (row.direction !== undefined) result.direction = { note: text(record(row.direction).note, 4_000, false, true) };
   return result;
 }
-function output(value: unknown, allowModel = false, allowReviewed = false): StudioGraphOutput | null {
+function output(value: unknown, allowModel = false, allowReviewed = false, imageKind?: StudioGraphDefinitionId): StudioGraphOutput | null {
   if (value === null) return null;
   const row = record(value), result: StudioGraphOutput = {};
+  if (imageKind === 'image_reference') closed(row, ['references']);
+  if (imageKind === 'image_prompt') closed(row, ['prompt']);
   if (row.text !== undefined) result.text = text(row.text, 8_000, false, true);
   if (row.direction !== undefined) result.direction = { note: text(record(row.direction).note, 4_000, false, true) };
   if (row.draft !== undefined) result.draft = draft(row.draft, allowModel);
   if (row.reviewed_draft !== undefined) { if (!allowReviewed) invalid(); result.reviewed_draft = draft(row.reviewed_draft, allowModel); }
   if (row.asset !== undefined) result.asset = assetReference(row.asset);
+  const imageReferences = (value: unknown) => {
+    const seen = new Set<string>();
+    return list(value, 5).map(value => {
+      const reference = record(value); closed(reference, ['asset', 'weight']);
+      const asset = assetReference(reference.asset), weight = number(reference.weight, Number.MIN_VALUE, 1);
+      if (asset.kind !== 'image' || seen.has(asset.asset_id)) invalid(); seen.add(asset.asset_id);
+      return { asset: { ...asset, kind: 'image' as const }, weight };
+    });
+  };
+  if (row.references !== undefined) {
+    if (imageKind !== 'image_reference') invalid(); result.references = imageReferences(row.references);
+  }
+  if (row.prompt !== undefined) {
+    if (imageKind !== 'image_prompt') invalid(); const prompt = record(row.prompt); closed(prompt, ['prompt', 'references']);
+    result.prompt = { prompt: text(prompt.prompt, 16000, false, true), references: imageReferences(prompt.references) };
+  }
   if (row.candidate !== undefined) {
     const candidate = record(row.candidate);
     if (!['image', 'video', 'audio', 'timeline'].includes(candidate.owner as string) || Object.keys(candidate).some(key => !['owner', 'job_id', 'job_version', 'request_digest', 'asset'].includes(key))) invalid();
@@ -371,23 +447,27 @@ function mediaSource(value: unknown): RecordedProductionSource {
   return { ...base, kind: 'ASSET', asset_kind: row.asset_kind as 'image' | 'video' | 'audio' };
 }
 function recordedMediaCommand(value: unknown): RecordedGraphMediaCommand {
-  const row = record(value); closed(row, ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note']);
-  const operation = mediaOperation(row.operation_id), resolved = mediaParameterValues(row.parameters, operation);
+  const row = record(value); closed(row, ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source']);
+  const operation = mediaOperation(row.operation_id, false, true), resolved = mediaParameterValues(row.parameters, operation, false,
+    row.image_source !== undefined || row.image_references !== undefined || row.mask_source !== undefined || operation === 'm5.image.reference' || operation === 'm5.image.inpaint');
   const requestId = text(row.request_id, 100); if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(requestId)) invalid();
   const sourceSnapshots = list(row.source_snapshots, 8).map(mediaSource);
   if (sourceSnapshots.some(source => source.kind !== 'ASSET')) invalid();
   return { operation_id: operation, request_id: requestId, provider_id: row.provider_id == null ? null : resourceId(row.provider_id),
     model_id: row.model_id == null ? null : resourceId(row.model_id), prompt: text(row.prompt, 16000, false, true),
     parameters: Object.fromEntries(Object.entries(resolved).filter((item): item is [string, string | number] => item[1] !== null)),
-    source_snapshots: sourceSnapshots, allow_cloud: bool(row.allow_cloud), license_note: text(row.license_note, 2000, false, true) };
+    source_snapshots: sourceSnapshots, allow_cloud: bool(row.allow_cloud), license_note: text(row.license_note, 2000, false, true),
+    ...checkedImageRuntimeInputs(row, sourceSnapshots, operation) };
 }
 function productionRecipe(value: unknown, operation: string): ProductionRecipe {
   const row = record(value); closed(row, ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline',
+    'image_recipe_id', 'reference_weights', 'reference_semantics', 'mask_semantics',
     ...(operation === 'm9.timeline.multitrack' ? ['export_profile'] : [])]);
   if (row.contract !== 'studio-execution-recipe/1' || row.operation_id !== operation || row.automatic_fallback !== false
     || !['ORIGINAL_HTTP_PROVIDER', 'COMFYUI_BUILTIN_IMAGE', 'AUTOMATIC1111_IMAGE', 'LOCAL_FFMPEG'].includes(row.adapter as string)
     || JSON.stringify(row).length > 131072) invalid();
   digest(row.recipe_digest);
+  checkedImageRecipeFields(row, operation);
   return row as ProductionRecipe;
 }
 function graphTimelineCommand(value: unknown): GraphTimelineCommand {
@@ -440,7 +520,7 @@ function productionPreview(value: unknown, projectId: string, branchId: string |
   const row = record(value); closed(row, ['contract', 'novel_id', 'branch_id', 'request_id', 'operation_id', 'preview_digest', 'request_digest', 'command', 'provider',
     'execution_recipe', 'sources', 'product_acceptance', 'execution_available', 'automatic_dispatch', 'output_policy']);
   if (row.novel_id !== projectId || (row.branch_id ?? null) !== branchId) mismatch();
-  const command = recordedMediaCommand(row.command), operation = mediaOperation(row.operation_id);
+  const command = recordedMediaCommand(row.command), operation = mediaOperation(row.operation_id, false, true);
   if (row.contract !== 'studio-production-preview/1' || row.request_id !== command.request_id || operation !== command.operation_id
     || row.product_acceptance !== 'LOCAL_REQUIRED' || row.execution_available !== true || row.automatic_dispatch !== false
     || row.output_policy !== 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW') invalid();
@@ -457,9 +537,10 @@ function productionPreview(value: unknown, projectId: string, branchId: string |
     const expected = command.source_snapshots[index]; if (['id', 'kind', 'version', 'digest', 'asset_kind'].some(key =>
       (snapshot as Record<string, unknown>)[key] !== (expected as Record<string, unknown>)[key])) invalid(); });
   // Project a checked command instead of retaining unknown response keys or nullable parameters.
+  const executionRecipe = productionRecipe(row.execution_recipe, operation); checkedImageRecipeCommand(executionRecipe, command);
   return { contract: 'studio-production-preview/1', novel_id: projectId, branch_id: branchId, operation_id: operation, request_id: command.request_id,
     command: command as ProductionPreview['command'], provider, preview_digest: digest(row.preview_digest), request_digest: digest(row.request_digest),
-    execution_recipe: productionRecipe(row.execution_recipe, operation), product_acceptance: 'LOCAL_REQUIRED', execution_available: true,
+    execution_recipe: executionRecipe, product_acceptance: 'LOCAL_REQUIRED', execution_available: true,
     automatic_dispatch: false, output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
 }
 function mediaJob(value: unknown): StudioGraphMediaJob {
@@ -502,6 +583,7 @@ function graphMediaRuntime(value: unknown, projectId: string, branchId: string |
         if (command.operation_id !== captured.operation_id || command.request_id !== captured.request_id || command.prompt !== captured.prompt
           || command.provider_id !== captured.provider_id || command.model_id !== captured.model_id || command.allow_cloud !== captured.allow_cloud || command.license_note !== captured.license_note
           || JSON.stringify(command.source_snapshots) !== JSON.stringify(captured.source_snapshots)
+          || !sameImageRuntimeInputs(command, captured)
           || Object.entries(command.parameters).some(([key, value]) => captured.parameters[key] !== value)) invalid();
       }
       preview = { node_id: nodeId, input_digest: digest(p.input_digest), preview_digest: digest(p.preview_digest), command, production_preview: production };
@@ -550,6 +632,14 @@ function catalog(value: unknown): StudioGraphCatalog {
   const modelEnabled = capabilities.model_execution === true;
   const mediaEnabled = capabilities.media_execution === true;
   const timelineEnabled = capabilities.timeline_execution === true;
+  const imageEnabled = capabilities.image_graph === true;
+  if (imageEnabled) {
+    if (!mediaEnabled || capabilities.image_graph_schema_version !== 4 || capabilities.image_graph_evidence !== 'LOCAL_REQUIRED'
+      || capabilities.image_reference_semantics !== 'WEIGHTED_PIXEL_INITIALIZATION' || capabilities.image_upscale_execution !== false) invalid();
+    expectedCapabilities.image_graph = true; expectedCapabilities.image_graph_schema_version = 4; expectedCapabilities.image_graph_evidence = 'LOCAL_REQUIRED';
+    expectedCapabilities.image_reference_semantics = 'WEIGHTED_PIXEL_INITIALIZATION'; expectedCapabilities.image_upscale_execution = false;
+  } else if (capabilities.image_graph_schema_version !== undefined || capabilities.image_graph_evidence !== undefined
+    || capabilities.image_reference_semantics !== undefined || capabilities.image_upscale_execution !== undefined) invalid();
   if (timelineEnabled) { if (!mediaEnabled || capabilities.timeline_evidence !== 'LOCAL_REQUIRED' || capabilities.automatic_timeline_dispatch !== false) invalid();
     expectedCapabilities.timeline_execution = true; expectedCapabilities.timeline_evidence = 'LOCAL_REQUIRED'; expectedCapabilities.automatic_timeline_dispatch = false;
   } else if (capabilities.timeline_evidence !== undefined || capabilities.automatic_timeline_dispatch !== undefined) invalid();
@@ -566,7 +656,7 @@ function catalog(value: unknown): StudioGraphCatalog {
   if (Object.entries(expectedLimits).some(([key, value]) => limits[key] !== value)
     || Object.entries(expectedCapabilities).some(([key, value]) => capabilities[key] !== value)) invalid();
   const definitions = list(row.definitions, definitionIds.length).map(item => catalogDefinition(item, mediaEnabled));
-  const expectedDefinitions = [...(modelEnabled ? modelDefinitionIds : localDefinitionIds), ...(mediaEnabled ? mediaDefinitionIds : []), ...(timelineEnabled ? ['timeline_export' as const] : [])];
+  const expectedDefinitions = [...(modelEnabled ? modelDefinitionIds : localDefinitionIds), ...(mediaEnabled ? mediaDefinitionIds : []), ...(timelineEnabled ? ['timeline_export' as const] : []), ...(imageEnabled ? imageDefinitionIds : [])];
   if (definitions.length !== expectedDefinitions.length || new Set(definitions.map(item => item.id)).size !== definitions.length
     || definitions.some(item => !expectedDefinitions.includes(item.id))) invalid();
   let mediaLimits: StudioGraphCatalog['media_limits'];
@@ -689,16 +779,19 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       if (!nodeStatuses.includes(state.status as StudioGraphNodeStatus)) invalid();
       const nodeState: StudioGraphNodeState = { status: state.status as StudioGraphNodeStatus,
         output: hideOutputs ? null : output(state.output, modelOutput, state.status === 'SUCCEEDED' && (!knownGraph
-          || knownGraph.schemaVersion === 3 && knownGraph.nodes[nodeId] === 'human_review')), error: state.error === null ? null : { code: code(record(state.error).code) } };
+          || knownGraph.schemaVersion === 3 && knownGraph.nodes[nodeId] === 'human_review'), knownGraph?.schemaVersion === 4 ? knownGraph.nodes[nodeId] : undefined), error: state.error === null ? null : { code: code(record(state.error).code) } };
       if (knownGraph && nodeState.output?.candidate && (knownGraph.nodes[nodeId] === 'timeline_export'
-        ? nodeState.output.candidate.owner !== 'timeline' : knownGraph.nodes[nodeId] !== 'media_generate' || nodeState.output.candidate.owner === 'timeline')) invalid();
+        ? nodeState.output.candidate.owner !== 'timeline' : !['media_generate', 'image_generate'].includes(knownGraph.nodes[nodeId]) || nodeState.output.candidate.owner === 'timeline'
+          || knownGraph.nodes[nodeId] === 'image_generate' && nodeState.output.candidate.owner !== 'image')) invalid();
       return [id(nodeId), nodeState];
     }));
     const currentNodeId = row.current_node_id === null ? null : id(row.current_node_id);
     if (currentNodeId !== null && !Object.hasOwn(nodeStates, currentNodeId)) invalid();
     if (model && !Object.hasOwn(nodeStates, model.node_id)) invalid();
     if (media?.nodes.some(node => !Object.hasOwn(nodeStates, node.node_id))) invalid();
-    if (knownGraph && media?.nodes.some(node => !['media_generate', 'timeline_export'].includes(knownGraph.nodes[node.node_id])
+    if (knownGraph && media?.nodes.some(node => !['media_generate', 'timeline_export', 'image_generate'].includes(knownGraph.nodes[node.node_id])
+      || knownGraph.nodes[node.node_id] === 'image_generate' && (node.execution && node.execution.owner !== 'image'
+        || node.preview && !GRAPH_IMAGE_OPERATIONS.includes(node.preview.command.operation_id as GraphImageOperation))
       || node.execution && (knownGraph.nodes[node.node_id] === 'timeline_export' ? node.execution.owner !== 'timeline' : node.execution.owner === 'timeline')
       || node.preview && (knownGraph.nodes[node.node_id] === 'timeline_export') !== (node.preview.command.operation_id === 'm9.timeline.multitrack'))) invalid();
     let review: StudioGraphRun['review'] = null;
@@ -792,6 +885,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       return transport.json(`${base}/production/timelines/${encodeURIComponent(snapshotId)}`, 'GET', undefined, signal).then(value => checkedTimelineRow(value, timelineId));
     },
     catalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog`, 'GET', undefined, signal).then(catalog),
+    imageCatalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog?include_image=true`, 'GET', undefined, signal).then(catalog),
     modelCapabilities: (signal?: AbortSignal): Promise<StudioGraphModelCapabilities> => transport.json(`${base}/graphs/model-capabilities`, 'GET', undefined, signal).then(value => graphModelCapabilities(value, owner)),
     list: (signal?: AbortSignal): Promise<{ items: StudioGraphRecord[] }> => transport.json(`${base}/graphs`, 'GET', undefined, signal).then(value => {
       const items = list(record(value).items, 25).map(item => checkedGraph(item));
@@ -910,5 +1004,6 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
 
 // Older embedded clients can omit the advisory extension; execution stays unchanged.
 type StudioGraphMediaClient = Pick<ReturnType<typeof createStudioGraphClient>, 'previewMedia' | 'dispatchMedia' | 'executeMedia' | 'refreshMedia' | 'reconcileMedia' | 'reviewMedia' | 'mediaCandidate' | 'graphTimelineList' | 'graphTimelineGet'>;
-export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient>
-  & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient>;
+type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog'>;
+export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient | keyof StudioGraphImageClient>
+  & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient> & Partial<StudioGraphImageClient>;

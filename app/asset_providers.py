@@ -15,7 +15,7 @@ DEFAULT_IMAGE_ENDPOINTS={key:value["endpoint"] for key,value in IMAGE_PROVIDER_C
 DEFAULT_IMAGE_MODELS={key:value["default_model"] for key,value in IMAGE_PROVIDER_CATALOG.items()}
 
 def validate_image_parameters(parameters: dict, allowed=None) -> dict:
-    known={'size','quality','width','height','steps','seed','negative_prompt'}
+    known={'size','quality','width','height','steps','seed','negative_prompt','denoising_strength'}
     if set(parameters)-known or (allowed is not None and set(parameters)-set(allowed)):
         raise ValueError('IMAGE_PARAMETER_UNSUPPORTED')
     for key in ('width','height'):
@@ -25,6 +25,10 @@ def validate_image_parameters(parameters: dict, allowed=None) -> dict:
     if 'size' in parameters and parameters['size'] not in {'auto','1024x1024','1536x1024','1024x1536'}:raise ValueError('unsupported image size')
     if 'quality' in parameters and parameters['quality'] not in {'auto','low','medium','high','standard','hd'}:raise ValueError('unsupported image quality')
     if 'negative_prompt' in parameters and (not isinstance(parameters['negative_prompt'],str) or len(parameters['negative_prompt'])>10000):raise ValueError('invalid negative prompt')
+    if 'denoising_strength' in parameters:
+        import math
+        value=parameters['denoising_strength']
+        if type(value) not in {int,float} or not math.isfinite(value) or not 0<value<=1:raise ValueError('invalid denoising strength')
     return dict(parameters)
 
 @dataclass(frozen=True)
@@ -221,6 +225,57 @@ class Automatic1111ImageProvider:
     supported_parameters = ("width", "height", "steps", "seed", "negative_prompt")
     edit_reference_limit = 5
     def __init__(self, transport, endpoint: str): self.transport,self.endpoint=transport,endpoint.rstrip('/')
+    def image_configuration(self):
+        import copy
+        recipe = copy.deepcopy(getattr(self, 'image_recipe_descriptor', None))
+        if recipe:
+            recipe['supported_parameters'] = {op: self.image_parameters(op) for op in recipe['operations']}
+        return recipe
+    def image_parameters(self, operation):
+        recipe = getattr(self, 'image_recipe_descriptor', None)
+        if not recipe or operation not in recipe['operations']:
+            raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
+        supported=self.supported_parameters if operation=='t2i' else tuple(k for k in self.supported_parameters if k not in {'width','height'})
+        return supported + (() if operation == 't2i' else ('denoising_strength',))
+    def image_recipe(self, request, *, operation, reference_weights=(), mask=False):
+        recipe = self.image_configuration()
+        if not recipe or operation not in recipe['operations']:
+            raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
+        return {'recipe_id': recipe['recipe_id'], 'operation': operation, 'model': request.model_id,
+            'parameters': validate_image_parameters(request.parameters,self.image_parameters(operation)),
+            'reference_weights': list(reference_weights), 'mask_semantics': recipe['mask_semantics'] if mask else None}
+    def generate_image(self, request, *, operation, images, reference_weights, mask=None):
+        if operation == 't2i':
+            if images or reference_weights or mask or 'denoising_strength' in request.parameters:
+                raise ValueError('IMAGE_RECIPE_T2I_INPUT_INVALID')
+            self.image_parameters(operation)
+            return self.generate(request)
+        self.image_parameters(operation)
+        if operation not in {'i2i','inpaint'} or len(images)!=1 or reference_weights != [1]:
+            raise ValueError('IMAGE_RECIPE_REFERENCES_INVALID')
+        if (operation == 'inpaint') != (mask is not None): raise ValueError('IMAGE_RECIPE_INPAINT_INPUT_INVALID')
+        inline_values=[*images, *([mask] if mask is not None else [])]
+        if sum(len(value) for value in inline_values if isinstance(value,str))>36*1024*1024:raise ValueError('IMAGE_EDIT_REFERENCE_LIMIT')
+        measured=[_verified_inline_image(value) for value in inline_values]
+        if mask is not None and (measured[0][1].get('width'),measured[0][1].get('height'))!=(measured[1][1].get('width'),measured[1][1].get('height')):
+            raise ValueError('IMAGE_RECIPE_MASK_DIMENSIONS_INVALID')
+        if mask is not None:
+            from .services.studio_image_mask_authoring import verify_mask
+            verify_mask(measured[1][0],checkpoint=request.dispatch_guard or (lambda:None))
+        payload={'prompt':request.prompt,'init_images':images,'denoising_strength':0.6,'steps':28,
+            'width':measured[0][1]['width'],'height':measured[0][1]['height'],
+            **validate_image_parameters(request.parameters,self.image_parameters(operation))}
+        if mask is not None:
+            payload.update(mask=mask,inpainting_mask_invert=1,inpainting_fill=1,mask_blur=0,inpaint_full_res=False,
+                inpaint_full_res_padding=0,resize_mode=0)
+        if request.model_id:payload['override_settings']={'sd_model_checkpoint':request.model_id}
+        if request.dispatch_guard is not None:request.dispatch_guard()
+        response=self.transport.post(self.endpoint+'/sdapi/v1/img2img',json=payload,timeout=180,dispatch_guard=request.dispatch_guard)
+        response.raise_for_status()
+        if request.dispatch_guard is not None:request.dispatch_guard()
+        values=response.json().get('images') or []
+        if not values:raise ValueError('automatic1111 edit response missing image')
+        return AssetGenerationResult(request.provider_id,request.model_id,'data:image/png;base64,'+str(values[0]).split(',',1)[-1])
     def health_check(self) -> bool:
         try:return self.transport.get(self.endpoint+"/sdapi/v1/sd-models",timeout=1.5).status_code==200
         except Exception:return False
@@ -255,6 +310,116 @@ class ComfyUIImageProvider:
     edit_supported_parameters = ("steps", "seed", "negative_prompt")
     edit_reference_limit = 1
     def __init__(self, transport, endpoint: str): self.transport,self.endpoint=transport,endpoint.rstrip('/')
+    def image_configuration(self):
+        import copy
+        recipe=copy.deepcopy(getattr(self,'image_recipe_descriptor',None))
+        if recipe:recipe['supported_parameters']={op:self.image_parameters(op) for op in recipe['operations']}
+        return recipe
+    def image_parameters(self, operation):
+        recipe=getattr(self,'image_recipe_descriptor',None)
+        if not recipe or operation not in recipe['operations']:raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
+        parameters=self.supported_parameters if operation=='t2i' else self.edit_supported_parameters+('denoising_strength',)
+        if recipe['recipe_id']=='comfy-flux1-v1':parameters=tuple(k for k in parameters if k!='negative_prompt')
+        return parameters
+    def image_recipe(self, request, *, operation, reference_weights=(), mask=False):
+        from .services.studio_image_provider_recipes import build_workflow
+        recipe=self.image_configuration()
+        if not recipe:raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
+        parameters=validate_image_parameters(request.parameters,self.image_parameters(operation))
+        return build_workflow(recipe,request.prompt,parameters,operation=operation,
+            uploads=tuple('source-'+str(i)+'.png' for i in range(len(reference_weights))),weights=reference_weights,
+            mask='mask.png' if mask else None)
+    def generate_image(self, request, *, operation, images, reference_weights, mask=None):
+        import hashlib
+        import re
+        from .services.studio_image_provider_recipes import RECIPES,project_comfy_image_recipe,build_workflow,validate_workflow
+        descriptor=getattr(self,'image_recipe_descriptor',None)
+        if not descriptor:raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
+        parameters=validate_image_parameters(request.parameters,self.image_parameters(operation))
+        if operation=='t2i' and (images or reference_weights or mask):raise ValueError('IMAGE_RECIPE_T2I_INPUT_INVALID')
+        if operation!='t2i' and (not 1<=len(images)<=descriptor['reference_limit'] or len(images)!=len(reference_weights)):
+            raise ValueError('IMAGE_RECIPE_REFERENCES_INVALID')
+        family=next(r['family'] for r in RECIPES if r['id']==descriptor['recipe_id'])
+        def observed():
+            if request.dispatch_guard is not None:request.dispatch_guard()
+            response=self.transport.get(self.endpoint+'/object_info',timeout=10,dispatch_guard=request.dispatch_guard)
+            response.raise_for_status()
+            if request.dispatch_guard is not None:request.dispatch_guard()
+            info=response.json()
+            projected=project_comfy_image_recipe(info,request.model_id,family)
+            if projected!=descriptor:raise ValueError('IMAGE_RECIPE_CONFIGURATION_CHANGED')
+            return info
+        if sum(len(value) for value in [*images,*([mask] if mask is not None else [])] if isinstance(value,str))>36*1024*1024:
+            raise ValueError('IMAGE_EDIT_REFERENCE_LIMIT')
+        values=[_verified_inline_image(value) for value in images]
+        mask_value=_verified_inline_image(mask) if mask is not None else None
+        if operation=='inpaint' and (len(values)!=1 or mask_value is None):raise ValueError('IMAGE_RECIPE_INPAINT_INPUT_INVALID')
+        if operation!='inpaint' and mask_value is not None:raise ValueError('IMAGE_RECIPE_INPAINT_INPUT_INVALID')
+        if mask_value is not None and (values[0][1].get('width'),values[0][1].get('height'))!=(mask_value[1].get('width'),mask_value[1].get('height')):
+            raise ValueError('IMAGE_RECIPE_MASK_DIMENSIONS_INVALID')
+        if mask_value is not None:
+            from .services.studio_image_mask_authoring import verify_mask
+            verify_mask(mask_value[0],checkpoint=request.dispatch_guard or (lambda:None))
+        preflight=build_workflow(descriptor,request.prompt,parameters,operation=operation,
+            uploads=tuple('source-'+str(i)+'.png' for i in range(len(values))),weights=reference_weights,
+            mask='mask.png' if mask_value is not None else None)
+        validate_workflow(observed(),preflight)
+        names=[];mask_name=None
+        for index,(data,measured) in enumerate([*values,*([mask_value] if mask_value is not None else [])]):
+            filename='studio-'+hashlib.sha256((request.task_id+':'+str(index)).encode()).hexdigest()+'.'+measured['extension']
+            if request.dispatch_guard is not None:request.dispatch_guard()
+            response=self.transport.post(self.endpoint+'/upload/image',files={'image':(filename,data,measured['media_type'])},
+                data={'type':'input','overwrite':'false'},timeout=30,dispatch_guard=request.dispatch_guard)
+            response.raise_for_status()
+            if request.dispatch_guard is not None:request.dispatch_guard()
+            receipt=response.json();name=receipt.get('name')
+            if (not isinstance(name,str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,239}',name)
+                    or '..' in name or receipt.get('subfolder','') or receipt.get('type','input')!='input'):
+                raise ValueError('COMFYUI_UPLOAD_RECEIPT_INVALID')
+            if index==len(values):mask_name=name
+            else:names.append(name)
+        info=observed()
+        workflow=build_workflow(descriptor,request.prompt,parameters,operation=operation,uploads=names,
+            weights=reference_weights,mask=mask_name)
+        validate_workflow(info,workflow)
+        if request.dispatch_guard is not None:request.dispatch_guard()
+        response=self.transport.post(self.endpoint+'/prompt',json={'prompt':workflow},timeout=15,dispatch_guard=request.dispatch_guard)
+        response.raise_for_status()
+        if request.dispatch_guard is not None:request.dispatch_guard()
+        prompt_id=response.json().get('prompt_id')
+        if not isinstance(prompt_id,str) or not prompt_id or len(prompt_id)>240:raise ValueError('ComfyUI response missing prompt_id')
+        return self._image_result(request,prompt_id)
+    def _image_result(self,request,prompt_id):
+        import re
+        from .media_files import inspect_image
+        for _ in range(120):
+            if request.dispatch_guard is not None:request.dispatch_guard()
+            response=self.transport.get(self.endpoint+'/history/'+quote(prompt_id,safe=''),timeout=10,dispatch_guard=request.dispatch_guard)
+            response.raise_for_status()
+            if request.dispatch_guard is not None:request.dispatch_guard()
+            entry=response.json().get(prompt_id) or {}
+            if (entry.get('status') or {}).get('status_str') in {'error','failed'}:
+                raise ValueError('COMFYUI_EXECUTION_FAILED')
+            # Only the closed SaveImage node owns the output; unrelated node
+            # history or preview images never become the reviewed candidate.
+            values=((entry.get('outputs') or {}).get('9') or {}).get('images') or []
+            if values:
+                item=values[0]
+                if (not isinstance(item,dict) or not isinstance(item.get('filename'),str)
+                        or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,239}',item['filename'])
+                        or '..' in item['filename'] or item.get('subfolder','') or item.get('type','output')!='output'):
+                    raise ValueError('COMFYUI_OUTPUT_RECEIPT_INVALID')
+                if request.dispatch_guard is not None:request.dispatch_guard()
+                binary=self.transport.get(self.endpoint+'/view',params={'filename':item['filename'],'subfolder':'','type':'output'},
+                    timeout=30,dispatch_guard=request.dispatch_guard)
+                binary.raise_for_status()
+                if request.dispatch_guard is not None:request.dispatch_guard()
+                if len(binary.content)>25*1024*1024:raise ValueError('IMAGE_OUTPUT_LIMIT')
+                measured=inspect_image(binary.content)
+                if request.dispatch_guard is not None:request.dispatch_guard()
+                return AssetGenerationResult(request.provider_id,request.model_id,'data:'+measured['media_type']+';base64,'+base64.b64encode(binary.content).decode('ascii'))
+            time.sleep(.5)
+        raise ValueError('ComfyUI generation timed out')
     def health_check(self) -> bool:
         try:return self.transport.get(self.endpoint+"/system_stats",timeout=1.5).status_code==200
         except Exception:return False
@@ -271,6 +436,9 @@ class ComfyUIImageProvider:
         }
     def generate(self, request: AssetGenerationRequest) -> AssetGenerationResult:
         if not request.model_id: raise ValueError("ComfyUI checkpoint is required")
+        recipe=getattr(self,'image_recipe_descriptor',None)
+        if recipe:
+            return self.generate_image(request,operation='t2i',images=[],reference_weights=[])
         workflow=self._workflow(request)
         if request.dispatch_guard is not None: request.dispatch_guard()
         response=self.transport.post(self.endpoint+"/prompt",json={"prompt":workflow},timeout=15)
@@ -337,3 +505,12 @@ def build_openai_compatible_from_vault(transport, provider_id: str, endpoint: st
     secret=vault.resolve(provider_id)
     if not secret: raise ValueError(f"credential is not configured: {provider_id}")
     return OpenAICompatibleImageProvider(transport,secret,endpoint)
+
+def _verified_inline_image(value):
+    from .media_files import inspect_image
+    if not isinstance(value,str) or not value.startswith('data:image/') or ';base64,' not in value or len(value)>36*1024*1024:
+        raise ValueError('IMAGE_EDIT_VERIFIED_INLINE_REFERENCE_REQUIRED')
+    try:data=base64.b64decode(value.split(';base64,',1)[1],validate=True)
+    except ValueError:raise ValueError('IMAGE_EDIT_VERIFIED_INLINE_REFERENCE_REQUIRED') from None
+    if not data or len(data)>25*1024*1024:raise ValueError('IMAGE_EDIT_REFERENCE_LIMIT')
+    return data,inspect_image(data)

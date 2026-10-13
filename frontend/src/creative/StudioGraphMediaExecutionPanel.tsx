@@ -1,5 +1,5 @@
 import { Badge, Button, StatusMessage } from '../ui/primitives';
-import { GRAPH_MEDIA_OPERATION_LABELS, MEDIA_STATUS_LABELS } from './useStudioMediaExecution';
+import { MEDIA_OPERATION_LABELS, MEDIA_STATUS_LABELS } from './useStudioMediaExecution';
 import { useStudioGraphMediaExecution, type StudioGraphMediaExecutionProps } from './useStudioGraphMediaExecution';
 
 export type { GraphMediaAction, GraphMediaActionEvidence, StudioGraphMediaExecutionProps } from './useStudioGraphMediaExecution';
@@ -28,7 +28,7 @@ export function StudioGraphMediaExecutionPanel(props: StudioGraphMediaExecutionP
       {state.node?.status === 'PENDING' && <p>先明确执行前置节点，到达媒体边界后再预览。</p>}
       {preview && <section aria-label="图媒体预览确认">
         <Badge tone="info">预览尚未调用媒体服务</Badge>
-        <p>{preview.command.operation_id === 'm9.timeline.multitrack' ? '原时间线剪辑与导出' : GRAPH_MEDIA_OPERATION_LABELS[preview.command.operation_id]} · {preview.production_preview.provider
+        <p>{preview.command.operation_id === 'm9.timeline.multitrack' ? '原时间线剪辑与导出' : MEDIA_OPERATION_LABELS[preview.command.operation_id]} · {preview.production_preview.provider
           ? `${preview.production_preview.provider.provider_id} / ${preview.production_preview.provider.model_id} · ${preview.production_preview.provider.local ? '本地' : '云端'}` : '本地处理'}</p>
         <details><summary>核对完整提示词、参数与来源</summary><pre>{JSON.stringify(preview.command, null, 2)}</pre></details>
         {preview.production_preview.operation_id === 'm9.timeline.multitrack' && <section aria-label="图时间线计划版本">

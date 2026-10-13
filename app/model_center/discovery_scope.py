@@ -87,7 +87,7 @@ def probe_paths(runtime: dict) -> list[str]:
     kind = runtime['type']
     if kind == 'OLLAMA': return ['/api/tags', '/api/version']
     if kind == 'COMFYUI': return ['/system_stats', '/object_info']
-    if kind == 'AUTOMATIC1111': return ['/sdapi/v1/sd-models']
+    if kind == 'AUTOMATIC1111': return ['/sdapi/v1/sd-models', '/openapi.json']
     if kind == 'LLAMA_CPP': return [runtime['health_endpoint'] or '/v1/models']
     if kind == 'OPENAI_COMPATIBLE_LOCAL':
         return ['/models' if runtime['endpoint'].endswith('/v1') else '/v1/models']

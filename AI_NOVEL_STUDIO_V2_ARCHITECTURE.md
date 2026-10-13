@@ -563,3 +563,15 @@ unchanged; the Agent selection fix binds display and mutation to the same role.
 now binds the selected 56-file File/real-PG range to that corrected source, with
 normal PG shutdown and original source/inventory contracts preserved. It is not
 full-product or new-SHA hosted acceptance; M3 remains PARTIAL.
+
+
+### Production Expansion 2: additive image runtime (2026-10-13)
+
+Explicit image roles and weighted versioned Asset snapshots extend the original
+ProductionExecution/ImageJob/Asset/review path. Fixed SD/FLUX.1/Qwen Image recipes
+are capability-proved through original discovery; no new registry, queue,
+permissions or model loader is introduced. Graph schema4 is an explicitly selected
+image-only extension; schemas1/2/3 keep their original closed contracts. See
+[stage report](docs/v2/production-expansion-image-runtime-20261013.md). Upscale
+is a non-executable reserved adapter contract. Model quality and installed
+Windows/GPU acceptance remain LOCAL_REQUIRED.

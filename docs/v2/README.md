@@ -87,3 +87,17 @@ productionjobs/privateAsset/review pipeline. It preserves the strict public
 client and Opus UI boundaries; source/contract results and Windows prerequisite
 failure are reported separately. This does not complete Image Studio, M5, fullCI
 or actual installed-model acceptance. Current inventory13442 is collection only.
+
+
+### Image runtime expansion (2026-10-13)
+
+[Expansion2 report](production-expansion-image-runtime-20261013.md) records actual
+fixed SD/FLUX.1/Qwen Image/A1111 image execution adapters, exact weighted Asset
+references, authored-mask inpaint and explicitly selected schema4. Original
+Job/private Asset/review, legacy request identities and Opus controllers remain.
+Module PARTIAL; real inference/Windows/GPU LOCAL_REQUIRED; upscale only reserved.
+
+Changelog: added bounded image runtime source and basic controller-backed
+selection/weight/Mask/Graph controls; preserved original default contracts,
+capability-gated parameters, private review and UNKNOWN recovery. No Video,
+QingJian, automatic model installation or final Windows acceptance.

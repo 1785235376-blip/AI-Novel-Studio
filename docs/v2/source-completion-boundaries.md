@@ -43,3 +43,14 @@ ASR 使用原 `ModelRuntimeSubtitleAdapter`，由原固定 Whisper Host owner �
 M4 仍 PARTIAL，M5–M9 保持 LOCAL_REQUIRED，按 M4→M9 顺序进行真实验收。Windows Application 构建、launcher→PostgreSQL→backend→DesktopHost、V2 数据／缓存／vault 隔离、重启／会话失效／中文路径／V1 不受影响、真实 GPU／模型完整闭环都必须以最终远端 SHA 的实际证据确认。
 
 a40df115 历史 CI 29 jobs 的 20 success／5 failure／4 cancelled、两个 Cloud cancelled、PG 的终态 timeout 与取消分片 failed-call、File 不完整及严格汇总门禁失败原样保留。本批没有复现、删除断言、加无限超时或 rerun-until-green；F00 INTEGRATED＋39 PARTIAL、独立复审 BLOCKED、原 NOT_RUN 均不变。
+
+
+## 后续图片运行时更新（2026-10-13；不改写上述历史NOT_RUN）
+
+基线c911e549之后仅深化Image。固定配方、显式来源／权重／作者Mask、原任务／私有
+候选／审核及图片Graphschema4已有实际执行源码；相关隔离测试恢复执行，结果见
+[本阶段报告](production-expansion-image-runtime-20261013.md)及JSON。合成HTTP、
+真实File/PG/PNG检查与实际Comfy/A1111模型效果分开，整体仍PARTIAL/LOCAL_REQUIRED。
+超分仅保留闭合输入／adapter协议和不可执行标记，不能据此宣称超分已实现。
+Opus可重构视图，必须保留原controllers、Host/CAS/来源版本/dirty/UNKNOWN/明确审核。
+没有进入Video、QingJian、Windows最终验收、GPU压力测试或真实模型全面推理。

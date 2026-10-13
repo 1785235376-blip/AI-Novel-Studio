@@ -60,7 +60,7 @@ class CreativeGraphMediaRuntime:
 
     @staticmethod
     def nodes(row):
-        return {node["id"]: node for node in row["typed_nodes"] if node["definition_id"] in {"media_generate", "timeline_export"}}
+        return {node["id"]: node for node in row["typed_nodes"] if node["definition_id"] in {"media_generate", "timeline_export", "image_generate"}}
 
     def _node(self, row, node_id):
         node = self.nodes(row).get(node_id)
@@ -138,7 +138,7 @@ class CreativeGraphMediaRuntime:
         # Bound only still-pending local outputs; modality references/receipts and
         # original transition traces receive an additional finite 16 KiB margin.
         pending_local = sum(MAX_OUTPUT_BYTES for node in row["typed_nodes"]
-            if node["definition_id"] not in {"media_generate", "media_review", "timeline_export"}
+            if node["definition_id"] not in {"media_generate", "media_review", "timeline_export", "image_generate"}
             and row["node_states"][node["id"]]["status"] != "SUCCEEDED")
         future = min(256000, pending_local) + 16384
         addition = updates * (len(canonical(snapshot).encode("utf-8")) + future)
@@ -150,6 +150,15 @@ class CreativeGraphMediaRuntime:
     def _inputs(self, row, node):
         ports = self.service.executor._inputs(row, node["id"], row["typed_outputs"])
         command = deepcopy(node["parameters"])
+        if node["definition_id"] == "image_generate":
+            if row.get("graph_schema_version") != 4:
+                raise ValueError("CREATIVE_GRAPH_IMAGE_SCHEMA_REQUIRED")
+            from .graph_image_nodes import image_command_fields
+            command.update(image_command_fields(node, ports))
+            command.update(request_id="graph-media-" + digest([CONTRACT, row[BINDING], row["scope"], row["created_by"],
+                row["id"], row["graph_id"], row["graph_version"], row["request_digest"], node["id"]]))
+            body = MediaCommand.model_validate(command)
+            return ports, body, digest([row[BINDING], row["scope"], row["created_by"], row["graph_digest"], node, ports])
         if node["definition_id"] == "timeline_export":
             expected = {binding["port"] for binding in command["source_bindings"]}
             if set(ports) != expected:
@@ -637,7 +646,7 @@ class CreativeGraphMediaRuntime:
         """
         current()
         row = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
-        if row.get("graph_schema_version") != 3 or row.get("media_execution_contract") != CONTRACT:
+        if row.get("graph_schema_version") not in {3, 4} or row.get("media_execution_contract") != CONTRACT:
             raise ValueError("CREATIVE_GRAPH_MEDIA_CONTRACT_REQUIRED")
         # The current Graph can have been edited/deleted after reservation.
         # Validate the durable original run snapshot; never revive that Graph
@@ -653,7 +662,7 @@ class CreativeGraphMediaRuntime:
                     or any(character not in "0123456789abcdef" for character in row[key])
                     for key in ("graph_digest", "execution_digest", "request_digest"))):
             raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_BINDING_CHANGED")
-        definition = parse_graph({"schema_version": 3, "title": snapshot.get("title"),
+        definition = parse_graph({"schema_version": row["graph_schema_version"], "title": snapshot.get("title"),
             "nodes": row.get("typed_nodes"), "edges": row.get("typed_edges")}).model_dump()
         nodes, edges = definition["nodes"], definition["edges"]
         if nodes != row["typed_nodes"] or edges != row["typed_edges"] or set(selected) != {node["id"] for node in nodes}:
@@ -686,7 +695,11 @@ class CreativeGraphMediaRuntime:
         for node_id, output in outputs.items():
             if states[node_id]["status"] != "SUCCEEDED":
                 raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RECOVERY_OUTPUT_CHANGED")
-            validate_output_ports(by_id[node_id]["definition_id"], output, schema_version=3)
+            validate_output_ports(by_id[node_id]["definition_id"], output, schema_version=row["graph_schema_version"])
+            if by_id[node_id]["definition_id"] in {"image_reference", "image_prompt"}:
+                from .graph_image_nodes import execute_image_local
+                if output != execute_image_local(by_id[node_id], self.service.executor._inputs(row, node_id, outputs)):
+                    raise StaleSourceError("CREATIVE_GRAPH_IMAGE_TRANSFORM_CHANGED")
             receipt = row.get("cache_keys", {}).get(node_id, {})
             engine_output = (states[node_id].get("output") or {}).get("result") or {}
             if (engine_output.get("ports") != output or receipt.get("output_digest") != digest(output)
@@ -851,7 +864,7 @@ class CreativeGraphMediaRuntime:
                 self.service.asset_inputs.read(nid, scope, actor, asset, current)
                 host = _ScopedOriginalWorkflowHost(stored, current)
                 host.approve_workflow_node(rid, body.node_id, actor, "EXPLICIT_ORIGINAL_MEDIA_OWNER_REVIEW")
-                output = validate_output_ports("media_review", {"asset": asset}, schema_version=3)
+                output = validate_output_ports("media_review", {"asset": asset}, schema_version=row.get("graph_schema_version"))
                 host.row["typed_outputs"][body.node_id] = output
                 host.row["node_states"][body.node_id]["output"] = {"result": {"ports": output,
                     "provenance": {"method": "ORIGINAL_MEDIA_OWNER_REVIEW", "contract": CONTRACT,

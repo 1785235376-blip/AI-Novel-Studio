@@ -6,10 +6,10 @@ import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 
 export type { StudioMediaExecutionProps } from './useStudioMediaExecution';
 const labels: Record<MediaParameter, string> = { width: '宽度（64–2048）', height: '高度（64–2048）', steps: '采样步数（1–150）', seed: '种子（0–2147483647）',
-  negative_prompt: '负向提示词', size: '图片规格', quality: '图片质量', duration_seconds: '时长（1–600 秒）', frame_rate: '帧率（1–60）', voice_id: '语音标识',
+  negative_prompt: '负向提示词', size: '图片规格', quality: '图片质量', denoising_strength: '重绘强度（大于 0 至 1，可选）', duration_seconds: '时长（1–600 秒）', frame_rate: '帧率（1–60）', voice_id: '语音标识',
   speech_rate: '语速（0.5–2）', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）', gain_db: '增益（-60–12 dB，可选）', sample_rate: '输出采样率（8000–96000 Hz，可选）', channels: '输出声道（可选）' };
 const ranges: Partial<Record<MediaParameter, [number, number, number]>> = { width: [64, 2048, 8], height: [64, 2048, 8], steps: [1, 150, 1], seed: [0, 2147483647, 1],
-  duration_seconds: [1, 600, 1], frame_rate: [1, 60, 1], speech_rate: [0.5, 2, 0.1], in_ms: [0, 600000, 1], out_ms: [1, 600000, 1], gain_db: [-60, 12, 0.1], sample_rate: [8000, 96000, 1] };
+  denoising_strength: [0.01, 1, 0.01], duration_seconds: [1, 600, 1], frame_rate: [1, 60, 1], speech_rate: [0.5, 2, 0.1], in_ms: [0, 600000, 1], out_ms: [1, 600000, 1], gain_db: [-60, 12, 0.1], sample_rate: [8000, 96000, 1] };
 const kindLabels = { image: '图片', video: '视频', audio: '音频' };
 
 /** A replaceable presentation over the original receipt-aware media controller. */
@@ -17,7 +17,8 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const state = useStudioMediaExecution(props), draft = state.draft, job = state.selected;
   const providers = state.providers.filter(row => row.operation_id === draft.operation);
   const cutout = draft.operation === 'm5.image.cutout';
-  const sourceAssets = props.assets.filter(asset => asset.kind === state.requiredSourceKind && !asset.deleted_at && (!cutout || usableCutoutSource(asset) && !asset.manual_mask));
+  const inpaint = draft.operation === 'm5.image.inpaint', reference = draft.operation === 'm5.image.reference';
+  const sourceAssets = props.assets.filter(asset => asset.kind === state.requiredSourceKind && !asset.deleted_at && (!(cutout || inpaint) || usableCutoutSource(asset) && !asset.manual_mask));
   const selectedIds = draft.sources.map(source => source.id), trim = draft.operation === 'm8.audio.trim';
   function parameter(name: MediaParameter) {
     const value = draft.parameters[name];
@@ -49,24 +50,34 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
           <option value="">明确选择当前配置</option>{providers.map(row => <option key={mediaProviderKey(row)} value={mediaProviderKey(row)}>{row.provider_id} · {row.model_id} · {row.local ? '本地' : '云端'}</option>)}
         </select></label>
         <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && '暂无对应配置，请先完成服务商与模型配置。'}</p>
+        {state.provider?.image_capabilities && <p>当前图片配方：{state.provider.image_capabilities.recipe_id}。输入结构已核对，真实推理尚未验证。参考图最多 {state.provider.image_capabilities.reference_limit} 张；{state.provider.image_capabilities.reference_semantics === 'WEIGHTED_PIXEL_INITIALIZATION' ? '权重用于归一化混合参考像素后初始化生成，不代表角色或风格识别质量。' : '当前路线采用单图初始化。'}</p>}
         <Button disabled={!state.canRead || state.providerLoading} loading={state.providerLoading} onClick={() => void state.loadProviders()}>重新读取配置</Button>
         <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>
         {state.provider && !state.provider.local && <label><input type="checkbox" disabled={!state.canEdit} checked={draft.allowCloud} onChange={event => state.changeField('allowCloud', event.target.checked)} />确认本次允许将提示词及选中的参考素材发送到该云端服务，可能产生费用</label>}
       </>}
-      {state.requiredSourceKind && <fieldset disabled={!state.canEdit}><legend>{kindLabels[state.requiredSourceKind]}来源 · {draft.operation === 'm5.image.i2i' ? '选取 1–5 张' : '选取 1 个'}</legend>
+      {state.requiredSourceKind && !reference && <fieldset disabled={!state.canEdit}><legend>{kindLabels[state.requiredSourceKind]}来源 · {draft.operation === 'm5.image.i2i' && !state.imageInputs ? '选取 1–5 张' : '选取 1 个'}</legend>
         {!sourceAssets.length && <p>当前素材库没有对应类型的可用来源。</p>}
-        {sourceAssets.map(asset => <label key={asset.id}><input type="checkbox" checked={cutout ? draft.sources[0]?.id === asset.id : selectedIds.includes(asset.id)} onChange={event => state.selectSource(asset.id, event.target.checked)} />{asset.filename} · v{asset.version}</label>)}
+        {sourceAssets.map(asset => <label key={asset.id}><input type="checkbox" checked={cutout ? draft.sources[0]?.id === asset.id : state.imageInputs ? draft.imageSource?.id === asset.id : selectedIds.includes(asset.id)} onChange={event => state.selectSource(asset.id, event.target.checked)} />{asset.filename} · v{asset.version}</label>)}
         {!!draft.sources.length && <><ul>{draft.sources.map(source => <li key={source.id}>已绑定来源 {props.assets.find(row => row.id === source.id)?.filename || source.id} · v{source.version}</li>)}</ul>
           {!state.freshSources && (!cutout || draft.sources.length === 2) && <StatusMessage tone="warning">来源已变化或不可用，先重新选取版本再预览。</StatusMessage>}
           <Button disabled={!state.canEdit} onClick={state.refreshSources}>明确选取当前来源版本</Button>
-          <Button disabled={!state.canEdit} onClick={() => draft.sources.forEach(source => state.selectSource(source.id, false))}>移除已选来源</Button>
+          <Button disabled={!state.canEdit} onClick={state.clearSources}>移除已选来源</Button>
         </>}
       </fieldset>}
-      {cutout && <fieldset disabled={!state.canEdit}><legend>已保存的手绘二值遮罩</legend>
-        <label>绑定当前来源版本的遮罩<select value={draft.sources[1]?.id || ''} onChange={event => state.selectMask(event.target.value)}><option value="">明确选择一个已核对的遮罩</option>{state.eligibleMasks.map(mask => <option key={mask.id} value={mask.id}>{mask.filename} · v{mask.version} · {mask.manual_mask!.width} × {mask.manual_mask!.height}</option>)}</select></label>
+      {(cutout || inpaint) && <fieldset disabled={!state.canEdit}><legend>已保存的手绘二值遮罩</legend>
+        {inpaint && <p>沿用原手绘遮罩：白色像素保留原图，黑色区域重绘。后端转换处理语义并保护白色区域；原图与遮罩版本必须匹配。结果仍为私有候选，须人工审核。</p>}
+        <label>绑定当前来源版本的遮罩<select value={inpaint ? draft.maskSource?.id || '' : draft.sources[1]?.id || ''} onChange={event => state.selectMask(event.target.value)}><option value="">明确选择一个已核对的遮罩</option>{state.eligibleMasks.map(mask => <option key={mask.id} value={mask.id}>{mask.filename} · v{mask.version} · {mask.manual_mask!.width} × {mask.manual_mask!.height}</option>)}</select></label>
         {!draft.sources.length ? <p>先选取 PNG 来源，再选择为该来源版本保存的遮罩。</p> : !state.eligibleMasks.length && <p>当前没有匹配此来源版本的可用手绘遮罩。请在素材工作区选择来源、绘制并保存二值遮罩，再读取当前素材版本。</p>}
         {draft.sources[1] && !state.freshSources && <StatusMessage tone="warning">来源或遮罩已变化、删除或失去核对信息。原预览与确认已失效；重新读取并明确选择当前版本。</StatusMessage>}
       </fieldset>}
+      {state.imageInputs && !inpaint && <fieldset disabled={!state.canEdit}><legend>图片参考与权重 · 绑定确切版本</legend>
+        <p>{reference ? '选择 1–5 张参考图；当前服务的上限见配方说明。' : '基础图独立绑定；可再明确选择配方支持的辅助参考。'}权重须大于 0 且不超过 1；按当前配方初始化像素，不保证语义或风格一致性。</p>
+        {props.assets.filter(asset => asset.kind === 'image' && !asset.deleted_at && !asset.manual_mask).map(asset => <label key={asset.id}><input type="checkbox" checked={draft.imageReferences.some(row => row.source.id === asset.id)} onChange={event => state.selectReference(asset.id, event.target.checked)} />参考 {asset.filename} · v{asset.version}</label>)}
+        {draft.imageReferences.map(row => <label key={row.source.id}>参考权重 · {props.assets.find(asset => asset.id === row.source.id)?.filename || row.source.id} · v{row.source.version}<input aria-label={`参考权重 · ${props.assets.find(asset => asset.id === row.source.id)?.filename || row.source.id} · v${row.source.version}`} type="number" min={0.01} max={1} step={0.01} value={row.weight} onChange={event => state.changeReferenceWeight(row.source.id, event.target.value)} /><code>{row.source.digest}</code></label>)}
+        {!!draft.sources.length && <><Button disabled={!state.canEdit} onClick={state.refreshSources}>明确选取当前参考版本</Button><Button disabled={!state.canEdit} onClick={state.clearSources}>移除图片输入绑定</Button></>}
+        {!state.freshSources && draft.imageReferences.length > 0 && <StatusMessage tone="warning">已绑定的图片版本变化；旧预览与确认失效，请明确重新选择。</StatusMessage>}
+      </fieldset>}
+      {draft.operation.startsWith('m5.image.') && <p>超分：接口预留，当前没有可执行入口；不会自动下载或启动模型。</p>}
       {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{state.parameterNames.map(parameter)}
         {!!state.unsupportedParameters.length && <><StatusMessage tone="warning">所选配置不支持已填写的参数：{state.unsupportedParameters.map(name => labels[name]).join('、')}。这些输入不会自动丢弃。</StatusMessage><Button disabled={!state.canEdit} onClick={state.clearUnsupportedParameters}>明确清空不支持的参数</Button></>}
       </fieldset>}

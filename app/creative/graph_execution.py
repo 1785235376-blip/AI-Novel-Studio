@@ -1,7 +1,7 @@
 """M2-A pure local orchestration through the original WorkflowRun state owner.
 
 There is no worker, scheduler, provider, chapter anchor or alternate JobManager.
-All claims/completions/review decisions are original engine transitions. Schema-3
+All claims/completions/review decisions are original engine transitions. Schema-3/4
 assets use the existing scope -> asset -> project atomic source fences.
 """
 from __future__ import annotations
@@ -75,7 +75,7 @@ class CreativeGraphExecutor:
             raise ValueError("CREATIVE_GRAPH_RUNTIME_TIMING_INVALID") from None
 
     def _current(self, nid, scope, actor, row, guard, state=None, *, check_assets=True):
-        if check_assets and row.get("graph_schema_version") == 3 and not self.service.asset_inputs.in_phase(nid, scope, actor):
+        if check_assets and row.get("graph_schema_version") in {3, 4} and not self.service.asset_inputs.in_phase(nid, scope, actor):
             with self.service.asset_inputs.phase(nid, scope, actor, guard) as document:
                 return self._current(nid, scope, actor, row, guard, document)
         guard()
@@ -89,8 +89,8 @@ class CreativeGraphExecutor:
         selected = row["selected_closure"]
         expected = [node for node in graph["definition"]["nodes"] if node["id"] in selected]
         schema = graph["definition"]["schema_version"]
-        if (row.get("typed_nodes") != expected or (schema != 3 and any(node["definition_id"] == "asset_reference" for node in expected))
-                or (schema == 3 and row.get("graph_schema_version") != 3)
+        if (row.get("typed_nodes") != expected or (schema not in {3, 4} and any(node["definition_id"] == "asset_reference" for node in expected))
+                or (schema in {3, 4} and row.get("graph_schema_version") != schema)
                 or row.get("typed_edges") != [edge for edge in graph["definition"]["edges"]
                     if edge["source_node_id"] in selected and edge["target_node_id"] in selected]):
             raise StaleSourceError("CREATIVE_GRAPH_RUN_BINDING_CHANGED")
@@ -98,7 +98,7 @@ class CreativeGraphExecutor:
         # edit advances its base. Original asset inputs are checked below; the
         # actual edited timeline snapshot is fenced by its original runtime.
         preflight = self.service._preflight(graph, {"expected_version": graph["version"],
-            "target_node_ids": selected}, actor, check_assets=False if schema == 3 else check_assets)
+            "target_node_ids": selected}, actor, check_assets=False if schema in {3, 4} else check_assets)
         pairs = list(dict.fromkeys((edge["source_node_id"], edge["target_node_id"]) for edge in row["typed_edges"]))
         snapshot = {"title": graph["definition"]["title"],
             "nodes": [{"id": node["id"], "name": node["id"], "config": {},
@@ -119,6 +119,10 @@ class CreativeGraphExecutor:
             if row["node_states"][node_id]["status"] != "SUCCEEDED":
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_STATE_INVALID")
             validate_output_ports(by_id[node_id]["definition_id"], output, schema_version=schema)
+            if by_id[node_id]["definition_id"] in {"image_reference", "image_prompt"}:
+                from .graph_image_nodes import execute_image_local
+                if output != execute_image_local(by_id[node_id], self._inputs(row, node_id, row["typed_outputs"])):
+                    raise StaleSourceError("CREATIVE_GRAPH_IMAGE_TRANSFORM_CHANGED")
             receipt = row.get("cache_keys", {}).get(node_id, {})
             engine_output = (row["node_states"][node_id].get("output") or {}).get("result") or {}
             if (engine_output.get("ports") != output or receipt.get("output_digest") != digest(output)
@@ -136,10 +140,10 @@ class CreativeGraphExecutor:
             if self.service.model_runtime is None:
                 raise StaleSourceError("CREATIVE_MODEL_RUNTIME_UNAVAILABLE")
             self.service.model_runtime.validate_snapshot(row)
-        if schema == 3:
+        if schema in {3, 4}:
             if check_assets:
                 self.service.asset_inputs.current(nid, scope, actor, row, guard, state)
-            if any(node["definition_id"] in {"media_generate", "timeline_export"} for node in expected):
+            if any(node["definition_id"] in {"media_generate", "timeline_export", "image_generate"} for node in expected):
                 if self.service.media_runtime is None:
                     raise StaleSourceError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
                 self.service.media_runtime.validate_snapshot(row)
@@ -153,7 +157,7 @@ class CreativeGraphExecutor:
         incarnation, current = self.service._context(nid, scope, actor, guard)
         original = self.service._owned(nid, scope, actor, self.service.GRAPHS, rid)
         phase = (self.service.asset_inputs.transaction(nid, scope, actor, current)
-            if original["definition"]["schema_version"] == 3 else self.service.store.transaction(nid, scope))
+            if original["definition"]["schema_version"] in {3, 4} else self.service.store.transaction(nid, scope))
         with phase as state:
             graph = self.service._owned(nid, scope, actor, self.service.GRAPHS, rid, state)
             check_version(graph, body.expected_graph_version)
@@ -200,9 +204,9 @@ class CreativeGraphExecutor:
             if any(node["definition_id"] == "text_generate" for node in typed_nodes):
                 from .ai_execution import CONTRACT
                 payload.update(model_execution_contract=CONTRACT, model_preview=None, model_execution=None)
-            if graph["definition"]["schema_version"] == 3:
-                payload["graph_schema_version"] = 3
-                if any(node["definition_id"] in {"media_generate", "timeline_export"} for node in typed_nodes):
+            if graph["definition"]["schema_version"] in {3, 4}:
+                payload["graph_schema_version"] = graph["definition"]["schema_version"]
+                if any(node["definition_id"] in {"media_generate", "timeline_export", "image_generate"} for node in typed_nodes):
                     payload.update(media_execution_contract="creative-graph-media/1", media_previews={}, media_executions={})
             row = new_row(nid, scope, actor, payload)
             rows[row["id"]] = row
@@ -282,7 +286,7 @@ class CreativeGraphExecutor:
             node["definition_version"], node["parameters"], inputs])
 
     def _cached(self, row, actor, node_id, key, state):
-        if row.get("graph_schema_version") == 3:
+        if row.get("graph_schema_version") in {3, 4}:
             return None
         if any(item["id"] == node_id and item["definition_id"] == "text_generate" for item in row["typed_nodes"]):
             return None
@@ -310,7 +314,7 @@ class CreativeGraphExecutor:
             if current["status"] != "WAITING_APPROVAL" or node_id is None:
                 break
             node = nodes[node_id]
-            if node["definition_id"] in {"human_review", "text_generate", "media_generate", "media_review", "timeline_export"}:
+            if node["definition_id"] in {"human_review", "text_generate", "media_generate", "media_review", "timeline_export", "image_generate"}:
                 break
             guard()
             host.trigger_agent_node(row["id"], node_id, actor)
@@ -321,8 +325,13 @@ class CreativeGraphExecutor:
             hit = output is not None
             try:
                 if output is None:
-                    if node["definition_id"] == "asset_reference" and row.get("graph_schema_version") == 3:
+                    if node["definition_id"] == "asset_reference" and row.get("graph_schema_version") in {3, 4}:
                         output = self.service.asset_inputs.execute_reference(row["novel_id"], row["scope"], actor, node, guard)
+                    elif node["definition_id"] in {"image_reference", "image_prompt"} and row.get("graph_schema_version") == 4:
+                        from .graph_image_nodes import execute_image_local
+                        guard()
+                        output = execute_image_local(node, inputs)
+                        guard()
                     else:
                         receipt = run_trusted_local(self.adapter, AdapterRequest(node["definition_id"],
                             {"parameters": deepcopy(node["parameters"]), "ports": inputs},
@@ -370,12 +379,12 @@ class CreativeGraphExecutor:
         _, current = self.service._context(nid, scope, actor, guard)
         original = self.service._owned(nid, scope, actor, self.service.RUNS, rid)
         phase = (self.service.asset_inputs.transaction(nid, scope, actor, current)
-            if original.get("graph_schema_version") == 3 else self.service.store.transaction(nid, scope))
+            if original.get("graph_schema_version") in {3, 4} else self.service.store.transaction(nid, scope))
         with phase as state:
             row = self.service._owned(nid, scope, actor, self.service.RUNS, rid, state)
             check_version(row, body.expected_version)
             self._timing(row)
-            history_limit = MAX_MEDIA_HISTORY if row.get("graph_schema_version") == 3 else MAX_HISTORY
+            history_limit = MAX_MEDIA_HISTORY if row.get("graph_schema_version") in {3, 4} else MAX_HISTORY
             if (row.get("model_execution_contract") or row.get("media_execution_contract")) and action not in {"cancel", "reject"} and len(row["history"]) >= history_limit - 2:
                 raise ValueError("CREATIVE_MODEL_ACTION_HISTORY_CAPACITY")
             if action in {"pause", "resume"} and row.get("model_execution") and row["node_states"][row["model_execution"]["node_id"]]["status"] == "WORKING":

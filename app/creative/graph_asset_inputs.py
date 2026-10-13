@@ -1,4 +1,4 @@
-"""Schema-3 input fences over the existing scope, asset and project owners.
+"""Schema-3/4 input fences over the existing scope, asset and project owners.
 
 No asset, queue or workflow state is owned here. Scope writes take the original
 raw scope lease before asset -> project leases; guards never invert that order.
@@ -175,10 +175,14 @@ class GraphAssetInputs:
                 if set(output) != {"asset"}:
                     raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
                 AssetParameters.model_validate(output["asset"])
-            elif node["definition_id"] in {"media_generate", "timeline_export"}:
+            elif node["definition_id"] in {"media_generate", "timeline_export", "image_generate"}:
                 if set(output) != {"candidate"}:
                     raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
-                validate_output_ports(node["definition_id"], output, schema_version=3)
+                validate_output_ports(node["definition_id"], output, schema_version=row.get("graph_schema_version"))
+            elif node["definition_id"] in {"image_reference", "image_prompt"}:
+                from .graph_image_nodes import execute_image_local
+                if output != execute_image_local(node, self.service.executor._inputs(row, node_id, row["typed_outputs"])):
+                    raise StaleSourceError("CREATIVE_GRAPH_IMAGE_TRANSFORM_CHANGED")
         guard()
         return saved
 

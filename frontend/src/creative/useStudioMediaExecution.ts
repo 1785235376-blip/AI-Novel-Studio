@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import type { StudioAsset } from './studioClient';
 import { eligibleCutoutMask, usableCutoutSource } from './studioCutoutContract';
-import type { GraphMediaOperation } from './studioGraphTypes';
+import { checkedImageRuntimeInputs, type ImageReference } from './studioImageRuntimeContract';
+import type { GraphImageOperation, GraphMediaOperation } from './studioGraphTypes';
 import type { MediaCommand, MediaOperation, ProductionJob, ProductionPreview, ProductionProvider, ProductionSource, StudioProductionClient } from './studioProductionClient';
 
 export type StudioMediaExecutionProps = {
@@ -17,23 +18,30 @@ export const GRAPH_MEDIA_OPERATION_LABELS: Record<GraphMediaOperation, string> =
   'm7.video.i2v': '图片生成视频', 'm7.video.v2v': '视频生成视频', 'm8.audio.speech': '语音合成',
   'm8.audio.music': '音乐生成', 'm8.audio.effects': '音效生成', 'm8.audio.trim': '本地音频截取',
 };
-export const MEDIA_OPERATION_LABELS: Record<MediaOperation, string> = { ...GRAPH_MEDIA_OPERATION_LABELS, 'm5.image.cutout': '本地二值遮罩抠图' };
+export const GRAPH_IMAGE_OPERATION_LABELS: Record<GraphImageOperation, string> = {
+  'm5.image.t2i': '文字生成图片', 'm5.image.i2i': '参考图片生成图片',
+  'm5.image.reference': '多参考图生成图片', 'm5.image.inpaint': '图片局部重绘',
+};
+export const MEDIA_OPERATION_LABELS: Record<MediaOperation, string> = { ...GRAPH_MEDIA_OPERATION_LABELS, ...GRAPH_IMAGE_OPERATION_LABELS, 'm5.image.cutout': '本地二值遮罩抠图' };
 export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
   QUEUED: '已入队，尚未执行', RUNNING: '正在执行', SEND_RESERVED: '已记录分派意图', REMOTE_RUNNING: '远端处理中',
   RESULT_READY: '已有结果，等待本地核对', AWAITING_REVIEW: '等待人工审核', SUCCEEDED: '处理完成，需核对审核',
   REVIEWING: '审核提交待核对', APPROVED: '已审核入库', UNKNOWN: '分派结果不确定', FAILED: '执行失败', CANCELLED: '已丢弃本地结果',
 };
-export type MediaParameter = 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels';
-type Draft = { operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string };
+export type MediaParameter = 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels';
+type Draft = { operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
+  imageSource?: ProductionSource; imageReferences: { source: ProductionSource; weight: string }[]; maskSource?: ProductionSource };
 type Preview = { value: ProductionPreview; command: MediaCommand; input: string };
 type Candidate = { url: string; kind: 'image' | 'video' | 'audio'; binding: string };
 type Kind = 'PREVIEW' | 'CREATE' | 'LIST' | 'GET' | 'CANDIDATE' | 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review';
 type Operation = { id: number; kind: Kind; client: StudioProductionClient; controller: AbortController; canMutate: boolean; canReview: boolean };
 type Creation = { requestId: string; requestDigest: string; operation: MediaOperation; input: string; uncertain: boolean };
-const parameterNames: MediaParameter[] = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels'];
+const parameterNames: MediaParameter[] = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels'];
 const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm5.image.t2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
-  'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
+  'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
+  'm5.image.reference': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
+  'm5.image.inpaint': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
   'm5.image.cutout': [],
   'm7.video.t2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
@@ -42,7 +50,7 @@ const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels'],
 };
 const initialDraft = (): Draft => ({ operation: 'm5.image.t2i', providerKey: '', prompt: '',
-  parameters: Object.fromEntries(parameterNames.map(name => [name, ''])) as Record<MediaParameter, string>, sources: [], allowCloud: false, licenseNote: '' });
+  parameters: Object.fromEntries(parameterNames.map(name => [name, ''])) as Record<MediaParameter, string>, sources: [], imageReferences: [], allowCloud: false, licenseNote: '' });
 const inputKey = (draft: Draft) => JSON.stringify(draft);
 export const mediaProviderKey = (row: ProductionProvider) => JSON.stringify([row.operation_id, row.provider_id, row.model_id, row.route_digest]);
 const jobIdentity = (job?: ProductionJob) => job ? JSON.stringify([job.owner, job.id, job.version, job.request_digest]) : '';
@@ -52,15 +60,24 @@ const reviewIdentity = (job?: ProductionJob) => job?.output_candidate
 const uncertainFailure = (error: unknown) => !(error instanceof ApiError) || error.status === 0 || error.status >= 500 || [408, 409, 425, 429].includes(error.status) || error.problem.code === 'STUDIO_RESPONSE_INVALID';
 const invalid = (message: string) => new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message });
 function sourceKind(operation: MediaOperation): 'image' | 'video' | 'audio' | undefined {
-  return ({ 'm5.image.i2i': 'image', 'm5.image.cutout': 'image', 'm7.video.i2v': 'image', 'm7.video.v2v': 'video', 'm8.audio.trim': 'audio' } as Partial<Record<MediaOperation, 'image' | 'video' | 'audio'>>)[operation];
+  return ({ 'm5.image.i2i': 'image', 'm5.image.reference': 'image', 'm5.image.inpaint': 'image', 'm5.image.cutout': 'image', 'm7.video.i2v': 'image', 'm7.video.v2v': 'video', 'm8.audio.trim': 'audio' } as Partial<Record<MediaOperation, 'image' | 'video' | 'audio'>>)[operation];
 }
 function usableAsset(row: StudioAsset, kind: string) {
   return row.kind === kind && !row.deleted_at && Number.isSafeInteger(row.version) && row.version >= 1 && /^[a-f0-9]{64}$/.test(row.sha256);
+}
+const imageSnapshot = (row: StudioAsset): ProductionSource => ({ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: 'image' });
+function imageSources(draft: Draft): ProductionSource[] {
+  const inputs = [draft.imageSource, ...draft.imageReferences.map(reference => reference.source), draft.maskSource].filter((row): row is ProductionSource => !!row);
+  return inputs.filter((row, index) => inputs.findIndex(value => value.id === row.id) === index);
 }
 function sourcesCurrent(sources: ProductionSource[], assets: StudioAsset[], operation?: string) {
   if (operation === 'm5.image.cutout') {
     const source = assets.find(row => row.id === sources[0]?.id), mask = assets.find(row => row.id === sources[1]?.id);
     if (sources.length !== 2 || !source || !mask || !eligibleCutoutMask(mask, source)) return false;
+  }
+  if (operation === 'm5.image.inpaint') {
+    const base = assets.find(row => row.id === sources[0]?.id), mask = assets.find(row => row.id === sources[1]?.id);
+    if (sources.length !== 2 || !base || !mask || !eligibleCutoutMask(mask, base)) return false;
   }
   return sources.every(source => assets.some(row => usableAsset(row, source.asset_kind) && row.id === source.id && row.version === source.version && row.sha256 === source.digest));
 }
@@ -75,6 +92,9 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
     else if (name === 'quality') { if (!['auto', 'low', 'medium', 'high', 'standard', 'hd'].includes(value)) throw new Error('图片质量不受支持。'); result[name] = value; }
     else if (name === 'gain_db') {
       const number = Number(value); if (!/^-?(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) || !Number.isFinite(number) || number < -60 || number > 12) throw new Error('增益须为 -60 至 12 dB 之间的有限数值。'); result[name] = number;
+    }
+    else if (name === 'denoising_strength') {
+      const number = Number(value); if (!/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) || !Number.isFinite(number) || number <= 0 || number > 1) throw new Error('重绘强度须大于 0 且不超过 1。'); result[name] = number;
     }
     else if (name === 'speech_rate') {
       const number = Number(value); if (!/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) || !Number.isFinite(number) || number < 0.5 || number > 2) throw new Error('语速须在 0.5 至 2 之间。'); result[name] = number;
@@ -100,12 +120,27 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
   const kind = sourceKind(draft.operation), sources = draft.sources;
   if (cutout && sources.length !== 2) throw new Error('请先选择一张 PNG 来源，再明确选择为该版本绘制的二值遮罩。');
   if (!sourcesCurrent(sources, assets, draft.operation)) throw new Error('来源素材版本已变化，请重新选取当前版本。');
-  if (kind && (!sources.length || sources.some(source => source.asset_kind !== kind) || (draft.operation === 'm5.image.i2i' ? sources.length > 5 : sources.length !== (cutout ? 2 : 1)))) throw new Error(kind === 'image' ? '请选取对应数量的图片来源。' : '请选取一个对应类型的来源素材。');
+  const rich = draft.operation === 'm5.image.reference' || draft.operation === 'm5.image.inpaint' || draft.imageSource !== undefined || draft.imageReferences.length > 0;
+  if (kind && (!sources.length || sources.some(source => source.asset_kind !== kind) || (draft.operation === 'm5.image.i2i' ? sources.length > 5
+    : draft.operation === 'm5.image.reference' ? sources.length > 5 : sources.length !== (cutout || draft.operation === 'm5.image.inpaint' ? 2 : 1)))) throw new Error(kind === 'image' ? '请选取对应数量的图片来源。' : '请选取一个对应类型的来源素材。');
   if (!kind && sources.length) throw new Error('本操作不接收素材参考。');
   if (draft.licenseNote.length > 2000) throw new Error('来源与授权说明超过长度限制。');
+  let image: { image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource } = {};
+  if (rich) {
+    if (!provider?.image_capabilities) throw new Error('当前路线没有已核对的图片输入契约，请明确选择支持对应操作的配置。');
+    if (draft.imageReferences.length + (draft.imageSource ? 1 : 0) > provider.image_capabilities.reference_limit) throw new Error('基础图与参考图的总数超过当前路线的上限。');
+    const references = draft.imageReferences.map(reference => {
+      const weight = Number(reference.weight);
+      if (!/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(reference.weight) || !Number.isFinite(weight) || weight <= 0 || weight > 1) throw new Error('参考图权重须大于 0 且不超过 1。');
+      return { source: reference.source, weight };
+    });
+    image = checkedImageRuntimeInputs({ ...(draft.imageSource ? { image_source: draft.imageSource } : {}),
+      ...(references.length ? { image_references: references } : {}), ...(draft.maskSource ? { mask_source: draft.maskSource } : {}) }, sources, draft.operation, true);
+    if (draft.operation === 'm5.image.inpaint' && provider.image_capabilities.mask_semantics !== 'WHITE_KEEP_BLACK_REPAINT') throw new Error('当前路线未提供本手绘遮罩的保留／重绘契约。');
+  }
   return { operation_id: draft.operation, request_id: requestId, provider_id: localTrim ? null : provider!.provider_id,
     model_id: localTrim ? null : provider!.model_id, prompt: localTrim ? '' : draft.prompt, parameters: parameters(draft),
-    source_snapshots: sources.map(source => ({ ...source })), allow_cloud: localTrim ? false : draft.allowCloud, license_note: draft.licenseNote };
+    source_snapshots: sources.map(source => ({ ...source })), allow_cloud: localTrim ? false : draft.allowCloud, license_note: draft.licenseNote, ...image };
 }
 
 /** Draft, exact receipts and private media lifetime remain independent of rendering. */
@@ -184,7 +219,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   function changeField(field: 'prompt' | 'licenseNote' | 'allowCloud' | 'providerKey', value: string | boolean) {
     const next = { ...draftRef.current };
     if (field === 'allowCloud') { if (typeof value !== 'boolean') return; next.allowCloud = value; }
-    else { if (typeof value !== 'string') return; next[field] = value; if (field === 'providerKey') next.allowCloud = false; }
+    else { if (typeof value !== 'string') return; next[field] = value; if (field === 'providerKey' || field === 'prompt' && (next.imageSource || next.imageReferences.length || ['m5.image.reference', 'm5.image.inpaint'].includes(next.operation))) next.allowCloud = false; }
     edit(next);
   }
   function changeParameter(name: MediaParameter, value: string) { if (parameterNames.includes(name)) edit({ ...draftRef.current, parameters: { ...draftRef.current.parameters, [name]: value } }); }
@@ -202,6 +237,13 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (checked && !row) { setError('PNG 来源不可用，请重新读取素材。'); return; }
       edit({ ...old, sources: checked && row ? [{ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: 'image' }] : [] }); return;
     }
+    const selectedProvider = providersRef.current.find(provider => mediaProviderKey(provider) === old.providerKey && provider.operation_id === old.operation);
+    if (old.operation === 'm5.image.inpaint' || old.operation === 'm5.image.i2i' && !!selectedProvider?.image_capabilities) {
+      if (checked && (!row || old.operation === 'm5.image.inpaint' && !usableCutoutSource(row))) { setError('图片来源不可用，请重新读取素材。'); return; }
+      if (checked && old.imageReferences.some(reference => reference.source.id === id)) { setError('参考素材已绑定为辅助输入，请明确移除该参考后再选择基础图。'); return; }
+      const next = { ...old, imageSource: checked && row ? imageSnapshot(row) : undefined, maskSource: undefined, allowCloud: false };
+      edit({ ...next, sources: imageSources(next) }); return;
+    }
     if (checked && !row) { setError('来源不可用，请重新读取素材。'); return; }
     let sources = old.sources.filter(source => source.id !== id);
     if (checked && row) {
@@ -213,7 +255,12 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   function selectMask(id: string) {
     const old = draftRef.current, source = latest.current.assets.find(asset => asset.id === old.sources[0]?.id);
-    if (old.operation !== 'm5.image.cutout' || !source || source.version !== old.sources[0]?.version || source.sha256 !== old.sources[0]?.digest) return;
+    if (!['m5.image.cutout', 'm5.image.inpaint'].includes(old.operation) || !source || source.version !== old.sources[0]?.version || source.sha256 !== old.sources[0]?.digest) return;
+    if (old.operation === 'm5.image.inpaint') {
+      const mask = id ? latest.current.assets.find(asset => asset.id === id && eligibleCutoutMask(asset, source)) : undefined;
+      if (id && !mask) { setError('遮罩与当前来源版本不匹配，请重新读取素材。'); return; }
+      const next = { ...old, maskSource: mask ? imageSnapshot(mask) : undefined, allowCloud: false }; edit({ ...next, sources: imageSources(next) }); return;
+    }
     if (!id) { edit({ ...old, sources: old.sources.slice(0, 1) }); return; }
     const mask = latest.current.assets.find(asset => asset.id === id && eligibleCutoutMask(asset, source));
     if (!mask) { setError('遮罩与当前来源版本不匹配，请重新读取素材。'); return; }
@@ -222,13 +269,40 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   function refreshSources() {
     const old = draftRef.current, kind = sourceKind(old.operation); if (!kind) return;
     const sources: ProductionSource[] = [];
-    for (const source of old.operation === 'm5.image.cutout' ? old.sources.slice(0, 1) : old.sources) {
+    for (const source of ['m5.image.cutout', 'm5.image.inpaint'].includes(old.operation) ? old.sources.slice(0, 1) : old.sources) {
       const row = latest.current.assets.find(asset => asset.id === source.id && usableAsset(asset, kind));
       if (!row) { setError('已选来源已删除或不可用，请先移除该来源。'); return; }
       sources.push({ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: kind });
     }
-    edit({ ...old, sources });
+    if (old.imageSource || old.imageReferences.length || old.operation === 'm5.image.inpaint') {
+      const next = { ...old, allowCloud: false, imageSource: old.imageSource ? sources.find(row => row.id === old.imageSource!.id) : undefined,
+        imageReferences: old.imageReferences.map(reference => ({ ...reference, source: sources.find(row => row.id === reference.source.id)! })), maskSource: undefined };
+      edit({ ...next, sources: imageSources(next) });
+    } else edit({ ...old, sources });
   }
+  function selectReference(id: string, checked: boolean) {
+    const old = draftRef.current;
+    if (!['m5.image.reference', 'm5.image.i2i'].includes(old.operation)) return;
+    const provider = providersRef.current.find(row => mediaProviderKey(row) === old.providerKey && row.operation_id === old.operation);
+    if (!provider?.image_capabilities) return;
+    const asset = latest.current.assets.find(row => row.id === id && usableAsset(row, 'image') && !row.manual_mask);
+    if (checked && !asset) { setError('参考素材不可用，请重新读取素材。'); return; }
+    const references = old.imageReferences.filter(reference => reference.source.id !== id);
+    if (checked && asset) {
+      if (asset.id === old.imageSource?.id) { setError('基础图不能同时作为辅助参考，请选择不同素材。'); return; }
+      const limit = old.operation === 'm5.image.i2i' ? Math.min(4, Math.max(0, provider.image_capabilities.reference_limit - 1)) : provider.image_capabilities.reference_limit;
+      if (references.length >= limit) { setError('参考图数量超过当前路线的上限。'); return; }
+      references.push({ source: imageSnapshot(asset), weight: '1' });
+    }
+    const next = { ...old, imageReferences: references, allowCloud: false }; edit({ ...next, sources: imageSources(next) });
+  }
+  function changeReferenceWeight(id: string, weight: string) {
+    const old = draftRef.current;
+    const next = { ...old, imageReferences: old.imageReferences.map(reference => reference.source.id === id ? { ...reference, weight } : reference), allowCloud: false };
+    edit(next);
+  }
+  function clearSources() { edit({ ...draftRef.current, sources: [], imageSource: undefined, imageReferences: [], maskSource: undefined,
+    allowCloud: draftRef.current.imageSource || draftRef.current.imageReferences.length || ['m5.image.reference', 'm5.image.inpaint'].includes(draftRef.current.operation) ? false : draftRef.current.allowCloud }); }
   function clearInputs() { if (!current() || busy() || !latest.current.canMutate || uncertainRef.current || creation.current?.uncertain) return;
     edit(initialDraft()); baseline.current = inputKey(initialDraft()); clearCandidate(); }
 
@@ -426,7 +500,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     adoptJob(props.externalJob); // A returned owner row only; never a GET/action or draft overwrite.
   }, [external, pending, props.busy, props.client]);
 
-  const cutoutSource = draft.operation === 'm5.image.cutout' ? props.assets.find(row => row.id === draft.sources[0]?.id && row.version === draft.sources[0]?.version && row.sha256 === draft.sources[0]?.digest) : undefined;
+  const cutoutSource = ['m5.image.cutout', 'm5.image.inpaint'].includes(draft.operation) ? props.assets.find(row => row.id === draft.sources[0]?.id && row.version === draft.sources[0]?.version && row.sha256 === draft.sources[0]?.digest) : undefined;
   const eligibleMasks = owns && cutoutSource ? props.assets.filter(row => eligibleCutoutMask(row, cutoutSource)) : [];
   return { runningControl, controlRunningCutout, canCancelRunning: !uncertain && !!selected && !sentActions.current.has(actionIdentity(selected, 'cancel')), canControlRunning: owns && props.canMutate && !!props.cutoutExecution && !!executingCutout.current && pending === 'execute' && !runningControl, eligibleMasks, draft: owns ? draft : initialDraft(), providers: owns ? providers : [], provider: owns ? provider : undefined, providerLoading, jobs: owns ? jobs : [], selected: owns ? selected : undefined,
     preview: owns && previewBinding ? preview?.value : undefined, previewReviewed: !!previewBinding && previewConsent === previewBinding,
@@ -437,7 +511,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     uncertainRequestId: owns && creation.current?.uncertain ? creation.current.requestId : undefined,
     canInspect: canEdit && !providerLoading && !inputError, canCreate: canEdit && !creation.current && !!previewBinding && previewConsent === previewBinding,
     canRead: !locked, canLoadCandidate: !locked && !uncertain && !creation.current?.uncertain && jobSourcesFresh && !!selected?.output_candidate,
-    changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
+    imageInputs: !!provider?.image_capabilities && ['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint'].includes(draft.operation),
+    changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
     create, listJobs, openJob, canAction, action, loadCandidate, confirmReview, mediaFailed, downloadReceipt };
 }
 export type StudioMediaExecutionController = ReturnType<typeof useStudioMediaExecution>;

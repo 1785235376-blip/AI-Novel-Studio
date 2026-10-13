@@ -851,3 +851,15 @@ Windows failure nor historical failures are erased. API2219, inventory13442,
 frozen9151 order/skips/gates unchanged. Original owners/assertions protected.
 Image staysPARTIAL/LOCAL_REQUIRED; actual M4→M9 gates and Draft/noRelease remain.
 Actual publication/CI status is recorded after push from real remote receipts.
+
+
+### Production Expansion 2 — explicit Image runtime and schema4
+
+2026-10-13, baselinec911e549143d4b4187afc056079da30221aa1e97. Original ImageJob,
+ModelCenter, Asset versions, private candidates and explicit review now carry
+fixed SD/FLUX.1/Qwen Image/A1111, weighted references and exact authored inpaint.
+Graphschema4 is explicitly opt-in and image-only; schemas1/2/3 retained.
+Upscale is a closed non-executable reservation. See [report](docs/v2/production-expansion-image-runtime-20261013.md)
+for source pins, actual tests, retained failures and boundaries. This is a
+development increment, not M5 or whole-product acceptance. Draft47/no merge/no
+release, QingJian pause, Video exclusion and original milestone order remain.

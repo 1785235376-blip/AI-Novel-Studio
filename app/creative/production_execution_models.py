@@ -8,7 +8,8 @@ from .production_contracts import ProductionSourceSnapshot, Name, Digest
 GraphMediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m7.video.i2v",
     "m7.video.v2v", "m8.audio.speech", "m8.audio.music", "m8.audio.effects", "m8.audio.trim"]
 
-MediaOperation = Literal[GraphMediaOperation, "m5.image.cutout"]
+ImageRuntimeOperation = Literal["m5.image.t2i", "m5.image.i2i", "m5.image.reference", "m5.image.inpaint"]
+MediaOperation = Literal[GraphMediaOperation, "m5.image.cutout", "m5.image.reference", "m5.image.inpaint"]
 
 
 class ExecutionModel(BaseModel):
@@ -16,7 +17,7 @@ class ExecutionModel(BaseModel):
 
 
 class ProviderSelection(ExecutionModel):
-    operation_id: GraphMediaOperation
+    operation_id: Literal[GraphMediaOperation, "m5.image.reference", "m5.image.inpaint"]
     provider_id: Name
     model_id: Name
 
@@ -42,16 +43,33 @@ class MediaExecutionParameters(MediaParameters):
     gain_db: float | None = Field(default=None, ge=-60, le=12)
     sample_rate: int | None = Field(default=None, ge=8000, le=96000)
     channels: int | None = Field(default=None, ge=1, le=2)
+    denoising_strength: float | None = Field(default=None, gt=0, le=1)
 
     @model_serializer(mode="wrap")
     def preserve_legacy_identity(self, handler):
         # Original preview and job identities include the old null fields.
         # Omit only the new unset controls, including in nested model_dump().
         value = handler(self)
-        for key in ("gain_db", "sample_rate", "channels"):
+        for key in ("gain_db", "sample_rate", "channels", "denoising_strength"):
             if value.get(key) is None:
                 value.pop(key, None)
         return value
+
+
+class ImageReference(ExecutionModel):
+    """Weighted reference to the existing Asset owner, never copied pixels."""
+    source: ProductionSourceSnapshot
+    weight: float = Field(gt=0, le=1)
+
+    @model_validator(mode="after")
+    def original_image(self):
+        if self.source.kind != "ASSET" or self.source.asset_kind != "image":
+            raise ValueError("STUDIO_IMAGE_REFERENCE_KIND_INVALID")
+        return self
+
+
+def image_snapshot(value):
+    return value.model_dump(exclude_none=True, exclude={"reference_only"})
 
 
 class MediaCommand(ExecutionModel):
@@ -64,6 +82,17 @@ class MediaCommand(ExecutionModel):
     source_snapshots: list[ProductionSourceSnapshot] = Field(default_factory=list, max_length=8)
     allow_cloud: bool = False
     license_note: str = Field(default="", max_length=2000)
+    image_source: ProductionSourceSnapshot | None = None
+    image_references: list[ImageReference] | None = Field(default=None, max_length=5)
+    mask_source: ProductionSourceSnapshot | None = None
+
+    @model_serializer(mode="wrap")
+    def legacy_image_identity(self, handler):
+        value = handler(self)
+        for key in ("image_source", "image_references", "mask_source"):
+            if value.get(key) is None or (key == "image_references" and value[key] == []):
+                value.pop(key, None)
+        return value
 
     @model_validator(mode="after")
     def operation_inputs(self):
@@ -71,7 +100,9 @@ class MediaCommand(ExecutionModel):
         allowed = {
             "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
             "m5.image.cutout": set(),
-            "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality", "denoising_strength"},
+            "m5.image.reference": {"width", "height", "steps", "seed", "negative_prompt", "denoising_strength"},
+            "m5.image.inpaint": {"steps", "seed", "negative_prompt", "denoising_strength"},
             "m7.video.t2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
             "m7.video.i2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
             "m7.video.v2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
@@ -89,6 +120,10 @@ class MediaCommand(ExecutionModel):
         keys = [(s.kind, s.id) for s in self.source_snapshots]
         if len(set(keys)) != len(keys):
             raise ValueError("STUDIO_OPERATION_SOURCE_DUPLICATE")
+        advanced = (self.image_source is not None or bool(self.image_references) or self.mask_source is not None
+            or self.parameters.denoising_strength is not None)
+        if advanced or self.operation_id in {"m5.image.reference", "m5.image.inpaint"}:
+            self._image_runtime_inputs()
         if self.operation_id == "m5.image.cutout":
             if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt or p:
                 raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
@@ -104,7 +139,8 @@ class MediaCommand(ExecutionModel):
                 raise ValueError("STUDIO_AUDIO_TRIM_INPUT_REQUIRED")
         elif not self.provider_id or not self.model_id or not self.prompt.strip() or self.provider_id == "auto":
             raise ValueError("STUDIO_EXPLICIT_PROVIDER_MODEL_PROMPT_REQUIRED")
-        required = {"m5.image.i2i": "image", "m7.video.i2v": "image", "m7.video.v2v": "video"}.get(self.operation_id)
+        required = {"m5.image.i2i": "image", "m5.image.reference": "image", "m5.image.inpaint": "image",
+            "m7.video.i2v": "image", "m7.video.v2v": "video"}.get(self.operation_id)
         assets = [s for s in self.source_snapshots if s.kind == "ASSET"]
         if required and (not assets or any(s.asset_kind != required for s in assets)):
             raise ValueError("STUDIO_MEDIA_REFERENCE_KIND_INVALID")
@@ -117,6 +153,34 @@ class MediaCommand(ExecutionModel):
         if any(s.kind not in {"ASSET", "CREATIVE_DOCUMENT"} for s in self.source_snapshots):
             raise ValueError("STUDIO_OPERATION_SOURCE_OWNER_UNSUPPORTED")
         return self
+
+    def _image_runtime_inputs(self):
+        if self.operation_id not in {"m5.image.i2i", "m5.image.reference", "m5.image.inpaint"}:
+            raise ValueError("STUDIO_IMAGE_RUNTIME_OPERATION_INVALID")
+        refs = self.image_references or []
+        snapshots = []
+        for snapshot in (self.image_source, self.mask_source):
+            if snapshot is not None and (snapshot.kind != "ASSET" or snapshot.asset_kind != "image"):
+                raise ValueError("STUDIO_IMAGE_RUNTIME_SOURCE_KIND_INVALID")
+        if self.operation_id == "m5.image.reference":
+            if not refs or self.image_source is not None or self.mask_source is not None:
+                raise ValueError("STUDIO_IMAGE_REFERENCE_INPUT_REQUIRED")
+        elif self.operation_id == "m5.image.i2i":
+            if self.image_source is None or self.mask_source is not None or len(refs) > 4:
+                raise ValueError("STUDIO_IMAGE_RUNTIME_BASE_REQUIRED")
+        elif self.image_source is None or self.mask_source is None or refs:
+            raise ValueError("STUDIO_IMAGE_INPAINT_SOURCE_MASK_REQUIRED")
+        if self.image_source is not None:
+            snapshots.append(self.image_source)
+        snapshots.extend(reference.source for reference in refs)
+        if self.mask_source is not None:
+            snapshots.append(self.mask_source)
+        ids = [snapshot.id for snapshot in snapshots]
+        if len(ids) != len(set(ids)):
+            raise ValueError("STUDIO_IMAGE_RUNTIME_REFERENCE_DUPLICATE")
+        assets = [source for source in self.source_snapshots if source.kind == "ASSET"]
+        if [image_snapshot(source) for source in assets] != [image_snapshot(source) for source in snapshots]:
+            raise ValueError("STUDIO_IMAGE_RUNTIME_SNAPSHOT_MISMATCH")
 
 
 class MediaCreate(ExecutionModel):

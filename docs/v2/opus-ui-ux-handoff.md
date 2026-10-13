@@ -129,3 +129,14 @@ UNKNOWN/REVIEWING reconciliation, source version/Host/scope fences and workspace
 mutation exclusion. Do not expose these controls for Graph or other audio jobs.
 Visual refinement may change layout, not these authority or recovery behaviors.
 Browser/device playback and final Windows acceptance remain unverified.
+
+## Image Runtime / schema4（2026-10-13）
+
+沿原制作与Graph两个headless controller重构视图，不另造owner。新image_source／
+weighted image_references／mask_source绑定同序原Asset版本和摘要；独立控件按实际
+Provider supported_parameters过滤。加权参考是像素初始化，不是身份一致性保证；
+手绘Mask白保留、黑重绘且不可刷新原图版本。预览／入队／执行／私有候选／明确
+审核分开，权重或来源变化清旧同意，Host/identity晚响应和UNKNOWN不重发仍保持。
+图片Graph目录及schema4升级均需明确动作；旧1/2/3图不自动转换或删除不兼容节点。
+Opus可替换画布、Inspector、素材与参数布局，保留原父级mutex/CAS/client/审核门禁。
+超分仅预留，不提供执行按钮；新增控件的专业视觉与实际Windows验收未完成。

@@ -166,9 +166,10 @@ class ProductionExecutionService:
         from ..experimental.flags import require_flag
         from ..services.studio_image_mask_authoring import SOURCE_MAX_BYTES, verify_mask, validate_source_png
         guard(); require_flag("asset_lineage_v2")
-        sources = context["sources"]
+        inpaint = context["operation_id"] == "m5.image.inpaint"
+        sources = [s for s in context["sources"] if s.get("kind") == "ASSET"] if inpaint else context["sources"]
         if (len(sources) != 2 or any(s.get("kind") != "ASSET" or s.get("asset_kind") != "image" for s in sources)
-                or sources[0]["id"] == sources[1]["id"] or context.get("graph_binding") is not None):
+                or sources[0]["id"] == sources[1]["id"] or (not inpaint and context.get("graph_binding") is not None)):
             raise ValueError("STUDIO_IMAGE_CUTOUT_INPUT_REQUIRED")
         with (nullcontext() if under_asset_lease else self.workspace._asset_scope(nid, scope)):
             if self.store.incarnation(nid) != context["incarnation"]:
@@ -218,9 +219,24 @@ class ProductionExecutionService:
             raise ValueError("STUDIO_IMAGE_CUTOUT_PROOF_CHANGED")
 
     def _sources_current(self, nid, scope, context, guard):
-        if context["operation_id"] == "m5.image.cutout":
-            return self._cutout_inputs(nid, scope, context, guard)
+        if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}:
+            images = self._cutout_inputs(nid, scope, context, guard)
+            by_id = {item["snapshot"]["id"]: item for item in images}
+            return [by_id[source["id"]] if source["kind"] == "ASSET" else self.source(nid, scope, source, guard)
+                    for source in context["sources"]]
         return [self.source(nid, scope, snapshot, guard) for snapshot in context["sources"]]
+
+    @staticmethod
+    def _image_configuration(provider):
+        getter = getattr(provider, "image_configuration", None)
+        return getter() if callable(getter) else None
+
+    @staticmethod
+    def _image_runtime(command):
+        return isinstance(command, MediaCommand) and (command.image_source is not None
+            or bool(command.image_references) or command.mask_source is not None
+            or command.parameters.denoising_strength is not None
+            or command.operation_id in {"m5.image.reference", "m5.image.inpaint"})
 
     def _binding(self, command):
         if command.operation_id in {"m8.audio.trim", "m5.image.cutout"}: return None
@@ -233,8 +249,18 @@ class ProductionExecutionService:
             from ..model_center.discovery_bridge import LocalImageAdapter
             if type(provider) is LocalImageAdapter:
                 config = provider.studio_configuration()
-            capability = "IMAGE_EDIT" if operation.endswith("i2i") else "TEXT_TO_IMAGE"
-            if capability == "IMAGE_EDIT" and not callable(getattr(provider, "edit", None)):
+            image_config = self._image_configuration(provider)
+            image_operation = operation.rsplit(".", 1)[-1]
+            capability = "TEXT_TO_IMAGE" if image_operation == "t2i" else "IMAGE_EDIT"
+            if image_operation in {"reference", "inpaint"} or self._image_runtime(command):
+                if (not image_config or image_operation not in image_config["operations"]
+                        or not callable(getattr(provider, "generate_image", None))):
+                    raise ValueError("STUDIO_IMAGE_RUNTIME_PROVIDER_UNSUPPORTED")
+            elif image_config and image_operation != "t2i" and isinstance(command, MediaCommand):
+                # Rich recipes have explicit source roles; never run FLUX/Qwen
+                # through the historic SD checkpoint img2img template.
+                raise ValueError("STUDIO_IMAGE_RUNTIME_BASE_REQUIRED")
+            if capability == "IMAGE_EDIT" and not image_config and not callable(getattr(provider, "edit", None)):
                 raise ValueError("STUDIO_IMAGE_EDIT_PROVIDER_UNSUPPORTED")
             model = getattr(provider, "default_model", "") or config.get("default_model", "")
         elif operation.startswith("m7."):
@@ -270,8 +296,11 @@ class ProductionExecutionService:
             binding["endpoint"] = endpoint.rstrip("/")
             try: ipaddress.ip_address(urlsplit(endpoint).hostname or "")
             except ValueError: binding["local"] = False
-        binding["route_digest"] = digest({**binding, "config": {k: config.get(k) for k in
-            ("enabled", "local", "requires_credential", "default_model", "model_id", "api_style", "capabilities", "video_to_video")}})
+        route_config = {k: config.get(k) for k in
+            ("enabled", "local", "requires_credential", "default_model", "model_id", "api_style", "capabilities", "video_to_video")}
+        if operation.startswith("m5.") and image_config:
+            route_config["image_recipe"] = image_config
+        binding["route_digest"] = digest({**binding, "config": route_config})
         return binding
 
     def _egress(self, nid, scope, command, binding, guard):
@@ -361,13 +390,21 @@ class ProductionExecutionService:
         if command.operation_id == "m5.image.cutout": return []
         if command.operation_id.startswith("m5."):
             provider = self.image_registry.get(command.provider_id)
-            names = getattr(provider, "supported_parameters", None)
-            if command.operation_id == "m5.image.i2i": names = getattr(provider, "edit_supported_parameters", names)
+            config = self._image_configuration(provider)
+            operation = command.operation_id.rsplit(".", 1)[-1]
+            if config:
+                names = provider.image_parameters(operation)
+            else:
+                names = getattr(provider, "supported_parameters", None)
+                if command.operation_id == "m5.image.i2i": names = getattr(provider, "edit_supported_parameters", names)
             if names is None: raise ValueError("STUDIO_PROVIDER_PARAMETER_CONTRACT_REQUIRED")
             if isinstance(command, MediaCommand):
                 from ..asset_providers import validate_image_parameters
                 validate_image_parameters(command.parameters.model_dump(exclude_none=True), names)
-                if command.operation_id == "m5.image.i2i" and sum(s.kind == "ASSET" for s in command.source_snapshots) > getattr(provider, "edit_reference_limit", 0):
+                count = (1 if command.image_source is not None else 0) + len(command.image_references or [])
+                if config and operation != "t2i" and count > config["reference_limit"]:
+                    raise ValueError("STUDIO_PROVIDER_IMAGE_REFERENCE_LIMIT")
+                if not config and command.operation_id == "m5.image.i2i" and sum(s.kind == "ASSET" for s in command.source_snapshots) > getattr(provider, "edit_reference_limit", 0):
                     raise ValueError("STUDIO_PROVIDER_IMAGE_REFERENCE_LIMIT")
             return list(names)
         return {"m7.video.t2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
@@ -381,7 +418,7 @@ class ProductionExecutionService:
         if (graph_binding is not None and command.operation_id == "m8.audio.trim"
                 and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels"))):
             raise ValueError("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY")
-        if command.operation_id == "m5.image.cutout": guard = self._cutout_guard(guard)
+        if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
         context = self._base(nid, scope, actor, guard)
         if graph_binding is not None:
             from .graph_media_binding import validate_graph_binding
@@ -427,6 +464,24 @@ class ProductionExecutionService:
         elif command.operation_id.startswith("m5."):
             from ..asset_providers import AssetGenerationRequest, ComfyUIImageProvider, Automatic1111ImageProvider
             provider = self.image_registry.get(command.provider_id)
+            image_config = self._image_configuration(provider)
+            if image_config:
+                operation = command.operation_id.rsplit(".", 1)[-1]
+                weights = [reference.weight for reference in command.image_references or []]
+                if command.image_source is not None: weights.insert(0, 1.0)
+                result = provider.image_recipe(AssetGenerationRequest(command.provider_id, command.model_id,
+                    command.prompt, command.request_id, parameters), operation=operation,
+                    reference_weights=weights, mask=command.mask_source is not None)
+                recipe.update(adapter="COMFYUI_BUILTIN_IMAGE" if image_config["recipe_id"].startswith("comfy-") else "AUTOMATIC1111_IMAGE",
+                    image_recipe_id=image_config["recipe_id"], reference_weights=weights,
+                    reference_semantics=image_config["reference_semantics"],
+                    mask_semantics=image_config["mask_semantics"] if command.mask_source is not None else None)
+                if image_config["recipe_id"].startswith("comfy-"): recipe["workflow"] = result
+                else:
+                    recipe["defaults"] = {"width": 1024, "height": 1024, "steps": 28} if operation == "t2i" else {"steps": 28}
+                    if operation != "t2i": recipe["denoising_strength"] = parameters.get("denoising_strength", 0.6)
+                recipe["recipe_digest"] = digest(recipe)
+                return recipe
             from ..model_center.discovery_bridge import LocalImageAdapter
             model_id = command.model_id
             if type(provider) is LocalImageAdapter:
@@ -496,7 +551,7 @@ class ProductionExecutionService:
         context["command"] = copy.deepcopy(preview["command"]) if command.operation_id == "m5.image.cutout" else command.model_dump()
         branch = scope.get("branch_id")
         if command.operation_id.startswith("m5."):
-            if command.operation_id == "m5.image.cutout":
+            if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}:
                 guard = self._cutout_guard(guard)
                 row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard,
                     source_phase=lambda: self._cutout_queue_phase(nid, scope, context, guard))
@@ -684,7 +739,7 @@ class ProductionExecutionService:
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
             raise CapabilityVersionConflict(self.view(row, owner))
-        if context["operation_id"] == "m5.image.cutout": guard = self._cutout_guard(guard)
+        if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
         branch = scope.get("branch_id")
         recover = lambda captured: self._recover_media_candidate(nid, scope, actor, captured, context, guard,
             graph_source_guard=graph_source_guard)
@@ -780,6 +835,8 @@ class ProductionExecutionService:
                 if context["operation_id"] == "m5.image.cutout":
                     inputs = self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
                     self._cutout_result_proof(captured, inputs)
+                elif context["operation_id"] == "m5.image.inpaint":
+                    self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
                 for source in context["sources"]:
                     if source["kind"] == "ASSET":
                         asset = self.workspace._row(nid, scope, source["id"])
@@ -856,8 +913,9 @@ class ProductionExecutionService:
             with self.video_owner.studio_review_phase(jid):
                 return self._review_timeline(nid, scope, actor, jid, row, context, action, guard,
                     graph_source_guard=graph_source_guard)
-        if context["operation_id"] == "m5.image.cutout":
+        if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}:
             guard = self._cutout_guard(guard)
+        if context["operation_id"] == "m5.image.cutout":
             self._cutout_result_proof(row, self._cutout_inputs(nid, scope, context, guard))
         _, promote = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
         sources = self._source_guard(nid, scope, guard)
@@ -1071,7 +1129,7 @@ class ProductionExecutionService:
                 with self.workspace._asset_scope(nid, scope):
                     if self.store.incarnation(nid) != context["incarnation"]: raise StaleSourceError("STUDIO_OWNER_CHANGED")
                     if graph_asset_guard is not None: graph_asset_guard()
-                    if context["operation_id"] == "m5.image.cutout": self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
+                    if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}: self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
                     for source in context["sources"]:
                         if source["kind"] == "ASSET":
                             row = self.workspace._row(nid, scope, source["id"])
@@ -1107,7 +1165,7 @@ class ProductionExecutionService:
                 with asset_phase:
                     if self.store.incarnation(nid) != context["incarnation"]: raise StaleSourceError("STUDIO_OWNER_CHANGED")
                     if graph_asset_guard is not None: graph_asset_guard()
-                    if context["operation_id"] == "m5.image.cutout": self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
+                    if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}: self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
                     for source in context["sources"]:
                         if source["kind"] == "ASSET":
                             row = self.workspace._row(nid, scope, source["id"])
@@ -1131,7 +1189,10 @@ class ProductionExecutionService:
         for pid, config in load().items():
             model = config.get("default_model", "")
             if model:
-                for operation in ("m5.image.t2i", "m5.image.i2i"): candidates.append((pid, model, operation))
+                try: image_config = self._image_configuration(self.image_registry.get(pid))
+                except ValueError: image_config = None
+                operations = ["m5.image." + op for op in image_config["operations"]] if image_config else ["m5.image.t2i", "m5.image.i2i"]
+                for operation in operations: candidates.append((pid, model, operation))
         from ..model_center.discovery_bridge import LocalImageAdapter
         for pid, provider in self.image_registry._providers.copy().items():
             if type(provider) is not LocalImageAdapter:
@@ -1140,11 +1201,10 @@ class ProductionExecutionService:
                 config = provider.studio_configuration()
             except ValueError:
                 continue
-            # Discovery currently proves only the shipped checkpoint T2I
-            # structure. I2I and other families need their own actual evidence.
-            candidate = (pid, config["default_model"], "m5.image.t2i")
-            if candidate not in candidates:
-                candidates.append(candidate)
+            for operation in config.get("image_operations", ["t2i"]):
+                candidate = (pid, config["default_model"], "m5.image." + operation)
+                if candidate not in candidates:
+                    candidates.append(candidate)
         for pid, config in self.video_configs.items():
             model = config.get("model_id", "")
             if model:
@@ -1160,10 +1220,16 @@ class ProductionExecutionService:
                 binding = self._binding(command)
                 parameters = self._parameters(command)
             except ValueError: continue
-            rows.append({"operation_id": operation, "provider_id": pid, "model_id": model,
+            row = {"operation_id": operation, "provider_id": pid, "model_id": model,
                 "local": binding["local"], "route_digest": binding["route_digest"], "capability": binding["capability"],
                 "supported_parameters": parameters,
-                "readiness": "CONFIGURED_NOT_VERIFIED", "product_acceptance": "LOCAL_REQUIRED"})
+                "readiness": "CONFIGURED_NOT_VERIFIED", "product_acceptance": "LOCAL_REQUIRED"}
+            if operation.startswith("m5."):
+                image_config = self._image_configuration(self.image_registry.get(pid))
+                if image_config:
+                    from ..services.studio_image_provider_recipes import public_capabilities
+                    row["image_capabilities"] = public_capabilities(image_config)
+            rows.append(row)
         guard()
         return {"items": rows, "automatic_runtime_start": False, "health_probed": False, "credentials_read": False}
 
@@ -1192,10 +1258,10 @@ class ProductionExecutionService:
         host_guard = guard
         def guard():
             host_guard()
-            if command.operation_id == "m5.image.cutout":
+            if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}:
                 from ..experimental.flags import require_flag
                 require_flag("asset_lineage_v2")
-            elif command.operation_id != "m8.audio.trim":
+            if command.operation_id not in {"m5.image.cutout", "m8.audio.trim"}:
                 from .ai_execution import require_execution
                 require_execution()
                 binding = context.get("provider_binding")
@@ -1223,7 +1289,7 @@ class ProductionExecutionService:
                 expected_version=action.expected_version, expected_request_digest=action.expected_request_digest,
                 guard=guard, source_guard=lambda: self._sources_current(nid, scope, context, guard), dispatch_guard=before_send,
                 read_images=lambda: ([item["data"] for item in self._cutout_inputs(nid, scope, context, guard)]
-                    if command.operation_id == "m5.image.cutout" else [source_guard(s)["data"] for s in context["sources"] if s["kind"] == "ASSET" and s["asset_kind"] == "image"]), publish=publish)
+                    if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"} else [source_guard(s)["data"] for s in context["sources"] if s["kind"] == "ASSET" and s["asset_kind"] == "image"]), publish=publish)
         elif owner == "video":
             def resolve(binding):
                 if self._binding(command) != binding: raise StaleSourceError("STUDIO_PROVIDER_ROUTE_CHANGED")

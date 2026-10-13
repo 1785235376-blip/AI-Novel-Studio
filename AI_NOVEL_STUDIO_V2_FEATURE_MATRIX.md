@@ -1184,3 +1184,21 @@ checks pass. No complete Windows/CI/model/product verdict follows.
 Original generators produce2219API operations and13442collected nodes, all9151
 frozen nodes/order/skips/gates retained. No original test/generator/freeze/Interop
 modification; M4 and ordered M5-M9 acceptance, QingJian pause and Opus seams remain.
+
+
+### Production Expansion 2 — Image runtime, references and authored inpaint
+
+The prior Expansion1 T2I-only checkpoint remains historical. On baselinec911e549,
+IMAGE-01/06/10/15/17 and Graph image sub-capabilities now have bounded code for
+explicit I2I, weighted references and saved authored-mask inpaint through original
+owners. Fixed Comfy SD/FLUX.1/Qwen Image and schema-proved A1111 contracts reject
+missing components, ambiguous inputs and unsupported parameters. Explicit
+schema4 carries Asset→Reference→Prompt→ImageGeneration→originalReview→formalAsset;
+oldschemas1/2/3 and original labels/identities remain closed. Upscale is RESERVED /
+NOT_CONFIGURED with execution unavailable, not an implemented model capability.
+
+Sub-capability source is IMPLEMENTED; module status remains PARTIAL and actual
+model/quality/Windows/GPU acceptance LOCAL_REQUIRED. Selected actual verification
+and all failed attempts are separated in the [stage report](docs/v2/production-expansion-image-runtime-20261013.md)
+and same-name JSON. These results do not replace original M4→M9, F00, independent
+review or CI gates. No Video/QingJian development, download or paid model call.

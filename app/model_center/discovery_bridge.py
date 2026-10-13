@@ -79,7 +79,7 @@ class _LocalImageTransport:
         except zlib.error as exc:
             raise ValueError('LOCAL_AI_INVALID_RESPONSE_ENCODING') from exc
 
-    def _body(self, response):
+    def _body(self, response, *, dispatch_guard=None):
         encoding = response.headers.get('content-encoding', 'identity').strip().lower()
         if encoding not in {'identity', 'gzip', 'deflate'}:
             raise ValueError('LOCAL_AI_CONTENT_ENCODING_UNSUPPORTED')
@@ -93,6 +93,7 @@ class _LocalImageTransport:
         # iter_bytes() would decompress without a size limit before we could
         # check it. Read the wire and bound every decompressor allocation.
         for chunk in response.iter_raw():
+            if dispatch_guard is not None: dispatch_guard()
             wire_bytes += len(chunk)
             if wire_bytes > self.max_wire_bytes:
                 raise ValueError('LOCAL_AI_RESPONSE_TOO_LARGE')
@@ -124,6 +125,7 @@ class _LocalImageTransport:
 
     def _request(self, method, url, **kwargs):
         import httpx
+        dispatch_guard = kwargs.pop('dispatch_guard', None)
         # All dynamic ComfyUI paths remain on the same already-approved origin.
         parsed, origin = urlsplit(url), urlsplit(self.endpoint)
         if ((parsed.scheme, parsed.netloc) != (origin.scheme, origin.netloc) or
@@ -131,11 +133,13 @@ class _LocalImageTransport:
                 '\\' in url or any(ord(c) < 32 for c in url)):
             raise ValueError('LOCAL_AI_DESTINATION_REJECTED')
         kwargs.pop('follow_redirects', None)
+        if dispatch_guard is not None: dispatch_guard()
         with httpx.Client(trust_env=self.trust_env, follow_redirects=False, timeout=kwargs.pop('timeout', 30),
                           headers={'Accept-Encoding': 'gzip, deflate, identity'}) as client:
             with client.stream(method, url, follow_redirects=False, **kwargs) as response:
                 if response.is_redirect: raise ValueError('LOCAL_AI_REDIRECT_REJECTED')
-                body = self._body(response)
+                body = self._body(response, dispatch_guard=dispatch_guard)
+                if dispatch_guard is not None: dispatch_guard()
                 # The reconstructed response contains decoded bytes. Retaining
                 # wire encoding/length would decode twice or describe stale data.
                 headers = [(key, value) for key, value in response.headers.multi_items()
@@ -286,9 +290,14 @@ class LocalImageAdapter:
         self.default_model = candidate['id']
         cls = Automatic1111ImageProvider if candidate['runtime_type'] == 'AUTOMATIC1111' else ComfyUIImageProvider
         self.delegate = cls(_LocalImageTransport(self.endpoint), self.endpoint)
+        recipe = candidate.get('evidence', {}).get('image_recipe')
+        if recipe:
+            self.delegate.image_recipe_descriptor = copy.deepcopy(recipe)
 
     @property
     def supported_parameters(self):
+        if getattr(self.delegate, 'image_recipe_descriptor', None):
+            return self.delegate.image_parameters('t2i')
         return self.delegate.supported_parameters
 
     def studio_configuration(self):
@@ -315,32 +324,58 @@ class LocalImageAdapter:
                 expected = Automatic1111ImageProvider if candidate['runtime_type'] == 'AUTOMATIC1111' else ComfyUIImageProvider
                 if type(self.delegate) is not expected or self.delegate.endpoint != self.endpoint:
                     raise ValueError(error)
+                recipe = candidate.get('evidence', {}).get('image_recipe')
+                if recipe and recipe != getattr(self.delegate, 'image_recipe_descriptor', None):
+                    raise ValueError(error)
                 if candidate['runtime_type'] == 'COMFYUI':
-                    template = next((item for item in self.bridge.service.workflow_adapters
+                    template = next((item for item in [*self.bridge.service.workflow_adapters, *self.bridge.service.image_workflow_adapters]
                         if item['id'] == candidate.get('workflow_adapter_id')), None)
                     evidence = candidate.get('evidence', {})
-                    if (not template or template['id'] != 'comfy-sd-checkpoint-v1'
-                            or candidate.get('family') != 'STABLE_DIFFUSION'
-                            or template['model_loader'] != 'CheckpointLoaderSimple'
-                            or template['model_input'] != 'ckpt_name'
+                    recipe = evidence.get('image_recipe')
+                    legacy_sd = (template and template['id'] == 'comfy-sd-checkpoint-v1'
+                        and candidate.get('family') == 'STABLE_DIFFUSION'
+                        and template['model_loader'] == 'CheckpointLoaderSimple'
+                        and template['model_input'] == 'ckpt_name')
+                    exact_recipe = (template and recipe and template['id'] == recipe['recipe_id']
+                        and recipe == getattr(self.delegate, 'image_recipe_descriptor', None)
+                        and recipe['components']['model'] == candidate['model_name'])
+                    if (not template or not ((legacy_sd and not recipe) or exact_recipe)
                             or not set(template['required_nodes']) <= set(evidence.get('node_classes', []))
-                            or {'node_class': 'CheckpointLoaderSimple', 'input_field': 'ckpt_name'}
+                            or {'node_class': template['model_loader'], 'input_field': template['model_input']}
                                 not in evidence.get('loader_bindings', [])):
                         raise ValueError(error)
                 epoch = self.bridge.service._control_epochs.get(candidate['id'], 0)
                 registration_digest = hashlib.sha256(json.dumps({'registration': identity, 'control_epoch': epoch},
                     sort_keys=True, default=str).encode()).hexdigest()
-                return {'enabled': True, 'local': True, 'requires_credential': False,
+                config = {'enabled': True, 'local': True, 'requires_credential': False,
                     'default_model': candidate['id'], 'endpoint': self.endpoint,
                     'api_style': 'automatic1111' if candidate['runtime_type'] == 'AUTOMATIC1111' else 'comfyui',
                     'registration_digest': registration_digest, 'runtime_model_id': candidate['model_name']}
+                recipe = candidate.get('evidence', {}).get('image_recipe')
+                if recipe:
+                    from ..services.studio_image_provider_recipes import public_capabilities
+                    config.update(image_recipe=copy.deepcopy(recipe), image_operations=list(recipe['operations']),
+                        image_capabilities=public_capabilities(recipe))
+                return config
             except (KeyError, TypeError, ModelRuntimeError, ValueError):
                 raise ValueError(error) from None
 
     def health_check(self):
         try: self.bridge.guard(self.candidate['id']); return self.delegate.health_check()
         except (ValueError, KeyError, ModelRuntimeError): return False
+    def image_configuration(self):
+        self.studio_configuration()
+        return self.delegate.image_configuration()
+    def image_parameters(self, operation):
+        self.studio_configuration()
+        return self.delegate.image_parameters(operation)
+    def image_recipe(self, request, *, operation, reference_weights=(), mask=False):
+        config = self.studio_configuration()
+        return self.delegate.image_recipe(replace(request, model_id=config['runtime_model_id']),
+            operation=operation, reference_weights=reference_weights, mask=mask)
     def generate(self, request):
+        if self.candidate.get('evidence', {}).get('image_recipe'):
+            return self.generate_image(request, operation='t2i', images=[], reference_weights=[])
         candidate = self.bridge.guard(self.candidate['id'])
         self.bridge.service.check_model_dispatch(candidate)
         current = self.bridge.guard(candidate['id'])
@@ -354,6 +389,28 @@ class LocalImageAdapter:
         current = self.bridge.guard(candidate['id'])
         if current.get('enabled_at') != candidate.get('enabled_at'): raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
         result = self.delegate.generate(replace(request, model_id=candidate['model_name']))
+        return replace(result, model_id=candidate['id'])
+
+    def generate_image(self, request, *, operation, images, reference_weights, mask=None):
+        config = self.studio_configuration()
+        candidate = self.bridge.guard(self.candidate['id'])
+        if request.model_id not in {'', candidate['id'], candidate['model_name']}:
+            raise ValueError('LOCAL_AI_MODEL_MISMATCH')
+        if operation not in config.get('image_operations', []):
+            raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
+        if request.dispatch_guard is not None: request.dispatch_guard()
+        self.bridge.service.check_model_dispatch(candidate)
+        self.studio_configuration()
+        original_guard = request.dispatch_guard
+        expected = config['registration_digest']
+        def guard():
+            if original_guard is not None: original_guard()
+            if self.studio_configuration()['registration_digest'] != expected:
+                raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
+        guard()
+        result = self.delegate.generate_image(replace(request, model_id=candidate['model_name'], dispatch_guard=guard),
+            operation=operation, images=images, reference_weights=reference_weights, mask=mask)
+        guard()
         return replace(result, model_id=candidate['id'])
 
 

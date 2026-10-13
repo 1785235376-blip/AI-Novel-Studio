@@ -21,7 +21,8 @@ CONTRACT = "studio-image-execution/1"
 MAX_BYTES = 25 * 1024 * 1024
 MAX_VERSION = 2**53 - 1
 STATES = {"QUEUED", "RUNNING", "FAILED", "UNKNOWN", "AWAITING_REVIEW", "REVIEWING", "APPROVED", "CANCELLED"}
-OPERATIONS = {"m5.image.t2i", "m5.image.i2i", "m5.image.cutout"}
+OPERATIONS = {"m5.image.t2i", "m5.image.i2i", "m5.image.cutout", "m5.image.reference", "m5.image.inpaint"}
+IMAGE_RUNTIME_FIELDS = {"image_source", "image_references", "mask_source"}
 IDENTITY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$")
 DIGEST = re.compile(r"^[a-f0-9]{64}$")
 
@@ -67,8 +68,14 @@ def _payload(body):
     if hasattr(body, "model_dump"):
         body = body.model_dump()
     required = {"operation_id", "provider_id", "model_id", "prompt", "parameters"}
-    if not isinstance(body, dict) or set(body) != required or body["operation_id"] not in OPERATIONS:
+    if (not isinstance(body, dict) or not required.issubset(body)
+            or set(body) - required - IMAGE_RUNTIME_FIELDS or body["operation_id"] not in OPERATIONS):
         raise ValueError("STUDIO_IMAGE_REQUEST_INVALID")
+    for key in IMAGE_RUNTIME_FIELDS.intersection(body):
+        item = body[key]
+        if (key == "image_references" and (not isinstance(item, list) or not 1 <= len(item) <= 5)
+                or key != "image_references" and not isinstance(item, dict)):
+            raise ValueError("STUDIO_IMAGE_RUNTIME_INPUT_INVALID")
     if body["operation_id"] == "m5.image.cutout":
         if body["provider_id"] is not None or body["model_id"] is not None or body["prompt"] != "" or body["parameters"] != {}:
             raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
@@ -79,7 +86,15 @@ def _payload(body):
     parameters = body["parameters"]
     if not isinstance(parameters, dict):
         raise ValueError("STUDIO_IMAGE_PARAMETERS_INVALID")
-    validate_image_parameters(parameters)
+    # Only the explicit new image path admits denoise; the old parameter
+    # validator and old body identity remain unchanged for legacy requests.
+    legacy_parameters = {key: value for key, value in parameters.items() if key != "denoising_strength"}
+    validate_image_parameters(legacy_parameters)
+    if "denoising_strength" in parameters:
+        value = parameters["denoising_strength"]
+        if (type(value) not in (float, int) or not 0 < value <= 1
+                or body["operation_id"] not in {"m5.image.i2i", "m5.image.reference", "m5.image.inpaint"}):
+            raise ValueError("STUDIO_IMAGE_DENOISE_INVALID")
     if (parameters.get("width") is None) != (parameters.get("height") is None):
         raise ValueError("STUDIO_IMAGE_DIMENSIONS_PAIR_REQUIRED")
     return copy.deepcopy(body)
@@ -145,6 +160,9 @@ def _context(value, body, actor):
             raise ValueError("STUDIO_IMAGE_REVIEWED_COMMAND_INVALID")
         command_body = {key: command.get(key) for key in ("operation_id", "provider_id", "model_id", "prompt")}
         command_body["parameters"] = {key: item for key, item in parameters.items() if item is not None}
+        for key in IMAGE_RUNTIME_FIELDS:
+            if key in body:
+                command_body[key] = copy.deepcopy(command.get(key))
         if command_body != body or command.get("request_id") != value["request_id"]:
             raise ValueError("STUDIO_IMAGE_REVIEWED_COMMAND_CHANGED")
         references = command.get("source_snapshots")
@@ -154,6 +172,18 @@ def _context(value, body, actor):
                       for source in references]
         if references != sources:
             raise ValueError("STUDIO_IMAGE_REVIEWED_SOURCE_CHANGED")
+        if (IMAGE_RUNTIME_FIELDS.intersection(body) or IMAGE_RUNTIME_FIELDS.intersection(command)
+                or body["operation_id"] in {"m5.image.reference", "m5.image.inpaint"}
+                or "denoising_strength" in body["parameters"]):
+            from ..creative.production_execution_models import MediaCommand
+            checked = MediaCommand.model_validate(command)
+            checked_body = checked.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id"})
+            checked_body["parameters"] = checked.parameters.model_dump(exclude_none=True)
+            if checked.operation_id not in OPERATIONS or checked_body != body:
+                raise ValueError("STUDIO_IMAGE_RUNTIME_CONTEXT_INVALID")
+    elif (IMAGE_RUNTIME_FIELDS.intersection(body) or body["operation_id"] in {"m5.image.reference", "m5.image.inpaint"}
+            or "denoising_strength" in body["parameters"]):
+        raise ValueError("STUDIO_IMAGE_RUNTIME_CONTEXT_REQUIRED")
     _no_secrets(value)
     if len(_canonical(value).encode("utf-8")) > 128 * 1024:
         raise ValueError("STUDIO_IMAGE_CONTEXT_LIMIT")
@@ -267,7 +297,7 @@ def create(service, nid, branch, actor, body, context, guard, *, source_phase=No
         row["binding_digest"] = _binding(row)
         rows.append(row)
         return copy.deepcopy(row)
-    if body["operation_id"] == "m5.image.cutout":
+    if body["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}:
         if not callable(source_phase): raise ValueError("STUDIO_IMAGE_CUTOUT_SOURCE_PHASE_REQUIRED")
         # Original queue -> source -> asset -> project order; hold the input
         # lease through atomic queue persistence, including idempotent retries.
@@ -456,6 +486,34 @@ def _decode(uri, provider):
     return data, inspect_image(data)
 
 
+def _runtime_images(job, values):
+    """Bind actual bounded pixels to the reviewed original Asset snapshots."""
+    from ..creative.production_execution_models import MediaCommand
+    command = MediaCommand.model_validate(job["context"]["command"])
+    references = [source for source in job["context"]["sources"] if source["kind"] == "ASSET"]
+    if (not isinstance(values, list) or len(values) != len(references)
+            or not 1 <= len(values) <= 5):
+        raise ValueError("STUDIO_IMAGE_REFERENCES_CHANGED")
+    images, total = [], 0
+    for data, reference in zip(values, references):
+        if not isinstance(data, bytes) or not data:
+            raise ValueError("STUDIO_IMAGE_REFERENCE_INVALID")
+        total += len(data)
+        if total > MAX_BYTES:
+            raise ValueError("STUDIO_IMAGE_REFERENCES_LIMIT")
+        if hashlib.sha256(data).hexdigest() != reference["digest"]:
+            raise ValueError("STUDIO_IMAGE_REFERENCE_DIGEST_CHANGED")
+        measured = inspect_image(data)
+        images.append("data:" + measured["media_type"] + ";base64," + base64.b64encode(data).decode("ascii"))
+    weights = [reference.weight for reference in command.image_references or []]
+    if command.image_source is not None:
+        weights.insert(0, 1.0)
+    mask = images.pop() if command.mask_source is not None else None
+    if len(images) != len(weights):
+        raise ValueError("STUDIO_IMAGE_RUNTIME_SNAPSHOT_MISMATCH")
+    return images, weights, mask
+
+
 def _candidate(asset, job, data, measured):
     return _candidate_identity(asset, job, hashlib.sha256(data).hexdigest(), len(data), measured["media_type"])
 
@@ -571,7 +629,14 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                     raise ValueError("STUDIO_IMAGE_PROVIDER_GUARD_UNSUPPORTED")
                 guard(); source_guard(); dispatch_guard(job, provider); current()
                 images = []
-                if job["body"]["operation_id"] == "m5.image.i2i":
+                advanced = (bool(IMAGE_RUNTIME_FIELDS.intersection(job["body"]))
+                    or job["body"]["operation_id"] in {"m5.image.reference", "m5.image.inpaint"}
+                    or "denoising_strength" in job["body"]["parameters"])
+                if advanced:
+                    images, weights, mask_image = _runtime_images(job, read_images())
+                    if not callable(getattr(provider, "generate_image", None)):
+                        raise ValueError("STUDIO_IMAGE_RUNTIME_PROVIDER_UNSUPPORTED")
+                elif job["body"]["operation_id"] == "m5.image.i2i":
                     values = read_images()
                     expected_count = sum(source.get("asset_kind") == "image" for source in job["context"]["sources"])
                     if not isinstance(values, list) or len(values) != expected_count or not 1 <= len(values) <= 5:
@@ -593,7 +658,9 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                 request = AssetGenerationRequest(job["body"]["provider_id"], job["body"]["model_id"],
                     job["body"]["prompt"], job["id"], copy.deepcopy(job["body"]["parameters"]), dispatch_guard=last_mile)
                 invoked = True
-                result = provider.edit(request, images) if images else provider.generate(request)
+                result = (provider.generate_image(request, operation=job["body"]["operation_id"].rsplit(".", 1)[-1],
+                    images=images, reference_weights=weights, mask=mask_image) if advanced else
+                    provider.edit(request, images) if images else provider.generate(request))
                 if not sent:
                     raise ValueError("STUDIO_IMAGE_GUARDED_DISPATCH_NOT_OBSERVED")
                 if result.provider_id != request.provider_id or result.model_id != request.model_id:
