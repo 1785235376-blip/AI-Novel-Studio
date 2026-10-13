@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from typing import Literal
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
 from .production_contracts import ProductionSourceSnapshot, Name, Digest
 
 GraphMediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m7.video.i2v",
@@ -37,13 +37,30 @@ class MediaParameters(ExecutionModel):
     out_ms: int | None = Field(default=None, ge=1, le=600000)
 
 
+class MediaExecutionParameters(MediaParameters):
+    """Standalone additions; the original Graph parameter schema stays closed."""
+    gain_db: float | None = Field(default=None, ge=-60, le=12)
+    sample_rate: int | None = Field(default=None, ge=8000, le=96000)
+    channels: int | None = Field(default=None, ge=1, le=2)
+
+    @model_serializer(mode="wrap")
+    def preserve_legacy_identity(self, handler):
+        # Original preview and job identities include the old null fields.
+        # Omit only the new unset controls, including in nested model_dump().
+        value = handler(self)
+        for key in ("gain_db", "sample_rate", "channels"):
+            if value.get(key) is None:
+                value.pop(key, None)
+        return value
+
+
 class MediaCommand(ExecutionModel):
     operation_id: MediaOperation
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
     provider_id: Name | None = None
     model_id: Name | None = None
     prompt: str = Field(default="", max_length=16000)
-    parameters: MediaParameters = Field(default_factory=MediaParameters)
+    parameters: MediaExecutionParameters = Field(default_factory=MediaExecutionParameters)
     source_snapshots: list[ProductionSourceSnapshot] = Field(default_factory=list, max_length=8)
     allow_cloud: bool = False
     license_note: str = Field(default="", max_length=2000)
@@ -61,7 +78,7 @@ class MediaCommand(ExecutionModel):
             "m8.audio.speech": {"voice_id", "speech_rate"},
             "m8.audio.music": {"duration_seconds", "seed"},
             "m8.audio.effects": {"duration_seconds", "seed"},
-            "m8.audio.trim": {"in_ms", "out_ms"},
+            "m8.audio.trim": {"in_ms", "out_ms", "gain_db", "sample_rate", "channels"},
         }[self.operation_id]
         if set(p) - allowed:
             raise ValueError("STUDIO_OPERATION_PARAMETER_UNSUPPORTED")

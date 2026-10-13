@@ -800,3 +800,19 @@ with 393 existing backend/feature skips. All 20 original migrations and original
 assertions are unchanged; independent focused review approved the repair.
 Historical failures remain documented above. No Windows/model/full-product
 acceptance is claimed. See the dedicated Graph target-budget report.
+
+### Bounded Audio PCM controls reconstruction
+
+Existing standalone audio trim now accepts optional gain[-60,12]dB, resampling
+8000–96000Hz and mono/stereo, with predictable PCM size admission and actual
+decoded output proof. Blank controls preserve original defaults and five exact
+legacy identities. Positive gain may saturate; this is not loudness normalization
+or playback-speed control. Existing Graph schema and private review remain.
+Independent review found and fixed proof deletion and missing-candidate decoder
+gaps before final integration. File/fresh real PostgreSQL each412 passed/167
+backend skips; frontend2928 passed/8 original skips, types/build/token guard pass.
+Earlier owned-cluster encoding and token-script working-directory errors remain
+recorded, with corrected setup passing unchanged checks. No Windows/model claim.
+New generated inventories passed47 original checks locally but publication is
+blocked after the Markdown retry denial. Source/test/report publication proceeds
+separately; no full CI acceptance or synchronized inventory claim is made.

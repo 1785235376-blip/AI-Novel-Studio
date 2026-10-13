@@ -116,3 +116,16 @@ review after cancellation. Visual rearrangement must not collapse explicit
 preview/create/execute/review or manufacture success from a late response.
 Backend format is narrow8-bit noninterlaced PNG64–1024 multiple8, no ancillary
 chunks; native browser/Windows visual acceptance is still unverified.
+
+## Reconstructed standalone Audio WAV controls (2026-10-13)
+
+Use the existing IMAGE/VIDEO/AUDIO production panel and audio trim controls.
+Optional gain dB, sample-rate Hz and mono/stereo fields must remain blank by
+default so old request bytes/identities stay unchanged. Explain positive-gain
+saturation, resampling without speed change, and the bounded PCM output size.
+Preview/consent/create/execute/private candidate/explicit review remain separate.
+Display measured PCM output only from the strict backend receipt. Preserve
+UNKNOWN/REVIEWING reconciliation, source version/Host/scope fences and workspace
+mutation exclusion. Do not expose these controls for Graph or other audio jobs.
+Visual refinement may change layout, not these authority or recovery behaviors.
+Browser/device playback and final Windows acceptance remain unverified.

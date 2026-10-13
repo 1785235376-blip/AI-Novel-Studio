@@ -29,6 +29,34 @@ STUDIO_ORIGIN = "studio-audio-execution/1"
 CAPABILITIES = {"m8.audio.speech": "TTS", "m8.audio.music": "MUSIC", "m8.audio.effects": "SFX", "m8.audio.trim": "TRIM"}
 _ACTIVE: set[tuple[str, str, str]] = set()
 _ACTIVE_LOCK = threading.RLock()
+TRIM_CONTROLS = {"gain_db", "sample_rate", "channels"}
+
+
+def trim_output_profile(parameters):
+    # Reserve bounded WAV header space before accepting a reviewed recipe.
+    # Encoding never silently lowers requested rate, channels or duration.
+    if (math.ceil((parameters["out_ms"] - parameters["in_ms"]) * parameters.get("sample_rate", 48000) / 1000)
+            * parameters.get("channels", 2) * 2 + 4096 > 25 * 1024 * 1024):
+        raise _error("STUDIO_AUDIO_TRIM_BYTES_BUDGET_EXCEEDED", "所选 PCM WAV 参数超过原资产大小上限", 400)
+    channels = "MONO" if parameters.get("channels", 2) == 1 else "STEREO"
+    return f"PCM_S16LE_WAV_{parameters.get('sample_rate', 48000)}_{channels}"
+
+
+def _trim_measurement(value, parameters):
+    """Validate persisted actual-byte proof, never synthesize it from settings."""
+    fields = {"duration_ms", "byte_count", "sample_rate", "channels", "sample_width", "container",
+              "audio_codec", "profile_validation", "output_sha256"}
+    if (not isinstance(value, dict) or set(value) != fields
+            or any(type(value.get(key)) is not int for key in ("duration_ms", "byte_count", "sample_rate", "channels", "sample_width"))
+            or not 0 < value["byte_count"] <= 25 * 1024 * 1024 or value["duration_ms"] < 1
+            or abs(value["duration_ms"] - (parameters["out_ms"] - parameters["in_ms"])) > 2
+            or value["sample_rate"] != parameters.get("sample_rate", 48000)
+            or value["channels"] != parameters.get("channels", 2) or value["sample_width"] != 2
+            or value["container"] != "wav" or value["audio_codec"] != "pcm_s16le"
+            or value["profile_validation"] != "PCM_DECODED"):
+        raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "原音频实际输出证明不一致", 409)
+    _sha(value["output_sha256"])
+    return value
 
 
 def _error(code, message, status=409):
@@ -84,7 +112,7 @@ def _body(value):
     parameters = value.get("parameters", {})
     if not isinstance(parameters, dict):
         raise _error("STUDIO_AUDIO_PARAMETERS_INVALID", "音频参数无效", 400)
-    names = {"voice_id", "speech_rate"} if operation == "m8.audio.speech" else {"in_ms", "out_ms"} if operation == "m8.audio.trim" else {"duration_seconds", "seed"}
+    names = {"voice_id", "speech_rate"} if operation == "m8.audio.speech" else {"in_ms", "out_ms"} | TRIM_CONTROLS if operation == "m8.audio.trim" else {"duration_seconds", "seed"}
     if set(parameters) - names:
         raise _error("AUDIO_PARAMETER_UNSUPPORTED", "原音频操作不支持所选参数", 400)
     parameters = copy.deepcopy(parameters)
@@ -98,6 +126,12 @@ def _body(value):
         start, end = parameters.get("in_ms"), parameters.get("out_ms")
         if type(start) is not int or type(end) is not int or not 0 <= start < end <= 600_000 or end - start > 120_000:
             raise _error("STUDIO_AUDIO_TRIM_RANGE_INVALID", "裁剪范围须在原音频内且最长 120 秒", 400)
+        gain, rate, channels = parameters.get("gain_db", 0), parameters.get("sample_rate", 48000), parameters.get("channels", 2)
+        if (type(gain) not in {int, float} or not math.isfinite(gain) or not -60 <= gain <= 12
+                or type(rate) is not int or not 8000 <= rate <= 96000
+                or type(channels) is not int or channels not in {1, 2}):
+            raise _error("STUDIO_AUDIO_TRIM_PARAMETERS_INVALID", "音频增益、采样率或声道超出本地 WAV 参数范围", 400)
+        trim_output_profile(parameters)
         if prompt:
             raise _error("STUDIO_AUDIO_TRIM_PROMPT_INVALID", "本地裁剪不使用生成提示词", 400)
     elif "duration_seconds" in parameters:
@@ -134,6 +168,8 @@ def _binding(value, body):
         if value["graph_binding"] is None:
             raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
         validate_graph_binding(value["graph_binding"], value)
+        if body["operation_id"] == "m8.audio.trim" and TRIM_CONTROLS.intersection(body["parameters"]):
+            raise _error("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY", "新增音频控制仅支持独立音频制作入口", 400)
     if not isinstance(value["sources"], list) or value["sources"] != body["source_snapshots"]:
         raise _error("STUDIO_AUDIO_SOURCE_BINDING_MISMATCH", "当前来源与音频请求不一致", 409)
     if not isinstance(value["rights"], dict):
@@ -165,7 +201,7 @@ def _binding(value, body):
                 or recipe.get("operation_id") != body["operation_id"]
                 or recipe.get("adapter") != ("LOCAL_FFMPEG" if trim else "ORIGINAL_HTTP_PROVIDER")
                 or recipe.get("automatic_fallback") is not False
-                or (trim and recipe.get("output_profile") != "PCM_S16LE_WAV_48000_STEREO")
+                or (trim and recipe.get("output_profile") != trim_output_profile(body["parameters"]))
                 or len(_canonical(recipe)) > 16 * 1024):
             raise _error("STUDIO_AUDIO_RECIPE_INVALID", "音频执行配方必须使用已审核的原操作参数", 400)
         recipe_body = _body({**body, "parameters": recipe["parameters"]})
@@ -247,6 +283,23 @@ class StudioAudioExecution:
                 or row.get("request_sha256") != _digest({"body": body, "context": binding})):
             raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频任务绑定已变化，不能继续执行", 409)
         _version(row.get("version"))
+        controlled_output = (body["operation_id"] == "m8.audio.trim" and TRIM_CONTROLS.intersection(body["parameters"])
+            and (row.get("publication_ready") is not None or row.get("publication_state") in {"RESERVED", "VERIFIED"}
+                 or row.get("output_asset_id") is not None or row.get("status") in {"AWAITING_REVIEW", "REVIEWING", "APPROVED"}))
+        if controlled_output and "measured" not in row:
+            raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "新增音频控制的实际输出证明缺失", 409)
+        if "measured" in row:
+            if body["operation_id"] != "m8.audio.trim" or "graph_binding" in binding:
+                raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "音频输出证明不属于此原操作", 409)
+            measured = _trim_measurement(row["measured"], body["parameters"])
+            ready = row.get("publication_ready")
+            receipt = copy.deepcopy(row); self._receipt(receipt)
+            if (not isinstance(ready, dict) or ready.get("output_digest") != measured["output_sha256"]
+                    or ready.get("output_bytes") != measured["byte_count"] or ready.get("media_type") != "audio/wav"
+                    or row.get("duration_ms") != measured["duration_ms"] or row.get("media_validation") != "PCM_DECODED"
+                    or row.get("output_digest") not in {None, measured["output_sha256"]}
+                    or row.get("receipt_digest") != receipt["receipt_digest"]):
+                raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "原音频实际输出证明与持久回执不一致", 409)
         return row
 
     @staticmethod
@@ -305,10 +358,13 @@ class StudioAudioExecution:
     @staticmethod
     def _receipt(row):
         # This hashes durable owner state, never invents a provider receipt.
-        row["receipt_digest"] = _digest({key: row.get(key) for key in (
+        proof = {key: row.get(key) for key in (
             "id", "version", "request_digest", "status", "attempt", "dispatch_state", "publication_state",
             "review_state", "remote_task_id", "provider_status", "output_asset_id", "candidate_asset_version",
-            "output_digest", "duration_ms", "media_validation", "cancellation_mode", "error_code")})
+            "output_digest", "duration_ms", "media_validation", "cancellation_mode", "error_code")}
+        # No new null key: unchanged legacy receipts retain their exact digest.
+        if "measured" in row: proof["measured"] = row["measured"]
+        row["receipt_digest"] = _digest(proof)
 
     @staticmethod
     def _expected(row, expected_version, context, expected_request_digest=None):
@@ -442,6 +498,12 @@ class StudioAudioExecution:
                 content = self._provider_bytes(result.audio_uri, provider)
                 measured = inspect_media(content, "audio")
             output_digest = hashlib.sha256(content).hexdigest()
+            output_proof = {}
+            if body["operation_id"] == "m8.audio.trim" and "graph_binding" not in binding:
+                output_proof["measured"] = _trim_measurement({"duration_ms": measured["duration_ms"],
+                    "byte_count": len(content), "sample_rate": measured["sample_rate"], "channels": measured["channels"],
+                    "sample_width": measured["sample_width"], "container": "wav", "audio_codec": "pcm_s16le",
+                    "profile_validation": measured["validation"], "output_sha256": output_digest}, body["parameters"])
             # Persist uncertainty before crossing from the audio owner to the
             # original source/asset owners. Never acquire those leases while
             # holding AudioProductionStore's mutation lock.
@@ -455,7 +517,7 @@ class StudioAudioExecution:
                 return self._bump(row, publication_state="RESERVED", receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY",
                     publication_ready={"kind": "audio", "output_digest": output_digest,
                         "output_bytes": len(content), "media_type": measured["media_type"]},
-                    duration_ms=measured["duration_ms"], media_validation=measured["validation"], timing_status="MEASURED")
+                    duration_ms=measured["duration_ms"], media_validation=measured["validation"], timing_status="MEASURED", **output_proof)
             reserved = self.store.mutate(nid, reserve_output)
             if reserved["status"] != "RUNNING" or reserved.get("execution_token") != claim["execution_token"]:
                 return reserved
@@ -548,9 +610,11 @@ class StudioAudioExecution:
                 # again in the original publication source/asset phase.
                 if self._attempt(nid, claim, context, guard) is None:
                     raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
+            filters = ["-af", f"volume={parameters['gain_db']:.17g}dB"] if "gain_db" in parameters else []
             run_guarded_process([executable, "-nostdin", "-v", "error", "-xerror", "-threads", "1", "-protocol_whitelist", "file,pipe",
                 "-ss", f"{parameters['in_ms'] / 1000:.3f}", "-i", str(source_path), "-map", "0:a:0", "-vn", "-sn", "-dn",
-                "-t", f"{duration / 1000:.3f}", "-ar", "48000", "-ac", "2", "-c:a", "pcm_s16le", "-fs", str(self.assets.MAX_BYTES + 1),
+                "-t", f"{duration / 1000:.3f}", *filters, "-ar", str(parameters.get("sample_rate", 48000)),
+                "-ac", str(parameters.get("channels", 2)), "-c:a", "pcm_s16le", "-fs", str(self.assets.MAX_BYTES + 1),
                 "-f", "wav", str(target)], cwd=directory, guard=trim_current, timeout=50)
             trim_current()
             if not target.is_file() or not 0 < target.stat().st_size <= self.assets.MAX_BYTES:
@@ -559,6 +623,10 @@ class StudioAudioExecution:
         if not 0 < len(output) <= self.assets.MAX_BYTES: raise MediaValidationError("trim output exceeds asset limit")
         result = inspect_media(output, "audio")
         if abs(result["duration_ms"] - duration) > 2: raise MediaValidationError("trim output duration does not match the reviewed interval")
+        if (result.get("media_type") != "audio/wav" or result.get("validation") != "PCM_DECODED"
+                or result.get("sample_rate") != parameters.get("sample_rate", 48000)
+                or result.get("channels") != parameters.get("channels", 2) or result.get("sample_width") != 2):
+            raise MediaValidationError("trim output does not match the reviewed PCM WAV profile")
         return output, result
 
     def cancel(self, nid, job_id, expected_version, context, guard, *, expected_request_digest=None):

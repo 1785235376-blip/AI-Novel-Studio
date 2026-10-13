@@ -20,9 +20,14 @@ export type ProductionPreview = { contract: 'studio-production-preview/1'; novel
   sources?: { snapshot: ProductionSource; measured: Record<string, unknown> }[];
   execution_recipe: ProductionRecipe; product_acceptance: 'LOCAL_REQUIRED'; execution_available: true; automatic_dispatch: false; output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
 export type ProductionRecipe = { contract: 'studio-execution-recipe/1'; operation_id: string; adapter: string; recipe_digest: string; automatic_fallback: false; [key: string]: unknown };
+// Shared receipt projection retains the existing timeline consumer type name.
+// The decoder validates the two owners independently; WAV fields are trim-only.
 export type TimelineMediaMeasurement = { duration_ms?: number; byte_count?: number; width?: number; height?: number; fps?: number;
-  video_codec?: string; audio_codec?: string; sample_rate?: number; channels?: number; container?: 'mp4' | 'webm';
-  profile_validation?: 'NATIVE_FFPROBE_EXACT'; render_profile?: string; export_profile?: TimelineExportProfile };
+  video_codec?: string; audio_codec?: string; sample_rate?: number; channels?: number; container?: 'mp4' | 'webm' | 'wav';
+  profile_validation?: 'NATIVE_FFPROBE_EXACT' | 'PCM_DECODED'; render_profile?: string; export_profile?: TimelineExportProfile;
+  sample_width?: 2; output_sha256?: string };
+export type AudioWavMeasurement = { duration_ms: number; byte_count: number; sample_rate: number; channels: 1 | 2; sample_width: 2;
+  container: 'wav'; audio_codec: 'pcm_s16le'; profile_validation: 'PCM_DECODED'; output_sha256: string };
 export type ProductionJob = { contract: 'studio-production-job/1'; owner: ProductionOwner; id: string; novel_id: string; branch_id: string | null; version: number;
   operation_id: string; request_id: string; status: 'QUEUED' | 'RUNNING' | 'SEND_RESERVED' | 'REMOTE_RUNNING' | 'RESULT_READY' | 'AWAITING_REVIEW' | 'SUCCEEDED' | 'REVIEWING' | 'APPROVED' | 'UNKNOWN' | 'FAILED' | 'CANCELLED';
   request_digest: string; receipt_digest: string | null; output_candidate: { id: string; version: number; digest: string; kind: 'image' | 'video' | 'audio' } | null;
@@ -39,7 +44,8 @@ export type ProductionAction = { expected_version: number; expected_request_dige
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.cutout', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
 const states = ['QUEUED', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED', 'UNKNOWN', 'FAILED', 'CANCELLED'];
-const parameterKeys = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms'];
+const parameterKeys = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels'];
+const trimControlKeys = ['gain_db', 'sample_rate', 'channels'];
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
 const identifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(v);
@@ -68,6 +74,64 @@ function sameCutoutCommand(expected: RecordedMediaCommand, value: RecordedMediaC
       ['id', 'kind', 'version', 'digest', 'asset_kind'].every(key => (source as Record<string, unknown>)[key]
         === (expected.source_snapshots[index] as Record<string, unknown>)[key]));
 }
+function trimParameters(v: unknown, projected = false): Record<string, number> {
+  if (!record(v)) invalid();
+  const result: Record<string, number> = {};
+  for (const [key, value] of Object.entries(v)) {
+    // Original preview projections include known null defaults. Never treat
+    // those placeholders as requested controls or synthesize default values.
+    if (projected && value === null && parameterKeys.includes(key)) continue;
+    if (!['in_ms', 'out_ms', ...trimControlKeys].includes(key) || typeof value !== 'number' || !Number.isFinite(value)) invalid();
+    if (key === 'gain_db' ? value < -60 || value > 12 : !Number.isSafeInteger(value)) invalid();
+    if (key === 'sample_rate' && (value < 8000 || value > 96000) || key === 'channels' && value !== 1 && value !== 2) invalid();
+    result[key] = value;
+  }
+  if (!Number.isSafeInteger(result.in_ms) || !Number.isSafeInteger(result.out_ms)
+    || result.in_ms < 0 || result.out_ms > 600000 || result.out_ms <= result.in_ms || result.out_ms - result.in_ms > 120000) invalid();
+  return result;
+}
+function sameTrimParameters(a: Record<string, number>, b: Record<string, number>) {
+  return Object.keys(a).length === Object.keys(b).length && Object.entries(a).every(([key, value]) => b[key] === value);
+}
+function trimCommand(v: unknown, projected = false): asserts v is MediaCommand {
+  if (!record(v) || v.operation_id !== 'm8.audio.trim' || v.provider_id != null || v.model_id != null || v.prompt !== '' || v.allow_cloud !== false
+    || typeof v.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(v.request_id)
+    || typeof v.license_note !== 'string' || v.license_note.length > 2000
+    || Object.keys(v).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note'].includes(key))) invalid();
+  trimParameters(v.parameters, projected);
+  sources(v.source_snapshots, 1);
+  if (v.source_snapshots.length !== 1 || v.source_snapshots[0].kind !== 'ASSET' || v.source_snapshots[0].asset_kind !== 'audio'
+    || !projected && v.source_snapshots[0].reference_only !== undefined) invalid();
+}
+function trimRecipe(v: ProductionRecipe, command: unknown) {
+  trimCommand(command, true);
+  const parameters = trimParameters(command.parameters, true), keys = ['contract', 'operation_id', 'adapter', 'parameters', 'automatic_fallback', 'recipe_digest', 'output_profile'];
+  if (Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key)) || v.adapter !== 'LOCAL_FFMPEG'
+    || v.output_profile !== `PCM_S16LE_WAV_${parameters.sample_rate ?? 48000}_${parameters.channels === 1 ? 'MONO' : 'STEREO'}`
+    || !sameTrimParameters(parameters, trimParameters(v.parameters))) invalid();
+  return parameters;
+}
+function sameTrimCommand(expected: RecordedMediaCommand, value: RecordedMediaCommand | null) {
+  return !!value && sameCutoutCommand({ ...expected, provider_id: expected.provider_id ?? null, model_id: expected.model_id ?? null },
+    { ...value, provider_id: value.provider_id ?? null, model_id: value.model_id ?? null }) && sameTrimParameters(trimParameters(expected.parameters, true), trimParameters(value.parameters, true));
+}
+function commandScope(command: MediaCommand) {
+  if (command.operation_id === 'm8.audio.trim') trimCommand(command);
+  else if (Object.keys(command.parameters).some(key => trimControlKeys.includes(key))) invalid();
+}
+function audioMeasurement(v: unknown, executionRecipe: ProductionRecipe, command: unknown, candidate: unknown): AudioWavMeasurement {
+  const keys = ['duration_ms', 'byte_count', 'sample_rate', 'channels', 'sample_width', 'container', 'audio_codec', 'profile_validation', 'output_sha256'];
+  if (!record(v) || Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key))
+    || v.profile_validation !== 'PCM_DECODED' || v.container !== 'wav' || v.audio_codec !== 'pcm_s16le' || v.sample_width !== 2
+    || !hex(v.output_sha256)) invalid();
+  const parameters = trimRecipe(executionRecipe, command);
+  if (typeof v.duration_ms !== 'number' || !Number.isSafeInteger(v.duration_ms) || v.duration_ms < 1
+    || Math.abs(v.duration_ms - (parameters.out_ms - parameters.in_ms)) > 2
+    || typeof v.byte_count !== 'number' || !Number.isSafeInteger(v.byte_count) || v.byte_count < 1 || v.byte_count > 25 * 1024 * 1024
+    || v.sample_rate !== (parameters.sample_rate ?? 48000) || v.channels !== (parameters.channels ?? 2)
+    || candidate !== null && (!record(candidate) || candidate.kind !== 'audio' || candidate.digest !== v.output_sha256)) invalid();
+  return v as AudioWavMeasurement;
+}
 function recipe(v: unknown, operation: unknown): ProductionRecipe {
   if (operation === 'm5.image.cutout') {
     const keys = ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'output_profile', 'mask_policy'];
@@ -83,8 +147,9 @@ function recipe(v: unknown, operation: unknown): ProductionRecipe {
     || JSON.stringify(v).length > 131072) invalid();
   return v as ProductionRecipe;
 }
-function measurement(v: unknown, owner: unknown, executionRecipe: ProductionRecipe): TimelineMediaMeasurement | null | undefined {
+function measurement(v: unknown, owner: unknown, executionRecipe: ProductionRecipe, operation: unknown, command: unknown, candidate: unknown): TimelineMediaMeasurement | null | undefined {
   if (v === undefined || v === null) return v;
+  if (owner === 'audio' && operation === 'm8.audio.trim') return audioMeasurement(v, executionRecipe, command, candidate);
   if (owner !== 'timeline' || !record(v) || Object.keys(v).some(key => !['duration_ms', 'byte_count', 'width', 'height', 'fps', 'video_codec', 'audio_codec',
     'sample_rate', 'channels', 'container', 'profile_validation', 'render_profile', 'export_profile'].includes(key))) invalid();
   const bounds: Record<string, [number, number]> = { duration_ms: [1, 36000000], byte_count: [1, 25 * 1024 * 1024], width: [16, 1920], height: [16, 1080], sample_rate: [1, 384000], channels: [1, 32] };
@@ -155,7 +220,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if (!record(s) || !identifier(s.id) || !revision(s.version) || !hex(s.digest) || v.operation_id !== 'm9.timeline.multitrack') invalid();
     } else if (v.timeline_snapshot !== null) invalid();
     const executionRecipe = recipe(v.execution_recipe, v.operation_id);
-    measurement(v.media_measurement, v.owner, executionRecipe);
+    measurement(v.media_measurement, v.owner, executionRecipe, v.operation_id, v.command, v.output_candidate);
     if (v.approved_asset_version !== null && !revision(v.approved_asset_version)) invalid();
     if (v.owner === 'timeline') { if (v.command !== null || v.provider !== null) invalid(); }
     else {
@@ -163,7 +228,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if (!record(c) || c.operation_id !== v.operation_id || c.request_id !== v.request_id || typeof c.prompt !== 'string' || c.prompt.length > 16000
         || !record(c.parameters) || !Array.isArray(c.source_snapshots) || typeof c.allow_cloud !== 'boolean' || typeof c.license_note !== 'string' || c.license_note.length > 2000) invalid();
       if (Object.keys(c).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note'].includes(key))
-        || Object.entries(c.parameters).some(([key, value]) => !parameterKeys.includes(key)
+        || Object.entries(c.parameters).some(([key, value]) => !parameterKeys.includes(key) || c.operation_id !== 'm8.audio.trim' && trimControlKeys.includes(key)
           || (typeof value === 'number' ? !Number.isFinite(value) : typeof value !== 'string' || value.length > 8000))) invalid();
       sources(c.source_snapshots, 8);
       if (c.source_snapshots.length !== v.sources.length || c.source_snapshots.some((s, index) => ['id', 'kind', 'version', 'digest', 'asset_kind'].some(key =>
@@ -176,7 +241,14 @@ export function studioProductionClient(projectId: string, context: Collaboration
         if (v.output_candidate !== null && (v.output_candidate as Record<string, unknown>).kind !== 'image') invalid();
         checkedCutoutProof(v.processing_proof, v.sources, v.output_candidate as { digest: string } | null);
       }
-      else if (c.operation_id === 'm8.audio.trim') { if (v.provider !== null) invalid(); }
+      else if (c.operation_id === 'm8.audio.trim') {
+        trimRecipe(executionRecipe, c);
+        if (v.media_measurement != null && (v.status === 'QUEUED'
+          || ['AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED'].includes(String(v.status)) && v.output_candidate === null)) invalid();
+        if (v.provider !== null || v.output_candidate !== null && (v.output_candidate as Record<string, unknown>).kind !== 'audio'
+          || Object.keys(c.parameters).some(key => trimControlKeys.includes(key)) && v.media_measurement == null
+            && (v.output_candidate !== null || ['AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED'].includes(String(v.status)))) invalid();
+      }
       else if (!record(v.provider) || typeof c.provider_id !== 'string' || !c.provider_id || typeof c.model_id !== 'string' || !c.model_id
         || v.provider.provider_id !== c.provider_id || v.provider.model_id !== c.model_id || !hex(v.provider.route_digest) || typeof v.provider.local !== 'boolean'
         || Object.keys(v.provider).some(key => !['provider_id', 'model_id', 'route_digest', 'local'].includes(key))) invalid();
@@ -195,6 +267,8 @@ export function studioProductionClient(projectId: string, context: Collaboration
     if (result.owner !== owner || result.id !== id || result.request_digest !== body.expected_request_digest) invalid();
     if (expected?.operation_id === 'm5.image.cutout' && (result.version < expected.version || !expected.command
       || !sameCutoutCommand(expected.command, result.command) || result.execution_recipe.recipe_digest !== expected.execution_recipe.recipe_digest)) invalid();
+    if (expected?.operation_id === 'm8.audio.trim' && (result.version < expected.version || !expected.command
+      || !sameTrimCommand(expected.command, result.command) || result.execution_recipe.recipe_digest !== expected.execution_recipe.recipe_digest)) invalid();
     return result;
   }
   return {
@@ -210,6 +284,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
       });
     },
     async preview(command: MediaCommand): Promise<ProductionPreview> {
+      commandScope(command);
       if (command.operation_id === 'm5.image.cutout') cutoutCommand(command);
       const v = await transport.json<unknown>(`${base}/preview`, 'POST', command);
       if (!record(v)) invalid(); scoped(v);
@@ -222,6 +297,14 @@ export function studioProductionClient(projectId: string, context: Collaboration
         || Object.entries(command.parameters).some(([key, value]) => (v.command as Record<string, unknown>).parameters && ((v.command as Record<string, unknown>).parameters as Record<string, unknown>)[key] !== value)
         || !Array.isArray(v.command.source_snapshots) || v.command.source_snapshots.length !== command.source_snapshots.length
         || v.command.source_snapshots.some((s, index) => !record(s) || ['id', 'kind', 'version', 'digest', 'asset_kind'].some(key => s[key] !== command.source_snapshots[index][key as keyof ProductionSource]))) invalid();
+      if (command.operation_id === 'm8.audio.trim') {
+        const keys = ['contract', 'novel_id', 'branch_id', 'operation_id', 'request_id', 'request_digest', 'provider', 'sources', 'execution_recipe',
+          'command', 'product_acceptance', 'execution_available', 'automatic_dispatch', 'output_policy', 'preview_digest'];
+        if (Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key))) invalid();
+        trimCommand(v.command, true);
+        trimRecipe(recipe(v.execution_recipe, command.operation_id), v.command);
+        if (v.provider !== null || !sameTrimCommand(command, v.command)) invalid();
+      }
       if (command.operation_id === 'm5.image.cutout') {
         cutoutCommand(v.command, true);
         const keys = ['contract', 'novel_id', 'branch_id', 'operation_id', 'request_id', 'request_digest', 'provider', 'sources', 'execution_recipe',
@@ -244,10 +327,12 @@ export function studioProductionClient(projectId: string, context: Collaboration
       return v as unknown as ProductionPreview;
     },
     async create(command: MediaCommand, reviewed_preview_digest: string) {
+      commandScope(command);
       if (command.operation_id === 'm5.image.cutout') cutoutCommand(command);
       const v = job(await transport.json<unknown>(`${base}/jobs`, 'POST', { command, reviewed_preview_digest }, undefined, command.request_id));
       if (v.request_id !== command.request_id || v.operation_id !== command.operation_id
-        || command.operation_id === 'm5.image.cutout' && !sameCutoutCommand(command, v.command)) invalid(); return v;
+        || command.operation_id === 'm5.image.cutout' && !sameCutoutCommand(command, v.command)
+        || command.operation_id === 'm8.audio.trim' && !sameTrimCommand(command, v.command)) invalid(); return v;
     },
     async list(signal?: AbortSignal) {
       const v = await transport.json<unknown>(`${base}/jobs`, 'GET', undefined, signal);

@@ -1129,3 +1129,18 @@ failing assertions now pass unchanged. Focused broad File and fresh PostgreSQL
 selections each pass 848 tests with 393 existing backend/feature skips; no full
 product acceptance is implied. See
 `docs/v2/reconstruction-graph-target-budgets-20261013.md`.
+
+Standalone Audio PCM controls: **IMPLEMENTED / CONTRACT_VERIFIED**, bounded to
+existing m8.audio.trim. Optional gain, resampling and mono/stereo preserve legacy
+request identities and original private Asset/review owners. Actual decoded WAV
+proof is checked against recipe and durable receipt; missing/tampered proof fails
+closed. Graph remains closed to new controls. Integrated File and fresh real PG
+each pass412 with167 backend skips; full frontend2928 passed/8 original skips.
+Real CPU FFmpeg fixture execution is not model or device playback acceptance.
+See `docs/v2/reconstruction-audio-wav-integration-20261013.json`.
+
+Latest locally generated inventory now contains2219 API operations and13153
+collected nodes. Original47 inventory tests pass, all9151 frozen nodes preserved.
+This newer inventory is **BLOCKED from synchronized publication** by the renewed
+Markdown upload rejection; prior c01 publication remains a completed historical
+checkpoint. No subsequent denied upload or alternate route was attempted.

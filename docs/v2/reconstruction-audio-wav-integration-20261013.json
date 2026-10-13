@@ -1,0 +1,61 @@
+{
+  "tested_source_commit": "a6dc6be3b281fff0963e2346a5720ed0acb392ae",
+  "scope": "Standalone m8.audio.trim gain/resampling/channel controls, actual PCM WAV proof, existing private candidate and review; includes shared Graph compatibility repair",
+  "file": {
+    "passed": 412,
+    "skipped": 167,
+    "status": "PASS"
+  },
+  "real_postgresql": {
+    "passed": 412,
+    "skipped": 167,
+    "status": "PASS",
+    "fresh_database": true,
+    "empty_application_objects": 0,
+    "original_migrations": 20,
+    "server_stop": "stopped"
+  },
+  "frontend_full": {
+    "passed": 2928,
+    "skipped": 8,
+    "failed": 0,
+    "duration_seconds": 94.09
+  },
+  "typescript": "PASS",
+  "vite_build": "PASS; original large chunk warning preserved",
+  "token_guard": "PASS (52 files)",
+  "independent_review": "Two identified proof/candidate deletion gaps corrected and regression-tested; final focused review cleared",
+  "earlier_setup_failures": [
+    "First owned test cluster initialized with SQL_ASCII; strict identity check rejected before application tests. Preserved failed receipt and stopped cluster; new UTF8 cluster passed original unchanged harness.",
+    "Initial token guard invocation used frontend working directory; corrected invocation from repository root passed without code changes."
+  ],
+  "native_scope": "Real local CPU FFmpeg on authored synthetic WAV; no model/user machine/GPU call",
+  "generated_inventory": {
+    "local_checks_passed": 47,
+    "api_operations": 2219,
+    "collected_nodes": 13153,
+    "baseline_nodes_preserved": 9151,
+    "published": false,
+    "reason": "API_CATALOG.md publication denied after evidence-backed retry; no alternate route or further upload attempted"
+  },
+  "not_run": [
+    "Browser native display",
+    "Windows device playback",
+    "User GPU/models",
+    "Full product acceptance"
+  ],
+  "source_sha256": {
+    "app/creative/production_execution.py": "4fead61410739f3f63a1320909200fcda176d14ab8b7c11d9a97af813c34e814",
+    "app/creative/production_execution_models.py": "ab97143ca95a438e96ee31048412b82f8c2521ffdc43f438e637853f60b97d95",
+    "app/services/studio_audio_execution.py": "3afbce88f457778487592e8d593e34688ba1e5340e9ca69485f4b0c963d8fadc",
+    "frontend/src/creative/IndependentStudioAudioWav.test.tsx": "c77221921f4086306f1e8dbb2684adbd9d39a333df4c7d1611a69514f58fc301",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx": "2cbdb55cb41e7945188a5c7ecd56b1bbde220719f76349674167251548f8d617",
+    "frontend/src/creative/fixtures/audioWav.mounted.json": "6c295a972484fe1bace305717419686aead1778e9664c9681beea42a972df178",
+    "frontend/src/creative/studioAudioWav.testFixtures.ts": "ff384c6d5956852954cd0742936e9d0e72dfc6eadf1700f9221962f360e58695",
+    "frontend/src/creative/studioAudioWavContract.test.ts": "f22897ab7af0b4c353c2e062184589159579dcccb7c6ba18684453deb15c345e",
+    "frontend/src/creative/studioProductionClient.ts": "9c5235b83c3ce06a378bb385ca072aa18befe3d385c573711a97a4cc03a3a0a2",
+    "frontend/src/creative/useStudioMediaExecution.ts": "fd0b2c68068246c5077492a77d35948d62b59e6b623cd90ab6f0646b7cab4209",
+    "tests/test_v2_audio_wav_controls.py": "70f2e9b9ec6567db720e1b4d1b6363d566e260d801d55a7b95cfe549a15c2192",
+    "tests/test_v2_audio_wav_controls_api.py": "6c865d94ecc99037f4487d4e7e5971703821d5740ef50a440963f6fb5a8ea330"
+  }
+}

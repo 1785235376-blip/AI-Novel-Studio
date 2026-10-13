@@ -7,9 +7,9 @@ import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 export type { StudioMediaExecutionProps } from './useStudioMediaExecution';
 const labels: Record<MediaParameter, string> = { width: '宽度（64–2048）', height: '高度（64–2048）', steps: '采样步数（1–150）', seed: '种子（0–2147483647）',
   negative_prompt: '负向提示词', size: '图片规格', quality: '图片质量', duration_seconds: '时长（1–600 秒）', frame_rate: '帧率（1–60）', voice_id: '语音标识',
-  speech_rate: '语速（0.5–2）', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）' };
+  speech_rate: '语速（0.5–2）', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）', gain_db: '增益（-60–12 dB，可选）', sample_rate: '输出采样率（8000–96000 Hz，可选）', channels: '输出声道（可选）' };
 const ranges: Partial<Record<MediaParameter, [number, number, number]>> = { width: [64, 2048, 8], height: [64, 2048, 8], steps: [1, 150, 1], seed: [0, 2147483647, 1],
-  duration_seconds: [1, 600, 1], frame_rate: [1, 60, 1], speech_rate: [0.5, 2, 0.1], in_ms: [0, 600000, 1], out_ms: [1, 600000, 1] };
+  duration_seconds: [1, 600, 1], frame_rate: [1, 60, 1], speech_rate: [0.5, 2, 0.1], in_ms: [0, 600000, 1], out_ms: [1, 600000, 1], gain_db: [-60, 12, 0.1], sample_rate: [8000, 96000, 1] };
 const kindLabels = { image: '图片', video: '视频', audio: '音频' };
 
 /** A replaceable presentation over the original receipt-aware media controller. */
@@ -22,12 +22,13 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   function parameter(name: MediaParameter) {
     const value = draft.parameters[name];
     if (name === 'negative_prompt') return <label key={name}>{labels[name]}<textarea maxLength={8000} disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)} /></label>;
+    if (name === 'channels') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">默认双声道（2）</option><option value="1">单声道（1）</option><option value="2">双声道（2）</option></select></label>;
     if (name === 'size' || name === 'quality') {
       const options = name === 'size' ? ['auto', '1024x1024', '1536x1024', '1024x1536'] : ['auto', 'low', 'medium', 'high', 'standard', 'hd'];
       return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">使用服务商默认值</option>{options.map(option => <option key={option} value={option}>{option}</option>)}</select></label>;
     }
     const range = ranges[name];
-    return <label key={name}>{labels[name]}<input type={range ? 'number' : 'text'} min={range?.[0]} max={range?.[1]} step={range?.[2]} maxLength={name === 'voice_id' ? 240 : undefined}
+    return <label key={name}>{labels[name]}<input type={range ? 'number' : 'text'} min={range?.[0]} max={range?.[1]} step={name === 'gain_db' ? 'any' : range?.[2]} maxLength={name === 'voice_id' ? 240 : undefined}
       disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)} /></label>;
   }
   return <Panel title="媒体制作与审核" className="studio-graph-run">
@@ -66,7 +67,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {!draft.sources.length ? <p>先选取 PNG 来源，再选择为该来源版本保存的遮罩。</p> : !state.eligibleMasks.length && <p>当前没有匹配此来源版本的可用手绘遮罩。请在素材工作区选择来源、绘制并保存二值遮罩，再读取当前素材版本。</p>}
         {draft.sources[1] && !state.freshSources && <StatusMessage tone="warning">来源或遮罩已变化、删除或失去核对信息。原预览与确认已失效；重新读取并明确选择当前版本。</StatusMessage>}
       </fieldset>}
-      {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{state.provider || trim ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}{trim && '片段最长 120 秒；起止点还须在真实来源时长内。'}</p>{state.parameterNames.map(parameter)}
+      {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{state.parameterNames.map(parameter)}
         {!!state.unsupportedParameters.length && <><StatusMessage tone="warning">所选配置不支持已填写的参数：{state.unsupportedParameters.map(name => labels[name]).join('、')}。这些输入不会自动丢弃。</StatusMessage><Button disabled={!state.canEdit} onClick={state.clearUnsupportedParameters}>明确清空不支持的参数</Button></>}
       </fieldset>}
       <label>来源与授权说明<input maxLength={2000} disabled={!state.canEdit} value={draft.licenseNote} onChange={event => state.changeField('licenseNote', event.target.value)} /></label>
@@ -109,6 +110,12 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         </details>
         {job.timeline_snapshot && <details><summary>来源时间线 {job.timeline_snapshot.id} · v{job.timeline_snapshot.version}</summary><p>原执行入口会再次核对摘要：<code>{job.timeline_snapshot.digest}</code></p></details>}
         {job.owner === 'timeline' && <StudioTimelineMeasurement measurement={job.media_measurement} />}
+        {job.operation_id === 'm8.audio.trim' && (job.media_measurement?.profile_validation === 'PCM_DECODED' ? <section aria-label="音频实际输出测量"><h4>实际输出测量</h4><Badge>原服务 PCM 解码测量回执</Badge>
+          <dl><dt>媒体时长</dt><dd>{job.media_measurement.duration_ms} 毫秒</dd><dt>实际大小</dt><dd>{job.media_measurement.byte_count} 字节</dd>
+            <dt>实际声音</dt><dd>{job.media_measurement.sample_rate} Hz · {job.media_measurement.channels} 声道 · 16 位 PCM WAV</dd>
+            <dt>输出摘要</dt><dd><code>{job.media_measurement.output_sha256}</code></dd></dl>
+          <p>以上为服务端解码实际 WAV 的测量，不代表增益已测量。候选仍须读取实际字节、核对摘要并人工审核。</p>
+        </section> : <p>尚未读取到已核对的 WAV 输出测量；原请求参数与执行配方不代表实际输出。</p>)}
         {job.processing_proof && <details><summary>本地 CPU 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · PNG {job.processing_proof.output_bytes} 字节</p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
         {!!job.sources.length && <details><summary>本任务绑定的来源版本</summary><ul>{job.sources.map(source => <li key={`${source.kind}:${source.id}`}>{source.kind === 'ASSET' ? props.assets.find(row => row.id === source.id)?.filename || source.id : source.id} · v{source.version}<p>来源摘要：<code>{source.digest}</code></p></li>)}</ul></details>}
         {!state.jobSourcesFresh && <StatusMessage tone="warning">本任务的素材来源已变化，当前不可继续执行或审核。保留原记录供读取核对。</StatusMessage>}
@@ -124,7 +131,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         <div className="studio-graph-actions">
           <Button disabled={!state.canAction('execute')} loading={state.pending === 'execute'} onClick={() => void state.action('execute')}>明确执行当前入队任务</Button>
           {job.owner === 'video' && <Button disabled={!state.canAction('refresh')} loading={state.pending === 'refresh'} onClick={() => void state.action('refresh')}>核对已有远端进度</Button>}
-          {(['RUNNING', 'SEND_RESERVED'].includes(job.status) || job.operation_id === 'm5.image.cutout' && (['UNKNOWN', 'REVIEWING'].includes(job.status) || job.status === 'CANCELLED' && !!job.processing_proof && !job.output_candidate)) && <Button disabled={!state.canAction('reconcile')} loading={state.pending === 'reconcile'} onClick={() => void state.action('reconcile')}>核对中断状态，不重新发送</Button>}
+          {(['RUNNING', 'SEND_RESERVED'].includes(job.status) || job.operation_id === 'm8.audio.trim' && ['UNKNOWN', 'REVIEWING'].includes(job.status) || job.operation_id === 'm5.image.cutout' && (['UNKNOWN', 'REVIEWING'].includes(job.status) || job.status === 'CANCELLED' && !!job.processing_proof && !job.output_candidate)) && <Button disabled={!state.canAction('reconcile')} loading={state.pending === 'reconcile'} onClick={() => void state.action('reconcile')}>核对中断状态，不重新发送</Button>}
           {(job.owner !== 'timeline' || ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)) && <Button variant="danger" disabled={!state.canAction('cancel')} loading={state.pending === 'cancel'} onClick={() => void state.action('cancel')}>{job.operation_id === 'm5.image.cutout' ? '明确取消本地抠图或丢弃候选' : job.owner === 'timeline' && job.status === 'RUNNING' ? '明确取消本地渲染' : '丢弃未采用的本地结果'}</Button>}
         </div>
         <p>{job.operation_id === 'm5.image.cutout' ? '取消会请求原本地处理停止，或撤销未审核候选的采用权限；保留原记录，不会重新处理或入库。' : job.owner === 'timeline' ? '时间线取消会请求原本地渲染停止或撤销未审核候选的采用权限，保留原回执与已有候选；已进入审核或已入库的结果不能从这里取消。' : '丢弃仅撤销本地采用结果的权限，保留原记录；远端计算可能继续。'}</p>

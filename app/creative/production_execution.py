@@ -362,10 +362,13 @@ class ProductionExecutionService:
             "m7.video.i2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
             "m7.video.v2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
             "m8.audio.speech": ["voice_id", "speech_rate"], "m8.audio.music": ["duration_seconds", "seed"],
-            "m8.audio.effects": ["duration_seconds", "seed"], "m8.audio.trim": ["in_ms", "out_ms"]}[command.operation_id]
+            "m8.audio.effects": ["duration_seconds", "seed"], "m8.audio.trim": ["in_ms", "out_ms", "gain_db", "sample_rate", "channels"]}[command.operation_id]
 
     def preview(self, nid, scope, actor, value, guard, *, graph_binding=None):
         command = MediaCommand.model_validate(value)
+        if (graph_binding is not None and command.operation_id == "m8.audio.trim"
+                and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels"))):
+            raise ValueError("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY")
         if command.operation_id == "m5.image.cutout": guard = self._cutout_guard(guard)
         context = self._base(nid, scope, actor, guard)
         if graph_binding is not None:
@@ -428,7 +431,8 @@ class ProductionExecutionService:
                 recipe["defaults"] = {"width": 1024, "height": 1024, "steps": 28}
                 if command.operation_id == "m5.image.i2i": recipe["denoising_strength"] = 0.6
         elif command.operation_id == "m8.audio.trim":
-            recipe.update(adapter="LOCAL_FFMPEG", output_profile="PCM_S16LE_WAV_48000_STEREO")
+            from ..services.studio_audio_execution import trim_output_profile
+            recipe.update(adapter="LOCAL_FFMPEG", output_profile=trim_output_profile(parameters))
         recipe["recipe_digest"] = digest(recipe)
         return recipe
 
@@ -456,7 +460,9 @@ class ProductionExecutionService:
             "media_measurement": {key: copy.deepcopy(row["measured"][key]) for key in
                 ("duration_ms", "byte_count", "width", "height", "fps", "video_codec", "audio_codec", "sample_rate", "channels",
                  "container", "profile_validation", "render_profile", "export_profile") if key in row.get("measured", {})}
-                if owner == "timeline" and isinstance(row.get("measured"), dict) else None,
+                if owner == "timeline" and isinstance(row.get("measured"), dict) else
+                copy.deepcopy(row.get("measured")) if owner == "audio" and context.get("operation_id") == "m8.audio.trim"
+                and context.get("graph_binding") is None else None,
             "approved_asset_version": row.get("approved_asset_version", row.get("output_asset_version") if row.get("status") == "APPROVED" else None),
             "request_id": row.get("context", {}).get("request_id"), "product_acceptance": "LOCAL_REQUIRED",
             "automatic_replay": False, "remote_compute_may_continue": owner != "timeline" and row.get("cancellation_mode") == "LOCAL_RESULT_DISCARD"}
