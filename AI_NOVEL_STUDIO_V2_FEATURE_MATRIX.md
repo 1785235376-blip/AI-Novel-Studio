@@ -1075,3 +1075,30 @@ retroactively upgrade their acceptance.
 See `docs/v2/reconstruction-20261013.md` and the separate backend/frontend mask
 reports. Original V1 evidence, F00 INTEGRATED + 39 PARTIAL, historical independent
 review BLOCKED and frozen Local Interop contracts retain their prior boundaries.
+
+### Later reconstruction evidence, 2026-10-13
+
+The preceding checkpoint remains historical. The following source-bound update
+does not alter V1, F00 INTEGRATED + 39 PARTIAL or prior independent-review BLOCKED.
+
+| Existing capability | Reconstructed status | Evidence and remaining limit |
+|---|---|---|
+| Original receipt byte bounds | IMPLEMENTED / CONTRACT_VERIFIED | `1c481a7`; bounded reads and observable file replacement checks. File 170 and real PG 117 passed. Not an OS atomic snapshot guarantee. |
+| Native export process output bounds | IMPLEMENTED / PARTIAL platform validation | `1c481a7`; bounded captured output, draining and cancellation, CPU FFmpeg/ffprobe exercised. Actual Windows path NOT_RUN. |
+| Shared workspace response and identity fences | IMPLEMENTED / CONTRACT_VERIFIED | `3a720cd9`; permanent scope/Host generation retirement, private data redaction, original CAS/consent retained. Full frontend 2741 passed/8 unchanged skips, zero failed. Browser rendering BLOCKED. |
+| Original activation acknowledgement | IMPLEMENTED / CONTRACT_VERIFIED | `3a720cd9`; strict project-identity projection, separate full overview, no fabricated preferences or permission. Included in full frontend result. |
+| Audio receipt history enumeration | IMPLEMENTED / CONTRACT_VERIFIED | `2fda20f6`; linear normal string-ID scan and fail-closed requested duplicates. File 255 and real PG 172 passed. Whole-file load and malformed-ID fallback remain. |
+| Generated API/coverage publication | BLOCKED pending explicit upload retry approval | Locally refreshed 2219 API operations and 12612 collected nodes; collection is inventory only. Remote generated files are not yet current. |
+| Hosted CI on current published source | BLOCKED / no acceptance | Cloud CI run 38343016231: 11 failures, runner_id zero and empty steps. Cause unconfirmed. |
+
+CPU mask cutout and other missing post-baseline increments remain uncompleted
+unless separately implemented and verified. Windows/GPU/model quality and final
+product acceptance retain NOT_RUN / LOCAL_REQUIRED.
+
+Image-provider connection boundary: **IMPLEMENTED / CONTRACT_VERIFIED**, using
+the existing configured/discovery transport owner. Local proxy isolation and
+bounded compressed responses are covered by synthetic HTTP and persisted
+File/PostgreSQL tests; authorized remote proxy policy is preserved. Scoped File
+273 and PG 277 passed, with skip/recovery details in
+`docs/v2/reconstruction-image-transport-20261013.md`. Real ComfyUI/A1111/model/GPU
+acceptance remains **NOT_RUN / LOCAL_REQUIRED**. This does not complete Image Studio.

@@ -8,6 +8,7 @@ from __future__ import annotations
 import threading
 import time
 import json
+import zlib
 from dataclasses import replace
 from urllib.parse import urlsplit
 
@@ -36,21 +37,109 @@ def _llama_grammar_schema(value):
 
 
 class _LocalImageTransport:
-    def __init__(self, endpoint): self.endpoint = local_endpoint(endpoint)
+    """One bounded transport for the existing image adapters.
+
+    Discovery always uses the strict loopback default. Explicit provider config
+    may name LAN/remote services; its existing execution owner still decides
+    locality, cloud consent, source privacy and dispatch authority.
+    """
+    max_wire_bytes = 64 * 1024 * 1024
+    max_response_bytes = 64 * 1024 * 1024
+
+    def __init__(self, endpoint, *, configured=False, trust_env=False):
+        # Only the configured-provider owner can opt into remote proxy policy.
+        self.trust_env = bool(configured and trust_env)
+        if not configured:
+            self.endpoint = local_endpoint(endpoint)
+            return
+        parsed = urlsplit(endpoint)
+        if (parsed.scheme not in {'http', 'https'} or not parsed.hostname or
+                parsed.username is not None or parsed.password is not None or
+                parsed.query or parsed.fragment or '\\' in endpoint or
+                any(ord(c) < 32 for c in endpoint)):
+            raise ValueError('LOCAL_AI_DESTINATION_REJECTED')
+        # Accessing port also rejects malformed/out-of-range configured ports.
+        parsed.port
+        self.endpoint = endpoint.rstrip('/')
+
+    def _decode_chunk(self, decoder, chunk, body):
+        if chunk and decoder.eof:
+            raise ValueError('LOCAL_AI_INVALID_RESPONSE_ENCODING')
+        try:
+            while chunk:
+                decoded = decoder.decompress(chunk, self.max_response_bytes - len(body) + 1)
+                if len(body) + len(decoded) > self.max_response_bytes:
+                    raise ValueError('LOCAL_AI_RESPONSE_TOO_LARGE')
+                body.extend(decoded)
+                if decoder.unused_data:
+                    raise ValueError('LOCAL_AI_INVALID_RESPONSE_ENCODING')
+                chunk = decoder.unconsumed_tail
+        except zlib.error as exc:
+            raise ValueError('LOCAL_AI_INVALID_RESPONSE_ENCODING') from exc
+
+    def _body(self, response):
+        encoding = response.headers.get('content-encoding', 'identity').strip().lower()
+        if encoding not in {'identity', 'gzip', 'deflate'}:
+            raise ValueError('LOCAL_AI_CONTENT_ENCODING_UNSUPPORTED')
+        decoder = (zlib.decompressobj(16 + zlib.MAX_WBITS) if encoding == 'gzip' else
+                   zlib.decompressobj() if encoding == 'deflate' else None)
+        # Raw DEFLATE can have a zlib-looking prefix. Retain at most the wire
+        # cap for a single bounded raw retry, including across split chunks.
+        replay = bytearray() if encoding == 'deflate' else None
+        body = bytearray()
+        wire_bytes = 0
+        # iter_bytes() would decompress without a size limit before we could
+        # check it. Read the wire and bound every decompressor allocation.
+        for chunk in response.iter_raw():
+            wire_bytes += len(chunk)
+            if wire_bytes > self.max_wire_bytes:
+                raise ValueError('LOCAL_AI_RESPONSE_TOO_LARGE')
+            if not chunk:
+                continue
+            if decoder is None:
+                if len(body) + len(chunk) > self.max_response_bytes:
+                    raise ValueError('LOCAL_AI_RESPONSE_TOO_LARGE')
+                body.extend(chunk)
+                continue
+            if replay is not None:
+                replay.extend(chunk)
+            try:
+                self._decode_chunk(decoder, chunk, body)
+            except ValueError as exc:
+                if replay is None or str(exc) == 'LOCAL_AI_RESPONSE_TOO_LARGE':
+                    raise
+                decoder, body = zlib.decompressobj(-zlib.MAX_WBITS), bytearray()
+                self._decode_chunk(decoder, replay, body)
+                replay = None
+        if replay is not None and not decoder.eof:
+            decoder, body = zlib.decompressobj(-zlib.MAX_WBITS), bytearray()
+            self._decode_chunk(decoder, replay, body)
+        # Do not use unbounded flush(), accept truncation, or silently discard
+        # trailing bytes / concatenated members after the advertised stream.
+        if encoding != 'identity' and (decoder is None or not decoder.eof):
+            raise ValueError('LOCAL_AI_INVALID_RESPONSE_ENCODING')
+        return bytes(body)
+
     def _request(self, method, url, **kwargs):
         import httpx
         # All dynamic ComfyUI paths remain on the same already-approved origin.
         parsed, origin = urlsplit(url), urlsplit(self.endpoint)
-        if (parsed.scheme, parsed.netloc) != (origin.scheme, origin.netloc) or parsed.username or parsed.password:
+        if ((parsed.scheme, parsed.netloc) != (origin.scheme, origin.netloc) or
+                parsed.username is not None or parsed.password is not None or parsed.fragment or
+                '\\' in url or any(ord(c) < 32 for c in url)):
             raise ValueError('LOCAL_AI_DESTINATION_REJECTED')
-        with httpx.Client(trust_env=False, follow_redirects=False, timeout=kwargs.pop('timeout', 30)) as client:
-            with client.stream(method, url, **kwargs) as response:
+        kwargs.pop('follow_redirects', None)
+        with httpx.Client(trust_env=self.trust_env, follow_redirects=False, timeout=kwargs.pop('timeout', 30),
+                          headers={'Accept-Encoding': 'gzip, deflate, identity'}) as client:
+            with client.stream(method, url, follow_redirects=False, **kwargs) as response:
                 if response.is_redirect: raise ValueError('LOCAL_AI_REDIRECT_REJECTED')
-                body = bytearray()
-                for chunk in response.iter_bytes():
-                    body.extend(chunk)
-                    if len(body) > 64 * 1024 * 1024: raise ValueError('LOCAL_AI_RESPONSE_TOO_LARGE')
-                return httpx.Response(response.status_code, headers=response.headers, content=bytes(body), request=response.request)
+                body = self._body(response)
+                # The reconstructed response contains decoded bytes. Retaining
+                # wire encoding/length would decode twice or describe stale data.
+                headers = [(key, value) for key, value in response.headers.multi_items()
+                           if key.lower() not in {'content-encoding', 'content-length', 'transfer-encoding'}]
+                headers.append(('Content-Length', str(len(body))))
+                return httpx.Response(response.status_code, headers=headers, content=body, request=response.request)
     def get(self, url, **kwargs): return self._request('GET', url, **kwargs)
     def post(self, url, **kwargs): return self._request('POST', url, **kwargs)
 

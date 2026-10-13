@@ -706,3 +706,54 @@ valid downloaded Chromium and a socket-denied system Chromium launch. Windows,
 GPU, real models and final product acceptance remain NOT_RUN / LOCAL_REQUIRED.
 Small source-only bounds repairs may continue in isolated worktrees; their tests
 and publication will be recorded separately. QingJian remains paused.
+
+## 2026-10-13 — Reconstructed bounds and shared frontend checkpoint
+
+This is an append-only update; earlier evidence and limitations remain bound to
+their historical source, not rewritten as later acceptance.
+
+- `9212c9c824eab93312beb2641b66c2f99dd0d59b`: manual-mask source checkpoint.
+- `1c481a78c887824d07bfe0edb55f099b70c767dd`: bounded original receipt reads
+  and native-process output capture. File receipt checks 170 passed and fresh
+  real PostgreSQL 117 passed; process-specific 29 checks passed, including a
+  real CPU FFmpeg/ffprobe test. No Windows native acceptance.
+- `3a720cd9f5d92add8aff2f163c281c95b8789743`: original shared-client/controller
+  and activation repairs. All 24 reproduced earlier frontend failures fixed;
+  59 additive regressions include actual enclosing-shell identity ABA, private
+  receipt redaction and cancelled-read denial handling. Combined frontend
+  2741 passed, 8 unchanged skips, zero failed; type/build/token checks passed.
+  All 374 test/spec files present at published baseline remain byte-identical.
+- `2fda20f60382a9c452d1b05399072dc41647cc48`: original audio receipt listing
+  avoids quadratic scans for owner-generated string IDs, preserves full-tail
+  validation and rejects ambiguous matching duplicates without rewriting history.
+  File 255 passed; fresh real PostgreSQL 172 passed; integrated additive check
+  46 passed and 2 canonical backend skips. Legacy malformed-ID fallback and
+  original whole-file loading remain explicitly unchanged.
+
+The exact latest Cloud CI run 38343016231 has 11 failed jobs with no assigned
+runner and no executed steps. This is not evidence of product tests passing or
+failing. No rerun-until-green or test/gate weakening was performed.
+
+Generated API and coverage inventories are refreshed and tested locally, but
+their external upload was cancelled and a specific retry approval remains
+pending. Local API inventory is 2219 operations; test collection is 12612 nodes,
+not 12612 executed passing tests. The frozen 9151-node inventory is unchanged.
+Do not treat the published source as complete CI/inventory acceptance.
+
+Reports: `docs/v2/reconstruction-shared-frontend-integration-20261013.json`,
+`docs/v2/reconstruction-linear-audio-listing-2026-10-13.md`, and the bounded
+receipt/process reports. Browser remains blocked before page execution;
+Windows/GPU/user-model/final-product acceptance is NOT_RUN / LOCAL_REQUIRED.
+
+### Original image transport reconstruction
+
+Synthetic tests reproduced owner-local image prompts following an environment
+proxy, normal gzip double decoding and missing encoded-body bounds. The original
+transport now isolates proxy policy using the existing endpoint-locality owner,
+preserves authorized nonlocal proxy behavior, and bounds raw/decoded responses.
+No new registry or dispatch owner was added. File 273 passed; fresh PostgreSQL
+277 passed with 3 canonical/tool-availability skips; the unmodified dump/restore
+test then passed separately with existing binaries on PATH. Root integration
+with manual-mask/audio regressions passed 236 with 90 backend-specific skips.
+All HTTP was synthetic; no real model, user data or credential was transmitted.
+Raw evidence remains private. See `docs/v2/reconstruction-image-transport-20261013.md`.

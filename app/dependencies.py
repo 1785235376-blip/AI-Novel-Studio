@@ -43,6 +43,8 @@ from .packaging.local_session_bootstrap import LocalSessionBootstrap, TrustedLoc
 from .packaging.initial_workspace import PackagedInitialWorkspaceProvisioner
 from .packaging.runtime_identity import RuntimeIdentity
 from .model_center import create_default_model_center
+from .model_center.discovery_bridge import _LocalImageTransport
+from .creative.production_execution import endpoint_local as _asset_endpoint_local
 from .stable_identity import StableIdentityStore, get_host_identity_store
 from .provider_runtime_v2_model_center_snapshot_bridge import create_provider_runtime_snapshot as _create_provider_runtime_snapshot
 import os
@@ -72,8 +74,10 @@ for _provider,_endpoint in _endpoints.items():
     try:
         import httpx
         _style=_cfg.get('api_style','openai')
-        if _style=='comfyui': _adapter=ComfyUIImageProvider(httpx,_endpoint)
-        elif _style=='automatic1111': _adapter=Automatic1111ImageProvider(httpx,_endpoint)
+        if _style in {'comfyui','automatic1111'}:
+            _transport=_LocalImageTransport(_endpoint,configured=True,trust_env=not _asset_endpoint_local(_endpoint,bool(_cfg.get('local'))))
+        if _style=='comfyui': _adapter=ComfyUIImageProvider(_transport,_endpoint)
+        elif _style=='automatic1111': _adapter=Automatic1111ImageProvider(_transport,_endpoint)
         else: _adapter=build_openai_compatible_from_vault(httpx, _provider, _endpoint, credential_vault)
         _adapter.default_model=_cfg.get('default_model','')
         asset_provider_registry.register(_provider,_adapter)
@@ -93,8 +97,10 @@ def refresh_asset_provider(provider_id: str) -> bool:
         return False
     try:
         import httpx
-        if style=="comfyui": adapter=ComfyUIImageProvider(httpx,endpoint)
-        elif style=="automatic1111": adapter=Automatic1111ImageProvider(httpx,endpoint)
+        if style in {"comfyui","automatic1111"}:
+            transport=_LocalImageTransport(endpoint,configured=True,trust_env=not _asset_endpoint_local(endpoint,bool(effective.get('local'))))
+        if style=="comfyui": adapter=ComfyUIImageProvider(transport,endpoint)
+        elif style=="automatic1111": adapter=Automatic1111ImageProvider(transport,endpoint)
         else: adapter=build_openai_compatible_from_vault(httpx,legacy_vault_provider,endpoint,credential_vault)
         adapter.default_model=effective.get("default_model","")
         asset_provider_registry.register(provider_id,adapter)
