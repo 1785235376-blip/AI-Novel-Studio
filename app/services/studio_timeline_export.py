@@ -9,10 +9,10 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import shutil
 import subprocess
-import tempfile
 import time
 
 from ..media_files import MediaValidationError
@@ -86,40 +86,136 @@ def validate_export_admission(timeline, profile, max_bytes):
     return {key: compiled[key] for key in ("profile", "extension", "mime", "estimated_max_bytes")}
 
 
-def run_guarded_process(command, *, cwd, guard, timeout, stdout_path=None):
-    """Stop the local native process when its original execution fence closes.
+# Bounds apply while the child is running, not only when reading its result.
+_PROCESS_STDOUT_LIMIT = 1_048_576
+_PROCESS_STDERR_LIMIT = 65_536
+_PROCESS_READ_BYTES = 65_536
+_PROCESS_POLL_SECONDS = 0.025
 
-    Files avoid pipe deadlock. They are temporary, bounded reads; no command or
-    stderr text is persisted in public receipts or used as code.
+
+def _windows_pipe_available(stream):
+    """Peek a Windows anonymous pipe without blocking (including Python 3.11).
+
+    select() cannot poll these handles and Windows os.set_blocking(pipe) needs
+    Python 3.12. A sized HANDLE also avoids truncating handles on 64-bit hosts.
+    """
+    import ctypes
+    from ctypes import wintypes
+    import msvcrt
+
+    peek = ctypes.WinDLL("kernel32", use_last_error=True).PeekNamedPipe
+    peek.argtypes = [wintypes.HANDLE, wintypes.LPVOID, wintypes.DWORD,
+                     wintypes.LPDWORD, wintypes.LPDWORD, wintypes.LPDWORD]
+    peek.restype = wintypes.BOOL
+    available = wintypes.DWORD()
+    if not peek(msvcrt.get_osfhandle(stream.fileno()), None, 0, None, ctypes.byref(available), None):
+        error = ctypes.get_last_error()
+        if error in (109, 232):  # ERROR_BROKEN_PIPE / ERROR_NO_DATA: writer closed.
+            return -1
+        raise ctypes.WinError(error)
+    return available.value
+
+
+def _read_process_pipe(stream):
+    """Return one bounded chunk, None if idle, or b"" at EOF; never wait."""
+    size = _PROCESS_READ_BYTES
+    if os.name == "nt":
+        available = _windows_pipe_available(stream)
+        if available < 0:
+            return b""
+        if available == 0:
+            return None
+        size = min(size, available)
+    try:
+        return os.read(stream.fileno(), size)
+    except BlockingIOError:
+        return None
+
+
+def _reap_guarded_process(process):
+    if process.poll() is None:
+        try:
+            process.terminate()
+        except ProcessLookupError:
+            pass  # The child can exit between poll() and terminate().
+        try:
+            process.wait(timeout=2)
+        except subprocess.TimeoutExpired:
+            try:
+                process.kill()
+            except ProcessLookupError:
+                pass
+            process.wait(timeout=2)
+    else:
+        process.wait()
+
+
+def run_guarded_process(command, *, cwd, guard, timeout, stdout_path=None):
+    """Drain only the original server-built process under its execution fence.
+
+    Unused stdout goes directly to DEVNULL. Captured stdout is written by this
+    owner, never beyond 1 MiB; stderr retains only its original 64 KiB private
+    diagnostic prefix and drains the rest without disk storage. Both streams
+    drain fairly in fixed-size chunks, including after exit, under the same
+    cancellation/deadline checks. No reader threads can outlive the execution.
     """
     guard()
-    with tempfile.TemporaryFile() as stderr, tempfile.TemporaryFile() as discard:
-        target = open(stdout_path, "wb") if stdout_path is not None else discard
-        process = None
-        try:
-            process = subprocess.Popen(command, cwd=str(cwd), stdin=subprocess.DEVNULL, stdout=target,
-                                       stderr=stderr, shell=False, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
-            deadline = time.monotonic() + timeout
-            while process.poll() is None:
-                guard()
-                if time.monotonic() >= deadline:
-                    raise subprocess.TimeoutExpired(command, timeout)
-                if stdout_path is not None and Path(stdout_path).stat().st_size > 1_048_576:
-                    raise MediaValidationError("STUDIO_TIMELINE_PROBE_OUTPUT_LIMIT")
-                time.sleep(0.25)
+    target = None
+    process = None
+    stderr = bytearray()
+    try:
+        if stdout_path is not None:
+            target = open(stdout_path, "wb")
+        process = subprocess.Popen(command, cwd=str(cwd), stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE if target is not None else subprocess.DEVNULL,
+            stderr=subprocess.PIPE, shell=False, bufsize=0,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        deadline = time.monotonic() + timeout
+        streams = [stream for stream in (process.stdout, process.stderr) if stream is not None]
+        if os.name != "nt":
+            for stream in streams:
+                os.set_blocking(stream.fileno(), False)
+        stdout_size = 0
+        while True:
             guard()
-            if process.returncode:
-                stderr.seek(0)
-                raise subprocess.CalledProcessError(process.returncode, command, stderr=stderr.read(65_536))
+            if time.monotonic() >= deadline:
+                raise subprocess.TimeoutExpired(command, timeout)
+            progressed = False
+            for stream in tuple(streams):
+                chunk = _read_process_pipe(stream)
+                if chunk is None:
+                    continue
+                if not chunk:
+                    streams.remove(stream)
+                    continue
+                progressed = True
+                if stream is process.stderr:
+                    stderr.extend(chunk[:max(0, _PROCESS_STDERR_LIMIT - len(stderr))])
+                else:
+                    remaining = _PROCESS_STDOUT_LIMIT - stdout_size
+                    target.write(chunk[:remaining])
+                    stdout_size += min(len(chunk), remaining)
+                    if len(chunk) > remaining:
+                        raise MediaValidationError("STUDIO_TIMELINE_PROBE_OUTPUT_LIMIT")
+            # A fast-exiting child must still have its complete pipes checked.
+            # Inherited writers cannot keep a drain alive beyond the deadline.
+            if process.poll() is not None and not streams:
+                break
+            if not progressed:
+                time.sleep(min(_PROCESS_POLL_SECONDS, max(0, deadline - time.monotonic())))
+        guard()
+        if process.returncode:
+            raise subprocess.CalledProcessError(process.returncode, command, stderr=bytes(stderr))
+    finally:
+        try:
+            if process is not None:
+                _reap_guarded_process(process)
         finally:
-            if process is not None and process.poll() is None:
-                process.terminate()
-                try:
-                    process.wait(timeout=2)
-                except subprocess.TimeoutExpired:
-                    process.kill()
-                    process.wait(timeout=2)
-            if stdout_path is not None:
+            if process is not None:
+                for stream in (process.stdout, process.stderr):
+                    if stream is not None:
+                        stream.close()
+            if target is not None:
                 target.close()
 
 

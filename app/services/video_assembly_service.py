@@ -114,11 +114,39 @@ class VideoAssemblyService:
             raise ValueError("STUDIO_TIMELINE_OWNER_PATH_INVALID")
         return path
 
+    @staticmethod
+    def _studio_receipt_bytes(path):
+        """Read one bounded snapshot without trusting a pre-open size check."""
+        limit = 384_000
+        def snapshot(value):
+            return (value.st_dev, value.st_ino, value.st_size,
+                    value.st_mtime_ns, value.st_ctime_ns)
+
+        before = path.stat()
+        if before.st_size > limit:
+            raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
+        # Binary, unbuffered I/O bounds actual bytes, including the single
+        # overflow sentinel. Reject replacement and observable in-place writes,
+        # even when the resulting bytes would form a valid receipt. This uses
+        # filesystem metadata, not an OS-level snapshot or a new writer lock.
+        with path.open("rb", buffering=0) as source:
+            opened = os.fstat(source.fileno())
+            if opened.st_size > limit:
+                raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
+            if snapshot(opened) != snapshot(before):
+                raise ValueError("STUDIO_TIMELINE_RECEIPT_INVALID")
+            data = source.read(limit + 1)
+            after = os.fstat(source.fileno())
+            if len(data) > limit or after.st_size > limit:
+                raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
+            if (len(data) != before.st_size or snapshot(after) != snapshot(before)
+                    or snapshot(path.stat()) != snapshot(before)):
+                raise ValueError("STUDIO_TIMELINE_RECEIPT_INVALID")
+        return data
+
     def _studio_load(self, novel_id, branch_id, actor_id, job_id, context):
         path = self._studio_path(novel_id, branch_id, actor_id, job_id, context)
-        if path.stat().st_size > 384_000:
-            raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
-        row = json.loads(path.read_text(encoding="utf-8"))
+        row = json.loads(self._studio_receipt_bytes(path).decode("utf-8"))
         if (not isinstance(row, dict) or row.get("id") != job_id or row.get("novel_id") != novel_id
                 or row.get("branch_id") != branch_id or row.get("owner_actor_id") != actor_id
                 or row.get("scope_key") != context["scope_key"] or row.get("incarnation") != context["incarnation"]

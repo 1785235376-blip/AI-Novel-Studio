@@ -1,0 +1,98 @@
+{
+  "schema": "v2-native-process-reconstruction/1",
+  "published_base": "de23bb50b96f07dac3e96dc0f9a1df9940e494b3",
+  "status": "TARGETED_PASS_WITH_CONFIRMED_BASELINE_FAILURE",
+  "application_scope": [
+    "app/services/studio_timeline_export.py"
+  ],
+  "original_test_files_modified": [],
+  "checks": [
+    {
+      "label": "rebuild-process-bounds-confirm-baseline",
+      "status": "FAIL",
+      "exit_code": 1,
+      "started_utc": "2026-10-12T23:49:21.911594+00:00",
+      "finished_utc": "2026-10-12T23:49:30.758302+00:00",
+      "counts": {
+        "passed": 0,
+        "failed": 4,
+        "skipped": 0
+      },
+      "source_head": "de23bb50b96f07dac3e96dc0f9a1df9940e494b3",
+      "sources_changed_during_check": false,
+      "source_sha256": {
+        "app/services/studio_timeline_export.py": "6f18186bcf813e881d9ede0ea4ded5d8b94d13f5f92b6183c91a4b34b7b64f2d",
+        "tests/test_v2_reconstructed_native_process_bounds.py": "06235995e6e3b04679b71645f0e8796659537740fbcc87b9795c337252146048",
+        "scripts/run_v2_checks.py": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54"
+      },
+      "source_snapshot_sha256": "cbe4b587d69eb29e2207d4bf3ce0727217837bc42346adc19a43f7d0d0d71e8d",
+      "private_raw_receipt_sha256": "0c04914a9b6a34fcf1faa9420dc607a93cbfeffec5cc6b76bdede84df7df8155",
+      "private_log_sha256": "afcb133fae9800bc6966774323806c4a565cc9fe9d18ad6f1f178770bc559de5"
+    },
+    {
+      "label": "rebuild-process-bounds-targeted",
+      "status": "PASS",
+      "exit_code": 0,
+      "started_utc": "2026-10-12T23:51:10.339480+00:00",
+      "finished_utc": "2026-10-12T23:51:26.785057+00:00",
+      "counts": {
+        "passed": 29,
+        "failed": 0,
+        "skipped": 0
+      },
+      "source_head": "de23bb50b96f07dac3e96dc0f9a1df9940e494b3",
+      "sources_changed_during_check": false,
+      "source_sha256": {
+        "app/services/studio_timeline_export.py": "9f317160bceef4de6abc6eecdd230b9beaa37ed21d78e41e3f20b8c4e41fcfdc",
+        "tests/test_v2_reconstructed_native_process_bounds.py": "b2ffbc6d42e62ad4a7e43ac49f025c31ea813068f7fabb0da51438adacc16198",
+        "scripts/run_v2_checks.py": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54"
+      },
+      "source_snapshot_sha256": "0008092917c20ce3a862738e66f27a9611590a6182f74620e0dbd346bda90226",
+      "private_raw_receipt_sha256": "6e73f3d151d852f659dd2d8e8b33a3f213b57a81da3e96ee562c9c33d84020a2",
+      "private_log_sha256": "f45d71c38dbd94cf6a0e4169cc07d787d538c93dd7cdd01c3b14948401457bf6"
+    },
+    {
+      "label": "rebuild-process-bounds-verified",
+      "status": "FAIL",
+      "exit_code": 1,
+      "started_utc": "2026-10-12T23:50:05.495033+00:00",
+      "finished_utc": "2026-10-12T23:50:48.025737+00:00",
+      "counts": {
+        "passed": 111,
+        "failed": 1,
+        "skipped": 33
+      },
+      "source_head": "de23bb50b96f07dac3e96dc0f9a1df9940e494b3",
+      "sources_changed_during_check": false,
+      "source_sha256": {
+        "app/services/studio_timeline_export.py": "9f317160bceef4de6abc6eecdd230b9beaa37ed21d78e41e3f20b8c4e41fcfdc",
+        "tests/test_v2_reconstructed_native_process_bounds.py": "b2ffbc6d42e62ad4a7e43ac49f025c31ea813068f7fabb0da51438adacc16198",
+        "scripts/run_v2_checks.py": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54"
+      },
+      "source_snapshot_sha256": "0008092917c20ce3a862738e66f27a9611590a6182f74620e0dbd346bda90226",
+      "private_raw_receipt_sha256": "18ee32e89805c4bd279d0cb79671621d7432788f47e63f2fedc8cc5259b4261d",
+      "private_log_sha256": "0d8ed1bc1fb0c8b220614ba63fce1d0ac0dc2fb10a90c13596c3a6cb0a47ed4d"
+    }
+  ],
+  "preexisting_failure": {
+    "test": "tests/test_surface_freeze_media_engine_adapters.py::test_real_model_adapter_requires_original_runtime_admission[file]",
+    "expected": "NOT_CONFIGURED_ORIGINAL_MEDIA_RUNTIME_REQUIRED",
+    "actual": "ORIGINAL_AUDIO_MODEL_NODE_EXPLICIT_REGISTERED_LOCAL_ROUTE_REQUIRED",
+    "reproduced_on_published_source": true
+  },
+  "native_environment": {
+    "os": "Linux",
+    "python": "3.12.14",
+    "ffmpeg": "7.1.5-0+deb13u1",
+    "ffprobe": "7.1.5-0+deb13u1"
+  },
+  "not_run": [
+    "actual Windows",
+    "real PostgreSQL in this package",
+    "user models",
+    "GPU quality",
+    "full repository suite",
+    "hosted CI",
+    "publication"
+  ]
+}
