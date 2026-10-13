@@ -816,3 +816,22 @@ recorded, with corrected setup passing unchanged checks. No Windows/model claim.
 New generated inventories passed47 original checks locally but publication is
 blocked after the Markdown retry denial. Source/test/report publication proceeds
 separately; no full CI acceptance or synchronized inventory claim is made.
+
+## 2026-10-13 — Production Expansion read-only takeover audit
+
+Start local/remote/PR HEAD72765972b3bf81ba6959754c33b827294a63fb3f,
+tree142dedccf3c26c97a17d85bd61a9995ac33da809. PR47 OPEN/Draft.
+[Audit](AI_NOVEL_STUDIO_V2_CODEX_HANDOVER_AUDIT.md) records current service owners,
+execution vs missing features, API/UI seams, risk and Image-first file plan.
+No product code or model execution precedes this documentation stage.
+Configured T2I/I2I/CPUcutout and schema3 media are preserved; the first new slice
+addresses original enabled discovery adapter integration.
+
+The previous catalog-upload block is historical:727 includes synchronized2219
+operations/13364 collected nodes, frozen9151 retained. Related File750/PG762,
+each14skips, are preceding-source results, not newly executed audit tests.
+Current29CI jobs did not start (runner0/empty steps/account billing lock).
+Windows/GPU/real model acceptance remains NOT_RUN/LOCAL_REQUIRED. M4 PARTIAL,
+ordered M5-M9 gates, F00 INTEGRATED+39 PARTIAL, independent-review BLOCKED and
+old PG/CI failures remain. Audit publication is bound to actual remote receipts;
+no self-referential end SHA is invented here.

@@ -1144,3 +1144,23 @@ collected nodes. Original47 inventory tests pass, all9151 frozen nodes preserved
 This newer inventory is **BLOCKED from synchronized publication** by the renewed
 Markdown upload rejection; prior c01 publication remains a completed historical
 checkpoint. No subsequent denied upload or alternate route was attempted.
+
+## 2026-10-13 — Production Expansion takeover audit (7276597)
+
+Append-only current observation: [Codex handover audit](AI_NOVEL_STUDIO_V2_CODEX_HANDOVER_AUDIT.md).
+The preceding publication block belongs to its historical source. Actual remote
+72765972 now contains verified non-WAV integration and generated catalogs:
+2219 API operations,13364 collected nodes,all9151 frozen nodes retained.
+Selected File750/PG762 pass with14 original skips each; scopes overlap.
+Original Windows inventory45pass/2symlink prerequisite failures, Ubuntu two-node
+supplement passes. Source checks are not final Windows/model acceptance.
+
+IMAGE-01/06/15 remain PARTIAL: configured image execution and schema3 Graph media
+exist, but enabled discovery LocalImageAdapter cannot yet satisfy production
+guard/parameter/recipe selection. AI inpaint/outpaint/repair/upscale and complete
+typed image-node tooling remain missing/partial. First phase will connect the
+original enabled local registry route, not create another registry or queue.
+Current Director/Storyboard, Video, Audio and bounded multitrack execution/gaps
+are detailed in the audit; old rows retain their historical identities.
+M4 PARTIAL and M5-M9 real acceptance LOCAL_REQUIRED remain. New audit tests NOT_RUN;
+727 CI is BLOCKED before execution by account billing lock. PR47 remains Draft.

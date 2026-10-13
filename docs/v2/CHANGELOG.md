@@ -64,3 +64,14 @@ These are development stages on `feature/v2-narrative-platform`, not releases.
 - Selected final File/PostgreSQL each 238 passed / 237 profile skips; full UI
   2,439 passed / 8 old skips. Full hosted acceptance remains pending/incomplete,
   including the newly retained 899d PG failed-call observation.
+
+## 2026-10-13 — Production Expansion takeover audit
+
+- Audit actual72765972 owners, currentAPI/Opus boundaries and module gaps before
+  writing product code. Preserve historical matrix rows and append current facts.
+- First Image slice: connect existing explicitly enabled local ModelCenter
+  image adapters to original production jobs/assets/review, with passive listing,
+  registration-identity guards and actual delegate recipe/parameter evidence.
+- Audit is documentation only: new module tests NOT_RUN, no model launch/download.
+  Previous selected results and billing-blocked CI stay separately identified.
+- Full audit: [Codex handover audit](../../AI_NOVEL_STUDIO_V2_CODEX_HANDOVER_AUDIT.md).

@@ -71,3 +71,12 @@ the older `776286f` receipt remains historical evidence.
 - 2026-10-11: additive M4–M9 read-only operation framework and UI/controller seams; execution verification is deferred by user instruction.
 
 - Baseline import: exact frozen source differences, original tests retained; verified file equality on import. No new feature or new runtime validation claimed.
+
+## Production Expansion takeover
+
+The [2026-10-13 Codex handover audit](../../AI_NOVEL_STUDIO_V2_CODEX_HANDOVER_AUDIT.md)
+records actual72765972 owners/API boundaries and current gaps. Audit publication
+precedes the first Image-local-route integration. The module priority is Image,
+Director, Storyboard, Video, Audio and Editing; actual acceptance retains its
+original ordered gates. No automatic download/runtime start, QingJian work,
+Windows final acceptance, GPU pressure test or release is part of this stage.
