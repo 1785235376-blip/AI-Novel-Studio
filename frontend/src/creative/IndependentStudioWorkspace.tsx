@@ -25,7 +25,7 @@ import './independentStudio.css';
 
 export const isManualStudioModule = (module: StudioModule): module is LocalStudioModule => ['IMAGE', 'ASSETS', 'VIDEO', 'AUDIO'].includes(module);
 let studioObserver = 0;
-const signature = (projectId: string, context: CollaborationContext) => JSON.stringify([projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
+const signature = (projectId: string, context: CollaborationContext) => JSON.stringify([projectId, context.sessionToken, context.actor?.id, context.actor?.workspaceId, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
 function lineageAsset(asset: Asset): LineageAsset {
   const row = asset.provenance as (NonNullable<Asset['provenance']> & { source_task_id?: string }) | undefined;
   return { id: asset.id, label: asset.filename, kind: asset.kind, version: asset.version!, digest: asset.sha256, deleted: !!asset.deleted_at,
@@ -42,11 +42,11 @@ export function IndependentStudioWorkspace(props: IndependentStudioProps) {
 }
 function IndependentStudioSession({ projectId, context, scope, actor, module, requestedAssetId, onModuleChange, onProjectChoice, onVerified, status }: IndependentStudioProps) {
   const query = useQueryClient();
-  const hostToken = useLocalHostSession(state => state.token);
-  const capturedToken = useRef(hostToken);
+  const capturedHost = useRef({ ...useLocalHostSession.getState() });
   const watchHost = !context.sessionToken && !context.scope && !context.actor;
   const origin = useRef(signature(projectId, context));
-  const alive = useRef(true), revoked = useRef(false), busyRef = useRef(false);
+  const alive = useRef(true), revoked = useRef(false), authorityLost = useRef(false), busyRef = useRef(false);
+  const [identityRetired, setIdentityRetired] = useState(false);
   const client = useMemo(() => studioClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
   const productionClient = useMemo(() => studioProductionClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
   const [cacheKey] = useState(() => `independent-studio-${++studioObserver}`);
@@ -74,18 +74,52 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const timelineDraftChanged = useCallback((value: boolean) => { timelineDirtyRef.current = value; setTimelineDirty(value); }, []);
   const verifiedCallback = useRef(onVerified); verifiedCallback.current = onVerified;
   const lastImport = useRef<{ body: string; key: string }>();
-  const current = useCallback(() => {
+  const sameStudioIdentity = useCallback(() => {
     const state = useStudio.getState();
-    return alive.current && !revoked.current && (!watchHost || capturedToken.current === useLocalHostSession.getState().token)
-      && origin.current === signature(state.novelId, { sessionToken: state.sessionToken, actor: state.actor, scope: state.scope });
+    return origin.current === signature(state.novelId, { sessionToken: state.sessionToken, actor: state.actor, scope: state.scope });
+  }, []);
+  const sameHostIdentity = useCallback(() => {
+    const host = useLocalHostSession.getState(), captured = capturedHost.current;
+    return !watchHost || host.token === captured.token && host.actorId === captured.actorId && host.epoch === captured.epoch;
   }, [watchHost]);
+  const current = useCallback(() => {
+    if (!sameStudioIdentity() || !sameHostIdentity()) authorityLost.current = true;
+    return alive.current && !revoked.current && !authorityLost.current;
+  }, [sameStudioIdentity, sameHostIdentity]);
   const deny = useCallback(() => { revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
-  const guarded = useCallback(async <T,>(operation: () => Promise<T>): Promise<T> => {
+  const retireIdentity = useCallback(() => {
+    authorityLost.current = true; setIdentityRetired(true);
+    selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++;
+    overviewReading.current?.abort(); storageRequest.current?.abort();
+    setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined);
+    setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setError(''); setNotice(''); setLoading(false);
+  }, []);
+  useEffect(() => {
+    // Observe every transition synchronously, including A -> B -> A inside one React batch.
+    // Redraw immediately to hide adopted data; only local authored graph text remains read-only.
+    const studioChanged = () => { if (!sameStudioIdentity()) retireIdentity(); };
+    const hostChanged = () => { if (!sameHostIdentity()) { authorityLost.current = true; deny(); } };
+    const unsubscribeStudio = useStudio.subscribe(studioChanged);
+    const unsubscribeHost = useLocalHostSession.subscribe(hostChanged);
+    studioChanged(); hostChanged();
+    return () => { unsubscribeStudio(); unsubscribeHost(); };
+  }, [sameStudioIdentity, sameHostIdentity, deny, retireIdentity]);
+  const guarded = useCallback(async <T,>(operation: () => Promise<T>, signal?: AbortSignal): Promise<T> => {
+    if (signal?.aborted) throw new DOMException('读取已取消。', 'AbortError');
     if (!current()) throw new Error('项目或会话已改变，请重新打开。');
-    try { const result = await operation(); if (!current()) throw new Error('项目或会话已改变，请重新打开。'); return result; }
-    catch (reason) { if (alive.current && reason instanceof ApiError && [401, 403].includes(reason.status)) deny(); throw reason; }
+    try {
+      const result = await operation();
+      if (signal?.aborted) throw new DOMException('读取已取消。', 'AbortError');
+      if (!current()) throw new Error('项目或会话已改变，请重新打开。');
+      return result;
+    } catch (reason) {
+      // A cancelled read no longer owns the visible selection. Active reads and
+      // every mutation still revoke the workspace after authoritative denial.
+      if (!signal?.aborted && current() && reason instanceof ApiError && [401, 403].includes(reason.status)) deny();
+      throw reason;
+    }
   }, [current, deny]);
-  const writable = overview?.capabilities.can_mutate === true && !denied;
+  const writable = overview?.capabilities.can_mutate === true && !denied && !identityRetired;
   const graphMutation = useCallback(async <T,>(operation: () => Promise<T>): Promise<T> => {
     if (busyRef.current || !current()) throw new Error('当前操作尚未结束，请先核对结果。');
     busyRef.current = true; setBusy(true);
@@ -95,7 +129,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const adoptPreferences = useCallback((value: StudioPreferences) => { setOverview(previous => previous && { ...previous, preferences: value }); }, []);
   const graphDraftBlocked = useCallback(() => graphDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current, []);
   const operationPending = useCallback(() => busyRef.current, []);
-  const preferenceController = useStudioWorkspacePreferences({ initial: overview?.preferences, denied, canMutate: writable, busy, externalDirty: lineageDirty || relationshipDirty || mediaDirty || timelineDirty || maskDirty,
+  const preferenceController = useStudioWorkspacePreferences({ initial: overview?.preferences, denied: denied || identityRetired, canMutate: writable, busy, externalDirty: lineageDirty || relationshipDirty || mediaDirty || timelineDirty || maskDirty,
     client, isCurrent: current, read: guarded, mutate: graphMutation, onAdopt: adoptPreferences, isExternallyDirty: graphDraftBlocked });
   const preferenceDirty = preferenceController.dirty || preferenceController.blocked;
   const rememberGraphLocation = useCallback((selection: { graphId?: string; runId?: string }) => {
@@ -122,7 +156,6 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     finally { if (current() && epoch === overviewEpoch.current) setLoading(false); }
   }, [client, current, guarded, projectId]);
   useEffect(() => { alive.current = true; void refresh(); return () => { alive.current = false; overviewEpoch.current++; storageEpoch.current++; selectionEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); }; }, [refresh]);
-  useEffect(() => { if (watchHost && hostToken !== capturedToken.current) deny(); }, [hostToken, watchHost, deny]);
   useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => { if (dirty || busyRef.current) { event.preventDefault(); event.returnValue = ''; } };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
@@ -265,7 +298,8 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
       finally { busyRef.current = false; if (alive.current) setBusy(false); }
     }} />
   </>;
-  return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next))} scope={{ ...scope, project: overview?.project.title || scope.project }} projectNoun={overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={actor} sidebar={sidebar} main={main}
-    inspector={denied ? <EmptyState title="权限失效" detail="重新核对身份与项目范围后再打开。" /> : graphView ? graph.inspector : productionView ? <Panel title="制作操作"><p>当前阶段：{productionStage}</p><p>在主工作区核对输入、版本、来源和审核要求。实际任务的权限、状态与回执由原执行入口确认。</p></Panel> : <AssetInspector asset={selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
-    status={<>{denied ? '权限失效' : loading ? '正在核对' : error ? '读取失败' : busy ? readingAsset || preferenceController.pending === 'READ' ? '读取中' : '操作中' : dirty || pendingDeclaration ? '未保存或待核对' : '已保存'} · {productionView ? '制作操作' : graphView ? '创作图' : '独立素材'} · 模型调用记录见运行回执{status}</>} />;
+  const retiredNotice = <EmptyState title="身份已改变" detail="原范围的服务端信息已关闭。请重新核对身份与项目后打开工作区。" />;
+  return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next))} scope={identityRetired ? { workspace: '待核对', project: '待核对', storyline: '待核对', branch: '待核对' } : { ...scope, project: overview?.project.title || scope.project }} projectNoun={overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={identityRetired ? '身份待核对' : actor} sidebar={identityRetired ? retiredNotice : sidebar} main={identityRetired ? graphView ? graph.content : retiredNotice : main}
+    inspector={identityRetired ? graphView ? graph.inspector : retiredNotice : denied ? <EmptyState title="权限失效" detail="重新核对身份与项目范围后再打开。" /> : graphView ? graph.inspector : productionView ? <Panel title="制作操作"><p>当前阶段：{productionStage}</p><p>在主工作区核对输入、版本、来源和审核要求。实际任务的权限、状态与回执由原执行入口确认。</p></Panel> : <AssetInspector asset={selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
+    status={<>{identityRetired ? '身份已改变' : denied ? '权限失效' : loading ? '正在核对' : error ? '读取失败' : busy ? readingAsset || preferenceController.pending === 'READ' ? '读取中' : '操作中' : dirty || pendingDeclaration ? '未保存或待核对' : '已保存'} · {productionView ? '制作操作' : graphView ? '创作图' : '独立素材'} · 模型调用记录见运行回执{!identityRetired && status}</>} />;
 }

@@ -582,8 +582,8 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   const originalTransport = transport;
   const admitted = () => { if (capturedScope && capturedScope.projectId !== projectId) mismatch(); };
   transport = {
-    json<T>(url: string, method?: string, body?: unknown, signal?: AbortSignal, idempotencyKey?: string): Promise<T> {
-      admitted(); return originalTransport.json<T>(url, method, body, signal, idempotencyKey);
+    json<T>(...args: Parameters<StudioGraphTransport['json']>): Promise<T> {
+      admitted(); return originalTransport.json<T>(...args);
     },
     ...(originalTransport.blob ? { blob: (url: string) => { admitted(); return originalTransport.blob!(url); } } : {}),
   };

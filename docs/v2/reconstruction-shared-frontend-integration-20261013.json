@@ -1,0 +1,50 @@
+{
+  "status": "LOCAL_FRONTEND_VERIFIED",
+  "tested_local_commit": "194ac585894d1498f78defb3c6fbb2dd80a7d051",
+  "published_parent": "1c481a78c887824d07bfe0edb55f099b70c767dd",
+  "full_frontend": {
+    "passed": 2741,
+    "failed": 0,
+    "skipped": 8,
+    "suite_files_passed": 303,
+    "suite_files_skipped": 2,
+    "duration_seconds": 82.86,
+    "original_skip_policy": "unchanged"
+  },
+  "before": {
+    "passed": 2658,
+    "failed": 24,
+    "skipped": 8,
+    "failures_reproduced_on_original_baseline": 24
+  },
+  "type_check": "PASS",
+  "production_build": "PASS_WITH_EXISTING_LARGE_CHUNK_WARNING",
+  "design_token_guard": "PASS_52_FILES",
+  "original_published_frontend_test_files": {
+    "count": 374,
+    "changed": 0
+  },
+  "source_sha256": {
+    "frontend/src/creative/GraphReadRevocation.regression.test.tsx": "58697f4bd8ac454da772193d5053918bb4d54a2df08d0d8b66ab3dcc31e111ea",
+    "frontend/src/creative/IndependentStudioIdentity.regression.test.tsx": "9b97711417ac7ca139d2fb3048277cedb4e0c79ded0e5af4a211effcec307dbf",
+    "frontend/src/creative/IndependentStudioRunReads.regression.test.tsx": "be4e1dfbb18ef492709bdbd5e337f0d07b31b177eb6b9d2eea7ffa71e19c4a97",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "24fd569fe549759ed568b9641fafb9c5287db1618268da3e78b5ce6abaf3d991",
+    "frontend/src/creative/studioActivationReceipt.test.ts": "9873c7ec1f01f7c21c3a876f46b285a57a68acb62664de3f4e878a004ad4a08e",
+    "frontend/src/creative/studioClient.ts": "e8d95e822731db3e38c40fb4ea56dcbfd791d4589ce06e14ff04b86f03c25e80",
+    "frontend/src/creative/studioGraphClient.ts": "5332bebabbf9831e34543a6c89fef3c114829478a3bda5091823dad9f9dd7a9f",
+    "frontend/src/creative/studioGraphEditorView.tsx": "5e591189d5162902378541e171b45c207ef943a6426b05551632c3a79d9e6b29",
+    "frontend/src/creative/studioGraphModelExecutionView.tsx": "03c83e613f8dd4fb2469be5414d744665c9891c80561acdb8fb30f615a2c176c",
+    "frontend/src/creative/studioGraphRunView.tsx": "d460cc3639fb7442589e4f1fb3bd798bb9a2de4e8300528912df309565ad7f37",
+    "frontend/src/creative/studioGraphTransportForwarding.test.ts": "2b8a247e5aff2ad4ef5eb73eee09c92788bf1d6bb69ff207dc14f4d2c1ea1762",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "b67b8c4d1bdeadb194542ae2934eb96952a49a4d7dfdc00fea22beba92912088",
+    "frontend/src/creative/useStudioGraphModelExecutionController.ts": "355d588e2d89ee039c55f249ee98eb7d8aa16bb6ec3ee8ee078c81c8702e138c",
+    "frontend/src/creative/useStudioGraphRunController.ts": "3b7981c46a0050514438e9b07baabce393530ecd1668ecc1bce72596d856fc5a"
+  },
+  "limitations": [
+    "Generated API and coverage inventories remain locally committed; upload retry awaits explicit user approval.",
+    "Hosted CI is not a local frontend test receipt. Previous published head jobs had no runner assigned and no test steps.",
+    "Browser blocked before rendering by current cloud environment.",
+    "Windows, GPU and user-machine model acceptance NOT_RUN.",
+    "Reconstructed source is not recovery of missing commit 1134f8de."
+  ]
+}

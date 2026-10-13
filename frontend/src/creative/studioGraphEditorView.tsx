@@ -14,6 +14,14 @@ import './studioGraph.css';
 const portKey = (node: string, port: string) => JSON.stringify([node, port]);
 /** Render only. UI refactors consume the same controller without replacing operation contracts. */
 export function studioGraphEditorView(controller: StudioGraphEditorController, props: StudioGraphEditorProps) {
+  if (controller.retired) return {
+    content: <section className="studio-graph-editor" aria-label="独立创作图编辑器"><Panel title="创作图 · 本地输入只读">
+      <StatusMessage tone="warning">身份或项目已改变，服务端目录、预览和运行回执已关闭。仅保留未保存的作者文字，请重新打开工作区。</StatusMessage>
+      <label>创作图标题<input value={controller.retainedTitle} disabled readOnly /></label>
+      {controller.retainedText.map((input, index) => <label key={index}>{input.label}<textarea value={input.value} disabled readOnly /></label>)}
+    </Panel></section>,
+    inspector: <EmptyState title="原范围信息已关闭" detail="重新核对身份后再读取图节点、来源与运行记录。" />,
+  };
   const { client, busy, externalDirty, canMutate, canReview, read, mutate, identity, requestedRunId } = props;
   const {
     catalog, records, base, draft, selected, past, future, loading, error, notice, blocked,

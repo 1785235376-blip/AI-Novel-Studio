@@ -3,7 +3,7 @@ import { ApiError, apiErrorView } from '../api';
 import type { StudioGraphClient } from './studioGraphClient';
 import type { StudioGraphAction, StudioGraphPreflight, StudioGraphRecord, StudioGraphRun } from './studioGraphTypes';
 import { graphId } from './graphDraft';
-import type { GraphModelAction, GraphModelActionEvidence } from './useStudioGraphModelExecutionController';
+import { GRAPH_MODEL_UNAVAILABLE_NOTICE, type GraphModelAction, type GraphModelActionEvidence } from './useStudioGraphModelExecutionController';
 import type { GraphMediaAction, GraphMediaActionEvidence } from './useStudioGraphMediaExecution';
 
 export type StudioGraphRunPanelProps = {
@@ -11,7 +11,7 @@ export type StudioGraphRunPanelProps = {
   canMutate: boolean; canReview: boolean; modelExecutionEnabled?: boolean; mediaExecutionEnabled?: boolean;
   requestedRunId?: string; onRunSelectionChange?: (runId?: string) => void;
   onDirtyChange?: (dirty: boolean) => void;
-  isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
+  isCurrent: () => boolean; read: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
 };
 type ReadKind = 'INSPECT' | 'LIST' | 'OPEN' | 'RESTORE' | 'MODEL_READ';
 type OperationKind = ReadKind | 'CREATE' | 'ACTION' | 'MODEL' | 'MEDIA';
@@ -53,7 +53,15 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
       ? JSON.stringify([source.id, source.version, targets(value.target_node_ids), value.preflight_digest]) : undefined;
   };
   function begin(kind: OperationKind): Operation | undefined {
-    if (!current() || pending.current) return;
+    if (!current()) return;
+    const previous = pending.current;
+    if (previous) {
+      // Read-only navigation may be superseded, but an in-flight command is never cancelled or replayed.
+      const replacesList = previous.kind === 'LIST' && kind !== 'LIST';
+      const replacesSelection = ['OPEN', 'RESTORE'].includes(previous.kind) && ['OPEN', 'RESTORE'].includes(kind);
+      if (!replacesList && !replacesSelection) return;
+      cancelRead(previous);
+    }
     const operation = { id: ++sequence.current, kind, client: latest.current.client, owner: ownerRef.current, controller: new AbortController() };
     pending.current = operation; setPendingKind(kind); return operation;
   }
@@ -71,17 +79,17 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     setPreflight(undefined); setPreflightConsent(undefined); setSelected(undefined); setRuns([]); resetReview();
     noteRef.current = ''; setNote(''); creation.current = undefined; setCreationUncertain(false);
   }
-  function unavailable(deny = false) {
+  function unavailable(deny = false, model = false) {
     if (!alive.current || !latest.current.isCurrent()) return;
     if (deny) revoked.current = true;
     const operation = pending.current; if (operation) cancelRead(operation);
     clearPrivateState(); markUncertain(true); latest.current.onRunSelectionChange?.(undefined);
-    setNotice('权限或入口已变更，已清除先前预览和结果。请重新核对当前能力与运行记录。');
+    setNotice(model ? GRAPH_MODEL_UNAVAILABLE_NOTICE : '权限或入口已变更，已清除先前预览和结果。请重新核对当前能力与运行记录。');
   }
   function failure(value: unknown, operation: Operation, fallback = '运行操作未完成，请核对当前记录。') {
     if (!live(operation)) return;
     setError(apiErrorView(value, fallback).message);
-    if (value instanceof ApiError && [401, 403].includes(value.status)) unavailable(true);
+    if (value instanceof ApiError && [401, 403].includes(value.status)) unavailable(true, operation.kind === 'MODEL' || operation.kind === 'MODEL_READ');
   }
   function acceptRun(value: StudioGraphRun, expectedId?: string, expectedGraphVersion?: number) {
     if (value.graph_id !== latest.current.graph?.id || expectedId && value.id !== expectedId
@@ -114,7 +122,7 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     const operation = begin('RESTORE'); if (!operation) return;
     const requested = source.requestedRunId; restoredRun.current = requested;
     let settled = false; setError(''); resetReview();
-    void source.read(() => source.client.getRun(requested, operation.controller.signal)).then(value => {
+    void source.read(() => source.client.getRun(requested, operation.controller.signal), operation.controller.signal).then(value => {
       if (!live(operation)) return;
       acceptRun(value, requested); settled = true; markUncertain(false);
       setNotice('已读取上次运行。未恢复执行；预览、确认和审核需要重新核对。');
@@ -135,8 +143,9 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     const targetKey = targets(source.targetNodeIds), expectedEpoch = preflightEpoch.current;
     setError(''); preflightConsentRef.current = undefined; setPreflightConsent(undefined); preflightRef.current = undefined; setPreflight(undefined);
     try {
+      // Retain the legacy interactive-read call shape; live/epoch checks fence late responses.
       const value = await source.read(() => source.client.preflight(source.graph!.id,
-        { expected_version: source.graph!.version, target_node_ids: [...source.targetNodeIds] }, operation.controller.signal));
+        { expected_version: source.graph!.version, target_node_ids: [...source.targetNodeIds] }), operation.controller.signal);
       if (live(operation) && expectedEpoch === preflightEpoch.current && !latest.current.dirty
         && targetKey === targets(latest.current.targetNodeIds)) { preflightRef.current = value; setPreflight(value); }
     } catch (value) { failure(value, operation); } finally { finish(operation); }
@@ -144,24 +153,25 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   async function listRuns() {
     const source = latest.current; if (!source.graph || source.busy || !current()) return;
     const operation = begin('LIST'); if (!operation) return; setError('');
-    try { const value = await source.read(() => source.client.runs(source.graph!.id, operation.controller.signal)); if (live(operation)) setRuns(value.items); }
+    try { const value = await source.read(() => source.client.runs(source.graph!.id, operation.controller.signal), operation.controller.signal); if (live(operation)) setRuns(value.items); }
     catch (value) { failure(value, operation); } finally { finish(operation); }
   }
   async function openRun(id: string) {
     const source = latest.current; if (!source.graph || source.busy || !current()) return;
     const operation = begin('OPEN'); if (!operation) return;
     selectedRef.current = undefined; setSelected(undefined); resetReview(); markUncertain(false); setError('');
-    try { const value = await source.read(() => source.client.getRun(id, operation.controller.signal)); if (live(operation)) acceptRun(value, id); }
+    // Legacy readers receive only the selected ID; the operation fence still invalidates superseded replies.
+    try { const value = await source.read(() => source.client.getRun(id), operation.controller.signal); if (live(operation)) acceptRun(value, id); }
     catch (value) { failure(value, operation); } finally { finish(operation); }
   }
   function reviewPreflight(checked: boolean) {
     const source = latest.current, key = preflightKey(preflightRef.current);
-    const value = checked && current() && !pending.current && !source.busy && source.canMutate && preflightRef.current?.executable ? key : undefined;
+    const value = checked && current() && (!pending.current || pending.current.kind === 'LIST') && !source.busy && source.canMutate && preflightRef.current?.executable ? key : undefined;
     preflightConsentRef.current = value; setPreflightConsent(value);
   }
   function reviewOutput(checked: boolean) {
     const source = latest.current, run = selectedRef.current;
-    const value = checked && current() && !pending.current && !source.busy && !source.dirty && source.canReview
+    const value = checked && current() && (!pending.current || pending.current.kind === 'LIST') && !source.busy && !source.dirty && source.canReview
       && run?.status === 'WAITING_APPROVAL' && !run.stale && !uncertainRef.current ? reviewIdentity(run) : undefined;
     outputConsentRef.current = value; setOutputConsent(value);
   }
@@ -192,7 +202,7 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   }
   function canAction(kind: StudioGraphAction) {
     const source = latest.current, run = selectedRef.current;
-    if (!run || !current() || pending.current || source.busy || source.dirty || terminalRun(run)) return false;
+    if (!run || !current() || pending.current && pending.current.kind !== 'LIST' || source.busy || source.dirty || terminalRun(run)) return false;
     if (kind === 'approve' || kind === 'reject') return source.canReview && run.status === 'WAITING_APPROVAL'
       && !run.stale && !uncertainRef.current && !!run.review && outputConsentRef.current === reviewIdentity(run);
     if (!source.canMutate) return false;
@@ -217,14 +227,14 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     } catch (value) { if (live(operation)) { if (uncertainFailure(value)) markUncertain(true); failure(value, operation); } }
     finally { finish(operation); }
   }
-  const modelUnavailable = useCallback(() => unavailable(), []);
+  const modelUnavailable = useCallback(() => unavailable(false, true), []);
   async function mediaAction(kind: GraphMediaAction, evidence?: GraphMediaActionEvidence): Promise<boolean> {
     const source = latest.current, run = selectedRef.current;
     if (!run?.media_runtime || source.busy || source.dirty || !current()) return false;
     if (kind === 'get') {
       const operation = begin('OPEN'); if (!operation) return false;
       try {
-        const value = await source.read(() => source.client.getRun(run.id, operation.controller.signal));
+        const value = await source.read(() => source.client.getRun(run.id, operation.controller.signal), operation.controller.signal);
         if (live(operation)) { acceptRun(value, run.id); markUncertain(false); return true; }
       } catch (value) { failure(value, operation); } finally { finish(operation); }
       return false;
@@ -302,7 +312,7 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     } catch (value) {
       if (live(operation)) {
         if (uncertainFailure(value)) markUncertain(true);
-        failure(value, operation); if (current() && value instanceof ApiError && value.status === 404) unavailable();
+        failure(value, operation); if (current() && value instanceof ApiError && value.status === 404) unavailable(false, true);
       }
     } finally { finish(operation); }
     return false;
@@ -314,21 +324,22 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     if (source.busy || source.dirty || !current()) throw new ApiError({ status: 409, code: 'STUDIO_MODEL_READ_BUSY', message: '当前操作结束后再核对模型信息。' });
     const operation = begin('MODEL_READ');
     if (!operation) throw new ApiError({ status: 409, code: 'STUDIO_MODEL_READ_BUSY', message: '当前运行操作结束后再核对模型信息。' });
-    try { return await source.read(work); }
+    try { return await source.read(work, operation.controller.signal); }
     catch (value) {
       if (live(operation) && value instanceof ApiError && [401, 403].includes(value.status)) { failure(value, operation); }
       throw value;
     } finally { finish(operation); }
   }
-  function changeNote(value: string) { if (current() && !pending.current && !latest.current.busy && !latest.current.dirty) { noteRef.current = value.slice(0, 1000); setNote(noteRef.current); } }
-  const locked = props.busy || props.dirty || !!pendingKind || !current();
+  function changeNote(value: string) { if (current() && (!pending.current || pending.current.kind === 'LIST') && !latest.current.busy && !latest.current.dirty) { noteRef.current = value.slice(0, 1000); setNote(noteRef.current); } }
+  const locked = props.busy || props.dirty || !!pendingKind && pendingKind !== 'LIST' || !current();
   const key = preflightKey(preflight), outputKey = reviewIdentity(selected);
   const reviewed = !!key && key === preflightConsent, outputReviewed = !!outputKey && outputKey === outputConsent;
   const visible = current();
   return { preflight: visible ? preflight : undefined, reviewed: visible && reviewed, outputReviewed: visible && outputReviewed,
     runs: visible ? runs : [], selected: visible ? selected : undefined, error, notice, note: visible ? note : '', uncertain, creationUncertain, locked,
-    modelLocked: props.busy || props.dirty || !current() || !!pendingKind && pendingKind !== 'MODEL_READ',
+    modelLocked: props.busy || props.dirty || !current() || !!pendingKind && !['MODEL_READ', 'LIST'].includes(pendingKind),
     canReadRuns: !!props.graph && !props.busy && !pendingKind && current(),
+    canSelectRun: !!props.graph && !props.busy && (!pendingKind || ['LIST', 'OPEN', 'RESTORE'].includes(pendingKind)) && current(),
     loading: ['INSPECT', 'LIST', 'OPEN', 'RESTORE'].includes(pendingKind ?? ''), pendingKind,
     terminal: terminalRun(selected), current, inspect, listRuns, openRun, createRun, action, canAction,
     reviewPreflight, reviewOutput, changeNote, modelAction, mediaAction, modelUnavailable, readModel };

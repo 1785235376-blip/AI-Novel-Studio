@@ -3,6 +3,8 @@ import { ApiError, apiErrorView } from '../api';
 import type { StudioGraphClient } from './studioGraphClient';
 import type { StudioGraphModelCapabilities, StudioGraphRun } from './studioGraphTypes';
 
+export const GRAPH_MODEL_UNAVAILABLE_NOTICE = '模型执行权限或入口已变更，已清除先前的模型预览和结果。请重新核对当前能力与运行记录。';
+
 export type GraphModelAction = 'preview' | 'dispatch' | 'refresh';
 export type GraphModelActionEvidence = { route_id?: string; allow_synthetic?: boolean; reviewed_preview_digest?: string; archive_result?: true };
 export type StudioGraphModelExecutionPanelProps = {
@@ -18,13 +20,13 @@ export function useStudioGraphModelExecutionController(props: StudioGraphModelEx
   const [capabilities, setCapabilities] = useState<StudioGraphModelCapabilities>(), [routeId, setRouteId] = useState('');
   const [allowSynthetic, setAllowSynthetic] = useState(false), [consent, setConsent] = useState<string>();
   const [loading, setLoading] = useState(false), [error, setError] = useState('');
-  const alive = useRef(true), epoch = useRef(0), pending = useRef<Request>();
+  const alive = useRef(true), revoked = useRef(false), epoch = useRef(0), pending = useRef<Request>();
   const latest = useRef(props); latest.current = props;
   const consentRef = useRef(consent); consentRef.current = consent;
   const capabilitiesRef = useRef(capabilities); capabilitiesRef.current = capabilities;
   const choice = useRef({ routeId, allowSynthetic }); choice.current = { routeId, allowSynthetic };
   const visibleOwner = useRef({ client: props.client, runId: props.run?.id });
-  const current = useCallback(() => alive.current && latest.current.client === visibleOwner.current.client
+  const current = useCallback(() => alive.current && !revoked.current && latest.current.client === visibleOwner.current.client
     && latest.current.run?.id === visibleOwner.current.runId && latest.current.isCurrent(), []);
   const valid = (request: Request) => current() && pending.current?.id === request.id && epoch.current === request.id
     && latest.current.client === request.client && latest.current.run?.id === request.runId && !request.controller.signal.aborted;
@@ -38,7 +40,10 @@ export function useStudioGraphModelExecutionController(props: StudioGraphModelEx
     capabilitiesRef.current = undefined; setCapabilities(undefined); choice.current = { routeId: '', allowSynthetic: false };
     setRouteId(''); setAllowSynthetic(false); clearConsent();
   }
-  function unavailable() { abortLoad(); clearCapabilities(); latest.current.onUnavailable(); }
+  function unavailable() {
+    abortLoad(); clearCapabilities(); revoked.current = true; setError(GRAPH_MODEL_UNAVAILABLE_NOTICE);
+    latest.current.onUnavailable();
+  }
   function snapshot() {
     const source = latest.current, model = source.run?.model_runtime;
     const preview = !source.run?.stale ? model?.preview : null, execution = model?.execution;
@@ -59,7 +64,7 @@ export function useStudioGraphModelExecutionController(props: StudioGraphModelEx
   }
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; pending.current?.controller.abort(); pending.current = undefined; }; }, []);
   useEffect(() => {
-    abortLoad(); visibleOwner.current = { client: props.client, runId: props.run?.id }; clearCapabilities(); setError('');
+    abortLoad(); visibleOwner.current = { client: props.client, runId: props.run?.id }; revoked.current = false; clearCapabilities(); setError('');
   }, [props.client, props.run?.id]);
   useEffect(() => {
     clearConsent();
@@ -118,6 +123,6 @@ export function useStudioGraphModelExecutionController(props: StudioGraphModelEx
     model: visible ? state.model : undefined, preview: visible ? state.preview : null,
     execution: visible ? state.execution : undefined, route: visible ? state.route : undefined, loading, error,
     reviewed: !!state.confirmationKey && consent === state.confirmationKey,
-    canRead: !props.locked && !loading && current(), current, load, chooseRoute, chooseSynthetic, reviewPreview, action };
+    canRead: !props.locked && !loading && current(), current, unavailable, load, chooseRoute, chooseSynthetic, reviewPreview, action };
 }
 export type StudioGraphModelExecutionController = ReturnType<typeof useStudioGraphModelExecutionController>;

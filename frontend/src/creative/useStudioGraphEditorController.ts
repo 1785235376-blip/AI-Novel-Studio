@@ -39,7 +39,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const createRequest = useRef(graphId('graph'));
   const current = useCallback(() => alive.current && isCurrent(), [isCurrent]);
   const locked = () => busy || saving.current || !!isBusy?.();
-  const editable = !!catalog && canMutate && !denied && !busy && !externalDirty && !executionDirty && !blocked && base?.can_edit !== false;
+  const editable = !!catalog && canMutate && !denied && !busy && !externalDirty && !executionDirty && !blocked && base?.can_edit !== false && current();
   const node = draft.nodes.find(row => row.id === selected[0]);
   const timelineEditor = useStudioGraphTimelineEditor({ client: client.graphs, node, editable, identity, isCurrent: current, isBusy: locked, read,
     update: parameters => { const selectedNode = draftRef.current.nodes.find(row => row.id === selected[0]); if (selectedNode?.definition_id !== 'timeline_export') return;
@@ -239,7 +239,19 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     };
   }, [active, denied, requestedGraphId, catalog, busy, externalDirty, executionDirty, dirty, blocked, current, identity, base?.id, read, client, accept]);
 
+  // Retired owners expose only text changed locally, never saved identities, bindings or receipts.
+  const retired = !current();
+  const localTextFields = { text: '作者输入文本', result: '手工处理结果', note: '可选导演备注', instruction: '本地模型写作指令', prompt: '媒体提示词', license_note: '来源与授权说明' };
+  const retainedText = retired ? draft.nodes.flatMap(node => {
+    const saved = base?.definition.nodes.find(row => row.id === node.id);
+    return Object.entries(localTextFields).flatMap(([key, label]) => {
+      const value = node.parameters[key as keyof typeof localTextFields];
+      return typeof value === 'string' && value !== saved?.parameters[key as keyof typeof localTextFields] ? [{ label, value }] : [];
+    });
+  }) : [];
+  const retainedTitle = !base || draft.title !== base.definition.title ? draft.title : blankGraph().title;
   return {
+    retired, retainedText, retainedTitle,
     catalog: catalog ? { ...catalog, definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,

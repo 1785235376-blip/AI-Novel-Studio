@@ -30,7 +30,8 @@ export type StudioOverview = {
     intent_is_permission: false;
   };
 };
-export type StudioActivation = Omit<StudioOverview, 'capabilities'> & { capabilities: Omit<StudioOverview['capabilities'], 'can_mutate'> };
+// Activation confirms identity only; the full overview remains the state/permission owner.
+export type StudioActivation = { project: StudioProject & { entry_kind: 'NEUTRAL_STUDIO' } };
 export type StudioLicenseDeclaration = { label: string; source: string; note: string };
 export type StudioLineageOrigin = 'ORIGINAL_INPUT' | 'GENERATED_RESULT' | 'DERIVED_PROCESSING' | 'EXTERNAL_IMPORT' | 'MANUAL_EDIT';
 export type StudioLineageLink = { id?: string; label?: string; version?: number; digest?: string; state: string };
@@ -309,15 +310,28 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     if (!value || value.project?.id !== projectId) mismatch();
     return value;
   }
-  function checkedOverview<T extends StudioOverview | StudioActivation>(value: T): T {
+  function checkedOverview<T extends StudioOverview>(value: T): T {
     checkedProject(value);
     return { ...value, preferences: checkedStudioPreferences(value.preferences) };
+  }
+  function checkedActivation(value: unknown): StudioActivation {
+    // Activation needs its exact project acknowledgement, not workspace state.
+    // Do not fabricate preference versions or treat response capabilities as grants.
+    if (!value || typeof value !== 'object' || Array.isArray(value) || !Object.hasOwn(value, 'project')) mismatch();
+    const row = value as Record<string, unknown>, project = row.project as Record<string, unknown> | null;
+    if (!project || typeof project !== 'object' || Array.isArray(project)
+      || !['id', 'title', 'entry_kind'].every(key => Object.hasOwn(project, key))
+      || project.id !== projectId || typeof project.title !== 'string' || project.entry_kind !== 'NEUTRAL_STUDIO') mismatch();
+    // An explicit malformed preference response is still rejected; absence is
+    // not default state and full overview/preference reads remain strict.
+    if (Object.hasOwn(row, 'preferences')) checkedStudioPreferences(row.preferences);
+    return { project: { id: projectId, title: project!.title as string, entry_kind: 'NEUTRAL_STUDIO' } };
   }
   return {
     graphs: createStudioGraphClient(projectId, { scope }, transport),
     productionContracts: createStudioWorkspaceOperationClient(projectId, transport, scope).read,
     overview: (signal?: AbortSignal) => transport.json<StudioOverview>(base, 'GET', undefined, signal).then(checkedOverview),
-    activate: () => transport.json<StudioActivation>(`${base}/activate`, 'POST').then(checkedOverview),
+    activate: () => transport.json<unknown>(`${base}/activate`, 'POST').then(checkedActivation),
     preferences: (signal?: AbortSignal) => transport.json<StudioPreferences>(`${base}/preferences`, 'GET', undefined, signal).then(checkedStudioPreferences),
     savePreferences: (value: StudioPreferencesInput, expectedVersion: number) => transport.json<StudioPreferences>(`${base}/preferences`, 'PUT', {
       intents: [...value.intents], preset: value.preset, custom_intent: value.custom_intent, expected_version: version(expectedVersion, 0),
