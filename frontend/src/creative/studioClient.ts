@@ -4,7 +4,7 @@ import { isPackagedDesktopHost } from '../packagedHost';
 import { createStudioGraphClient } from './studioGraphClient';
 import { createStudioWorkspaceOperationClient } from './studioWorkspaceOperationClient';
 import { checkedStudioPreferences } from './studioWorkspacePreferences';
-import { checkedMaskInput, checkedMaskResult, maskSha256, type StudioMaskInput } from './studioManualMaskContract';
+import { checkedMaskInput, checkedMaskResult, maskSha256, type StudioMaskInput, type StudioMaskReceipt } from './studioManualMaskContract';
 
 export type CreativeIntent = 'NOVEL_WRITING' | 'NOVEL_ADAPTATION' | 'AI_SHORT_FILM' | 'COMMERCIAL_CG'
   | 'ADVERTISEMENT' | 'MUSIC_VIDEO' | 'GAME_PREVIS' | 'IMAGE_DESIGN' | 'PODCAST_VOICE' | 'BLANK' | 'CUSTOM';
@@ -37,7 +37,7 @@ export type StudioLineageOrigin = 'ORIGINAL_INPUT' | 'GENERATED_RESULT' | 'DERIV
 export type StudioLineageLink = { id?: string; label?: string; version?: number; digest?: string; state: string };
 /** The existing production-lineage projection, not a second asset owner. */
 export type ProductionLineage = AssetProvenance;
-export type StudioAsset = Asset & { version: number };
+export type StudioAsset = Asset & { version: number; manual_mask?: StudioMaskReceipt };
 export type StudioReferenceKind = AssetRelationshipReferenceKind;
 export type StudioReference = AssetRelationshipReference;
 export type StudioReferences = { items: StudioReference[]; read_only: true; content_copied: false };

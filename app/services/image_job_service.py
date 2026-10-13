@@ -59,9 +59,9 @@ class ImageJobService:
         with self._lock:
             return [{**row,'recoverable':row.get('status')=='RUNNING' and row.get('execution_token') not in self._active} for row in reversed(self._load(novel_id, branch_id)) if row.get('contract') != 'studio-image-execution/1']
 
-    def create_studio(self, nid, branch, actor, body, context, guard):
+    def create_studio(self, nid, branch, actor, body, context, guard, *, source_phase=None):
         from .studio_image_execution import create
-        return create(self, nid, branch, actor, body, context, guard)
+        return create(self, nid, branch, actor, body, context, guard, source_phase=source_phase)
 
     def get_studio(self, nid, branch, actor, job_id, guard):
         from .studio_image_execution import get

@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import type { StudioAsset } from './studioClient';
+import { eligibleCutoutMask, usableCutoutSource } from './studioCutoutContract';
+import type { GraphMediaOperation } from './studioGraphTypes';
 import type { MediaCommand, MediaOperation, ProductionJob, ProductionPreview, ProductionProvider, ProductionSource, StudioProductionClient } from './studioProductionClient';
 
 export type StudioMediaExecutionProps = {
@@ -8,12 +10,14 @@ export type StudioMediaExecutionProps = {
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onDirtyChange: (dirty: boolean) => void; onJob?: (job: ProductionJob) => void; onUnavailable: () => void; onApproved?: () => void | Promise<void>;
   externalJob?: ProductionJob;
+  cutoutExecution?: { execute: (job: ProductionJob) => Promise<ProductionJob>; control: (kind: 'read' | 'cancel', job: ProductionJob) => Promise<ProductionJob> };
 };
-export const MEDIA_OPERATION_LABELS: Record<MediaOperation, string> = {
+export const GRAPH_MEDIA_OPERATION_LABELS: Record<GraphMediaOperation, string> = {
   'm5.image.t2i': '文字生成图片', 'm5.image.i2i': '参考图片生成图片', 'm7.video.t2v': '文字生成视频',
   'm7.video.i2v': '图片生成视频', 'm7.video.v2v': '视频生成视频', 'm8.audio.speech': '语音合成',
   'm8.audio.music': '音乐生成', 'm8.audio.effects': '音效生成', 'm8.audio.trim': '本地音频截取',
 };
+export const MEDIA_OPERATION_LABELS: Record<MediaOperation, string> = { ...GRAPH_MEDIA_OPERATION_LABELS, 'm5.image.cutout': '本地二值遮罩抠图' };
 export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
   QUEUED: '已入队，尚未执行', RUNNING: '正在执行', SEND_RESERVED: '已记录分派意图', REMOTE_RUNNING: '远端处理中',
   RESULT_READY: '已有结果，等待本地核对', AWAITING_REVIEW: '等待人工审核', SUCCEEDED: '处理完成，需核对审核',
@@ -30,6 +34,7 @@ const parameterNames: MediaParameter[] = ['width', 'height', 'steps', 'seed', 'n
 const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm5.image.t2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
   'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
+  'm5.image.cutout': [],
   'm7.video.t2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
@@ -47,12 +52,16 @@ const reviewIdentity = (job?: ProductionJob) => job?.output_candidate
 const uncertainFailure = (error: unknown) => !(error instanceof ApiError) || error.status === 0 || error.status >= 500 || [408, 409, 425, 429].includes(error.status) || error.problem.code === 'STUDIO_RESPONSE_INVALID';
 const invalid = (message: string) => new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message });
 function sourceKind(operation: MediaOperation): 'image' | 'video' | 'audio' | undefined {
-  return ({ 'm5.image.i2i': 'image', 'm7.video.i2v': 'image', 'm7.video.v2v': 'video', 'm8.audio.trim': 'audio' } as Partial<Record<MediaOperation, 'image' | 'video' | 'audio'>>)[operation];
+  return ({ 'm5.image.i2i': 'image', 'm5.image.cutout': 'image', 'm7.video.i2v': 'image', 'm7.video.v2v': 'video', 'm8.audio.trim': 'audio' } as Partial<Record<MediaOperation, 'image' | 'video' | 'audio'>>)[operation];
 }
 function usableAsset(row: StudioAsset, kind: string) {
   return row.kind === kind && !row.deleted_at && Number.isSafeInteger(row.version) && row.version >= 1 && /^[a-f0-9]{64}$/.test(row.sha256);
 }
-function sourcesCurrent(sources: ProductionSource[], assets: StudioAsset[]) {
+function sourcesCurrent(sources: ProductionSource[], assets: StudioAsset[], operation?: string) {
+  if (operation === 'm5.image.cutout') {
+    const source = assets.find(row => row.id === sources[0]?.id), mask = assets.find(row => row.id === sources[1]?.id);
+    if (sources.length !== 2 || !source || !mask || !eligibleCutoutMask(mask, source)) return false;
+  }
   return sources.every(source => assets.some(row => usableAsset(row, source.asset_kind) && row.id === source.id && row.version === source.version && row.sha256 === source.digest));
 }
 function parameters(draft: Draft): MediaCommand['parameters'] {
@@ -78,15 +87,16 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
   return result;
 }
 function commandFor(draft: Draft, providers: ProductionProvider[], assets: StudioAsset[], requestId: string): MediaCommand {
-  const localTrim = draft.operation === 'm8.audio.trim';
+  const cutout = draft.operation === 'm5.image.cutout', localTrim = draft.operation === 'm8.audio.trim' || cutout;
   const provider = providers.find(row => mediaProviderKey(row) === draft.providerKey && row.operation_id === draft.operation);
   if (!localTrim && !provider) throw new Error('请选择当前配置中的服务商和模型。');
   if (provider && parametersByOperation[draft.operation].some(name => draft.parameters[name] !== '' && !provider.supported_parameters.includes(name))) throw new Error('所选配置不支持部分已填写参数，请明确清空这些参数或恢复原选择。');
   if (!localTrim && (!draft.prompt.trim() || draft.prompt.length > 16000)) throw new Error('请填写本次提示词，最多 16000 字符。');
   if (provider && !provider.local && !draft.allowCloud) throw new Error('使用云端服务前，请明确确认本次发送提示词与参考素材。');
   const kind = sourceKind(draft.operation), sources = draft.sources;
-  if (!sourcesCurrent(sources, assets)) throw new Error('来源素材版本已变化，请重新选取当前版本。');
-  if (kind && (!sources.length || sources.some(source => source.asset_kind !== kind) || (draft.operation === 'm5.image.i2i' ? sources.length > 5 : sources.length !== 1))) throw new Error(kind === 'image' ? '请选取对应数量的图片来源。' : '请选取一个对应类型的来源素材。');
+  if (cutout && sources.length !== 2) throw new Error('请先选择一张 PNG 来源，再明确选择为该版本绘制的二值遮罩。');
+  if (!sourcesCurrent(sources, assets, draft.operation)) throw new Error('来源素材版本已变化，请重新选取当前版本。');
+  if (kind && (!sources.length || sources.some(source => source.asset_kind !== kind) || (draft.operation === 'm5.image.i2i' ? sources.length > 5 : sources.length !== (cutout ? 2 : 1)))) throw new Error(kind === 'image' ? '请选取对应数量的图片来源。' : '请选取一个对应类型的来源素材。');
   if (!kind && sources.length) throw new Error('本操作不接收素材参考。');
   if (draft.licenseNote.length > 2000) throw new Error('来源与授权说明超过长度限制。');
   return { operation_id: draft.operation, request_id: requestId, provider_id: localTrim ? null : provider!.provider_id,
@@ -100,6 +110,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const [providerLoading, setProviderLoading] = useState(false), [jobs, setJobs] = useState<ProductionJob[]>([]), [selected, setSelected] = useState<ProductionJob>();
   const [preview, setPreview] = useState<Preview>(), [previewConsent, setPreviewConsent] = useState(''), [reviewConsent, setReviewConsent] = useState('');
   const [candidate, setCandidate] = useState<Candidate>(), [pending, setPending] = useState<Kind>(), [uncertain, setUncertain] = useState(false);
+  const [runningControl, setRunningControl] = useState<'read' | 'cancel'>();
+  const runningControlRef = useRef<'read' | 'cancel'>(), executingCutout = useRef<ProductionJob>(), controlFence = useRef(0);
   const [denied, setDenied] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const latest = useRef(props); latest.current = props;
   const alive = useRef(true), revoked = useRef(false), owner = useRef(props.client), epoch = useRef(0), slot = useRef<Operation>();
@@ -112,20 +124,20 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   draftRef.current = draft; selectedRef.current = selected; previewRef.current = preview; uncertainRef.current = uncertain;
   previewConsentRef.current = previewConsent; reviewConsentRef.current = reviewConsent; providersRef.current = providers;
   const current = () => alive.current && !revoked.current && owner.current === latest.current.client && latest.current.isCurrent();
-  const busy = () => !!slot.current || latest.current.busy || !!latest.current.isBusy?.() || !current();
+  const busy = () => !!slot.current || !!runningControlRef.current || latest.current.busy || !!latest.current.isBusy?.() || !current();
   const owns = !denied && owner.current === props.client && props.isCurrent();
-  const input = inputKey(draft), freshSources = sourcesCurrent(draft.sources, props.assets);
-  const sourceState = JSON.stringify(draft.sources.map(source => { const row = props.assets.find(asset => asset.id === source.id); return [source.id, row?.version, row?.sha256, row?.deleted_at, row?.kind]; }));
+  const input = inputKey(draft), freshSources = sourcesCurrent(draft.sources, props.assets, draft.operation);
+  const sourceState = JSON.stringify(draft.sources.map(source => { const row = props.assets.find(asset => asset.id === source.id); return [source.id, row?.version, row?.sha256, row?.deleted_at, row?.kind, row?.manual_mask, row?.provenance]; }));
   const jobSources = selected?.sources.filter((source): source is ProductionSource => source.kind === 'ASSET') || [];
-  const jobSourcesFresh = sourcesCurrent(jobSources, props.assets);
-  const jobSourceState = JSON.stringify(jobSources.map(source => { const row = props.assets.find(asset => asset.id === source.id); return [source.id, row?.version, row?.sha256, row?.deleted_at, row?.kind]; }));
+  const jobSourcesFresh = sourcesCurrent(jobSources, props.assets, selected?.operation_id);
+  const jobSourceState = JSON.stringify(jobSources.map(source => { const row = props.assets.find(asset => asset.id === source.id); return [source.id, row?.version, row?.sha256, row?.deleted_at, row?.kind, row?.manual_mask, row?.provenance]; }));
   const provider = providers.find(row => mediaProviderKey(row) === draft.providerKey && row.operation_id === draft.operation);
   const unsupportedParameters = provider ? parametersByOperation[draft.operation].filter(name => draft.parameters[name] !== '' && !provider.supported_parameters.includes(name)) : [];
   const previewBinding = preview && preview.input === input && freshSources ? JSON.stringify([input, preview.value.preview_digest, preview.value.request_digest]) : '';
-  const reviewBinding = reviewIdentity(selected), candidateVisible = owns && candidate?.binding === reviewBinding ? candidate : undefined;
+  const reviewBinding = reviewIdentity(selected), candidateVisible = owns && candidate?.binding === reviewBinding && jobSourcesFresh ? candidate : undefined;
   const repeatBlocked = !!selected && ['execute', 'refresh', 'reconcile', 'cancel', 'review'].some(kind => sentActions.current.has(actionIdentity(selected, kind)));
   const dirty = owns && (input !== baseline.current || uncertain || repeatBlocked || !!pending && ['CREATE', 'review', 'execute', 'refresh', 'reconcile', 'cancel'].includes(pending));
-  const locked = !owns || props.busy || !!pending || !!props.isBusy?.();
+  const locked = !owns || props.busy || !!runningControl || !!pending || !!props.isBusy?.();
   const canEdit = !locked && props.canMutate && !uncertain && !creation.current?.uncertain;
   let inputError = ''; try { commandFor(draft, providers, props.assets, 'shape_check'); } catch (reason) { inputError = reason instanceof Error ? reason.message : '请核对输入。'; }
 
@@ -181,7 +193,11 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   function selectSource(id: string, checked: boolean) {
     const old = draftRef.current, kind = sourceKind(old.operation); if (!kind) return;
-    const row = latest.current.assets.find(asset => asset.id === id && usableAsset(asset, kind));
+    const row = latest.current.assets.find(asset => asset.id === id && usableAsset(asset, kind) && (old.operation !== 'm5.image.cutout' || usableCutoutSource(asset)));
+    if (old.operation === 'm5.image.cutout') {
+      if (checked && !row) { setError('PNG 来源不可用，请重新读取素材。'); return; }
+      edit({ ...old, sources: checked && row ? [{ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: 'image' }] : [] }); return;
+    }
     if (checked && !row) { setError('来源不可用，请重新读取素材。'); return; }
     let sources = old.sources.filter(source => source.id !== id);
     if (checked && row) {
@@ -191,10 +207,18 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     }
     edit({ ...old, sources });
   }
+  function selectMask(id: string) {
+    const old = draftRef.current, source = latest.current.assets.find(asset => asset.id === old.sources[0]?.id);
+    if (old.operation !== 'm5.image.cutout' || !source || source.version !== old.sources[0]?.version || source.sha256 !== old.sources[0]?.digest) return;
+    if (!id) { edit({ ...old, sources: old.sources.slice(0, 1) }); return; }
+    const mask = latest.current.assets.find(asset => asset.id === id && eligibleCutoutMask(asset, source));
+    if (!mask) { setError('遮罩与当前来源版本不匹配，请重新读取素材。'); return; }
+    edit({ ...old, sources: [old.sources[0], { id: mask.id, kind: 'ASSET', version: mask.version, digest: mask.sha256, asset_kind: 'image' }] });
+  }
   function refreshSources() {
     const old = draftRef.current, kind = sourceKind(old.operation); if (!kind) return;
     const sources: ProductionSource[] = [];
-    for (const source of old.sources) {
+    for (const source of old.operation === 'm5.image.cutout' ? old.sources.slice(0, 1) : old.sources) {
       const row = latest.current.assets.find(asset => asset.id === source.id && usableAsset(asset, kind));
       if (!row) { setError('已选来源已删除或不可用，请先移除该来源。'); return; }
       sources.push({ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: kind });
@@ -222,18 +246,18 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     try {
       const command = commandFor(draftRef.current, providersRef.current, latest.current.assets, crypto.randomUUID());
       const result = await latest.current.read(() => value.client.preview(command));
-      if (!live(value) || captured !== inputKey(draftRef.current) || !sourcesCurrent(command.source_snapshots, latest.current.assets)) return;
+      if (!live(value) || captured !== inputKey(draftRef.current) || !sourcesCurrent(command.source_snapshots, latest.current.assets, command.operation_id)) return;
       const chosen = providersRef.current.find(row => mediaProviderKey(row) === draftRef.current.providerKey);
-      if (command.operation_id !== 'm8.audio.trim' && (!chosen || !result.provider || result.provider.route_digest !== chosen.route_digest || result.provider.local !== chosen.local)) throw invalid('服务商路线已变化，请重新读取配置并预览。');
+      if (!['m8.audio.trim', 'm5.image.cutout'].includes(command.operation_id) && (!chosen || !result.provider || result.provider.route_digest !== chosen.route_digest || result.provider.local !== chosen.local)) throw invalid('服务商路线已变化，请重新读取配置并预览。');
       const next = { value: result, command, input: captured }; previewRef.current = next; setPreview(next);
       setNotice('预览已读取；尚未创建任务，也未执行媒体处理。');
     } catch (reason) { if (live(value)) failure(reason, '制作预览未完成。'); } finally { finish(value); }
   }
-  function confirmPreview(checked: boolean) { if (!current() || busy()) return; const key = previewRef.current && previewRef.current.input === inputKey(draftRef.current) && sourcesCurrent(draftRef.current.sources, latest.current.assets)
+  function confirmPreview(checked: boolean) { if (!current() || busy()) return; const key = previewRef.current && previewRef.current.input === inputKey(draftRef.current) && sourcesCurrent(draftRef.current.sources, latest.current.assets, draftRef.current.operation)
     ? JSON.stringify([previewRef.current.input, previewRef.current.value.preview_digest, previewRef.current.value.request_digest]) : ''; previewConsentRef.current = checked ? key : ''; setPreviewConsent(previewConsentRef.current); }
   async function create() {
     const saved = previewRef.current;
-    if (!current() || !latest.current.canMutate || uncertainRef.current || creation.current || !saved || saved.input !== inputKey(draftRef.current) || !sourcesCurrent(saved.command.source_snapshots, latest.current.assets)) return;
+    if (!current() || !latest.current.canMutate || uncertainRef.current || creation.current || !saved || saved.input !== inputKey(draftRef.current) || !sourcesCurrent(saved.command.source_snapshots, latest.current.assets, saved.command.operation_id)) return;
     const binding = JSON.stringify([saved.input, saved.value.preview_digest, saved.value.request_digest]); if (previewConsentRef.current !== binding) return;
     const value = begin('CREATE'); if (!value) return;
     creation.current = { requestId: saved.command.request_id, requestDigest: saved.value.request_digest, operation: saved.command.operation_id, input: saved.input, uncertain: true };
@@ -271,28 +295,37 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     const job = selectedRef.current;
     if (!job || busy() || uncertainRef.current || creation.current?.uncertain || sentActions.current.has(actionIdentity(job, kind))) return false;
     const assetSources = job.sources.filter((source): source is ProductionSource => source.kind === 'ASSET');
-    const fresh = sourcesCurrent(assetSources, latest.current.assets);
+    const fresh = sourcesCurrent(assetSources, latest.current.assets, job.operation_id);
     if (kind === 'review') return latest.current.canReview && fresh && ['AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING'].includes(job.status)
       && !!job.output_candidate && candidateRef.current?.binding === reviewIdentity(job) && reviewConsentRef.current === reviewIdentity(job);
     if (!latest.current.canMutate) return false;
     if (kind === 'execute') return job.owner !== 'timeline' && job.status === 'QUEUED' && fresh;
     if (kind === 'refresh') return job.owner === 'video' && ['REMOTE_RUNNING', 'RESULT_READY', 'UNKNOWN'].includes(job.status);
-    if (kind === 'reconcile') return job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status)
+    if (kind === 'reconcile') return job.operation_id === 'm5.image.cutout' && job.status === 'CANCELLED' ? !!job.processing_proof && !job.output_candidate : job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status)
       : job.owner === 'video' ? ['RUNNING', 'SEND_RESERVED', 'UNKNOWN', 'RESULT_READY', 'REVIEWING'].includes(job.status)
       : ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status);
-    return job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)
+    return job.operation_id === 'm5.image.cutout' ? ['QUEUED', 'RUNNING', 'UNKNOWN', 'AWAITING_REVIEW'].includes(job.status)
+      : job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)
       : ['QUEUED', 'AWAITING_REVIEW', 'UNKNOWN', 'REMOTE_RUNNING', 'RESULT_READY'].includes(job.status);
   }
   async function action(kind: 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review') {
     if (!canAction(kind)) return; const job = selectedRef.current!;
     const value = begin(kind); if (!value) return; clearCandidate();
     const sentKey = actionIdentity(job, kind); sentActions.current.add(sentKey);
+    const localExecution = kind === 'execute' && job.operation_id === 'm5.image.cutout' && latest.current.cutoutExecution;
+    if (localExecution) executingCutout.current = job;
+    const responseFence = controlFence.current;
     try {
-      const result = await latest.current.mutate(() => value.client[kind](job)); if (!live(value)) return;
+      const result = await (localExecution ? localExecution.execute(job) : latest.current.mutate(() => value.client[kind](job))); if (!live(value)) return;
+      if (localExecution && responseFence !== controlFence.current) {
+        if (runningControlRef.current || uncertainRef.current || selectedRef.current?.version && result.version <= selectedRef.current.version) return;
+        if (selectedRef.current?.status === 'CANCELLED') return;
+      }
+      if (result.version < job.version || result.request_digest !== job.request_digest || result.id !== job.id || result.operation_id !== job.operation_id) throw invalid('原任务响应版本或身份不一致，请重新读取。');
       adoptJob(result); markUncertain(false);
       setNotice(kind === 'cancel' ? result.owner === 'timeline'
         ? result.cancellation_mode === 'LOCAL_RENDER_PROCESS_STOP_REQUESTED' ? '已记录停止本地渲染进程的请求；请重新读取原任务核对。已有回执与候选保留，不能继续采用。' : '已取消此未审核时间线结果的采用权限，原回执与候选保留。'
-        : '已丢弃本地结果的采用权限；远端计算可能继续。'
+        : result.operation_id === 'm5.image.cutout' ? '已记录本地取消并撤销候选采用权限；请读取原任务核对。不会自动重试。' : '已丢弃本地结果的采用权限；远端计算可能继续。'
         : kind === 'review' ? '已保存审核回执，请核对当前素材库。' : kind === 'reconcile' ? '已核对本地中断状态，未重新提交媒体生成。' : '已收到任务回执，请核对状态与候选结果。');
       if (kind === 'review' && result.status === 'APPROVED') {
         const approved = jobIdentity(result);
@@ -300,12 +333,30 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
           if (current() && jobIdentity(selectedRef.current) === approved) setError('审核已经保存，但素材列表刷新未完成，请重新读取。');
         }); } catch { setError('审核已经保存，但素材列表刷新未完成，请重新读取。'); }
       }
-    } catch (reason) { if (live(value)) { if (!uncertainFailure(reason)) sentActions.current.delete(sentKey); failure(reason, '操作结果未确认，请读取任务核对。', true); } } finally { finish(value); }
+    } catch (reason) { if (live(value)) { if (localExecution && responseFence !== controlFence.current && selectedRef.current?.status === 'CANCELLED' && !uncertainRef.current) return; if (!uncertainFailure(reason)) sentActions.current.delete(sentKey); failure(reason, '操作结果未确认，请读取任务核对。', true); } } finally { if (localExecution && executingCutout.current === job) executingCutout.current = undefined; finish(value); }
+  }
+  async function controlRunningCutout(kind: 'read' | 'cancel') {
+    const original = executingCutout.current, active = slot.current, method = latest.current.cutoutExecution?.control;
+    if (!current() || !latest.current.canMutate || !original || !active || active.kind !== 'execute' || !method || runningControlRef.current) return;
+    const expected = selectedRef.current;
+    if (!expected || expected.id !== original.id || expected.request_digest !== original.request_digest || expected.operation_id !== 'm5.image.cutout') return;
+    if (kind === 'cancel' && (uncertainRef.current || sentActions.current.has(actionIdentity(expected, 'cancel')))) return;
+    if (kind === 'cancel') sentActions.current.add(actionIdentity(expected, 'cancel'));
+    const fence = ++controlFence.current; runningControlRef.current = kind; setRunningControl(kind); clearCandidate();
+    try {
+      const result = await method(kind, expected);
+      if (!live(active) || controlFence.current !== fence) return;
+      if (result.id !== original.id || result.owner !== 'image' || result.operation_id !== original.operation_id || result.request_digest !== original.request_digest
+        || result.request_id !== original.request_id || result.version < expected.version || result.version < (selectedRef.current?.version || 0)) throw invalid('原抠图任务回执不一致，请重新读取。');
+      adoptJob(result); markUncertain(false);
+      setNotice(result.status === 'CANCELLED' ? '原任务已记录取消；本地处理和候选采用已被围栏阻止。不会自动重试。' : '已读取原本地抠图任务状态；未重新执行。');
+    } catch (reason) { if (live(active) && controlFence.current === fence) failure(reason, '原本地任务控制结果未确认，请等待执行返回后读取核对。', true); }
+    finally { if (controlFence.current === fence) { runningControlRef.current = undefined; if (alive.current) setRunningControl(undefined); } }
   }
   async function loadCandidate() {
-    const job = selectedRef.current; if (!job?.output_candidate || uncertainRef.current || creation.current?.uncertain) return;
+    const job = selectedRef.current; if (!job?.output_candidate || uncertainRef.current || creation.current?.uncertain || !sourcesCurrent(job.sources.filter((source): source is ProductionSource => source.kind === 'ASSET'), latest.current.assets, job.operation_id)) return;
     const sourceAuthority = () => JSON.stringify(job.sources.filter((source): source is ProductionSource => source.kind === 'ASSET').map(source => {
-      const row = latest.current.assets.find(asset => asset.id === source.id); return [source.id, row?.version, row?.sha256, row?.deleted_at, row?.kind];
+      const row = latest.current.assets.find(asset => asset.id === source.id); return [source.id, row?.version, row?.sha256, row?.deleted_at, row?.kind, row?.manual_mask, row?.provenance];
     }));
     const capturedSource = sourceAuthority();
     const value = begin('CANDIDATE'); if (!value) return; clearCandidate(); const binding = reviewIdentity(job);
@@ -316,6 +367,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (!blob.size || blob.size > 25 * 1024 * 1024 || !blob.type.startsWith(job.output_candidate.kind + '/')) throw invalid('候选媒体类型或大小不正确，请读取任务核对。');
       const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await blob.arrayBuffer())), byte => byte.toString(16).padStart(2, '0')).join('');
       if (!stillBound()) return;
+      if (job.operation_id === 'm5.image.cutout' && (blob.type !== 'image/png' || blob.size !== job.processing_proof?.output_bytes)) throw invalid('本地抠图候选与处理证明不一致，不可审核。');
       if (digest !== job.output_candidate.digest) throw invalid('候选字节摘要与任务回执不符，不可审核。');
       const next = { url: URL.createObjectURL(blob), kind: job.output_candidate.kind, binding }; candidateRef.current = next; setCandidate(next);
     } catch (reason) { if (live(value)) failure(reason, '候选媒体读取失败。', true); } finally { finish(value); }
@@ -339,17 +391,18 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
 
   useLayoutEffect(() => {
     alive.current = true;
-    return () => { alive.current = false; epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); providerRead.current?.abort();
+    return () => { alive.current = false; controlFence.current++; executingCutout.current = undefined; runningControlRef.current = undefined; epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); providerRead.current?.abort();
       if (candidateRef.current) URL.revokeObjectURL(candidateRef.current.url); candidateRef.current = undefined; clearReceiptDownload(); latest.current.onDirtyChange(false); };
   }, []);
   useLayoutEffect(() => {
     epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); slot.current = undefined; providerRead.current?.abort();
+    controlFence.current++; executingCutout.current = undefined; runningControlRef.current = undefined; setRunningControl(undefined);
     clearCandidate(); clearPreview(); owner.current = props.client; revoked.current = false; setDenied(false); setPending(undefined); setProviders([]); setJobs([]);
     const empty = initialDraft(); draftRef.current = empty; setDraft(empty); baseline.current = inputKey(empty); selectedRef.current = undefined; setSelected(undefined);
     creation.current = undefined; sentActions.current.clear(); consumedExternal.current = ''; markUncertain(false); setError(''); setNotice('');
   }, [props.client]);
   useLayoutEffect(() => {
-    clearCandidate(); clearPreview();
+    clearCandidate(); clearPreview(); controlFence.current++; executingCutout.current = undefined; runningControlRef.current = undefined; setRunningControl(undefined);
     const running = slot.current;
     if (running) { running.controller.abort(); epoch.current++; slot.current = undefined; setPending(undefined);
       if (['CREATE', 'execute', 'refresh', 'reconcile', 'cancel', 'review'].includes(running.kind)) markUncertain(true); }
@@ -367,7 +420,9 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     adoptJob(props.externalJob); // A returned owner row only; never a GET/action or draft overwrite.
   }, [external, pending, props.busy, props.client]);
 
-  return { draft: owns ? draft : initialDraft(), providers: owns ? providers : [], provider: owns ? provider : undefined, providerLoading, jobs: owns ? jobs : [], selected: owns ? selected : undefined,
+  const cutoutSource = draft.operation === 'm5.image.cutout' ? props.assets.find(row => row.id === draft.sources[0]?.id && row.version === draft.sources[0]?.version && row.sha256 === draft.sources[0]?.digest) : undefined;
+  const eligibleMasks = owns && cutoutSource ? props.assets.filter(row => eligibleCutoutMask(row, cutoutSource)) : [];
+  return { runningControl, controlRunningCutout, canCancelRunning: !uncertain && !!selected && !sentActions.current.has(actionIdentity(selected, 'cancel')), canControlRunning: owns && props.canMutate && !!props.cutoutExecution && !!executingCutout.current && pending === 'execute' && !runningControl, eligibleMasks, draft: owns ? draft : initialDraft(), providers: owns ? providers : [], provider: owns ? provider : undefined, providerLoading, jobs: owns ? jobs : [], selected: owns ? selected : undefined,
     preview: owns && previewBinding ? preview?.value : undefined, previewReviewed: !!previewBinding && previewConsent === previewBinding,
     candidate: candidateVisible, outputReviewed: !!candidateVisible && reviewConsent === reviewBinding,
     pending, uncertain, repeatBlocked, error: owns ? error : '当前身份或项目范围待核对。', notice: owns ? notice : '', denied, dirty, locked, canEdit, inputError, freshSources, jobSourcesFresh, requiredSourceKind: owns ? sourceKind(draft.operation) : undefined,
@@ -375,8 +430,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     unsupportedParameters: owns ? unsupportedParameters : [], creationUncertain: owns && !!creation.current?.uncertain,
     uncertainRequestId: owns && creation.current?.uncertain ? creation.current.requestId : undefined,
     canInspect: canEdit && !providerLoading && !inputError, canCreate: canEdit && !creation.current && !!previewBinding && previewConsent === previewBinding,
-    canRead: !locked, canLoadCandidate: !locked && !uncertain && !creation.current?.uncertain && !!selected?.output_candidate,
-    changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
+    canRead: !locked, canLoadCandidate: !locked && !uncertain && !creation.current?.uncertain && jobSourcesFresh && !!selected?.output_candidate,
+    changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
     create, listJobs, openJob, canAction, action, loadCandidate, confirmReview, mediaFailed, downloadReceipt };
 }
 export type StudioMediaExecutionController = ReturnType<typeof useStudioMediaExecution>;

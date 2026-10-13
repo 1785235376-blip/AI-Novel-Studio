@@ -1,0 +1,511 @@
+{
+  "command": {
+    "operation_id": "m5.image.cutout",
+    "request_id": "mounted-cutout",
+    "provider_id": null,
+    "model_id": null,
+    "prompt": "",
+    "parameters": {},
+    "allow_cloud": false,
+    "license_note": "",
+    "source_snapshots": [
+      {
+        "kind": "ASSET",
+        "asset_kind": "image",
+        "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+        "version": 1,
+        "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d"
+      },
+      {
+        "kind": "ASSET",
+        "asset_kind": "image",
+        "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+        "version": 1,
+        "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48"
+      }
+    ]
+  },
+  "source": {
+    "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+    "novel_id": "r3-mounted-541a5b4c31a749a9a6cb7d909bb1ece9",
+    "filename": "source.png",
+    "kind": "image",
+    "media_type": "image/png",
+    "size": 203,
+    "sha256": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+    "branch_id": null,
+    "created_at": "2026-10-13T07:51:29.533610+00:00",
+    "updated_at": "2026-10-13T07:51:29.533617+00:00",
+    "version": 1,
+    "deleted_at": null,
+    "idempotency_key": "source",
+    "provenance": {
+      "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+      "label": "source.png",
+      "kind": "image",
+      "version": 1,
+      "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "UNDECLARED",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "",
+      "parents": [],
+      "sources": [],
+      "producer": {
+        "declared_by": null,
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": false,
+      "source_task_id": null
+    },
+    "relationships": []
+  },
+  "mask": {
+    "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+    "novel_id": "r3-mounted-541a5b4c31a749a9a6cb7d909bb1ece9",
+    "filename": "manual-mask.png",
+    "kind": "image",
+    "media_type": "image/png",
+    "size": 4228,
+    "sha256": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+    "branch_id": null,
+    "source_asset_ids": [
+      "349ef256-750e-46ce-a496-2847a4b76a06"
+    ],
+    "source_job_id": null,
+    "provider_id": null,
+    "model_id": null,
+    "created_at": "2026-10-13T07:51:31.239033+00:00",
+    "updated_at": "2026-10-13T07:51:31.239039+00:00",
+    "version": 1,
+    "deleted_at": null,
+    "idempotency_key": "studio-manual-mask:9759d791171eeb8219fec1f86da04d2446a20a9b808182c09b1d5be295837c3b",
+    "parameters": {},
+    "manual_mask": {
+      "contract": "manual-binary-mask/1",
+      "source_asset_id": "349ef256-750e-46ce-a496-2847a4b76a06",
+      "source_version": 1,
+      "source_sha256": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+      "width": 64,
+      "height": 64,
+      "bitplane_sha256": "0dc50ed6e41c0a4d3eaa8c5a1e850607fd4bf2042596439f6112369e90f58364",
+      "keep_pixels": 512,
+      "remove_pixels": 3584,
+      "mask_sha256": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48"
+    },
+    "provenance": {
+      "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+      "label": "manual-mask.png",
+      "kind": "image",
+      "version": 1,
+      "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "MANUAL_EDIT",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "Manual binary mask: white KEEP, black REMOVE",
+      "parents": [
+        {
+          "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+          "label": "source.png",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "state": "CURRENT"
+        }
+      ],
+      "sources": [],
+      "producer": {
+        "declared_by": "local-author",
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": false,
+      "source_task_id": null
+    },
+    "relationships": []
+  },
+  "preview": {
+    "contract": "studio-production-preview/1",
+    "novel_id": "r3-mounted-541a5b4c31a749a9a6cb7d909bb1ece9",
+    "branch_id": null,
+    "operation_id": "m5.image.cutout",
+    "request_id": "mounted-cutout",
+    "request_digest": "065be811d2508b22700e885d930332d947af21ef2417827f6d01624ca0dd97b5",
+    "provider": null,
+    "sources": [
+      {
+        "snapshot": {
+          "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image"
+        },
+        "measured": {
+          "media_type": "image/png",
+          "extension": "png",
+          "width": 64,
+          "height": 64,
+          "validation": "DECODED"
+        }
+      },
+      {
+        "snapshot": {
+          "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image"
+        },
+        "measured": {
+          "media_type": "image/png",
+          "extension": "png",
+          "width": 64,
+          "height": 64,
+          "validation": "DECODED"
+        }
+      }
+    ],
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.cutout",
+      "adapter": "LOCAL_CPU_MASK",
+      "parameters": {},
+      "automatic_fallback": false,
+      "output_profile": "PNG_RGBA8_STORED_DEFLATE",
+      "mask_policy": "WHITE_KEEP_BLACK_TRANSPARENT_ZERO",
+      "recipe_digest": "eb5176697bb328fa4226bccfad62c9f683c711fea36871d9b286c189196da80a"
+    },
+    "command": {
+      "operation_id": "m5.image.cutout",
+      "request_id": "mounted-cutout",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {},
+      "source_snapshots": [
+        {
+          "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image",
+          "reference_only": true
+        },
+        {
+          "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "product_acceptance": "LOCAL_REQUIRED",
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "preview_digest": "afc79a5ee1b6620ba1dab9cde2c882d006c609b9cca87638fc6baebc1625ae16"
+  },
+  "queued": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "processing_proof": null,
+    "id": "619d6e5b-776a-4d09-9a40-b6a8e9483de1",
+    "novel_id": "r3-mounted-541a5b4c31a749a9a6cb7d909bb1ece9",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "065be811d2508b22700e885d930332d947af21ef2417827f6d01624ca0dd97b5",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-13T07:51:31.379176+00:00",
+    "updated_at": "2026-10-13T07:51:31.379188+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.cutout",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "asset_kind": "image"
+      },
+      {
+        "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+        "asset_kind": "image"
+      }
+    ],
+    "command": {
+      "operation_id": "m5.image.cutout",
+      "request_id": "mounted-cutout",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {},
+      "source_snapshots": [
+        {
+          "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image",
+          "reference_only": true
+        },
+        {
+          "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.cutout",
+      "adapter": "LOCAL_CPU_MASK",
+      "parameters": {},
+      "automatic_fallback": false,
+      "output_profile": "PNG_RGBA8_STORED_DEFLATE",
+      "mask_policy": "WHITE_KEEP_BLACK_TRANSPARENT_ZERO",
+      "recipe_digest": "eb5176697bb328fa4226bccfad62c9f683c711fea36871d9b286c189196da80a"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "mounted-cutout",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "executed": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "processing_proof": {
+      "contract": "cpu-binary-mask-cutout/1",
+      "width": 64,
+      "height": 64,
+      "source_sha256": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+      "mask_sha256": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+      "output_sha256": "7ba840b090ff63edf2f60fcbab3196886560b4ff830e87c75c0198831b414abc",
+      "output_bytes": 16516,
+      "keep_pixels": 512,
+      "remove_pixels": 3584
+    },
+    "id": "619d6e5b-776a-4d09-9a40-b6a8e9483de1",
+    "novel_id": "r3-mounted-541a5b4c31a749a9a6cb7d909bb1ece9",
+    "branch_id": null,
+    "version": 4,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "065be811d2508b22700e885d930332d947af21ef2417827f6d01624ca0dd97b5",
+    "receipt_digest": "9a03f3893363597e9a5b73ce537b47f6ba01ad5abfb0239d566ecd65f6c83d16",
+    "attempt": 1,
+    "created_at": "2026-10-13T07:51:31.379176+00:00",
+    "updated_at": "2026-10-13T07:51:31.471639+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.cutout",
+    "output_candidate": {
+      "id": "eeb4b49f-9cf1-46c6-9b01-eb694e235be2",
+      "version": 1,
+      "digest": "7ba840b090ff63edf2f60fcbab3196886560b4ff830e87c75c0198831b414abc",
+      "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "asset_kind": "image"
+      },
+      {
+        "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+        "asset_kind": "image"
+      }
+    ],
+    "command": {
+      "operation_id": "m5.image.cutout",
+      "request_id": "mounted-cutout",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {},
+      "source_snapshots": [
+        {
+          "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image",
+          "reference_only": true
+        },
+        {
+          "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.cutout",
+      "adapter": "LOCAL_CPU_MASK",
+      "parameters": {},
+      "automatic_fallback": false,
+      "output_profile": "PNG_RGBA8_STORED_DEFLATE",
+      "mask_policy": "WHITE_KEEP_BLACK_TRANSPARENT_ZERO",
+      "recipe_digest": "eb5176697bb328fa4226bccfad62c9f683c711fea36871d9b286c189196da80a"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "mounted-cutout",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "processing_proof": {
+      "contract": "cpu-binary-mask-cutout/1",
+      "width": 64,
+      "height": 64,
+      "source_sha256": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+      "mask_sha256": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+      "output_sha256": "7ba840b090ff63edf2f60fcbab3196886560b4ff830e87c75c0198831b414abc",
+      "output_bytes": 16516,
+      "keep_pixels": 512,
+      "remove_pixels": 3584
+    },
+    "id": "619d6e5b-776a-4d09-9a40-b6a8e9483de1",
+    "novel_id": "r3-mounted-541a5b4c31a749a9a6cb7d909bb1ece9",
+    "branch_id": null,
+    "version": 6,
+    "status": "APPROVED",
+    "request_digest": "065be811d2508b22700e885d930332d947af21ef2417827f6d01624ca0dd97b5",
+    "receipt_digest": "9a03f3893363597e9a5b73ce537b47f6ba01ad5abfb0239d566ecd65f6c83d16",
+    "attempt": 1,
+    "created_at": "2026-10-13T07:51:31.379176+00:00",
+    "updated_at": "2026-10-13T07:51:31.567303+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.cutout",
+    "output_candidate": {
+      "id": "eeb4b49f-9cf1-46c6-9b01-eb694e235be2",
+      "version": 1,
+      "digest": "7ba840b090ff63edf2f60fcbab3196886560b4ff830e87c75c0198831b414abc",
+      "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "asset_kind": "image"
+      },
+      {
+        "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+        "asset_kind": "image"
+      }
+    ],
+    "command": {
+      "operation_id": "m5.image.cutout",
+      "request_id": "mounted-cutout",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {},
+      "source_snapshots": [
+        {
+          "id": "349ef256-750e-46ce-a496-2847a4b76a06",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image",
+          "reference_only": true
+        },
+        {
+          "id": "e921e4a1-92c7-4322-a9a6-526e395707b2",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.cutout",
+      "adapter": "LOCAL_CPU_MASK",
+      "parameters": {},
+      "automatic_fallback": false,
+      "output_profile": "PNG_RGBA8_STORED_DEFLATE",
+      "mask_policy": "WHITE_KEEP_BLACK_TRANSPARENT_ZERO",
+      "recipe_digest": "eb5176697bb328fa4226bccfad62c9f683c711fea36871d9b286c189196da80a"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "mounted-cutout",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  }
+}

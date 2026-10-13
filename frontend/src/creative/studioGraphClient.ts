@@ -1,6 +1,7 @@
 import { ApiError, type CollaborationContext } from '../api';
+import { GRAPH_MEDIA_OPERATIONS } from './studioGraphTypes';
 import type {
-  StudioGraphAction, StudioGraphActionInput, StudioGraphCatalogDefinition, StudioGraphDefinition,
+  RecordedGraphMediaCommand, GraphMediaOperation, StudioGraphAction, StudioGraphActionInput, StudioGraphCatalogDefinition, StudioGraphDefinition,
   StudioGraphDefinitionId, StudioGraphDraft, StudioGraphNode, StudioGraphOutput, StudioGraphParameters,
   StudioGraphParameterSchema, StudioGraphPort, StudioGraphPosition, StudioGraphPreflight,
   StudioGraphPreflightInput, StudioGraphCreateInput, StudioGraphSaveInput, StudioGraphRunCreateInput,
@@ -12,7 +13,7 @@ import type {
   StudioGraphMediaPreview, StudioGraphMediaJob, StudioGraphMediaExecution,
   GraphTimelineProductionPreview,
 } from './studioGraphTypes';
-import type { MediaOperation, ProductionJob, ProductionPreview, RecordedMediaCommand, RecordedProductionSource, ProductionRecipe } from './studioProductionClient';
+import type { ProductionJob, ProductionPreview, RecordedProductionSource, ProductionRecipe } from './studioProductionClient';
 import { graphModelCapabilities, graphModelRuntime } from './studioGraphModelContract';
 import { graphTextAssetOutput } from './studioGraphTextAssetContract';
 import { createStudioProviderClient, type StudioProviderClient } from './studioProviderClient';
@@ -59,10 +60,9 @@ function nodePorts(kind: StudioGraphDefinitionId, mediaSchema: boolean): { input
   if (mediaSchema && kind === 'media_generate') return { inputs: { text: 'TEXT', draft: 'DRAFT', source: 'ASSET_REF' }, outputs: { candidate: 'MEDIA_CANDIDATE' } };
   return ports[kind];
 }
-const mediaOperations: readonly MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v',
-  'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
+const mediaOperations: readonly GraphMediaOperation[] = GRAPH_MEDIA_OPERATIONS;
 const mediaParameterKeys = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms'];
-const parametersForOperation: Record<MediaOperation, readonly string[]> = {
+const parametersForOperation: Record<GraphMediaOperation, readonly string[]> = {
   'm5.image.t2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
   'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
   'm7.video.t2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
@@ -143,10 +143,10 @@ function position(value: unknown, input = false): StudioGraphPosition {
   const row = record(value, input);
   return { x: number(row.x, -100_000, 100_000, input), y: number(row.y, -100_000, 100_000, input) };
 }
-function mediaOperation(value: unknown, input = false): MediaOperation {
-  if (!mediaOperations.includes(value as MediaOperation)) invalid(input); return value as MediaOperation;
+function mediaOperation(value: unknown, input = false): GraphMediaOperation {
+  if (!mediaOperations.includes(value as GraphMediaOperation)) invalid(input); return value as GraphMediaOperation;
 }
-function mediaParameterValues(value: unknown, operation: MediaOperation, input = false): NonNullable<StudioGraphParameters['parameters']> {
+function mediaParameterValues(value: unknown, operation: GraphMediaOperation, input = false): NonNullable<StudioGraphParameters['parameters']> {
   const row = record(value, input), result: NonNullable<StudioGraphParameters['parameters']> = {};
   if (Object.keys(row).some(key => !mediaParameterKeys.includes(key))) invalid(input);
   for (const [key, value] of Object.entries(row)) {
@@ -268,7 +268,7 @@ function schema(value: unknown, kind: StudioGraphDefinitionId): StudioGraphParam
       || Object.keys(properties).some(key => !parameterKeys[kind].includes(key))) invalid();
     const operation = record(properties.operation_id);
     if (operation.type !== 'string' || !Array.isArray(operation.enum) || operation.enum.length !== mediaOperations.length
-      || operation.enum.some(item => !mediaOperations.includes(item as MediaOperation))) invalid();
+      || operation.enum.some(item => !mediaOperations.includes(item as GraphMediaOperation))) invalid();
     // This is a bounded display projection. The executable parameter validator above is code-owned.
     return { type: 'object', additionalProperties: false, properties: {
       operation_id: { type: 'string', enum: [...mediaOperations] }, provider_id: { type: 'string', maxLength: 240 },
@@ -370,7 +370,7 @@ function mediaSource(value: unknown): RecordedProductionSource {
   if (row.kind !== 'ASSET' || !['image', 'video', 'audio'].includes(row.asset_kind as string)) invalid();
   return { ...base, kind: 'ASSET', asset_kind: row.asset_kind as 'image' | 'video' | 'audio' };
 }
-function recordedMediaCommand(value: unknown): RecordedMediaCommand {
+function recordedMediaCommand(value: unknown): RecordedGraphMediaCommand {
   const row = record(value); closed(row, ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note']);
   const operation = mediaOperation(row.operation_id), resolved = mediaParameterValues(row.parameters, operation);
   const requestId = text(row.request_id, 100); if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(requestId)) invalid();

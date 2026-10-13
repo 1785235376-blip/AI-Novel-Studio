@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from ..experimental.store import canonical
 from ..services.v1_capability_service import V1CapabilityService, WorkflowRunIn
 from .production_contracts import Name
-from .production_execution_models import MediaOperation, MediaParameters
+from .production_execution_models import GraphMediaOperation, MediaParameters
 
 MAX_NODES = 16
 MAX_MEDIA_NODES = 24
@@ -82,7 +82,7 @@ class AssetParameters(Strict):
 
 class MediaNodeParameters(Strict):
     """Configuration only; the runtime constructs the original MediaCommand."""
-    operation_id: MediaOperation
+    operation_id: GraphMediaOperation
     provider_id: Name | None = None
     model_id: Name | None = None
     prompt: str = Field(default="", max_length=16000)

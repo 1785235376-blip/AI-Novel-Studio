@@ -15,7 +15,7 @@ CONTRACT = "studio-production-operation-contracts/1"
 EVIDENCE = "NOT_EVALUATED_BY_THIS_ENDPOINT"
 Milestone = Literal["M4", "M5", "M6", "M7", "M8", "M9"]
 OperationId = Literal[
-    "m4.text.generate", "m5.image.generate", "m5.image.edit", "m5.image.t2i", "m5.image.i2i",
+    "m4.text.generate", "m5.image.generate", "m5.image.edit", "m5.image.t2i", "m5.image.i2i", "m5.image.cutout",
     "m6.director.propose", "m6.director.model", "m6.storyboard.derive", "m7.video.plan",
     "m7.video.generate", "m7.video.t2v", "m7.video.i2v", "m7.video.v2v", "m8.audio.speech",
     "m8.audio.import", "m8.audio.music", "m8.audio.effects", "m8.audio.trim",
@@ -623,6 +623,22 @@ def _operations():
     subtitle.input_requirements.append("原 Studio 时间线另可导入／导出闭合 SRT／WebVTT；预览不写，替换已有字幕须明确确认损失与准确版本。")
     subtitle.output_requirements.append("原 SubtitleTimelineService 持久处理任务可注入 V2 显式配置的受控 FFmpeg 烧录；本地 ASR 执行代码经原 Registry AUDIO 与可信 Host model admission，未配置则拒绝执行。")
     subtitle.limitations.append("真实 ASR 需要可靠的已启用模型／runtime 身份准入；whisper.cpp wire 本身不证明模型哈希。Forced alignment engine 仍 NOT_CONFIGURED，不能把 ASR 段时间戳写成强制对齐。")
+    # Standalone only: deliberately outside the shared Graph descriptor loop.
+    operations.append(_existing("m5.image.cutout", "本地手工蒙版抠图",
+        _owner("app.creative.production_execution", "ProductionExecutionService", "preview", "create", "execute", "get", "cancel", "review", "reconcile"), [
+            _action("preview", "POST", production + "/preview", "app.creative.production_execution.ProductionExecutionService.preview", "MediaCommand", permission="domain.read", host=True),
+            _action("queue", "POST", production + "/jobs", "app.creative.production_execution.ProductionExecutionService.create", "MediaCreate", host=True),
+            _action("execute", "POST", production + "/jobs/image/{jid}/execute", "app.creative.production_execution.ProductionExecutionService.execute", "MediaJobAction", host=True),
+            _action("receipt", "GET", production + "/jobs/image/{jid}", "app.creative.production_execution.ProductionExecutionService.get", permission="domain.read", host=True),
+            _action("cancel", "POST", production + "/jobs/image/{jid}/cancel", "app.creative.production_execution.ProductionExecutionService.cancel", "MediaJobAction", host=True),
+            _action("review", "POST", production + "/jobs/image/{jid}/review", "app.creative.production_execution.ProductionExecutionService.review", "MediaReview", permission="domain.review", host=True),
+            _action("reconcile", "POST", production + "/jobs/image/{jid}/reconcile", "app.creative.production_execution.ProductionExecutionService.reconcile", "MediaJobAction", host=True)],
+        inputs=["仅两个有序图像快照：原 PNG、已保存手工二值蒙版；provider/model 为空、prompt/parameters 为空、allow_cloud=false。", "8 位非交错灰度/RGB/灰度透明/RGBA PNG；64–1024 像素且为 8 的倍数；拒绝附加块、调色板、动画和越界数据。"],
+        sources=["原 AssetLibrary 核验蒙版不可变来源、原图与蒙版准确版本/摘要、当前作用域与 Host 权限；保留两份快照。"],
+        outputs=["原 ImageJobService 保存确定性 RGBA PNG 私有候选。白色保留原像素与 alpha，黑色输出零 RGBA；不调用 provider、网络、子进程或 Pillow。"],
+        review=["单独预览、入队、执行，核对候选摘要后人工明确批准；中断回执不自动重放。", "仅此 CPU 操作支持 RUNNING 协作式取消；已保存候选保持私有。"],
+        limitations=["仅独立 IMAGE 工作区；不加入 Graph 闭合媒体操作集合；不是自动分割、羽化或通用图片编辑。", "真实用户浏览器与 Windows 验收另行记录，产品验收仍 LOCAL_REQUIRED。"],
+        blockers=["M4_TO_M9_ORDERED_ACCEPTANCE_REQUIRED"]))
     return [replacements.get(operation.id, operation) for operation in operations]
 
 

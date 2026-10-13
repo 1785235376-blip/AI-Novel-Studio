@@ -1,7 +1,10 @@
 import type { StudioGraphResultStorage, StudioGraphTextAssetOutput } from './studioGraphTextAssetTypes';
-import type { MediaOperation, ProductionJob, ProductionPreview, RecordedMediaCommand } from './studioProductionClient';
+import type { ProductionJob, ProductionPreview, RecordedMediaCommand } from './studioProductionClient';
 import type { GraphTimelineBinding, GraphTimelineCommand, GraphTimelineEdit, GraphTimelineSnapshot } from './studioGraphTimelineContract';
 import type { TimelineExportProfile } from './studioTimelineExportTypes';
+export const GRAPH_MEDIA_OPERATIONS = ['m5.image.t2i', 'm5.image.i2i', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v',
+  'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'] as const;
+export type GraphMediaOperation = typeof GRAPH_MEDIA_OPERATIONS[number];
 /** Finite, code-owned contracts. A catalog entry cannot register executable code. */
 export type StudioGraphDefinitionId = 'text_input' | 'text_reference' | 'draft_prepare'
   | 'manual_transform' | 'director_note' | 'human_review' | 'asset_reference' | 'text_generate' | 'media_generate' | 'media_review' | 'timeline_export';
@@ -20,7 +23,7 @@ export type StudioGraphParameters = {
   version?: number;
   digest?: string;
   kind?: 'image' | 'video' | 'audio';
-  operation_id?: MediaOperation;
+  operation_id?: GraphMediaOperation;
   provider_id?: string | null;
   model_id?: string | null;
   prompt?: string;
@@ -231,13 +234,14 @@ export type StudioGraphModelRefreshInput = { expected_version: number };
 export type StudioGraphMediaNodeRuntime = {
   node_id: string; status: string; preview: StudioGraphMediaPreview | null; execution: StudioGraphMediaExecution | null;
 };
-export type GraphTimelineProductionPreview = Omit<ProductionPreview, 'command' | 'operation_id' | 'provider'> & {
+export type GraphTimelineProductionPreview = Omit<ProductionPreview, 'command' | 'operation_id' | 'provider' | 'sources'> & {
   operation_id: 'm9.timeline.multitrack'; command: GraphTimelineCommand; provider: null;
   timeline_snapshot: GraphTimelineSnapshot; source_timeline_snapshot: GraphTimelineSnapshot; export_profile: TimelineExportProfile;
   timeline_edit_proof: { request_id: string; request_digest: string; input_version: number; input_digest: string; output_digest: string } | null;
   sources: { snapshot: { id: string; kind: 'ASSET'; asset_kind: 'image' | 'video' | 'audio'; version: number; digest: string }; measured: null }[];
 };
-export type StudioGraphMediaPreview = { node_id: string; input_digest: string; preview_digest: string; command: RecordedMediaCommand | GraphTimelineCommand; production_preview: ProductionPreview | GraphTimelineProductionPreview };
+export type RecordedGraphMediaCommand = Omit<RecordedMediaCommand, 'operation_id'> & { operation_id: GraphMediaOperation };
+export type StudioGraphMediaPreview = { node_id: string; input_digest: string; preview_digest: string; command: RecordedGraphMediaCommand | GraphTimelineCommand; production_preview: ProductionPreview | GraphTimelineProductionPreview };
 export type StudioGraphMediaJob = Pick<ProductionJob, 'id' | 'version' | 'status' | 'request_digest' | 'receipt_digest' | 'output_candidate' | 'approved_asset_version' | 'error_code' | 'needs_reconciliation' | 'execution_state' | 'remote_compute_may_continue'> & { cancellation_mode?: string };
 export type StudioGraphMediaExecution = { node_id: string; owner: 'image' | 'video' | 'audio' | 'timeline'; job_id: string | null; status: string;
   receipt_state: 'RECORDED' | 'UNKNOWN_NO_AUTOMATIC_REPLAY'; send_reserved: boolean; job: StudioGraphMediaJob | null;

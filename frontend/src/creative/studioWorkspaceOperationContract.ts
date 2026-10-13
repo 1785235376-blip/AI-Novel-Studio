@@ -66,6 +66,7 @@ function operation(value: unknown): StudioProductionOperation {
   if (!blockers.length || new Set(actions.map(item => item.id)).size !== actions.length
     || row.capability_status === 'EXISTING_OWNER_CONTRACT' && !selectedOwner
     || row.capability_status === 'RESERVED_INTERFACE' && (selectedOwner !== null || actions.length !== 0)) invalid();
+  if (id === 'm5.image.cutout' && actions.some(item => item.id.startsWith('graph_') || /\/graphs(?:\/|$)/.test(item.path))) invalid();
   const references = object(row.interface_contracts, Object.keys(STUDIO_PRODUCTION_INTERFACE_REFERENCES));
   for (const key of Object.keys(STUDIO_PRODUCTION_INTERFACE_REFERENCES) as (keyof typeof STUDIO_PRODUCTION_INTERFACE_REFERENCES)[]) {
     if (references[key] !== STUDIO_PRODUCTION_INTERFACE_REFERENCES[key]) invalid();

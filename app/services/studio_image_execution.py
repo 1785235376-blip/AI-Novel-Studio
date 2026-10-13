@@ -21,7 +21,7 @@ CONTRACT = "studio-image-execution/1"
 MAX_BYTES = 25 * 1024 * 1024
 MAX_VERSION = 2**53 - 1
 STATES = {"QUEUED", "RUNNING", "FAILED", "UNKNOWN", "AWAITING_REVIEW", "REVIEWING", "APPROVED", "CANCELLED"}
-OPERATIONS = {"m5.image.t2i", "m5.image.i2i"}
+OPERATIONS = {"m5.image.t2i", "m5.image.i2i", "m5.image.cutout"}
 IDENTITY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$")
 DIGEST = re.compile(r"^[a-f0-9]{64}$")
 
@@ -69,6 +69,10 @@ def _payload(body):
     required = {"operation_id", "provider_id", "model_id", "prompt", "parameters"}
     if not isinstance(body, dict) or set(body) != required or body["operation_id"] not in OPERATIONS:
         raise ValueError("STUDIO_IMAGE_REQUEST_INVALID")
+    if body["operation_id"] == "m5.image.cutout":
+        if body["provider_id"] is not None or body["model_id"] is not None or body["prompt"] != "" or body["parameters"] != {}:
+            raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
+        return copy.deepcopy(body)
     _text(body["provider_id"]); _text(body["model_id"])
     if not isinstance(body["prompt"], str) or not body["prompt"].strip() or len(body["prompt"]) > 16_000:
         raise ValueError("STUDIO_IMAGE_PROMPT_INVALID")
@@ -121,7 +125,12 @@ def _context(value, body, actor):
     images = [source for source in sources if source.get("asset_kind") == "image"]
     if body["operation_id"] == "m5.image.i2i" and not 1 <= len(images) <= 5:
         raise ValueError("STUDIO_IMAGE_REFERENCE_COUNT_INVALID")
-    if not isinstance(value["provider_binding"], dict) or not value["provider_binding"]:
+    if body["operation_id"] == "m5.image.cutout":
+        if (value["provider_binding"] is not None or "graph_binding" in value or len(sources) != 2 or len(images) != 2):
+            raise ValueError("STUDIO_IMAGE_CUTOUT_INPUT_REQUIRED")
+        if not isinstance(value.get("command"), dict) or value["command"].get("allow_cloud") is not False:
+            raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
+    elif not isinstance(value["provider_binding"], dict) or not value["provider_binding"]:
         raise ValueError("STUDIO_IMAGE_PROVIDER_BINDING_REQUIRED")
     if not isinstance(value["rights"], (dict, str)):
         raise ValueError("STUDIO_IMAGE_RIGHTS_INVALID")
@@ -151,6 +160,32 @@ def _context(value, body, actor):
     return copy.deepcopy(value)
 
 
+def _cutout_proof(row):
+    proof = row.get("processing_proof")
+    ready = row.get("publication_ready")
+    if proof is None:
+        if ready is not None or row.get("output_asset_id"):
+            raise ValueError("STUDIO_IMAGE_CUTOUT_PROOF_REQUIRED")
+        return
+    from .studio_image_cutout import CONTRACT as CUTOUT_CONTRACT, MAX_OUTPUT_BYTES
+    from .studio_image_mask_authoring import dimensions
+    fields = {"contract", "width", "height", "source_sha256", "mask_sha256", "output_sha256",
+        "output_bytes", "keep_pixels", "remove_pixels"}
+    if not isinstance(proof, dict) or set(proof) != fields or proof["contract"] != CUTOUT_CONTRACT:
+        raise ValueError("STUDIO_IMAGE_CUTOUT_PROOF_INVALID")
+    dimensions(proof["width"], proof["height"])
+    for key in ("source_sha256", "mask_sha256", "output_sha256"): _require_digest(proof[key])
+    if (any(type(proof[key]) is not int or proof[key] <= 0 for key in ("keep_pixels", "remove_pixels", "output_bytes"))
+            or proof["keep_pixels"] + proof["remove_pixels"] != proof["width"] * proof["height"]
+            or proof["output_bytes"] > MAX_OUTPUT_BYTES
+            or proof["output_bytes"] != ((proof["width"] * 4 + 1) * proof["height"]
+                + 5 * (((proof["width"] * 4 + 1) * proof["height"] + 65534) // 65535) + 63)
+            or [proof["source_sha256"], proof["mask_sha256"]] != [source["digest"] for source in row["context"]["sources"]]
+            or ready != {"kind": "image", "output_digest": proof["output_sha256"], "output_bytes": proof["output_bytes"], "media_type": "image/png"}
+            or (row.get("output_digest") is not None and row["output_digest"] != proof["output_sha256"])):
+        raise ValueError("STUDIO_IMAGE_CUTOUT_PROOF_INVALID")
+
+
 def _binding(row):
     return _digest({key: row[key] for key in ("id", "novel_id", "branch_id", "owner_actor_id", "body", "context", "request_digest")})
 
@@ -164,6 +199,7 @@ def _owned(service, row, nid, branch, actor):
     context = _context(row.get("context"), body, actor)
     if row["request_digest"] != context["request_digest"]:
         raise ValueError("STUDIO_IMAGE_REQUEST_BINDING_CHANGED")
+    if body["operation_id"] == "m5.image.cutout": _cutout_proof(row)
     if row.get("status") not in STATES or row.get("binding_digest") != _binding(row):
         raise ValueError("STUDIO_IMAGE_JOB_BINDING_CHANGED")
     return row
@@ -205,7 +241,7 @@ def _execution_lease(service, job_id):
         yield
 
 
-def create(service, nid, branch, actor, body, context, guard):
+def create(service, nid, branch, actor, body, context, guard, *, source_phase=None):
     if not callable(guard) or service.owner_actor_id != actor or not actor:
         raise ValueError("STUDIO_IMAGE_AUTHORITY_REQUIRED")
     body = _payload(body); context = _context(context, body, actor)
@@ -231,7 +267,20 @@ def create(service, nid, branch, actor, body, context, guard):
         row["binding_digest"] = _binding(row)
         rows.append(row)
         return copy.deepcopy(row)
-    value = service._mutate(nid, branch, add)
+    if body["operation_id"] == "m5.image.cutout":
+        if not callable(source_phase): raise ValueError("STUDIO_IMAGE_CUTOUT_SOURCE_PHASE_REQUIRED")
+        # Original queue -> source -> asset -> project order; hold the input
+        # lease through atomic queue persistence, including idempotent retries.
+        with service._lock, workspace_mutation(service.root, "image-jobs"), source_phase():
+            guard()
+            def checked_add(rows):
+                result = add(rows)
+                guard()
+                return result
+            value = service._mutate(nid, branch, checked_add)
+            guard()
+    else:
+        value = service._mutate(nid, branch, add)
     guard()
     return value
 
@@ -264,7 +313,8 @@ def list_jobs(service, nid, branch, actor, context, guard):
 def cancel(service, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard):
     """Cancel only local ownership; preserve all source/candidate evidence.
 
-    RUNNING cannot be cancelled here: a remote provider may already own work.
+    Only the bounded checkpointed CPU operation can cancel RUNNING here.
+    Provider RUNNING jobs may already own remote work and remain unchanged.
     UNKNOWN cancellation discards local adoption, not remote execution.
     """
     if not callable(guard):
@@ -275,10 +325,12 @@ def cancel(service, nid, branch, actor, job_id, *, expected_version, expected_re
         _cas(row, expected_version, expected_request_digest)
         if row["status"] == "CANCELLED":
             return copy.deepcopy(row)
-        if row["status"] not in {"QUEUED", "AWAITING_REVIEW", "UNKNOWN"}:
+        cpu = row["body"]["operation_id"] == "m5.image.cutout"
+        if row["status"] not in ({"QUEUED", "RUNNING", "AWAITING_REVIEW", "UNKNOWN"} if cpu else {"QUEUED", "AWAITING_REVIEW", "UNKNOWN"}):
             raise ValueError("STUDIO_IMAGE_NOT_CANCELLABLE")
         return copy.deepcopy(_advance(row, status="CANCELLED", local_result_discarded=True,
-            cancellation_mode="LOCAL_RESULT_DISCARD", remote_cancel_confirmed=False, cancelled_at=now(), error_code=None))
+            cancellation_mode="COOPERATIVE_LOCAL_CANCEL" if cpu else "LOCAL_RESULT_DISCARD",
+            remote_cancel_confirmed=False, cancelled_at=now(), error_code=None))
     value = service._mutate(nid, branch, change)
     guard()
     return value
@@ -297,7 +349,9 @@ def reconcile(service, nid, branch, actor, job_id, *, expected_version, expected
             value = _reconcile_review(service, nid, branch, actor, job_id, captured, recover_review)
             guard()
             return value
-        if captured["status"] not in {"RUNNING", "UNKNOWN"}:
+        cancelled_cpu = (captured["status"] == "CANCELLED" and captured["body"]["operation_id"] == "m5.image.cutout"
+            and isinstance(captured.get("publication_ready"), dict) and not captured.get("output_asset_id"))
+        if captured["status"] not in {"RUNNING", "UNKNOWN"} and not cancelled_cpu:
             raise ValueError("STUDIO_IMAGE_NOT_RECONCILABLE")
         candidate = None
         ready = captured.get("publication_ready")
@@ -324,11 +378,12 @@ def reconcile(service, nid, branch, actor, job_id, *, expected_version, expected
                     or row.get("publication_ready") != ready or row["context"] != captured["context"]):
                 raise ValueError("STUDIO_IMAGE_RECONCILE_RECEIPT_CHANGED")
             if candidate is not None:
-                _advance(row, status="AWAITING_REVIEW", execution_token=None, output_asset_id=candidate["id"],
+                _advance(row, status="CANCELLED" if cancelled_cpu else "AWAITING_REVIEW", execution_token=None, output_asset_id=candidate["id"],
                     output_asset_version=candidate["version"], candidate_asset_version=candidate["version"],
                     output_digest=candidate["sha256"], review_state="VERIFIED_PRIVATE_CANDIDATE", error_code=None)
                 row["receipt_digest"] = _digest(_receipt(row))
                 return copy.deepcopy(row)
+            if cancelled_cpu: return copy.deepcopy(row)
             return copy.deepcopy(_advance(row, status="UNKNOWN", execution_token=None,
                 error_code="STUDIO_IMAGE_INTERRUPTED_DISPATCH"))
         value = service._mutate(nid, branch, change)
@@ -437,7 +492,9 @@ def _receipt(job):
         "provider_id": job["body"]["provider_id"], "model_id": job["body"]["model_id"],
         "source_snapshots": copy.deepcopy(job["context"]["sources"]),
         "candidate_asset_id": job["output_asset_id"], "candidate_asset_version": job["candidate_asset_version"],
-        "output_digest": job["output_digest"], "product_acceptance": "LOCAL_REQUIRED"}
+        "output_digest": job["output_digest"], "product_acceptance": "LOCAL_REQUIRED",
+        **({"processing_proof": copy.deepcopy(job.get("processing_proof"))}
+           if job["body"]["operation_id"] == "m5.image.cutout" else {})}
 
 
 def execute(service, nid, branch, actor, job_id, registry, *, expected_version, expected_request_digest,
@@ -485,52 +542,79 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                 job = service._mutate(nid, branch, intent)
                 sent = True
         try:
-            provider = registry.get(job["body"]["provider_id"])
-            if getattr(provider, "supports_dispatch_guard", False) is not True:
-                raise ValueError("STUDIO_IMAGE_PROVIDER_GUARD_UNSUPPORTED")
-            guard(); source_guard(); dispatch_guard(job, provider); current()
-            images = []
-            if job["body"]["operation_id"] == "m5.image.i2i":
+            cpu = job["body"]["operation_id"] == "m5.image.cutout"
+            proof = None
+            if cpu:
+                from .studio_image_cutout import render_cutout
+                guard(); source_guard(); dispatch_guard(); current()
                 values = read_images()
-                expected_count = sum(source.get("asset_kind") == "image" for source in job["context"]["sources"])
-                if not isinstance(values, list) or len(values) != expected_count or not 1 <= len(values) <= 5:
-                    raise ValueError("STUDIO_IMAGE_REFERENCES_CHANGED")
-                total = 0
-                references = [source for source in job["context"]["sources"] if source.get("asset_kind") == "image"]
-                for data, reference in zip(values, references):
-                    if not isinstance(data, bytes) or not data:
-                        raise ValueError("STUDIO_IMAGE_REFERENCE_INVALID")
-                    total += len(data)
-                    if total > MAX_BYTES:
-                        raise ValueError("STUDIO_IMAGE_REFERENCES_LIMIT")
-                    if hashlib.sha256(data).hexdigest() != reference["digest"]:
-                        raise ValueError("STUDIO_IMAGE_REFERENCE_DIGEST_CHANGED")
-                    measured = inspect_image(data)
-                    images.append("data:" + measured["media_type"] + ";base64," + base64.b64encode(data).decode("ascii"))
-                if not callable(getattr(provider, "edit", None)):
-                    raise ValueError("STUDIO_IMAGE_EDIT_UNSUPPORTED")
-            request = AssetGenerationRequest(job["body"]["provider_id"], job["body"]["model_id"],
-                job["body"]["prompt"], job["id"], copy.deepcopy(job["body"]["parameters"]), dispatch_guard=last_mile)
-            invoked = True
-            result = provider.edit(request, images) if images else provider.generate(request)
-            if not sent:
-                raise ValueError("STUDIO_IMAGE_GUARDED_DISPATCH_NOT_OBSERVED")
-            if result.provider_id != request.provider_id or result.model_id != request.model_id:
-                raise ValueError("STUDIO_IMAGE_PROVIDER_RESULT_CHANGED")
-            guard(); source_guard(); dispatch_guard(job, provider); current()
-            if registry.get(job["body"]["provider_id"]) is not provider:
-                raise ValueError("STUDIO_IMAGE_PROVIDER_CHANGED")
-            data, measured = _decode(result.asset_uri, provider)
-            guard(); source_guard(); dispatch_guard(job, provider); current()
+                if (not isinstance(values, list) or len(values) != 2
+                        or any(not isinstance(data, bytes) or hashlib.sha256(data).hexdigest() != source["digest"]
+                               for data, source in zip(values, job["context"]["sources"]))):
+                    raise ValueError("STUDIO_IMAGE_CUTOUT_SOURCE_CHANGED")
+                checkpoints = 0
+                def checkpoint():
+                    nonlocal checkpoints
+                    checkpoints += 1
+                    # Each call covers at most one bounded scanline/chunk. Poll
+                    # cancellation frequently without re-reading source pixels.
+                    if checkpoints % 16 == 0:
+                        guard(); current()
+                checkpoint(); guard(); current()
+                data, proof = render_cutout(*values, checkpoint=checkpoint)
+                measured = {"kind": "image", "media_type": "image/png", "extension": "png",
+                    "width": proof["width"], "height": proof["height"], "byte_count": len(data)}
+                guard(); source_guard(); dispatch_guard(); current()
+            else:
+                provider = registry.get(job["body"]["provider_id"])
+                if getattr(provider, "supports_dispatch_guard", False) is not True:
+                    raise ValueError("STUDIO_IMAGE_PROVIDER_GUARD_UNSUPPORTED")
+                guard(); source_guard(); dispatch_guard(job, provider); current()
+                images = []
+                if job["body"]["operation_id"] == "m5.image.i2i":
+                    values = read_images()
+                    expected_count = sum(source.get("asset_kind") == "image" for source in job["context"]["sources"])
+                    if not isinstance(values, list) or len(values) != expected_count or not 1 <= len(values) <= 5:
+                        raise ValueError("STUDIO_IMAGE_REFERENCES_CHANGED")
+                    total = 0
+                    references = [source for source in job["context"]["sources"] if source.get("asset_kind") == "image"]
+                    for data, reference in zip(values, references):
+                        if not isinstance(data, bytes) or not data:
+                            raise ValueError("STUDIO_IMAGE_REFERENCE_INVALID")
+                        total += len(data)
+                        if total > MAX_BYTES:
+                            raise ValueError("STUDIO_IMAGE_REFERENCES_LIMIT")
+                        if hashlib.sha256(data).hexdigest() != reference["digest"]:
+                            raise ValueError("STUDIO_IMAGE_REFERENCE_DIGEST_CHANGED")
+                        measured = inspect_image(data)
+                        images.append("data:" + measured["media_type"] + ";base64," + base64.b64encode(data).decode("ascii"))
+                    if not callable(getattr(provider, "edit", None)):
+                        raise ValueError("STUDIO_IMAGE_EDIT_UNSUPPORTED")
+                request = AssetGenerationRequest(job["body"]["provider_id"], job["body"]["model_id"],
+                    job["body"]["prompt"], job["id"], copy.deepcopy(job["body"]["parameters"]), dispatch_guard=last_mile)
+                invoked = True
+                result = provider.edit(request, images) if images else provider.generate(request)
+                if not sent:
+                    raise ValueError("STUDIO_IMAGE_GUARDED_DISPATCH_NOT_OBSERVED")
+                if result.provider_id != request.provider_id or result.model_id != request.model_id:
+                    raise ValueError("STUDIO_IMAGE_PROVIDER_RESULT_CHANGED")
+                guard(); source_guard(); dispatch_guard(job, provider); current()
+                if registry.get(job["body"]["provider_id"]) is not provider:
+                    raise ValueError("STUDIO_IMAGE_PROVIDER_CHANGED")
+                data, measured = _decode(result.asset_uri, provider)
+                guard(); source_guard(); dispatch_guard(job, provider); current()
             def publication_ready(rows):
                 row = _owned(service, service._find(rows, job_id), nid, branch, actor)
                 _cas(row, job["version"], job["request_digest"])
                 if row["status"] != "RUNNING" or row.get("execution_token") != job["execution_token"]:
                     raise ValueError("STUDIO_IMAGE_ATTEMPT_CHANGED")
-                return copy.deepcopy(_advance(row, publication_ready={"kind": "image",
-                    "output_digest": hashlib.sha256(data).hexdigest(), "output_bytes": len(data), "media_type": measured["media_type"]}))
+                fields = {"publication_ready": {"kind": "image", "output_digest": hashlib.sha256(data).hexdigest(),
+                    "output_bytes": len(data), "media_type": measured["media_type"]}, **({"processing_proof": proof} if cpu else {})}
+                if cpu: _cutout_proof({**row, **fields})
+                return copy.deepcopy(_advance(row, **fields))
             job = service._mutate(nid, branch, publication_ready)
             # No image-job mutex is held while entering source -> asset -> project.
+            if cpu: invoked = True
             candidate = _candidate(publish(data, "image", "studio-image-" + job_id + "." + measured["extension"], measured, job_id,
                 lambda: current(under_asset_lease=True)), job, data, measured)
             guard(); source_guard(); current()
@@ -545,7 +629,7 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                 return copy.deepcopy(row)
             return service._mutate(nid, branch, finish)
         except Exception as exc:
-            code = str(exc) if isinstance(exc, ValueError) and re.fullmatch(r"STUDIO_IMAGE_[A-Z0-9_]{1,100}", str(exc)) else "STUDIO_IMAGE_PROVIDER_REQUEST_FAILED"
+            code = str(exc) if isinstance(exc, ValueError) and re.fullmatch(r"(?:STUDIO_IMAGE_|IMAGE_MASK_|IMAGE_CUTOUT_)[A-Z0-9_]{1,100}", str(exc)) else ("STUDIO_IMAGE_CUTOUT_FAILED" if job["body"]["operation_id"] == "m5.image.cutout" else "STUDIO_IMAGE_PROVIDER_REQUEST_FAILED")
             def fail(rows):
                 row = _owned(service, service._find(rows, job_id), nid, branch, actor)
                 if row["status"] == "RUNNING" and row.get("execution_token") == job["execution_token"]:
@@ -559,6 +643,14 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                     _advance(row, status="UNKNOWN" if sent or invoked else "FAILED", error_code=code, **fields)
                     if candidate is not None:
                         row["receipt_digest"] = _digest(_receipt(row))
+                elif (row["status"] == "CANCELLED" and row["body"]["operation_id"] == "m5.image.cutout"
+                        and row.get("execution_token") == job["execution_token"] and candidate is not None
+                        and row.get("output_asset_id") is None):
+                    # The cancellation remains terminal. Retain an already
+                    # committed private result for inspection, never adoption.
+                    _advance(row, output_asset_id=candidate["id"], output_asset_version=candidate["version"],
+                        candidate_asset_version=candidate["version"], output_digest=candidate["sha256"])
+                    row["receipt_digest"] = _digest(_receipt(row))
                 return copy.deepcopy(row)
             return service._mutate(nid, branch, fail)
 

@@ -1,6 +1,7 @@
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import { MEDIA_OPERATION_LABELS, MEDIA_STATUS_LABELS, mediaProviderKey, useStudioMediaExecution, type MediaParameter, type StudioMediaExecutionProps } from './useStudioMediaExecution';
 import type { MediaOperation } from './studioProductionClient';
+import { usableCutoutSource } from './studioCutoutContract';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 
 export type { StudioMediaExecutionProps } from './useStudioMediaExecution';
@@ -15,7 +16,8 @@ const kindLabels = { image: '图片', video: '视频', audio: '音频' };
 export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const state = useStudioMediaExecution(props), draft = state.draft, job = state.selected;
   const providers = state.providers.filter(row => row.operation_id === draft.operation);
-  const sourceAssets = props.assets.filter(asset => asset.kind === state.requiredSourceKind && !asset.deleted_at);
+  const cutout = draft.operation === 'm5.image.cutout';
+  const sourceAssets = props.assets.filter(asset => asset.kind === state.requiredSourceKind && !asset.deleted_at && (!cutout || usableCutoutSource(asset) && !asset.manual_mask));
   const selectedIds = draft.sources.map(source => source.id), trim = draft.operation === 'm8.audio.trim';
   function parameter(name: MediaParameter) {
     const value = draft.parameters[name];
@@ -40,7 +42,8 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       <label>操作<select disabled={!state.canEdit} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
         {Object.entries(MEDIA_OPERATION_LABELS).map(([id, title]) => <option key={id} value={id}>{title}</option>)}
       </select></label>
-      {!trim && <>
+      {cutout && <p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。输出同尺寸 PNG；不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>}
+      {!trim && !cutout && <>
         <label>服务商与模型<select disabled={!state.canEdit || state.providerLoading} value={draft.providerKey} onChange={event => state.changeField('providerKey', event.target.value)}>
           <option value="">明确选择当前配置</option>{providers.map(row => <option key={mediaProviderKey(row)} value={mediaProviderKey(row)}>{row.provider_id} · {row.model_id} · {row.local ? '本地' : '云端'}</option>)}
         </select></label>
@@ -51,22 +54,27 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       </>}
       {state.requiredSourceKind && <fieldset disabled={!state.canEdit}><legend>{kindLabels[state.requiredSourceKind]}来源 · {draft.operation === 'm5.image.i2i' ? '选取 1–5 张' : '选取 1 个'}</legend>
         {!sourceAssets.length && <p>当前素材库没有对应类型的可用来源。</p>}
-        {sourceAssets.map(asset => <label key={asset.id}><input type="checkbox" checked={selectedIds.includes(asset.id)} onChange={event => state.selectSource(asset.id, event.target.checked)} />{asset.filename} · v{asset.version}</label>)}
+        {sourceAssets.map(asset => <label key={asset.id}><input type="checkbox" checked={cutout ? draft.sources[0]?.id === asset.id : selectedIds.includes(asset.id)} onChange={event => state.selectSource(asset.id, event.target.checked)} />{asset.filename} · v{asset.version}</label>)}
         {!!draft.sources.length && <><ul>{draft.sources.map(source => <li key={source.id}>已绑定来源 {props.assets.find(row => row.id === source.id)?.filename || source.id} · v{source.version}</li>)}</ul>
-          {!state.freshSources && <StatusMessage tone="warning">来源已变化或不可用，先重新选取版本再预览。</StatusMessage>}
+          {!state.freshSources && (!cutout || draft.sources.length === 2) && <StatusMessage tone="warning">来源已变化或不可用，先重新选取版本再预览。</StatusMessage>}
           <Button disabled={!state.canEdit} onClick={state.refreshSources}>明确选取当前来源版本</Button>
           <Button disabled={!state.canEdit} onClick={() => draft.sources.forEach(source => state.selectSource(source.id, false))}>移除已选来源</Button>
         </>}
       </fieldset>}
-      <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{state.provider || trim ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}{trim && '片段最长 120 秒；起止点还须在真实来源时长内。'}</p>{state.parameterNames.map(parameter)}
+      {cutout && <fieldset disabled={!state.canEdit}><legend>已保存的手绘二值遮罩</legend>
+        <label>绑定当前来源版本的遮罩<select value={draft.sources[1]?.id || ''} onChange={event => state.selectMask(event.target.value)}><option value="">明确选择一个已核对的遮罩</option>{state.eligibleMasks.map(mask => <option key={mask.id} value={mask.id}>{mask.filename} · v{mask.version} · {mask.manual_mask!.width} × {mask.manual_mask!.height}</option>)}</select></label>
+        {!draft.sources.length ? <p>先选取 PNG 来源，再选择为该来源版本保存的遮罩。</p> : !state.eligibleMasks.length && <p>当前没有匹配此来源版本的可用手绘遮罩。请在素材工作区选择来源、绘制并保存二值遮罩，再读取当前素材版本。</p>}
+        {draft.sources[1] && !state.freshSources && <StatusMessage tone="warning">来源或遮罩已变化、删除或失去核对信息。原预览与确认已失效；重新读取并明确选择当前版本。</StatusMessage>}
+      </fieldset>}
+      {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{state.provider || trim ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}{trim && '片段最长 120 秒；起止点还须在真实来源时长内。'}</p>{state.parameterNames.map(parameter)}
         {!!state.unsupportedParameters.length && <><StatusMessage tone="warning">所选配置不支持已填写的参数：{state.unsupportedParameters.map(name => labels[name]).join('、')}。这些输入不会自动丢弃。</StatusMessage><Button disabled={!state.canEdit} onClick={state.clearUnsupportedParameters}>明确清空不支持的参数</Button></>}
-      </fieldset>
+      </fieldset>}
       <label>来源与授权说明<input maxLength={2000} disabled={!state.canEdit} value={draft.licenseNote} onChange={event => state.changeField('licenseNote', event.target.value)} /></label>
       {state.inputError && <p>{state.inputError}</p>}
       <div className="studio-graph-actions"><Button disabled={!state.canInspect} loading={state.pending === 'PREVIEW'} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canEdit} onClick={state.clearInputs}>清空本地输入</Button></div>
-      {state.preview && <section aria-label="制作预览确认"><h4>确认本次预览</h4><p>{MEDIA_OPERATION_LABELS[state.preview.operation_id]} · {state.preview.provider ? `${state.preview.provider.provider_id} / ${state.preview.provider.model_id} · ${state.preview.provider.local ? '本地' : '云端'}` : '本地截取'}</p>
-        <p>预览绑定当前输入、来源版本与服务商路线。创建仅保存任务，尚不执行。</p>
-        <details><summary>核对本次执行接口、默认参数与工作流</summary><p>本次预览的接口记录，不代表服务商或模型已成功运行。</p><pre>{JSON.stringify(state.preview.execution_recipe, null, 2)}</pre></details>
+      {state.preview && <section aria-label="制作预览确认"><h4>确认本次预览</h4><p>{MEDIA_OPERATION_LABELS[state.preview.operation_id]} · {state.preview.provider ? `${state.preview.provider.provider_id} / ${state.preview.provider.model_id} · ${state.preview.provider.local ? '本地' : '云端'}` : state.preview.operation_id === 'm5.image.cutout' ? '本地 CPU 二值遮罩抠图' : '本地截取'}</p>
+        <p>预览绑定当前输入、来源版本与处理接口。创建仅保存任务，尚不执行。</p>
+        <details><summary>核对本次执行接口、默认参数与工作流</summary><p>本次预览的接口记录，不代表处理已成功执行。</p><pre>{JSON.stringify(state.preview.execution_recipe, null, 2)}</pre></details>
         <label><input type="checkbox" disabled={state.locked || !props.canMutate} checked={state.previewReviewed} onChange={event => state.confirmPreview(event.target.checked)} />已核对本次输入、来源和处理边界</label>
         <Button disabled={!state.canCreate} loading={state.pending === 'CREATE'} onClick={() => void state.create()}>仅创建任务并入队</Button>
       </section>}
@@ -80,7 +88,8 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         <details><summary>本任务已确认的输入与处理记录</summary>
           <p>这里显示刚读取的服务端公共回执，不会替换当前制作输入，也不代表本机能力验收已通过。</p>
           {job.command ? <>
-            <label>原提示词<textarea readOnly rows={4} value={job.command.prompt} aria-label="原任务已确认的提示词" /></label>
+            {job.operation_id === 'm5.image.cutout' && <p>原任务为本地 CPU 二值遮罩抠图，无服务商、模型、提示词或云端发送。来源顺序：原图片，然后是手绘遮罩。</p>}
+            {job.operation_id !== 'm5.image.cutout' && <label>原提示词<textarea readOnly rows={4} value={job.command.prompt} aria-label="原任务已确认的提示词" /></label>}
             <h4>原任务参数</h4>
             {Object.keys(job.command.parameters).length ? <dl>{Object.entries(job.command.parameters).map(([name, value]) => <div key={name}>
               <dt>{labels[name as MediaParameter] || name}</dt><dd>{value === null ? '未显式指定' : String(value)}</dd>
@@ -100,6 +109,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         </details>
         {job.timeline_snapshot && <details><summary>来源时间线 {job.timeline_snapshot.id} · v{job.timeline_snapshot.version}</summary><p>原执行入口会再次核对摘要：<code>{job.timeline_snapshot.digest}</code></p></details>}
         {job.owner === 'timeline' && <StudioTimelineMeasurement measurement={job.media_measurement} />}
+        {job.processing_proof && <details><summary>本地 CPU 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · PNG {job.processing_proof.output_bytes} 字节</p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
         {!!job.sources.length && <details><summary>本任务绑定的来源版本</summary><ul>{job.sources.map(source => <li key={`${source.kind}:${source.id}`}>{source.kind === 'ASSET' ? props.assets.find(row => row.id === source.id)?.filename || source.id : source.id} · v{source.version}<p>来源摘要：<code>{source.digest}</code></p></li>)}</ul></details>}
         {!state.jobSourcesFresh && <StatusMessage tone="warning">本任务的素材来源已变化，当前不可继续执行或审核。保留原记录供读取核对。</StatusMessage>}
         {job.status === 'UNKNOWN' && <StatusMessage tone="warning">无法确认先前分派结果，禁止再次执行。同一原任务只能继续读取核对或丢弃本地结果。</StatusMessage>}
@@ -107,13 +117,17 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {job.error_code && <details><summary>任务回执细节</summary><p>{job.error_code}</p></details>}
         <Button disabled={!state.canRead} loading={state.pending === 'GET'} onClick={() => void state.openJob(job)}>读取当前任务核对</Button>
         <Button disabled={!state.canRead} onClick={state.downloadReceipt}>下载当前已读回执（JSON）</Button>
+        {state.pending === 'execute' && job.operation_id === 'm5.image.cutout' && props.cutoutExecution && <section aria-label="正在执行的本地抠图控制"><p>本地执行请求尚未返回。可读取同一原任务，或明确取消；其它制作修改保持锁定。</p>
+          <Button disabled={!state.canControlRunning} loading={state.runningControl === 'read'} onClick={() => void state.controlRunningCutout('read')}>读取运行中的原抠图任务</Button>
+          <Button variant="danger" disabled={!state.canControlRunning || !state.canCancelRunning || job.status === 'CANCELLED'} loading={state.runningControl === 'cancel'} onClick={() => void state.controlRunningCutout('cancel')}>明确取消运行中的原抠图任务</Button>
+        </section>}
         <div className="studio-graph-actions">
           <Button disabled={!state.canAction('execute')} loading={state.pending === 'execute'} onClick={() => void state.action('execute')}>明确执行当前入队任务</Button>
           {job.owner === 'video' && <Button disabled={!state.canAction('refresh')} loading={state.pending === 'refresh'} onClick={() => void state.action('refresh')}>核对已有远端进度</Button>}
-          {['RUNNING', 'SEND_RESERVED'].includes(job.status) && <Button disabled={!state.canAction('reconcile')} loading={state.pending === 'reconcile'} onClick={() => void state.action('reconcile')}>核对中断状态，不重新发送</Button>}
-          {(job.owner !== 'timeline' || ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)) && <Button variant="danger" disabled={!state.canAction('cancel')} loading={state.pending === 'cancel'} onClick={() => void state.action('cancel')}>{job.owner === 'timeline' && job.status === 'RUNNING' ? '明确取消本地渲染' : '丢弃未采用的本地结果'}</Button>}
+          {(['RUNNING', 'SEND_RESERVED'].includes(job.status) || job.operation_id === 'm5.image.cutout' && (['UNKNOWN', 'REVIEWING'].includes(job.status) || job.status === 'CANCELLED' && !!job.processing_proof && !job.output_candidate)) && <Button disabled={!state.canAction('reconcile')} loading={state.pending === 'reconcile'} onClick={() => void state.action('reconcile')}>核对中断状态，不重新发送</Button>}
+          {(job.owner !== 'timeline' || ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)) && <Button variant="danger" disabled={!state.canAction('cancel')} loading={state.pending === 'cancel'} onClick={() => void state.action('cancel')}>{job.operation_id === 'm5.image.cutout' ? '明确取消本地抠图或丢弃候选' : job.owner === 'timeline' && job.status === 'RUNNING' ? '明确取消本地渲染' : '丢弃未采用的本地结果'}</Button>}
         </div>
-        <p>{job.owner === 'timeline' ? '时间线取消会请求原本地渲染停止或撤销未审核候选的采用权限，保留原回执与已有候选；已进入审核或已入库的结果不能从这里取消。' : '丢弃仅撤销本地采用结果的权限，保留原记录；远端计算可能继续。'}</p>
+        <p>{job.operation_id === 'm5.image.cutout' ? '取消会请求原本地处理停止，或撤销未审核候选的采用权限；保留原记录，不会重新处理或入库。' : job.owner === 'timeline' ? '时间线取消会请求原本地渲染停止或撤销未审核候选的采用权限，保留原回执与已有候选；已进入审核或已入库的结果不能从这里取消。' : '丢弃仅撤销本地采用结果的权限，保留原记录；远端计算可能继续。'}</p>
         {job.output_candidate && <section aria-label="媒体候选预览与审核"><h4>候选结果</h4><p>{kindLabels[job.output_candidate.kind]}候选 · v{job.output_candidate.version}</p>
           <Button disabled={!state.canLoadCandidate} loading={state.pending === 'CANDIDATE'} onClick={() => void state.loadCandidate()}>读取并核对候选媒体</Button>
           {state.candidate?.kind === 'image' && <img src={state.candidate.url} style={{ maxWidth: '100%', maxHeight: 'var(--layout-inspector-width)' }} alt="本任务经摘要核对的图片候选" onError={() => state.mediaFailed(state.candidate?.binding || '')} />}

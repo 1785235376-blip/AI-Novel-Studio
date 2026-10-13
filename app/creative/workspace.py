@@ -145,6 +145,12 @@ class IndependentWorkspaceService:
             # Only current scoped projections disclose source/relationship IDs.
             public["parameters"].pop("asset_lineage_v2", None)
         provenance = self._production_provenance(nid, scope, row) if row.get("_studio_result_origin") else self.lineage.asset(nid, scope, row["id"], include_impact=False)
+        if "_manual_mask_origin" in row:
+            origin = self.assets._manual_record(row)
+            public["manual_mask"] = {"contract": origin["contract"],
+                "source_asset_id": origin["source"]["id"], "source_version": origin["source"]["version"],
+                "source_sha256": origin["source"]["sha256"],
+                **{key: origin[key] for key in ("width", "height", "bitplane_sha256", "keep_pixels", "remove_pixels", "mask_sha256")}}
         return {**public,
                 "provenance": provenance,
                 "relationships": self.relationships.project(nid, scope, row)}
@@ -184,7 +190,7 @@ class IndependentWorkspaceService:
 
     @staticmethod
     def _production_origin(origin):
-        return "DERIVED_PROCESSING" if origin["operation_id"] in {"m8.audio.trim", "m9.timeline.multitrack"} else "GENERATED_RESULT"
+        return "DERIVED_PROCESSING" if origin["operation_id"] in {"m5.image.cutout", "m8.audio.trim", "m9.timeline.multitrack"} else "GENERATED_RESULT"
 
     @staticmethod
     def _production_asset_ids(origin):

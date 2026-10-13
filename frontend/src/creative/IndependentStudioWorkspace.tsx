@@ -49,6 +49,8 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [identityRetired, setIdentityRetired] = useState(false);
   const client = useMemo(() => studioClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
   const productionClient = useMemo(() => studioProductionClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
+  const cutoutPermission = useRef(false);
+  const cutoutLease = useRef<{ job: ProductionJob; control?: Promise<ProductionJob> }>();
   const [cacheKey] = useState(() => `independent-studio-${++studioObserver}`);
   const [overview, setOverview] = useState<StudioOverview>(), [rows, setRows] = useState<StudioAsset[]>([]);
   const [selected, setSelected] = useState<Asset>(), [loading, setLoading] = useState(true), [error, setError] = useState(''), [notice, setNotice] = useState(''), [denied, setDenied] = useState(false), [busy, setBusy] = useState(false), [readingAsset, setReadingAsset] = useState(false), [storageLoading, setStorageLoading] = useState(false);
@@ -120,12 +122,48 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     }
   }, [current, deny]);
   const writable = overview?.capabilities.can_mutate === true && !denied && !identityRetired;
+  cutoutPermission.current = writable;
   const graphMutation = useCallback(async <T,>(operation: () => Promise<T>): Promise<T> => {
     if (busyRef.current || !current()) throw new Error('当前操作尚未结束，请先核对结果。');
     busyRef.current = true; setBusy(true);
     try { return await guarded(operation); }
     finally { busyRef.current = false; if (alive.current) setBusy(false); }
   }, [current, guarded]);
+  // This exception belongs to the original workspace semaphore, not to a second
+  // mutation owner: only the same executing cutout's read/CAS cancel may overlap.
+  const sameCutout = (expected: ProductionJob, value: ProductionJob) => value.operation_id === 'm5.image.cutout' && value.owner === 'image'
+    && value.id === expected.id && value.novel_id === expected.novel_id && value.branch_id === expected.branch_id
+    && value.request_id === expected.request_id && value.request_digest === expected.request_digest && value.version >= expected.version;
+  const cutoutExecution = {
+    execute: (job: ProductionJob) => graphMutation(async () => {
+      if (!writable || job.operation_id !== 'm5.image.cutout' || job.owner !== 'image' || job.status !== 'QUEUED') throw new Error('当前不能执行此本地任务。');
+      const lease = { job } as NonNullable<typeof cutoutLease.current>; cutoutLease.current = lease;
+      try { return await productionClient.execute(job); }
+      finally {
+        // A late execute cannot release other workspace mutations while its
+        // exact cancellation/read still owns the semaphore.
+        if (lease.control) await lease.control.catch(() => undefined);
+        if (cutoutLease.current === lease) cutoutLease.current = undefined;
+      }
+    }),
+    control: (kind: 'read' | 'cancel', expected: ProductionJob) => {
+      const lease = cutoutLease.current;
+      if (!lease || lease.control || !busyRef.current || !current() || !cutoutPermission.current || !sameCutout(lease.job, expected))
+        return Promise.reject(new Error('当前没有可核对的本地抠图执行。'));
+      const work = guarded(async () => {
+        const original = await productionClient.get('image', lease.job.id);
+        if (!current() || !cutoutPermission.current || cutoutLease.current !== lease || !sameCutout(expected, original)) throw new Error('原本地任务版本未确认，请重新读取。');
+        if (kind === 'read' || !['QUEUED', 'RUNNING', 'UNKNOWN', 'AWAITING_REVIEW'].includes(original.status)) return original;
+        const cancelled = await productionClient.cancel(original);
+        if (!current() || !cutoutPermission.current || cutoutLease.current !== lease || !sameCutout(original, cancelled) || cancelled.version <= original.version
+          || cancelled.status !== 'CANCELLED') throw new Error('取消回执未确认，请读取原任务核对。');
+        return cancelled;
+      });
+      lease.control = work;
+      void work.finally(() => { if (lease.control === work) lease.control = undefined; }).catch(() => undefined);
+      return work;
+    },
+  };
   const adoptPreferences = useCallback((value: StudioPreferences) => { setOverview(previous => previous && { ...previous, preferences: value }); }, []);
   const graphDraftBlocked = useCallback(() => graphDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current, []);
   const operationPending = useCallback(() => busyRef.current, []);
@@ -269,7 +307,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
       <Button disabled={busy} onClick={() => void loadProductionAssets()}>读取当前素材版本</Button>
       <StudioMediaExecutionPanel key={`media:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} canReview={overview.capabilities.can_review === true}
-        busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} mutate={graphMutation}
+        busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} mutate={graphMutation} cutoutExecution={cutoutExecution}
         onDirtyChange={mediaDraftChanged} onUnavailable={deny} externalJob={productionJob?.client === productionClient ? productionJob.job : undefined} onApproved={productionApproved} />
       <StudioTimelineEditor key={`timeline:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}

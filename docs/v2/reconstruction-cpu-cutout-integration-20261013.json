@@ -1,0 +1,68 @@
+{
+  "tested_local_commit": "2b6fe2b2dc27c6a76f9853558dfa7c66ad16bcd1",
+  "operation": "m5.image.cutout",
+  "scope": "Standalone original ProductionExecution/ImageJob/Asset owners; Graph excludes cutout",
+  "root_file": {
+    "passed": 262,
+    "skipped": 160,
+    "skip_reason": "opposite_backend"
+  },
+  "root_frontend": {
+    "passed": 2814,
+    "skipped": 8,
+    "failed": 0,
+    "duration_seconds": 83.15
+  },
+  "worker_real_postgresql": {
+    "passed": 262,
+    "skipped": 160,
+    "fresh_database": true,
+    "original_migrations": 20,
+    "clean_shutdown": true
+  },
+  "broader_original_regressions": {
+    "file_and_postgresql_each": {
+      "passed": 529,
+      "skipped": 182,
+      "failed": 2
+    },
+    "failures": "Original Graph target-budget assertions independently reproduced on untouched3cd94a4; no assertion changes"
+  },
+  "source_sha256": {
+    "app/creative/graph_models.py": "aac0a714795c080575125e5c96073d7fd19b6321c9ae512f2c3d5d99499941f2",
+    "app/creative/production_contracts.py": "281607b57ae46b242e1f581fe9d69900f73b58608820df83632b1a1df6ab34a1",
+    "app/creative/production_execution.py": "e651ab4bebb9e6170010946b2433c8bfb8ccae5de199a564cb5a85529099362f",
+    "app/creative/production_execution_api.py": "da27d71614ac89a1ddff72790336ad563a6e89ecdea626b26e8ee54b82bbb303",
+    "app/creative/production_execution_models.py": "026cb1b935f2fb5968ab5a8c36968e3c6bedcb65eaab6dcd8fbb3ade980aea36",
+    "app/creative/workspace.py": "a83caf1d87a15d0ee806a869882fdf08d1e88728573dcab344068e8e97630024",
+    "app/services/image_job_service.py": "5d767f118689c6964db42c0fa313a367079d77aa6fe25bfbc36c8aa7719f15a5",
+    "app/services/studio_image_cutout.py": "cb06258734697b7f74e70876c0549f27e5ad3400e3e58307d54c776372b2339f",
+    "app/services/studio_image_execution.py": "031d68dc2eb78efa2038cfa3346e5b8034ed497d359c64e694bf8521bdc17d20",
+    "frontend/src/creative/IndependentStudioCpuCutout.test.tsx": "e27966c2f68d44a782fb4a9bcd8acbae7f456ac25e87f84f1ce93ae57fdb3770",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "4f526e7b41209908380d5527020b1e3ae950feef880a5b31d1f9eb03c251d46c",
+    "frontend/src/creative/StudioGraphMediaExecutionPanel.tsx": "11050a8d7c2ef8b7f67645816a809b4a012b3f8e30d4d0a64bfba4465d592637",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx": "fe9666062343fc17e4255fa9729b80f0c59f6d74bbdd1b56b353e696d3405d52",
+    "frontend/src/creative/fixtures/cpuCutout.mounted.json": "a16be7024c7ee87741af06dd0cf38d387d6e1f8d70ae665f88dd49d3fd0d2fe0",
+    "frontend/src/creative/studioClient.ts": "477a08301461ac6187a240bc44bc2e5f449c66b4b74a0bf71bb32331cf07dacf",
+    "frontend/src/creative/studioCpuCutout.testFixtures.ts": "fd1f14a5a27ed248e84283d66e3c7b1da15aee8507c5cb923b2a4b54b541df43",
+    "frontend/src/creative/studioCpuCutoutContract.test.ts": "0354a4dda6405eac208c84a5d5680a88c8cdb1fb0a2083f3fa63df88045c875d",
+    "frontend/src/creative/studioCutoutContract.ts": "bf6396901f2ba2d5e4d2e8ea1699dc0d6fae596dd139c7c7ec9086595a5266ee",
+    "frontend/src/creative/studioGraphClient.ts": "404c6004669efd4487d754dcfbb6d52e5b1d8be9ccd1255618a7c7721ff45207",
+    "frontend/src/creative/studioGraphEditorView.tsx": "d0027da97dc838f39d8da542930ab390a8a6bbdeae6a98480a84b7cb27d22ddd",
+    "frontend/src/creative/studioGraphTypes.ts": "991c97299ad3c6fac7a53ccf70d60d7c593de63df9753dbbff8b2f689219e9b1",
+    "frontend/src/creative/studioProductionClient.ts": "dfb64c2166d9d0daf90ed1b70813235d5fb3244eb739570d28418701088a4e82",
+    "frontend/src/creative/studioWorkspaceOperationContract.ts": "6e051c2968a8d072d63585d8698ef01dc61bb955beb846aec829262e475a15af",
+    "frontend/src/creative/studioWorkspaceOperationTypes.ts": "c8db43dcf85fea6761eebc8913907040846cdc4060b76a77b389a9a66509af83",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "cd3e52a06d56f8c24b002fca89471b4ed773661b834a387e2dfba0e2f0678348",
+    "frontend/src/creative/useStudioMediaExecution.ts": "afcc3846fe5cfd170a6b61a9d7f12a33943c8e3284667ea62e76c845ddaca52c",
+    "tests/test_v2_cpu_cutout_api.py": "b4dacd49403e97a809c4504135977c8523f9e0d92b7d70aeeb7571596752b44b",
+    "tests/test_v2_cpu_cutout_owner.py": "0dfa018f37beea17aefa225e975690ed24603efd3488b8c0a47ffc3bf8f2fa46",
+    "tests/test_v2_cpu_cutout_pixels.py": "8f17c400b7c3547ed70fd2e526445e013da6bfe547e4d09f68cea3fee1010604"
+  },
+  "limitations": [
+    "Browser native decoding/visual verification blocked",
+    "Windows/GPU/live model acceptance NOT_RUN",
+    "Generated API/coverage publication technical retry remains in progress; user approval received",
+    "No full product/hosted CI acceptance claim"
+  ]
+}

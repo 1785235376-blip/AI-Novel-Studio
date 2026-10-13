@@ -757,3 +757,18 @@ test then passed separately with existing binaries on PATH. Root integration
 with manual-mask/audio regressions passed 236 with 90 backend-specific skips.
 All HTTP was synthetic; no real model, user data or credential was transmitted.
 Raw evidence remains private. See `docs/v2/reconstruction-image-transport-20261013.md`.
+
+### Standalone authored-mask CPU cutout
+
+The next reconstructed slice implements m5.image.cutout through original
+ProductionExecution/ImageJob/Asset owners. Exact source+authored-mask snapshots,
+bounded stdlib PNG processing, cooperative cancellation, private candidate
+recovery and explicit review/promotion are implemented. No model/provider or
+FFmpeg/image dependency is used. Graph remains closed to this operation.
+Integrated File262 passed/160 opposite-backend skips; fresh real PostgreSQL
+worker262 passed/160 skips, empty database and20 original migrations verified;
+root full frontend2814 passed/8 unchanged skips. Broader original regressions
+still have2 Graph target-budget failures, reproduced on untouched3cd94a4; original
+assertions were not changed. This is not all-green/full-product acceptance.
+See reconstruction-cpu-mask-cutout, cpu-mask-cutout-frontend and the integrated
+JSON reports under docs/v2. Browser-native/Windows/GPU acceptance remains unrun.

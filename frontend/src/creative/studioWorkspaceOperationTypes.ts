@@ -6,7 +6,7 @@ export const STUDIO_PRODUCTION_STAGE_LABELS: Record<StudioProductionStageId, str
 };
 export const STUDIO_PRODUCTION_OPERATION_IDS = [
   'm4.text.generate',
-  'm5.image.generate', 'm5.image.edit', 'm5.image.t2i', 'm5.image.i2i',
+  'm5.image.generate', 'm5.image.edit', 'm5.image.t2i', 'm5.image.i2i', 'm5.image.cutout',
   'm6.director.propose', 'm6.director.model', 'm6.storyboard.derive',
   'm7.video.plan', 'm7.video.generate', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v',
   'm8.audio.speech', 'm8.audio.import', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim',

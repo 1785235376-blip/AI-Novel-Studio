@@ -99,3 +99,20 @@ Graph 的 `review_recovery` 三字段只授予原 REVIEWING 私有预留的明�
 Phase14 的播放缓存经原 export/job/private Asset owner；稳定 request ID 由服务器实际版本／来源／工具 SHA 构造，不创建第二队列。复用旧 Blob 前也需原 candidate attestation；后端拒绝／撤权／来源变更立即撤销本会话字节，不清除 UNKNOWN 原请求身份。读回执与取消可在长时间 BUILD 中显式操作，但仍互斥且不重发。视图可重构时间定位、按钮和视频外观，不可自动生成／播放／审核；dirty／UNKNOWN 与原父级导航保护保持。
 
 交叉溶解关系位于 VIDEO clip 的 `transition_out`，由原 schema／edit／Graph author 操作及实际双源 FFmpeg 渲染共同处理；表单不自动移动片段或清除用户 fades 来凑合法结果。两片段须真实重叠等于指定窗口且保持同一几何／opacity。OTIO 预览明确给出关系与 loss，不能用 Studio extension 的回读承诺外部 NLE 原生保真。Whisper Host 固定配置及 MFA 运行时／词典／声学 pin 由 server-owned 配置持有，前端不接收绝对路径、任意 argv、token 或动态模型替换；源码／loaded 状态／真实质量三个层次分别记录。
+
+## Reconstructed standalone CPU cutout surface
+
+Existing independent IMAGE production panel now offers source PNG + saved
+authored-mask selection, bounded local CPU preview, explicit job creation and
+execution, private candidate display and separate explicit review. No provider,
+model, prompt or cloud consent is part of this operation. It is not a Graph action.
+Keep exact ordered input snapshots and immutable mask lineage; source/mask
+changes invalidate prior preview/review consent. Recovery controls cover UNKNOWN,
+REVIEWING and cancelled lost-publication receipts without automatic replay.
+The original workspace semaphore retains global mutation exclusion until both
+execution and its narrow exact-job GET/CAS cancellation control settle. Preserve
+identity ABA redaction, late-response fences, uncertain-send states and disabled
+review after cancellation. Visual rearrangement must not collapse explicit
+preview/create/execute/review or manufacture success from a late response.
+Backend format is narrow8-bit noninterlaced PNG64–1024 multiple8, no ancillary
+chunks; native browser/Windows visual acceptance is still unverified.

@@ -1102,3 +1102,12 @@ File/PostgreSQL tests; authorized remote proxy policy is preserved. Scoped File
 273 and PG 277 passed, with skip/recovery details in
 `docs/v2/reconstruction-image-transport-20261013.md`. Real ComfyUI/A1111/model/GPU
 acceptance remains **NOT_RUN / LOCAL_REQUIRED**. This does not complete Image Studio.
+
+Later CPU cutout checkpoint: **IMPLEMENTED / CONTRACT_VERIFIED**, bounded to the
+original narrow PNG format and saved authored masks; previous MISSING row above
+remains historical. Standalone source/mask selection, explicit queue/execute,
+same-page cooperative cancel, private result and explicit review are connected.
+Graph cutout remains unsupported. Root File262 and frontend2814 pass; fresh real
+PG262 passes. Two broader original Graph target-budget assertions still fail on
+both original and current source. Native image display/Windows remains
+**NOT_RUN / LOCAL_REQUIRED**; no general Image Studio completion is claimed.

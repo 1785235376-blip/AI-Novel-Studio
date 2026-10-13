@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView, type Asset } from '../api';
 import type { StudioAsset, StudioClient } from './studioClient';
 import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphRecord } from './studioGraphTypes';
-import type { MediaOperation } from './studioProductionClient';
+import { GRAPH_MEDIA_OPERATIONS, type GraphMediaOperation } from './studioGraphTypes';
 import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, retainsSavedAssetBindings } from './graphDraft';
 import { useStudioGraphTimelineEditor } from './useStudioGraphTimelineEditor';
 
@@ -160,7 +160,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   function updateMediaField(key: 'operation_id' | 'provider_id' | 'model_id' | 'prompt' | 'allow_cloud' | 'license_note', value: string | boolean) {
     const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || target.definition_id !== 'media_generate') return;
-    if (key === 'operation_id' && !['m5.image.t2i', 'm5.image.i2i', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'].includes(String(value))
+    if (key === 'operation_id' && !GRAPH_MEDIA_OPERATIONS.includes(value as GraphMediaOperation)
       || (key === 'allow_cloud' ? typeof value !== 'boolean' : typeof value !== 'string')) return;
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value } } : row) });
   }
@@ -265,9 +265,9 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
 export type StudioGraphEditorController = ReturnType<typeof useStudioGraphEditorController>;
 export const GRAPH_MEDIA_PARAMETER_LABELS: Record<string, string> = { width: '宽度', height: '高度', steps: '采样步数', seed: '种子', negative_prompt: '负向提示词', size: '图片规格', quality: '图片质量',
   duration_seconds: '时长（秒）', frame_rate: '帧率', voice_id: '语音标识', speech_rate: '语速', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）' };
-export function graphMediaParameterNames(operation: MediaOperation): string[] {
+export function graphMediaParameterNames(operation: GraphMediaOperation): string[] {
   return ({ 'm5.image.t2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'], 'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
     'm7.video.t2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'], 'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
     'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'], 'm8.audio.speech': ['voice_id', 'speech_rate'],
-    'm8.audio.music': ['duration_seconds', 'seed'], 'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms'] } as Record<MediaOperation, string[]>)[operation];
+    'm8.audio.music': ['duration_seconds', 'seed'], 'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms'] } as Record<GraphMediaOperation, string[]>)[operation];
 }

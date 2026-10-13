@@ -5,8 +5,10 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from .production_contracts import ProductionSourceSnapshot, Name, Digest
 
-MediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m7.video.i2v",
+GraphMediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m7.video.i2v",
     "m7.video.v2v", "m8.audio.speech", "m8.audio.music", "m8.audio.effects", "m8.audio.trim"]
+
+MediaOperation = Literal[GraphMediaOperation, "m5.image.cutout"]
 
 
 class ExecutionModel(BaseModel):
@@ -14,7 +16,7 @@ class ExecutionModel(BaseModel):
 
 
 class ProviderSelection(ExecutionModel):
-    operation_id: MediaOperation
+    operation_id: GraphMediaOperation
     provider_id: Name
     model_id: Name
 
@@ -51,6 +53,7 @@ class MediaCommand(ExecutionModel):
         p = self.parameters.model_dump(exclude_none=True)
         allowed = {
             "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m5.image.cutout": set(),
             "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
             "m7.video.t2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
             "m7.video.i2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
@@ -69,7 +72,12 @@ class MediaCommand(ExecutionModel):
         keys = [(s.kind, s.id) for s in self.source_snapshots]
         if len(set(keys)) != len(keys):
             raise ValueError("STUDIO_OPERATION_SOURCE_DUPLICATE")
-        if self.operation_id == "m8.audio.trim":
+        if self.operation_id == "m5.image.cutout":
+            if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt or p:
+                raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
+            if (len(self.source_snapshots) != 2 or any(s.kind != "ASSET" or s.asset_kind != "image" for s in self.source_snapshots)):
+                raise ValueError("STUDIO_IMAGE_CUTOUT_INPUT_REQUIRED")
+        elif self.operation_id == "m8.audio.trim":
             if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt:
                 raise ValueError("STUDIO_AUDIO_TRIM_LOCAL_ONLY")
             if (len(self.source_snapshots) != 1 or self.source_snapshots[0].asset_kind != "audio"
@@ -87,7 +95,7 @@ class MediaCommand(ExecutionModel):
             raise ValueError("STUDIO_VIDEO_SINGLE_REFERENCE_REQUIRED")
         if self.operation_id == "m5.image.i2i" and len(assets) > 5:
             raise ValueError("STUDIO_IMAGE_REFERENCE_LIMIT")
-        if not required and self.operation_id != "m8.audio.trim" and assets:
+        if not required and self.operation_id not in {"m8.audio.trim", "m5.image.cutout"} and assets:
             raise ValueError("STUDIO_OPERATION_UNUSED_ASSET_REFERENCE")
         if any(s.kind not in {"ASSET", "CREATIVE_DOCUMENT"} for s in self.source_snapshots):
             raise ValueError("STUDIO_OPERATION_SOURCE_OWNER_UNSUPPORTED")
