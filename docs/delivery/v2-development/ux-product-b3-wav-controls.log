@@ -1,0 +1,54 @@
+.s.s......................s........ssssss...s.s....ssss.s...FF.ssss.     [100%]
+================================== FAILURES ===================================
+_ test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration[file-96000-2-12.0-10000-32767] _
+
+audio = namespace(nid='v2-independent-efb274c878914f3daf289bd1b6a21314', scope={'mode': 'local', 'novel_id': 'v2-independent-e...bd', 'version': 1, 'digest': '327cc558b5388a3877c85caea3b598e3ade209c42d71118ad31fd35c7aae98c3'}], 'license_note': ''})
+rate = 96000, channels = 2, gain = 12.0, amplitude = 10000, expected = 32767
+
+    @pytest.mark.parametrize('rate,channels,gain,amplitude,expected', [
+        (8000, 1, -60.0, 2000, 2),
+        (96000, 2, 12.0, 10000, 32767),
+        (96000, 2, 12.0, -10000, -32768),
+        (48000, 1, 12.0, 2000, 7962),
+    ])
+    def test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration(audio, rate, channels, gain, amplitude, expected):
+        e = audio
+        source = import_asset(e, data=wav_bytes(amplitude=amplitude, channels=channels), filename='boundary-fixture.wav', kind='audio')
+        e.command = command(snapshot(source), gain_db=gain, sample_rate=rate, channels=channels)
+>       result = run(e, queue(e)); assert result['status'] == 'AWAITING_REVIEW', result
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {'contract': 'studio-production-job/1', 'owner': 'audio', 'id': 'audio-0e159fdf-24e8-4db3-b710-ef7c18e4993f', 'novel_id': 'v2-independent-efb274c878914f3daf289bd1b6a21314', ...}
+E       assert 'FAILED' == 'AWAITING_REVIEW'
+E         
+E         - AWAITING_REVIEW
+E         + FAILED
+
+tests\test_v2_audio_wav_controls.py:375: AssertionError
+_ test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration[file-96000-2-12.0--10000--32768] _
+
+audio = namespace(nid='v2-independent-d5ac0ccabfb04a94843de7b79dc743f6', scope={'mode': 'local', 'novel_id': 'v2-independent-d...33', 'version': 1, 'digest': '8398252935b4b070d17b57c4b1cd716d9a45530df1217c8648439ef2f7887c55'}], 'license_note': ''})
+rate = 96000, channels = 2, gain = 12.0, amplitude = -10000, expected = -32768
+
+    @pytest.mark.parametrize('rate,channels,gain,amplitude,expected', [
+        (8000, 1, -60.0, 2000, 2),
+        (96000, 2, 12.0, 10000, 32767),
+        (96000, 2, 12.0, -10000, -32768),
+        (48000, 1, 12.0, 2000, 7962),
+    ])
+    def test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration(audio, rate, channels, gain, amplitude, expected):
+        e = audio
+        source = import_asset(e, data=wav_bytes(amplitude=amplitude, channels=channels), filename='boundary-fixture.wav', kind='audio')
+        e.command = command(snapshot(source), gain_db=gain, sample_rate=rate, channels=channels)
+>       result = run(e, queue(e)); assert result['status'] == 'AWAITING_REVIEW', result
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {'contract': 'studio-production-job/1', 'owner': 'audio', 'id': 'audio-81a26a20-dc75-4ccc-b000-a1ba4c88c793', 'novel_id': 'v2-independent-d5ac0ccabfb04a94843de7b79dc743f6', ...}
+E       assert 'FAILED' == 'AWAITING_REVIEW'
+E         
+E         - AWAITING_REVIEW
+E         + FAILED
+
+tests\test_v2_audio_wav_controls.py:375: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_v2_audio_wav_controls.py::test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration[file-96000-2-12.0-10000-32767]
+FAILED tests/test_v2_audio_wav_controls.py::test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration[file-96000-2-12.0--10000--32768]
+2 failed, 46 passed, 20 skipped in 10.78s

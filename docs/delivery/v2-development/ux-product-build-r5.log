@@ -1,0 +1,6 @@
+
+> ai-novel-studio-ui@0.7.0 build D:\PoemSeed\Worktrees\studio-v2-audio-editing-20261014\frontend
+> tsc -b && vite build
+
+src/storyboard/storyboardWorkspaceTypes.ts(18,3): error TS2459: Module '"../creative/studioStoryboardContract"' declares 'PlanningSnapshot' locally, but it is not exported.
+ ELIFECYCLE  Command failed with exit code 1.

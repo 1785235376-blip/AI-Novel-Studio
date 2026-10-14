@@ -14,6 +14,8 @@ export type StudioTimelineEditorProps = {
   client: StudioProductionClient; assets: StudioAsset[]; canMutate: boolean; busy: boolean; isBusy?: () => boolean;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onDirtyChange: (dirty: boolean) => void; onJob: (job: StudioTimelineJob) => void; onUnavailable: () => void;
+  /** UX-PRODUCT batch 3 (UX-06): display-only project identity for the editing rail. */
+  projectId?: string;
 };
 type Operation = 'LIST' | 'GET' | 'SAVE' | 'RENDER' | 'JOB' | 'EXPORT_PREVIEW' | 'EXPORT' | 'TRACK_LOCK';
 type Attempt = { binding: string; requestId: string; state: 'UNKNOWN' | 'RETURNED'; requestDigest?: string;

@@ -127,7 +127,22 @@ QingJian 联动、Adapter、双产品运行与协议映射专项本轮**全部�
 - **验证**：`tests/test_v2_content_policy_reservation.py` 覆盖任务书要求的 4 项（旧项目读作 STANDARD、新项目默认 STANDARD、未知值拒绝、资产/导出读取不因缺字段失败），并追加"无关编辑不得重置已保存策略"的真实 owner 证明。File 与**真实 PostgreSQL** 双后端通过；Phase7 与 studio seam 同时回归通过。
 - **标记**：`CONTENT_POLICY_FRAMEWORK: RESERVED`（**不是** IMPLEMENTED）。
 
-## 10. 下一可执行项
+## 11. 第三批（UX-05 导演与分镜 + UX-06 多轨剪辑）—— 已完成
+
+| 工作包 | 源码 | 位置 | 用户能得到什么 |
+| --- | --- | --- | --- |
+| UX-05 导演与分镜工作区 | IMPLEMENTED | `frontend/src/storyboard/`（17 文件） | 镜头列表与卡片**共用一次选择**；镜头详情给时长/景别/机位/参考/候选/音频与**下一步可执行动作**；**重排保留稳定 Shot ID**（显示序号与身份分开，并报告会失效的绑定）；导演目标可编辑，AI 建议与已采用内容分区显示、采纳前不合并；来源不一致**只按证据报告**，"未发现证据"不等于"连续性没问题"；"送往图片/视频/时间线"只形成**草稿**（带原文档版本与镜头版本），不执行目标模块 |
+| UX-06 多轨剪辑/预览/交付 | IMPLEMENTED | `frontend/src/nle/`（11 文件） | 时间尺/播放头/缩放/吸附/入出点/轨道锁定静音增益/片段选择与检查；编辑命令**只映射既有 owner 已实现的语义**（split/duplicate/move 走原控制器，trim/slip/remove/update 明确拒绝并说明"尚未接线"，绝不静默替换动作）；字幕轨可手工编辑，**转写始终标注不可用**（无转写 owner）；预览质量与成品导出质量**分开**、`deliveryReady` 恒为 false；限额在触顶前提示并**拒绝任何试图抬高限额的输入** |
+
+**集成方式（增量，全部保留既有入口）**：UX-05 挂在 `CreativeWorkspace` 的导演/分镜检查器旁，**按需打开**（默认不读取，不影响既有流程）；UX-06 挂在既有 `StudioTimelineEditor` 的 Panel 内，直接消费同一个控制器与草稿。未新增第二编辑器引擎、未改既有 storyboard/timeline 契约。
+
+**第三批修掉的真实集成回归**：初版把镜头工作区直接挂载，导致既有 `CreativeWorkspace.test.tsx` 2 项失败（挂载即读取改变了既有请求与 DOM 预期）。**未改既有测试**，改为按需打开后 16 files / 292 tests 全绿。
+
+**第二批遗留缺陷（验证线独立发现）已修**：`classifyGraphChange(undefined, undefined)` 曾返回 PRESENTATION（恒等短路先于形状校验），已改为先校验形状并补回归用例（`src/canvasops` 94 tests）。
+
+**第三批未完成/不声称**：`editCommand` 中 trim/slip/remove/update 四类由 owner 支持但**尚未接线**到控制器（界面明确拒绝，不静默）；缩略图/波形未实现；浏览器视觉/几何验收仍为 NOT_RUN；无真实渲染/Windows/GPU 验收。
+
+## 12. 下一可执行项
 
 1. **第三批**：UX-05（导演与分镜实际工作区）+ UX-06（多轨剪辑/预览/交付）。UX-05 复用 `DirectorService`/`proposals`/`StoryboardWorkspace`，镜头列表与画布共享同一镜头数据、顺序调整保留稳定 Shot ID、"送往…"先形成目标草稿；UX-06 复用 `ProductionExecutionService` 时间线与 `VideoAssemblyService`，坚持原整数/有理时间基，缩略图/波形按需，字幕轨可编辑，导出回执丢失只恢复原请求不重渲染。
 2. **浏览器/视觉验收**：四个 UX 面的 playwright 视觉与几何检查仍为 NOT_RUN；有资源时补做并单独出收据。

@@ -7,6 +7,9 @@ import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 import { StudioTimelineTransferPanel } from './StudioTimelineTransferPanel';
 import { StudioTimelinePlaybackPanel } from './StudioTimelinePlaybackPanel';
 import { StudioTimelineSourceEditPanel } from './StudioTimelineSourceEditPanel';
+// UX-PRODUCT batch 3 (UX-06): multitrack editing rail. Additive presentation over the
+// SAME controller and draft; it never introduces a second timeline engine.
+import { TimelineWorkspacePanel } from '../nle/TimelineWorkspacePanel';
 export type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
 
 const numeric = (value: string) => value === '' ? Number.NaN : Number(value);
@@ -22,6 +25,11 @@ function NumberField({ label, value, onChange, min = 0, max, step = 1 }: { label
 export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   const c = useStudioTimelineEditor(props), [picked, setPicked] = useState<Record<string, string>>({});
   const [clipEdits, setClipEdits] = useState<Record<string, { split?: number; position?: number; target?: string }>>({});
+  // UX-06 rail state: local view/selection only; it never writes the timeline.
+  const [nleClips, setNleClips] = useState<string[]>([]);
+  const [nlePlayhead, setNlePlayhead] = useState(0);
+  const [nleView, setNleView] = useState({ startMs: 0, scale: 1 });
+  const [nleNotice, setNleNotice] = useState('');
   useEffect(() => { setPicked({}); setClipEdits({}); }, [props.client]);
   const draft = c.draft;
   if (!draft) return <Panel title="时间线"><EmptyState title="当前时间线入口不可用" detail="请重新核对项目、身份与原可信会话。旧输入和回执不会跨身份显示。" /></Panel>;
@@ -218,5 +226,24 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     {c.attempt && <StudioTimelineMeasurement measurement={c.attempt.measurement} />}
     {c.attempt && <Button disabled={readLocked} loading={c.pending === 'JOB'} onClick={() => void c.checkRenderJob()}>读取此请求的原渲染或导出回执</Button>}
     <p>这些入口已接入原 owner，当前代码的 Windows、媒体和完整产品验证仍待执行。</p>
+    {nleNotice && <StatusMessage tone="warning">{nleNotice}</StatusMessage>}
+    <TimelineWorkspacePanel projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
+      selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}
+      editable={c.canEdit} onSelectClips={setNleClips} onPlayhead={setNlePlayhead}
+      onView={next => setNleView({ startMs: next.startMs, scale: next.scale })}
+      exportReceipt={c.exportPreview} limits={TIMELINE_LIMITS}
+      onEdit={command => {
+        const payload = command.payload as { clip_id?: string; at_ms?: number; target_track_id?: string } | undefined;
+        const clipId = payload?.clip_id;
+        const track = clipId ? draft.timeline.tracks.find(row => row.clips.some(clip => clip.id === clipId)) : undefined;
+        if (!clipId || !track || typeof payload?.at_ms !== 'number') {
+          setNleNotice('已拒绝该编辑：缺少原 owner 需要的片段或位置；未执行任何更改。');
+          return;
+        }
+        if (command.kind === 'clip.split') { c.splitClip(track.id, clipId, payload.at_ms); setNleNotice('已按原 owner 的 split 语义应用到本地草稿；保存前不会写入服务端。'); return; }
+        if (command.kind === 'clip.duplicate') { c.duplicateClip(track.id, clipId, payload.at_ms); setNleNotice('已按原 owner 的 duplicate 语义应用到本地草稿。'); return; }
+        if (command.kind === 'clip.move' && payload.target_track_id) { c.moveClip(track.id, clipId, payload.target_track_id, payload.at_ms); setNleNotice('已按原 owner 的 move 语义应用到本地草稿。'); return; }
+        setNleNotice(`该编辑（${command.kind}）由原 owner 支持，但当前工作台尚未接线到控制器；未执行任何更改。`);
+      }} />
   </Panel>;
 }

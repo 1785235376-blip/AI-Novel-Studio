@@ -1,5 +1,14 @@
 """UX-PRODUCT batch acceptance checks (batch 1: UX-01 entry/intent + UX-02 task center;
-batch 2 adds UX-03 asset browser + UX-04 canvas/node operations).
+batch 2 adds UX-03 asset browser + UX-04 canvas/node operations; batch 3 adds
+UX-05 director/storyboard + UX-06 multitrack editing).
+
+Batch 3 extends this runner in one compatible way only: `FRONTEND_FOLDERS` also
+declares `src/storyboard` (UX-05 / LINE_H) and `src/nle` (UX-06 / LINE_I), so the
+frontend check runs every UX folder that exists and records an absent one as
+NOT_YET_AVAILABLE. Nothing else changes: the `regression` check is kept exactly as
+batch 2 defined it, `--checks` keeps every previous name, and the receipt schema,
+exit-code semantics (0 = all PASS, 1 = any FAIL, 2 = no FAIL but
+NOT_YET_AVAILABLE/SKIPPED), UTF-8 handling and python-cache hygiene are unchanged.
 
 Batch 2 extends this runner in three compatible ways only:
 
@@ -102,7 +111,7 @@ from pytest_temp_isolation import (  # noqa: E402
     pytest_temp_root,
 )
 
-PHASE = "ux-product-batch2"
+PHASE = "ux-product-batch3"
 PREFIX = "ux-product"
 
 # UX batch 1 backend surface: the production workflow contract the entry/intent
@@ -116,14 +125,20 @@ DEFAULT_BACKEND_TESTS = [
 # The protected-surface / seam regression: pre-existing router-factory and
 # admission tests that prove the studio seam UX batch 1 extends still holds.
 SEAM_TESTS = ["tests/test_v2_independent_workspace_api.py"]
-# UX-01 (LINE_A), UX-02 (LINE_B), UX-03 (LINE_E) and UX-04 (LINE_F) frontend folders.
-# A folder that does not exist yet is skipped and reported, never failed on.
-FRONTEND_FOLDERS = ["src/onboarding", "src/taskcenter", "src/assetbrowser", "src/canvasops"]
+# UX-01 (LINE_A), UX-02 (LINE_B), UX-03 (LINE_E), UX-04 (LINE_F), UX-05 (LINE_H) and
+# UX-06 (LINE_I) frontend folders. A folder that does not exist yet is skipped and
+# reported, never failed on.
+# LINE_C and LINE_G are this runner's own verification lines (previous batches), so the
+# product lines continue at H (UX-05) and I (UX-06).
+FRONTEND_FOLDERS = ["src/onboarding", "src/taskcenter", "src/assetbrowser", "src/canvasops",
+                    "src/storyboard", "src/nle"]
 FRONTEND_FOLDER_LINES = {
     "src/onboarding": "LINE_A",
     "src/taskcenter": "LINE_B",
     "src/assetbrowser": "LINE_E",
     "src/canvasops": "LINE_F",
+    "src/storyboard": "LINE_H",
+    "src/nle": "LINE_I",
 }
 # The pre-existing suites batch 2 could disturb. `src/creative/IndependentStudio*` is
 # the studio-workspace integration surface the new folders get mounted into; the four
@@ -394,14 +409,15 @@ def plan_checks(args) -> list[dict]:
         checks.append({"check": "frontend", "kind": "vitest", "status": None,
                        "line": frontend_lines(present_folders),
                        "targets": present_folders, "cwd": FRONTEND,
-                       # The declared surface is all four UX folders. When a folder does not
-                       # exist yet the check still executes the folders that do (so batch 1 is
-                       # never silently dropped), but its status is recorded as
-                       # NOT_YET_AVAILABLE rather than PASS, so exit code 0 can never be read
-                       # as "the batch-2 frontend surface is verified".
+                       # The declared surface is every UX folder in FRONTEND_FOLDERS. When a
+                       # folder does not exist yet the check still executes the folders that do
+                       # (so earlier batches are never silently dropped), but its status is
+                       # recorded as NOT_YET_AVAILABLE rather than PASS, so exit code 0 can never
+                       # be read as "the declared frontend surface is verified".
                        "incomplete_coverage": missing_folders,
                        "coverage_missing_reason": (
-                           "Batch-2 frontend folder(s) not written yet: " + ", ".join(missing_folders)
+                           "Declared UX-PRODUCT frontend folder(s) not written yet: "
+                           + ", ".join(missing_folders)
                            + ". The folders that do exist were executed and their real result is in "
                              "the log/exit_code, but the declared UX-PRODUCT frontend surface is not "
                              "fully covered, so this check is NOT_YET_AVAILABLE, never a pass.")

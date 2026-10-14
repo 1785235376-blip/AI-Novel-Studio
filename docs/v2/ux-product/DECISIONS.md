@@ -97,3 +97,11 @@
 - 安全边界：策略不是绕过安全限制的手段；未来仍需用户责任、平台规则、年龄限制与内容审核策略。
 - 验证：`tests/test_v2_content_policy_reservation.py` — File 与**真实 PostgreSQL**（fresh 库、20 迁移、空库证明、正常停止）双后端通过；既有 Phase7 与 studio seam 套件同时回归通过（新增字段零回归）。
 - 标记：`CONTENT_POLICY_FRAMEWORK: RESERVED`（**不是** IMPLEMENTED）。
+
+## D16 — 第三批的集成方式（不新增第二引擎、不静默替换动作）
+
+- **UX-05 按需打开**：镜头工作区初版直接挂在创作模块检查器内，挂载即读取，导致既有 `CreativeWorkspace.test.tsx` 2 项失败（不改既有测试）。裁决：改为**显式"按需打开镜头工作区"**——默认不读取、不产生重复 DOM/请求；这是与仓库既有"明确读取"风格一致的取舍。
+- **UX-05 身份与顺序分离**：`shot_id` 是身份（owner 的 `shot_versions`），`number` 只是显示序号；重排保持身份并**如实报告**会失效的绑定，不声称连续性保证。
+- **UX-06 挂在既有控制器内**：剪辑工作台渲染在 `StudioTimelineEditor` 的 Panel 内，消费**同一个**控制器与草稿；为传递显示用项目身份给 `StudioTimelineEditorProps` 增加**可选** `projectId`（向后兼容）。
+- **UX-06 编辑只映射已接线语义**：`onEdit` 仅把 `clip.split` / `clip.duplicate` / `clip.move` 交给控制器既有函数；其余（trim/slip/remove/update）由 owner 支持但**尚未接线**，一律给出可见拒绝并说明原因，**绝不静默替换动作**或假装成功。
+- **限额不可抬高**：`limitsNotice` 只读展示 owner 的真实限额，任何高于 owner 的输入都被拒绝并报告。
