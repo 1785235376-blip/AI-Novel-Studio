@@ -585,8 +585,10 @@ export function classifyGraphChange(
 ): CanvasChangeClassification {
   const reasons = new Set<CanvasChangeReasonCode>();
   const add = (code: CanvasChangeReasonCode) => { reasons.add(code); };
-  if (before === after) add('NO_CHANGE');
-  else if (!isDefinitionShaped(before) || !isDefinitionShaped(after)) add('NOT_COMPARABLE');
+  // Shape first: an incomparable draft (missing, malformed or unknown) must never be
+  // reported as presentation-only — not even when both sides are the same `undefined`.
+  if (!isDefinitionShaped(before) || !isDefinitionShaped(after)) add('NOT_COMPARABLE');
+  else if (before === after) add('NO_CHANGE');
   else {
     const beforeKeys = Object.keys(before), afterKeys = Object.keys(after);
     if ([...beforeKeys, ...afterKeys].some(key => !CANVAS_DEFINITION_KEYS.includes(key as typeof CANVAS_DEFINITION_KEYS[number]))) add('UNKNOWN_FIELD_CHANGED');

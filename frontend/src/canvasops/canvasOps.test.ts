@@ -430,6 +430,16 @@ describe('canvas ops · conservative change classification', () => {
     expect(classifyGraphChange(base(), broken).verdict).toBe('GENERATION_AFFECTING');
   });
 
+  it('treats two missing drafts as incomparable rather than presentation-only', () => {
+    // Regression: the identity short-circuit used to fire before the shape check, so
+    // (undefined, undefined) reported PRESENTATION. Unknown must never be trusted.
+    const missing = classifyGraphChange(undefined, undefined);
+    expect(missing.verdict).toBe('GENERATION_AFFECTING');
+    expect(missing.reasonCodes).toEqual(['NOT_COMPARABLE']);
+    const same = base();
+    expect(classifyGraphChange(same, same)).toMatchObject({ verdict: 'PRESENTATION', reasonCodes: ['NO_CHANGE'] });
+  });
+
   it('mixes reasons deterministically and keeps a position change alongside a parameter change generation affecting', () => {
     const after = withNodes(base(), rows => rows.map((row, index) => index === 0
       ? { ...row, position: { x: 1, y: 1 }, parameters: { text: 'x' } } : row));
