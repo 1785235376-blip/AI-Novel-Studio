@@ -1,0 +1,91 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/frontend
+
+ ✓ src/creative/graphDraft.test.ts (39 tests) 10ms
+ ✓ src/creative/studioGraphTransportForwarding.test.ts (8 tests) 14ms
+ ✓ src/creative/graphCanvasGeometry.test.ts (9 tests) 15ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 828ms
+ ✓ src/creative/IndependentStudioSequentialImport.test.tsx (2 tests) 1147ms
+   ✓ independent studio sequential import readiness > does not advertise readiness at lineage completion while the asset list refresh is still pending, then imports the next file once 922ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests) 1616ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 434ms
+   ✓ independent studio original owner integration > retains uploaded v1 after a declaration failure and retries only the declaration 327ms
+ ✓ src/creative/IndependentStudioReadFences.test.tsx (7 tests) 2235ms
+   ✓ independent asset read fences and truthful capability labels > locks mutation inputs during explicit refresh and preserves the next draft after the read finishes 868ms
+   ✓ independent asset read fences and truthful capability labels > ignores delayed recovery after the author explicitly selects a different asset and starts a draft 355ms
+   ✓ independent asset read fences and truthful capability labels > labels review-only authority accurately while asset files remain readonly 308ms
+ ✓ src/creative/IndependentStudioRelationships.test.tsx (5 tests) 2490ms
+   ✓ studio relationship ownership and draft integration > keeps a relationship draft across navigation attempts and prevents other asset mutations 919ms
+   ✓ studio relationship ownership and draft integration > saves through the original asset owner and refreshes the source version without copying a target 549ms
+   ✓ studio relationship ownership and draft integration > preserves CAS-conflicted input and source version until an explicit reload 448ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 3805ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1122ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 480ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 700ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 517ms
+ ✓ src/creative/IndependentStudioIdentity.regression.test.tsx (19 tests) 3917ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous project ABA and rejects a late list 677ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous session ABA and rejects a late list 596ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor ABA and rejects a late list 519ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous branch ABA and rejects a late list 480ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor workspace ABA and rejects a late list 492ms
+ ✓ src/creative/IndependentStudioRunReads.regression.test.tsx (7 tests) 4277ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled list denial 401 after a reviewed run command finishes 1186ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled list denial 403 after a reviewed run command finishes 791ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled selection denial 401 after the newer exact run loads 445ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled selection denial 403 after the newer exact run loads 386ms
+   ✓ original workspace respects graph read cancellation before denying access > still clears private state after a current list denial 401 506ms
+   ✓ original workspace respects graph read cancellation before denying access > still clears private state after a current list denial 403 476ms
+   ✓ original workspace respects graph read cancellation before denying access > still denies an active mutation after it supersedes a read-only list 487ms
+ ✓ src/creative/IndependentStudioManualMask.test.tsx (11 tests) 4831ms
+   ✓ manual mask in the original Image workspace > loads only explicitly and creates original MANUAL_EDIT Asset without jobs or automatic selection 894ms
+   ✓ manual mask in the original Image workspace > uses the original shared semaphore to block imports and navigation until POST settles 613ms
+   ✓ manual mask in the original Image workspace > uses original discard confirmation for local dirty pixels 426ms
+   ✓ manual mask in the original Image workspace > latches host ABA before a late save response, with no Asset merge or selection 382ms
+   ✓ manual mask in the original Image workspace > latches host-rebind ABA before a late save response, with no Asset merge or selection 411ms
+   ✓ manual mask in the original Image workspace > latches project ABA before a late save response, with no Asset merge or selection 378ms
+   ✓ manual mask in the original Image workspace > latches actor ABA before a late save response, with no Asset merge or selection 354ms
+   ✓ manual mask in the original Image workspace > latches branch ABA before a late save response, with no Asset merge or selection 383ms
+   ✓ manual mask in the original Image workspace > latches session ABA before a late save response, with no Asset merge or selection 319ms
+   ✓ manual mask in the original Image workspace > keeps lost-save uncertainty after stale retry and provides an original list read 459ms
+ ✓ src/creative/IndependentStudioCpuCutout.test.tsx (21 tests) 8891ms
+   ✓ CPU cutout through the original mounted Image workspace > requires separate source/mask, preview, queue, execute, private byte check and review actions 1226ms
+   ✓ CPU cutout through the original mounted Image workspace > revokes preview consent when source version changes and requires explicit rebinding 414ms
+   ✓ CPU cutout through the original mounted Image workspace > revokes preview consent when mask version changes and requires explicit rebinding 330ms
+   ✓ CPU cutout through the original mounted Image workspace > keeps a lost create uncertain and recovers only the original saved request 391ms
+   ✓ CPU cutout through the original mounted Image workspace > re-reads the exact running job, cancels with its current CAS and ignores a late success while keeping global exclusion 595ms
+   ✓ CPU cutout through the original mounted Image workspace > keeps the workspace locked if execute settles before an in-flight cancellation response 607ms
+   ✓ CPU cutout through the original mounted Image workspace > offers explicit UNKNOWN recovery without replay or automatic review 308ms
+   ✓ CPU cutout through the original mounted Image workspace > offers explicit CANCELLED recovery without replay or automatic review 304ms
+   ✓ CPU cutout through the original mounted Image workspace > rejects candidate bytes outside the proven exact output size and clears review 450ms
+   ✓ CPU cutout through the original mounted Image workspace > does not dispatch cancellation after host ABA during its exact-job read 305ms
+   ✓ CPU cutout through the original mounted Image workspace > does not dispatch cancellation after project ABA during its exact-job read 310ms
+   ✓ CPU cutout through the original mounted Image workspace > blocks duplicate cancel while uncertain and does not let a late execute clear uncertainty 440ms
+   ✓ CPU cutout through the original mounted Image workspace > keeps cancel CAS conflict uncertain until an explicit original read, then binds a new explicit cancellation to that version 437ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches host ABA 363ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches host-rebind ABA 349ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches project ABA 383ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches actor ABA 431ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches branch ABA 354ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches session ABA 366ms
+ ✓ src/creative/IndependentStudioAudioWav.test.tsx (28 tests) 9751ms
+   ✓ WAV controls through the original mounted production workspace > keeps blank controls absent, original defaults explicit, and preview/queue/execute separate 697ms
+   ✓ WAV controls through the original mounted production workspace > executes explicit controls, shows only measured WAV output, byte-checks privately and requires explicit review 1019ms
+   ✓ WAV controls through the original mounted production workspace > keeps the shared workspace locked while executing and never submits a duplicate execution 404ms
+   ✓ WAV controls through the original mounted production workspace > cancels the queued task with exact CAS while preserving its selected controls 322ms
+   ✓ WAV controls through the original mounted production workspace > recovers the original RUNNING WAV reservation without reexecution or automatic review 304ms
+   ✓ WAV controls through the original mounted production workspace > recovers the original UNKNOWN WAV reservation without reexecution or automatic review 321ms
+   ✓ WAV controls through the original mounted production workspace > rejects private candidate size outside the verified output measurement 392ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host ABA 390ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host-rebind ABA 442ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches project ABA 414ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches actor ABA 416ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches branch ABA 397ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches session ABA 430ms
+   ✓ WAV controls through the original mounted production workspace > ignores a candidate response arriving after project identity ABA 351ms
+
+ Test Files  14 passed (14)
+      Tests  198 passed (198)
+   Start at  21:51:38
+   Duration  13.47s (transform 2.50s, setup 139ms, collect 21.13s, tests 43.83s, environment 13.72s, prepare 2.76s)
+

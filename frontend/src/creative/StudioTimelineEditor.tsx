@@ -233,16 +233,19 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       onView={next => setNleView({ startMs: next.startMs, scale: next.scale })}
       exportReceipt={c.exportPreview} limits={TIMELINE_LIMITS}
       onEdit={command => {
-        const payload = command.payload as { clip_id?: string; at_ms?: number; target_track_id?: string } | undefined;
+        // Field names come from the mapper's REAL payloads (nle/timelineOps.ts):
+        // clip.split {at_ms}, clip.duplicate/clip.move {start_ms, track_id}.
+        const payload = command.payload as { clip_id?: string; at_ms?: number; start_ms?: number; track_id?: string } | undefined;
         const clipId = payload?.clip_id;
+        const position = command.kind === 'clip.split' ? payload?.at_ms : payload?.start_ms;
         const track = clipId ? draft.timeline.tracks.find(row => row.clips.some(clip => clip.id === clipId)) : undefined;
-        if (!clipId || !track || typeof payload?.at_ms !== 'number') {
+        if (!clipId || !track || typeof position !== 'number') {
           setNleNotice('已拒绝该编辑：缺少原 owner 需要的片段或位置；未执行任何更改。');
           return;
         }
-        if (command.kind === 'clip.split') { c.splitClip(track.id, clipId, payload.at_ms); setNleNotice('已按原 owner 的 split 语义应用到本地草稿；保存前不会写入服务端。'); return; }
-        if (command.kind === 'clip.duplicate') { c.duplicateClip(track.id, clipId, payload.at_ms); setNleNotice('已按原 owner 的 duplicate 语义应用到本地草稿。'); return; }
-        if (command.kind === 'clip.move' && payload.target_track_id) { c.moveClip(track.id, clipId, payload.target_track_id, payload.at_ms); setNleNotice('已按原 owner 的 move 语义应用到本地草稿。'); return; }
+        if (command.kind === 'clip.split') { c.splitClip(track.id, clipId, position); setNleNotice('已按原 owner 的 split 语义应用到本地草稿；保存前不会写入服务端。'); return; }
+        if (command.kind === 'clip.duplicate') { c.duplicateClip(track.id, clipId, position); setNleNotice('已按原 owner 的 duplicate 语义应用到本地草稿。'); return; }
+        if (command.kind === 'clip.move' && payload?.track_id) { c.moveClip(track.id, clipId, payload.track_id, position); setNleNotice('已按原 owner 的 move 语义应用到本地草稿。'); return; }
         setNleNotice(`该编辑（${command.kind}）由原 owner 支持，但当前工作台尚未接线到控制器；未执行任何更改。`);
       }} />
   </Panel>;
