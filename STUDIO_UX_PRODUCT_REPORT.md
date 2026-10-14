@@ -142,7 +142,29 @@ QingJian 联动、Adapter、双产品运行与协议映射专项本轮**全部�
 
 **第三批未完成/不声称**：`editCommand` 中 trim/slip/remove/update 四类由 owner 支持但**尚未接线**到控制器（界面明确拒绝，不静默）；缩略图/波形未实现；浏览器视觉/几何验收仍为 NOT_RUN；无真实渲染/Windows/GPU 验收。
 
-## 12. 下一可执行项
+## 12. 第四批（UX-07 模型中心/存储 + UX-08 项目提示助手）—— 已完成
+
+| 工作包 | 目录 | 用户能得到什么 |
+| --- | --- | --- |
+| UX-07 模型中心与存储 | `frontend/src/modelcenter/`（13 文件） | 能力矩阵区分**声明 vs 实测**（声明**永不**提升为实测）；模型不可选时**逐条列出阻塞的 owner 事实**；readiness **无法触发下载**；存储/清理只出**报告**（`physical_delete:false`，UI 控件禁用）；孤儿检测无逐条来源时返回 `available:false` 而非编造；密钥只报存在性（解码器递归拒绝 13 类密钥键名，`secret_value` 硬编码 `null`）；未知状态如实 UNKNOWN |
+| UX-08 项目提示助手（不接青简） | `frontend/src/guide/`（14 文件） | 提示**只来自已加载的 owner 事实**并**逐条引用来源字段**；**无来源的提示被拒绝**；EMPTY/DENIED/FAILED 区分；不可读来源显示"不可读"而非"没问题"；**零网络**（无 `useEffect`、无 transport）；青简仅禁用扩展位（`available:false`、适配器计数 0、不渲染、从不报"已连接"） |
+
+**第四批验证**：r8 七项全 PASS（`frontend` 26 files / 588 tests）；验证线独立复核 UX-07 五项、UX-08 四项性质并**全仓 grep 青简**（`frontend/src` 命中全部在 `guide/`，`app/`/`tests/`/`database/` 零命中）。**已归档的流程缺陷**：修订 8 存在两次并发 harness 运行互相覆盖同一批收据（§15.3 违规，由 Lead 调度造成）；`types` 检查在热缓存下偏弱，故后续改用 `tsc -b --force`；Lead 集成曾瞬时中断构建并被验证线抓到。
+
+## 13. 第五批（UX-09 统一导出与工程交接）—— 已完成
+
+`frontend/src/delivery/`（14 文件）：**单对象导出不依赖全项目**（`exportableItem()` 结构上没有"项目其余部分"参数）；**不支持格式显式拒绝**（拒绝分支没有回执/文件名，无法伪装成功；音频/视频因无 owner 格式而拒绝而非伪造）；**交接包结构上装不进**模型/依赖目录/凭据/他项目对象（敌意输入全部进 `excluded[]` 并带机器码）；**回执恢复只重新读取**（`method` 恒为 `'GET'`，路径无 cancel/retry/download，UNKNOWN 永不显示为成功）；限额只引用真实常量且不得抬高。
+
+## 14. 整包结论（诚实口径）
+
+- **五个批次全部完成**：UX-01…UX-09 共 **125 个新文件**，九个 UX 目录全部集成到既有产品上下文（**按需打开、既有入口一律保留**）。
+- **最终验收**：冻结树 **r10 七项全 PASS，`failed=0 / pending=0`**，`frontend` 覆盖**全部九个** UX 目录；`tsc -b --force` 0 错误。
+- **不构成发布就绪**：M4 PARTIAL、M5–M9 LOCAL_REQUIRED、V1 冻结、F00 INTEGRATED + 39 PARTIAL 均未改变；托管 CI 仍 `BLOCKED_ACCOUNT_PLATFORM`。
+- **仍未覆盖**：浏览器/视觉与几何验收（全部前端证据为 jsdom/夹具）、**S10 真实 CPU 媒体管线**、真实导出/模型/GPU、Windows 安装版、真实项目迁移。
+- **未提交的既有失败**（环境级，非本包引入）：`test_v2_audio_wav_controls.py` 2 failed（96 kHz 边界）、`test_v2_media_prerequisites.py` 10 failed（POSIX-only shim）。
+- **未来扩展位**：`CONTENT_POLICY_FRAMEWORK: RESERVED`（不是 IMPLEMENTED）、青简禁用扩展位、`editCommand` 中四类尚未接线的编辑（界面显式拒绝）。
+
+## 15. 下一可执行项
 
 1. **第三批**：UX-05（导演与分镜实际工作区）+ UX-06（多轨剪辑/预览/交付）。UX-05 复用 `DirectorService`/`proposals`/`StoryboardWorkspace`，镜头列表与画布共享同一镜头数据、顺序调整保留稳定 Shot ID、"送往…"先形成目标草稿；UX-06 复用 `ProductionExecutionService` 时间线与 `VideoAssemblyService`，坚持原整数/有理时间基，缩略图/波形按需，字幕轨可编辑，导出回执丢失只恢复原请求不重渲染。
 2. **浏览器/视觉验收**：四个 UX 面的 playwright 视觉与几何检查仍为 NOT_RUN；有资源时补做并单独出收据。

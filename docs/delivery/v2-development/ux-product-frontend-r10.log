@@ -1,0 +1,39 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/frontend
+
+ ✓ src/canvasops/canvasOps.test.ts (69 tests) 19ms
+ ✓ src/modelcenter/modelCenterOps.test.ts (79 tests) 24ms
+ ✓ src/guide/projectGuideOps.test.ts (39 tests) 19ms
+ ✓ src/storyboard/storyboardOps.test.ts (36 tests) 20ms
+ ✓ src/assetbrowser/assetBrowserOps.test.ts (30 tests) 24ms
+ ✓ src/delivery/deliveryOps.test.ts (23 tests) 15ms
+ ✓ src/nle/timelineOps.test.ts (52 tests) 75ms
+ ✓ src/taskcenter/taskCenterContract.test.ts (17 tests) 14ms
+ ✓ src/delivery/deliveryContract.test.ts (10 tests) 7ms
+ ✓ src/storyboard/storyboardWorkspaceContract.test.ts (16 tests) 10ms
+ ✓ src/guide/useProjectGuide.test.tsx (13 tests) 30ms
+ ✓ src/onboarding/IntentPicker.test.tsx (4 tests) 365ms
+ ✓ src/assetbrowser/assetBrowserContract.test.ts (19 tests) 9ms
+ ✓ src/guide/ProjectGuidePanel.test.tsx (22 tests) 259ms
+ ✓ src/delivery/DeliveryCenterPanel.test.tsx (11 tests) 368ms
+ ✓ src/assetbrowser/assetBrowserClient.test.ts (12 tests) 6ms
+ ✓ src/taskcenter/taskCenterClient.test.ts (7 tests) 12ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 489ms
+ ✓ src/delivery/deliveryClient.test.ts (11 tests) 628ms
+ ✓ src/onboarding/StudioStartPanel.test.tsx (8 tests) 501ms
+ ✓ src/onboarding/studioEntryClient.test.ts (9 tests) 11ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 551ms
+ ✓ src/onboarding/studioEntryContract.test.ts (7 tests) 6ms
+ ✓ src/taskcenter/TaskCenter.test.tsx (11 tests) 710ms
+ ✓ src/canvasops/canvasOpsPanels.test.tsx (25 tests) 691ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 772ms
+ ✓ src/onboarding/useStudioEntry.test.tsx (15 tests) 1104ms
+ ✓ src/taskcenter/useTaskCenter.test.ts (9 tests) 1213ms
+ ✓ src/assetbrowser/AssetBrowserPanel.test.tsx (13 tests) 914ms
+ ✓ src/assetbrowser/useAssetBrowser.test.tsx (14 tests) 1447ms
+
+ Test Files  30 passed (30)
+      Tests  643 passed (643)
+   Start at  22:34:27
+   Duration  3.30s (transform 4.87s, setup 382ms, collect 12.46s, tests 10.32s, environment 13.65s, prepare 3.73s)
+

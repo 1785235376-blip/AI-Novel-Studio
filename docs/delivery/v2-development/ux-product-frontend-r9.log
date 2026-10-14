@@ -1,0 +1,35 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/frontend
+
+ ✓ src/assetbrowser/assetBrowserOps.test.ts (30 tests) 22ms
+ ✓ src/canvasops/canvasOps.test.ts (69 tests) 23ms
+ ✓ src/storyboard/storyboardOps.test.ts (36 tests) 16ms
+ ✓ src/modelcenter/modelCenterOps.test.ts (79 tests) 20ms
+ ✓ src/guide/projectGuideOps.test.ts (39 tests) 21ms
+ ✓ src/taskcenter/taskCenterContract.test.ts (17 tests) 11ms
+ ✓ src/storyboard/storyboardWorkspaceContract.test.ts (16 tests) 12ms
+ ✓ src/assetbrowser/assetBrowserContract.test.ts (19 tests) 10ms
+ ✓ src/nle/timelineOps.test.ts (52 tests) 60ms
+ ✓ src/assetbrowser/assetBrowserClient.test.ts (12 tests) 6ms
+ ✓ src/onboarding/studioEntryContract.test.ts (7 tests) 6ms
+ ✓ src/onboarding/studioEntryClient.test.ts (9 tests) 10ms
+ ✓ src/guide/useProjectGuide.test.tsx (13 tests) 33ms
+ ✓ src/taskcenter/taskCenterClient.test.ts (7 tests) 13ms
+ ✓ src/guide/ProjectGuidePanel.test.tsx (22 tests) 224ms
+ ✓ src/onboarding/IntentPicker.test.tsx (4 tests) 325ms
+ ✓ src/onboarding/StudioStartPanel.test.tsx (8 tests) 382ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 440ms
+ ✓ src/canvasops/canvasOpsPanels.test.tsx (25 tests) 603ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 509ms
+ ✓ src/taskcenter/TaskCenter.test.tsx (11 tests) 700ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 768ms
+ ✓ src/assetbrowser/AssetBrowserPanel.test.tsx (13 tests) 847ms
+ ✓ src/taskcenter/useTaskCenter.test.ts (9 tests) 1172ms
+ ✓ src/onboarding/useStudioEntry.test.tsx (15 tests) 1093ms
+ ✓ src/assetbrowser/useAssetBrowser.test.tsx (14 tests) 1394ms
+
+ Test Files  26 passed (26)
+      Tests  588 passed (588)
+   Start at  22:19:02
+   Duration  3.28s (transform 5.64s, setup 265ms, collect 12.65s, tests 8.72s, environment 12.58s, prepare 3.32s)
+

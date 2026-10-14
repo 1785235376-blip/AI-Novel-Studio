@@ -1,12 +1,29 @@
 # UX-PRODUCT 状态
 
-**当前批次**：第四批 **已完成**（UX-07 模型中心/存储 + UX-08 项目提示助手，含集成、冻结树 r8 验收、提交 `9c1c646`/`40caee6`）。
-**进行中**：第五批 UX-09（统一导出与工程交接）—— 覆盖 S11/S12 的收敛。
-**下一批次**：用最终验证线的独立证据修订 `SCENARIOS.md`，更新本报告与 feature matrix，补齐第五批 source-pin。
+**五个批次全部完成**：UX-01…UX-09 共 **125 个新文件**，九个 UX 目录全部落地、集成、冻结树验收（r10 七项全 PASS，`frontend` 覆盖九个目录）。
+**最终提交**：见远端分支头（`ccb7585` 为第五批源码；本轮追加 S 表更正、收据与文档）。
+**剩余工作**：仅"未完成/未覆盖"清单中的环境级动作（浏览器视觉与几何验收、真实 CPU 媒体管线 S10、真实导出/模型/GPU、Windows 安装版）与未来扩展（CONTENT_POLICY 完整框架、青简接入）。
 
 **分支**：`feature/v2-narrative-platform`（PR #47 保持 OPEN / Draft）。
-**提交**：`400b522` 解释器修复 · `68ad8ef` 批次 1 · `3023f9e` 批次 2 · `bda534a` CONTENT_POLICY 预留 · `b7af80a` 分类器修复 · `25b5042` 批次 3 · `17cc869` S 矩阵/source-pin · `b2bb623` onEdit 修复 · `ec68a10` 验证发现归档 · `9c1c646` 批次 4 · `40caee6` 批次 4 收据。
+**提交链**：`400b522` 解释器修复 · `68ad8ef` 批次 1 · `3023f9e` 批次 2 · `bda534a` CONTENT_POLICY 预留 · `b7af80a` 分类器修复 · `25b5042` 批次 3 · `17cc869` S 矩阵/source-pin · `b2bb623` onEdit 修复 · `ec68a10` 验证发现归档 · `9c1c646` 批次 4 · `40caee6` r8 收据 · `9340e51` 状态 · `500c90f` S 表更正 · `ccb7585` 批次 5。
 **基线保护**：39–41 个既有未跟踪文件属基线，**未提交、未清理**。
+
+## 状态表（源码状态 ≠ 验证状态）
+
+| 工作包 | 源码 | 位置 | 目录文件 | 实测 |
+| --- | --- | --- | --- | --- |
+| UX-01 入口/意图/模式 | IMPLEMENTED | `frontend/src/onboarding/` | 14 | 96 tests（含模式往返/默认/非法值） |
+| UX-02 任务中心/审核 | IMPLEMENTED | `frontend/src/taskcenter/` | 15 | 同上 |
+| UX-03 素材复用 | IMPLEMENTED | `frontend/src/assetbrowser/` | 18 | 88 tests |
+| UX-04 画布/节点 | IMPLEMENTED | `frontend/src/canvasops/` | 10 | 94 tests |
+| UX-05 导演/分镜 | IMPLEMENTED | `frontend/src/storyboard/` | 16 | 76 tests |
+| UX-06 多轨剪辑 | IMPLEMENTED | `frontend/src/nle/` | 11 | 70 tests |
+| UX-07 模型中心/存储 | IMPLEMENTED | `frontend/src/modelcenter/` | 13 | 99 tests |
+| UX-08 项目提示助手 | IMPLEMENTED | `frontend/src/guide/` | 14 | 74 tests |
+| UX-09 统一导出/交接 | IMPLEMENTED | `frontend/src/delivery/` | 14 | 55 tests |
+| CONTENT_POLICY 预留 | RESERVED | `app/creative/content_policy.py` | — | File + 真实 PG 双后端 |
+
+**集成挂载（全部增量、按需打开，既有入口一律保留）**：入口面板 → `START` 视图；任务中心 → `TASKS` 视图；素材浏览器 → `ASSETS` 视图；画布操作栏 → 既有图编辑器内；镜头工作区 → 创作模块导演/分镜检查器旁；剪辑工作台 → 既有 `StudioTimelineEditor` 内；模型中心/提示助手/导出交接 → studio `PRODUCTION` 视图按需按钮。
 
 ## 状态表（源码状态 ≠ 验证状态）
 
