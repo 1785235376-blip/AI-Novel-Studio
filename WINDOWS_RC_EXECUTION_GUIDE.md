@@ -143,3 +143,38 @@ usage is not evidence about AI-Novel-Studio and must not be counted in any VRAM 
 3. No cell is filled from a cloud, mock or synthetic result.
 4. A clean-machine run is the only thing that can move install/uninstall, launcher, DesktopHost
    and packaged-storage off `NOT_RUN`.
+
+---
+
+## 8. Phase13 completeness matrix
+
+Every item the RC gate enumerates, with its owner and its honest state. `NOT_RUN` here means
+nothing was executed on a clean machine; the development-host facts in §1 are not a substitute.
+
+| Area | Item | Owner | Status |
+| --- | --- | --- | --- |
+| **Clean Windows** | Install | installer (not produced) | `NOT_RUN` |
+| | Uninstall | installer (not produced) | `NOT_RUN` |
+| | First start | `app/packaging/*`, `database_bootstrap.py` | `NOT_RUN` |
+| **Desktop** | Launcher | `packaged_launcher.py`, `launch_profiles.py`, `paths.py` | `NOT_RUN` |
+| | Backend | `app/main.py` | `PASS` (dev invocation on 8110 only); packaged `NOT_RUN` |
+| | DesktopHost | `packaged_desktop_host.py`, `host_uplink.py`, `control_pipe.py`, `local_session_bootstrap.py` | `NOT_RUN` (`ENABLE_PACKAGED_RUNTIME=false`) |
+| | PostgreSQL | `scripts/run_v2_postgres_checks.py`, `database/migrations/*.sql` | `PASS` (portable cluster, Phase10 `phase10-a1-r4`); installed-service `NOT_RUN` |
+| **Paths** | Chinese path | data dir, stores, export names, log encoding | `NOT_RUN` |
+| | Space path | launcher quoting, service args, subprocess paths | `NOT_RUN` |
+| | Long path (>260) | `\\?\` long-path opt-in and every native path call | `NOT_RUN` |
+| **Recovery** | Crash recovery | `app/autosave/*`, interrupted-write behaviour | `NOT_RUN` |
+| | Restart recovery | saved revisions, duplicate-asset check | `NOT_RUN` |
+| | Cache recovery | delete cache, rebuild without loss | `NOT_RUN` |
+| | Backup / restore | `scripts/backup.ps1`, `restore.ps1`, `app/backup_restore.py` | `NOT_RUN` |
+| **GPU (RTX 5080)** | CUDA discovery | `windows_acceleration_components()` | `PARTIAL` — reports `COMPONENT_FOUND_NOT_VERIFIED` with `inference_verified: false`, which is the correct shape |
+| | VRAM | DXGI facts via `WindowsHostHardwareProbe` | `PASS` for measurement (15 977 MiB usable); free-VRAM must be recorded at run time |
+| | Model load | Model Center lifecycle | `NOT_RUN` |
+| | Image generation | Image step + image runtime | `BLOCKED_LOCAL_RUNTIME` (no local image runtime) |
+| | Video generation | Video step + video runtime | `BLOCKED_LOCAL_RUNTIME` (no local video runtime) |
+
+**GPU rule restated for this matrix:** no capability may be inferred from a detected component, no
+threshold may be lowered for the run, and nothing vendor- or model-specific may be hardcoded. GPU
+capability comes only from hardware discovery — the identity fix in `82d1282` is what keeps that
+discovery truthful (one physical GPU reported once, capability actually granted).
+
