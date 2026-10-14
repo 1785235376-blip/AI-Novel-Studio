@@ -49,7 +49,18 @@
 
 ## 3. 浏览器与视觉验收准备
 
-见 `docs/v2/phase8-browser-acceptance.md`（由专门的准备线产出）：浏览器能力实测、`frontend/e2e/` 入口点、六个界面（START / TASKS / ASSETS / MODEL CENTER / PRODUCTION / DELIVERY）逐项状态，以及把 BLOCKED 转成真实验收所需的操作步骤。**jsdom 通过不构成浏览器验收**，二者分开记录。
+入口点已建立，并且**真实浏览器执行过一次**（详见 `docs/v2/phase8-browser-acceptance.md`）：
+
+| 项 | 状态 | 证据 |
+| --- | --- | --- |
+| 入口点 | **IMPLEMENTED** | `frontend/playwright.studio-release.config.ts`（新配置，未改动既有 16 个配置）+ `frontend/e2e/studio-release-acceptance.spec.ts`（8 用例：六界面地标 + 中文冒烟 + 键盘焦点）+ `frontend/e2e/README.md` + `package.json` 的 `e2e` 脚本；`--list` → **8 tests in 1 file** |
+| 浏览器来源 | **不使用下载的浏览器** | 默认 `channel: 'msedge'`（系统已安装 Edge；本机 `ms-playwright` 与 `.local-browsers` 均不存在，全程零下载） |
+| 真实浏览器实测 | **7 passed / 1 failed**（系统 Edge，前端 `127.0.0.1:5173`，**未启动后端**，约 1.2 分钟） | TASKS / ASSETS / PRODUCTION / MODEL CENTER（按需打开）/ DELIVERY（按需打开）/ 中文冒烟 / 键盘焦点 **全部真实 PASS**；**START FAILED**：等待 `空白项目名称` 超时——未启后端时入口不显示新建表单，属**环境缺失**，非地标缺失 |
+| 逐界面状态 | 五个界面 **BROWSER_ACCEPTED**；START **BLOCKED** | 见上；**未伪造通过** |
+| jsdom 对照（**不是**浏览器证据） | 30 files / 446 tests PASS | 仅说明断言本身有既有覆盖 |
+| 视觉回归（截图基线/几何） | **NOT_RUN** | 沿用既有 `playwright.visual.config.ts` 与其基线，本阶段未执行 |
+
+**把 START 转为通过的操作步骤**：按项目既有方式启动完整应用（后端 + 真实 PostgreSQL，`E2E_DATABASE_URL`），确认前端监听 5173（或设置 `STUDIO_ACCEPTANCE_BASE_URL`），再 `cd frontend && pnpm run e2e`；若项目已存在，START 用例会直接采用已挂载的工作区。运行后服务已停止（端口 5173 不再监听），失败用例的截图与 trace 落在**已被忽略**的 `frontend/test-results/`。
 
 ## 4. 明确未做 / 未声称
 
