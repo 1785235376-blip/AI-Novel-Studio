@@ -190,6 +190,15 @@ def host_hardware(*, cancel=None) -> dict:
                                'name': getattr(g, 'name', '') or 'NOT_VERIFIED', 'dedicated_vram_bytes': g.dedicated_vram_bytes} for g in facts.gpus or ()]
             result['status'] = 'DETECTED' if facts.gpus is not None else 'PARTIAL'
             if facts.gpus is None: result['notes'].append('WINDOWS_GPU_INVENTORY_UNAVAILABLE')
+            # Adapter aliasing is surfaced rather than hidden: the device count above
+            # is already the physical count, and this says how it was decided.
+            enumeration = getattr(facts, 'gpu_enumeration', None)
+            if enumeration is not None:
+                result['gpu_enumeration'] = enumeration
+                if enumeration.get('aliased_adapter_count'):
+                    result['notes'].append('GPU_ADAPTER_ALIASES_COLLAPSED')
+                if enumeration.get('unresolved_signatures'):
+                    result['notes'].append('GPU_DEVICE_COUNT_UNRESOLVED')
         except Exception:
             result['notes'].append('HOST_HARDWARE_UNAVAILABLE')
     else:

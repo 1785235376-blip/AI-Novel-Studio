@@ -1,0 +1,47 @@
+[
+  {
+    "index": 0,
+    "Description": "NVIDIA GeForce RTX 5080",
+    "VendorId": "0x10de",
+    "DeviceId": "0x2c02",
+    "SubSysId": "0x209610de",
+    "Revision": "0xa1",
+    "DedicatedVideoMemory": 16753098752,
+    "DedicatedSystemMemory": 0,
+    "SharedSystemMemory": 34145765376,
+    "AdapterLuid": "0:68850",
+    "Flags": 0
+  },
+  {
+    "index": 1,
+    "Description": "NVIDIA GeForce RTX 5080",
+    "VendorId": "0x10de",
+    "DeviceId": "0x2c02",
+    "SubSysId": "0x209610de",
+    "Revision": "0xa1",
+    "DedicatedVideoMemory": 16753098752,
+    "DedicatedSystemMemory": 0,
+    "SharedSystemMemory": 34145765376,
+    "AdapterLuid": "0:112158",
+    "Flags": 0
+  },
+  {
+    "index": 2,
+    "Description": "Microsoft Basic Render Driver",
+    "VendorId": "0x1414",
+    "DeviceId": "0x8c",
+    "SubSysId": "0x0",
+    "Revision": "0x0",
+    "DedicatedVideoMemory": 0,
+    "DedicatedSystemMemory": 0,
+    "SharedSystemMemory": 34145765376,
+    "AdapterLuid": "0:77580",
+    "Flags": 2
+  },
+  {
+    "index": 3,
+    "enum_result": "0x887a0002",
+    "note": "DXGI_ERROR_NOT_FOUND"
+  }
+]
+SUMMARY {"raw_adapter_rows": 3, "distinct_adapter_luids": 3, "duplicate_luid": false}
