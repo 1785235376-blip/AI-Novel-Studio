@@ -1,0 +1,35 @@
+FFFFFFFFFFFFF.FF.FFFFFFFFFFF.                                            [100%]
+============================== warnings summary ===============================
+tests/test_round3r_prompt_read_contract.py::test_read_limit_reports_truncation_and_never_loses_the_200th_body
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_round3r_prompt_read_contract.py::test_payload_rejects_a_string_that_is_not_a_boolean
+FAILED tests/test_round3r_prompt_read_contract.py::test_payload_rejects_a_bool_where_a_business_integer_is_required
+FAILED tests/test_round3r_prompt_read_contract.py::test_payload_rejects_unknown_keys_and_bad_shapes
+FAILED tests/test_round3r_prompt_read_contract.py::test_payload_validator_accepts_the_real_builder_output
+FAILED tests/test_round3r_prompt_read_contract.py::test_list_and_detail_agree_on_payload_validity_and_counting
+FAILED tests/test_round3r_prompt_read_contract.py::test_full_body_is_exact_utf8_within_the_cap_and_states_it_is_complete
+FAILED tests/test_round3r_prompt_read_contract.py::test_over_limit_body_is_marked_truncated_and_never_claims_completeness
+FAILED tests/test_round3r_prompt_read_contract.py::test_invalid_utf8_is_reported_not_silently_replaced
+FAILED tests/test_round3r_prompt_read_contract.py::test_multibyte_boundary_never_produces_a_broken_character
+FAILED tests/test_round3r_prompt_read_contract.py::test_zero_length_and_empty_text_are_handled
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_truncated_preview_hash_is_never_presented_as_the_asset_hash
+FAILED tests/test_round3r_prompt_read_contract.py::test_prompt_context_maps_real_shot_cards_without_losing_fields
+FAILED tests/test_round3r_prompt_read_contract.py::test_prompt_context_keeps_document_and_shot_identity
+FAILED tests/test_round3r_prompt_read_contract.py::test_read_limit_reports_truncation_and_never_loses_the_200th_body
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_family_outside_the_first_page_still_resolves_in_detail
+FAILED tests/test_round3r_prompt_read_contract.py::test_history_complete_is_false_when_the_read_was_bounded
+FAILED tests/test_round3r_prompt_read_contract.py::test_chain_anomalies_are_reported_not_sorted_into_a_fake_history
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_broken_predecessor_is_reported
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_cross_family_predecessor_is_reported
+FAILED tests/test_round3r_prompt_read_contract.py::test_an_unreadable_revision_is_reported_rather_than_assumed_readable
+FAILED tests/test_round3r_prompt_read_contract.py::test_shot_index_does_not_depend_on_a_character_being_present
+FAILED tests/test_round3r_prompt_read_contract.py::test_shot_identity_is_scoped_to_its_document
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_private_draft_is_readable_by_its_author_through_the_api
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_private_draft_is_not_readable_by_another_author
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_redacted_prompt_leaks_no_text_anywhere_in_the_projection
+FAILED tests/test_round3r_prompt_read_contract.py::test_redaction_does_not_grant_permission
+26 failed, 3 passed, 1 warning in 3.97s

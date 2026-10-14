@@ -261,8 +261,10 @@ def test_non_prompt_assets_are_ignored():
 def test_a_prompt_asset_with_an_unreadable_payload_is_reported_not_guessed():
     projection = library([asset("A1", {"contract": "other/1", "purpose": "IMAGE"})])
     assert projection["prompt_count"] == 0
+    # Reason refined by R3-R-07: the validator now names the specific violation rather
+    # than one generic code. The refusal itself is unchanged and still reported.
     assert projection["malformed"] == [{"asset_id": "A1", "family_id": "A1",
-                                        "reason": "PROMPT_PAYLOAD_UNREADABLE"}]
+                                        "reason": "PROMPT_PAYLOAD_CONTRACT_INVALID"}]
 
 
 def test_a_payload_missing_its_required_family_id_is_reported_not_silently_accepted():
@@ -275,7 +277,7 @@ def test_a_payload_missing_its_required_family_id_is_reported_not_silently_accep
     bare.pop("family_id")
     projection = library([asset("A1", bare), asset("A2", bare)])
     assert projection["prompt_count"] == 0
-    assert {row["reason"] for row in projection["malformed"]} == {"PROMPT_PAYLOAD_UNREADABLE"}
+    assert {row["reason"] for row in projection["malformed"]} == {"PROMPT_PAYLOAD_FIELD_MISSING"}
     assert len(projection["malformed"]) == 2
 
 

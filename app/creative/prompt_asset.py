@@ -4,42 +4,40 @@ Why this module exists
 ----------------------
 Round 3 turns prompts from scattered text into a reusable, versioned, bindable
 asset. Round 3 §3 forbids a second asset, version or review system, and
-`ROUND3_PROMPT_SOURCE_AUDIT.md` established exactly how to reuse the existing one
-(read from `app/services/asset_library_service.py`, not assumed):
+`ROUND3_PROMPT_SOURCE_AUDIT.md` established how to reuse the existing one by reading
+`app/services/asset_library_service.py` rather than assuming:
 
 | Prompt Asset property | Existing owner field that carries it |
 | --- | --- |
-| identity | the asset id (existing asset owner) |
-| prompt text | the asset's immutable bytes, `kind="prompt"` (`kind` is free-form) |
-| negative prompt, model, parameters, seed, purpose, origin, change note/reason | `parameters` — an allow-listed dict field on `update_metadata` |
-| character / scene binding | the **already allow-listed** `character_id` / `scene_id` metadata fields |
-| reference assets | `source_asset_ids` (existing) |
-| version | the existing asset `version` + `expected_version` CAS |
-| version chain | `annotate_lineage` — the existing mechanism that retains a `history` |
-| review | `promote_owned` (existing review owner) |
-| history retention | assets are immutable and `delete` keeps bytes and identity |
+| identity | the asset id |
+| prompt text | the asset's immutable bytes, `kind="prompt"` |
+| negative prompt, model, parameters, seed, purpose, origin | `parameters` (allow-listed dict) |
+| character / scene binding | the already allow-listed `character_id` / `scene_id` |
+| reference / output assets | `source_asset_ids` (references, never copies) |
+| version | the asset `version` + `expected_version` CAS |
+| version chain | `annotate_lineage` history |
+| review | `promote_owned` |
 
-So this module adds **no owner, no collection and no database**. It is a pure
-projection plus a payload contract, and `AssetLibraryService` remains the only
-writer.
+This module adds no owner, no collection and no database. It is a pure projection
+plus payload/body contracts.
 
-Versioning model
-----------------
-An asset's bytes are immutable, so a revised prompt is a **new asset** in the same
-*family*: the family id is stable, `revision` increments 1, 2, 3…, and the new
-asset points at its predecessor through the existing lineage. Every old revision
-therefore remains physically readable forever — history cannot be lost — and the
-change note/reason recorded on each revision is what makes "v1 → v2" explainable.
-
-Honesty rules
--------------
-1. **A binding is shown only when the target really exists.** A character or scene
-   that cannot be resolved in the supplied bible index is reported `UNKNOWN`, never
-   silently dropped and never assumed present.
-2. **Redaction is a first-class mode.** The project already stores only a
-   negative-prompt *digest* in lineage, so a prompt may be authored with
-   `redacted: true`, in which case only digests are projected.
-3. **Nothing is inferred.** A field the author did not set is `UNKNOWN`.
+R3-R read-contract fixes (2026-10-15)
+------------------------------------
+* `read_prompt_body` separates **full value / short preview / redacted digest**, and
+  reports `COMPLETE` / `TRUNCATED` / `UNDECODABLE` explicitly. The digest always
+  describes the **original bytes**, never a truncated preview.
+* `validate_payload` is a full strict schema check (exact keys; exact `bool`; exact
+  `int` — `True` is not a business integer and `'false'` is not `False`).
+* `history_complete` is derived from **actual coverage** plus chain anomalies, never a
+  constant. Duplicate revisions, broken/cross-family predecessors and unavailable
+  revisions are reported instead of being sorted into a fake linear history.
+* `shot_index` builds shot identity from real shot/document structures, **independent
+  of whether a character appears in the shot**, scoped per document so two documents'
+  shot number 1 cannot be confused.
+* `project_prompt_context` adapts the **real** `project_shot_cards()` output (which
+  returns top-level fields, not a `dimensions` list) and carries document/shot
+  identity, preserving `DOCUMENT_AUTHORED` vs `PER_SHOT_MEASURED`.
+* Redaction covers change note and reason as well as text, and grants no permission.
 """
 from __future__ import annotations
 
@@ -51,11 +49,8 @@ PROMPT_DETAIL_CONTRACT = "studio-prompt-detail/1"
 PROMPT_CONTEXT_CONTRACT = "studio-prompt-context/1"
 SCHEMA_VERSION = 1
 
-#: The asset `kind` used for prompts. The existing asset owner accepts a free-form kind.
 PROMPT_KIND = "prompt"
-#: Where the structured payload lives inside the asset's allow-listed `parameters`.
 PAYLOAD_KEY = "prompt"
-#: Payload schema marker, so a future change is detectable rather than silently misread.
 PAYLOAD_CONTRACT = "prompt-asset/1"
 
 UNKNOWN = "UNKNOWN"
@@ -65,7 +60,6 @@ PURPOSES: tuple[str, ...] = ("IMAGE", "VIDEO", "AUDIO", "TEXT")
 ORIGINS: tuple[str, ...] = ("MANUAL", "AI_GENERATED", "IMPORTED")
 BINDING_KINDS: tuple[str, ...] = ("CHARACTER", "SCENE", "SHOT", "ASSET")
 
-#: The prompt fields the library must be able to show.
 PROMPT_FIELDS: tuple[str, ...] = (
     "text", "negative_prompt", "model_reference", "parameters", "seed",
     "reference_assets", "output_assets", "purpose", "origin", "binding", "version",
@@ -82,8 +76,37 @@ BINDING_LABELS: dict[str, str] = {
     "CHARACTER": "角色", "SCENE": "场景", "SHOT": "镜头", "ASSET": "素材",
 }
 
+#: The payload's exact key set. Anything else is a contract violation, not a hint.
+PAYLOAD_REQUIRED_KEYS: tuple[str, ...] = (
+    "contract", "family_id", "revision", "purpose", "origin", "negative_prompt",
+    "model_reference", "parameters", "seed", "reference_asset_ids", "output_asset_ids",
+    "character_ids", "scene_ids", "shot_ids", "change_note", "change_reason", "redacted",
+)
+PAYLOAD_OPTIONAL_KEYS: tuple[str, ...] = ("previous_asset_id", "adopted_from")
+
+MAX_TEXT = 20000
+MAX_IDENTIFIER = 240
+MAX_IDS = 100
+
+#: Body read states. `COMPLETE` is the only one that may be presented as the whole text.
+BODY_COMPLETE = "COMPLETE"
+BODY_TRUNCATED = "TRUNCATED"
+BODY_UNDECODABLE = "UNDECODABLE"
+
+#: The digest always describes the original bytes, never a preview.
+DIGEST_OF_ORIGINAL = "ORIGINAL_BYTES"
+
+#: Anomalies that make a family's history provably incomplete.
+BLOCKING_ANOMALIES = frozenset({
+    "DUPLICATE_REVISION", "BROKEN_PREDECESSOR", "CROSS_FAMILY_LINK",
+    "REVISION_UNAVAILABLE", "REVISION_GAP",
+})
+
 
 def digest(value: Any) -> str:
+    """SHA-256 of a text or bytes value. Bytes are hashed as-is."""
+    if isinstance(value, (bytes, bytearray)):
+        return hashlib.sha256(bytes(value)).hexdigest()
     text = value if isinstance(value, str) else str(value)
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -112,14 +135,146 @@ def _mapping(value: Any) -> Mapping[str, Any]:
     return value if isinstance(value, Mapping) else {}
 
 
+def _is_exact_bool(value: Any) -> bool:
+    return type(value) is bool
+
+
+def _is_business_int(value: Any) -> bool:
+    """`True`/`False` are `int` in Python; a business integer must not be a bool."""
+    return type(value) is int
+
+
+# ------------------------------------------------------- body read contract --
+
+def _decode_chunk(chunk: bytes) -> tuple[str | None, bool]:
+    """Decode a byte chunk, tolerating only an incomplete trailing sequence.
+
+    A cut in the middle of a multibyte character drops the partial bytes; genuinely
+    invalid bytes are reported as undecodable rather than silently replaced.
+    """
+    try:
+        return chunk.decode("utf-8"), True
+    except UnicodeDecodeError as exc:
+        if exc.end == len(chunk) and len(chunk) - exc.start < 4:
+            try:
+                return chunk[:exc.start].decode("utf-8"), True
+            except UnicodeDecodeError:
+                return None, False
+        return None, False
+
+
+def read_prompt_body(raw: Any, *, limit: int) -> dict[str, Any]:
+    """Read a prompt body within a safe cap, stating exactly what was obtained.
+
+    Returns:
+      state            `COMPLETE` | `TRUNCATED` | `UNDECODABLE`
+      value            exact text (`COMPLETE`), a valid-UTF-8 preview (`TRUNCATED`),
+                       or `None` (`UNDECODABLE`)
+      truncated        bool
+      decodable        bool
+      original_length  byte length of the original body
+      digest           SHA-256 of the **original bytes**
+      digest_of        `ORIGINAL_BYTES`
+      fetch            how to obtain the whole body
+    """
+    if not isinstance(raw, (bytes, bytearray)):
+        raise ValueError("PROMPT_BODY_INVALID")
+    if not _is_business_int(limit) or limit < 0:
+        raise ValueError("PROMPT_BODY_LIMIT_INVALID")
+    data = bytes(raw)
+    total = len(data)
+    truncated = total > limit
+    text, decodable = _decode_chunk(data[:limit] if truncated else data)
+    if not decodable:
+        state, value = BODY_UNDECODABLE, None
+    elif truncated:
+        state, value = BODY_TRUNCATED, text
+    else:
+        state, value = BODY_COMPLETE, text
+    return {
+        "state": state,
+        "value": value,
+        "truncated": truncated,
+        "decodable": decodable,
+        "original_length": total,
+        "preview_length": 0 if value is None else len(value.encode("utf-8")),
+        "limit": limit,
+        "digest": digest(data),
+        "digest_of": DIGEST_OF_ORIGINAL,
+        "fetch": "ASSET_BYTES" if state != BODY_COMPLETE else "INCLUDED",
+    }
+
+
 # ------------------------------------------------------------- the payload --
 
-def prompt_payload(asset: Mapping[str, Any]) -> Mapping[str, Any]:
-    """The structured prompt payload of one asset, or `{}` when there is none.
+def validate_payload(payload: Any) -> dict[str, Any]:
+    """Strict schema validation of one `parameters.prompt` payload.
 
-    A prompt asset is recognised by `kind == 'prompt'`, not by the payload being
-    well formed — a malformed payload must be visible as a problem, not silently
-    reclassified as a non-prompt asset.
+    Nothing here is a truthiness check: `'false'` is not `False`, and `True` is not a
+    business integer. Unknown keys are rejected rather than ignored.
+    """
+    def bad(reason: str) -> dict[str, Any]:
+        return {"ok": False, "reason": reason}
+
+    if not isinstance(payload, Mapping):
+        return bad("PROMPT_PAYLOAD_NOT_OBJECT")
+    # Contract first: it is the most informative reason for an artefact that is not a
+    # prompt payload at all, and it is what a caller can act on.
+    if payload.get("contract") != PAYLOAD_CONTRACT:
+        return bad("PROMPT_PAYLOAD_CONTRACT_INVALID")
+    keys = set(payload)
+    if not set(PAYLOAD_REQUIRED_KEYS) <= keys:
+        return bad("PROMPT_PAYLOAD_FIELD_MISSING")
+    if keys - set(PAYLOAD_REQUIRED_KEYS) - set(PAYLOAD_OPTIONAL_KEYS):
+        return bad("PROMPT_PAYLOAD_UNKNOWN_KEY")
+    family = payload.get("family_id")
+    if not isinstance(family, str) or not family.strip() or len(family) > MAX_IDENTIFIER:
+        return bad("PROMPT_PAYLOAD_FAMILY_INVALID")
+    if not _is_business_int(payload.get("revision")) or payload["revision"] < 1:
+        return bad("PROMPT_PAYLOAD_REVISION_INVALID")
+    if payload.get("purpose") not in PURPOSES:
+        return bad("PROMPT_PAYLOAD_PURPOSE_INVALID")
+    if payload.get("origin") not in ORIGINS:
+        return bad("PROMPT_PAYLOAD_ORIGIN_INVALID")
+    for field in ("negative_prompt", "model_reference", "change_note", "change_reason"):
+        value = payload.get(field)
+        if not isinstance(value, str) or len(value) > MAX_TEXT:
+            return bad("PROMPT_PAYLOAD_TYPE_INVALID")
+    if not isinstance(payload.get("parameters"), Mapping):
+        return bad("PROMPT_PAYLOAD_TYPE_INVALID")
+    seed = payload.get("seed")
+    if seed is not None and (not _is_business_int(seed) or seed < 0):
+        return bad("PROMPT_PAYLOAD_SEED_INVALID")
+    for field in ("reference_asset_ids", "output_asset_ids", "character_ids", "scene_ids", "shot_ids"):
+        value = payload.get(field)
+        if not isinstance(value, list) or len(value) > MAX_IDS:
+            return bad("PROMPT_PAYLOAD_TYPE_INVALID")
+        if any(not isinstance(item, str) or not item.strip() or len(item) > MAX_IDENTIFIER for item in value):
+            return bad("PROMPT_PAYLOAD_ID_INVALID")
+    if not _is_exact_bool(payload.get("redacted")):
+        return bad("PROMPT_PAYLOAD_TYPE_INVALID")
+    if "previous_asset_id" in payload:
+        previous = payload["previous_asset_id"]
+        if not isinstance(previous, str) or not previous.strip() or len(previous) > MAX_IDENTIFIER:
+            return bad("PROMPT_PAYLOAD_ID_INVALID")
+    if "adopted_from" in payload:
+        adopted = payload["adopted_from"]
+        if not isinstance(adopted, Mapping) or set(adopted) != {"owner", "field", "digest"}:
+            return bad("PROMPT_PAYLOAD_ADOPTION_INVALID")
+        if any(not isinstance(value, str) for value in adopted.values()):
+            return bad("PROMPT_PAYLOAD_ADOPTION_INVALID")
+    return {"ok": True, "reason": None}
+
+
+def payload_is_readable(payload: Mapping[str, Any]) -> bool:
+    return validate_payload(payload)["ok"] is True
+
+
+def prompt_payload(asset: Mapping[str, Any]) -> Mapping[str, Any]:
+    """The structured payload of one asset, or `{}` when there is none.
+
+    A prompt asset is recognised by `kind == 'prompt'`, not by a well-formed payload —
+    a malformed payload must be visible as a problem, not silently reclassified.
     """
     return _mapping(_mapping(asset.get("parameters")).get(PAYLOAD_KEY))
 
@@ -136,19 +291,19 @@ def build_payload(*, family_id: str, revision: int, purpose: str, origin: str,
                   redacted: bool = False, source: Any = None) -> dict[str, Any]:
     """Build the payload stored under `parameters.prompt`.
 
-    This is a pure builder: the asset owner performs the write, the CAS and the
-    lineage annotation. Values are validated by shape here so a caller cannot
-    store something the projection would then have to guess about.
+    A pure builder: the asset owner performs the write, the CAS and the lineage
+    annotation. Values are validated by shape here so a caller cannot store something
+    the projection would then have to guess about.
     """
     if purpose not in PURPOSES:
         raise ValueError("PROMPT_PURPOSE_INVALID")
     if origin not in ORIGINS:
         raise ValueError("PROMPT_ORIGIN_INVALID")
-    if type(revision) is not int or revision < 1:
+    if not _is_business_int(revision) or revision < 1:
         raise ValueError("PROMPT_REVISION_INVALID")
     if not _text(family_id):
         raise ValueError("PROMPT_FAMILY_REQUIRED")
-    if seed is not None and (type(seed) is not int or seed < 0):
+    if seed is not None and (not _is_business_int(seed) or seed < 0):
         raise ValueError("PROMPT_SEED_INVALID")
     payload: dict[str, Any] = {
         "contract": PAYLOAD_CONTRACT,
@@ -179,34 +334,31 @@ def build_payload(*, family_id: str, revision: int, purpose: str, origin: str,
     return payload
 
 
-def payload_is_readable(payload: Mapping[str, Any]) -> bool:
-    if _text(payload.get("contract")) != PAYLOAD_CONTRACT:
-        return False
-    if _text(payload.get("purpose")) not in PURPOSES or _text(payload.get("origin")) not in ORIGINS:
-        return False
-    revision = payload.get("revision")
-    return type(revision) is int and revision >= 1 and bool(_text(payload.get("family_id")))
-
-
 # ------------------------------------------------------------- the family --
 
 def _revision_of(asset: Mapping[str, Any]) -> int:
     revision = prompt_payload(asset).get("revision")
-    return revision if type(revision) is int and revision >= 1 else 0
+    return revision if _is_business_int(revision) and revision >= 1 else 0
 
 
 def _family_of(asset: Mapping[str, Any]) -> str:
-    payload = prompt_payload(asset)
-    family = _text(payload.get("family_id"))
+    family = _text(prompt_payload(asset).get("family_id"))
     # An asset that predates a family id is its own family: never merged by guesswork.
     return family or _text(asset.get("id"))
 
 
-def families(assets: Iterable[Mapping[str, Any]]) -> dict[str, list[Mapping[str, Any]]]:
-    """Group prompt assets into version chains, oldest revision first."""
+def families(assets: Iterable[Mapping[str, Any]], *, include_deleted: bool = False
+             ) -> dict[str, list[Mapping[str, Any]]]:
+    """Group prompt assets into version chains, oldest revision first.
+
+    `include_deleted` lets a detail view notice that a revision exists but is no longer
+    readable, instead of silently reporting a shorter, "complete" history.
+    """
     grouped: dict[str, list[Mapping[str, Any]]] = {}
     for asset in _rows(assets):
-        if not is_prompt_asset(asset):
+        if _text(asset.get("kind")) != PROMPT_KIND:
+            continue
+        if not include_deleted and asset.get("deleted_at"):
             continue
         grouped.setdefault(_family_of(asset), []).append(asset)
     for rows in grouped.values():
@@ -214,31 +366,65 @@ def families(assets: Iterable[Mapping[str, Any]]) -> dict[str, list[Mapping[str,
     return grouped
 
 
+def _anomalies(versions: list[Mapping[str, Any]], known: Mapping[str, Mapping[str, Any]],
+               family_id: str) -> list[dict[str, Any]]:
+    """Structural problems in one family's chain, reported rather than smoothed over."""
+    found: list[dict[str, Any]] = []
+    seen: dict[int, str] = {}
+    for row in versions:
+        asset_id = _text(row.get("id"))
+        if row.get("deleted_at"):
+            found.append({"kind": "REVISION_UNAVAILABLE", "asset_id": asset_id,
+                          "detail": "asset is deleted or no longer readable"})
+        revision = _revision_of(row)
+        if revision in seen:
+            found.append({"kind": "DUPLICATE_REVISION", "asset_id": asset_id,
+                          "detail": f"revision {revision} also used by {seen[revision]}"})
+        else:
+            seen[revision] = asset_id
+        previous = _text(prompt_payload(row).get("previous_asset_id"))
+        if previous:
+            if previous not in known:
+                found.append({"kind": "BROKEN_PREDECESSOR", "asset_id": asset_id,
+                              "detail": f"predecessor {previous} is not present"})
+            elif _family_of(known[previous]) != family_id:
+                found.append({"kind": "CROSS_FAMILY_LINK", "asset_id": asset_id,
+                              "detail": f"predecessor {previous} belongs to another family"})
+    revisions = sorted(seen)
+    if revisions and revisions != list(range(1, len(revisions) + 1)):
+        found.append({"kind": "REVISION_GAP", "asset_id": None,
+                      "detail": f"revisions present: {revisions}"})
+    return found
+
+
 # ---------------------------------------------------------------- bindings --
 
-def _resolve_bindings(payload: Mapping[str, Any],
-                      bible: Mapping[str, Any] | None) -> dict[str, Any]:
-    """Resolve every declared binding against the real bible / asset index.
+def _resolve_bindings(payload: Mapping[str, Any], bible: Mapping[str, Any] | None) -> dict[str, Any]:
+    """Resolve every declared binding against the real index.
 
-    A declared target that cannot be found is `UNKNOWN` with the reason stated. It
-    is never dropped from the list and never assumed to exist — Round 3 requires
-    "真实存在才显示；不存在 UNKNOWN".
+    An unresolvable target is `UNKNOWN` with the reason stated — never dropped and never
+    assumed present (Round 3 §7). This is not a permission check: it says whether the
+    target exists in the index the caller supplied.
     """
     character_index = set(_identifiers(bible.get("character_ids"))) if bible is not None else set()
     scene_index = set(_identifiers(bible.get("location_ids"))) if bible is not None else set()
     asset_index = set(_identifiers(bible.get("asset_ids"))) if bible is not None else set()
-    shot_index = set(_identifiers(bible.get("shot_ids"))) if bible is not None else set()
+    shot_keys = set(_identifiers(bible.get("shot_keys"))) if bible is not None else set()
 
-    def resolve(kind: str, declared: list[str], index: set[str]) -> list[dict[str, Any]]:
-        return [{"kind": kind, "id": identifier,
-                 "resolution": KNOWN if identifier in index else UNKNOWN,
-                 "verification": "INDEX_SUPPLIED" if bible is not None else "NO_INDEX_SUPPLIED"}
-                for identifier in declared]
+    def resolve(kind: str, declared: list[str], index: set[str], *, scoped: bool = False) -> list[dict[str, Any]]:
+        rows = []
+        document_id = _text(payload.get("shot_scope")) if scoped else ""
+        for identifier in declared:
+            known = identifier in index or (scoped and document_id and f"{document_id}:{identifier}" in index)
+            rows.append({"kind": kind, "id": identifier,
+                         "resolution": KNOWN if known else UNKNOWN,
+                         "verification": "INDEX_SUPPLIED" if bible is not None else "NO_INDEX_SUPPLIED"})
+        return rows
 
     return {
         "characters": resolve("CHARACTER", _identifiers(payload.get("character_ids")), character_index),
         "scenes": resolve("SCENE", _identifiers(payload.get("scene_ids")), scene_index),
-        "shots": resolve("SHOT", _identifiers(payload.get("shot_ids")), shot_index),
+        "shots": resolve("SHOT", _identifiers(payload.get("shot_ids")), shot_keys, scoped=True),
         "assets": resolve("ASSET",
                           _identifiers(payload.get("reference_asset_ids"))
                           + _identifiers(payload.get("output_asset_ids")), asset_index),
@@ -259,19 +445,45 @@ def _field(field: str, value: Any, *, authored: bool | None = None) -> dict[str,
     }
 
 
+def _body_of(asset_id: str, asset_body: Mapping[str, Any]) -> dict[str, Any]:
+    """Accept the rich body contract, or a plain string from an older caller."""
+    value = asset_body.get(asset_id)
+    if isinstance(value, Mapping):
+        return dict(value)
+    if isinstance(value, str):
+        return read_prompt_body(value.encode("utf-8"), limit=MAX_TEXT)
+    return {"state": BODY_UNDECODABLE, "value": None, "digest": None, "digest_of": None,
+            "truncated": False, "decodable": False, "original_length": None,
+            "preview_length": 0, "limit": None, "fetch": "UNAVAILABLE"}
+
+
 def _entry_for(family_id: str, versions: list[Mapping[str, Any]],
-               bible: Mapping[str, Any] | None,
-               asset_text: Mapping[str, str]) -> dict[str, Any]:
+               bible: Mapping[str, Any] | None, asset_body: Mapping[str, Any],
+               *, read_complete: bool = True,
+               known: Mapping[str, Mapping[str, Any]] | None = None) -> dict[str, Any]:
     head = versions[-1]
     payload = prompt_payload(head)
-    redacted = bool(payload.get("redacted"))
-    text = asset_text.get(_text(head.get("id")), "")
-    text_value = digest(text) if redacted else text
+    redacted = payload.get("redacted") is True
+    body = _body_of(_text(head.get("id")), asset_body)
+    if redacted:
+        # The digest IS the projection of the body — it is not digested again, so the
+        # caller can verify it against the original bytes. The body itself is withheld.
+        text_value = body.get("digest") or UNKNOWN
+        negative_value = (digest(_text(payload.get("negative_prompt")))
+                          if _text(payload.get("negative_prompt")) else "")
+        text_authored = bool(body.get("digest"))
+        body = {**body, "value": None, "state": "REDACTED", "fetch": "REDACTED"}
+    else:
+        # A preview is surfaced as a preview; an undecodable body is not "authored".
+        text_value = body.get("value") if body.get("value") is not None else UNKNOWN
+        text_authored = body.get("value") is not None
+        negative_value = _text(payload.get("negative_prompt"))
     bindings = _resolve_bindings(payload, bible)
     reference_ids = _identifiers(payload.get("reference_asset_ids"))
     output_ids = _identifiers(payload.get("output_asset_ids"))
     unresolved = [row["id"] for group in bindings.values() if isinstance(group, list)
                   for row in group if row["resolution"] == UNKNOWN]
+    anomalies = _anomalies(versions, known or {}, family_id)
     return {
         "contract": PROMPT_LIBRARY_CONTRACT,
         "family_id": family_id,
@@ -283,23 +495,31 @@ def _entry_for(family_id: str, versions: list[Mapping[str, Any]],
         "review_status": _text(head.get("review_status") or "DRAFT") or "DRAFT",
         "approved": bool(head.get("approved_at")),
         "redacted": redacted,
+        # The body contract travels with the entry: a preview is never presented as the
+        # whole text, and an undecodable body is never presented as authored.
+        "body": body,
         "bindings": bindings,
         "unresolved_bindings": unresolved,
         "reference_asset_ids": reference_ids,
         "output_asset_ids": output_ids,
+        "anomalies": anomalies,
         "versions": [{
             "asset_id": _text(row.get("id")),
             "revision": _revision_of(row),
             "asset_version": row.get("version"),
-            "change_note": _text(prompt_payload(row).get("change_note")),
-            "change_reason": _text(prompt_payload(row).get("change_reason")),
+            "change_note": digest(_text(prompt_payload(row).get("change_note")))
+            if redacted and _text(prompt_payload(row).get("change_note"))
+            else _text(prompt_payload(row).get("change_note")),
+            "change_reason": digest(_text(prompt_payload(row).get("change_reason")))
+            if redacted and _text(prompt_payload(row).get("change_reason"))
+            else _text(prompt_payload(row).get("change_reason")),
             "previous_asset_id": _text(prompt_payload(row).get("previous_asset_id")) or None,
-            "redacted": bool(prompt_payload(row).get("redacted")),
+            "redacted": prompt_payload(row).get("redacted") is True,
+            "available": not bool(row.get("deleted_at")),
         } for row in versions],
         "fields": [
-            _field("text", text_value),
-            _field("negative_prompt", digest(_text(payload.get("negative_prompt")))
-                   if redacted and _text(payload.get("negative_prompt")) else _text(payload.get("negative_prompt"))),
+            _field("text", text_value, authored=text_authored),
+            _field("negative_prompt", negative_value),
             _field("model_reference", _text(payload.get("model_reference"))),
             _field("parameters", dict(_mapping(payload.get("parameters")))),
             _field("seed", payload.get("seed"), authored=payload.get("seed") is not None),
@@ -311,29 +531,39 @@ def _entry_for(family_id: str, versions: list[Mapping[str, Any]],
                                                         or bindings["shots"] or bindings["assets"])),
             _field("version", _revision_of(head)),
         ],
+        "read_complete": read_complete,
+        "history_complete": read_complete and not any(
+            row["kind"] in BLOCKING_ANOMALIES for row in anomalies),
     }
 
 
 def project_prompt_library(assets: Iterable[Mapping[str, Any]] | None = None, *,
                            bible: Mapping[str, Any] | None = None,
-                           asset_text: Mapping[str, str] | None = None,
-                           used_by: Mapping[str, Any] | None = None) -> dict[str, Any]:
-    """The Prompt Library projection: one entry per prompt family, newest revision first."""
-    grouped = families(assets)
-    text_index = dict(asset_text or {})
+                           asset_text: Mapping[str, Any] | None = None,
+                           used_by: Mapping[str, Any] | None = None,
+                           coverage: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    """The Prompt Library projection: one entry per prompt family.
+
+    `coverage` states honestly whether the read was bounded: a truncated read must not be
+    presented as the whole library, and an unknown total is never invented.
+    """
+    rows = _rows(assets)
+    grouped = families(rows)
+    known = {_text(row.get("id")): row for row in rows if _text(row.get("id"))}
+    bodies = dict(asset_text or {})
     usage = dict(used_by or {})
-    entries = []
-    malformed = []
+    entries, malformed = [], []
     for family_id, versions in grouped.items():
-        if not payload_is_readable(prompt_payload(versions[-1])):
-            # A prompt-kind asset with an unreadable payload is reported, never guessed at.
+        validation = validate_payload(prompt_payload(versions[-1]))
+        if not validation["ok"]:
             malformed.append({"asset_id": _text(versions[-1].get("id")), "family_id": family_id,
-                              "reason": "PROMPT_PAYLOAD_UNREADABLE"})
+                              "reason": validation["reason"]})
             continue
-        entry = _entry_for(family_id, versions, bible, text_index)
+        entry = _entry_for(family_id, versions, bible, bodies, known=known)
         entry["used_by"] = list(usage.get(family_id, []))
         entries.append(entry)
-    entries.sort(key=lambda row: (-row["revision"], row["family_id"]))
+    entries.sort(key=lambda row: (row["family_id"],))
+    cover = dict(coverage or {})
     return {
         "contract": PROMPT_LIBRARY_CONTRACT,
         "schema_version": SCHEMA_VERSION,
@@ -345,9 +575,20 @@ def project_prompt_library(assets: Iterable[Mapping[str, Any]] | None = None, *,
         "origins": list(ORIGINS),
         "binding_kinds": list(BINDING_KINDS),
         "entries": entries,
+        # `prompt_count`/`revision_count` count VALID families and revisions only;
+        # malformed artefacts are counted separately so the two can never disagree.
         "prompt_count": len(entries),
-        "revision_count": sum(len(rows) for rows in grouped.values()),
+        "revision_count": sum(len(versions) for family_id, versions in grouped.items()
+                              if validate_payload(prompt_payload(versions[-1]))["ok"]),
         "malformed": malformed,
+        "malformed_count": len(malformed),
+        "returned": cover.get("returned", len(entries)),
+        "limit": cover.get("limit"),
+        "truncated": bool(cover.get("truncated", False)),
+        "has_more": bool(cover.get("has_more", False)),
+        # The owner's list is bounded; a total is never invented.
+        "total_known": bool(cover.get("total_known", False)),
+        "read_complete": not bool(cover.get("truncated", False)),
         "unknown_is_explicit": True,
         "bible_index_supplied": bible is not None,
     }
@@ -355,50 +596,140 @@ def project_prompt_library(assets: Iterable[Mapping[str, Any]] | None = None, *,
 
 def project_prompt_detail(family_id: str, assets: Iterable[Mapping[str, Any]] | None = None, *,
                           bible: Mapping[str, Any] | None = None,
-                          asset_text: Mapping[str, str] | None = None,
-                          used_by: Mapping[str, Any] | None = None) -> dict[str, Any]:
-    """One prompt family with its full version history — every revision retained."""
-    grouped = families(assets)
+                          asset_text: Mapping[str, Any] | None = None,
+                          used_by: Mapping[str, Any] | None = None,
+                          read_complete: bool = True) -> dict[str, Any]:
+    """One prompt family with its version history and any structural anomalies.
+
+    `history_complete` is derived from actual coverage and chain integrity — never a
+    constant. A family whose revisions could not all be read reports the gap instead of
+    presenting a shorter history as complete.
+    """
+    rows = _rows(assets)
+    grouped = families(rows, include_deleted=True)
     versions = grouped.get(family_id)
-    if not versions:
+    if not versions or not validate_payload(prompt_payload(versions[-1]))["ok"]:
+        # Detail must not bypass the library's validity gate.
         raise FileNotFoundError(family_id)
-    entry = _entry_for(family_id, versions, bible, dict(asset_text or {}))
+    known = {_text(row.get("id")): row for row in rows if _text(row.get("id"))}
+    entry = _entry_for(family_id, versions, bible, dict(asset_text or {}),
+                       read_complete=read_complete, known=known)
     entry["contract"] = PROMPT_DETAIL_CONTRACT
     entry["schema_version"] = SCHEMA_VERSION
     entry["advisory_only"] = True
     entry["execution_authority"] = False
     entry["auto_modify"] = False
     entry["used_by"] = list((used_by or {}).get(family_id, []))
-    entry["history_complete"] = True
     return entry
+
+
+# ---------------------------------------------------------- shot identity --
+
+def shot_index(documents: Iterable[Mapping[str, Any]] | None = None) -> dict[str, Any]:
+    """A bounded, **scope-aware** shot index built from real shot structures.
+
+    Shot identity is `document_id:number`, so two documents' shot number 1 can never be
+    confused. Crucially this does **not** depend on a character appearing in the shot:
+    an empty establishing shot is still a valid binding target.
+    """
+    entries: dict[str, Any] = {}
+    for document in _rows(documents):
+        document_id = _text(document.get("document_id"))
+        if not document_id:
+            continue
+        for card in _rows(document.get("cards")):
+            number = card.get("number")
+            key = f"{document_id}:{number}"
+            character = _mapping(card.get("character"))
+            entries[key] = {
+                "key": key,
+                "document_id": document_id,
+                "shot_id": _text(card.get("shot_id")),
+                "number": number,
+                "characters": list(_identifiers(character.get("values"))),
+            }
+    return {"entries": entries, "scope_aware": True, "count": len(entries)}
 
 
 # -------------------------------------------------------- context assembly --
 
+#: How a shot card's own authored fields map onto context dimensions.
+_SHOT_FIELD_SOURCES: tuple[tuple[str, str], ...] = (
+    ("lighting", "ShotCard.lighting"), ("action", "ShotCard.action"), ("emotion", "ShotCard.emotion"),
+    ("lens", "ShotCard.lens"), ("movement", "ShotCard.camera_motion"),
+    ("composition", "ShotCard.composition"), ("character", "ShotCard.characters"),
+    ("audio", "ShotCard.sound/sound_effect/dialogue"), ("duration", "ShotCard.duration_seconds"),
+)
+
+
+def shot_card_dimensions(card: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Adapt a **real** `project_shot_cards()` entry into context dimensions.
+
+    `project_shot_cards()` returns top-level structured fields (`lighting`, `action`,
+    `audio`, `character`, …) — *not* a `dimensions` list. Reading `card['dimensions']`
+    therefore produced an empty context for every real shot; this adapter is the fix.
+    Every dimension here is `PER_SHOT_MEASURED`: it describes one shot, not a
+    document-level director decision.
+    """
+    def dimension(field: str, value: Any, authored: Any, source: str) -> dict[str, Any]:
+        present = bool(authored) and value not in (None, "")
+        return {"field": field, "value": value if present else UNKNOWN,
+                "authored": present, "state": KNOWN if present else UNKNOWN,
+                "source": source, "kind": "PER_SHOT_MEASURED"}
+
+    out: list[dict[str, Any]] = []
+    for field, source in _SHOT_FIELD_SOURCES:
+        raw = card.get(field)
+        if field == "duration":
+            entry = _mapping(raw)
+            seconds = entry.get("seconds")
+            out.append(dimension(field, "" if seconds is None else str(seconds),
+                                 entry.get("authored"), source))
+        elif field == "character":
+            entry = _mapping(raw)
+            out.append(dimension(field, ", ".join(_identifiers(entry.get("values"))),
+                                 entry.get("authored"), source))
+        elif field == "audio":
+            audio = _mapping(raw)
+            parts = [part for part in (_text(audio.get("sound")), _text(audio.get("sound_effect"))) if part]
+            if audio.get("dialogue"):
+                parts.append(f"dialogue:{len(audio['dialogue'])}")
+            out.append(dimension(field, ", ".join(parts), audio.get("authored"), source))
+        else:
+            entry = _mapping(raw)
+            out.append(dimension(field, _text(entry.get("value")), entry.get("authored"),
+                                 _text(entry.get("source")) or source))
+    camera = _mapping(card.get("camera"))
+    classification = _mapping(card.get("camera_classification"))
+    out.append(dimension("shot_size", _text(camera.get("shot_size")),
+                         classification.get("shot_size") in ("CANONICAL", "LEGACY_PASSTHROUGH"),
+                         "ShotCard.shot_size"))
+    return out
+
+
 def project_prompt_context(*, character_ids: Iterable[str] = (), location_ids: Iterable[str] = (),
                            director_intent: Mapping[str, Any] | None = None,
                            shot_cards: Iterable[Mapping[str, Any]] | None = None,
-                           bible: Mapping[str, Any] | None = None) -> dict[str, Any]:
+                           bible: Mapping[str, Any] | None = None,
+                           document_id: str | None = None) -> dict[str, Any]:
     """Round 3-D: show **where a prompt's context would come from** — and stop there.
 
-    This deliberately does **not** compose a final prompt. It reports the sources,
-    what each one contributes, and what is still unauthored, so the user confirms
-    before anything is generated. Composing the text automatically is exactly the
-    "AI overwrites the user's prompt" behaviour Round 3 §10 forbids.
+    Deliberately does **not** compose a final prompt: it reports sources, what each
+    contributes, and what is still unauthored, so the user confirms before anything is
+    generated. `DOCUMENT_AUTHORED` and `PER_SHOT_MEASURED` are preserved and never
+    merged, so a per-shot measurement is never presented as a global director decision.
     """
-    character_index = {}
-    for row in _rows((bible or {}).get("characters")):
-        character_index[_text(row.get("character_id"))] = row
-    location_index = {}
-    for row in _rows((bible or {}).get("locations")):
-        location_index[_text(row.get("location_id"))] = row
+    character_index = {_text(row.get("character_id")): row
+                       for row in _rows((bible or {}).get("characters"))}
+    location_index = {_text(row.get("location_id")): row
+                      for row in _rows((bible or {}).get("locations"))}
 
-    def dimensions_of(entry: Mapping[str, Any] | None) -> list[dict[str, Any]]:
+    def bible_dimensions(entry: Mapping[str, Any] | None, kind: str) -> list[dict[str, Any]]:
         if entry is None:
             return []
         return [{"field": _text(item.get("field")), "value": _text(item.get("value")),
                  "authored": bool(item.get("authored")), "state": _text(item.get("state")),
-                 "source": _text(item.get("source"))}
+                 "source": _text(item.get("source")), "kind": kind}
                 for item in _rows(entry.get("dimensions"))]
 
     sources: list[dict[str, Any]] = []
@@ -406,25 +737,40 @@ def project_prompt_context(*, character_ids: Iterable[str] = (), location_ids: I
         entry = character_index.get(character_id)
         sources.append({"kind": "CHARACTER_BIBLE", "id": character_id,
                         "resolution": KNOWN if entry is not None else UNKNOWN,
-                        "dimensions": dimensions_of(entry)})
+                        "dimensions": bible_dimensions(entry, "ENTITY_AUTHORED")})
     for location_id in _identifiers(list(location_ids)):
         entry = location_index.get(location_id)
         sources.append({"kind": "SCENE_BIBLE", "id": location_id,
                         "resolution": KNOWN if entry is not None else UNKNOWN,
-                        "dimensions": dimensions_of(entry)})
+                        "dimensions": bible_dimensions(entry, "ENTITY_AUTHORED")})
     if director_intent is not None:
-        sources.append({"kind": "DIRECTOR_INTENT",
-                        "resolution": KNOWN,
+        sources.append({"kind": "DIRECTOR_INTENT", "id": None, "resolution": KNOWN,
+                        "document_id": document_id,
+                        # The director's own `kind` passes through unchanged, so a
+                        # measured aggregate is never relabelled as a document decision.
                         "dimensions": [{"field": _text(item.get("field")), "value": _text(item.get("value")),
                                         "authored": bool(item.get("authored")),
-                                        "state": _text(item.get("state")), "source": _text(item.get("source"))}
+                                        "state": _text(item.get("state")),
+                                        "source": _text(item.get("source")),
+                                        "kind": _text(item.get("kind")) or "DOCUMENT_AUTHORED"}
                                        for item in _rows(director_intent.get("fields"))]})
     for card in _rows(shot_cards):
-        sources.append({"kind": "SHOT_CARD", "id": _text(card.get("shot_id")), "resolution": KNOWN,
-                        "dimensions": [{"field": _text(item.get("field")), "value": _text(item.get("value")),
-                                        "authored": bool(item.get("authored")),
-                                        "state": _text(item.get("state")), "source": _text(item.get("source"))}
-                                       for item in _rows(card.get("dimensions"))]})
+        # A real shot card has top-level fields; a pre-adapted one may already carry
+        # `dimensions`. Both are accepted, and never confused for one another.
+        dimensions = ([{"field": _text(item.get("field")), "value": _text(item.get("value")),
+                        "authored": bool(item.get("authored")), "state": _text(item.get("state")),
+                        "source": _text(item.get("source")),
+                        "kind": _text(item.get("kind")) or "PER_SHOT_MEASURED"}
+                       for item in _rows(card.get("dimensions"))]
+                      if "dimensions" in card else shot_card_dimensions(card))
+        # Identity always resolves to something traceable: the owner's shot id when the
+        # document supplies one, otherwise the document-scoped key.
+        shot_identity = (_text(card.get("shot_id")) or _text(card.get("id"))
+                         or (f"{document_id}:{card.get('number')}" if document_id else ""))
+        sources.append({"kind": "SHOT_CARD",
+                        "id": shot_identity,
+                        "resolution": KNOWN, "document_id": document_id,
+                        "number": card.get("number"), "dimensions": dimensions})
 
     unauthored = [{"kind": source["kind"], "id": source.get("id"), "field": dimension["field"]}
                   for source in sources for dimension in source["dimensions"]
@@ -435,9 +781,9 @@ def project_prompt_context(*, character_ids: Iterable[str] = (), location_ids: I
         "advisory_only": True,
         "execution_authority": False,
         "auto_modify": False,
-        # The point of the panel: it assembles *sources*, never a finished prompt.
         "composes_prompt_text": False,
         "requires_user_confirmation": True,
+        "document_id": document_id,
         "sources": sources,
         "unauthored": unauthored,
         "unknown_is_explicit": True,
