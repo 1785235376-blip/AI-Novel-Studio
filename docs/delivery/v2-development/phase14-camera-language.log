@@ -1,0 +1,25 @@
+........................................F..........s.s.s.s.s.s.s.s.s.s.. [ 37%]
+.sss.....sssss.s.s.s.s.s.s.s.s.s..ss..............ssssssssssssss..ss..ss [ 75%]
+..ss..ss..ss..ss..ss..ss..ss.s.s.s......ssssss                           [100%]
+================================== FAILURES ===================================
+_________________ test_identical_authored_values_warn_nothing _________________
+
+    def test_identical_authored_values_warn_nothing():
+>       assert camera.continuity_warnings([
+            shot("a", outfit="红色外套"), shot("b", outfit="红 色 外套"),
+        ]) == []
+E       AssertionError: assert [ContinuityWa...lue='红 色 外套')] == []
+E         
+E         Left contains one more item: ContinuityWarning(code='CONTINUITY_OUTFIT_CHANGED', field='outfit', previous_shot_id='a', next_shot_id='b', previous_value='红色外套', next_value='红 色 外套')
+E         Use -v to get more diff
+
+tests\test_v2_camera_language.py:149: AssertionError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_camera_language.py::test_identical_authored_values_warn_nothing
+1 failed, 119 passed, 70 skipped, 1 warning in 64.88s (0:01:04)
