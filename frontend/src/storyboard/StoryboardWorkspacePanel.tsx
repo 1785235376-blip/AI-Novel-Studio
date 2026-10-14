@@ -4,6 +4,8 @@ import type { CollaborationContext } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import { createDirectorWorkspaceClient } from '../director/directorWorkspaceClient';
 import { DirectorWorkspace } from '../director/DirectorWorkspace';
+import { createBibleClient } from '../bible/bibleClient';
+import { BibleWorkspace } from '../bible/BibleWorkspace';
 import { createStoryboardWorkspaceClient } from './storyboardWorkspaceClient';
 import { directorVsShotOverride } from './storyboardOps';
 import { DirectorGoalPanel } from './DirectorGoalPanel';
@@ -67,8 +69,14 @@ export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
   const [comparison, setComparison] = useState<{ kind: 'IMAGE' | 'VIDEO'; asset_id: string; version: number; digest: string; matches_version: boolean } | null>(null);
   const [goalNotice, setGoalNotice] = useState('');
   const [directorOpen, setDirectorOpen] = useState(false);
+  const [bibleOpen, setBibleOpen] = useState(false);
   const directorClient = useMemo(
     () => createDirectorWorkspaceClient(props.projectId, props.transport, props.scope),
+    [props.projectId, props.transport, props.scope],
+  );
+  // 角色与场景圣经是项目级的，不需要文档标识。
+  const bibleClient = useMemo(
+    () => createBibleClient(props.projectId, props.transport, props.scope),
     [props.projectId, props.transport, props.scope],
   );
 
@@ -191,6 +199,10 @@ export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
             documentId={props.directorDocumentId ?? controller.receipt?.document_snapshot.id ?? null}
             active={props.active}
           />}
+          <Button onClick={() => setBibleOpen(true)} aria-expanded={bibleOpen}>
+            按需打开角色与场景圣经
+          </Button>
+          {bibleOpen && <BibleWorkspace client={bibleClient} active={props.active} />}
         </div>
       </div>
     </div>

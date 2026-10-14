@@ -1620,3 +1620,33 @@ none of this is frozen surface.
 | Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
 
 This section adds current facts only.
+
+### 2026-10-15 — Round 2-B: Character & Scene Bible frontend surface (current facts)
+
+Append-only current observation. **No earlier row, status or evidence ID is edited**, including the
+Round 2 section immediately above — in particular the Round 2 row recording the frontend surface as
+`NOT_RUN` stays exactly as written; this section records that it has since been built. The round
+started from `4560dc0`; `main` `fed2404c` untouched; PR #47 still `OPEN`/draft.
+
+**No backend file was changed in this round.** The frontend consumes the Round 2 projection as-is.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| Character Bible Panel | **IMPLEMENTED** | One read-only card per character with all **six** required dimensions (identity, appearance, clothing, reference, behaviour, relationship). Identity is read from the existing `characters` records, behaviour/relationship from the existing `WorldService` `PSYCHOLOGY`/`RELATIONSHIP` records, appearance/clothing from `CHARACTER_VISUAL`. Relationships are never inferred — an empty set states that the original document recorded none. |
+| Scene Bible Panel | **IMPLEMENTED** | One read-only card per location with all **seven** required dimensions (location, architecture, material, lighting, weather, time, mood), from the existing `locations` records plus `SCENE_VISUAL`, with `GEOGRAPHY` relations surfaced. |
+| `UNKNOWN` as a state | **IMPLEMENTED** | An unauthored dimension renders the **literal `UNKNOWN`** plus 未作者化, with a dashed neutral treatment and `data-state="UNKNOWN"`. The decoder enforces `state === 'UNKNOWN'` ⟺ `value === 'UNKNOWN'` ⟺ `authored === false`, so a blank can never reach the surface. |
+| Draft is not canon | **IMPLEMENTED** | A non-approved world record renders `DRAFT（非 canon）`; only an approved record renders `CANON · APPROVED`. Field-level and entry-level both shown, derived from the owner's own record status. |
+| Declared is not verified | **IMPLEMENTED** | Each declared asset id renders individually as `RESOLVED` / `UNRESOLVED`; the decoder requires `unresolved_references` to equal exactly the `UNRESOLVED` entries and forbids any `RESOLVED` reference under `NO_INDEX_SUPPLIED`. |
+| Read-only interaction | **IMPLEMENTED** | The surface has **no** edit/save/create/delete control and no textbox or combobox anywhere; asserted by test. Authoring stays on the existing `WorldService` record route. |
+| Source traceability | **IMPLEMENTED** | Every dimension displays the exact owner path it was read from (e.g. `world_records.CHARACTER_VISUAL.appearance`), so each value can be traced to the owner that stores it. |
+| Mount | **IMPLEMENTED (additive)** | `frontend/src/bible/` (12 files) mounted on demand through the existing `StoryboardWorkspacePanel` via a new button; no new props and no protected surface touched. The panel's own 24 tests still pass. |
+| Verification | **IMPLEMENTED** | Frontend `vitest run src` **4002 passed / 6 skipped / exit 0** (`round2b-frontend-r1`); `tsc --noEmit` **PASS**; `vite build` **PASS**; backend File **190 passed / 69 skipped / exit 0**; backend **real PostgreSQL 140 passed / 69 skipped / exit 0** on a fresh `v2_round2b` database. 29 new frontend cases. All five legs were run even though no backend code changed. |
+| **CORRECTION — design-token guard scope** | RECORDED | The repo's `scripts/check_ui_design_tokens.mjs` **only walks `frontend/src/ui`** (`walk(path.join(root,'frontend','src','ui'))`). The Phase14-A section above cites `UI token guard PASS (52 files)` alongside a new stylesheet without stating that scope, which over-implied coverage: the guard has **never** scanned `frontend/src/director/` or `frontend/src/bible/`. This round therefore verified its own stylesheet directly — no raw hex/`rgb()`/`hsl()` colours and no arbitrary `px` outside `var(--…)` for padding/margin/gap/border-radius — and re-checked the Phase14-A stylesheet the same way (also clean), so that section's *conclusion* still holds but was reached by this check rather than by the guard. Widening the guard is a Root/Design System Owner decision and was **not** taken unilaterally. |
+| Identity field breakdown | `PARTIAL` | The projection supplies one joined identity value plus the entry `name`; the UI shows both and labels the owner source. It does **not** parse the joined string, because splitting it in the view would be inventing structure. A structured identity `detail` on the projection is the clean fix and was deliberately left out of a frontend-only round. |
+| Profile authoring UI | `NOT_RUN` | The owner route accepts `CHARACTER_VISUAL`/`SCENE_VISUAL` today with review and CAS; no authoring UI exists, and this round was explicitly forbidden from adding write controls. |
+| Bible-driven generation | `NOT_RUN` | `used_in` is reported from real documents, but no generation path consumes the bible yet. Bound and handed over for Round 3 in `ROUND2B_HANDOFF.md`. |
+| Browser / visual acceptance | `NOT_RUN` | Component-level (jsdom) evidence only; the stylesheet was verified by token/geometry inspection, not screenshot. This is the largest honest verification gap across Rounds 1–2. |
+| Release candidate validation | **NOT ESTABLISHED** | Unchanged. This round added capability; it did not move a release gate. `ROUND2B_BIBLE_FRONTEND_REPORT.md`. |
+| Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
+
+This section adds current facts only.
