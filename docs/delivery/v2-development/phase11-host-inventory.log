@@ -1,0 +1,51 @@
+{
+  "platform": "Windows-10-10.0.26100-SP0",
+  "windows_release": "10",
+  "windows_version": "10.0.26100",
+  "machine": "AMD64",
+  "python": "3.11.9",
+  "python_executable": "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "host_hardware": {
+    "platform": "Windows",
+    "architecture": "AMD64",
+    "cpu": "AMD64",
+    "ram_bytes": 68291530752,
+    "logical_cpu_count": 20,
+    "gpus": [
+      {
+        "vendor": "NVIDIA",
+        "name": "NVIDIA GeForce RTX 5080",
+        "dedicated_vram_bytes": 16753098752
+      },
+      {
+        "vendor": "NVIDIA",
+        "name": "NVIDIA GeForce RTX 5080",
+        "dedicated_vram_bytes": 16753098752
+      }
+    ],
+    "status": "DETECTED",
+    "notes": [],
+    "cuda": {
+      "status": "COMPONENT_FOUND_NOT_VERIFIED",
+      "source": "WINDOWS_SYSTEM_COMPONENT_METADATA",
+      "inference_verified": false
+    },
+    "directml": {
+      "status": "COMPONENT_FOUND_NOT_VERIFIED",
+      "source": "WINDOWS_SYSTEM_COMPONENT_METADATA",
+      "inference_verified": false
+    }
+  },
+  "windows_acceleration_components": {
+    "cuda": {
+      "status": "COMPONENT_FOUND_NOT_VERIFIED",
+      "source": "WINDOWS_SYSTEM_COMPONENT_METADATA",
+      "inference_verified": false
+    },
+    "directml": {
+      "status": "COMPONENT_FOUND_NOT_VERIFIED",
+      "source": "WINDOWS_SYSTEM_COMPONENT_METADATA",
+      "inference_verified": false
+    }
+  }
+}
