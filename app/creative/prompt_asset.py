@@ -146,16 +146,20 @@ def _is_business_int(value: Any) -> bool:
 
 # ------------------------------------------------------- body read contract --
 
-def _decode_chunk(chunk: bytes) -> tuple[str | None, bool]:
-    """Decode a byte chunk, tolerating only an incomplete trailing sequence.
+def _decode_chunk(chunk: bytes, *, allow_partial_tail: bool) -> tuple[str | None, bool]:
+    """Decode a byte chunk strictly; optionally tolerate one unfinished trailing codepoint.
 
-    A cut in the middle of a multibyte character drops the partial bytes; genuinely
-    invalid bytes are reported as undecodable rather than silently replaced.
+    §3.1 fix: the previous version tolerated *any* short trailing ``UnicodeDecodeError``
+    regardless of whether the read was truncated, so a genuinely invalid body such as
+    ``b"OK\\xff"`` decoded to ``"OK"`` and was reported ``COMPLETE``. Only a real preview
+    boundary may drop bytes, and only when the error is an unfinished codepoint
+    (``unexpected end of data``) rather than invalid start/continuation bytes.
     """
     try:
         return chunk.decode("utf-8"), True
     except UnicodeDecodeError as exc:
-        if exc.end == len(chunk) and len(chunk) - exc.start < 4:
+        if (allow_partial_tail and exc.reason == "unexpected end of data"
+                and exc.end == len(chunk) and len(chunk) - exc.start < 4):
             try:
                 return chunk[:exc.start].decode("utf-8"), True
             except UnicodeDecodeError:
@@ -167,15 +171,19 @@ def read_prompt_body(raw: Any, *, limit: int) -> dict[str, Any]:
     """Read a prompt body within a safe cap, stating exactly what was obtained.
 
     Returns:
-      state            `COMPLETE` | `TRUNCATED` | `UNDECODABLE`
-      value            exact text (`COMPLETE`), a valid-UTF-8 preview (`TRUNCATED`),
-                       or `None` (`UNDECODABLE`)
-      truncated        bool
-      decodable        bool
-      original_length  byte length of the original body
-      digest           SHA-256 of the **original bytes**
-      digest_of        `ORIGINAL_BYTES`
-      fetch            how to obtain the whole body
+      state              `COMPLETE` | `TRUNCATED` | `UNDECODABLE`
+      value              exact text (`COMPLETE`), a valid-UTF-8 preview (`TRUNCATED`),
+                         or `None` (`UNDECODABLE`)
+      truncated          bool
+      decodable          bool — the returned `value` is valid UTF-8
+      **body_validated** bool — the **whole original body** was decoded and validated.
+                         Only `COMPLETE` can claim this; a truncated read must not
+                         promise that its unread tail is valid UTF-8.
+      **tail_unverified** bool — bytes exist that were neither returned nor validated.
+      original_length    byte length of the original body
+      digest             SHA-256 of the **original bytes**
+      digest_of          `ORIGINAL_BYTES`
+      fetch              how to obtain the whole body
     """
     if not isinstance(raw, (bytes, bytearray)):
         raise ValueError("PROMPT_BODY_INVALID")
@@ -184,7 +192,9 @@ def read_prompt_body(raw: Any, *, limit: int) -> dict[str, Any]:
     data = bytes(raw)
     total = len(data)
     truncated = total > limit
-    text, decodable = _decode_chunk(data[:limit] if truncated else data)
+    # Only a truncated read may have its unfinished trailing codepoint dropped.
+    text, decodable = _decode_chunk(data if not truncated else data[:limit],
+                                    allow_partial_tail=truncated)
     if not decodable:
         state, value = BODY_UNDECODABLE, None
     elif truncated:
@@ -196,6 +206,8 @@ def read_prompt_body(raw: Any, *, limit: int) -> dict[str, Any]:
         "value": value,
         "truncated": truncated,
         "decodable": decodable,
+        "body_validated": state == BODY_COMPLETE,
+        "tail_unverified": truncated,
         "original_length": total,
         "preview_length": 0 if value is None else len(value.encode("utf-8")),
         "limit": limit,
@@ -399,6 +411,30 @@ def _anomalies(versions: list[Mapping[str, Any]], known: Mapping[str, Mapping[st
 
 # ---------------------------------------------------------------- bindings --
 
+def _version_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    """One revision's history entry.
+
+    §3.4 fix: redaction is resolved **per revision**. The previous version used the
+    head's flag for every row, so promoting an unmasked revision silently revealed a
+    historical note that its own revision had designated for masking (and the reverse
+    hid a note that revision had not masked). Each revision's presentation choice now
+    remains accurate on its own.
+    """
+    payload = prompt_payload(row)
+    masked = payload.get("redacted") is True
+    note, reason = _text(payload.get("change_note")), _text(payload.get("change_reason"))
+    return {
+        "asset_id": _text(row.get("id")),
+        "revision": _revision_of(row),
+        "asset_version": row.get("version"),
+        "change_note": digest(note) if (masked and note) else note,
+        "change_reason": digest(reason) if (masked and reason) else reason,
+        "previous_asset_id": _text(payload.get("previous_asset_id")) or None,
+        "redacted": masked,
+        "available": not bool(row.get("deleted_at")),
+    }
+
+
 def _resolve_bindings(payload: Mapping[str, Any], bible: Mapping[str, Any] | None) -> dict[str, Any]:
     """Resolve every declared binding against the real index.
 
@@ -503,20 +539,7 @@ def _entry_for(family_id: str, versions: list[Mapping[str, Any]],
         "reference_asset_ids": reference_ids,
         "output_asset_ids": output_ids,
         "anomalies": anomalies,
-        "versions": [{
-            "asset_id": _text(row.get("id")),
-            "revision": _revision_of(row),
-            "asset_version": row.get("version"),
-            "change_note": digest(_text(prompt_payload(row).get("change_note")))
-            if redacted and _text(prompt_payload(row).get("change_note"))
-            else _text(prompt_payload(row).get("change_note")),
-            "change_reason": digest(_text(prompt_payload(row).get("change_reason")))
-            if redacted and _text(prompt_payload(row).get("change_reason"))
-            else _text(prompt_payload(row).get("change_reason")),
-            "previous_asset_id": _text(prompt_payload(row).get("previous_asset_id")) or None,
-            "redacted": prompt_payload(row).get("redacted") is True,
-            "available": not bool(row.get("deleted_at")),
-        } for row in versions],
+        "versions": [_version_row(row) for row in versions],
         "fields": [
             _field("text", text_value, authored=text_authored),
             _field("negative_prompt", negative_value),
@@ -552,6 +575,11 @@ def project_prompt_library(assets: Iterable[Mapping[str, Any]] | None = None, *,
     known = {_text(row.get("id")): row for row in rows if _text(row.get("id"))}
     bodies = dict(asset_text or {})
     usage = dict(used_by or {})
+    cover = dict(coverage or {})
+    # §3.2 fix: the outer read completeness must reach every family entry. Previously
+    # `_entry_for` kept its `read_complete=True` default, so a truncated list could still
+    # advertise a family's latest revision and history as authoritative.
+    read_complete = not bool(cover.get("truncated", False))
     entries, malformed = [], []
     for family_id, versions in grouped.items():
         validation = validate_payload(prompt_payload(versions[-1]))
@@ -559,11 +587,11 @@ def project_prompt_library(assets: Iterable[Mapping[str, Any]] | None = None, *,
             malformed.append({"asset_id": _text(versions[-1].get("id")), "family_id": family_id,
                               "reason": validation["reason"]})
             continue
-        entry = _entry_for(family_id, versions, bible, bodies, known=known)
+        entry = _entry_for(family_id, versions, bible, bodies,
+                           read_complete=read_complete, known=known)
         entry["used_by"] = list(usage.get(family_id, []))
         entries.append(entry)
     entries.sort(key=lambda row: (row["family_id"],))
-    cover = dict(coverage or {})
     return {
         "contract": PROMPT_LIBRARY_CONTRACT,
         "schema_version": SCHEMA_VERSION,
@@ -582,6 +610,10 @@ def project_prompt_library(assets: Iterable[Mapping[str, Any]] | None = None, *,
                               if validate_payload(prompt_payload(versions[-1]))["ok"]),
         "malformed": malformed,
         "malformed_count": len(malformed),
+        # Scanned assets and projected families are different quantities and are labelled
+        # as such, so neither can be mistaken for the other or for a total.
+        "scanned_assets": cover.get("returned", len(entries)),
+        "projected_families": len(entries),
         "returned": cover.get("returned", len(entries)),
         "limit": cover.get("limit"),
         "truncated": bool(cover.get("truncated", False)),

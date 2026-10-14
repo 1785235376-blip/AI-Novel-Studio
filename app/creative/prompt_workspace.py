@@ -31,7 +31,7 @@ from __future__ import annotations
 
 from ..experimental.common import now
 from .prompt_asset import (
-    MAX_TEXT, PROMPT_LIBRARY_CONTRACT, is_prompt_asset, project_prompt_context,
+    MAX_TEXT, PROMPT_KIND, PROMPT_LIBRARY_CONTRACT, is_prompt_asset, project_prompt_context,
     project_prompt_detail, project_prompt_library, read_prompt_body, shot_index,
 )
 
@@ -44,6 +44,10 @@ MAX_TEXT_BYTES = 64 * 1024
 #: Detail needs the whole family, which may sit beyond the library page. This is its own
 #: (larger) bound, reported honestly through `read_complete`.
 MAX_PROMPT_SCAN = 2000
+
+
+def _clean(value) -> str:
+    return str(value).strip() if value is not None else ""
 
 
 class PromptWorkspaceService:
@@ -62,7 +66,7 @@ class PromptWorkspaceService:
                 view[key] = scope[key]
         return view
 
-    def _read_prompts(self, nid, scope, actor=None, *, limit=None):
+    def _read_prompts(self, nid, scope, actor=None, *, limit=None, include_deleted=False):
         """Full metadata **and** bodies for prompt assets, in one asset lease.
 
         `asset_index` is deliberately a bounded projection that excludes `parameters`, so
@@ -81,8 +85,17 @@ class PromptWorkspaceService:
         # Resolved at call time so the bound is a live policy, not a frozen default.
         limit = MAX_PROMPTS if limit is None else limit
         with self.workspace._asset_scope(nid, scope):
-            for row in self.workspace.assets.list(nid, branch_id=branch_id, actor_id=actor):
-                if not is_prompt_asset(row):
+            listed = self.workspace.assets.list(nid, branch_id=branch_id, actor_id=actor,
+                                                include_deleted=include_deleted)
+            for row in listed:
+                if _clean(row.get("kind")) != PROMPT_KIND:
+                    continue
+                deleted = bool(row.get("deleted_at"))
+                # §3.3 fix: the library excludes deleted rows, but the detail path accepts
+                # them as **metadata-only tombstones** so a removed revision is visible as
+                # removed instead of silently shortening the family into a "complete"
+                # history. A deleted body is never read or exposed.
+                if deleted and not include_deleted:
                     continue
                 if seen >= limit:
                     # There is more; say so instead of pretending this is everything.
@@ -94,11 +107,19 @@ class PromptWorkspaceService:
                 row = {**row, "review_status": "APPROVED" if row.get("approved_at") else "DRAFT"}
                 rows.append(row)
                 asset_id = str(row["id"])
+                if deleted:
+                    bodies[asset_id] = {"state": "DELETED", "value": None, "digest": None,
+                                        "digest_of": None, "truncated": False, "decodable": False,
+                                        "body_validated": False, "tail_unverified": False,
+                                        "original_length": None, "preview_length": 0,
+                                        "limit": MAX_TEXT_BYTES, "fetch": "TOMBSTONE"}
+                    continue
                 try:
                     raw = self.workspace.assets.content(asset_id, branch_id=branch_id, actor_id=actor)
                 except (FileNotFoundError, ValueError, PermissionError):
                     bodies[asset_id] = {"state": "UNAVAILABLE", "value": None, "digest": None,
                                         "digest_of": None, "truncated": False, "decodable": False,
+                                        "body_validated": False, "tail_unverified": False,
                                         "original_length": None, "preview_length": 0,
                                         "limit": MAX_TEXT_BYTES, "fetch": "UNAVAILABLE"}
                     continue
@@ -166,7 +187,8 @@ class PromptWorkspaceService:
         """
         self.workspace.store.key(nid, scope)
         self.workspace.novels.get(nid)
-        rows, bodies, coverage = self._read_prompts(nid, scope, actor, limit=MAX_PROMPT_SCAN)
+        rows, bodies, coverage = self._read_prompts(nid, scope, actor, limit=MAX_PROMPT_SCAN,
+                                                    include_deleted=True)
         projected = project_prompt_detail(
             family_id, rows, bible=self._bible_indices(nid, scope, rows, actor),
             asset_text=bodies, read_complete=not coverage["truncated"])
