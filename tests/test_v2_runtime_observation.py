@@ -248,3 +248,89 @@ def test_observation_payload_is_json_shaped_and_declares_its_ceiling():
     assert payload["observable_levels"] == 4
     assert payload["inference_verified"] is False
     assert isinstance(payload["notes"], list)
+
+
+# --- custom HTTP local registration: prepared, never performed --------------
+
+def _reachable_observation():
+    """The real shape observed for the local custom-HTTP endpoint on 8080."""
+    return ro.observe_runtime(
+        "custom-http-local", port=8080, http_reachable=True, model_recognized=True,
+        owner_probe=lambda *a, **k: owner(16292, "pythonw.exe"),
+    )
+
+
+def test_custom_http_local_requires_explicit_user_confirmation():
+    """False, and anything merely truthy, are both refused."""
+    for value in (False, None, "yes", 1):
+        with pytest.raises(ValueError, match="CUSTOM_HTTP_LOCAL_USER_CONFIRMATION_REQUIRED"):
+            ro.custom_http_local_registration(
+                name="strata", endpoint="http://127.0.0.1:8080",
+                observation=_reachable_observation(), user_confirmed=value,
+            )
+
+
+def test_custom_http_local_refuses_a_runtime_that_is_not_reachable():
+    unreachable = ro.observe_runtime(
+        "custom", port=8080, listener_probe=lambda *a, **k: False, owner_probe=lambda *a, **k: None
+    )
+    with pytest.raises(ValueError, match="CUSTOM_HTTP_LOCAL_NOT_REACHABLE"):
+        ro.custom_http_local_registration(
+            name="strata", endpoint="http://127.0.0.1:8080",
+            observation=unreachable, user_confirmed=True,
+        )
+
+
+def test_custom_http_local_refuses_a_non_loopback_endpoint():
+    with pytest.raises(ValueError, match="LOCAL_AI_LOOPBACK_ENDPOINT_REQUIRED"):
+        ro.custom_http_local_registration(
+            name="remote", endpoint="http://10.0.0.5:8080",
+            observation=_reachable_observation(), user_confirmed=True,
+        )
+
+
+def test_custom_http_local_records_endpoint_model_and_capability():
+    registration = ro.custom_http_local_registration(
+        name="Strata (observed)", endpoint="http://127.0.0.1:8080",
+        observation=_reachable_observation(), user_confirmed=True,
+        model="qwen3.8-flash-next-iq3_xxs", capability="TEXT",
+    )
+    payload = registration.as_dict()
+    assert payload["endpoint"] == "http://127.0.0.1:8080"
+    assert payload["model"] == "qwen3.8-flash-next-iq3_xxs"
+    assert payload["capability"] == "TEXT" and payload["capability_status"] == "DECLARED_BY_USER"
+    assert payload["runtime_type"] == "CUSTOM_HTTP"
+    assert payload["observation_status"] == "CAPABILITY_UNKNOWN"
+    # A prepared registration is not an authorization to run or schedule anything.
+    assert payload["generates_tasks"] is False and payload["auto_enabled"] is False
+    assert "INFERENCE_NOT_RUN" in payload["blockers"]
+    assert registration.as_runtime_input()["type"] == "CUSTOM_HTTP"
+
+
+def test_custom_http_local_leaves_capability_unverified_when_undeclared():
+    registration = ro.custom_http_local_registration(
+        name="strata", endpoint="http://127.0.0.1:8080",
+        observation=_reachable_observation(), user_confirmed=True,
+        model="qwen3.8-flash-next-iq3_xxs",
+    )
+    assert registration.capability is None
+    assert registration.capability_status == "NOT_VERIFIED"
+    assert "CAPABILITY_NOT_VERIFIED" in registration.blockers
+
+
+def test_custom_http_local_rejects_asr_as_a_capability_name():
+    """ASR is a graph node binding, not a model capability."""
+    with pytest.raises(ValueError, match="CUSTOM_HTTP_LOCAL_CAPABILITY_UNKNOWN"):
+        ro.custom_http_local_registration(
+            name="strata", endpoint="http://127.0.0.1:8080",
+            observation=_reachable_observation(), user_confirmed=True, capability="ASR",
+        )
+
+
+def test_prepared_registration_holds_no_center_or_scheduler():
+    registration = ro.custom_http_local_registration(
+        name="strata", endpoint="http://127.0.0.1:8080",
+        observation=_reachable_observation(), user_confirmed=True,
+    )
+    for forbidden in ("center", "service", "lifecycle", "task", "job", "start"):
+        assert not hasattr(registration, forbidden)

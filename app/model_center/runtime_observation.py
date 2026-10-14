@@ -347,3 +347,107 @@ def model_capability_for_task(task_type: str) -> str:
         return TASK_TO_MODEL_CAPABILITY[task_type]
     except KeyError:
         raise ValueError("TASK_CAPABILITY_UNKNOWN") from None
+
+
+# --- custom HTTP local runtimes: prepare a registration, never perform one ---
+#
+# An observed-but-unregistered local endpoint (for example a Strata server on
+# 8080) must not be bound automatically. This builds a *descriptor* that a caller
+# may hand to the existing owner-declared registration route after a human says
+# yes. It performs no registration, enables nothing, and can never create a task.
+
+@dataclass(frozen=True)
+class CustomHttpLocalRegistration:
+    """A prepared, explicitly user-confirmed custom HTTP local runtime."""
+
+    name: str
+    endpoint: str
+    runtime_type: str
+    model: str | None
+    capability: str | None
+    capability_status: str
+    observation_status: str
+    observation_level: int
+    listener_owner: dict[str, Any] | None
+    confirmed_by_user: bool
+    generates_tasks: bool = False
+    auto_enabled: bool = False
+    blockers: tuple[str, ...] = ()
+
+    def as_runtime_input(self) -> dict[str, Any]:
+        """The payload the existing owner-declared registration route expects."""
+        return {
+            "name": self.name,
+            "type": self.runtime_type,
+            "endpoint": self.endpoint,
+            "modality": self.capability or "",
+        }
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "name": self.name, "endpoint": self.endpoint, "runtime_type": self.runtime_type,
+            "model": self.model, "capability": self.capability,
+            "capability_status": self.capability_status,
+            "observation_status": self.observation_status,
+            "observation_level": self.observation_level,
+            "listener_owner": self.listener_owner,
+            "confirmed_by_user": self.confirmed_by_user,
+            "generates_tasks": self.generates_tasks, "auto_enabled": self.auto_enabled,
+            "blockers": list(self.blockers),
+        }
+
+
+def custom_http_local_registration(
+    *,
+    name: str,
+    endpoint: str,
+    observation: RuntimeObservation,
+    user_confirmed: bool,
+    model: str | None = None,
+    capability: str | None = None,
+) -> CustomHttpLocalRegistration:
+    """Prepare a custom HTTP local registration. Refuses without human confirmation.
+
+    Fail-closed by construction: nothing is registered, enabled, launched or
+    scheduled, and the returned descriptor states ``generates_tasks=False`` and
+    ``auto_enabled=False`` so a caller cannot read it as an authorization to run.
+    """
+    from .discovery_types import local_endpoint
+    from .domain import Capability
+
+    if user_confirmed is not True:
+        raise ValueError("CUSTOM_HTTP_LOCAL_USER_CONFIRMATION_REQUIRED")
+    # Numeric loopback only; this raises LOCAL_AI_LOOPBACK_ENDPOINT_REQUIRED.
+    endpoint = local_endpoint(endpoint)
+    if observation.level < 3:
+        raise ValueError("CUSTOM_HTTP_LOCAL_NOT_REACHABLE")
+
+    blockers: list[str] = []
+    if capability is None:
+        capability_status = "NOT_VERIFIED"
+        blockers.append("CAPABILITY_NOT_VERIFIED")
+    elif capability not in {item.value for item in Capability}:
+        raise ValueError("CUSTOM_HTTP_LOCAL_CAPABILITY_UNKNOWN")
+    else:
+        capability_status = "DECLARED_BY_USER"
+
+    if not model:
+        blockers.append("MODEL_NOT_RECORDED")
+    if not observation.inference_verified:
+        blockers.append("INFERENCE_NOT_RUN")
+    if observation.listener_owner is None:
+        blockers.append("LISTENER_OWNER_UNIDENTIFIED")
+
+    return CustomHttpLocalRegistration(
+        name=name,
+        endpoint=endpoint,
+        runtime_type="CUSTOM_HTTP",
+        model=model,
+        capability=capability,
+        capability_status=capability_status,
+        observation_status=observation.status,
+        observation_level=observation.level,
+        listener_owner=observation.listener_owner,
+        confirmed_by_user=True,
+        blockers=tuple(dict.fromkeys(blockers)),
+    )

@@ -1,0 +1,23 @@
+...................................................................F.    [100%]
+================================== FAILURES ===================================
+_____ test_provider_families_are_a_fourth_distinct_vocabulary[LLAMA_CPP] ______
+
+name = 'LLAMA_CPP'
+
+    @pytest.mark.parametrize("name", ["LOCAL_OLLAMA", "LM_STUDIO", "COMFYUI", "LLAMA_CPP", "API"])
+    def test_provider_families_are_a_fourth_distinct_vocabulary(name):
+        """Provider families name deployments; they are not runtime types or capabilities."""
+        from app.model_provider_contracts import ProviderFamily
+    
+        assert name in set(get_args(ProviderFamily))
+>       assert name not in RUNTIME_TYPES or name == "COMFYUI"  # COMFYUI is the only shared spelling
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert ('LLAMA_CPP' not in {'AUTOMATIC1111', 'COMFYUI', 'CUSTOM_HTTP', 'LLAMA_CPP', 'OLLAMA', 'OPENAI_COMPATIBLE_LOCAL', ...} or 'LLAMA_CPP' == 'COMFYUI'
+E         
+E         - COMFYUI
+E         + LLAMA_CPP)
+
+tests\test_v2_capability_vocabulary_layers.py:105: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_v2_capability_vocabulary_layers.py::test_provider_families_are_a_fourth_distinct_vocabulary[LLAMA_CPP]
+1 failed, 68 passed in 2.87s
