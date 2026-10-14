@@ -25,7 +25,7 @@
 ## 关于 r10 / r12 / r13 的核对与分歧（Lead 亲自核对）
 
 - **Lead 核对结果**：磁盘上的 `ux-product-*-r10.json` **七条全部** `sources_changed_during_check=false`（`frozen=True`），head 均为 `ccb758`；`ux-product-*-r13.json` 七条同样全部冻结，head 为 `1eb2e2`。
-- **与最终验证线的分歧**：该线报告"`ux-product-build-r10.json` 的 `sources_changed_during_check=TRUE`"。**我核对磁盘文件后不能确认该说法**——当前 r10 的 build 收据显示 `frozen=True`。可能原因是该线读到了被后续运行覆盖前的中间状态。按证据优先原则，本文件**不采纳**该未被复现的说法，但**同时**采纳其更具约束力的主张：**最终冻结集以 r13 为准**（它绑定最终 HEAD，覆盖面更全）。
+- **与最终验证线的分歧**：该线报告"`ux-product-build-r10.json` 的 `sources_changed_during_check=TRUE`"。**我核对磁盘文件后不能确认该说法**：该字段**存在**（收据键含 `source_sha256` / `source_sha256_before` / `sources_changed_during_check`），原始值为 **`False`**；`ux-product-build-r13.json`、`ux-product-frontend-r10.json`、`ux-product-types-r10.json` 同为 `False`。该线自身也记录"r10 的两份哈希表逐字节相同"——这与 `False` 一致，与 `TRUE` 矛盾。按证据优先原则，本文件**不采纳**该未被复现的说法，但**同时**采纳其更具约束力的主张：**最终冻结集以 r13 为准**（它绑定最终 HEAD `1eb2e2c`，`frontend` 30 files / 643 tests，覆盖面更全）。
 - **r12**（7 条收据存在）与 r11 均**不用于验收**：其 head 跨越提交，无法证明单次冻结。
 
 ## 冻结口径
