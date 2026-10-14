@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/frontend
+
+ ✓ src/production/productionWorkflowContract.test.ts (12 tests) 11ms
+ ✓ src/production/productionWorkflowClient.test.ts (6 tests) 9ms
+ ✓ src/production/ProductionDashboard.test.tsx (6 tests) 456ms
+ ✓ src/production/useProductionWorkflow.test.tsx (8 tests) 636ms
+ ✓ src/production/productionDashboardMount.test.tsx (3 tests) 991ms
+   ✓ production workflow dashboard mounted in the original Studio workspace > reads the projection once through the captured host session and renders it beside the operation contracts 347ms
+   ✓ production workflow dashboard mounted in the original Studio workspace > keeps the author selection through a 409 and saves it against the re-read version 431ms
+
+ Test Files  5 passed (5)
+      Tests  35 passed (35)
+   Start at  17:55:45
+   Duration  6.51s (transform 1.46s, setup 0ms, collect 3.02s, tests 2.10s, environment 1.46s, prepare 345ms)
+

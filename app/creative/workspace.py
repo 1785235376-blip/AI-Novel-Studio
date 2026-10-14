@@ -246,6 +246,34 @@ class IndependentWorkspaceService:
             rows = self.assets.list(nid, branch_id=scope.get("branch_id"), include_deleted=include_deleted)
             return {"items": [self._view(nid, scope, self._row(nid, scope, row["id"], deleted=include_deleted)) for row in rows]}
 
+    def asset_index(self, nid, scope, *, include_deleted=False):
+        """Bounded metadata-only asset index under the original asset lease.
+
+        A workflow aggregate must not open one lineage/relationship read per
+        asset, so this returns only fields an aggregate may use. Bytes, lineage,
+        relationship targets and every per-asset decision stay behind the
+        per-asset owners above. Review state is reported only from an owner-stored
+        marker (``_text_result_review``); media candidate review is job-level and
+        deliberately not invented here.
+        """
+        with self._asset_scope(nid, scope):
+            rows = self.assets.list(nid, branch_id=scope.get("branch_id"), include_deleted=include_deleted)
+            return [self._index_row(nid, scope, row) for row in rows]
+
+    @staticmethod
+    def _index_row(nid, scope, row):
+        if row.get("novel_id") != nid or row.get("branch_id") != scope.get("branch_id"):
+            raise FileNotFoundError(row.get("id"))
+        review = row.get("_text_result_review")
+        status = review.get("status") if isinstance(review, dict) else None
+        job = row.get("source_job_id")
+        kind = row.get("kind")
+        return {"id": row["id"], "kind": kind if isinstance(kind, str) and kind else "other",
+                "version": row.get("version"),
+                "review_status": status if status in {"DRAFT", "APPROVED", "REJECTED"} else None,
+                "source_job_id": job if isinstance(job, str) and job else None,
+                "deleted": bool(row.get("deleted_at")), "created_at": row.get("created_at")}
+
     def asset(self, nid, scope, aid, *, include_deleted=False):
         with self._asset_scope(nid, scope):
             return self._view(nid, scope, self._row(nid, scope, aid, deleted=include_deleted))

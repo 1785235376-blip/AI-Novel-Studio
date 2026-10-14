@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ApiError, apiErrorView, type Asset, type CollaborationContext } from '../api';
+import { ApiError, apiErrorView, api, type Asset, type CollaborationContext, type ModelCenterModel } from '../api';
 import { useStudio } from '../store';
 import { useLocalHostSession } from '../localHostSession';
 import { AppShell, type ScopeLabels, type StudioModule } from '../ui/AppShell';
@@ -9,7 +9,7 @@ import { AssetLibraryPanel, type AssetLibraryAdapter } from '../novel/AssetLibra
 import { AssetInspector } from '../novel/AssetInspector';
 import type { LineageAsset } from '../experimental/ProductionLineagePanel';
 import { StudioAssetDeclarationForm } from './StudioAssetDeclarationForm';
-import { studioClient, type StudioAsset, type StudioOverview, type StudioPreferences, type StudioStorage } from './studioClient';
+import { studioClient, studioTransport, type StudioAsset, type StudioOverview, type StudioPreferences, type StudioStorage } from './studioClient';
 import { rememberLocalStudioSelection, rememberLocalWorkspaceSelection, type LocalStudioModule } from '../workspaceSelection';
 import { useStudioGraphEditor } from './useStudioGraphEditor';
 import { AssetRelationshipsPanel } from './AssetRelationshipsPanel';
@@ -21,6 +21,11 @@ import { studioProductionClient, type ProductionJob } from './studioProductionCl
 import { StudioMediaExecutionPanel } from './StudioMediaExecutionPanel';
 import { StudioTimelineEditor } from './StudioTimelineEditor';
 import { StudioManualMaskPanel } from './StudioManualMaskPanel';
+import { createProductionWorkflowClient } from '../production/productionWorkflowClient';
+import { ProductionDashboard } from '../production/ProductionDashboard';
+import { ProductionInspectorPanel } from '../production/ProductionInspectorPanel';
+import { useProductionWorkflow } from '../production/useProductionWorkflow';
+import type { ProductionWorkflowAssetKind, ProductionWorkflowModuleId } from '../production/productionWorkflowTypes';
 import './independentStudio.css';
 
 export const isManualStudioModule = (module: StudioModule): module is LocalStudioModule => ['IMAGE', 'ASSETS', 'VIDEO', 'AUDIO'].includes(module);
@@ -72,6 +77,9 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [maskDirty, setMaskDirty] = useState(false);
   const maskDirtyRef = useRef(false);
   const maskDraftChanged = useCallback((value: boolean) => { maskDirtyRef.current = value; setMaskDirty(value); }, []);
+  const [workflowDirty, setWorkflowDirty] = useState(false), [workflowModule, setWorkflowModule] = useState<ProductionWorkflowModuleId>('director'), [workflowAssetKind, setWorkflowAssetKind] = useState<ProductionWorkflowAssetKind>('image');
+  const workflowDirtyRef = useRef(false);
+  const workflowDraftChanged = useCallback((value: boolean) => { workflowDirtyRef.current = value; setWorkflowDirty(value); }, []);
   const mediaDraftChanged = useCallback((value: boolean) => { mediaDirtyRef.current = value; setMediaDirty(value); }, []);
   const timelineDraftChanged = useCallback((value: boolean) => { timelineDirtyRef.current = value; setTimelineDirty(value); }, []);
   const verifiedCallback = useRef(onVerified); verifiedCallback.current = onVerified;
@@ -176,7 +184,19 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const graph = useStudioGraphEditor({ active: graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
     requestedGraphId: graphLocation.graphId, requestedRunId: graphLocation.runId, onSelectionChange: rememberGraphLocation, isBusy: operationPending });
   graphDirtyRef.current = graph.dirty;
-  const dirty = preferenceDirty || lineageDirty || relationshipDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty;
+  // One additive read-only workflow projection over the same captured Studio transport.
+  // It is mounted content only: no second owner, no execution and no shell change.
+  const workflowClient = useMemo(() => createProductionWorkflowClient(projectId,
+    studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined }), context.scope),
+    [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
+  const modelSource = useMemo(() => ({ load: () => api.modelCenterModels({ ...context, scope: context.scope ? { ...context.scope } : undefined })
+    .then(value => { if (!value || !Array.isArray(value.items)) throw new Error('模型注册表不可用。'); return value.items; }) }),
+    [context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
+  const workflow = useProductionWorkflow({ identity: cacheKey,
+    active: productionView && overview?.project.entry_kind === 'NEUTRAL_STUDIO' && !denied && !identityRetired,
+    denied: denied || identityRetired, busy, isCurrent: current, read: guarded, mutate: graphMutation, client: workflowClient,
+    onDirtyChange: workflowDraftChanged, onUnavailable: deny });
+  const dirty = preferenceDirty || lineageDirty || relationshipDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty || workflowDirty;
   const dirtyRef = useRef(dirty); dirtyRef.current = dirty;
   const lineageDirtyRef = useRef(lineageDirty); lineageDirtyRef.current = lineageDirty;
   const relationshipDirtyRef = useRef(relationshipDirty); relationshipDirtyRef.current = relationshipDirty;
@@ -272,7 +292,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const navigate = (action: () => void) => {
     if (!current()) return;
     if (busyRef.current) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
-    if (dirty || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
+    if (dirty || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
     action();
   };
   const confirmNavigation = () => {
@@ -280,7 +300,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     if (busyRef.current || preferenceController.pending) { setNotice('当前操作尚未结束，未放弃输入或离开。请先核对结果。'); return; }
     const action = pendingNavigation; setPendingNavigation(undefined); setDiscard(false);
     setLineageDirty(false); setRelationshipDirty(false); setFormRevision(value => value + 1); preferenceController.discard(); graph.discard();
-    mediaDraftChanged(false); timelineDraftChanged(false); maskDraftChanged(false); setProductionRevision(value => value + 1); setProductionJob(undefined); action();
+    mediaDraftChanged(false); timelineDraftChanged(false); maskDraftChanged(false); workflow.skip(); setProductionRevision(value => value + 1); setProductionJob(undefined); action();
   };
   const sidebar = <div className="independent-studio-sidebar"><h2>独立创作</h2><p>图片、视频和声音共享项目资产。连接其它模块由你决定。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button>
     <StudioWorkspacePreferencesForm controller={preferenceController} locked={graph.dirty || mediaDirty || timelineDirty || maskDirty} />
@@ -300,6 +320,8 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     {pendingNavigation && !denied && <section className="creative-navigation-confirm" role="alert"><p>{mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p><label><input type="checkbox" disabled={busy || !!preferenceController.pending} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard || busy || !!preferenceController.pending} onClick={confirmNavigation}>确认离开</Button><Button onClick={() => { setPendingNavigation(undefined); setDiscard(false); }}>继续编辑</Button></section>}
     {pendingDeclaration && !denied && workspaceView === 'ASSETS' && <Button disabled={!writable || busy || lineageDirty || relationshipDirty} onClick={() => { if (busyRef.current || lineageDirtyRef.current || relationshipDirtyRef.current) return; busyRef.current = true; setBusy(true); void guarded(() => declared(pendingDeclaration)).then(asset => { refreshedAsset(asset); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); }).catch(reason => { if (current()) setNotice(apiErrorView(reason, '来源声明仍未保存，文件已保留。').message); }).finally(() => { busyRef.current = false; if (alive.current) setBusy(false); }); }}>仅重试外部导入声明</Button>}
     {graphView && overview && !denied && graph.content}
+    {productionView && overview && !denied && <ProductionDashboard controller={workflow} selectedModuleId={workflowModule}
+      onSelectModule={setWorkflowModule} selectedKind={workflowAssetKind} onSelectKind={setWorkflowAssetKind} />}
     {productionView && overview && !denied && <StudioWorkspaceOperationPanel identity={cacheKey} denied={denied} busy={busy}
       isCurrent={current} read={guarded} loadContracts={client.productionContracts} requestedStage={productionStage}
       onStageChange={setProductionStage} onUnavailable={deny} onOpenSurface={view => navigate(() => setWorkspaceView(view))} />}
@@ -338,6 +360,6 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   </>;
   const retiredNotice = <EmptyState title="身份已改变" detail="原范围的服务端信息已关闭。请重新核对身份与项目后打开工作区。" />;
   return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next))} scope={identityRetired ? { workspace: '待核对', project: '待核对', storyline: '待核对', branch: '待核对' } : { ...scope, project: overview?.project.title || scope.project }} projectNoun={overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={identityRetired ? '身份待核对' : actor} sidebar={identityRetired ? retiredNotice : sidebar} main={identityRetired ? graphView ? graph.content : retiredNotice : main}
-    inspector={identityRetired ? graphView ? graph.inspector : retiredNotice : denied ? <EmptyState title="权限失效" detail="重新核对身份与项目范围后再打开。" /> : graphView ? graph.inspector : productionView ? <Panel title="制作操作"><p>当前阶段：{productionStage}</p><p>在主工作区核对输入、版本、来源和审核要求。实际任务的权限、状态与回执由原执行入口确认。</p></Panel> : <AssetInspector asset={selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
+    inspector={identityRetired ? graphView ? graph.inspector : retiredNotice : denied ? <EmptyState title="权限失效" detail="重新核对身份与项目范围后再打开。" /> : graphView ? graph.inspector : productionView ? <><Panel title="制作操作"><p>当前阶段：{productionStage}</p><p>在主工作区核对输入、版本、来源和审核要求。实际任务的权限、状态与回执由原执行入口确认。</p></Panel><ProductionInspectorPanel controller={workflow} selectedModuleId={workflowModule} selectedKind={workflowAssetKind} onSelectKind={setWorkflowAssetKind} modelSource={modelSource}/></> : <AssetInspector asset={selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
     status={<>{identityRetired ? '身份已改变' : denied ? '权限失效' : loading ? '正在核对' : error ? '读取失败' : busy ? readingAsset || preferenceController.pending === 'READ' ? '读取中' : '操作中' : dirty || pendingDeclaration ? '未保存或待核对' : '已保存'} · {productionView ? '制作操作' : graphView ? '创作图' : '独立素材'} · 模型调用记录见运行回执{!identityRetired && status}</>} />;
 }

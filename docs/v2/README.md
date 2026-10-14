@@ -125,3 +125,7 @@ Current test failures and earlier historical failures are not erased by publicat
 ### Phase6 Audio / Editing (2026-10-14)
 
 [Report](../../PHASE6_AUDIO_EDITING_REPORT.md) and [source evidence](phase6-audio-editing-20261014.json): explicit standalone FLAC with actual PCM proof, original Timeline formal-source batch operations and exact UNKNOWN recovery; actual small CPU mix/render/export/Review/reopen. Whole modules remain PARTIAL; native/GPU/model/full CI acceptance is not claimed.
+
+### Phase7 unified production workflow (2026-10-14)
+
+[Report](../../PHASE7_WORKFLOW_UX_REPORT.md) and [design/contract](production-workflow-phase7.md): one advisory read projection over the existing Director, Storyboard, Image, Video, Audio, Timeline and Asset owners, plus exactly one mutation — the neutral studio's own saved intent through the original scope-atomic preference row (version CAS, retained history, preset). Module counts and statuses are measured from owner rows; per-asset review state is reported only from an owner-stored marker, and media candidate review stays job-level rather than being inferred. The Studio dashboard, workflow board, intent editor, asset overview and inspector consume strict captured DTOs through the existing module-content seam, and a source-bound fixture emitted by the real service is decoded by the strict frontend contract. Whole modules remain PARTIAL; PostgreSQL is NOT_CONFIGURED on this machine; native/GPU/model/full-CI acceptance and M4→M9 gates remain LOCAL_REQUIRED, hosted checks BLOCKED_ACCOUNT_PLATFORM.

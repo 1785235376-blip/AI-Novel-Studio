@@ -1,0 +1,29 @@
+{
+  "check": "postgres",
+  "kind": "pytest",
+  "phase": "phase7-production-workflow",
+  "status": "SKIPPED",
+  "exit_code": null,
+  "logical_command": null,
+  "command": null,
+  "cwd": "D:\\PoemSeed\\Worktrees\\studio-v2-audio-editing-20261014",
+  "targets": [
+    "tests/test_v2_production_workflow.py",
+    "tests/test_v2_production_workflow_api.py"
+  ],
+  "started_utc": null,
+  "finished_utc": null,
+  "isolated_environment": {},
+  "python": "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "pnpm": null,
+  "head": "345ea18d269ee9a8b777ed18060ea7e51ea8c848",
+  "source_sha256": {},
+  "source_sha256_before": {},
+  "sources_changed_during_check": null,
+  "log": "docs/delivery/v2-development/phase7-workflow-postgres-r4.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "note": null,
+  "reason": "TEST_POSTGRES_DATABASE_URL is not set; no PostgreSQL server is configured on this machine (the check is NOT_CONFIGURED, not a pass).",
+  "pending_dependency": "LINE_A",
+  "configuration": "STORAGE_BACKEND=postgres"
+}

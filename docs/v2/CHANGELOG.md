@@ -131,3 +131,25 @@ These are development stages on `feature/v2-narrative-platform`, not releases.
 - Add explicit original standalone FLAC trim, fixed S16/level5 and bounded decoded samples/MD5/SHA/profile proof; preserve default WAV and Graph commands.
 - Expose original current ordinary Timeline edit receipt; connect explicit atomic formal-source insertion/replacement and full request/effect recovery through original controllers, no automatic replay.
 - Exercise real small CPU video/audio rendering, export, private Review, formal promotion and reopen. Fix new source-action numeric mismatch before POST; retain failure evidence and original native/model/product gates.
+
+## 2026-10-14 — Phase7 unified production workflow projection
+
+- Add one advisory read projection (`GET /api/projects/{nid}/studio/production/workflow`) over the
+  original Director, Storyboard, Image, Video, Audio, Timeline and Asset owners: neutral start state,
+  saved creative intent, seven-module workflow status measured from owner rows, asset overview and a
+  dashboard aggregate. It grants no execution authority and promotes no acceptance gate.
+- Add exactly one mutation (`POST .../workflow/intent`) that reuses the existing scope-atomic
+  `WorkspacePreferences` row with its version CAS, retained history and preset. No second intent,
+  project, asset, job, model or timeline owner is introduced; a null expectation fails closed.
+- Add the Studio dashboard, workflow board, intent editor, asset overview and inspector under
+  `frontend/src/production/` with strict captured DTOs, mounted through the existing module-content
+  seam. Protected shell surfaces are untouched.
+- Verification on the frozen tree: File 14 passed / 8 PostgreSQL skips; PostgreSQL
+  NOT_CONFIGURED (no server on this machine — not a pass); frontend 42 tests in 6 files;
+  `tsc -b` and the frozen `vite build` exit 0; UI token guard PASS (52 files); pre-existing studio
+  router/admission regressions 48 passed and 120 passed. A checked-in source-bound fixture emitted by
+  the real service is decoded by the strict frontend contract, so a wire drift fails a test.
+- [Design and contract](production-workflow-phase7.md) ·
+  [phase report](../../PHASE7_WORKFLOW_UX_REPORT.md). Whole modules remain PARTIAL;
+  Windows/GPU/real-model/full-CI acceptance and M4→M9 gates remain LOCAL_REQUIRED, hosted checks
+  BLOCKED_ACCOUNT_PLATFORM.

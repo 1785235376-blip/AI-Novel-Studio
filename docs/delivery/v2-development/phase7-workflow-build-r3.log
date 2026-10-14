@@ -1,0 +1,23 @@
+
+> ai-novel-studio-ui@0.7.0 build D:\PoemSeed\Worktrees\studio-v2-audio-editing-20261014\frontend
+> tsc -b && vite build
+
+src/production/productionWorkflowClient.test.ts(80,21): error TS2339: Property 'problem' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'problem' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(81,21): error TS2339: Property 'problem' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'problem' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(82,21): error TS2339: Property 'message' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'message' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(83,21): error TS2339: Property 'message' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'message' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(86,85): error TS2339: Property 'message' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'message' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(88,85): error TS2339: Property 'message' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'message' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(95,19): error TS2339: Property 'problem' does not exist on type 'ApiError | ProductionWorkflowProjection'.
+  Property 'problem' does not exist on type 'ProductionWorkflowProjection'.
+src/production/productionWorkflowClient.test.ts(98,21): error TS2339: Property 'problem' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'problem' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowContract.test.ts(118,80): error TS2353: Object literal may only specify known properties, and 'workspace_id' does not exist in type '{ mode: string; novel_id: string; }'.
+src/production/productionWorkflowContract.test.ts(122,23): error TS2339: Property 'branch_id' does not exist on type '{ mode: string; novel_id: string; }'.
+ ELIFECYCLE  Command failed with exit code 1.

@@ -27,8 +27,8 @@ def is_independent_studio_route(method, normalized_path):
     production = root + r"/production"
     owners = r"(?:image|audio|video|timeline)"
     production_patterns = {
-        "GET": production + r"/(?:providers|jobs(?:/" + owners + r"/[^/]+(?:/candidate)?)?|timelines(?:/[^/]+(?:/history)?)?)",
-        "POST": production + r"/(?:preview|jobs(?:/" + owners + r"/[^/]+/(?:execute|cancel|review|reconcile))?|jobs/video/[^/]+/refresh|timelines(?:/[^/]+/(?:render|edit|restore|export-preview|export))?)",
+        "GET": production + r"/(?:workflow|providers|jobs(?:/" + owners + r"/[^/]+(?:/candidate)?)?|timelines(?:/[^/]+(?:/history)?)?)",
+        "POST": production + r"/(?:workflow/intent|preview|jobs(?:/" + owners + r"/[^/]+/(?:execute|cancel|review|reconcile))?|jobs/video/[^/]+/refresh|timelines(?:/[^/]+/(?:render|edit|restore|export-preview|export))?)",
         "PUT": production + r"/timelines/[^/]+",
     }
     if method in production_patterns and re.fullmatch(production_patterns[method], normalized_path) is not None:
@@ -249,6 +249,11 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
 
     from .production_contract_api import create_production_contract_router
     router.include_router(create_production_contract_router(service, invoke))
+
+    from .production_workflow import ProductionWorkflowService
+    from .production_workflow_api import create_production_workflow_router
+    router.include_router(create_production_workflow_router(
+        ProductionWorkflowService(service, service.creative), invoke))
 
     if production_service is not None:
         from .production_execution_api import create_production_execution_router

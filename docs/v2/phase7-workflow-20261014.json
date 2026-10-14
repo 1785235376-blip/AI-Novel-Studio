@@ -1,0 +1,110 @@
+{
+  "contract": "studio-phase7-source-evidence/1",
+  "phase": "Phase7 unified production workflow projection",
+  "baseline_sha": "345ea18d269ee9a8b777ed18060ea7e51ea8c848",
+  "branch": "feature/v2-narrative-platform",
+  "worktree": "D:\\PoemSeed\\Worktrees\\studio-v2-audio-editing-20261014",
+  "frozen_input_tree": true,
+  "generated_at_utc": "2026-10-14T10:05:48.8018303Z",
+  "endpoints": [
+    "GET /api/projects/{nid}/studio/production/workflow",
+    "POST /api/projects/{nid}/studio/production/workflow/intent"
+  ],
+  "receipts": [
+    {
+      "check": "file",
+      "receipt": "docs/delivery/v2-development/phase7-workflow-file-r7.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "check": "postgres",
+      "receipt": "docs/delivery/v2-development/phase7-workflow-postgres-r6.json",
+      "status": "SKIPPED",
+      "exit_code": null,
+      "sources_changed_during_check": null
+    },
+    {
+      "check": "frontend",
+      "receipt": "docs/delivery/v2-development/phase7-workflow-frontend-r8.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "check": "types",
+      "receipt": "docs/delivery/v2-development/phase7-workflow-types-r8.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "check": "build",
+      "receipt": "docs/delivery/v2-development/phase7-workflow-build-r8.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "check": "tokens",
+      "receipt": "docs/delivery/v2-development/phase7-workflow-tokens-r5.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    },
+    {
+      "check": "seam",
+      "receipt": "docs/delivery/v2-development/phase7-workflow-seam-r5.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false
+    }
+  ],
+  "extra_receipts": [
+    "docs/delivery/v2-development/phase7-workflow-regression.json",
+    "docs/delivery/v2-development/phase7-workflow-admission-regression.json",
+    "docs/delivery/v2-development/phase7-m1-probe.json"
+  ],
+  "source_hashes": {
+    "AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md": "b2b0e99fa9f62a355ba8251344d0dd4265398d0084399f5de03d60290b5cb971",
+    "app/creative/production_workflow_api.py": "4c2e9ae20af747846aa2a9bbffc1dd3a983c05ef8197b5042ea0cdce8f10011c",
+    "app/creative/production_workflow_models.py": "59510c5cf8fc3e7d83b9757928fe95f34ac9dc52a9404b4957d03dbadc349939",
+    "app/creative/production_workflow.py": "6560c3aa21ce95ab9a1c7f678956bf3f44884942bf0965a3802f6899c907de4e",
+    "app/creative/workspace_api.py": "40067ab6626a65229bf4d4a666c12e2610bd5fde20ac5cbec14c9d80daad5bd2",
+    "app/creative/workspace.py": "52f2f8c859f4b20e81fafab56009be822d3252a31409ebd28af64982dad6562a",
+    "docs/v2/CHANGELOG.md": "ae65f674845ae7fa3e158838acbbcea247a177aaeff69ea87c022838583d3922",
+    "docs/v2/production-workflow-phase7.md": "b4992f3acad3264cfbada17c873b3f0e902a13e9581798e359d95c40d694496a",
+    "docs/v2/README.md": "fc5383cc1b4dd82f26a9baa2a2cedf48b6524dbd4c8130d6955ef09a42419343",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "ac0c1985008b8d718b04652d8ee04bccf14e9ac9d16a7704219eb5fefd8bf7ab",
+    "frontend/src/production/fixtures/productionWorkflowProjection.real.json": "fefd022e16694d57faa2ec54c79471c11cc57b77b1f5f733d7ade9f4bf9477d1",
+    "frontend/src/production/ProductionAssetOverview.tsx": "f14cbb034f487d615ea77e0141af57d9443b4b2fb02098e2163de077dcece19b",
+    "frontend/src/production/ProductionDashboard.test.tsx": "596d5b57fb7d20b8d90624a419971d98f7df2a94a2a4f4d50b11d466aef6d9a9",
+    "frontend/src/production/ProductionDashboard.tsx": "e811e4b48957b53df1102a39a3816e3e9fb5265ea801781fafdd9e7ff6c0156d",
+    "frontend/src/production/productionDashboardMount.test.tsx": "374a54c24dee9c62ecd22a763002edc098cec81aac39197ba3ee239bb6346715",
+    "frontend/src/production/ProductionInspectorPanel.tsx": "22d298c0835802e1fad437368da2054047cec2e461b81cff9460b676276234b6",
+    "frontend/src/production/ProductionIntentEditor.tsx": "bfeb8db51feb9af46020b384e5ffde886d153f19add0ecf2e06a9880ff351328",
+    "frontend/src/production/productionWorkflow.css": "682bc6807872d964030ec0e673297526f1a60f1fbf1c01757b2ac4b2162518c4",
+    "frontend/src/production/productionWorkflowClient.test.ts": "cf5d0661026c88f07c2d8d781d57f68d959f7aa7c4bc5c514143c048bab4c45c",
+    "frontend/src/production/productionWorkflowClient.ts": "382c6abe70d9b26a6670662c707a12776554e369ad2bd08118ca1fb17a3daff4",
+    "frontend/src/production/productionWorkflowContract.test.ts": "6fad6ba2e9157d58c6b25297c31175cd16c1f45af564a18a29818e76929c0409",
+    "frontend/src/production/productionWorkflowContract.ts": "6a205478ad40800efe5102960f6cee7a33e84a2e56842ec23f33ade1396f7a77",
+    "frontend/src/production/productionWorkflowRealProjection.test.ts": "472513f85d05a720e77bc4313b12925743882fe73e6725cc9dc3e89062a7d734",
+    "frontend/src/production/productionWorkflowTypes.ts": "45a3cfdbd7617e6dbe26fd49b2f8ec40946abba61633ac76d28eb64c8b5d8eea",
+    "frontend/src/production/useProductionWorkflow.test.tsx": "680c39ba7bbd9c1fb5f6e571af4bbf47a63dee0279ea5f1d167ed380a6e5c648",
+    "frontend/src/production/useProductionWorkflow.ts": "88fa7e8d49303370aed948c54ea8833c1cdd3c7ec3b1d41b4d182959749a4083",
+    "frontend/src/production/WorkflowStatusBoard.tsx": "404ada35821899746c6162bbc5d1788e03cee982af134f21a785f9bfad79786a",
+    "PHASE7_WORKFLOW_UX_REPORT.md": "8153ae473e0ee31d62706a66486fd13017f0eba7fe06cc9cac1ff9f49c48125c",
+    "scripts/emit_phase7_workflow_fixture.py": "0a664066193a8e6529effceddaf261efb45cf9a6dc5d10fe17071363d8541d0a",
+    "scripts/run_phase7_workflow_checks.py": "9b42667f5b4a1dae16ba28b7bf97ef353df61e198a03e2a02e3124cda06aed2f",
+    "tests/test_v2_production_workflow_api.py": "01b99fccf068f6a2cd1d1584693aa13613ce574d5b0d830b8d8272638f647e98",
+    "tests/test_v2_production_workflow.py": "7b4aece43d8be8e4bf4029f88f8a27ddfdcf23697bf8ee7ca0d263b3b40f8a69"
+  },
+  "not_claimed": [
+    "PostgreSQL acceptance: NOT_CONFIGURED (no server on this machine; not a pass)",
+    "browser/playwright visual and geometry acceptance: NOT_RUN",
+    "Windows installed application, DesktopHost trusted session, GPU and real-model quality: LOCAL_REQUIRED",
+    "full CI and M4-M9 ordered gates: unchanged; hosted checks BLOCKED_ACCOUNT_PLATFORM",
+    "no release, no tag, no main merge, no V1 frozen content change, no model download"
+  ]
+}

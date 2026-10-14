@@ -1,0 +1,7 @@
+
+> ai-novel-studio-ui@0.7.0 build D:\PoemSeed\Worktrees\studio-v2-audio-editing-20261014\frontend
+> tsc -b && vite build
+
+src/production/productionWorkflowClient.test.ts(82,28): error TS2349: This expression is not callable.
+  Type 'ApiError' has no call signatures.
+ ELIFECYCLE  Command failed with exit code 1.
