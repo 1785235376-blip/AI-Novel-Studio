@@ -1502,3 +1502,40 @@ edited.** The phase started from `f598bee`; `main` `fed2404c` untouched; PR #47 
 | Content policy reservation | **RESERVED** (unchanged) | No NSFW or Mature capability, no UI entry point, no model filtering; only fields, interfaces and compatibility tests. A policy is never a way to bypass a safety limit. |
 
 This section adds current facts only.
+
+### 2026-10-15 — Phase14: professional creative capability (current facts)
+
+Append-only current observation. Phase14 is a capability phase, not a validation phase, and it was
+**not** completed. This section records only what was actually built and verified; every other
+priority is recorded as `NOT_RUN` rather than described as reserved-but-intended. **No earlier row,
+status or evidence ID is edited.** The phase started from `5ab9b3d`; `main` `fed2404c` untouched;
+PR #47 still `OPEN`/draft.
+
+**Reconnaissance that shaped the work:** `DirectorNote` (`app/creative/models.py:62`) already carries
+`shot_size`, `camera_angle`, `camera_motion`, `composition`, `lens`, `lighting`, `color_palette`,
+`emotion`, `performance`, `blocking`, `character_state` and `performances`; `ShotContinuity`
+(`models.py:111`) already exists for `characters`/`outfit`/`environment`/`camera`; and the Asset
+relationship owner already declares seven relationship kinds (Phase10 audit). So the phase's gap was
+**not** missing owners — it was that every camera field is a bounded **free-text string** with no
+vocabulary anywhere in the tree.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| P1 Advanced Director Studio — camera language | **PARTIAL** | `app/creative/camera_language.py` (commit `0e10c5d`) adds an authoritative vocabulary over the **existing** fields: shot sizes `EXTREME_WIDE · WIDE · MEDIUM · CLOSE_UP · EXTREME_CLOSE_UP`; movements `STATIC · PAN · TILT · DOLLY · TRACKING · CRANE · HANDHELD`; lenses `WIDE · NORMAL · TELEPHOTO · MACRO`; compositions `RULE_OF_THIRDS · CENTER · SYMMETRY · LEADING_LINES`, plus documented spellings that fold onto them. Values are **classified, never coerced**: `CANONICAL`, `LEGACY_PASSTHROUGH` (unrecognised non-empty text preserved verbatim and reported as non-canonical) or `EMPTY`, so old projects stay readable. `require_canonical()` is the strict gate for new professional writes and is deliberately **not** wired into the legacy shot-update path. `project_camera()` is a read-only projection that never mutates its input. **Not done:** the Director Workspace surface (Story Goal / Visual Direction / Mood / Genre / Reference → Director Intent), scene-direction and performance-direction projections, any frontend exposure, and write-path enforcement. |
+| P2 Storyboard Pro — shot continuity | **PARTIAL** | `continuity_warnings()` implements the phase's own example over **authored** `ShotContinuity` data — two adjacent shots with differing authored `outfit` produce `CONTINUITY_OUTFIT_CHANGED` (and likewise `CONTINUITY_CHARACTERS_CHANGED` / `CONTINUITY_ENVIRONMENT_CHANGED`). It obeys that owner's own rule (authored constraints, **never inferred**): a value authored on only one side is treated as *unknown*, not as a break, and a camera change is deliberately **not** a warning because moving the camera between shots is direction. Comparison ignores case and surrounding whitespace but not internal spacing. **Not done:** Shot Card UI, storyboard sequence preview, approval-surface integration. |
+| P3 Prompt Studio | `NOT_RUN` | No prompt asset owner, prompt version chain, or Prompt↔Asset/Shot/Character/Scene binding was added. Prompt data therefore still lives wherever it already lived; nothing was created and nothing is claimed. |
+| P4 Character / Scene Consistency | `NOT_RUN` | No character or scene profile (appearance, age range, wardrobe, palette, references; environment/building/material/lighting/weather) and no generation-time reference injection were added. Existing fields only. |
+| P5 Asset Relationship Graph | `NOT_RUN` | The read-only relationship surface is unchanged from the Phase10 audit: the owner declares seven kinds and consumers must not guess undeclared ones. The requested full-chain projection (Character → Images → Shots → Videos → Timeline Clips with `USED_IN`/`DERIVED_FROM`/`REFERENCES`/`VERSION_OF`) was **not** added. |
+| P6 Timeline professional layer | `NOT_RUN` | No colour-adjustment parameter layer (brightness/contrast/exposure/saturation/white balance/LUT reference), no clip inspector, no markers and no trim/slip/ripple/transition preparation. Per the brief these were to be parameter systems only, with no pseudo-implementation — nothing was faked. |
+| P7 Audio professional layer | `NOT_RUN` | No track/clip/volume/fade/sync layer and no voice/music/SFX reservation. |
+| Professional vs simplified mode (UX) | `NOT_RUN` | No mode split was introduced, so complex parameters are not yet hidden from ordinary users. |
+| Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
+
+**Honest summary of the phase:** one priority's structured-data core and one continuity contract were
+delivered, verified against the existing owners and against the legacy suites (**122 passed,
+70 skipped, exit 0**, including `test_phase8_shots`, `test_r4_director` and
+`test_v2_creative_workflows`). The other five priorities are `NOT_RUN`. A test asserts the new module
+defines no second Shot/Scene/Project/Asset/Task model, so the "no second system" rule is enforced
+rather than merely stated. `PHASE14_PROFESSIONAL_CREATIVE_REPORT.md`.
+
+This section adds current facts only.
