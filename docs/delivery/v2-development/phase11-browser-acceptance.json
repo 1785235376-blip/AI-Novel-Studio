@@ -1,0 +1,37 @@
+{
+  "label": "phase11-browser-acceptance",
+  "utc": "2026-10-14T15:58:19.7418614Z",
+  "head": "2be9e4224e97bd776416b25ea3621ec0f64a36d1",
+  "branch": "feature/v2-narrative-platform",
+  "status": "PASS",
+  "exit_code": 0,
+  "result": "8 passed (14.4s)",
+  "tests_passed": 8,
+  "tests_failed": 0,
+  "retries": 0,
+  "real_environment": {
+    "browser_channel": "msedge",
+    "browser_path": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+    "browser_version": "152.0.4191.53",
+    "base_url": "http://127.0.0.1:5173",
+    "frontend_bind": "127.0.0.1:5173 (IPv4; forced with --host 127.0.0.1 --strictPort)",
+    "backend": "uvicorn app.main:app --host 127.0.0.1 --port 8110",
+    "backend_env": "STORAGE_BACKEND=file EXPERIMENTAL_FEATURES=narrative_production_v2 MOCK_PROVIDER=true CREDENTIAL_VAULT_BACKEND=memory",
+    "port_choice_reason": "8000 is in a Windows excluded range; 8100 is occupied by GearLink_KBService",
+    "node": "v22.14.0",
+    "pnpm": "12.4.2",
+    "jsdom": false
+  },
+  "covered_surfaces": [
+    "START",
+    "TASKS",
+    "ASSETS",
+    "PRODUCTION",
+    "MODEL CENTER",
+    "DELIVERY",
+    "SMOKE(zh-CN)",
+    "KEYBOARD"
+  ],
+  "command": "corepack pnpm exec playwright test --config playwright.studio-release.config.ts",
+  "evidence_log": "docs/delivery/v2-development/phase11-browser-acceptance.log"
+}

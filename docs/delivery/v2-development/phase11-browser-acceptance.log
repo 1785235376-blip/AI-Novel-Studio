@@ -1,0 +1,17 @@
+
+Running 8 tests using 1 worker
+
+(node:71460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:71460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [studio-release-msedge] › e2e\studio-release-acceptance.spec.ts:84:3 › Studio release acceptance — six surfaces in a real browser › START: the creative start entry renders its own landmark (4.6s)
+  ok 2 [studio-release-msedge] › e2e\studio-release-acceptance.spec.ts:91:3 › Studio release acceptance — six surfaces in a real browser › TASKS: the unified task centre renders its own landmark (1.2s)
+  ok 3 [studio-release-msedge] › e2e\studio-release-acceptance.spec.ts:97:3 › Studio release acceptance — six surfaces in a real browser › ASSETS: the independent asset workspace renders its own heading (1.2s)
+  ok 4 [studio-release-msedge] › e2e\studio-release-acceptance.spec.ts:103:3 › Studio release acceptance — six surfaces in a real browser › PRODUCTION: the production workflow dashboard renders its own landmark (1.2s)
+  ok 5 [studio-release-msedge] › e2e\studio-release-acceptance.spec.ts:109:3 › Studio release acceptance — six surfaces in a real browser › MODEL CENTER: opened on demand from production, renders its own landmark (1.3s)
+  ok 6 [studio-release-msedge] › e2e\studio-release-acceptance.spec.ts:117:3 › Studio release acceptance — six surfaces in a real browser › DELIVERY: opened on demand from production, renders its own landmark (1.4s)
+  ok 7 [studio-release-msedge] › e2e\studio-release-acceptance.spec.ts:124:3 › Studio release acceptance — six surfaces in a real browser › SMOKE (zh-CN): the studio shell really renders authored Chinese copy (1.1s)
+  ok 8 [studio-release-msedge] › e2e\studio-release-acceptance.spec.ts:134:3 › Studio release acceptance — six surfaces in a real browser › KEYBOARD: a switcher control is reachable by Tab and shows a visible focus indicator (1.3s)
+
+  8 passed (14.4s)
