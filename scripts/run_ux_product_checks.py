@@ -1,6 +1,17 @@
 """UX-PRODUCT batch acceptance checks (batch 1: UX-01 entry/intent + UX-02 task center;
 batch 2 adds UX-03 asset browser + UX-04 canvas/node operations; batch 3 adds
-UX-05 director/storyboard + UX-06 multitrack editing).
+UX-05 director/storyboard + UX-06 multitrack editing; batch 4 adds UX-07 model/storage
+centre + UX-08 in-project hint assistant).
+
+Batch 4 extends this runner in one compatible way only: `FRONTEND_FOLDERS` also
+declares `src/modelcenter` (UX-07 / LINE_J) and `src/guide` (UX-08 / LINE_K), so the
+frontend check runs every UX folder that exists and records an absent one as
+NOT_YET_AVAILABLE. Nothing else changes: the `regression` check is kept exactly as
+batch 2 defined it, `--checks` keeps every previous name (no new check name is added),
+and the receipt schema, exit-code semantics (0 = all PASS, 1 = any FAIL, 2 = no FAIL
+but NOT_YET_AVAILABLE/SKIPPED), UTF-8 handling and python-cache hygiene are unchanged.
+Only the `phase` label follows the batch-3 precedent ("ux-product-batch3" ->
+"ux-product-batch4"), as it did for batch 2 -> batch 3.
 
 Batch 3 extends this runner in one compatible way only: `FRONTEND_FOLDERS` also
 declares `src/storyboard` (UX-05 / LINE_H) and `src/nle` (UX-06 / LINE_I), so the
@@ -111,7 +122,7 @@ from pytest_temp_isolation import (  # noqa: E402
     pytest_temp_root,
 )
 
-PHASE = "ux-product-batch3"
+PHASE = "ux-product-batch4"
 PREFIX = "ux-product"
 
 # UX batch 1 backend surface: the production workflow contract the entry/intent
@@ -125,13 +136,13 @@ DEFAULT_BACKEND_TESTS = [
 # The protected-surface / seam regression: pre-existing router-factory and
 # admission tests that prove the studio seam UX batch 1 extends still holds.
 SEAM_TESTS = ["tests/test_v2_independent_workspace_api.py"]
-# UX-01 (LINE_A), UX-02 (LINE_B), UX-03 (LINE_E), UX-04 (LINE_F), UX-05 (LINE_H) and
-# UX-06 (LINE_I) frontend folders. A folder that does not exist yet is skipped and
-# reported, never failed on.
+# UX-01 (LINE_A), UX-02 (LINE_B), UX-03 (LINE_E), UX-04 (LINE_F), UX-05 (LINE_H),
+# UX-06 (LINE_I), UX-07 (LINE_J) and UX-08 (LINE_K) frontend folders. A folder that does
+# not exist yet is skipped and reported, never failed on.
 # LINE_C and LINE_G are this runner's own verification lines (previous batches), so the
-# product lines continue at H (UX-05) and I (UX-06).
+# product lines continue at H (UX-05), I (UX-06), J (UX-07) and K (UX-08).
 FRONTEND_FOLDERS = ["src/onboarding", "src/taskcenter", "src/assetbrowser", "src/canvasops",
-                    "src/storyboard", "src/nle"]
+                    "src/storyboard", "src/nle", "src/modelcenter", "src/guide"]
 FRONTEND_FOLDER_LINES = {
     "src/onboarding": "LINE_A",
     "src/taskcenter": "LINE_B",
@@ -139,6 +150,8 @@ FRONTEND_FOLDER_LINES = {
     "src/canvasops": "LINE_F",
     "src/storyboard": "LINE_H",
     "src/nle": "LINE_I",
+    "src/modelcenter": "LINE_J",
+    "src/guide": "LINE_K",
 }
 # The pre-existing suites batch 2 could disturb. `src/creative/IndependentStudio*` is
 # the studio-workspace integration surface the new folders get mounted into; the four

@@ -6,6 +6,10 @@ import { useLocalHostSession } from '../localHostSession';
 import { AppShell, type ScopeLabels, type StudioModule } from '../ui/AppShell';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { AssetLibraryPanel, type AssetLibraryAdapter } from '../novel/AssetLibraryPanel';
+// UX-PRODUCT batch 4: the model/storage centre (UX-07) and the in-project hint
+// assistant (UX-08). Both are read-only and open on demand.
+import { ModelCenterPanel } from '../modelcenter/ModelCenterPanel';
+import { ProjectGuidePanel } from '../guide/ProjectGuidePanel';
 import { AssetInspector } from '../novel/AssetInspector';
 import type { LineageAsset } from '../experimental/ProductionLineagePanel';
 import { StudioAssetDeclarationForm } from './StudioAssetDeclarationForm';
@@ -78,7 +82,8 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [productionStage, setProductionStage] = useState<StudioWorkspaceStage>(resume.state === 'SAVED' ? resume.location.stage : 'M4');
   const [graphLocation, setGraphLocation] = useState<Pick<StudioWorkspaceLocation, 'graphId' | 'runId'>>(resume.state === 'SAVED'
     ? { graphId: resume.location.graphId, runId: resume.location.runId } : {});
-  const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 'PRODUCTION';
+  const [modelOpen, setModelOpen] = useState(false), [guideOpen, setGuideOpen] = useState(false);
+const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 'PRODUCTION';
   // Presentation-only interface mode. Both modes share the same project, assets,
   // tasks, graph and drafts; switching never converts, copies or deletes data.
   const authoredLocally = !context.scope && !context.sessionToken && !context.actor;
@@ -399,6 +404,17 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
       selectedId={selected?.id} onSelect={assetId => navigate(() => { void refreshSelectedAsset(assetId); })}
       onSendTo={(target, reference) => setNotice(`已准备把素材 ${reference.asset_id} · v${reference.version} · 摘要 ${reference.digest.slice(0, 12)}… 送往 ${target}。目标模块不会被自动执行，请在对应工作区明确使用该版本；这里只传递原资产 ID、版本与摘要。`)}
       onUnavailable={deny} />}
+    {productionView && !denied && <>
+      <Button aria-expanded={guideOpen} onClick={() => setGuideOpen(true)}>按需打开项目提示助手</Button>
+      {guideOpen && <ProjectGuidePanel projectId={projectId} identity={cacheKey} active denied={denied} workflow={overview}
+        onNavigate={target => { if (target === 'STORYBOARD') { setNotice('分镜工作区在创作模块的导演/分镜检查器旁按需打开。'); return; } navigate(() => setWorkspaceView(target as StudioWorkspaceView)); }}
+        onUnavailable={deny} />}
+      <Button aria-expanded={modelOpen} onClick={() => setModelOpen(true)}>按需打开模型中心</Button>
+      {modelOpen && <ModelCenterPanel projectId={projectId}
+        transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
+        scope={context.scope} identity={cacheKey} active denied={denied} busy={busy} isCurrent={current}
+        read={guarded} mutate={graphMutation} onUnavailable={deny} />}
+    </>}
     {module === 'IMAGE' && workspaceView === 'ASSETS' && overview && !denied && selected && <StudioManualMaskPanel
       key={`mask:${cacheKey}:${maskEpoch}:${selected.id}:${selected.version}:${selected.sha256}:${formRevision}`} asset={selected} client={client}
       canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}
