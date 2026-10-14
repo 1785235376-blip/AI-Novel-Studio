@@ -84,3 +84,16 @@
 ## D9 — 受保护 UI 面不变
 
 `GlobalHeader`、`ModuleSwitcher`、`ContextBar`、`AppShell` 布局、`LeftSidebar`/`RightInspector` shell、`StatusBar`、主题 token 与核心 primitives 为受保护面；本轮只作为消费者复用。确需系统级变更时按 `docs/ui/design_system.md` 的 Design System Change Request 流程，并先继续不依赖该变更的功能。
+
+## D15 — CONTENT_POLICY_FRAMEWORK: RESERVED（预留，不是实现）
+
+- 目标：为未来的项目级内容策略框架预留扩展位；**不**实现 Mature/NSFW 模式、**不**新增审核系统、**不**改变当前用户流程。
+- 落点：复用既有偏好 owner `WorkspacePreferences`，新增**可选** `content_policy: Literal['STANDARD','MATURE','RESTRICTED','CUSTOM'] | None = None`；缺省/历史值一律读作 `STANDARD`（`app/creative/content_policy.py::effective_content_policy`）。**不新建存储**。
+- 两处必须的兼容性修正（否则会破坏旧项目）：
+  1. 原 `_preference_view` 用 `row[key]` 遍历全部模型字段——一旦新增字段，**旧行会 KeyError**、新字段还会泄漏到现有 wire。现改为**冻结的 3 字段投影**（`intents/preset/custom_intent` + `version`）并用 `row.get`，因此旧项目照常打开、任何既有客户端收到的字节不变。
+  2. `preferences()` 中 `content_policy` 为 `None` 表示"不修改"，从 payload 中剔除；否则一次无关偏好编辑会把已保存的策略静默重置。
+- 预留接口（纯函数，仅供未来使用，今天没有任何行为读取它们）：`asset_policy_for`（资产继承来源项目策略；**不改动资产 owner、不加资产字段**）、`model_content_policy_support`（只读模型条目的可选声明，**永不过滤/启用/启动模型**）、`export_notice`（导出阶段的通知描述符，**不渲染、不阻塞导出**）。
+- UI：本轮**不加**任何按钮/开关/设置项；未来位置为 Settings → Advanced → Content Policy。
+- 安全边界：策略不是绕过安全限制的手段；未来仍需用户责任、平台规则、年龄限制与内容审核策略。
+- 验证：`tests/test_v2_content_policy_reservation.py` — File 与**真实 PostgreSQL**（fresh 库、20 迁移、空库证明、正常停止）双后端通过；既有 Phase7 与 studio seam 套件同时回归通过（新增字段零回归）。
+- 标记：`CONTENT_POLICY_FRAMEWORK: RESERVED`（**不是** IMPLEMENTED）。

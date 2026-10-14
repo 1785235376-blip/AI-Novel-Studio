@@ -53,11 +53,21 @@ class IndependentWorkspaceService:
             WorkspacePreferences.model_validate({key: row.get(key) for key in WorkspacePreferences.model_fields})
         return rows[0] if rows else None
 
+    # The preference wire projection stays frozen at the fields every existing client
+    # already decodes. CONTENT_POLICY_FRAMEWORK: RESERVED is deliberately NOT on the
+    # wire yet (no UI, no filter, no export change); it is read through the typed
+    # helpers in `app/creative/content_policy.py`. Freezing the list here is also what
+    # keeps a row written before the field existed from raising KeyError.
+    PREFERENCE_VIEW_FIELDS = ("intents", "preset", "custom_intent")
+
     @staticmethod
     def _preference_view(row):
-        fields = WorkspacePreferences.model_fields
-        return {"version": row["version"], **{key: copy.deepcopy(row[key]) for key in fields}} if row else {
-            "version": 0, **WorkspacePreferences().model_dump()}
+        defaults = WorkspacePreferences().model_dump()
+        fields = IndependentWorkspaceService.PREFERENCE_VIEW_FIELDS
+        if not row:
+            return {"version": 0, **{key: copy.deepcopy(defaults[key]) for key in fields}}
+        return {"version": row["version"],
+                **{key: copy.deepcopy(row.get(key, defaults[key])) for key in fields}}
 
     def project(self, nid, scope):
         self.store.key(nid, scope)
@@ -94,6 +104,10 @@ class IndependentWorkspaceService:
     def preferences(self, nid, scope, actor, value, guard=lambda: None):
         body = WorkspacePreferencesUpdate.model_validate(value)
         payload = body.model_dump(exclude={"expected_version"})
+        # CONTENT_POLICY_FRAMEWORK: RESERVED — an omitted (null) policy means "unchanged",
+        # so an unrelated preference edit can never silently reset a saved policy.
+        if payload.get("content_policy") is None:
+            payload.pop("content_policy", None)
         self.store.key(nid, scope)
         with self.store.transaction(nid, scope) as document:
             row = self._preferences(document)

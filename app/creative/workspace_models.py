@@ -14,6 +14,14 @@ CreativeIntent = Literal["NOVEL_WRITING", "NOVEL_ADAPTATION", "AI_SHORT_FILM", "
                          "ADVERTISEMENT", "MUSIC_VIDEO", "GAME_PREVIS", "IMAGE_DESIGN", "PODCAST_VOICE",
                          "BLANK", "CUSTOM"]
 WorkspacePreset = Literal["BLANK", "TEXT", "IMAGE", "VIDEO", "AUDIO", "EDITING", "MIXED"]
+# CONTENT_POLICY_FRAMEWORK: RESERVED (not IMPLEMENTED).
+# A project-level policy vocabulary for a future content policy framework. It is
+# reserved as an OPTIONAL field on the existing preference owner so an older row
+# that never stored it still validates, and so no existing client, filter, export
+# or permission decision changes today. `None` means "not set" and is read as
+# STANDARD through `app/creative/content_policy.py`. Unknown values are refused by
+# the literal itself.
+ContentPolicy = Literal["STANDARD", "MATURE", "RESTRICTED", "CUSTOM"]
 
 
 class BlankProjectIn(StrictModel):
@@ -25,6 +33,9 @@ class WorkspacePreferences(StrictModel):
     intents: list[CreativeIntent] = Field(default_factory=list, max_length=11)
     preset: WorkspacePreset = "BLANK"
     custom_intent: str = Field(default="", max_length=240)
+    # CONTENT_POLICY_FRAMEWORK: RESERVED — optional on purpose: a row written before
+    # this field existed validates with `None`, and the effective value is STANDARD.
+    content_policy: ContentPolicy | None = None
 
     @model_validator(mode="after")
     def unique_intents(self):

@@ -116,7 +116,18 @@ QingJian 联动、Adapter、双产品运行与协议映射专项本轮**全部�
 2. 我（Lead）集成时把控制器 `catalog` 联合类型传给操作栏触发 TS2322；以带注释的窄化处理，不改该线已测代码语义。
 3. 我在批次 1 会话中写入 `DECISIONS.md` 时发生条目串位，本批重排为 D10–D14 有序并补齐 D12（连接合法性单一权威）。
 
-## 8. 下一可执行项
+## 9. CONTENT_POLICY_FRAMEWORK: RESERVED（架构预留，**不是**实现）
+
+应要求在主线开发中追加的**低风险预留**（未暂停主线、未重构数据库、未改权限模型、未开发 NSFW 功能）：
+
+- **项目级策略**：复用既有 `WorkspacePreferences` 新增**可选** `content_policy`（`STANDARD|MATURE|RESTRICTED|CUSTOM`，缺省/历史值一律读作 `STANDARD`）；不新建存储、不加 UI 开关/按钮、不改变当前用户流程。
+- **两处必要的兼容性修正**（否则会破坏旧项目）：偏好 wire 投影冻结为既有 3 字段并用 `row.get`（旧行不再 `KeyError`，也不泄漏新键）；`content_policy=None` 在写入时表示"不修改"，避免一次无关偏好编辑静默重置已保存策略。
+- **预留接口（纯函数，今天无任何行为读取）**：`asset_policy_for`（资产继承来源项目策略，**不改资产 owner、不加资产字段**）、`model_content_policy_support`（只读模型条目的可选声明，**不过滤/不启用/不启动模型**）、`export_notice`（未来导出通知描述符，**不渲染、不阻塞导出**）。
+- **安全边界**：策略**不是**绕过安全限制的手段；未来仍需用户责任、平台规则、年龄限制与内容审核策略。
+- **验证**：`tests/test_v2_content_policy_reservation.py` 覆盖任务书要求的 4 项（旧项目读作 STANDARD、新项目默认 STANDARD、未知值拒绝、资产/导出读取不因缺字段失败），并追加"无关编辑不得重置已保存策略"的真实 owner 证明。File 与**真实 PostgreSQL** 双后端通过；Phase7 与 studio seam 同时回归通过。
+- **标记**：`CONTENT_POLICY_FRAMEWORK: RESERVED`（**不是** IMPLEMENTED）。
+
+## 10. 下一可执行项
 
 1. **第三批**：UX-05（导演与分镜实际工作区）+ UX-06（多轨剪辑/预览/交付）。UX-05 复用 `DirectorService`/`proposals`/`StoryboardWorkspace`，镜头列表与画布共享同一镜头数据、顺序调整保留稳定 Shot ID、"送往…"先形成目标草稿；UX-06 复用 `ProductionExecutionService` 时间线与 `VideoAssemblyService`，坚持原整数/有理时间基，缩略图/波形按需，字幕轨可编辑，导出回执丢失只恢复原请求不重渲染。
 2. **浏览器/视觉验收**：四个 UX 面的 playwright 视觉与几何检查仍为 NOT_RUN；有资源时补做并单独出收据。
