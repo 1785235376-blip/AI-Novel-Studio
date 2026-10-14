@@ -693,9 +693,12 @@ studio_production_service = ProductionExecutionService(independent_workspace_ser
 creative_graph_service.configure_media(studio_production_service)
 from ..creative.bible_workspace import BibleWorkspaceService
 studio_bible_service = BibleWorkspaceService(independent_workspace_service, world_service)
+from ..creative.prompt_workspace import PromptWorkspaceService
+studio_prompt_service = PromptWorkspaceService(independent_workspace_service, studio_bible_service)
 router.include_router(create_independent_workspace_router(independent_workspace_service, authorize, require_flag,
     create_project=lambda body, token: legacy_api.create_novel(
         legacy_api.NovelIn(**body.model_dump(exclude_none=True)), token),
     workspace_writer=legacy_api._shared_workspace_writer, graph_service=creative_graph_service,
     require_host_session=require_inspection_host_session, model_host_authority=creative_model_host_authority,
-    production_service=studio_production_service, bible_service=studio_bible_service))
+    production_service=studio_production_service, bible_service=studio_bible_service,
+    prompt_service=studio_prompt_service))

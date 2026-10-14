@@ -1650,3 +1650,42 @@ started from `4560dc0`; `main` `fed2404c` untouched; PR #47 still `OPEN`/draft.
 | Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
 
 This section adds current facts only.
+
+### 2026-10-15 — Round 3: Prompt Intelligence System, audit + backend (current facts)
+
+Append-only current observation for the Round 1–10 master roadmap. **No earlier row, status or
+evidence ID is edited.** The round started from `558acea`; `main` `fed2404c` untouched; PR #47 still
+`OPEN`/draft.
+
+**Round 3 §4 required the audit first, and it was done first.** `ROUND3_PROMPT_SOURCE_AUDIT.md`
+scanned **15 prompt sources** read-only and changed/deleted nothing: the 12 `prompts/<agent>/system.md`
+files (excluded from the round as deploy-time agent configuration), `ImagePromptParameters` /
+`ImagePromptPort` / `StoryboardPromptParameters`, `ShotCard.frame_prompt`, screenplay
+`prompt`/`motion_prompt`, production-contract `prompt`/`negative_prompt`, media request/brief prompts,
+provider-invocation prompts and whitelists, legacy `ImageGenerateIn`, graph media execution,
+`VisionAnalyzeIn`, a hard-coded fallback negative prompt, and transport-level prompts. Eight problems
+recorded — no identity anywhere, incompatible bounds (`8000`/`10000`/`12000`/`16000`/`20000` for the
+same kind of text), no version/history, no bible binding, no unit-level provenance, silent hidden
+defaults, and a **deliberate redaction precedent** (`production_lineage.py:289` stores only a
+`negative_prompt_digest`).
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| Prompt Asset = existing asset | **IMPLEMENTED** | A prompt is an existing `AssetLibraryService` asset with `kind="prompt"` (the owner's `kind` is free-form `str(kind)[:40]`). **`app/services/asset_library_service.py` was NOT modified. No new collection, table or database was created.** The structured payload lives in `parameters` — an **already allow-listed** `update_metadata` field — bindings use the **already allow-listed** `character_id`/`scene_id`, references use `source_asset_ids`, version uses the existing `version` + `expected_version` CAS, the chain uses the existing `annotate_lineage` history, and review reuses `promote_owned`. |
+| Version + change note/reason | **IMPLEMENTED** | Asset bytes are immutable, so a revision is a **new asset in the same `family_id`** (`revision` 1→2→3, predecessor linked through existing lineage). Every prior revision therefore stays physically readable — history cannot be lost — and each carries its `change_note` and `change_reason`. Families are never merged (asserted). |
+| Prompt metadata (§6) | **IMPLEMENTED** | Frozen vocabularies: `purpose ∈ {IMAGE, VIDEO, AUDIO, TEXT}`, `origin ∈ {MANUAL, AI_GENERATED, IMPORTED}`, binding kinds `{CHARACTER, SCENE, SHOT, ASSET}`; all validated by the payload builder. |
+| Binding is a reference, never a copy (§7) | **IMPLEMENTED (read-only)** | Bindings are ids only, resolved against the live bible/asset index: a real target is `KNOWN`, a missing one is `UNKNOWN` and listed in `unresolved_bindings` — never dropped, never assumed. With no index every binding is `UNKNOWN` with `verification: NO_INDEX_SUPPLIED`. No bible field is written by this round, so a bible edit is visible on the next read. |
+| Prompt Library / Detail projections (§8 data) | **IMPLEMENTED** | Contracts `studio-prompt-library/1` and `studio-prompt-detail/1`, with the eleven required prompt fields, per-revision history, review status taken from the owner's `approved_at`, and `malformed[]` for an unreadable payload rather than a guess. |
+| Prompt generation context (§9) | **IMPLEMENTED** | `studio-prompt-context/1` reports **sources** (Character Bible, Scene Bible, Director Intent, Shot Card) with `authored`/`state`/`source` plus an `unauthored` list, and returns **`composes_prompt_text: false`** and `requires_user_confirmation: true` as contract fields. |
+| AI must not overwrite / auto-version / delete history (§10) | **IMPLEMENTED by absence** | The projection module and all three routes have **no write path at all**; there is no route that could overwrite a prompt, bump a revision or delete history. |
+| Redaction | **IMPLEMENTED** | `redacted: true` makes the projection emit digests for prompt text and negative prompt, respecting the audited `negative_prompt_digest` precedent. |
+| Verification | **IMPLEMENTED** | Backend File **177 passed / 69 skipped / exit 0** (`round3-prompt-r4`); **real PostgreSQL 108 passed / exit 0** (`round3-prompt-postgres`, fresh `v2_round3`, 20 migrations, cluster stopped cleanly). §12 cases asserted: a project with no prompt assets projects cleanly; non-prompt kinds are ignored and `graph_models.py` was not touched; a wrong contract/purpose/non-int revision is rejected; every revision is retained with note and reason; bindings are `KNOWN` only when the target exists. |
+| **Prompt Workspace UI (Round3-C)** | **`NOT_RUN`** | No Prompt Library / Detail / Version / Binding surface exists. The frozen contract for building it is in `ROUND3_HANDOFF.md` §3. |
+| **Frontend decoder / vitest / tsc / build** | **`NOT_RUN`** | Nothing frontend was changed in this round. |
+| **HTTP authoring route for prompt assets** | **`NOT_RUN`** | `ManualAssetImport.kind` is `Literal["image","video","audio"]` (`workspace_models.py:53`), so the existing `POST /studio/assets` route **cannot create a text or prompt asset**. A prompt is currently authorable only by a service holding the asset owner. This is the largest functional gap in Round 3 and needs a decision (widen the DTO, or add a dedicated prompt-asset route reusing `update_metadata`). |
+| Adoption of legacy sources | **`NOT_RUN`** (by design) | Round 3 **adopts, never migrates**: nothing was migrated, rewritten or deleted, and `prompts/**` is untouched. `build_payload` already accepts `adopted_from={owner, field, digest}` for a later increment. |
+| Two traps recorded for Round 4 | RECORDED | (1) `asset_index` is a deliberately **bounded** projection that **excludes `parameters`**, so any prompt payload must be read from the owner's own `list`/`get` under the project-binding lease — this cost two failed runs to find. (2) Asset visibility requires `IndependentWorkspaceService._asset_scope`; an asset created outside that lease is correctly invisible to studio reads. |
+| Release candidate validation | **NOT ESTABLISHED** | Unchanged. This round added capability; it did not move a release gate. `ROUND3_PROMPT_REPORT.md`. |
+| Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
+
+This section adds current facts only.
