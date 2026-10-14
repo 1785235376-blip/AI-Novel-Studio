@@ -1,0 +1,41 @@
+/* UX-04 画布操作栏：仅使用 `frontend/src/ui/tokens.css` 的设计令牌，不出现任何原始颜色。 */
+.canvas-ops { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; overflow-wrap: anywhere; font-family: var(--font-ui); color: var(--color-text-primary); }
+.canvas-ops > section { border-top: var(--border-default); padding-top: var(--space-3); }
+.canvas-ops h3, .canvas-ops h4 { margin: 0; }
+.canvas-ops p { margin: 0; color: var(--color-text-secondary); }
+.canvas-ops small { color: var(--color-text-muted); }
+.canvas-ops code { font-family: var(--font-mono); font-size: 11px; }
+.canvas-ops__codes code { display: inline-block; margin-inline-end: var(--space-2); }
+
+.canvas-ops__row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); min-width: 0; }
+.canvas-ops__field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; flex: 1 1 auto; }
+.canvas-ops__field > span { color: var(--color-text-muted); font-size: 11px; }
+.canvas-ops__field input, .canvas-ops__field select { min-height: var(--control-height-md); min-width: 0; max-width: 100%; padding: 0 var(--space-2); border: var(--border-default); border-radius: var(--radius-sm); background: var(--color-bg-elevated); color: var(--color-text-primary); font-family: var(--font-ui); }
+.canvas-ops__field input:focus-visible, .canvas-ops__field select:focus-visible, .canvas-ops__list button:focus-visible { outline: var(--border-strong); box-shadow: var(--focus-ring); }
+.canvas-ops__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.canvas-ops__actions .ui-button { min-height: var(--control-height-sm); padding: var(--space-1) var(--space-2); }
+
+.canvas-ops__list { display: flex; flex-direction: column; gap: var(--space-1); margin: 0; padding: 0; list-style: none; max-height: calc(var(--space-12) * 4); overflow: auto; border: var(--border-default); border-radius: var(--radius-md); background: var(--color-bg-surface); }
+.canvas-ops__list li { margin: 0; padding: 0; }
+.canvas-ops__list button.canvas-ops__item { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-1); width: 100%; height: auto; min-height: var(--control-height-md); padding: var(--space-2); border: 0; border-bottom: var(--border-default); border-radius: 0; background: transparent; text-align: left; color: var(--color-text-primary); font-family: var(--font-ui); cursor: pointer; }
+.canvas-ops__list button.canvas-ops__item:hover:not(:disabled) { background: var(--color-accent-subtle); }
+.canvas-ops__list button.canvas-ops__item[aria-pressed=true] { background: var(--color-selection-bg); box-shadow: inset 0 0 0 1px var(--color-selection-border); }
+.canvas-ops__list button.canvas-ops__item:disabled { cursor: not-allowed; color: var(--color-text-muted); }
+.canvas-ops__item-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.canvas-ops__item-head strong { font-size: 13px; }
+.canvas-ops__ports { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 11px; color: var(--color-text-secondary); }
+.canvas-ops__port { display: inline-flex; align-items: center; gap: var(--space-1); border: var(--border-default); border-radius: var(--radius-sm); padding: 0 var(--space-1); }
+.canvas-ops__port b { font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--color-text-muted); }
+.canvas-ops__port.is-required { border-color: var(--color-status-warning); color: var(--color-status-warning); }
+.canvas-ops__port.is-legal { border-color: var(--color-status-success); color: var(--color-status-success); }
+.canvas-ops__port.is-blocked { border-color: var(--color-status-error); color: var(--color-status-error); }
+
+.canvas-ops__note { border: var(--border-default); border-left: var(--space-1) solid var(--color-status-info); border-radius: var(--radius-sm); background: var(--color-bg-subtle); padding: var(--space-2); font-size: 12px; }
+.canvas-ops__note.is-warning { border-left-color: var(--color-status-warning); }
+.canvas-ops__note.is-generation { border-left-color: var(--color-status-warning); }
+.canvas-ops__note.is-presentation { border-left-color: var(--color-status-success); }
+.canvas-ops__note ul { margin: var(--space-1) 0 0; padding-inline-start: var(--space-4); }
+
+.canvas-ops__counts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; padding: 0; list-style: none; font-size: 12px; }
+.canvas-ops__counts li { display: inline-flex; align-items: center; gap: var(--space-1); }
+.canvas-ops__empty { margin: 0; padding: var(--space-3); color: var(--color-text-secondary); font-size: 12px; }

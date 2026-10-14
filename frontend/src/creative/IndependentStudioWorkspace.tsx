@@ -30,6 +30,10 @@ import type { ProductionWorkflowAssetKind, ProductionWorkflowModuleId } from '..
 // intent / interface-mode surface (UX-01). Both are additive mounted content in
 // their own folders; neither introduces a second project, task or preference owner.
 import { TaskCenterPanel } from '../taskcenter/TaskCenter';
+// UX-PRODUCT batch 2 (UX-03): the reuse-oriented asset browser. Additive content in
+// the ASSETS view; it reads through the same captured transport and never copies an
+// asset, executes a target module or physically deletes a file.
+import { AssetBrowserPanel } from '../assetbrowser/AssetBrowserPanel';
 import { StudioStartPanel } from '../onboarding/StudioStartPanel';
 import { InterfaceModeSwitch } from '../onboarding/InterfaceModeSwitch';
 import { createStudioEntryClient } from '../onboarding/studioEntryClient';
@@ -388,6 +392,13 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
         onJob={job => { if (current()) setProductionJob({ client: productionClient, job }); }} />
     </>}
     {workspaceView === 'ASSETS' && overview && !denied && <AssetLibraryPanel novelId={projectId} adapter={adapter} selectedAssetId={selected?.id} onSelectAsset={asset => navigate(() => { selectionEpoch.current += 1; setSelected(asset); setLineageDirty(false); setRelationshipDirty(false); })} />}
+    {workspaceView === 'ASSETS' && overview && !denied && <AssetBrowserPanel projectId={projectId}
+      transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
+      scope={context.scope} identity={cacheKey} active={workspaceView === 'ASSETS' && !denied && !identityRetired}
+      denied={denied || identityRetired} busy={busy} isCurrent={current} read={guarded} mutate={graphMutation}
+      selectedId={selected?.id} onSelect={assetId => navigate(() => { void refreshSelectedAsset(assetId); })}
+      onSendTo={(target, reference) => setNotice(`已准备把素材 ${reference.asset_id} · v${reference.version} · 摘要 ${reference.digest.slice(0, 12)}… 送往 ${target}。目标模块不会被自动执行，请在对应工作区明确使用该版本；这里只传递原资产 ID、版本与摘要。`)}
+      onUnavailable={deny} />}
     {module === 'IMAGE' && workspaceView === 'ASSETS' && overview && !denied && selected && <StudioManualMaskPanel
       key={`mask:${cacheKey}:${maskEpoch}:${selected.id}:${selected.version}:${selected.sha256}:${formRevision}`} asset={selected} client={client}
       canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}

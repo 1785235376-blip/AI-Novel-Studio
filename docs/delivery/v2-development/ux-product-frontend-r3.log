@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/frontend
+
+ ✓ src/onboarding/studioEntryContract.test.ts (7 tests) 5ms
+ ✓ src/taskcenter/taskCenterContract.test.ts (17 tests) 10ms
+ ✓ src/onboarding/studioEntryClient.test.ts (9 tests) 9ms
+ ✓ src/taskcenter/taskCenterClient.test.ts (7 tests) 10ms
+ ✓ src/onboarding/IntentPicker.test.tsx (4 tests) 239ms
+ ✓ src/onboarding/StudioStartPanel.test.tsx (8 tests) 247ms
+ ✓ src/taskcenter/TaskCenter.test.tsx (11 tests) 550ms
+ ✓ src/onboarding/useStudioEntry.test.tsx (15 tests) 1093ms
+ ✓ src/taskcenter/useTaskCenter.test.ts (9 tests) 1147ms
+
+ Test Files  9 passed (9)
+      Tests  87 passed (87)
+   Start at  20:52:43
+   Duration  4.32s (transform 1.04s, setup 530ms, collect 2.79s, tests 3.31s, environment 2.60s, prepare 720ms)
+

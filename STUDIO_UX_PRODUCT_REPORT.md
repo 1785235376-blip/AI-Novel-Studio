@@ -91,8 +91,34 @@ QingJian 联动、Adapter、双产品运行与协议映射专项本轮**全部�
 - Studio 本地视图定位记录**新增可选字段** `interface_mode` 与两个新视图值（`START`/`TASKS`）：旧记录仍有效，非法值判 `INVALID`，默认保持今天的界面；不会为存模式而伪造位置。
 - 无数据库 schema 迁移；无资产/任务/Graph 数据改写。
 
-## 7. 下一可执行项
+## 7. 第二批（UX-03 素材复用 + UX-04 画布/节点操作）—— 已完成
 
-1. 第二批：UX-03（Asset Browser 复用体验）+ UX-04（无限画布/节点工作流），按同一并行规则（两条产品写入线 + 一条验证线，共享文件由主代理串行整合）。
-2. 给 `START`/`TASKS` 视图补浏览器级小范围检查（playwright 可选）。
-3. 持续把每批次证据写入 `docs/delivery/v2-development/ux-product-*`，并在最终冻结输入树后重跑 harness。
+| 工作包 | 源码 | 位置 | 用户能得到什么 |
+| --- | --- | --- | --- |
+| UX-03 Asset Browser | IMPLEMENTED | `frontend/src/assetbrowser/`（18 文件） | 按媒体类型/标签/复审状态/时间/引用状态筛选与搜索（只搜名称与授权元数据）；列表与网格**共用选择**；按需详情含版本、来源、参数（权限允许时）、参考图与"被哪些镜头/节点/时间线使用"（未声明显示**未核实**）；版本对比与图片缩放；媒体预览互斥且由用户启动，切换即停旧播放；"送往图片/视频/分镜/时间线"**只传 `{asset_id, version, digest}`**，不执行目标模块；删除只给**影响范围报告**（`physical_delete:false`、`content_removed:false`），不物理删除用户文件 |
+| UX-04 画布/节点 | IMPLEMENTED | `frontend/src/canvasops/`（10 文件） | 节点检索/分类与端口展示；框选/多选/定位（复用既有几何 helper）；**连接前**显示待连端口类型、兼容目标与具体拒绝原因（合法性**只**来自既有 `connectionIssue`）；**布局变动 vs 影响生成内容**的差异分类（未知一律判为影响生成）；撤销/重做明确说明只作用于本地草稿，不回滚已花费用/远端任务/已提交审核；节点与连接预算只读展示，触顶时提示拆分工作流，**不抬高任何上限** |
+
+**第二批的诚实边界**：分组/注释/折叠是**会话内呈现态**（`canvasops-local/1`），不写入已保存创作图——持久化需要原 owner 的有类型向后兼容扩展，单独立项；自动布局只提供只读预览，提交必须走既有 `change()` 进入撤销栈；素材浏览器的标签/许可编辑为**只读展示**，不声称商业授权；关系 owner 未声明的归属一律"未核实"。
+
+### 第二批验证（冻结树，收据 `sources_changed_during_check=false`）
+
+| 检查 | 结果 | 收据 |
+| --- | --- | --- |
+| Frontend（四个 UX 目录） | **PASS 268 tests** | `ux-product-frontend-r4` |
+| 既有集成回归（studio + 画布 + 无障碍标签 + 关系 + 声明表单） | **PASS 198 tests** | `ux-product-regression-r4` |
+| File / TypeScript / Build / Tokens / Seam | **PASS ×5**（build 2130 modules） | `ux-product-{file,types,build,tokens,seam}-r4` |
+| 新面单测（会话内直接运行） | assetbrowser **88** + canvasops **93** + onboarding/taskcenter **96** = **277 passed** | 会话内 |
+| PostgreSQL | 复验不需要（本批**无后端改动**），沿用批次 1 的真实 PG 收据 | `ux-product-pg` |
+
+### 第二批修掉的真实回归（保留记录）
+
+1. UX-04 顾问面板初版的无障碍名称与既有端口下拉框冲突，令 `StudioSelectLabels.test.tsx` 失败；该线改名为 `连接建议 · 起始输出端口 / 目标输入端口` 后既有套件恢复全绿（我保留了既有控件，未删除既有可用入口）。
+2. 我（Lead）集成时把控制器 `catalog` 联合类型传给操作栏触发 TS2322；以带注释的窄化处理，不改该线已测代码语义。
+3. 我在批次 1 会话中写入 `DECISIONS.md` 时发生条目串位，本批重排为 D10–D14 有序并补齐 D12（连接合法性单一权威）。
+
+## 8. 下一可执行项
+
+1. **第三批**：UX-05（导演与分镜实际工作区）+ UX-06（多轨剪辑/预览/交付）。UX-05 复用 `DirectorService`/`proposals`/`StoryboardWorkspace`，镜头列表与画布共享同一镜头数据、顺序调整保留稳定 Shot ID、"送往…"先形成目标草稿；UX-06 复用 `ProductionExecutionService` 时间线与 `VideoAssemblyService`，坚持原整数/有理时间基，缩略图/波形按需，字幕轨可编辑，导出回执丢失只恢复原请求不重渲染。
+2. **浏览器/视觉验收**：四个 UX 面的 playwright 视觉与几何检查仍为 NOT_RUN；有资源时补做并单独出收据。
+3. **第四批**：UX-07 模型/存储 + UX-08 项目提示助手（不接青简）+ UX-09 统一导出与工程交接。
+4. 每批结束后重跑 harness、更新本报告与 feature matrix、提交推送。

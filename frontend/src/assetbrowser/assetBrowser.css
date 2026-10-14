@@ -1,0 +1,111 @@
+/*
+ * UX-03 素材浏览器样式。
+ * 只使用 DS-v1.0 design tokens（`var(--…)`），没有任何原始颜色值；
+ * 间距取自 --space-*，圆角取自 --radius-*，边框取自 --border-*。
+ */
+.asset-browser { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.asset-browser p { margin: 0; color: var(--color-text-secondary); }
+.asset-browser h3, .asset-browser h4, .asset-browser h5 { margin: 0; }
+.asset-browser__shell { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.asset-browser__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.asset-browser__note { color: var(--color-text-muted); overflow-wrap: anywhere; }
+.asset-browser__meta { color: var(--color-text-muted); font-family: var(--font-mono); overflow-wrap: anywhere; }
+.asset-browser__badges { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+
+/* ------------------------------------------------------------------ 过滤面 */
+
+.asset-browser__filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2) var(--space-3); margin: 0; }
+.asset-browser__field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.asset-browser__field > span { color: var(--color-text-muted); }
+.asset-browser__field input,
+.asset-browser__field select { min-height: var(--control-height-md); padding: 0 var(--space-2);
+  border: var(--border-default); border-radius: var(--radius-sm); background: var(--color-bg-elevated);
+  color: var(--color-text-primary); font-family: var(--font-ui); }
+.asset-browser__field input:focus-visible,
+.asset-browser__field select:focus-visible { outline: var(--border-strong); box-shadow: var(--focus-ring); }
+.asset-browser__filter-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+
+/* -------------------------------------------------------------- 分页 / 布局 */
+
+.asset-browser__pager { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2) var(--space-3); }
+.asset-browser__layout { display: grid; gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem); align-items: start; }
+.asset-browser__column { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+
+/* -------------------------------------------------------------- 网格 / 列表 */
+
+.asset-browser__grid-wrap { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.asset-browser__grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.asset-browser__grid--grid { grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); }
+.asset-browser__grid--list { grid-template-columns: minmax(0, 1fr); }
+/* 虚拟化：视口外的卡片不参与布局与绘制，行数再多也不会一次渲染全部高清内容。 */
+.asset-browser__card { content-visibility: auto; contain-intrinsic-size: 12rem; min-width: 0; }
+.asset-browser__card-select { display: flex; flex-direction: column; gap: var(--space-2); width: 100%;
+  text-align: left; border: var(--border-default); border-radius: var(--radius-lg);
+  padding: var(--space-2); background: var(--color-bg-surface); color: var(--color-text-primary);
+  font-family: var(--font-ui); cursor: pointer; }
+.asset-browser__card-select:hover { background: var(--color-bg-subtle); }
+.asset-browser__card-select:focus-visible { outline: var(--border-strong); box-shadow: var(--focus-ring); }
+.asset-browser__card.is-selected .asset-browser__card-select { background: var(--color-selection-bg);
+  border-color: var(--color-selection-border); }
+.asset-browser__card-select:disabled { cursor: not-allowed; opacity: .7; }
+.asset-browser__card-select > header { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.asset-browser__card-select strong { overflow-wrap: anywhere; }
+.asset-browser__thumb { display: flex; align-items: center; justify-content: center; min-height: 6rem;
+  border-radius: var(--radius-md); background: var(--color-bg-subtle); overflow: hidden; }
+.asset-browser__thumb img { max-width: 100%; max-height: 9rem; object-fit: contain; }
+.asset-browser__thumb-fallback { color: var(--color-text-muted); }
+.asset-browser__facts { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+.asset-browser__facts > div { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.asset-browser__facts dt { color: var(--color-text-muted); }
+.asset-browser__facts dd { margin: 0; overflow-wrap: anywhere; }
+.asset-browser__facts code { font-family: var(--font-mono); overflow-wrap: anywhere; }
+
+/* ------------------------------------------------------------------ 详情 */
+
+.asset-browser__detail { display: flex; flex-direction: column; gap: var(--space-3);
+  border: var(--border-default); border-radius: var(--radius-lg); padding: var(--space-3);
+  background: var(--color-bg-surface); min-width: 0; }
+.asset-browser__detail section { display: flex; flex-direction: column; gap: var(--space-2); }
+.asset-browser__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.asset-browser__list > li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  border-top: var(--border-default); padding-top: var(--space-2); min-width: 0; }
+.asset-browser__impact-group { display: flex; flex-direction: column; gap: var(--space-2); }
+.asset-browser__impact-group[data-empty='true'] h5 { color: var(--color-text-muted); }
+
+/* -------------------------------------------------------------- 版本对比 */
+
+.asset-browser__compare { display: flex; flex-direction: column; gap: var(--space-3);
+  border: var(--border-default); border-radius: var(--radius-lg); padding: var(--space-3);
+  background: var(--color-bg-surface); min-width: 0; }
+.asset-browser__compare-picks { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.asset-browser__compare-grid { display: grid; gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+.asset-browser__compare-side { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.asset-browser__media { display: flex; flex-direction: column; gap: var(--space-2); align-items: flex-start; }
+.asset-browser__media img { max-width: 100%; max-height: 20rem; object-fit: contain;
+  transition: transform var(--motion-standard) var(--ease-standard); }
+.asset-browser__media audio, .asset-browser__media video { width: 100%; max-height: 20rem; }
+.asset-browser__media[data-active='true'] { border: var(--border-strong); border-radius: var(--radius-md);
+  padding: var(--space-2); }
+.asset-browser__delta { width: 100%; border-collapse: collapse; }
+.asset-browser__delta caption { text-align: left; color: var(--color-text-muted); padding-bottom: var(--space-2); }
+.asset-browser__delta th, .asset-browser__delta td { text-align: left; vertical-align: top;
+  border-top: var(--border-default); padding: var(--space-1) var(--space-2); overflow-wrap: anywhere; }
+.asset-browser__delta tr[data-verdict='DIFFERENT'] { background: var(--color-bg-subtle); }
+.asset-browser__delta tr[data-verdict='UNVERIFIABLE'] td:last-child { color: var(--color-text-muted); }
+
+/* -------------------------------------------------------------- 传参面板 */
+
+.asset-browser__send-to { display: flex; flex-direction: column; gap: var(--space-2);
+  border: var(--border-default); border-radius: var(--radius-lg); padding: var(--space-3);
+  background: var(--color-bg-subtle); min-width: 0; }
+
+@media (max-width: 1100px) {
+  .asset-browser__layout { grid-template-columns: minmax(0, 1fr); }
+  .asset-browser__compare-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asset-browser__media img { transition: none; }
+}

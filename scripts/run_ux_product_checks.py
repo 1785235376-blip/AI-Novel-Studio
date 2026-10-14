@@ -1,9 +1,30 @@
-"""UX-PRODUCT batch acceptance checks (batch 1: UX-01 entry/intent + UX-02 task center).
+"""UX-PRODUCT batch acceptance checks (batch 1: UX-01 entry/intent + UX-02 task center;
+batch 2 adds UX-03 asset browser + UX-04 canvas/node operations).
+
+Batch 2 extends this runner in three compatible ways only:
+
+* the frontend check now runs **every** UX folder that exists
+  (`src/onboarding`, `src/taskcenter`, `src/assetbrowser`, `src/canvasops`); a folder
+  that does not exist yet is skipped and named in the receipt instead of failing the
+  run, so the batch-1 surface keeps being verified while batch 2 lands. Because the
+  *declared* surface is all four folders, a frontend run that covers only some of them
+  is recorded as NOT_YET_AVAILABLE (with the executed run's real `exit_code`, log and a
+  new `executed_status` field) rather than PASS — exit code 0 can never be read as
+  "the batch-2 frontend surface is verified". A real FAIL is never downgraded;
+* a new `regression` check runs the pre-existing studio-workspace suite
+  (`src/creative/IndependentStudio*`) plus the cheap pre-existing graph editor/draft
+  suites that UX-04 consumes (`graphDraft`, `graphCanvasGeometry`, `GraphCanvas`,
+  `studioGraphTransportForwarding`), so a batch-2 edit that disturbs them is caught;
+* `--checks` keeps accepting every previous name (`file`, `postgres`, `frontend`,
+  `types`, `build`, `tokens`, `seam`) and adds `regression`.
+
+The receipt schema, exit-code semantics (0 = all PASS, 1 = any FAIL, 2 = no FAIL but
+NOT_YET_AVAILABLE/SKIPPED), UTF-8 handling and python-cache hygiene are unchanged.
 
 Runs the UX-PRODUCT acceptance surface, records every real result as a receipt in
 the existing `docs/delivery/v2-development/phase6-*` / `phase7-*` style, and never
 fabricates a pass. A check whose target source does not exist yet is recorded as
-NOT_YET_AVAILABLE with the exact reason and the owning line (A or B); the
+NOT_YET_AVAILABLE with the exact reason and the owning line (A, B, E or F); the
 PostgreSQL check is recorded as SKIPPED / NOT_CONFIGURED when no V2-owned loopback
 database URL is configured.
 
@@ -81,7 +102,7 @@ from pytest_temp_isolation import (  # noqa: E402
     pytest_temp_root,
 )
 
-PHASE = "ux-product-batch1"
+PHASE = "ux-product-batch2"
 PREFIX = "ux-product"
 
 # UX batch 1 backend surface: the production workflow contract the entry/intent
@@ -95,8 +116,27 @@ DEFAULT_BACKEND_TESTS = [
 # The protected-surface / seam regression: pre-existing router-factory and
 # admission tests that prove the studio seam UX batch 1 extends still holds.
 SEAM_TESTS = ["tests/test_v2_independent_workspace_api.py"]
-# UX-01 (LINE_A) and UX-02 (LINE_B) frontend folders.
-FRONTEND_FOLDERS = ["src/onboarding", "src/taskcenter"]
+# UX-01 (LINE_A), UX-02 (LINE_B), UX-03 (LINE_E) and UX-04 (LINE_F) frontend folders.
+# A folder that does not exist yet is skipped and reported, never failed on.
+FRONTEND_FOLDERS = ["src/onboarding", "src/taskcenter", "src/assetbrowser", "src/canvasops"]
+FRONTEND_FOLDER_LINES = {
+    "src/onboarding": "LINE_A",
+    "src/taskcenter": "LINE_B",
+    "src/assetbrowser": "LINE_E",
+    "src/canvasops": "LINE_F",
+}
+# The pre-existing suites batch 2 could disturb. `src/creative/IndependentStudio*` is
+# the studio-workspace integration surface the new folders get mounted into; the four
+# graph suites are the pre-existing owners of `graphDraft.connectionIssue`,
+# `graphCatalogForSchema`, the canvas selection geometry and graph transport forwarding
+# that UX-04 composes with. All are pre-existing files, none is owned by batch 2.
+REGRESSION_TEST_GLOBS = [
+    "src/creative/IndependentStudio*.test.tsx",
+    "src/creative/graphDraft.test.ts",
+    "src/creative/graphCanvasGeometry.test.ts",
+    "src/creative/GraphCanvas.test.tsx",
+    "src/creative/studioGraphTransportForwarding.test.ts",
+]
 PYTEST_FLAGS = ["-p", "no:cacheprovider", "-q"]
 
 # Python cache directories this runner must never leave behind in the repository.
@@ -298,13 +338,27 @@ def frontend_targets() -> tuple[list[str], list[str]]:
 
 
 def frontend_test_files(folders: list[str]) -> list[str]:
-    """The *.test.ts(x) files inside the existing UX batch 1 folders."""
+    """The *.test.ts(x) files inside the existing UX folders."""
     found: list[str] = []
     for folder in folders:
         base = FRONTEND / folder
         found.extend(p.relative_to(FRONTEND).as_posix() for p in base.rglob("*")
                      if p.is_file() and re.search(r"\.test\.tsx?$", p.name))
     return sorted(set(found))
+
+
+def frontend_glob_tests(patterns: list[str]) -> list[str]:
+    """Expand frontend glob patterns to the *.test.ts(x) files that exist."""
+    found: list[str] = []
+    for pattern in patterns:
+        found.extend(p.relative_to(FRONTEND).as_posix() for p in FRONTEND.glob(pattern)
+                     if p.is_file() and re.search(r"\.test\.tsx?$", p.name))
+    return sorted(set(found))
+
+
+def frontend_lines(folders: list[str]) -> str:
+    """The owning line(s) of the present folders, e.g. 'LINE_A+LINE_E'."""
+    return "+".join(sorted({FRONTEND_FOLDER_LINES[f] for f in folders if f in FRONTEND_FOLDER_LINES})) or "LINE_A+LINE_B"
 
 
 def plan_checks(args) -> list[dict]:
@@ -338,9 +392,20 @@ def plan_checks(args) -> list[dict]:
                        "targets": present_folders, "logical_command": None})
     else:
         checks.append({"check": "frontend", "kind": "vitest", "status": None,
-                       "line": "LINE_A+LINE_B" if len(present_folders) == len(FRONTEND_FOLDERS) else
-                               ("LINE_A" if "src/onboarding" in present_folders else "LINE_B"),
+                       "line": frontend_lines(present_folders),
                        "targets": present_folders, "cwd": FRONTEND,
+                       # The declared surface is all four UX folders. When a folder does not
+                       # exist yet the check still executes the folders that do (so batch 1 is
+                       # never silently dropped), but its status is recorded as
+                       # NOT_YET_AVAILABLE rather than PASS, so exit code 0 can never be read
+                       # as "the batch-2 frontend surface is verified".
+                       "incomplete_coverage": missing_folders,
+                       "coverage_missing_reason": (
+                           "Batch-2 frontend folder(s) not written yet: " + ", ".join(missing_folders)
+                           + ". The folders that do exist were executed and their real result is in "
+                             "the log/exit_code, but the declared UX-PRODUCT frontend surface is not "
+                             "fully covered, so this check is NOT_YET_AVAILABLE, never a pass.")
+                           if missing_folders else None,
                        "frontend_test_files": frontend_test_files(present_folders),
                        "logical_command": ["corepack", "pnpm", "exec", "vitest", "run", *present_folders],
                        "note": ("Runs only the folders that exist"
@@ -365,6 +430,23 @@ def plan_checks(args) -> list[dict]:
     checks.append(pytest_check("seam", SEAM_TESTS, "PRE_EXISTING_SEAM",
                                "Pre-existing router-factory/admission tests; the protected-surface "
                                "regression UX batch 1 must not break."))
+
+    regression_targets = frontend_glob_tests(REGRESSION_TEST_GLOBS)
+    if not regression_targets:
+        checks.append({"check": "regression", "kind": "vitest", "status": NOT_YET,
+                       "line": "PRE_EXISTING_STUDIO_SURFACE",
+                       "reason": "None of the pre-existing studio-workspace / graph suites exist "
+                                 "(looked for " + ", ".join(REGRESSION_TEST_GLOBS) + ").",
+                       "targets": [], "logical_command": None})
+    else:
+        checks.append({"check": "regression", "kind": "vitest", "status": None,
+                       "line": "PRE_EXISTING_STUDIO_SURFACE",
+                       "targets": regression_targets, "cwd": FRONTEND,
+                       "frontend_test_files": regression_targets,
+                       "logical_command": ["corepack", "pnpm", "exec", "vitest", "run", *regression_targets],
+                       "note": "Pre-existing suites the batch-2 folders are mounted into and compose "
+                               "with (studio workspace integration + graph draft/geometry/canvas/"
+                               "transport owners). None of these files is owned by UX-03/UX-04."})
 
     if args.checks:
         wanted = {name.strip() for name in args.checks.split(",") if name.strip()}
@@ -454,9 +536,18 @@ def run_check(check: dict, args) -> dict:
     removed_caches = purge_new_python_caches(caches_before)
     if removed_caches:
         output += f"\n[removed python cache directories created by this run: {', '.join(removed_caches)}]\n"
-    check["status"] = PASS if exit_code == 0 else FAIL
+    executed_status = PASS if exit_code == 0 else FAIL
+    # A FAIL always wins. Only a run that really passed can be downgraded to
+    # NOT_YET_AVAILABLE, and only because the check's declared surface is incomplete.
+    missing = list(check.get("incomplete_coverage") or [])
+    check["status"] = executed_status if (executed_status == FAIL or not missing) else NOT_YET
+    reason = check.get("coverage_missing_reason") if check["status"] == NOT_YET else None
     return write_receipt(check, label, output, exit_code, started, finished, isolated, sources_before,
-                         {"reason": None, "pending_dependency": None if exit_code == 0 else check.get("line"),
+                         {"reason": reason,
+                          "pending_dependency": (missing or None) if check["status"] == NOT_YET
+                                                else (None if exit_code == 0 else check.get("line")),
+                          "executed_status": executed_status,
+                          "incomplete_coverage": missing or None,
                           "configuration": check.get("configuration"),
                           "python_caches_removed_by_this_run": removed_caches,
                           "python_caches_left_behind": sorted(python_cache_dirs())})
@@ -466,7 +557,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--checks", default="",
-                        help="comma-separated subset of: file,postgres,frontend,types,build,tokens,seam")
+                        help="comma-separated subset of: file,postgres,frontend,types,build,tokens,seam,regression")
     parser.add_argument("--postgres-url", default="",
                         help="loopback V2-owned (/v2_*) PostgreSQL URL for the postgres check")
     parser.add_argument("--revision", type=int, default=0,

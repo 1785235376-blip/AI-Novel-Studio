@@ -4,18 +4,44 @@ import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitive
 import { GraphCanvas } from './GraphCanvas';
 import { GraphRunPanel } from './GraphRunPanel';
 import { GRAPH_NODE_LABELS } from './studioGraphLabels';
-import type { StudioGraphDefinitionId } from './studioGraphTypes';
+import type { StudioGraphCatalog, StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphDefinitionId } from './studioGraphTypes';
 import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS } from './studioGraphTypes';
+import { connectionIssue } from './graphDraft';
 import { GRAPH_IMAGE_OPERATION_LABELS, GRAPH_MEDIA_OPERATION_LABELS } from './useStudioMediaExecution';
 import type { GraphMediaOperation } from './studioGraphTypes';
 import { GRAPH_MEDIA_PARAMETER_LABELS, graphMediaParameterNames } from './useStudioGraphEditorController';
 import type { StudioGraphEditorController, StudioGraphEditorProps } from './useStudioGraphEditorController';
 import { StudioGraphTimelineNodeEditor } from './StudioGraphTimelineNodeEditor';
+// UX-PRODUCT batch 2 (UX-04): node palette, selection/history bar, connection advice,
+// change-impact classification and a deterministic layout preview. Additive: the
+// original controls above stay intact and the rail only calls the controller's own
+// callbacks, so connectivity legality remains `connectionIssue`'s alone.
+import { CanvasOpsRail } from '../canvasops/CanvasOpsRail';
+import type { LocalCanvasState } from '../canvasops/canvasOpsTypes';
 import './studioGraph.css';
 
 const portKey = (node: string, port: string) => JSON.stringify([node, port]);
+/** Explain the pending connection using the ORIGINAL authority only.
+ *
+ * The rail must never re-derive legality, so a provisional edge is built from the
+ * controller's own port keys and handed to the existing `connectionIssue`; an
+ * incomplete or malformed selection yields no explanation instead of a guess.
+ */
+function pendingConnectionIssue(definition: StudioGraphDefinition, catalog: readonly StudioGraphCatalogDefinition[],
+  sourcePort: string, targetPort: string): string | undefined {
+  if (!sourcePort || !targetPort) return undefined;
+  try {
+    const source = JSON.parse(sourcePort) as unknown, target = JSON.parse(targetPort) as unknown;
+    if (!Array.isArray(source) || !Array.isArray(target) || source.length !== 2 || target.length !== 2
+      || typeof source[0] !== 'string' || typeof source[1] !== 'string'
+      || typeof target[0] !== 'string' || typeof target[1] !== 'string') return undefined;
+    return connectionIssue(definition, catalog, { id: 'pending-connection', source_node_id: source[0],
+      source_port: source[1], target_node_id: target[0], target_port: target[1] });
+  } catch { return undefined; }
+}
 /** Render only. UI refactors consume the same controller without replacing operation contracts. */
-export function studioGraphEditorView(controller: StudioGraphEditorController, props: StudioGraphEditorProps) {
+export function studioGraphEditorView(controller: StudioGraphEditorController, props: StudioGraphEditorProps,
+  canvas?: { local: LocalCanvasState; onLocal: (next: LocalCanvasState) => void }) {
   if (controller.retired) return {
     content: <section className="studio-graph-editor" aria-label="独立创作图编辑器"><Panel title="创作图 · 本地输入只读">
       <StatusMessage tone="warning">身份或项目已改变，服务端目录、预览和运行回执已关闭。仅保留未保存的作者文字，请重新打开工作区。</StatusMessage>
@@ -93,6 +119,14 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <label>起始输出端口<select aria-label="起始输出端口" disabled={!editable} value={sourcePort} onChange={event => setSourcePort(event.target.value)}><option value="">选择输出端口</option>{draft.nodes.flatMap(row => (catalog.definitions.find(item => item.id === row.definition_id)?.outputs || []).map(port => <option key={portKey(row.id, port.id)} value={portKey(row.id, port.id)}>{GRAPH_NODE_LABELS[row.definition_id]} · {row.id} · {port.id} ({port.type})</option>))}</select></label>
       <label>目标输入端口<select aria-label="目标输入端口" disabled={!editable} value={targetPort} onChange={event => setTargetPort(event.target.value)}><option value="">选择输入端口</option>{draft.nodes.flatMap(row => (catalog.definitions.find(item => item.id === row.definition_id)?.inputs || []).map(port => <option key={portKey(row.id, port.id)} value={portKey(row.id, port.id)}>{GRAPH_NODE_LABELS[row.definition_id]} · {row.id} · {port.id} ({port.type})</option>))}</select></label>
       <Button disabled={!editable || !sourcePort || !targetPort || draft.edges.length >= catalog.limits.edges} onClick={connect}>连接所选端口</Button></section>
+      {/* The controller's catalog is a union that differs only in the optional video-graph
+          capability flags; the rail reads `definitions` / `limits` / `media_limits` only. */}
+      {canvas && <CanvasOpsRail catalog={catalog as StudioGraphCatalog} definition={draft} base={base?.definition} selected={selected}
+        past={past.length} future={future.length} editable={editable} protectedNodeIds={protectedNodes} kind={kind}
+        sourcePort={sourcePort} targetPort={targetPort} connectionExplanation={pendingConnectionIssue(draft, catalog.definitions, sourcePort, targetPort)}
+        local={canvas.local} onLocal={canvas.onLocal}
+        onKind={value => setKind(value as StudioGraphDefinitionId)} onSourcePort={setSourcePort} onTargetPort={setTargetPort}
+        onAddNode={addNode} onConnect={connect} onSelect={setSelected} onTravel={direction => travel(direction === 'REDO')} />}
       <GraphCanvas definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => { if (port.direction === 'output') setSourcePort(portKey(port.nodeId, port.portId)); else setTargetPort(portKey(port.nodeId, port.portId)); }} />
       <section aria-label="图连接列表"><h3>已保存到草稿的连接</h3>{!draft.edges.length && <p>暂无连接；不相连节点可以独立保存。</p>}<ul>{draft.edges.map(edge => <li key={edge.id}>{edge.source_node_id}.{edge.source_port} → {edge.target_node_id}.{edge.target_port}<Button disabled={!editable} onClick={() => change({ ...draft, edges: draft.edges.filter(row => row.id !== edge.id) })}>移除连接 {edge.id}</Button></li>)}</ul></section>
       <GraphRunPanel client={client.graphs} graph={base} targetNodeIds={selected} dirty={dirty || blocked} busy={busy} canMutate={canMutate && !externalDirty} canReview={canReview && !externalDirty} modelExecutionEnabled={!videoGraph && catalog.capabilities.model_execution && catalog.capabilities.model_execution_contract === 'creative-graph-model/1'} mediaExecutionEnabled={mediaEnabled} onDirtyChange={setExecutionDirty} isCurrent={current} read={read} mutate={mutate} requestedRunId={requestedRunId} onRunSelectionChange={reportRunSelection} />

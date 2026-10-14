@@ -21,11 +21,29 @@
 ## D11 — 模式与视图枚举的兼容性
 
 - `StudioWorkspaceView` 增加 `START`、`TASKS`；旧记录只含 `ASSETS|GRAPH|PRODUCTION` 仍有效；未知视图判 `INVALID`（不静默降级）。
-- 模式字段 `interface_mode` 为可选；写入时不伪造位置（无有效记录时 `rememberLocalStudioInterfaceMode` 返回 false，模式随下一次位置写入一起保存）。
-  - 即时持久化：`rememberLocalStudioInterfaceMode` 合并进既有记录并保留 module/view/stage/graphId/runId；**没有有效记录时返回 false，绝不为了存模式而伪造一个位置**。
-  - 纯呈现：两种模式共用同一份项目、资产、任务、Graph 与草稿；切换不转换、不复制、不删除、不触发模型。
-- 理由：不为补一个呈现开关而扩大功能标志或新增第二偏好存储；`normal|advanced` 的语义差异（新手=任务卡/主操作，专业=节点/参数/Inspector/来源详情）由前端渲染实现即可。
-- 验证：`frontend/src/creative/studioWorkspaceResume.test.ts` 8 passed（含新增 5 项：往返、默认值/未知项目、非法值拒绝、合并保留其余字段、不伪造位置）。
+- 模式字段 `interface_mode` 为可选：写入时合并进既有位置记录并保留 module/view/stage/graphId/runId；**没有有效记录时返回 false，绝不为了存模式而伪造一个位置**。
+- 纯呈现：两种模式共用同一份项目、资产、任务、Graph 与草稿；切换不转换、不复制、不删除、不触发模型。
+
+## D12 — 画布分组/注释/折叠只做会话内呈现态，不新增持久化图字段
+
+- 事实：`studioGraphTypes` 的定义只有 `nodes/edges/viewport/(schema_version/title)`，没有分组、注释或折叠字段；本轮无法在不改动冻结图契约的前提下持久化它们。
+- 裁决：UX-04 的 `LocalCanvasState`（`canvasops-local/1`）是**会话内**状态，随身份变化丢弃，绝不写入已保存创作图；非法输入失败关闭为空态并给出中文原因。真要持久化，必须由原 owner 做**有类型、向后兼容**的扩展（含迁移与测试），单独立项。
+- 附加：自动布局是确定性纯函数、只改节点坐标；但**提交**必须走原控制器的 `change()` 才能进入既有 past/future 撤销栈——本轮的组合栏只提供只读预览与差异分类，不私自改图。
+- 连接合法性**只有** `graphDraft.connectionIssue` 一个权威：新增建议面板只按目录声明做同类型预筛，随后逐行保存 `connectionIssue` 的原文与结论，绝不自行判定“可以连接”。
+
+## D13 — 素材浏览器只读 + 传参只传引用
+
+- 事实：`AssetLibraryService.public()` 会剥离 `_text_result_review`；关系投影只声明 ASSET/CHAPTER/SCREENPLAY 目标；`storage().physical_cleanup_available == False`。
+- 裁决：
+  - UX-03 面板**只读**：不写标签、不改许可、不物理删除；删除只做**影响范围报告**（`physical_delete:false`、`content_removed:false`、阻塞引用列出）。
+  - 复审状态在 `public()` 下只能是 `UNREVIEWED`，除非调用方用 `workspace.asset_index()` 的行显式注入——不得凭空推断“已审”。
+  - “送往图片/视频/分镜/时间线”只通过回调发出 `{asset_id, version, digest}`，**不执行目标模块**；实际绑定发生在目标工作区。
+  - 镜头/节点/时间线归属在关系 owner 未声明时显示“未核实”，绝不用 ID 猜测。
+  - 版本对比只用 owner 已披露的候选（无版本列表端点）。
+
+## D14 — 第二批不新增后端契约
+
+本批（UX-03 + UX-04）**没有**后端改动、没有数据库迁移、没有新增端点；因此 PostgreSQL 复验复用上一批的 owned cluster 即可，PG 收据 `ux-product-pg` 仍然有效，本批不重复启动。
 
 ## D1b — 模式切换的原始备选（记录以便日后重新评估）
 

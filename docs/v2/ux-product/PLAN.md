@@ -38,6 +38,16 @@
 | B（子代理，UX-02） | `frontend/src/taskcenter/**`（新目录） | `GET …/tasks`、inbox `GET`/`batch`/`{domain}/{id}/{action}` | 只读现有接口 | 主代理在 `IndependentStudioWorkspace.tsx` 挂载 |
 | C（子代理，验证线） | `docs/delivery/v2-development/ux-*`（收据）、`scripts/run_ux_product_checks.py` | 无产品写入 | A/B 落定 | 冻结输入树后独立运行 |
 
+### 第二批（UX-03 + UX-04）
+
+| 线 | 负责文件 | 原 owner / 接口 | 集成条件 |
+| --- | --- | --- | --- |
+| E（子代理，UX-03） | `frontend/src/assetbrowser/**`（新目录） | `studioClient` 资产列/详情（含 provenance+relationships）、`studioRelationshipsClient`、`AssetLibraryService` 行（版本/摘要/来源/审核标记） | 主代理在 `IndependentStudioWorkspace.tsx` 的 ASSETS 视图**增量**挂载（不动既有 `AssetLibraryPanel`） |
+| F（子代理，UX-04） | `frontend/src/canvasops/**`（新目录） | `studioGraphTypes`（类型）、`graphDraft`（`connectionIssue` 是唯一合法性权威、`blankGraph`、`graphCatalogForSchema`）、`graphCanvasGeometry`（框选几何） | 主代理在既有 `studioGraphEditorView.tsx` 中**增量**组合（保留既有控件），并接 `catalog/draft/base/selected/past/future/editable/protectedNodes/kind/sourcePort/targetPort` 与 `addNode/connect/travel/setSelected/setKind/setSourcePort/setTargetPort` |
+| G（子代理，验证线） | `docs/delivery/v2-development/ux-product-*`（收据）、扩展 `scripts/run_ux_product_checks.py` | 无产品写入 | E/F 落定后独立运行并逐条证伪 |
+
+**第二批硬约束**：不新增持久化图字段（分组/注释/折叠只做**会话内呈现态**）；不新增第二套节点引擎或第二个资产库；不触受保护 shell；不提高既有节点/任务上限（触界时解释并建议拆分）。
+
 规则：不同线不得并发写同一文件；共享文件由主代理串行整合；A/B 只在自己的新目录内创建文件。
 
 ## 4. 执行顺序（工程建议，按实际依赖调整并记录）
