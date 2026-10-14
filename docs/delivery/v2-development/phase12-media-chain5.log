@@ -1,0 +1,4 @@
+{"step": "0-read-revisions", "source_versions": {"id": "a15f7d00-cfd2-4c6d-8f7a-02ae7ede65b6", "version": null, "edit_version": 3, "revision": 1, "shot_revision": 1, "storyboard_revision": null, "transition_revision": null, "updated_at": "2026-10-14T16:20:36.233462+00:00"}}
+{"step": "5a-approve-shots", "result": "BLOCKED", "error": "HTTP 409: {\"detail\":{\"code\":\"VERSION_CONFLICT\",\"server\":{\"id\":\"a15f7d00-cfd2-4c6d-8f7a-02ae7ede65b6\",\"novel_id\":\"phase12\",\"source_title\":\"Phase12 最小真实链路\",\"title\":\"雪夜 剧本\","}
+{"step": "4-storyboard", "result": "BLOCKED", "error": "HTTP 400: {\"detail\":\"shot plan must be approved before storyboard\",\"code\":\"HTTP_400\",\"message\":\"shot plan must be approved before storyboard\",\"details\":{},\"request_id\":\"8e4be9bd-bc86-404b-b7"}
+CHAIN5_SUMMARY {"pass": 0, "blocked": 2}

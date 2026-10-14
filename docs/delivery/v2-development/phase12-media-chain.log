@@ -1,0 +1,11 @@
+{"step": "1-project", "result": "PASS", "asset_id": "phase12", "input": {"title": "Phase12 最小真实链路"}, "output": {"id": "phase12", "title": "Phase12 最小真实链路"}}
+{"step": "2-text", "result": "PASS", "input": {"source": "author-supplied prose", "chars": 97}, "output": {"chapter_id": "phase12:1", "title": "第一章 雪夜"}, "asset_id": "phase12:1", "version": null, "digest": "e7f4164aca49d1bc4459cca5494774baca86f374218ab352d22352209af6b0a7", "review_state": "Draft"}
+{"step": "3-director-screenplay", "result": "PASS", "input": {"chapter_id": "phase12:1"}, "output": {"screenplay_id": "a15f7d00-cfd2-4c6d-8f7a-02ae7ede65b6", "title": "雪夜 剧本"}, "asset_id": "a15f7d00-cfd2-4c6d-8f7a-02ae7ede65b6", "version": 1, "digest": "bba32fd90249286a1efa716a94a99894ff1bd4b54f41af44c5944c5a1c29d73a", "review_state": "DRAFT"}
+{"step": "4-storyboard", "result": "BLOCKED", "error": "HTTPError: HTTP Error 400: Bad Request"}
+{"step": "5-shots", "result": "BLOCKED", "error": "HTTPError: HTTP Error 400: Bad Request"}
+{"step": "6-export", "result": "BLOCKED", "error": "HTTPError: HTTP Error 422: Unprocessable Entity"}
+{"step": "7-image", "result": "BLOCKED", "error": "no local image runtime: ComfyUI 8188 has no listener"}
+{"step": "8-video", "result": "BLOCKED", "error": "no local video runtime and no approved storyboard asset"}
+{"step": "9-audio", "result": "BLOCKED", "error": "no local ASR/TTS runtime: Whisper host not configured"}
+{"step": "10-timeline", "result": "BLOCKED", "error": "timeline needs real media assets from steps 7-9"}
+CHAIN_SUMMARY {"pass": 3, "blocked": 7, "steps": ["1-project", "2-text", "3-director-screenplay", "4-storyboard", "5-shots", "6-export", "7-image", "8-video", "9-audio", "10-timeline"]}
