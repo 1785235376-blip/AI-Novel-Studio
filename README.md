@@ -85,3 +85,13 @@ python scripts/run_v2_postgres_checks.py --pg-bin <便携 PG bin> --data <集群
 
 详见 [`PHASE10_RELEASE_HARDENING_REPORT.md`](PHASE10_RELEASE_HARDENING_REPORT.md) 与
 [`AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md`](AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md) 的 Phase10 追加区。
+
+### Phase11（RC Gate Closure）已核实事实
+
+- **第②级已补齐**：`app/model_center/runtime_observation.py` 是**只观察**层——不启动、不安装、不下载、不产生任何子进程。五级阶梯：`0 NOT_OBSERVED → 1 DISCOVERED → 2 RUNTIME_AVAILABLE → 3 REACHABLE → 4 CAPABILITY_UNKNOWN → 5 READY`；**仅靠观察永远到不了 `READY`**（32 种证据组合的穷举测试固定这一点）。
+- **本机实测**：Ollama 11434 / LM Studio 1234 / ComfyUI 8188 **无任何监听** → `NOT_OBSERVED`（不是 `DISCOVERED`）；8080 的自定义 HTTP 本地端点 → 第④级 `CAPABILITY_UNKNOWN`，监听者已识别（pid 16292、`pythonw.exe`、模型 `qwen3.8-flash-next-iq3_xxs`），**推理未运行**。该服务是 **Strata**，**只观察、未注册、未绑定**。
+- **自定义 HTTP 本地注册必须人工确认**：`custom_http_local_registration(user_confirmed=True)`，否则 `CUSTOM_HTTP_LOCAL_USER_CONFIRMATION_REQUIRED`；它只**准备描述符**，不注册、不启用、不生成任务（`generates_tasks=False`、`auto_enabled=False`）。
+- **真实浏览器验收已在当前 HEAD 重跑**：**8 passed (14.4s)**，exit 0 —— 系统 Edge + 真实后端（8110）+ 真实 Vite，六个界面加 zh-CN 与键盘用例。后端 8110 是因为 8000 属 Windows 排除区间、8100 已被无关厂商服务占用。
+- **媒体链路**只做了**契约预检**（86 passed / 79 skipped / 1 `BLOCKED_EXTERNAL`：本机无 `bash`），真实产物全部 `NOT_RUN` → `MEDIA_PIPELINE_RC_CHECKLIST.md`。
+- **Windows / GPU** 部分只做到**清单与实测**（RTX 5080、驱动 591.74、16303 MiB；CUDA = `COMPONENT_FOUND_NOT_VERIFIED`），安装/打包与真实生成仍 `NOT_RUN` → `WINDOWS_GPU_RC_CHECKLIST.md`。
+- **RC 结论：`NOT ESTABLISHED`**（未安装、未打包、未真实生成、未完整 CI）→ `PHASE11_RC_GATE_CLOSURE_REPORT.md`。
