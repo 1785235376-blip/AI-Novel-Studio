@@ -2,6 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { CollaborationContext } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
+import { createDirectorWorkspaceClient } from '../director/directorWorkspaceClient';
+import { DirectorWorkspace } from '../director/DirectorWorkspace';
 import { createStoryboardWorkspaceClient } from './storyboardWorkspaceClient';
 import { directorVsShotOverride } from './storyboardOps';
 import { DirectorGoalPanel } from './DirectorGoalPanel';
@@ -27,6 +29,11 @@ export type StoryboardWorkspacePanelProps = {
   mutate: <T>(w: () => Promise<T>) => Promise<T>;
   selectedShotId?: string;
   onSelectShot?: (shotId: string) => void;
+  /**
+   * Phase14-A：导演工作台默认读取本面板正在看的那份文档。父级可以显式指定另一份；
+   * 不给也不会猜——读不到文档标识时工作台保持"尚未选定文档"，不发请求。
+   */
+  directorDocumentId?: string;
   onSendTo?: (target: 'IMAGE' | 'VIDEO' | 'TIMELINE', draft: {
     shot_id: string; shot_version: number; document_version: number; source_digest: string;
   }) => void;
@@ -59,6 +66,11 @@ export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
   const [draft, setDraft] = useState<BoundShotTargetDraft | null>(null);
   const [comparison, setComparison] = useState<{ kind: 'IMAGE' | 'VIDEO'; asset_id: string; version: number; digest: string; matches_version: boolean } | null>(null);
   const [goalNotice, setGoalNotice] = useState('');
+  const [directorOpen, setDirectorOpen] = useState(false);
+  const directorClient = useMemo(
+    () => createDirectorWorkspaceClient(props.projectId, props.transport, props.scope),
+    [props.projectId, props.transport, props.scope],
+  );
 
   const controller = useStoryboardWorkspace({
     identity: props.identity, active: props.active, denied: props.denied, busy: props.busy,
@@ -170,6 +182,16 @@ export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
           <p>{controller.document.title} · v{controller.document.version} · {controller.document.mode}</p>
           <p>导演是可选的创作节点：这里是只读引用，不会因此获得对其它模块的核心权威。</p>
         </Panel>}
+        <div className="director-workspace__entry">
+          <Button onClick={() => setDirectorOpen(true)} aria-expanded={directorOpen}>
+            按需打开导演工作台
+          </Button>
+          {directorOpen && <DirectorWorkspace
+            client={directorClient}
+            documentId={props.directorDocumentId ?? controller.receipt?.document_snapshot.id ?? null}
+            active={props.active}
+          />}
+        </div>
       </div>
     </div>
   </section>;

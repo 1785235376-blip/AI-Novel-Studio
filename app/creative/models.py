@@ -38,12 +38,20 @@ class OptionalProductionFields(StrictCreativeModel):
         return value
 
 
-class DirectorVisualTarget(StrictCreativeModel):
+class DirectorVisualTarget(OptionalProductionFields):
+    """The existing authored director intent.
+
+    `genre` is an opt-in extension: it is omitted from serialization while unset,
+    so an existing stored `visual_target` keeps its exact shape and digest and no
+    document is force-upgraded.
+    """
+    production_optional_fields = ("genre",)
     style: str = Field(default="", max_length=2000, strict=True)
     atmosphere: str = Field(default="", max_length=2000, strict=True)
     reference_works: list[Annotated[str, Field(min_length=1, max_length=1000, strict=True)]] = Field(default_factory=list, max_length=20)
     color: str = Field(default="", max_length=2000, strict=True)
     rhythm: str = Field(default="", max_length=2000, strict=True)
+    genre: str | None = Field(default=None, max_length=2000, strict=True)
 
 
 class DirectorPerformance(StrictCreativeModel):
@@ -109,14 +117,23 @@ class Scene(StrictCreativeModel):
 
 
 class ShotContinuity(OptionalProductionFields):
-    """Authored continuity constraints, never inferred identity guarantees."""
-    production_optional_fields = ("previous_shot_id", "next_shot_id")
+    """Authored continuity constraints, never inferred identity guarantees.
+
+    `time` and `lighting` complete the phase's five continuity dimensions
+    (character, costume, scene, time, lighting). They are opt-in: while unauthored
+    they are omitted from serialization, so existing stored continuity blocks keep
+    their exact shape. They are only needed when a dimension has no other authored
+    home on the shot — lighting, for instance, is already authored on the card.
+    """
+    production_optional_fields = ("previous_shot_id", "next_shot_id", "time", "lighting")
     previous_shot_id: Identifier | None = None
     next_shot_id: Identifier | None = None
     characters: str = Field(default="", max_length=4000, strict=True)
     outfit: str = Field(default="", max_length=4000, strict=True)
     environment: str = Field(default="", max_length=4000, strict=True)
     camera: str = Field(default="", max_length=4000, strict=True)
+    time: str | None = Field(default=None, max_length=4000, strict=True)
+    lighting: str | None = Field(default=None, max_length=4000, strict=True)
 
 
 class ShotCard(OptionalProductionFields):

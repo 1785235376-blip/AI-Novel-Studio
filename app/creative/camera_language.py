@@ -35,6 +35,14 @@ inferred identity guarantees. `continuity_warnings` obeys that — it compares t
 adjacent shots only where **both** authored a value, and it never treats a camera
 change as a break, because changing the camera between shots is legitimate
 direction rather than a continuity error.
+
+Five dimensions are compared — character, costume, scene, time and lighting — and
+each one declares its authored sources in `CONTINUITY_SOURCES`. A dimension may be
+authored either in the continuity block or directly on the shot, and it is
+compared wherever both shots authored it. That precedence exists so the panel stays
+a **hint**: the director is never asked to retype a lighting or cast decision that
+the shot already carries. Resolving a *value* is not inferring one; a dimension
+authored on only one side remains unknown.
 """
 from __future__ import annotations
 
@@ -182,15 +190,44 @@ def project_camera(source: Mapping[str, Any]) -> dict[str, Any]:
 
 # --- continuity over authored constraints only ------------------------------
 
-#: Compared fields, taken from the existing `ShotContinuity` owner.
+#: Compared dimensions, over the existing `ShotContinuity` / `ShotCard` owners.
 #: `camera` is deliberately excluded: changing the camera between shots is
-#: direction, not a continuity break.
-CONTINUITY_FIELDS: tuple[str, ...] = ("characters", "outfit", "environment")
+#: direction, not a continuity break. The five dimensions below are the phase's
+#: required set — character, costume, scene, time and lighting.
+CONTINUITY_FIELDS: tuple[str, ...] = ("characters", "outfit", "environment", "time", "lighting")
 
 CONTINUITY_CODES: dict[str, str] = {
     "characters": "CONTINUITY_CHARACTERS_CHANGED",
     "outfit": "CONTINUITY_OUTFIT_CHANGED",
     "environment": "CONTINUITY_ENVIRONMENT_CHANGED",
+    "time": "CONTINUITY_TIME_CHANGED",
+    "lighting": "CONTINUITY_LIGHTING_CHANGED",
+}
+
+#: Human-facing name of each compared dimension, so every surface (API, UI, report)
+#: spells the same dimension the same way.
+CONTINUITY_LABELS: dict[str, str] = {
+    "characters": "角色",
+    "outfit": "服装",
+    "environment": "场景",
+    "time": "时间",
+    "lighting": "灯光",
+}
+
+#: Declared authored source per dimension, in precedence order: `(container, key)`.
+#:
+#: `("continuity", key)` reads the shot's authored `ShotContinuity` block;
+#: `("shot", key)` reads a field authored directly on the shot card. Both are
+#: authored facts on existing owners, so taking the first authored one means a
+#: director never has to type the same lighting or cast twice. Nothing is
+#: inferred: a dimension authored on only one of two adjacent shots is *unknown*,
+#: not a break.
+CONTINUITY_SOURCES: dict[str, tuple[tuple[str, str], ...]] = {
+    "characters": (("continuity", "characters"), ("shot", "characters")),
+    "outfit": (("continuity", "outfit"),),
+    "environment": (("continuity", "environment"), ("shot", "environment")),
+    "time": (("continuity", "time"),),
+    "lighting": (("continuity", "lighting"), ("shot", "lighting")),
 }
 
 
@@ -216,11 +253,55 @@ def _authored(shot: Mapping[str, Any]) -> Mapping[str, Any]:
     return value if isinstance(value, Mapping) else {}
 
 
+def authored_text(value: Any) -> str:
+    """Comparable string form of an authored value.
+
+    `ShotContinuity` authors a string while the shot card authors a list of
+    identifiers for the cast, so both shapes must be renderable. A list is joined
+    in authored order — the comparison never reorders or de-duplicates the
+    author's own input.
+    """
+    if value is None:
+        return ""
+    if isinstance(value, (list, tuple)):
+        return ", ".join(str(item).strip() for item in value if str(item).strip())
+    return str(value).strip()
+
+
+def _authored_value(shot: Mapping[str, Any], field: str) -> str:
+    """First authored, non-empty value for one dimension, per `CONTINUITY_SOURCES`.
+
+    Precedence is resolved **per shot**, independently: a dimension is compared
+    whenever both adjacent shots authored it, wherever each authored it. That is
+    what keeps the panel a *hint* rather than a form — an already-authored
+    `lighting` on the shot card is the same authored fact as one authored in the
+    continuity block, so the director is never asked to type it twice. Nothing is
+    inferred, and an unauthored dimension stays unknown.
+    """
+    block = _authored(shot)
+    for container, key in CONTINUITY_SOURCES[field]:
+        value = authored_text(block.get(key)) if container == "continuity" else authored_text(shot.get(key))
+        if value:
+            return value
+    return ""
+
+
+def authored_continuity_values(shot: Mapping[str, Any]) -> dict[str, str]:
+    """Every compared dimension's authored value on one shot ("" means unknown).
+
+    Exposed so a read-only panel can report its own coverage honestly — how many
+    adjacent pairs were actually comparable — instead of implying that silence
+    means agreement.
+    """
+    return {field: _authored_value(shot, field) for field in CONTINUITY_FIELDS}
+
+
 def continuity_warnings(shots: Iterable[Mapping[str, Any]]) -> list[ContinuityWarning]:
     """Warn where two adjacent shots **both** authored a differing constraint.
 
     Reported as a warning only — nothing is changed, corrected or inferred, which
-    is what `ShotContinuity`'s own docstring requires.
+    is what `ShotContinuity`'s own docstring requires. The caller decides what to
+    show; this function has no write path at all.
 
     Comparison ignores case and surrounding whitespace but **not** internal
     spacing, so `红 色 外套` and `红色外套` are reported rather than silently
@@ -230,9 +311,8 @@ def continuity_warnings(shots: Iterable[Mapping[str, Any]]) -> list[ContinuityWa
     ordered = [shot for shot in shots if isinstance(shot, Mapping)]
     warnings: list[ContinuityWarning] = []
     for previous, following in zip(ordered, ordered[1:]):
-        before, after = _authored(previous), _authored(following)
         for field in CONTINUITY_FIELDS:
-            left, right = str(before.get(field, "") or "").strip(), str(after.get(field, "") or "").strip()
+            left, right = _authored_value(previous, field), _authored_value(following, field)
             # Only two authored values can disagree; a missing one is unknown, not a break.
             if not left or not right or _fold(left) == _fold(right):
                 continue

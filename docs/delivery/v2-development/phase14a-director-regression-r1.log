@@ -1,0 +1,59 @@
+.s.s.s.s.s.s.s.s........ss..ss....ssss....ssss......................ssss [ 30%]
+ssssssssssssssssss..........ssssssssss..ss....ssss..ss....sss.s.s.s.s.s. [ 60%]
+s.s.......sssssss.s.s.s.s.s.s...sss.s...ss.s.s.s.s.s.s.s.s.....F......s. [ 91%]
+....sssss.s.s.s.s.s.s                                                    [100%]
+================================== FAILURES ===================================
+_ test_file_corrupt_marker_fails_closed_without_reading_external_content[symlink] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase14a-director-regression-r1/pytest/test_file_corrupt_marker_fails5')
+corruption = 'symlink'
+
+    @pytest.mark.file_backend_only
+    @pytest.mark.parametrize("corruption", ["invalid_json", "oversized", "invalid_uuid", "wrong_schema", "directory", "symlink"])
+    def test_file_corrupt_marker_fails_closed_without_reading_external_content(tmp_path, corruption):
+        import json
+        from pathlib import Path
+        from app.creative.project_store import CreativeProjectStore
+        from app.experimental.store import ExperimentalStore
+        from app.repository import FileRepository
+    
+        owner = FileRepository(tmp_path).create_novel({"title": TITLE})["id"]
+        scope = {"mode": "local", "novel_id": owner}
+        store = CreativeProjectStore(ExperimentalStore(tmp_path))
+        original = store.incarnation(owner)
+        marker = tmp_path / "novels" / owner / "creative_project_v2.json"
+        marker.unlink()
+        if corruption == "directory":
+            marker.mkdir()
+        elif corruption == "symlink":
+            external = tmp_path / "unrelated-private-marker.json"
+            external.write_text(json.dumps({"schema_version": 1, "project_incarnation": original.split(":")[1]}))
+>           marker.symlink_to(external)
+
+tests\test_v2_creative_project_lifecycle.py:319: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase14a-director-regression-r1/pytest/test_file_corrupt_marker_fails5/novels/v2-identical-title-lifecycle/creative_project_v2.json')
+target = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase14a-director-regression-r1/pytest/test_file_corrupt_marker_fails5/unrelated-private-marker.json')
+target_is_directory = False
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] 客户端没有所需的特权。: 'D:\\PoemSeed\\Worktrees\\studio-v2-audio-editing-20261014\\.runtime\\v2-checks\\phase14a-director-regression-r1\\pytest\\test_file_corrupt_marker_fails5\\unrelated-private-marker.json' -> 'D:\\PoemSeed\\Worktrees\\studio-v2-audio-editing-20261014\\.runtime\\v2-checks\\phase14a-director-regression-r1\\pytest\\test_file_corrupt_marker_fails5\\novels\\v2-identical-title-lifecycle\\creative_project_v2.json'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_creative_project_lifecycle.py::test_file_corrupt_marker_fails_closed_without_reading_external_content[symlink]
+1 failed, 127 passed, 109 skipped, 1 warning in 27.90s
