@@ -1,0 +1,502 @@
+...............................F........................................ [ 13%]
+........................................................................ [ 26%]
+.....F.....................F...................s....F................... [ 39%]
+........................................................................ [ 52%]
+........................................................................ [ 65%]
+......................................F................................. [ 78%]
+................................F..F.F............................F..... [ 91%]
+.............................................                            [100%]
+================================== FAILURES ===================================
+_________ test_scans_only_configured_roots_bounded_depth_and_no_link __________
+
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_scans_only_configured_roo0')
+
+    def test_scans_only_configured_roots_bounded_depth_and_no_link(tmp_path):
+        root=tmp_path/'models';root.mkdir(); gguf(root/'qwen.gguf')
+        private=tmp_path/'private';private.mkdir();gguf(private/'secret.gguf')
+>       (root/'link').symlink_to(private, target_is_directory=True)
+
+tests\test_local_ai_discovery.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_scans_only_configured_roo0/models/link')
+target = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_scans_only_configured_roo0/private')
+target_is_directory = True
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-70\\test_scans_only_configured_roo0\\private' -> 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-70\\test_scans_only_configured_roo0\\models\\link'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+____ test_symlink_roots_and_entries_skipped_and_nested_roots_deduplicated _____
+
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_symlink_roots_and_entries0')
+
+    def test_symlink_roots_and_entries_skipped_and_nested_roots_deduplicated(tmp_path):
+        root = tmp_path/'models'; root.mkdir(); child = root/'sub'; child.mkdir(); safetensors(child/'model.safetensors')
+        private = tmp_path/'private'; private.mkdir(); safetensors(private/'secret.safetensors')
+>       (root/'linked').symlink_to(private, target_is_directory=True)
+
+tests\test_local_ai_environment_v2.py:200: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_symlink_roots_and_entries0/models/linked')
+target = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_symlink_roots_and_entries0/private')
+target_is_directory = True
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-70\\test_symlink_roots_and_entries0\\private' -> 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-70\\test_symlink_roots_and_entries0\\models\\linked'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+____________ test_path_identity_changes_reject_before_probe[link] _____________
+
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_path_identity_changes_rej2')
+change = 'link'
+
+    @pytest.mark.parametrize('change', ['new', 'replace', 'link', 'metadata'])
+    def test_path_identity_changes_reject_before_probe(tmp_path, change):
+        svc = service(tmp_path); root = tmp_path / 'models'
+        if change != 'new': root.mkdir()
+        svc.configure_roots(DiscoverySettingsInput(scan_roots=[str(root)]))
+        scope = preview(svc)
+        if change == 'new': root.mkdir()
+        if change == 'replace': root.rename(tmp_path / 'old'); root.mkdir()
+        if change == 'link':
+            other = tmp_path / 'other'; other.mkdir()
+>           root.rmdir(); root.symlink_to(other, target_is_directory=True)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_discovery_scope.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_path_identity_changes_rej2/models')
+target = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_path_identity_changes_rej2/other')
+target_is_directory = True
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-70\\test_path_identity_changes_rej2\\other' -> 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-70\\test_path_identity_changes_rej2\\models'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+____________ test_passive_hardware_never_calls_platform_processor _____________
+
+obj = <module 'os' (frozen)>, name = 'sysconf', ann = 'os'
+
+    def annotated_getattr(obj: object, name: str, ann: str) -> object:
+        try:
+>           obj = getattr(obj, name)
+                  ^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'os' has no attribute 'sysconf'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\monkeypatch.py:95: AttributeError
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_passive_hardware_never_ca0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000207475C5D10>
+
+    def test_passive_hardware_never_calls_platform_processor(tmp_path, monkeypatch):
+        from app.model_center.discovery_probes import host_hardware
+        monkeypatch.setattr('platform.system', lambda: 'Linux')
+        monkeypatch.setattr('platform.machine', lambda: 'Synthetic')
+        monkeypatch.setattr('platform.processor', Mock(side_effect=AssertionError('may launch uname')))
+>       monkeypatch.setattr('os.sysconf', lambda _: 1)
+
+tests\test_v2_discovery_scope.py:423: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\monkeypatch.py:109: in derive_importpath
+    annotated_getattr(target, attr, ann=module)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+obj = <module 'os' (frozen)>, name = 'sysconf', ann = 'os'
+
+    def annotated_getattr(obj: object, name: str, ann: str) -> object:
+        try:
+            obj = getattr(obj, name)
+        except AttributeError as e:
+>           raise AttributeError(
+                f"{type(obj).__name__!r} object at {ann} has no attribute {name!r}"
+            ) from e
+E           AttributeError: 'module' object at os has no attribute 'sysconf'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\monkeypatch.py:97: AttributeError
+_ test_external_llama_requires_all_locality_evidence[linked-GGUF_HEADER_INVALID] _
+
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_external_llama_requires_a3')
+change = 'linked', blocker = 'GGUF_HEADER_INVALID'
+
+    @pytest.mark.parametrize("change,blocker", [
+        ("missing", "GGUF_HEADER_INVALID"), ("header", "GGUF_HEADER_INVALID"),
+        ("architecture", "CAPABILITY_UNVERIFIED"), ("linked", "GGUF_HEADER_INVALID"),
+        ("mismatched_path", "RUNTIME_MODEL_PATH_MISMATCH"),
+        ("alias", "RUNTIME_MODEL_UNVERIFIED"), ("not_running", "RUNTIME_MODEL_UNVERIFIED"),
+    ])
+    def test_external_llama_requires_all_locality_evidence(tmp_path, change, blocker):
+        svc, _, candidate, config, path = llama_fixture(tmp_path)
+        if change == "missing": path.unlink()
+        elif change == "header": path.write_bytes(b"INVALID_GGUF")
+        elif change == "architecture": gguf(path, arch="clip")
+        elif change == "linked":
+            target = tmp_path / "different.gguf"
+            gguf(target)
+            path.unlink()
+>           path.symlink_to(target)
+
+tests\test_v2_llama_locality_validation.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_external_llama_requires_a3/qwen.gguf')
+target = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_external_llama_requires_a3/different.gguf')
+target_is_directory = False
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-70\\test_external_llama_requires_a3\\different.gguf' -> 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-70\\test_external_llama_requires_a3\\qwen.gguf'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+________ test_managed_runtime_captures_bounded_logs_and_detects_crash _________
+
+self = <app.model_center.service.RuntimeLifecycle object at 0x000002074A9F2F10>
+definition = RuntimeDefinition(id='crashing', runtime_type=<RuntimeType.LLAMA_CPP: 'LLAMA_CPP'>, executable='C:\\Users\\admin\\AppD..._size=None, gpu_layers=None, threads=None, batch_size=None, extra_arguments=(), architecture_id=None, identity_id=None)
+host_argv = ('-c', "import sys;[print(f'line-{i}') for i in range(8)];print('failed',file=sys.stderr);sys.exit(17)")
+authority_guard = None
+
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
+        if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+        if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
+        _safe_runtime_environment(definition.environment)
+        executable = managed_executable_file(definition.executable)
+        with self._lock:
+            current = self._owned.get(definition.id)
+            if current and current.poll() is None: return self.instances[definition.id]
+            if definition.port is None: raise ValueError("RUNTIME_PORT_REQUIRED")
+            probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+>               probe.bind((definition.bind_address, definition.port))
+E               PermissionError: [WinError 10013] ��һ�ַ���Ȩ�޲������ķ�ʽ����һ�������׽��ֵĳ��ԡ�
+
+app\model_center\service.py:268: PermissionError
+
+The above exception was the direct cause of the following exception:
+
+    def test_managed_runtime_captures_bounded_logs_and_detects_crash():
+        lifecycle = RuntimeLifecycle(log_line_limit=3)
+        script = "import sys;[print(f'line-{i}') for i in range(8)];print('failed',file=sys.stderr);sys.exit(17)"
+        definition = RuntimeDefinition(
+            "crashing",
+            RuntimeType.LLAMA_CPP,
+            sys.executable,
+            "http://127.0.0.1:54321",
+            "127.0.0.1",
+            54321,
+            launch_arguments=("-c", script),
+        )
+>       lifecycle.start(definition, host_argv=("-c", script))
+
+tests\test_model_center_phase1.py:334: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.model_center.service.RuntimeLifecycle object at 0x000002074A9F2F10>
+definition = RuntimeDefinition(id='crashing', runtime_type=<RuntimeType.LLAMA_CPP: 'LLAMA_CPP'>, executable='C:\\Users\\admin\\AppD..._size=None, gpu_layers=None, threads=None, batch_size=None, extra_arguments=(), architecture_id=None, identity_id=None)
+host_argv = ('-c', "import sys;[print(f'line-{i}') for i in range(8)];print('failed',file=sys.stderr);sys.exit(17)")
+authority_guard = None
+
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
+        if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+        if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
+        _safe_runtime_environment(definition.environment)
+        executable = managed_executable_file(definition.executable)
+        with self._lock:
+            current = self._owned.get(definition.id)
+            if current and current.poll() is None: return self.instances[definition.id]
+            if definition.port is None: raise ValueError("RUNTIME_PORT_REQUIRED")
+            probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+                probe.bind((definition.bind_address, definition.port))
+            except OSError as exc:
+>               raise ValueError("PORT_IN_USE") from exc
+E               ValueError: PORT_IN_USE
+
+app\model_center\service.py:270: ValueError
+_____________ test_managed_runtime_does_not_inherit_host_secrets ______________
+
+self = <app.model_center.service.RuntimeLifecycle object at 0x000002074A9863D0>
+definition = RuntimeDefinition(id='isolated-env', runtime_type=<RuntimeType.LLAMA_CPP: 'LLAMA_CPP'>, executable='C:\\Users\\admin\\..._size=None, gpu_layers=None, threads=None, batch_size=None, extra_arguments=(), architecture_id=None, identity_id=None)
+host_argv = ('-c', "import os;print(os.getenv('MODEL_CENTER_TEST_SECRET','missing'));print(bool(os.getenv('PATH')))")
+authority_guard = None
+
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
+        if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+        if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
+        _safe_runtime_environment(definition.environment)
+        executable = managed_executable_file(definition.executable)
+        with self._lock:
+            current = self._owned.get(definition.id)
+            if current and current.poll() is None: return self.instances[definition.id]
+            if definition.port is None: raise ValueError("RUNTIME_PORT_REQUIRED")
+            probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+>               probe.bind((definition.bind_address, definition.port))
+E               PermissionError: [WinError 10013] ��һ�ַ���Ȩ�޲������ķ�ʽ����һ�������׽��ֵĳ��ԡ�
+
+app\model_center\service.py:268: PermissionError
+
+The above exception was the direct cause of the following exception:
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002074A9867D0>
+
+    def test_managed_runtime_does_not_inherit_host_secrets(monkeypatch):
+        secret = "super-secret-value"
+        monkeypatch.setenv("MODEL_CENTER_TEST_SECRET", secret)
+        lifecycle = RuntimeLifecycle()
+        script = "import os;print(os.getenv('MODEL_CENTER_TEST_SECRET','missing'));print(bool(os.getenv('PATH')))"
+        definition = RuntimeDefinition(
+            "isolated-env",
+            RuntimeType.LLAMA_CPP,
+            sys.executable,
+            "http://127.0.0.1:54325",
+            "127.0.0.1",
+            54325,
+            launch_arguments=("-c", script),
+        )
+>       lifecycle.start(definition, host_argv=("-c", script))
+
+tests\test_model_center_phase1.py:408: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.model_center.service.RuntimeLifecycle object at 0x000002074A9863D0>
+definition = RuntimeDefinition(id='isolated-env', runtime_type=<RuntimeType.LLAMA_CPP: 'LLAMA_CPP'>, executable='C:\\Users\\admin\\..._size=None, gpu_layers=None, threads=None, batch_size=None, extra_arguments=(), architecture_id=None, identity_id=None)
+host_argv = ('-c', "import os;print(os.getenv('MODEL_CENTER_TEST_SECRET','missing'));print(bool(os.getenv('PATH')))")
+authority_guard = None
+
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
+        if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+        if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
+        _safe_runtime_environment(definition.environment)
+        executable = managed_executable_file(definition.executable)
+        with self._lock:
+            current = self._owned.get(definition.id)
+            if current and current.poll() is None: return self.instances[definition.id]
+            if definition.port is None: raise ValueError("RUNTIME_PORT_REQUIRED")
+            probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+                probe.bind((definition.bind_address, definition.port))
+            except OSError as exc:
+>               raise ValueError("PORT_IN_USE") from exc
+E               ValueError: PORT_IN_USE
+
+app\model_center\service.py:270: ValueError
+_____ test_running_process_health_can_recover_after_initial_probe_failure _____
+
+self = <app.model_center.service.RuntimeLifecycle object at 0x000002074A96A350>
+definition = RuntimeDefinition(id='recovering', runtime_type=<RuntimeType.LLAMA_CPP: 'LLAMA_CPP'>, executable='C:\\Users\\admin\\Ap..._size=None, gpu_layers=None, threads=None, batch_size=None, extra_arguments=(), architecture_id=None, identity_id=None)
+host_argv = ('-c', 'import time;time.sleep(30)'), authority_guard = None
+
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
+        if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+        if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
+        _safe_runtime_environment(definition.environment)
+        executable = managed_executable_file(definition.executable)
+        with self._lock:
+            current = self._owned.get(definition.id)
+            if current and current.poll() is None: return self.instances[definition.id]
+            if definition.port is None: raise ValueError("RUNTIME_PORT_REQUIRED")
+            probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+>               probe.bind((definition.bind_address, definition.port))
+E               PermissionError: [WinError 10013] ��һ�ַ���Ȩ�޲������ķ�ʽ����һ�������׽��ֵĳ��ԡ�
+
+app\model_center\service.py:268: PermissionError
+
+The above exception was the direct cause of the following exception:
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002074A968DD0>
+
+    def test_running_process_health_can_recover_after_initial_probe_failure(monkeypatch):
+        lifecycle = RuntimeLifecycle()
+        definition = RuntimeDefinition(
+            "recovering",
+            RuntimeType.LLAMA_CPP,
+            sys.executable,
+            "http://127.0.0.1:54323",
+            "127.0.0.1",
+            54323,
+            launch_arguments=("-c", "import time;time.sleep(30)"),
+        )
+>       lifecycle.start(definition, host_argv=("-c", "import time;time.sleep(30)"))
+
+tests\test_model_center_phase1.py:439: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.model_center.service.RuntimeLifecycle object at 0x000002074A96A350>
+definition = RuntimeDefinition(id='recovering', runtime_type=<RuntimeType.LLAMA_CPP: 'LLAMA_CPP'>, executable='C:\\Users\\admin\\Ap..._size=None, gpu_layers=None, threads=None, batch_size=None, extra_arguments=(), architecture_id=None, identity_id=None)
+host_argv = ('-c', 'import time;time.sleep(30)'), authority_guard = None
+
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
+        if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+        if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
+        _safe_runtime_environment(definition.environment)
+        executable = managed_executable_file(definition.executable)
+        with self._lock:
+            current = self._owned.get(definition.id)
+            if current and current.poll() is None: return self.instances[definition.id]
+            if definition.port is None: raise ValueError("RUNTIME_PORT_REQUIRED")
+            probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+                probe.bind((definition.bind_address, definition.port))
+            except OSError as exc:
+>               raise ValueError("PORT_IN_USE") from exc
+E               ValueError: PORT_IN_USE
+
+app\model_center\service.py:270: ValueError
+____________ test_raw_runtime_logs_are_not_exposed_by_general_api _____________
+
+self = <app.model_center.service.RuntimeLifecycle object at 0x000002074A9ED750>
+definition = RuntimeDefinition(id='llama-cpp-local', runtime_type=<RuntimeType.LLAMA_CPP: 'LLAMA_CPP'>, executable='C:\\Users\\admi...e, batch_size=None, extra_arguments=(), architecture_id=None, identity_id=UUID('7e8956cc-2564-47db-9549-674bd4f3da63'))
+host_argv = ('-c', "print('super-secret-value')"), authority_guard = None
+
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
+        if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+        if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
+        _safe_runtime_environment(definition.environment)
+        executable = managed_executable_file(definition.executable)
+        with self._lock:
+            current = self._owned.get(definition.id)
+            if current and current.poll() is None: return self.instances[definition.id]
+            if definition.port is None: raise ValueError("RUNTIME_PORT_REQUIRED")
+            probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+>               probe.bind((definition.bind_address, definition.port))
+E               PermissionError: [WinError 10013] ��һ�ַ���Ȩ�޲������ķ�ʽ����һ�������׽��ֵĳ��ԡ�
+
+app\model_center\service.py:268: PermissionError
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-70/test_raw_runtime_logs_are_not_0')
+
+    def test_raw_runtime_logs_are_not_exposed_by_general_api(tmp_path: Path):
+        secret = "super-secret-value"
+        center = create_default_model_center()
+        center.configure_runtime("llama-cpp-local", {
+            "executable": sys.executable,
+            "base_url": "http://127.0.0.1:54327",
+            "port": 54327,
+        })
+>       started = center.lifecycle.start(center.runtimes["llama-cpp-local"], host_argv=("-c", f"print({secret!r})"))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_model_center_phase1.py:628: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.model_center.service.RuntimeLifecycle object at 0x000002074A9ED750>
+definition = RuntimeDefinition(id='llama-cpp-local', runtime_type=<RuntimeType.LLAMA_CPP: 'LLAMA_CPP'>, executable='C:\\Users\\admi...e, batch_size=None, extra_arguments=(), architecture_id=None, identity_id=UUID('7e8956cc-2564-47db-9549-674bd4f3da63'))
+host_argv = ('-c', "print('super-secret-value')"), authority_guard = None
+
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
+        if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+        if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
+        _safe_runtime_environment(definition.environment)
+        executable = managed_executable_file(definition.executable)
+        with self._lock:
+            current = self._owned.get(definition.id)
+            if current and current.poll() is None: return self.instances[definition.id]
+            if definition.port is None: raise ValueError("RUNTIME_PORT_REQUIRED")
+            probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+                probe.bind((definition.bind_address, definition.port))
+            except OSError as exc:
+>               raise ValueError("PORT_IN_USE") from exc
+E               ValueError: PORT_IN_USE
+
+app\model_center\service.py:270: ValueError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_local_ai_discovery.py::test_scans_only_configured_roots_bounded_depth_and_no_link
+FAILED tests/test_local_ai_environment_v2.py::test_symlink_roots_and_entries_skipped_and_nested_roots_deduplicated
+FAILED tests/test_v2_discovery_scope.py::test_path_identity_changes_reject_before_probe[link]
+FAILED tests/test_v2_discovery_scope.py::test_passive_hardware_never_calls_platform_processor
+FAILED tests/test_v2_llama_locality_validation.py::test_external_llama_requires_all_locality_evidence[linked-GGUF_HEADER_INVALID]
+FAILED tests/test_model_center_phase1.py::test_managed_runtime_captures_bounded_logs_and_detects_crash
+FAILED tests/test_model_center_phase1.py::test_managed_runtime_does_not_inherit_host_secrets
+FAILED tests/test_model_center_phase1.py::test_running_process_health_can_recover_after_initial_probe_failure
+FAILED tests/test_model_center_phase1.py::test_raw_runtime_logs_are_not_exposed_by_general_api
+9 failed, 539 passed, 1 skipped, 1 warning in 44.00s

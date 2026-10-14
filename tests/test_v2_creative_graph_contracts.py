@@ -9,6 +9,8 @@ import pytest
 from pydantic import ValidationError
 
 from app.creative import graph_models as models
+from app.creative.graph import CreativeGraphService
+from app.creative.project_store import BINDING
 from app.experimental.store import canonical
 
 
@@ -520,3 +522,143 @@ def test_catalog_parameter_schemas_match_their_validated_defaults_and_asset_pins
         else:
             normalized = models.NodeInstance.model_validate(node(definition_id=definition["id"]))
             assert definition["default_parameters"] == normalized.parameters
+
+
+# Every kind each persisted schema admits. The preflight required-input rule is
+# schema-independent (it reads the frozen base table), so the same declaration
+# must be enforced for a saved v1 graph and a saved v5 graph.
+SCHEMA_KINDS = {
+    1: ["text_input", "text_reference", "draft_prepare", "manual_transform",
+        "director_note", "human_review", "asset_reference"],
+    2: ["text_input", "text_reference", "draft_prepare", "manual_transform",
+        "director_note", "human_review", "asset_reference", "text_generate"],
+    3: ["text_input", "text_reference", "draft_prepare", "manual_transform",
+        "director_note", "human_review", "asset_reference", "text_generate",
+        "media_generate", "media_review", "timeline_export"],
+    4: ["text_input", "text_reference", "asset_reference", "image_reference",
+        "image_prompt", "image_generate", "media_review", "image_style", "image_upscale",
+        "director_plan", "storyboard_plan", "storyboard_prompt"],
+    5: ["text_input", "text_reference", "asset_reference", "director_plan",
+        "storyboard_plan", "storyboard_shot", "video_generate", "media_review", "timeline_export"],
+}
+
+
+def preflight_row(definition):
+    return {"novel_id": "novel-one", "scope": {"mode": "local"}, "id": "graph-one",
+        "version": 1, "definition": definition, "definition_digest": "0" * 64,
+        BINDING: "incarnation-one"}
+
+
+# The frozen required-input declaration per kind. A required port is a promise
+# that preflight refuses to execute without it, so dropping (or adding) one is a
+# contract change and must be a deliberate edit here as well.
+REQUIRED_INPUTS = {
+    "text_input": [],
+    "text_reference": ["text"],
+    "draft_prepare": ["text"],
+    "manual_transform": ["text"],
+    "director_note": [],
+    "human_review": ["draft"],
+    "asset_reference": [],
+    "text_generate": ["text"],
+    "media_generate": [],
+    "media_review": ["candidate"],
+    "timeline_export": [],
+    "image_reference": [],
+    "image_prompt": [],
+    "image_generate": ["prompt"],
+    "image_style": ["prompt"],
+    "image_upscale": ["source"],
+    "director_plan": [],
+    "storyboard_plan": [],
+    "storyboard_prompt": ["storyboard"],
+    "storyboard_shot": ["storyboard"],
+    "video_generate": [],
+}
+
+
+def declared_required_inputs(definition_id, schema_version=None):
+    return [port["id"] for port in
+        models.definition_for(definition_id, schema_version=schema_version)["inputs"] if port["required"]]
+
+
+@pytest.mark.parametrize("kind", sorted(models.DEFINITIONS))
+def test_required_input_declaration_is_frozen_per_kind(kind):
+    assert set(REQUIRED_INPUTS) == set(models.DEFINITIONS)
+    assert declared_required_inputs(kind) == REQUIRED_INPUTS[kind]
+    # A saved v5 catalogue only retypes two ports; the required flags stay base.
+    assert declared_required_inputs(kind, 5) == REQUIRED_INPUTS[kind]
+
+
+def expected_required_ids(definition):
+    return sorted(port["id"] for port in models.definition_for(
+        definition["nodes"][0]["definition_id"], schema_version=definition["schema_version"])["inputs"]
+        if port["required"])
+
+
+# Kinds whose parameters have no honest default carry one synthetic admitted value.
+SPECIAL_PARAMETERS = {
+    "asset_reference": dict(ASSET),
+    "director_plan": {"document_snapshot": {"id": "doc-one", "version": 1, "digest": "0" * 64}},
+    "storyboard_plan": {"document_snapshot": {"id": "doc-one", "version": 1, "digest": "0" * 64}},
+    "storyboard_shot": {"shot_id": "shot-one", "shot_version": 1, "shot_digest": "0" * 64},
+    "storyboard_prompt": {"shot_id": "shot-one"},
+    "image_generate": {"operation_id": "m5.image.t2i", "provider_id": "owned-provider", "model_id": "owned-model"},
+    "image_upscale": {"operation_id": "m5.image.upscale", "provider_id": "owned-provider", "model_id": "owned-model"},
+    "video_generate": {"operation_id": "m7.video.t2v", "provider_id": "owned-provider",
+        "model_id": "owned-model", "prompt": "authored"},
+    "media_generate": {"operation_id": "m8.audio.trim", "parameters": {"in_ms": 0, "out_ms": 50}},
+    "timeline_export": {"timeline_snapshot": {"id": "timeline-one", "version": 1, "digest": "0" * 64},
+        "export_profile": {"preset": "DELIVERY_H264_MP4"}},
+}
+
+
+def admitted_node(definition_id):
+    """Minimal admitted parameters: the declared default, or the synthetic pin."""
+    if definition_id in SPECIAL_PARAMETERS:
+        return node("only", definition_id, parameters=deepcopy(SPECIAL_PARAMETERS[definition_id]))
+    return node("only", definition_id,
+        parameters=models.DEFINITIONS[definition_id]["parameters"]().model_dump())
+
+
+def required_input_issues(definition):
+    # A bare instance is enough: the required-input rule reads only the frozen
+    # definition table, and no runtime is configured for this contract check.
+    service = CreativeGraphService.__new__(CreativeGraphService)
+    service.model_runtime = None
+    service.media_runtime = None
+    result = CreativeGraphService._preflight(service, preflight_row(definition),
+        {"expected_version": 1, "target_node_ids": []}, "actor-one", check_assets=False)
+    return sorted(issue["node_id"] for issue in result["issues"]
+        if issue["code"] == "CREATIVE_GRAPH_REQUIRED_INPUT_MISSING")
+
+
+@pytest.mark.parametrize("schema", sorted(SCHEMA_KINDS))
+def test_declared_required_inputs_are_exactly_the_ones_preflight_enforces(schema, monkeypatch):
+    """A definition-level required port is enforced on every admitted schema.
+
+    The saved v5 media review exists only for a video candidate, and the saved
+    v5 timeline export only produces one; both keep the base required flags.
+    Model authority is unrelated to the required-input rule, so it is stubbed.
+    """
+    monkeypatch.setattr(CreativeGraphService, "_model_authority", staticmethod(lambda definition: None))
+    assert len(SCHEMA_KINDS[schema]) == len(set(SCHEMA_KINDS[schema]))
+    for kind in SCHEMA_KINDS[schema]:
+        parsed = models.parse_graph({"schema_version": schema, "title": "Required input contract",
+            "nodes": [admitted_node(kind)], "edges": []}).model_dump()
+        enforce = required_input_issues(parsed)
+        assert enforce == ([parsed["nodes"][0]["id"]] if expected_required_ids(parsed) else []), (schema, kind)
+
+
+@pytest.mark.parametrize("kind", sorted(models.DEFINITIONS))
+def test_every_declared_port_is_an_exact_case_unique_optional_multiplicity_input(kind):
+    """Port identity is declared once per side: ids are unique and 1:1 by contract."""
+    for side in ("inputs", "outputs"):
+        ports = models.DEFINITIONS[kind][side]
+        assert len({port["id"] for port in ports}) == len(ports), (kind, side)
+        assert all(port["multiple"] is False for port in ports), (kind, side)
+        assert all(isinstance(port["id"], str) and port["id"] == port["id"].strip() for port in ports), (kind, side)
+        assert all(port["id"][0].islower() for port in ports), (kind, side)
+        assert all(port["id"] == port["id"].lower() for port in ports), (kind, side)
+        assert all(isinstance(port["type"], str) and port["type"] == port["type"].upper() for port in ports), (kind, side)
+        assert all(isinstance(port["required"], bool) for port in ports), (kind, side)
