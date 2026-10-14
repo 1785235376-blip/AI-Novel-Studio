@@ -28,7 +28,7 @@ Nothing below is taken from a prior description; each line is a command run in t
 | Remote heads | `git ls-remote <origin> refs/heads/feature/... refs/heads/main` | `55f67ea0f0af9…` and `fed2404c8e30b…` |
 | PR state | `gh pr view 47 --json state,isDraft,headRefOid,baseRefName,mergeable` | `OPEN`, draft, base `main`, `MERGEABLE` |
 | Pending change | `git diff --numstat -- tests/test_v2_creative_graph_contracts.py` | `142 0` (append-only) |
-| Untracked at start | `git status --porcelain` | 69 entries |
+| Untracked at start / end | `git status --porcelain` | 69 entries at start; **39 at end**, and every one of those 39 is a protected baseline family |
 
 `main` is unchanged and was never checked out, merged or written in this phase.
 The protected untracked baseline families (`docs/delivery/v2-development/phase6-*`,
@@ -336,3 +336,11 @@ disturbed; observations only.
 | `37051ec` | graph-contract pins +142/−0 and 30 Phase10 receipts |
 | `6a466c4` | `tests/test_v2_discovery_runtime_levels.py` with the level-② gap pin |
 | `20924f5` | real-PostgreSQL verification receipts (`r2`/`r3` failures and `r4` pass) |
+| `98b2e5d` | this report, the matrix Phase10 append (23 added / 0 removed), `README.md`, `docs/installation.md` |
+
+End state: HEAD `98b2e5d` = remote `98b2e5daf25e2bef7d594032397ece8796e159d5`; PR #47 `OPEN`,
+draft, `headRefOid` `98b2e5d`; `main` still `fed2404c`; no tracked file left dirty; the 39
+remaining untracked entries all match `phase6-*`, `catalog-f19d*`, `.graphflow-cache/` or
+`graphflow-out/`. No service started by this phase is still running (zero `postgres`
+processes; the only listeners on the probed ports are PID 4 on the Windows-excluded 8000 and
+the unrelated ASUS service on 8100).
