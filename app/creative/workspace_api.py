@@ -17,7 +17,7 @@ def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|assets(?:/[^/]+(?:/download)?)?|director/workspace/[^/]+))?",
+        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|assets(?:/[^/]+(?:/download)?)?|director/workspace/[^/]+))?",
         "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|assets(?:/[^/]+/(?:restore|relationships|mask))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
@@ -71,7 +71,8 @@ class ManualMaskRoute(PrivateProductionRoute):
 
 
 def create_independent_workspace_router(service, authorize, require_flag, *, create_project, workspace_writer,
-                                    graph_service=None, require_host_session=None, model_host_authority=None, production_service=None):
+                                    graph_service=None, require_host_session=None, model_host_authority=None, production_service=None,
+                                    bible_service=None):
     router = APIRouter(tags=["Independent Studios V2"], route_class=PrivateProductionRoute)
 
     def access(nid, token, branch, permission):
@@ -259,6 +260,10 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
     from .director_workspace_api import create_director_workspace_router
     router.include_router(create_director_workspace_router(
         DirectorWorkspaceService(service, service.creative), invoke))
+
+    if bible_service is not None:
+        from .bible_api import create_bible_router
+        router.include_router(create_bible_router(bible_service, invoke))
 
     if production_service is not None:
         from .production_execution_api import create_production_execution_router

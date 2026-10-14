@@ -1,0 +1,151 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________ test_bible_route_projects_real_owners_and_extension_records _________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000001BF3E25DDD0>, nid='round2-bible-06c9ae5e511f4ecd929...ce object at 0x000001BF3DF79890>, scope={'mode': 'local', 'novel_id': 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'})
+
+    def test_bible_route_projects_real_owners_and_extension_records(rig):
+        _authorize_record(rig, "CHARACTER_VISUAL",
+                          {"character_id": "c1", "appearance": "瘦高，短发", "clothing": "深色风衣"})
+>       _authorize_record(rig, "SCENE_VISUAL",
+                          {"location_id": "L1", "architecture": "老式砖楼", "mood": "压抑"})
+
+tests\test_round2_bible.py:427: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000001BF3E25DDD0>, nid='round2-bible-06c9ae5e511f4ecd929...ce object at 0x000001BF3DF79890>, scope={'mode': 'local', 'novel_id': 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'})
+kind = 'SCENE_VISUAL'
+data = {'location_id': 'L1', 'architecture': '老式砖楼', 'mood': '压抑'}
+
+    def _authorize_record(rig, kind, data):
+        from app.experimental.world import WorldRecordIn
+    
+>       created = rig.world.create_record(
+            rig.nid, rig.scope, "round2-author",
+            WorldRecordIn.model_validate({"kind": kind, "title": f"{kind} record", "data": data}))
+
+tests\test_round2_bible.py:417: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.experimental.world.WorldService object at 0x000001BF3DBE22D0>
+nid = 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'
+scope = {'mode': 'local', 'novel_id': 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'}
+actor = 'round2-author'
+value = WorldRecordIn(kind='SCENE_VISUAL', title='SCENE_VISUAL record', chapter_id=None, event_order=0, data={'location_id': '...e': '老式砖楼', 'material': '', 'lighting': '', 'weather': '', 'mood': '压抑', 'time_of_day': '', 'reference_asset_ids': []})
+reauthorize = <function WorldService.<lambda> at 0x000001BF3B464400>
+
+    def create_record(self, nid, scope, actor, value, *, reauthorize=lambda: None):
+        payload = self._payload(value)
+        self.novels.get(nid)
+        with self.store.transaction(nid, scope) as state:
+            reauthorize()
+            self._validate_create_capacity(state)
+>           captured = self._capture(nid, scope, payload, state)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+app\experimental\world.py:348: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.experimental.world.WorldService object at 0x000001BF3DBE22D0>
+nid = 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'
+scope = {'mode': 'local', 'novel_id': 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'}
+payload = {'kind': 'SCENE_VISUAL', 'title': 'SCENE_VISUAL record', 'chapter_id': None, 'event_order': 0, ...}
+state = {'collections': {'world_canon': {'149f5da6-1f0f-49c7-ab67-174073cc7723': {'chapter_id': None, 'created_at': '2026-10-1...67992e2', 'schema_version': 1, 'scope': {'mode': 'local', 'novel_id': 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'}}
+
+    def _capture(self, nid, scope, payload, state):
+        if payload["kind"] not in DATA_MODELS:
+            from .story_graph import capture_graph
+            return capture_graph(self, nid, scope, payload, state)
+        sources = scoped_sources(self, nid, scope, [payload["chapter_id"]] if payload["chapter_id"] else [])
+        number = self._chapter(nid, scope, payload["chapter_id"])["narrative_sequence"] if payload["chapter_id"] else 0
+>       links, entities, refs = self._references(nid, scope, payload, state)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+app\experimental\world.py:296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.experimental.world.WorldService object at 0x000001BF3DBE22D0>
+nid = 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'
+scope = {'mode': 'local', 'novel_id': 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'}
+payload = {'kind': 'SCENE_VISUAL', 'title': 'SCENE_VISUAL record', 'chapter_id': None, 'event_order': 0, ...}
+state = {'collections': {'world_canon': {'149f5da6-1f0f-49c7-ab67-174073cc7723': {'chapter_id': None, 'created_at': '2026-10-1...67992e2', 'schema_version': 1, 'scope': {'mode': 'local', 'novel_id': 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'}}
+
+    def _references(self, nid, scope, payload, state):
+        data, kind = payload["data"], payload["kind"]
+        characters, locations, dependencies = [], [], []
+        if kind == "HISTORY":
+            characters += data["character_ids"]
+            locations += data["location_ids"]
+            dependencies += [(r["event_id"], "HISTORY") for r in data["relations"]]
+        elif kind == "GEOGRAPHY":
+            locations += [data["location_id"]]
+            locations += [data["region_id"]] if data["region_id"] else []
+            locations += [r["location_id"] for r in data["relations"]]
+            if data["owner_id"]: dependencies.append((data["owner_id"], "CIVILIZATION"))
+            if data["supersedes_id"]: dependencies.append((data["supersedes_id"], "GEOGRAPHY"))
+            if data["region_id"] == data["location_id"]:
+                raise ValueError("a location cannot contain itself")
+        elif kind == "CIVILIZATION":
+            locations += data["location_ids"]
+            if data["parent_id"]: dependencies.append((data["parent_id"], "CIVILIZATION"))
+        elif kind == "ABILITY":
+            dependencies += [(rid, "ABILITY") for rid in data["conflicts_with"]]
+        elif kind == "ABILITY_USE":
+            characters.append(data["character_id"])
+            dependencies.append((data["rule_id"], "ABILITY"))
+        elif kind == "PSYCHOLOGY":
+            characters.append(data["character_id"])
+            if data["previous_snapshot_id"]: dependencies.append((data["previous_snapshot_id"], "PSYCHOLOGY"))
+        elif kind == "RELATIONSHIP":
+            characters += [data["source_character_id"], data["target_character_id"]]
+            if data["previous_record_id"]: dependencies.append((data["previous_record_id"], "RELATIONSHIP"))
+            if data["event_id"]: dependencies.append((data["event_id"], "HISTORY"))
+        elif kind == "CHARACTER_EVENT":
+            characters.append(data["character_id"])
+            if data["location_id"]: locations.append(data["location_id"])
+        elif kind == "CHARACTER_VISUAL":
+            # A visual profile must name a character this project already owns; the
+            # entity check below is what enforces it, so no id is ever invented.
+            characters.append(data["character_id"])
+        elif kind == "SCENE_VISUAL":
+            locations.append(data["location_id"])
+        else:
+            # Fail closed: a new typed kind must declare its references explicitly
+            # rather than silently falling into whichever branch happened to be last.
+            raise ValueError(f"unhandled world record kind: {kind}")
+        links = {"character_ids": sorted(set(characters)), "location_ids": sorted(set(locations))}
+>       entities = entity_sources(self, nid, scope, links, state)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+app\experimental\world.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+service = <app.experimental.world.WorldService object at 0x000001BF3DBE22D0>
+nid = 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'
+scope = {'mode': 'local', 'novel_id': 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'}
+links = {'character_ids': [], 'location_ids': ['L1']}
+state = {'collections': {'world_canon': {'149f5da6-1f0f-49c7-ab67-174073cc7723': {'chapter_id': None, 'created_at': '2026-10-1...67992e2', 'schema_version': 1, 'scope': {'mode': 'local', 'novel_id': 'round2-bible-06c9ae5e511f4ecd929cff40567992e2'}}
+
+    def entity_sources(service: DomainService, nid: str, scope: dict, links: dict, state: dict | None = None) -> dict:
+        """Validate real references and fence even legacy entities without versions."""
+        captures = {}
+        for field, dataset in (("character_ids", "characters"), ("location_ids", "locations"), ("story_route_ids", "story_routes")):
+            ids = links.get(field, [])
+            if not ids:
+                continue
+            rows = {str(row.get("id")): row for row in service.novels.data_set(nid, dataset)}
+            for rid in ids:
+                if rid not in rows:
+>                   raise ValueError(f"unknown {dataset} reference: {rid}")
+E                   ValueError: unknown locations reference: L1
+
+app\experimental\planning.py:173: ValueError
+============================== warnings summary ===============================
+tests/test_round2_bible.py::test_bible_route_projects_real_owners_and_extension_records
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_round2_bible.py::test_bible_route_projects_real_owners_and_extension_records
+1 failed, 1 warning in 2.42s

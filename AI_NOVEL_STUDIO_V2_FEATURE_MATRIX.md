@@ -1584,3 +1584,39 @@ brief's "no new Director/Shot/Scene/Project/Asset model" rule turned out to be s
 | Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
 
 This section adds current facts only.
+
+### 2026-10-15 — Round 2: Character & Scene Bible, backend increment (current facts)
+
+Append-only current observation for the Round 1–10 master roadmap. **No earlier row, status or
+evidence ID is edited**, including the whole Phase14-A section above. The round started from
+`e951dbe`; `main` `fed2404c` untouched; PR #47 still `OPEN`/draft.
+
+**Reconnaissance that shaped the work:** every requested dimension was traced to an owner first, and
+most already had one — character identity on the project's `characters` records, behaviour on
+`WorldService` `PSYCHOLOGY`, relationships on `WorldService` `RELATIONSHIP`, location on the
+`locations` records plus `WorldService` `GEOGRAPHY`, story time on `WorldService` `HISTORY`. The only
+genuine gap was the **authored visual half** (appearance/clothing/reference; architecture/material/
+lighting/weather/mood). `V1_SCOPE_FREEZE.md` mentions none of characters/locations/lore/world, so
+none of this is frozen surface.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| `CHARACTER_VISUAL` / `SCENE_VISUAL` record kinds | **IMPLEMENTED (extension of the existing owner)** | Rather than create a bible owner, two typed kinds were registered on the existing `WorldService`: `CharacterVisualData` (`character_id`, `appearance`, `clothing`, `distinguishing`, `reference_asset_ids`) and `SceneVisualData` (`location_id`, `architecture`, `material`, `lighting`, `weather`, `mood`, `time_of_day`, `reference_asset_ids`). They inherit the owner's existing versioning, CAS, review/approval, history, source fencing and typed `data` validation, and deliberately do **not** require a `chapter_id` (a visual profile is project-level). The alternative — adding visual fields to the V1 novel repository — would have touched `CharacterModel`, both novel repositories and the migration path, with no versioning or review. |
+| World reference dispatch | **IMPLEMENTED (hardened)** | `WorldService._references` gained explicit `CHARACTER_VISUAL`/`SCENE_VISUAL` branches; the previously-implicit `CHARACTER_EVENT` fallback was made explicit; and the final `else` now **raises** `unhandled world record kind` instead of silently treating a new kind as whichever one happened to be last. Pinned by test. The eight pre-existing kinds are unchanged (asserted as an exact set of ten including the two new ones). |
+| Bible projection | **IMPLEMENTED (read-only)** | `app/creative/bible_projection.py` joins the existing owners into a Character Bible (six required dimensions) and a Scene Bible (seven required dimensions), plus `gaps` (the literal list of still-unauthored dimensions) and `used_in` per entry built **only** from authored references on real scenes/shots. It imports no application model and has no write path — both asserted by test. |
+| Unknown is a value | **IMPLEMENTED** | An unauthored dimension is the literal `UNKNOWN` with `authored: false`, never an empty string that could read as "nothing to say". Not filled in from prose. |
+| Draft is not canon | **IMPLEMENTED** | The owner's own `status` is carried through: only `APPROVED` is `authoritative`, a `DRAFT` is reported as a draft, and an approved record wins over a draft for the same subject. The projection never promotes a record. |
+| Declared is not verified | **IMPLEMENTED** | An asset reference is `RESOLVED` only against an index the caller supplied; with no index every id is `UNRESOLVED` with `verification: NO_INDEX_SUPPLIED`. The route supplies the **real** workspace asset index. |
+| Closed read route | **IMPLEMENTED** | One GET: `GET /api/projects/{nid}/studio/bible`, added to the closed admission allow-list (POST/PUT/DELETE and any trailing segment are not admitted; asserted). Wired in `app/experimental/api.py` by passing the **existing** `world_service` instance — not a second one. No write route: authoring a profile still uses the existing `WorldService` record route with its own review and CAS. |
+| Backend verification | **IMPLEMENTED** | **173 passed, 27 skipped, exit 0** (`round2-bible-r3`) across the new suite plus the world/owner suites and the Round 1 director suites; the three route integration tests run the **real** studio router and **real** File store with only authority stubbed. |
+| **Real PostgreSQL verification** | **IMPLEMENTED** | **80 passed, 9 skipped, exit 0** (`round2-bible-postgres`) on a **fresh** `v2_round2` database with all 20 migrations applied on a loopback-only disposable cluster, cleanly stopped afterwards. This is the first round verified on both backends from the outset. |
+| Existing owner behaviour discovered | RECORDED | The project's location owner **lower-cases the location id** (`upsert_location(nid,"L1",…)` stores `l1`) while a **character id is preserved verbatim**. The owner correctly refused a `SCENE_VISUAL` record naming a location the project did not have — the reference validation working as designed. Verified directly and now asserted in the rig; not changed (existing behaviour, outside this round's scope). |
+| **Frontend Bible surface** | **`NOT_RUN`** | No Character/Scene Bible UI exists yet. Explicitly not claimed. The projection and route it will consume are done and verified. |
+| Authoring a visual profile from a Studio surface | `NOT_RUN` | The owner route accepts the two new kinds today with review and CAS; no Studio authoring UI was added. |
+| Image / Video consuming the bible | `NOT_RUN` | `used_in` is reported from real documents, but no generation path consumes the bible yet — that is Round 3 (Prompt Intelligence) territory. |
+| Browser / visual acceptance | `NOT_RUN` | No Playwright run; with no new UI in this increment there is nothing new to accept visually. |
+| GATE-M2 / §7–8 shared Creative Graph | UNCHANGED | Still MISSING/PARTIAL; this round added no graph capability. |
+| Release candidate validation | **NOT ESTABLISHED** | Unchanged. This round added capability; it did not move a release gate. `ROUND2_BIBLE_REPORT.md`. |
+| Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
+
+This section adds current facts only.

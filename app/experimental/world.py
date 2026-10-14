@@ -126,14 +126,50 @@ class CharacterEventData(StrictModel):
     location_id: str | None = None
 
 
+class CharacterVisualData(StrictModel):
+    """Authored visual identity for one existing character: the Character Bible's visual half.
+
+    Identity (name/age/role) stays on the original `characters` record this refers to;
+    behaviour and relationships stay in PSYCHOLOGY/RELATIONSHIP records. Only what
+    nothing else carries — how the character *looks* — lives here. Every field is
+    authored. Nothing is inferred from prose, and an empty field means "not authored",
+    never a guess.
+    """
+    character_id: str = Field(min_length=1, max_length=160)
+    appearance: str = Field(default="", max_length=4000)
+    clothing: str = Field(default="", max_length=4000)
+    distinguishing: str = Field(default="", max_length=2000)
+    #: Declared references to bytes owned by the asset library. Declared, not verified
+    #: here: this owner does not read another owner's store.
+    reference_asset_ids: list[str] = Field(default_factory=list, max_length=50)
+
+
+class SceneVisualData(StrictModel):
+    """Authored visual identity for one existing location: the Scene Bible's visual half.
+
+    Geographic relations stay in GEOGRAPHY, story time in HISTORY, and narrative
+    location naming on the original `locations` record. This carries the visual
+    direction a storyboard or image prompt needs and that nothing else holds.
+    """
+    location_id: str = Field(min_length=1, max_length=160)
+    architecture: str = Field(default="", max_length=4000)
+    material: str = Field(default="", max_length=4000)
+    lighting: str = Field(default="", max_length=2000)
+    weather: str = Field(default="", max_length=2000)
+    mood: str = Field(default="", max_length=2000)
+    time_of_day: str = Field(default="", max_length=1000)
+    reference_asset_ids: list[str] = Field(default_factory=list, max_length=50)
+
+
 DATA_MODELS = {"HISTORY": HistoryData, "GEOGRAPHY": GeographyData,
                "CIVILIZATION": CivilizationData, "ABILITY": AbilityData,
                "ABILITY_USE": AbilityUseData, "PSYCHOLOGY": PsychologyData,
-               "RELATIONSHIP": RelationshipData, "CHARACTER_EVENT": CharacterEventData}
+               "RELATIONSHIP": RelationshipData, "CHARACTER_EVENT": CharacterEventData,
+               "CHARACTER_VISUAL": CharacterVisualData, "SCENE_VISUAL": SceneVisualData}
 
 
 class WorldRecordIn(StrictModel):
-    kind: Literal["HISTORY", "GEOGRAPHY", "CIVILIZATION", "ABILITY", "ABILITY_USE", "PSYCHOLOGY", "RELATIONSHIP", "CHARACTER_EVENT"]
+    kind: Literal["HISTORY", "GEOGRAPHY", "CIVILIZATION", "ABILITY", "ABILITY_USE", "PSYCHOLOGY", "RELATIONSHIP", "CHARACTER_EVENT", "CHARACTER_VISUAL", "SCENE_VISUAL"]
     title: str = Field(min_length=1, max_length=240)
     chapter_id: str | None = None
     event_order: int = Field(default=0, ge=0)
@@ -214,9 +250,19 @@ class WorldService(DomainService):
             characters += [data["source_character_id"], data["target_character_id"]]
             if data["previous_record_id"]: dependencies.append((data["previous_record_id"], "RELATIONSHIP"))
             if data["event_id"]: dependencies.append((data["event_id"], "HISTORY"))
-        else:
+        elif kind == "CHARACTER_EVENT":
             characters.append(data["character_id"])
             if data["location_id"]: locations.append(data["location_id"])
+        elif kind == "CHARACTER_VISUAL":
+            # A visual profile must name a character this project already owns; the
+            # entity check below is what enforces it, so no id is ever invented.
+            characters.append(data["character_id"])
+        elif kind == "SCENE_VISUAL":
+            locations.append(data["location_id"])
+        else:
+            # Fail closed: a new typed kind must declare its references explicitly
+            # rather than silently falling into whichever branch happened to be last.
+            raise ValueError(f"unhandled world record kind: {kind}")
         links = {"character_ids": sorted(set(characters)), "location_ids": sorted(set(locations))}
         entities = entity_sources(self, nid, scope, links, state)
         refs = {}
