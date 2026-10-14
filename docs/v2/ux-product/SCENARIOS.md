@@ -31,3 +31,18 @@
 - **NOT_COVERED**：S10、S12 —— 前者需要真实 CPU 媒体管线执行，后者属于尚未开始的 UX-09。
 - 所有前端场景证据均为 **jsdom/协议夹具**；没有任何一条场景经过真实浏览器视觉验收或真实 Windows 安装版验收。
 - 本表不构成发布就绪结论：M4 PARTIAL、M5–M9 LOCAL_REQUIRED、托管 CI `BLOCKED_ACCOUNT_PLATFORM` 均未改变。
+
+## 批次 3 验证线补充实测（独立执行，2026-10-14）
+
+以下为本机**实测**结论，用于收紧上表口径；均为**既有/环境级**，`app/**` 在本工作包内无改动：
+
+| 发现 | 实测 | 对本表的影响 |
+| --- | --- | --- |
+| `tests/test_v2_audio_wav_controls.py` | 46 passed / 20 skipped / **2 failed**：`…[file-96000-2-12.0-10000-32767]` 与 `[…--10000--32768]` 返回 job `FAILED` 而非 `AWAITING_REVIEW`（本机 ffmpeg 8.1.2；根因未在断言输出中证明） | **S10 仍为 NOT_COVERED**，并新增一条已知既有失败；不得据此宣称 CPU 媒体管线可用 |
+| `tests/test_v2_media_prerequisites.py` | **10 failed**：其合成 shim 为 shebang 脚本，而 `probe()` 把 PATH 替换为 `tmp_path`（POSIX-only 用例）；真实 ffmpeg/ffprobe 存在于 `D:\ffmpeg` | 同上；属**测试自身不可移植**，非产品缺陷，但必须如实记录 |
+| `tests/test_v2_cpu_cutout_pixels.py` / `test_v2_cpu_cutout_owner.py` | 69 passed / 46 passed+46 skipped | S10 的**像素级**部分有既有覆盖，但仍**不是**本工作包的真实管线验收 |
+| `tests/test_export_jobs.py` | 18 passed，含 `test_export_job_rejects_unknown_format`（未知格式抛 `ValueError`） | S11 的"不支持格式不能假导出"在**后端 owner 层**有证据；"单条导出不依赖全项目"仍无证据（UX-09） |
+| 既有 storyboard/timeline 套件 | 9 个套件 **167 tests PASS**（含 `TimelineSourceEditing.phase6` 的原子准备/显式保存/503 不重放/UNKNOWN 保留） | 为 S09 的"撤销与冲突恢复"提供 owner 层证据；仍缺真实浏览器与真实 PG 的保存冲突复现 |
+| 集成映射缺陷 | 验证线发现并已修复（提交 `b2bb623`）：`onEdit` 曾读错 `at_ms`/`target_track_id`，致 duplicate/move 被恒拒（fail-closed） | 提醒：**界面"拒绝"不等于功能正确**；接线类改动必须配测试 |
+
+**口径提醒**：`scripts/check_ui_design_tokens.mjs` 只扫描 `frontend/src/ui`，`tokens` 收据的 PASS **不覆盖**任何功能目录的 CSS；新增目录的令牌合规来自验证线的逐目录扫描，而非该检查。
