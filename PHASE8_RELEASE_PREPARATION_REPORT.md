@@ -55,8 +55,8 @@
 | --- | --- | --- |
 | 入口点 | **IMPLEMENTED** | `frontend/playwright.studio-release.config.ts`（新配置，未改动既有 16 个配置）+ `frontend/e2e/studio-release-acceptance.spec.ts`（8 用例：六界面地标 + 中文冒烟 + 键盘焦点）+ `frontend/e2e/README.md` + `package.json` 的 `e2e` 脚本；`--list` → **8 tests in 1 file** |
 | 浏览器来源 | **不使用下载的浏览器** | 默认 `channel: 'msedge'`（系统已安装 Edge；本机 `ms-playwright` 与 `.local-browsers` 均不存在，全程零下载） |
-| 真实浏览器实测 | **7 passed / 1 failed**（系统 Edge，前端 `127.0.0.1:5173`，**未启动后端**，约 1.2 分钟） | TASKS / ASSETS / PRODUCTION / MODEL CENTER（按需打开）/ DELIVERY（按需打开）/ 中文冒烟 / 键盘焦点 **全部真实 PASS**；**START FAILED**：等待 `空白项目名称` 超时——未启后端时入口不显示新建表单，属**环境缺失**，非地标缺失 |
-| 逐界面状态 | 五个界面 **BROWSER_ACCEPTED**；START **BLOCKED** | 见上；**未伪造通过** |
+| 真实浏览器实测 | **8 passed / 8，exit 0**（Phase9 复跑：竞态版 spec + 真实后端 + 系统 Edge，14.1 s） | Phase8 当时记录为 7/1（旧版点探 spec、未启后端）；Phase9 更正见 `PHASE9_BROWSER_ACCEPTANCE_REPORT.md` |
+| 逐界面状态 | 六界面 **BROWSER_ACCEPTED**（START 的阻塞已解除） | 见上；Phase8 的 BLOCKED 记录保留为历史 |
 | jsdom 对照（**不是**浏览器证据） | 30 files / 446 tests PASS | 仅说明断言本身有既有覆盖 |
 | 视觉回归（截图基线/几何） | **NOT_RUN** | 沿用既有 `playwright.visual.config.ts` 与其基线，本阶段未执行 |
 

@@ -17,6 +17,8 @@
 
 ## 2. 真实浏览器实测结果
 
+> **后续更正（Phase9，见 `PHASE9_BROWSER_ACCEPTANCE_REPORT.md`）**：本节记录的 **7 passed / 1 failed、START BLOCKED** 来自一次**未启动后端**、且使用**较早的点探版 spec**的运行。Phase9 用**竞态版 spec + 真实后端**（uvicorn，file 后端）复跑得到 **8 passed / 8，exit 0**，六个界面全部 **BROWSER_ACCEPTED**。两次结果都保留，历史不覆盖。
+
 **执行方式**：以 `pnpm exec vite --port 5173 --strictPort` 自行启动前端（**未启动后端**），随后
 `STUDIO_ACCEPTANCE_CHANNEL=msedge pnpm exec playwright test --config playwright.studio-release.config.ts --reporter=list`。
 
@@ -43,8 +45,8 @@
 
 | 界面 | 状态 | 依据 |
 | --- | --- | --- |
-| TASKS / ASSETS / PRODUCTION / MODEL CENTER / DELIVERY | **BROWSER_ACCEPTED**（真实浏览器 PASS，前端无后端） | 第 2 节 |
-| START | **BLOCKED** | 需要后端（或已存在的项目）才能显示新建入口；本次未启动后端，故如实记为阻塞，**不伪造通过** |
+| 六个界面（START / TASKS / ASSETS / PRODUCTION / MODEL CENTER / DELIVERY） | **BROWSER_ACCEPTED**（Phase9 复跑 8/8） | 见 `PHASE9_BROWSER_ACCEPTANCE_REPORT.md`：竞态版 spec + 真实后端 + 系统 Edge，8 passed / 14.1s / exit 0 |
+| START（本次记录中的阻塞） | **BLOCKED → 已解除** | Phase8 时未启后端；Phase9 启后端后通过。保留为历史记录 |
 | 视觉回归（截图基线 / 几何） | **NOT_RUN** | 本入口只做地标、中文与键盘；像素级视觉沿用既有 `playwright.visual.config.ts` 与其基线，本阶段未执行 |
 
 ## 5. 操作者把 BLOCKED 转成 8/8 的步骤

@@ -57,12 +57,19 @@ async function enterStudio(page: Page): Promise<void> {
   await page.goto('/');
   const ready = switcher(page);
   const blankName = page.getByLabel('空白项目名称', {exact: true});
-  // Whichever of the two entry states this load lands on.
-  await expect(ready.or(blankName).first()).toBeVisible({timeout: 30_000});
-  if (await ready.isVisible().catch(() => false)) return; // studio already open
-  await blankName.fill('Studio 发布验收');
-  await page.getByRole('button', {name: '创建空白项目', exact: true}).click();
-  await expect(ready).toBeVisible();
+  // Resolve the entry state ONCE, as a race, instead of probing one locator and
+  // then re-probing the other: a point-in-time probe can straddle a React
+  // re-render and then wait forever on a control that is not on screen.
+  const settled = await Promise.race([
+    ready.waitFor({state: 'visible', timeout: 30_000}).then(() => 'STUDIO' as const).catch(() => null),
+    blankName.waitFor({state: 'visible', timeout: 30_000}).then(() => 'ENTRY' as const).catch(() => null),
+  ]);
+  if (settled === 'STUDIO') return; // the app re-opened an existing project
+  if (settled === 'ENTRY') {
+    await blankName.fill('Studio 发布验收');
+    await page.getByRole('button', {name: '创建空白项目', exact: true}).click();
+  }
+  await expect(ready, `Neither an open studio nor the blank-project entry appeared (settled=${settled}); is the app running and is narrative_production_v2 enabled?`).toBeVisible({timeout: 30_000});
 }
 
 /** Switch to one of the four Studio views the switcher owns. */
