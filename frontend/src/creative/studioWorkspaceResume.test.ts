@@ -1,6 +1,9 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it } from 'vitest';
-import { readLocalStudioResume, rememberLocalStudioResume } from './studioWorkspaceResume';
+import {
+  DEFAULT_STUDIO_INTERFACE_MODE, readLocalStudioInterfaceMode,
+  readLocalStudioResume, rememberLocalStudioInterfaceMode, rememberLocalStudioResume,
+} from './studioWorkspaceResume';
 
 afterEach(() => localStorage.clear());
 const record = { schema: 1, mode: 'local', actor: 'local-author', project_id: 'project-a',
@@ -34,4 +37,74 @@ it('treats unavailable storage separately from an empty server workspace', () =>
   expect(rememberLocalStudioResume('project-a', { module: 'VIDEO', view: 'PRODUCTION', stage: 'M9' },
     { setItem: () => { throw new Error('quota'); } })).toBe(false);
   expect(rememberLocalStudioResume('project-a', { module: 'VIDEO', view: 'GRAPH', stage: 'M4', runId: 'orphan' })).toBe(false);
+});
+
+it('round-trips the presentation mode without converting any other saved field', () => {
+  expect(rememberLocalStudioResume('project-a', {
+    module: 'VIDEO', view: 'GRAPH', stage: 'M6', graphId: 'graph-a', runId: 'run-a',
+    interfaceMode: 'PROFESSIONAL',
+  })).toBe(true);
+  expect(readLocalStudioResume('project-a')).toEqual({ state: 'SAVED', location: {
+    module: 'VIDEO', view: 'GRAPH', stage: 'M6', graphId: 'graph-a', runId: 'run-a',
+    interfaceMode: 'PROFESSIONAL',
+  } });
+  expect(readLocalStudioInterfaceMode('project-a')).toBe('PROFESSIONAL');
+});
+
+it('defaults to today\'s full interface and only honours an explicitly saved mode', () => {
+  // Adding a presentation mode must never change an existing interface: an
+  // absent, older or unreadable record keeps the full workspace.
+  expect(DEFAULT_STUDIO_INTERFACE_MODE).toBe('PROFESSIONAL');
+  expect(readLocalStudioInterfaceMode('project-a')).toBe('PROFESSIONAL');
+  expect(readLocalStudioInterfaceMode('project-a', stored(record))).toBe('PROFESSIONAL');
+  expect(readLocalStudioInterfaceMode('other-project', stored(record))).toBe('PROFESSIONAL');
+  expect(readLocalStudioInterfaceMode('project-a', { getItem: () => { throw new Error('blocked'); } })).toBe('PROFESSIONAL');
+  expect(readLocalStudioInterfaceMode('project-a', stored({ ...record, interface_mode: 'EXPERT' }))).toBe('PROFESSIONAL');
+  // An explicit novice choice is restored.
+  expect(readLocalStudioInterfaceMode('project-a', stored({ ...record, interface_mode: 'NOVICE' }))).toBe('NOVICE');
+});
+
+it('rejects a malformed presentation mode instead of adopting it', () => {
+  for (const value of [{ ...record, interface_mode: 'EXPERT' }, { ...record, interface_mode: '' },
+    { ...record, interface_mode: 1 }]) {
+    expect(readLocalStudioResume('project-a', stored(value))).toEqual({ state: 'INVALID' });
+  }
+  expect(rememberLocalStudioResume('project-a', {
+    module: 'VIDEO', view: 'GRAPH', stage: 'M6',
+    interfaceMode: 'EXPERT' as never,
+  })).toBe(false);
+});
+
+it('switching mode merges into the saved location and preserves every other field', () => {
+  expect(rememberLocalStudioResume('project-a', {
+    module: 'VIDEO', view: 'GRAPH', stage: 'M6', graphId: 'graph-a', runId: 'run-a',
+  })).toBe(true);
+  expect(rememberLocalStudioInterfaceMode('project-a', 'PROFESSIONAL')).toBe(true);
+  expect(readLocalStudioResume('project-a')).toEqual({ state: 'SAVED', location: {
+    module: 'VIDEO', view: 'GRAPH', stage: 'M6', graphId: 'graph-a', runId: 'run-a',
+    interfaceMode: 'PROFESSIONAL',
+  } });
+  expect(rememberLocalStudioInterfaceMode('project-a', 'NOVICE')).toBe(true);
+  expect(readLocalStudioInterfaceMode('project-a')).toBe('NOVICE');
+  expect(readLocalStudioResume('project-a')).toEqual({ state: 'SAVED', location: {
+    module: 'VIDEO', view: 'GRAPH', stage: 'M6', graphId: 'graph-a', runId: 'run-a',
+    interfaceMode: 'NOVICE',
+  } });
+});
+
+it('refuses to fabricate a saved location just to store a mode', () => {
+  expect(rememberLocalStudioInterfaceMode('project-a', 'PROFESSIONAL')).toBe(false);
+  expect(readLocalStudioResume('project-a')).toEqual({ state: 'EMPTY' });
+  expect(rememberLocalStudioInterfaceMode('project-a', 'EXPERT' as never)).toBe(false);
+  expect(rememberLocalStudioInterfaceMode('', 'PROFESSIONAL')).toBe(false);
+});
+
+it('restores the unified task-center view while rejecting an unknown view', () => {
+  expect(rememberLocalStudioResume('project-a', {
+    module: 'ASSETS', view: 'TASKS', stage: 'M4', interfaceMode: 'NOVICE',
+  })).toBe(true);
+  expect(readLocalStudioResume('project-a')).toEqual({ state: 'SAVED', location: {
+    module: 'ASSETS', view: 'TASKS', stage: 'M4', interfaceMode: 'NOVICE',
+  } });
+  expect(readLocalStudioResume('project-a', stored({ ...record, view: 'INBOX' }))).toEqual({ state: 'INVALID' });
 });

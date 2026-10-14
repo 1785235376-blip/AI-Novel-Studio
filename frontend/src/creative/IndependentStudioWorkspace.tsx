@@ -14,7 +14,7 @@ import { rememberLocalStudioSelection, rememberLocalWorkspaceSelection, type Loc
 import { useStudioGraphEditor } from './useStudioGraphEditor';
 import { AssetRelationshipsPanel } from './AssetRelationshipsPanel';
 import { StudioWorkspaceOperationPanel } from './StudioWorkspaceOperationPanel';
-import { readLocalStudioResume, rememberLocalStudioResume, type StudioWorkspaceLocation, type StudioWorkspaceStage, type StudioWorkspaceView } from './studioWorkspaceResume';
+import { readLocalStudioInterfaceMode, readLocalStudioResume, rememberLocalStudioInterfaceMode, rememberLocalStudioResume, type StudioInterfaceMode, type StudioWorkspaceLocation, type StudioWorkspaceStage, type StudioWorkspaceView } from './studioWorkspaceResume';
 import { useStudioWorkspacePreferences } from './useStudioWorkspacePreferences';
 import { StudioWorkspacePreferencesForm } from './StudioWorkspacePreferencesForm';
 import { studioProductionClient, type ProductionJob } from './studioProductionClient';
@@ -26,6 +26,14 @@ import { ProductionDashboard } from '../production/ProductionDashboard';
 import { ProductionInspectorPanel } from '../production/ProductionInspectorPanel';
 import { useProductionWorkflow } from '../production/useProductionWorkflow';
 import type { ProductionWorkflowAssetKind, ProductionWorkflowModuleId } from '../production/productionWorkflowTypes';
+// UX-PRODUCT batch 1: the unified task center (UX-02) and the studio entry /
+// intent / interface-mode surface (UX-01). Both are additive mounted content in
+// their own folders; neither introduces a second project, task or preference owner.
+import { TaskCenterPanel } from '../taskcenter/TaskCenter';
+import { StudioStartPanel } from '../onboarding/StudioStartPanel';
+import { InterfaceModeSwitch } from '../onboarding/InterfaceModeSwitch';
+import { createStudioEntryClient } from '../onboarding/studioEntryClient';
+import { useStudioEntry } from '../onboarding/useStudioEntry';
 import './independentStudio.css';
 
 export const isManualStudioModule = (module: StudioModule): module is LocalStudioModule => ['IMAGE', 'ASSETS', 'VIDEO', 'AUDIO'].includes(module);
@@ -67,6 +75,22 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [graphLocation, setGraphLocation] = useState<Pick<StudioWorkspaceLocation, 'graphId' | 'runId'>>(resume.state === 'SAVED'
     ? { graphId: resume.location.graphId, runId: resume.location.runId } : {});
   const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 'PRODUCTION';
+  // Presentation-only interface mode. Both modes share the same project, assets,
+  // tasks, graph and drafts; switching never converts, copies or deletes data.
+  const authoredLocally = !context.scope && !context.sessionToken && !context.actor;
+  const [interfaceMode, setInterfaceMode] = useState<StudioInterfaceMode>(
+    () => authoredLocally ? readLocalStudioInterfaceMode(projectId) : 'PROFESSIONAL');
+  const changeInterfaceMode = useCallback((mode: StudioInterfaceMode) => {
+    if (mode === 'NOVICE') {
+      // A novice never lands on the node graph: move off it instead of leaving a
+      // hidden view rendered.
+      setWorkspaceView(current => current === 'GRAPH' ? 'TASKS' : current);
+    }
+    setInterfaceMode(mode);
+    // Best-effort local hint; when no location is saved yet the next resume write
+    // carries the mode, and this never fabricates a location to store it.
+    rememberLocalStudioInterfaceMode(projectId, mode);
+  }, [projectId]);
   const [pendingNavigation, setPendingNavigation] = useState<() => void>(), [discard, setDiscard] = useState(false);
   const selectionEpoch = useRef(0), overviewEpoch = useRef(0), storageEpoch = useRef(0), storageReading = useRef(false);
   const overviewReading = useRef<AbortController>(), storageRequest = useRef<AbortController>();
@@ -196,6 +220,18 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     active: productionView && overview?.project.entry_kind === 'NEUTRAL_STUDIO' && !denied && !identityRetired,
     denied: denied || identityRetired, busy, isCurrent: current, read: guarded, mutate: graphMutation, client: workflowClient,
     onDirtyChange: workflowDraftChanged, onUnavailable: deny });
+  // UX-01 entry controller over the same captured Studio transport. It lists the
+  // original projects, creates through the original blank-project owner and reads
+  // or replaces the saved intent; it executes no generation. It is active only
+  // while the start surface is actually on screen, so a normal session issues no
+  // extra request at all.
+  const startVisible = authoredLocally && !denied && !identityRetired
+    && overview?.project.entry_kind === 'NEUTRAL_STUDIO' && workspaceView === 'START'
+    && !rows.length && !selected;
+  const entryClient = useMemo(() => createStudioEntryClient(studioTransport({
+    ...context, scope: context.scope ? { ...context.scope } : undefined }), projectId),
+    [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
+  const entry = useStudioEntry({ client: entryClient, identity: cacheKey, active: startVisible, projectId });
   const dirty = preferenceDirty || lineageDirty || relationshipDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty || workflowDirty;
   const dirtyRef = useRef(dirty); dirtyRef.current = dirty;
   const lineageDirtyRef = useRef(lineageDirty); lineageDirtyRef.current = lineageDirty;
@@ -221,8 +257,8 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   useEffect(() => {
     if (!overview || context.scope || context.sessionToken || context.actor || !current()) return;
     if (!rememberLocalWorkspaceSelection(projectId) || !rememberLocalStudioSelection(projectId, module, selected?.id)
-      || !rememberLocalStudioResume(projectId, { module, view: workspaceView, stage: productionStage, ...graphLocation })) setNotice('浏览器无法记住本次选择；已保存内容仍在服务端，可以从项目列表重新打开。');
-  }, [overview, context.scope, context.sessionToken, context.actor, current, projectId, module, selected?.id, workspaceView, productionStage, graphLocation]);
+      || !rememberLocalStudioResume(projectId, { module, view: workspaceView, stage: productionStage, interfaceMode, ...graphLocation })) setNotice('浏览器无法记住本次选择；已保存内容仍在服务端，可以从项目列表重新打开。');
+  }, [overview, context.scope, context.sessionToken, context.actor, current, projectId, module, selected?.id, workspaceView, productionStage, interfaceMode, graphLocation]);
   const invalidateStorage = useCallback(() => { storageEpoch.current++; storageRequest.current?.abort(); storageReading.current = false; setStorageLoading(false); setStorage(undefined); }, []);
   const loadProductionAssets = useCallback(async () => {
     if (!current() || busyRef.current) return;
@@ -313,7 +349,17 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   </div>;
   const maskEpoch = selectionEpoch.current;
   const main = <div className="independent-studio">
-    {overview && !denied && <div className="studio-graph-actions" aria-label="独立工作区内容"><Button aria-pressed={workspaceView === 'ASSETS'} onClick={() => navigate(() => setWorkspaceView('ASSETS'))}>素材工作区</Button><Button aria-pressed={graphView} onClick={() => navigate(() => setWorkspaceView('GRAPH'))}>创作图</Button><Button aria-pressed={productionView} onClick={() => navigate(() => setWorkspaceView('PRODUCTION'))}>制作操作</Button></div>}
+    {overview && !denied && <div className="studio-graph-actions" aria-label="独立工作区内容"><Button aria-pressed={workspaceView === 'START'} onClick={() => navigate(() => setWorkspaceView('START'))}>创作开始</Button><Button aria-pressed={workspaceView === 'TASKS'} onClick={() => navigate(() => setWorkspaceView('TASKS'))}>任务中心</Button><Button aria-pressed={workspaceView === 'ASSETS'} onClick={() => navigate(() => setWorkspaceView('ASSETS'))}>素材工作区</Button>{interfaceMode === 'PROFESSIONAL' && <Button aria-pressed={graphView} onClick={() => navigate(() => setWorkspaceView('GRAPH'))}>创作图</Button>}<Button aria-pressed={productionView} onClick={() => navigate(() => setWorkspaceView('PRODUCTION'))}>制作操作</Button><InterfaceModeSwitch mode={interfaceMode} onChange={changeInterfaceMode} /></div>}
+    {workspaceView === 'TASKS' && !denied && <TaskCenterPanel projectId={projectId}
+      transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
+      scope={context.scope} identity={cacheKey} active={workspaceView === 'TASKS' && !denied && !identityRetired}
+      denied={denied || identityRetired} busy={busy} isCurrent={current} read={guarded} mutate={graphMutation}
+      onNavigate={target => { if (!current()) return; if (target.queue === 'TASKS') { navigate(() => setWorkspaceView('PRODUCTION')); setNotice(`已定位到原任务 ${target.task_id}（${target.authority}）：这里只发出定位回调，没有重新提交模型或渲染。`); } else { navigate(() => setWorkspaceView('ASSETS')); setNotice(`已定位到待审候选 ${target.item_id}（${target.domain}）：请在对应工作区按原版本复核。`); } }}
+      onUnavailable={deny} />}
+    {startVisible && <StudioStartPanel controller={entry} onOpenProject={id => {
+      if (id === projectId) { navigate(() => setWorkspaceView(resume.state === 'SAVED' ? resume.location.view : 'ASSETS')); setNotice('已回到本项目保存的位置。'); return; }
+      setNotice(`项目“${id}”已经存在；请从项目列表打开它，当前工作区不会自动切换，也不会为它新建任何内容。`);
+    }} mode={interfaceMode} onModeChange={changeInterfaceMode} />}
     {workspaceView === 'ASSETS' && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
     {loading && <StatusMessage>正在核对项目与权限…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {denied ? <EmptyState title="当前会话无权访问此项目" detail="私人预览已关闭。重新核对身份与范围后再打开。" /> : !overview && !loading ? <Button onClick={() => void refresh()}>重新读取项目</Button> : null}
@@ -322,9 +368,14 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     {graphView && overview && !denied && graph.content}
     {productionView && overview && !denied && <ProductionDashboard controller={workflow} selectedModuleId={workflowModule}
       onSelectModule={setWorkflowModule} selectedKind={workflowAssetKind} onSelectKind={setWorkflowAssetKind} />}
-    {productionView && overview && !denied && <StudioWorkspaceOperationPanel identity={cacheKey} denied={denied} busy={busy}
+    {productionView && overview && !denied && interfaceMode === 'PROFESSIONAL' && <StudioWorkspaceOperationPanel identity={cacheKey} denied={denied} busy={busy}
       isCurrent={current} read={guarded} loadContracts={client.productionContracts} requestedStage={productionStage}
       onStageChange={setProductionStage} onUnavailable={deny} onOpenSurface={view => navigate(() => setWorkspaceView(view))} />}
+    {productionView && overview && !denied && interfaceMode === 'NOVICE' && <Panel title="制作操作（新手模式）">
+      <p>新手模式只展开主要操作：素材执行、时间线与任务中心都在本页或“任务中心”里。制作操作契约、阶段与来源详情属于专业视图。</p>
+      <p>两种模式使用同一份项目、素材、任务与草稿；切换不会转换、复制或删除任何数据。</p>
+      <Button onClick={() => changeInterfaceMode('PROFESSIONAL')}>切换到专业模式查看契约与参数</Button>
+    </Panel>}
     {productionView && overview && !denied && <>
       <Button disabled={busy} onClick={() => void loadProductionAssets()}>读取当前素材版本</Button>
       <StudioMediaExecutionPanel key={`media:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows}
