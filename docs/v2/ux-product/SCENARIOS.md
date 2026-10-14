@@ -46,3 +46,17 @@
 | 集成映射缺陷 | 验证线发现并已修复（提交 `b2bb623`）：`onEdit` 曾读错 `at_ms`/`target_track_id`，致 duplicate/move 被恒拒（fail-closed） | 提醒：**界面"拒绝"不等于功能正确**；接线类改动必须配测试 |
 
 **口径提醒**：`scripts/check_ui_design_tokens.mjs` 只扫描 `frontend/src/ui`，`tokens` 收据的 PASS **不覆盖**任何功能目录的 CSS；新增目录的令牌合规来自验证线的逐目录扫描，而非该检查。
+
+## 执行范围更正与流程缺陷（批次 4 验证线独立发现，2026-10-14 22:2x）
+
+以下为本表**必须更正**的口径问题，均由独立验证线以反证形式提出：
+
+| 问题 | 事实 | 更正后的表述 |
+| --- | --- | --- |
+| 本表引用了**未被批次 harness 执行**的测试文件 | 批次 4 验收命令（`run_ux_product_checks.py`）只执行 8 个 UX 目录 + 14 个既有回归文件；`quality` 下列文件**不在**该执行集内：`src/creative/studioWorkspaceResume.test.ts`（S01/S02 模式切换）、`src/creative/StudioSelectLabels.test.tsx` 与 `src/creative/CreativeWorkspace.test.tsx`（S14）、`src/creative/TimelineSourceEditing.phase6.test.tsx`（S09 撤销/保存冲突） | 这些文件确有**执行证据**，但来自 Lead 集成轮的**直接 vitest 运行**（批次 3 集成时 `pnpm exec vitest run src/storyboard src/nle src/creative/IndependentStudio src/creative/CreativeWorkspace.test.tsx` = 16 files/292 tests；批次 1/2 亦直跑过对应套件），**不是**批次 harness 的一部分。正确表述应为"**Lead 直接运行**"，而非"批次收据覆盖"。 |
+| 并发写入同一收据路径（§15.3 违规） | 修订 8 有**两次并发运行**（验证线与 Lead 各自执行同一命令），互相覆盖 `ux-product-*-r8.json`。存留集合来自另一次运行 | r8 收据**不是**单次无争用运行的结果；该违规由 Lead 的调度造成（未在启动 harness 前与验证线互斥），已如实记录。 |
+| harness 覆盖完整性只按**目录存在**判断 | `frontend` 检查的 `incomplete_coverage` 依据目录是否存在，而非目录内是否有测试 | 若某 UX 目录存在但**无测试**，仍会被记为 PASS；本批次未触发（modelcenter 99 + guide 74 确实执行）。 |
+| `types` 检查在**热缓存**下偏弱 | 验证线运行中 `types` PASS，而同一文件的 esbuild 已报错——`tsc -b` 使用了 `frontend/tsconfig.tsbuildinfo` 热缓存 | 需要 `tsc -b --force` 才能作为强证据；后续批次应在冻结前强制重建。 |
+| Lead 集成曾**瞬时中断构建** | 修订 8 期间 `IndependentStudioWorkspace.tsx:81` 出现"组件体内 import"（Lead 的编辑失误），使某次 build FAIL，随后修复 | r8 的 all-PASS 是**修复后**的结果；该中断属真实过程记录，不作为产品缺陷保留。 |
+
+**因此**：本表"COVERED"的含义收窄为"**有某次真实执行的测试证据**（可能来自 Lead 直跑而非批次 harness）"；只有同时出现在批次收据中的条目，才是被 harness 独立复核过的。
