@@ -89,6 +89,57 @@ def test_asset_and_export_reads_survive_a_missing_field():
     assert model_content_policy_support({"content_policy_support": ["STANDARD", "MATURE"]}) == ("STANDARD", "MATURE")
 
 
+def test_the_phase8_mapping_declaration_shape_is_accepted():
+    """Phase8 fixed the mapping form; the earlier list form stays supported."""
+    mapping = {"content_policy_support": {"STANDARD": True, "MATURE": False}}
+    assert model_content_policy_support(mapping) == ("STANDARD",)
+    assert model_content_policy_support({"content_policy_support": {"MATURE": True, "STANDARD": True}}) == ("STANDARD", "MATURE")
+    assert model_content_policy_support({"content_policy_support": {"MATURE": True}}) == ("MATURE",)
+    # A mapping with nothing explicitly true, an unknown-only mapping, junk and a
+    # non-boolean truthy value all fall back to the default instead of guessing.
+    assert model_content_policy_support({"content_policy_support": {"STANDARD": False}}) == ("STANDARD",)
+    assert model_content_policy_support({"content_policy_support": {"NSFW": True}}) == ("STANDARD",)
+    assert model_content_policy_support({"content_policy_support": {"STANDARD": 1}}) == ("STANDARD",)
+    assert model_content_policy_support({"content_policy_support": {}}) == ("STANDARD",)
+    assert model_content_policy_support({"content_policy_support": "STANDARD"}) == ("STANDARD",)
+    # Legacy list form still works, and neither shape filters anything.
+    assert model_content_policy_support({"content_policy_support": ["MATURE"]}) == ("MATURE",)
+
+
+def test_no_owner_outside_the_reservation_reads_the_reserved_field():
+    """Asset and export reads cannot fail on a missing policy: nothing else reads it.
+
+    Bounded walk over `app/` — the field is declared in `workspace_models.py` and its
+    "null means unchanged" write rule lives in `workspace.py`; every other module,
+    including the asset library and the export job service, must be untouched by it.
+    """
+    root = Path(__file__).resolve().parents[1]
+    allowed = {
+        # The declaration and the "null means unchanged" write rule.
+        "app/creative/content_policy.py", "app/creative/workspace_models.py", "app/creative/workspace.py",
+        # Pre-existing and unrelated: interactive_story.py:701 carries the string
+        # 'content_policy': 'RETAIN_AUTHOR_TEXT_AS_UNREVIEWED_DRAFT_...' as an
+        # interactive-story retention rule. It is not this project-level field and it
+        # predates the reservation; it is listed here so the guard stays exact.
+        "app/experimental/interactive_story.py",
+    }
+    offenders = []
+    for path in (root / "app").rglob("*.py"):
+        relative = path.relative_to(root).as_posix()
+        if relative in allowed:
+            continue
+        text = path.read_text(encoding="utf-8")
+        for needle in ("content_policy", "asset_policy"):
+            if needle in text:
+                offenders.append(f"{relative}:{needle}")
+    assert offenders == []
+    # The reserved helpers therefore accept every shape a legacy reader can hand them.
+    for absent in (None, {}, {"content_policy": None}, {"intents": [], "preset": "BLANK", "custom_intent": ""}):
+        assert effective_content_policy(absent) == "STANDARD"
+        assert asset_policy_for(None) == "STANDARD"
+        assert export_notice(None)["blocking"] is False
+
+
 @pytest.fixture(params=[
     pytest.param("file", marks=pytest.mark.file_backend_only),
     pytest.param("postgres", marks=pytest.mark.postgres_backend_only),

@@ -54,8 +54,18 @@ def model_content_policy_support(entry: Mapping | None) -> tuple[str, ...]:
 
     Reports only what an entry declares, defaulting to STANDARD. It never filters,
     hides, enables or launches a model, and an unknown declaration is not trusted.
+
+    Two declaration shapes are accepted, because Phase8 fixed the mapping form while
+    the earlier reservation used a list:
+      - a mapping of policy -> bool, e.g. ``{"STANDARD": true, "MATURE": false}``
+        (only entries explicitly ``True`` count, and unknown policy names are dropped);
+      - a list/tuple of policy names, e.g. ``["STANDARD", "MATURE"]``.
+    Anything else — including a mapping with no ``True`` entry — reports STANDARD.
     """
     declared = entry.get("content_policy_support") if isinstance(entry, Mapping) else None
+    if isinstance(declared, Mapping):
+        supported = tuple(name for name in POLICIES if declared.get(name) is True)
+        return supported or (DEFAULT_CONTENT_POLICY,)
     if isinstance(declared, (list, tuple)) and declared and all(value in POLICIES for value in declared):
         return tuple(declared)
     return (DEFAULT_CONTENT_POLICY,)
