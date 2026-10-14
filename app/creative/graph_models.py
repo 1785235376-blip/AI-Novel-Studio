@@ -762,8 +762,45 @@ def history_limit(row):
     return MAX_MEDIA_HISTORY if row.get("graph_schema_version") in {3, 4, 5} or row.get("definition", {}).get("schema_version") in {3, 4, 5} else MAX_HISTORY
 
 
+#: Schema versions the graph contract can validate. `parse_graph` maps 1..5:
+#: 5 -> GraphVideoInput, 4 -> GraphImageInput, 3 -> GraphMediaInput,
+#: 2 -> GraphModelInput, anything else -> the frozen GraphInput (v1).
+SUPPORTED_SCHEMA_VERSIONS = frozenset({1, 2, 3, 4, 5})
+
+#: The frozen pre-schema catalog. A missing version means v1, never "unknown".
+LEGACY_SCHEMA_VERSION = 1
+
+
+def normalise_schema_version(value):
+    """Resolve a caller-supplied schema version, or refuse it.
+
+    ``None`` is a **deliberate** legacy default, not an oversight: the frozen
+    seven-node catalog predates ``schema_version``, and ``definition_for`` returns
+    the same definition for ``None`` as for ``1``, so a caller that omits the
+    version is validating v1 semantics and old persisted rows stay readable.
+
+    Anything else must be a real version. This is the part that was missing: an
+    out-of-range or non-integer value used to fall through every ``not in {3,4,5}``
+    style gate and be silently validated as v1. The check is exact on purpose,
+    because ``True == 1`` in Python and this module rejects booleans for version
+    fields elsewhere (``GraphCreate.exact_zero``).
+    """
+    if value is None:
+        return LEGACY_SCHEMA_VERSION
+    if type(value) is not int or value not in SUPPORTED_SCHEMA_VERSIONS:
+        raise ValueError("CREATIVE_GRAPH_SCHEMA_VERSION_INVALID")
+    return value
+
+
 def validate_output_ports(definition_id, value, *, schema_version=None):
-    """Finite output types also apply to persisted/cached local receipts."""
+    """Finite output types also apply to persisted/cached local receipts.
+
+    ``schema_version=None`` means the frozen legacy v1 contract (see
+    ``normalise_schema_version``); every schema-specific port type still refuses to
+    validate under a version it does not belong to, so omitting the version is
+    fail-closed rather than permissive.
+    """
+    schema_version = normalise_schema_version(schema_version)
     expected = definition_for(definition_id, schema_version=schema_version)["outputs"]
     if not isinstance(value, dict) or set(value) != {port["id"] for port in expected}:
         raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
