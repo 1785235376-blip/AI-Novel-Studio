@@ -10,6 +10,9 @@ import { AssetLibraryPanel, type AssetLibraryAdapter } from '../novel/AssetLibra
 // assistant (UX-08). Both are read-only and open on demand.
 import { ModelCenterPanel } from '../modelcenter/ModelCenterPanel';
 import { ProjectGuidePanel } from '../guide/ProjectGuidePanel';
+// UX-PRODUCT batch 5 (UX-09): the unified export and handover centre. Read-only:
+// it can only read export receipts and refuse a format it has no owner for.
+import { DeliveryCenterPanel } from '../delivery/DeliveryCenterPanel';
 import { AssetInspector } from '../novel/AssetInspector';
 import type { LineageAsset } from '../experimental/ProductionLineagePanel';
 import { StudioAssetDeclarationForm } from './StudioAssetDeclarationForm';
@@ -82,7 +85,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [productionStage, setProductionStage] = useState<StudioWorkspaceStage>(resume.state === 'SAVED' ? resume.location.stage : 'M4');
   const [graphLocation, setGraphLocation] = useState<Pick<StudioWorkspaceLocation, 'graphId' | 'runId'>>(resume.state === 'SAVED'
     ? { graphId: resume.location.graphId, runId: resume.location.runId } : {});
-  const [modelOpen, setModelOpen] = useState(false), [guideOpen, setGuideOpen] = useState(false);
+  const [modelOpen, setModelOpen] = useState(false), [guideOpen, setGuideOpen] = useState(false), [deliveryOpen, setDeliveryOpen] = useState(false);
 const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 'PRODUCTION';
   // Presentation-only interface mode. Both modes share the same project, assets,
   // tasks, graph and drafts; switching never converts, copies or deletes data.
@@ -411,6 +414,11 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         onUnavailable={deny} />}
       <Button aria-expanded={modelOpen} onClick={() => setModelOpen(true)}>按需打开模型中心</Button>
       {modelOpen && <ModelCenterPanel projectId={projectId}
+        transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
+        scope={context.scope} identity={cacheKey} active denied={denied} busy={busy} isCurrent={current}
+        read={guarded} mutate={graphMutation} onUnavailable={deny} />}
+      <Button aria-expanded={deliveryOpen} onClick={() => setDeliveryOpen(true)}>按需打开统一导出与工程交接</Button>
+      {deliveryOpen && <DeliveryCenterPanel projectId={projectId}
         transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
         scope={context.scope} identity={cacheKey} active denied={denied} busy={busy} isCurrent={current}
         read={guarded} mutate={graphMutation} onUnavailable={deny} />}
