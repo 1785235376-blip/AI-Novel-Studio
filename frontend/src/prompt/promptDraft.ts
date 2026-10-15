@@ -66,6 +66,22 @@ export const emptyContent = (): DraftContent => ({
   changeNote: '', changeReason: '',
 });
 
+/**
+ * 深拷贝草稿内容。
+ *
+ * 只做 `{ ...content }` 会共享数组引用：外部对原数组 push/splice，或组件闭包复用同一个数组，
+ * 都会在提交之后悄悄改变“已发出的请求”的含义。因此快照与写入都必须复制数组。
+ */
+export function cloneContent(content: DraftContent): DraftContent {
+  return {
+    ...content,
+    characterIds: [...content.characterIds],
+    sceneIds: [...content.sceneIds],
+    shotIds: [...content.shotIds],
+    referenceAssetIds: [...content.referenceAssetIds],
+  };
+}
+
 export function newDraft(key: string): Draft {
   return { key, familyId: null, baseAssetId: null, baseRevision: null, content: emptyContent(),
     pending: null, state: 'CLEAN', requestId: null, conflictCode: null, message: null };
@@ -111,7 +127,7 @@ export function canSubmit(draft: Draft): boolean {
 export function editDraft(draft: Draft, patch: Partial<DraftContent>): Draft {
   // SUBMITTING / UNKNOWN：不得改动待提交快照，否则“已保存”的可能是另一份内容。
   if (isInputLocked(draft)) return draft;
-  return { ...draft, content: { ...draft.content, ...patch }, state: 'DIRTY',
+  return { ...draft, content: cloneContent({ ...draft.content, ...patch }), state: 'DIRTY',
     // 冲突标记保留到显式重新基准为止，因此编辑本身不等于“可以提交”。
     message: null };
 }
@@ -122,7 +138,7 @@ export function editDraft(draft: Draft, patch: Partial<DraftContent>): Draft {
 export function beginSubmit(draft: Draft, allocate: () => string): Draft {
   if (draft.state === 'SUBMITTING') return draft;
   if (!canSubmit(draft)) return draft;
-  return { ...draft, state: 'SUBMITTING', pending: { ...draft.content },
+  return { ...draft, state: 'SUBMITTING', pending: cloneContent(draft.content),
     requestId: allocate(), conflictCode: null, message: null };
 }
 
@@ -290,14 +306,22 @@ function storageKey(scope: string, key: string): string {
   return `${scope}\u0000${key}`;
 }
 
-/** 会话内读写：跨模块跳转保留，跨项目/身份不串台。 */
+/** 会话内读写：跨模块跳转保留，跨项目/身份不串台。存入与取出都复制，避免共享可变对象。 */
 export function stashDraft(projectId: string, branchId: string | null, actor: string, draft: Draft): void {
-  inMemoryDrafts.set(storageKey(draftScopeKey(projectId, branchId, actor), draft.key), draft);
+  inMemoryDrafts.set(storageKey(draftScopeKey(projectId, branchId, actor), draft.key), {
+    ...draft,
+    content: cloneContent(draft.content),
+    pending: draft.pending ? cloneContent(draft.pending) : null,
+  });
 }
 
 export function takeDraft(projectId: string, branchId: string | null, actor: string,
   key: string): Draft | null {
-  return inMemoryDrafts.get(storageKey(draftScopeKey(projectId, branchId, actor), key)) ?? null;
+  const stored = inMemoryDrafts.get(storageKey(draftScopeKey(projectId, branchId, actor), key));
+  if (!stored) return null;
+  // 返回副本：旧组件保留上一次取到的对象时，不能继续污染 store 里的草稿。
+  return { ...stored, content: cloneContent(stored.content),
+    pending: stored.pending ? cloneContent(stored.pending) : null };
 }
 
 export function dropStashedDrafts(projectId: string, branchId: string | null, actor: string): void {

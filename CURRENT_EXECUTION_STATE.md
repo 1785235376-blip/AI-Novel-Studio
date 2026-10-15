@@ -46,41 +46,50 @@ No `reset --hard`, `git clean`, force push, ref repair, ACL change or PATH rewri
 
 ## R3-U breakpoint (resume here)
 
-**Done and pushed:** `ddd56ca` (R3-U1), `e622d12` (R3-U2). Remote feature head =
-`e622d1271adb9d0fd6bf48c76e228c7f8009ca98`. 0 tracked dirty. PG cluster stopped.
+**R3-U1 `ddd56ca` · R3-U2 `e622d12` · R3-U3-A contract alignment · R3-U3-B snapshot/aliasing — all done and pushed.**
+Frontend: **52 tests pass**, `tsc --noEmit` exit 0. 0 tracked dirty. PG cluster stopped.
 
-**Next concrete action — R3-U3, the real React Workspace** (this is the only thing standing
-between R3-U and COMPLETE):
+### R3-U3-A / B — done (real producer contract + snapshot freeze)
 
-1. `frontend/src/prompt/PromptWorkspace.tsx` + child components + a `usePromptWorkspace` hook,
-   consuming the **already-verified** `promptContract.ts` / `promptClient.ts` / `promptDraft.ts`.
-2. Mount inside `IndependentStudioWorkspace` using the existing **ASSETS tab / tool-workspace**
-   pattern. Do **not** add a top-level `ModuleSwitcher` entry and do **not** touch protected
-   surfaces (`docs/ui/protected_ui_surfaces.md`).
-3. Library (list, search, filter by purpose/model/review status, incomplete-read banner from
-   `truncated`/`hasMore`, and explicit states for loading/empty/no-permission/network/contract
-   error/conflict/deleted) · Editor (all fields; **save only on explicit click**; inputs disabled
-   while `isInputLocked(draft)`; double-submit guard; `aria-live` status) · Version History
-   (APPROVED vs DRAFT distinct; `DUPLICATE_REVISION`/`CONFLICTED`/`REVISION_UNAVAILABLE` shown,
-   never inferred from version numbers) · Version Comparison via the new
-   `GET …/revisions/{asset_id}/body` route (real text diff; unavailable/redacted/deleted ⇒
-   "cannot compare this field") · bindings view (KNOWN/UNKNOWN; write-time reference check stays
-   `NOT_RUN` and must not be relabelled VERIFIED).
-4. Reuse `StudioInterfaceMode` (`NOVICE`/`PROFESSIONAL`) — no second mode concept.
-5. New CSS under `frontend/src/prompt/` uses DS-v1.0 tokens only, and must be **self-verified**:
-   `scripts/check_ui_design_tokens.mjs` only walks `frontend/src/ui`.
-6. Then: jsdom/Testing-Library component tests → `tsc --noEmit` → Vite production build →
-   Playwright at 1366x768 / 1440x900 / 1920x1080 against a **localhost test service, never the
-   user's Strata on 8080**.
+* `scripts/capture_prompt_contract_fixture.py` captures the **real** backend JSON into
+  `frontend/src/prompt/__fixtures__/`; `promptProducerContract.test.ts` decodes those files, so a
+  decoder that disagrees with the producer fails in CI rather than in the browser.
+* Confirmed mismatches fixed: library envelope (`required_fields`, `purposes`, `origins`,
+  `binding_kinds`) and service envelope (`project_id`, `scope`, `generated_at`, `asset_owner`,
+  `bible_owner`); bindings group-level + row-level `verification` and row `kind`; the real contract
+  literals `studio-prompt-library/1` / `studio-prompt-detail/1` (were one wrong constant
+  `prompt-library/1`), now validated and rejected when unknown.
+* `readRevisionBody(familyId, assetId)` + strict decoder added — the U2 route had no caller.
+* Pending snapshot now deep-copies all four binding arrays; the session store copies on write and
+  read.
+
+### Remaining — R3-U3-C and R3-U3-D
+
+1. `frontend/src/prompt/PromptWorkspace.tsx`, `usePromptWorkspace.ts`, and Library / Editor /
+   History / Compare / Binding child components, consuming the verified `promptTypes` /
+   `promptContract` / `promptClient` / `promptDraft`. **Do not** reimplement asset saving in a
+   component or add a second owner.
+2. Mount in `IndependentStudioWorkspace` via the existing ASSETS view or tool-panel slot, with a
+   visible Prompt workspace entry. Do not create a component without mounting it, and do not touch
+   the AppShell / ModuleSwitcher / protected surfaces (`docs/ui/protected_ui_surfaces.md`).
+3. Editor must disable inputs while `isInputLocked(draft)`, guard double submit, keep invalid
+   parameter JSON / seed in the draft with an explanation, default hand-written drafts to `MANUAL`
+   (never claim `AI_GENERATED`), show `KNOWN`/`UNKNOWN` bindings with their source, and use a
+   persistent `aria-live` status rather than a transient toast.
+4. Compare via the real `/revisions/{asset_id}/body`; unavailable/redacted/deleted fields must read
+   "cannot compare this field". Reuse `StudioInterfaceMode` for NOVICE/PROFESSIONAL — no second mode.
+5. New CSS under `frontend/src/prompt/` uses DS-v1.0 tokens only and must be self-verified
+   (`check_ui_design_tokens.mjs` only walks `frontend/src/ui`).
+6. Then component tests → `tsc` → `vite build` → Playwright at 1366x768 / 1440x900 / 1920x1080
+   against a localhost test service, **never the user's Strata on 8080**.
 
 **Only after that may** `ROUND3U_PROMPT_WORKSPACE_REPORT.md`, `_DECISIONS.md` and `_HANDOFF.md` be
-generated (plus FEATURE_MATRIX + this file). While R3-U3 is unfinished, `ROUND3U_STATUS.md`
-(PARTIAL) is the authoritative status — do not produce a pseudo-complete report.
+generated. While R3-U3-C/D are unfinished, `ROUND3U_STATUS.md` (PARTIAL) stays authoritative.
 
-**Still `NOT_RUN` and must be reported as such:** real browser acceptance · real refresh draft
-restore (the marker only *detects* a lost draft; text is never written to browser storage, so
-restore is `PARTIAL` by design) · cross-process concurrency · write-time reference verification ·
-the R3-U2 tombstone branch against a real deleted revision (blocked: `delete()` has no `actor_id`).
+**Still `NOT_RUN`:** real browser acceptance · real refresh draft restore (PARTIAL by design — the
+marker only *detects* a lost draft; text is never written to browser storage) · cross-process
+concurrency · write-time reference verification · the U2 tombstone branch against a real deleted
+revision (blocked: `delete()` has no `actor_id`).
 | R3-I production application | `NOT_RUN` | — |
 | R3-GATE | `NOT_RUN` | — |
 | R4 asset relationship view | `NOT_RUN` | — |
