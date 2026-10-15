@@ -253,6 +253,10 @@ class CreativeService(DomainService):
           delete a server-generated proof.
         """
         self._expected(expected_version)
+        # Set only after the transaction has actually committed: handing the caller a proof
+        # while assert_current / assert_capacity / reauthorize could still fail would report an
+        # adoption for a transaction that rolled back.
+        committed_proof = None
         with self.store.transaction(nid, scope) as state:
             row = state["collections"].get(self.COLLECTION, {}).get(rid)
             if row is None or row.get("novel_id") != nid or row.get("scope") != scope or row.get("status") == "ARCHIVED":
@@ -288,17 +292,20 @@ class CreativeService(DomainService):
                     current["prompt_adoptions"] = proofs
                 else:
                     current.pop("prompt_adoptions", None)
-                if server_proof is not None and proof_sink is not None:
-                    # Hand the caller the proof that was ACTUALLY stored, from inside the
-                    # commit transaction. A caller that searched the returned row afterwards
-                    # could fail only after the write had committed, reporting failure for a
-                    # version that really exists.
-                    proof_sink["proof"] = copy.deepcopy(server_proof)
+                if server_proof is not None:
+                    nonlocal committed_proof
+                    committed_proof = copy.deepcopy(server_proof)
             change_row(row, actor, expected_version, replace_content)
             self.assert_current(nid, scope, row)
             self.assert_capacity(state)
             reauthorize()
-            return copy.deepcopy(row)
+            result = copy.deepcopy(row)
+        # Only now has the transaction committed. If any check above raised, this line is
+        # never reached and the caller sees no proof at all -- which is accurate, because no
+        # version carrying this request was created.
+        if proof_sink is not None:
+            proof_sink["proof"] = committed_proof
+        return result
 
     def archive(self, nid, scope, actor, rid, expected_version, *, reauthorize=lambda: None):
         self._expected(expected_version)

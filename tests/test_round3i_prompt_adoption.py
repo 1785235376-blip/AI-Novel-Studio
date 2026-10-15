@@ -527,3 +527,74 @@ def test_an_unconfirmable_revision_fails_closed_rather_than_displaying(rig):
     entry2 = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][-1]
     assert entry2["source_state"] == "UNKNOWN"
     assert entry2["source_readable"] is False
+
+
+# ------------------------------------------- document digest, and the UNKNOWN branch --
+def test_the_read_projection_digest_is_the_documents_own_digest(rig):
+    """Regression: the per-revision lookup used to rebind the CreativeDocument variable.
+
+    `read()` bound `row` to the CreativeDocument and then reassigned the same name to a
+    Prompt `versions[]` entry, so the digest it returned came from a PROMPT VERSION ROW, and
+    when no row matched it hashed None. This asserts the real, document-level digest both
+    before and after an adoption.
+    """
+    document, shot_id = _storyboard(rig)
+    before = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)
+    expected = rig.creative.document_digest(rig.creative.get(rig.nid, rig.scope, document["id"]))
+    assert before["digest"] == expected
+    assert before["version"] == document["version"]
+
+    receipt, _d, b1 = _prompt(rig)
+    _adopt(rig, document, shot_id, receipt, b1)
+
+    after = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)
+    live = rig.creative.get(rig.nid, rig.scope, document["id"])
+    assert after["digest"] == rig.creative.document_digest(live)
+    assert after["version"] == live["version"]
+    assert after["digest"] != before["digest"], "a new revision must change the document digest"
+
+
+def test_the_unknown_branch_fails_closed_and_still_returns_a_document_digest(rig):
+    """CONTROLLED PROJECTION CONTRACT TEST — not a business scenario.
+
+    A stub prompt service returns a family projection whose `versions[]` omits the adopted
+    asset, which is how a storage-compatibility state (a proof referencing a revision the
+    family no longer lists) presents itself. This exercises the UNKNOWN branch and, crucially,
+    the previously crashing path: `document_digest(None)` from the shadowed variable.
+
+    It is deliberately NOT presented as a real user operation: no business API produces this
+    input, so it is a contract test of the projection itself.
+    """
+    import copy as _copy
+    document, shot_id = _storyboard(rig)
+    receipt, _d, b1 = _prompt(rig)
+    _adopt(rig, document, shot_id, receipt, b1)
+
+    real = rig.adoption.prompts
+
+    class _StubPrompts:
+        def __init__(self, inner):
+            self._inner = inner
+
+        def detail(self, nid, scope, family_id, actor=None):
+            projection = self._inner.detail(nid, scope, family_id, actor)
+            projection = _copy.deepcopy(projection)
+            # The adopted revision is no longer listed by the family.
+            projection["versions"] = [v for v in projection.get("versions") or []
+                                      if v.get("asset_id") != receipt["asset_id"]]
+            return projection
+
+        def revision_body(self, *a, **k):
+            return self._inner.revision_body(*a, **k)
+
+    rig.adoption.prompts = _StubPrompts(real)
+    try:
+        read = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)
+        entry = read["adoptions"][-1]
+        assert entry["source_state"] == "UNKNOWN", "an unconfirmable revision must be UNKNOWN"
+        assert entry["source_readable"] is False, "UNKNOWN must fail closed, never allow"
+        # The crash path: this must be the DOCUMENT's digest, not None hashed.
+        live = rig.creative.get(rig.nid, rig.scope, document["id"])
+        assert read["digest"] == rig.creative.document_digest(live)
+    finally:
+        rig.adoption.prompts = real

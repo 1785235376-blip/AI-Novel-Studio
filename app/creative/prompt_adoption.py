@@ -84,11 +84,13 @@ class PromptAdoptionService:
         self.workspace.store.key(nid, scope)
         self.workspace.novels.get(nid)
         value = self.workspace.creative.get(nid, scope, document_id)
-        row = self._document(nid, scope, actor, document_id)
-        current = {item.get("id"): item for item in self._shots(row) if isinstance(item, dict)}
-        version = row.get("version")
+        # `document` is the CreativeDocument for the WHOLE function. The per-revision mask
+        # lookup below must never bind this name.
+        document = self._document(nid, scope, actor, document_id)
+        current = {item.get("id"): item for item in self._shots(document) if isinstance(item, dict)}
+        version = document.get("version")
         entries = []
-        for proof in self._proofs(row):
+        for proof in self._proofs(document):
             entry = dict(proof)
             entry["newer_revision_available"] = False
             entry["source_readable"] = True
@@ -115,21 +117,21 @@ class PromptAdoptionService:
                 # contract, which carries only state/available/verified/read_complete — reading
                 # it from the body silently yielded None and let every masked revision look
                 # displayable.
-                row = next((item for item in (detail.get("versions") or [])
-                            if isinstance(item, dict)
-                            and item.get("asset_id") == proof.get("asset_id")), None)
-                if row is None or row.get("revision") != proof.get("revision"):
+                version_row = next((item for item in (detail.get("versions") or [])
+                                    if isinstance(item, dict)
+                                    and item.get("asset_id") == proof.get("asset_id")), None)
+                if version_row is None or version_row.get("revision") != proof.get("revision"):
                     # This revision's state cannot be confirmed: fail closed rather than
                     # assume it is displayable.
                     entry["source_state"] = "UNKNOWN"
                     entry["source_readable"] = False
                 else:
                     entry["source_state"] = "KNOWN"
-                    entry["source_redacted"] = row.get("redacted") is True
-                    entry["source_available"] = row.get("available") is not False
+                    entry["source_redacted"] = version_row.get("redacted") is True
+                    entry["source_available"] = version_row.get("available") is not False
                     entry["source_readable"] = bool(
-                        row.get("redacted") is not True
-                        and row.get("available") is not False
+                        version_row.get("redacted") is not True
+                        and version_row.get("available") is not False
                         and body["state"] == prompt.BODY_COMPLETE and body["verified"]
                         and detail.get("history_complete") and detail.get("read_complete"))
             except (FileNotFoundError, ValueError, PermissionError, KeyError):
@@ -138,7 +140,8 @@ class PromptAdoptionService:
             entries.append(entry)
         return {"contract": PROOF_CONTRACT, "document_id": document_id,
                 "version": version,
-                "digest": self.workspace.creative.document_digest(row),
+                # Definitely the DOCUMENT's digest: `document`, never a version row.
+                "digest": self.workspace.creative.document_digest(document),
                 "adoptions": entries, "generated_at": now()}
 
     # ------------------------------------------------------------ writes --
