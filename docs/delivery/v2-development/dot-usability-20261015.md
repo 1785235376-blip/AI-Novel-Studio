@@ -258,8 +258,80 @@ previously recorded cloud launch restriction; no browser retry was attempted. Fu
 backend, live model/GPU/Windows and whole-product acceptance remain **NOT_RUN**. The earlier
 preference-CAS baseline failure and hosted workflow failures remain open.
 
+### Stage 4 publication
+
+Remote `497abbd9c2b4af012ae9843a594b92c59e966962`, tree
+`da354668517c4236afaf214e70461630349aa7ab`, exactly matches reviewed/tested local
+`2984b61fa149579c2bfad668046e8ce7f29bb5b3`. `git ls-remote` and fetched tree verification
+passed. The PR metadata update first paused at an authorization check; after the exact original
+Draft-PR authorization was supplied, the single retry succeeded. PR #48 remains Draft.
+Exact-SHA PR workflows are terminal failures: Cloud CI `38795027442`, Local Interop
+`38795027410`, Shared R123 `38795027347`. No hosted pass or rerun is claimed.
+
+The stage-3 reviewer also closed both display findings against the actual published `8128b6c7`
+source and its dedicated tests, without another test or browser run.
+
+## Stage 5 — Prompt size guidance and accessible error correction
+
+### Verified gap and implementation
+
+The existing editor showed a static 64-KiB text limit but no current UTF-8 usage, making the limit
+hard to judge for Chinese text and emoji. Seed/JSON errors were not linked to their controls, and
+an invalid advanced JSON draft became hidden after switching to novice mode: saving explained
+the error without exposing the field needed to fix it.
+
+- Show current UTF-8 bytes, remaining bytes or exact overage against the existing
+  `PROMPT_BOUNDS.textBytes`. Preserve every character; no trimming, clipping, new request or new
+  save gate is introduced. Existing validation remains responsible for submission decisions.
+- Associate current field-error text via `aria-describedby`, mark the affected control, and
+  focus that control when an editable validation error is presented.
+- Reveal erroneous parameters in novice mode and keep the correction field visible while the
+  user types. Normal novice editing still hides advanced parameters; input remains unchanged
+  until edited, and saving still requires the existing explicit button.
+- Reuse the existing status/control presentation. On successful family selection, clear the
+  previous draft's view-level field error so it cannot mark or focus a different draft. No CSS,
+  primitive, draft state machine, API, persistence or backend changes.
+
+Code files: `frontend/src/prompt/PromptEditorPanel.tsx`, new
+`PromptEditorPanel.usability.test.tsx`, and an appended integration case in
+`PromptWorkspace.test.tsx`; `usePromptWorkspace.ts` changes only the successful-selection
+field-error reset.
+
+### Verification
+
+Commands are from `frontend/`; counts overlap.
+
+| Command / checkpoint | Actual result | Exit |
+| --- | --- | --- |
+| `vitest run src/prompt/PromptEditorPanel.usability.test.tsx --maxWorkers=2 --minWorkers=1 --reporter=verbose` before implementation | 6 new failures / 1 unchanged pass | 1 |
+| Same focused command after implementation | 7 passed | 0 |
+| Stage-4 combined command after initial editor implementation | 294 passed, 25 files | 0 |
+| Same combined command after adding professional-to-novice correction and explicit-save integration coverage | 295 passed, 25 files | 0 |
+| Focused family-switch regression before review correction | 1 failed / 15 deselected | 1 |
+| Same combined command after clearing the prior draft's field error on successful selection | 296 passed, 25 files | 0 |
+| `tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs` | Pass; existing large-chunk warning unchanged | 0 |
+| `git diff --check` | Pass | 0 |
+
+The final combined command is `vitest run src/modelcenter src/prompt
+src/novel/ExportPanel.downloadFeedback.test.tsx src/novel/ExportPanel.test.tsx
+src/novel/ExportPanel.recovery.test.tsx src/novel/ExportPanel.scope.test.tsx
+src/ui/AppShell.test.tsx src/ui/AppShell.projectNoun.test.tsx
+--maxWorkers=4 --minWorkers=1 --reporter=verbose` (one shell command).
+
+Read-only review found a stale cross-family validation error: selecting valid family B after
+invalid family A could expose and focus B's valid parameters. A dedicated regression reproduced
+this; the correction clears only the UI field error when successful selection replaces the draft.
+The reviewer verified the final four source/test hashes and reran four isolated suites including
+its original reproduction: **29 passed**, a separate overlapping review run. No remaining finding
+in that scoped review.
+
+Real browser/screen-reader/geometry checks remain **BLOCKED / NOT_RUN**; focus assertions here
+are jsdom contracts, not assistive-technology acceptance. Full frontend, backend, live models,
+GPU/Windows and whole-product acceptance remain **NOT_RUN**. The earlier baseline and hosted
+workflow failures remain open.
+
 ## Current handoff
 
-Four independent usability slices are implemented with preserved evidence and Draft-only
-publication. Stage 4 publication SHA/tree will be recorded at the next checkpoint. No merge,
+Five independent usability slices are implemented with preserved evidence and Draft-only
+publication. Stage 5 publication SHA/tree will be recorded at the next checkpoint. No merge,
 release or deployment is implied. The blocked lifecycle work remains separate and unchanged.

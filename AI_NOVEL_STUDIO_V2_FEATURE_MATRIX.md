@@ -1754,3 +1754,19 @@ Export scope **35 passed** (4 files); combined prior-stage regression **287 pass
 exit 0; counts overlap. Type/build/token checks pass. Read-only code/test review found no
 new defect. Real browser downloads/geometry remain **BLOCKED / NOT_RUN**, and original baseline
 and hosted failures stay open. Details: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent Prompt editor correction checkpoint
+
+Append-only observation after export-feedback checkpoint `497abbd9`. The editor now reports
+UTF-8 body usage/overage against the existing 64-KiB bound, links validation errors to their fields,
+and focuses editable invalid controls. Invalid advanced JSON is exposed for correction in novice
+mode and stays visible while typing. Successful family selection clears the prior draft's field
+error, preventing stale correction/focus on another draft. No clipping, new save gate, validation,
+persistence or backend change is introduced.
+
+Focused editor **7 passed**; final prior-stage combined regression **296 passed** (25 files),
+exit 0, including mode-switch → correction → explicit-save integration. Counts overlap.
+Type/build/token checks pass. Browser/assistive-technology/geometry checks remain
+**BLOCKED / NOT_RUN**; baseline and hosted failures stay open. Exact commands and limits:
+`docs/delivery/v2-development/dot-usability-20261015.md`.

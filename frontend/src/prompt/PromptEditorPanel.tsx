@@ -6,11 +6,12 @@
  *
  * 正文不做 trim：中文、换行、emoji 与空白都是创作内容。
  */
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import type { StudioInterfaceMode } from '../creative/studioWorkspaceResume';
 import type { Draft, DraftContent } from './promptDraft';
 import { bodyStateLabel } from './PromptLibraryPanel';
-import type { PromptEntry } from './promptTypes';
+import { PROMPT_BOUNDS, type PromptEntry } from './promptTypes';
 
 type Props = {
   draft: Draft;
@@ -48,6 +49,23 @@ export function PromptEditorPanel(props: Props) {
     onEdit, onSave, onRetry, onRebase, onDiscard } = props;
   const professional = mode === 'PROFESSIONAL';
   const status = draftStatus(draft);
+  const fieldErrorId = useId();
+  const byteCountId = useId();
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const seedRef = useRef<HTMLInputElement>(null);
+  const parametersRef = useRef<HTMLTextAreaElement>(null);
+  const [parametersCorrectionKey, setParametersCorrectionKey] = useState<string | null>(null);
+  const showParameters = professional || fieldError?.field === 'parameters' || parametersCorrectionKey === draft.key;
+  const textBytes = useMemo(() => new TextEncoder().encode(draft.content.text).length, [draft.content.text]);
+  const excessBytes = textBytes - PROMPT_BOUNDS.textBytes;
+  useEffect(() => {
+    if (!fieldError || locked) return;
+    if (fieldError.field === 'parameters') setParametersCorrectionKey(draft.key);
+    const input = fieldError.field === 'text' ? textRef.current
+      : fieldError.field === 'seed' ? seedRef.current
+      : fieldError.field === 'parameters' ? parametersRef.current : null;
+    input?.focus();
+  }, [fieldError, locked, draft.key]);
 
   return (
     <section className="prompt-editor" aria-label="Prompt 编辑器">
@@ -60,7 +78,7 @@ export function PromptEditorPanel(props: Props) {
         </StatusMessage>
       )}
       {saveError && <StatusMessage tone="error">{saveError}</StatusMessage>}
-      {fieldError && <StatusMessage tone="error">{fieldError.message}</StatusMessage>}
+      {fieldError && <StatusMessage tone="error"><span id={fieldErrorId}>{fieldError.message}</span></StatusMessage>}
 
       {detail && detail.body.state !== 'COMPLETE' && (
         <StatusMessage tone="warning">
@@ -70,10 +88,14 @@ export function PromptEditorPanel(props: Props) {
       )}
 
       <label htmlFor="prompt-text">正文</label>
-      <textarea id="prompt-text" rows={8} value={draft.content.text} disabled={locked}
-        aria-describedby="prompt-text-hint"
+      <textarea ref={textRef} id="prompt-text" rows={8} value={draft.content.text} disabled={locked}
+        aria-describedby={`prompt-text-hint ${byteCountId}${fieldError?.field === 'text' ? ` ${fieldErrorId}` : ''}`}
+        aria-invalid={fieldError?.field === 'text' || excessBytes > 0}
         onChange={event => onEdit({ text: event.target.value })} />
       <p id="prompt-text-hint">按 UTF-8 字节计最长 64 KiB。不会自动去除空格、换行或 emoji。</p>
+      <p id={byteCountId}>正文已用 {textBytes} / {PROMPT_BOUNDS.textBytes} 字节 · {excessBytes > 0
+        ? `超过上限 ${excessBytes} 字节，请缩短后保存；当前内容未被截断。`
+        : `剩余 ${-excessBytes} 字节。`}</p>
 
       <label htmlFor="prompt-negative">Negative Prompt</label>
       <textarea id="prompt-negative" rows={3} value={draft.content.negativePrompt} disabled={locked}
@@ -97,17 +119,20 @@ export function PromptEditorPanel(props: Props) {
         </div>
         <div>
           <label htmlFor="prompt-seed">Seed</label>
-          <input id="prompt-seed" inputMode="numeric" value={draft.content.seed} disabled={locked}
+          <input ref={seedRef} id="prompt-seed" inputMode="numeric" value={draft.content.seed} disabled={locked}
             aria-invalid={fieldError?.field === 'seed'}
+            aria-describedby={fieldError?.field === 'seed' ? fieldErrorId : undefined}
             onChange={event => onEdit({ seed: event.target.value })} />
         </div>
       </div>
 
-      {professional && (
+      {showParameters && (
         <>
+          {!professional && <p>参数已展开供修正与核对；修改不会自动保存。</p>}
           <label htmlFor="prompt-parameters">参数（JSON，不会执行）</label>
-          <textarea id="prompt-parameters" rows={3} value={draft.content.parameters} disabled={locked}
+          <textarea ref={parametersRef} id="prompt-parameters" rows={3} value={draft.content.parameters} disabled={locked}
             aria-invalid={fieldError?.field === 'parameters'}
+            aria-describedby={fieldError?.field === 'parameters' ? fieldErrorId : undefined}
             onChange={event => onEdit({ parameters: event.target.value })} />
         </>
       )}
