@@ -112,7 +112,9 @@ def main(argv=None) -> int:
     runner = load_runner(args.repo_root)
     try:
         # The repository's own guard: refuses a data directory that is not an owned cluster.
-        runner.validate_owned_cluster(args.repo_root, str(args.pg_bin), str(args.data))
+        # NOTE: it calls .resolve() on these internally, so Path objects must be passed --
+        # str() would raise AttributeError instead of validating.
+        runner.validate_owned_cluster(args.repo_root, args.pg_bin, args.data)
     except Exception as exc:  # noqa: BLE001
         print(f"BLOCKED: cluster ownership not confirmed: {exc}")
         return EXIT_BLOCKED

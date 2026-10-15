@@ -83,14 +83,55 @@ def test_a_fully_proven_receipt_is_owned(tmp_path):
 
 
 def test_the_script_defaults_to_a_read_only_precheck(tmp_path):
-    """Without --execute nothing may be dropped, and a non-loopback host is refused."""
+    """A LEGAL precheck must return exactly 0; an illegal target must return exactly 2.
+
+    A controlled fixture stands in for the cluster-ownership guard (a real owned cluster is not
+    started and the four already-dropped databases are NOT recreated). With ownership satisfied
+    and nothing provably owned, a precheck is a clean no-op: exit 0.
+    """
     mod = _load_cleanup()
-    # No owned receipts: the precheck must not even reach a connection.
+
+    class _OwnedStub:
+        @staticmethod
+        def validate_owned_cluster(repo_root, pg_bin, data):
+            # Ownership confirmed. Also assert the caller passed Path objects, because the real
+            # implementation calls .resolve() on them.
+            assert hasattr(pg_bin, "resolve") and hasattr(data, "resolve"), \
+                "validate_owned_cluster must receive Path objects, not strings"
+
+    mod.load_runner = lambda repo_root: _OwnedStub
+    code = mod.main(["--repo-root", str(REPO), "--pg-bin", str(tmp_path), "--data", str(tmp_path),
+                     "--receipts", str(tmp_path)])
+    assert code == 0, f"a legal read-only precheck must return 0, got {code}"
+
+    # The same invocation WITHOUT --execute must never drop anything, even with an owned
+    # receipt present, because dry-run is the default.
+    _receipt(tmp_path, "r3i-owned.json", database="v2_r3i_owned", database_oid=777)
     assert mod.main(["--repo-root", str(REPO), "--pg-bin", str(tmp_path), "--data", str(tmp_path),
-                     "--receipts", str(tmp_path)]) in {0, 2}
-    # A non-loopback host is refused outright.
+                     "--receipts", str(tmp_path)]) == 0
+
+
+def test_a_non_loopback_host_is_refused(tmp_path):
+    mod = _load_cleanup()
     assert mod.main(["--repo-root", str(REPO), "--pg-bin", str(tmp_path), "--data", str(tmp_path),
                      "--receipts", str(tmp_path), "--host", "10.0.0.5"]) == 2
+
+
+def test_an_unowned_directory_is_blocked(tmp_path):
+    """Real guard, no stub: a temp dir is not an owned cluster, so this must be BLOCKED."""
+    mod = _load_cleanup()
+    bogus = tmp_path / "not-a-cluster"
+    bogus.mkdir()
+    code = mod.main(["--repo-root", str(REPO), "--pg-bin", str(tmp_path), "--data", str(bogus),
+                     "--receipts", str(tmp_path)])
+    assert code == 2, f"an unowned data directory must be BLOCKED (2), got {code}"
+
+
+def test_a_missing_data_directory_is_blocked(tmp_path):
+    mod = _load_cleanup()
+    code = mod.main(["--repo-root", str(REPO), "--pg-bin", str(tmp_path),
+                     "--data", str(tmp_path / "absent"), "--receipts", str(tmp_path)])
+    assert code == 2
 
 
 # ----------------------------------------------------------- DTO digest format --
