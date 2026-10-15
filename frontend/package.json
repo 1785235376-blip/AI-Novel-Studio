@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "test": "vitest run",
+    "test:discovery": "node scripts/check-test-discovery.mjs",
     "lint": "node ../scripts/check_ui_design_tokens.mjs",
     "test:visual": "playwright test --config playwright.visual.config.ts",
     "e2e": "playwright test --config playwright.studio-release.config.ts"

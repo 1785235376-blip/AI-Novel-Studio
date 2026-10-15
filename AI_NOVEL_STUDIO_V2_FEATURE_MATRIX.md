@@ -1911,3 +1911,27 @@ Local implementation commit: `a8c2f2df4c1ecce5fb4c0e6293a1b4fac1375cb9`, tree
 `9e517487aef6519875fd4b182cbf88856d3f08d0`; independent review also cleared both selector-only
 corrections. The following documentation-only checkpoint does not alter production/test bytes.
 Publication remains blocked and was not attempted.
+
+### 2026-10-15 — frontend runner discovery correction (local only)
+
+The original Vitest config accidentally collected all three `frontend/e2e` Playwright
+specs, producing framework-level collection errors. Adding the missing `e2e/**`
+exclusion now preserves the exact **399 unit/component files** and leaves every existing
+test/assertion/timeout unchanged. The new `pnpm test:discovery` regression and explicit
+runner manifest prove all three specs remain with their existing Playwright owners:
+**8 Studio release cases**, plus **7 Prompt cases × 3 viewports = 21 project-cases**.
+Both Playwright commands use `--list` only. The 80 pre-existing `tests/e2e`/`tests/visual`
+specs and their separate configs/exclusions are unchanged; those configs were not loaded.
+
+Baseline inventory was 402 files (399 units + 3 mistaken Playwright specs); regression
+is red against that config and green after the single exclusion. Representative unchanged
+unit/component verification: **62 passed / 5 files**. Typecheck/build/token guard pass
+with the existing bundle warning. This proves runner discovery, not browser acceptance.
+
+Stage 12's later exact-commit broad frontend retries remain **TIMING-FLAKY / INCONCLUSIVE**:
+four workers 2071 passed/3 timeout failures; serial 2072 passed/2 different timeout failures,
+with unchanged affected files passing in isolation. The earlier 2074-pass result is separate
+historical evidence. No timeout was relaxed, failure suite hidden, or whole-suite green claimed.
+Browser/AT, Windows/device, GPU/model and blocked security/lifecycle limits remain open.
+Stage 11+ publication is still blocked and was not retried. Details and commands are appended
+in `docs/delivery/v2-development/dot-usability-20261015.md`; this is not V2/release acceptance.

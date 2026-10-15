@@ -922,3 +922,101 @@ found no concern: exact conflict message/alert role is stronger than the ambiguo
 and all downstream draft/source/version/no-extra-write assertions remain. This append-only local
 documentation checkpoint changes no production or tests. Exact-local reruns and resource receipts
 are retained with the local handoff; no published SHA or remote acceptance is claimed.
+
+## Stage 13 — separate frontend test-runner discovery (local only)
+
+This bounded infrastructure correction starts from Stage 12 checkpoint
+`350374c8146a04193a9c016156a41b374bac63fb`. The original Vite test config excluded
+`tests/e2e/**` and `tests/visual/**`, but omitted `e2e/**`. Vitest therefore discovered
+three actual Playwright specs in `frontend/e2e`, although the existing Studio-release
+and Prompt-acceptance Playwright configs already owned them. This was reproduced,
+not inferred from a red full-suite run: `vitest run e2e --maxWorkers=1 --minWorkers=1
+--reporter=verbose` exited 1 with all three specs failing collection at Playwright
+`test()`/`test.describe()`. The substring filter also selected the existing
+`e2eDatabaseContract.test.ts`, whose 20 unit cases passed.
+
+The only runner selection change adds `e2e/**` to the existing Vitest exclusions.
+Production code, existing test bodies, assertions, skips, timeout thresholds,
+Playwright configs and their project/viewport selections are byte-identical.
+Nothing was moved or deleted. `frontend/test-runner-manifest.json` explicitly maps:
+
+- `e2e/studio-release-acceptance.spec.ts` → `playwright.studio-release.config.ts`:
+  8 cases in its existing system-browser project.
+- `e2e/prompt-acceptance-s0.spec.ts` → `playwright.prompt-acceptance.config.ts`:
+  1 case in each of its 3 existing viewport projects.
+- `e2e/prompt-workspace-acceptance.spec.ts` → that same Prompt config:
+  6 cases in each of its 3 viewport projects.
+
+`pnpm test:discovery` runs the new list-based regression. An independent filesystem
+and TypeScript-import inventory is compared with Vitest's actual `list --filesOnly
+--json` output, rather than deriving expected units from the exclusion globs. Every
+unit/component file must appear exactly once; Playwright runtime imports must not
+appear in that set. Type-only Playwright imports in existing fixture unit tests do
+not execute Playwright syntax and remain allowed. Every spec under `frontend/e2e`
+must have an explicit manifest owner, and both existing owners are run with `--list`
+only. The check verifies all per-file/per-project counts and empty execution results.
+The new command does not replace or weaken the existing `pnpm test` command.
+
+### Recorded verification and coverage preservation
+
+- Before correction, actual Vitest file discovery returned **402 files**: all
+  **399** unit/component files plus the three incorrectly collected Playwright specs.
+  The new regression against that unchanged config failed on exactly those three extras.
+- After correction, discovery regression **PASS**, exit 0: the exact **399-file**
+  unit/component set is retained (393 under `src`, 6 under `tests`). Both explicit
+  Playwright lists succeed, exit 0, with **8 Studio + 21 Prompt project-cases** across
+  all **3 affected spec files**. These are discovery counts, not passed browser tests.
+- The **80 pre-existing** Playwright specs under `tests/e2e` and `tests/visual` retain
+  their existing separate ownership and exclusions. Their configs were not loaded
+  by this check; the legacy default config invokes PostgreSQL preparation on import.
+  No database fixture, application service or browser was started.
+- Representative unchanged Vitest selection **62 passed / 5 files**, exit 0:
+  `src/e2eDatabaseContract.test.ts`, `src/onboarding/StudioStartPanel.test.tsx`,
+  `src/creative/IndependentStudioWorkspace.test.tsx`,
+  `src/creative/studioAudioMp3Contract.test.tsx`, `tests/localInteropLayout.test.ts`.
+  Command: `node node_modules/vitest/vitest.mjs run <those five paths>
+  --maxWorkers=4 --minWorkers=1 --reporter=verbose`, from `frontend`.
+- `node --check scripts/check-test-discovery.mjs`, TypeScript `tsc -b`, Vite build
+  and design-token guard pass. Vite retains its existing large-chunk warning.
+- Local pre/post hashes verify every existing production/test/Playwright-config
+  byte is unchanged. The only changed file in the 2,129-file protected snapshot is
+  the explanatory `frontend/e2e/README.md`; the other 2,128 files match exactly.
+
+Exact discovery commands from `frontend`: `node scripts/check-test-discovery.mjs`;
+`node node_modules/vitest/vitest.mjs list --filesOnly --json`;
+`node node_modules/@playwright/test/cli.js test --config
+playwright.studio-release.config.ts --list --reporter=json`; and the same command
+with `playwright.prompt-acceptance.config.ts`. Baseline failures, source hashes,
+inventories and verification logs remain in local receipts. The initial new checker
+incorrectly classified a type-only Playwright import as runtime syntax; that checker
+error was corrected before the baseline red/final green comparison, without editing
+the existing fixture test. Its development failure is retained as well.
+
+### Unchanged acceptance and publication limits
+
+Independent read-only review verified **499 existing test/spec/Playwright-config
+paths are byte-identical** to the base commit. The checker control passes and **10
+negative mutations** fail closed, including omitted units/specs/owners/configs,
+wrong runner syntax, source skip, dropped case, missing project and replaced Prompt
+project identity. Review exposed that project count alone was insufficient; the
+manifest now pins the exact three existing Prompt project names and the regression
+enforces them. Studio's browser-channel-dependent project name remains flexible.
+The final reviewer discovery rerun also exits 0 with the same 399/8/21 inventory.
+Re-running the original `vitest run e2e` filter after correction gives **20 passed /
+1 unit file**, exit 0, with none of the three framework-collection failures. Counts
+overlap the representative run and must not be added.
+
+The earlier Stage 12 identical-source **2074 passed / 131 files** result remains
+historical evidence. Its subsequent exact-commit four-worker run had **2071 passed /
+3 timeout failures**, and exact-commit serial run had **2072 passed / 2 different
+timeout failures**. The affected files passed unchanged in isolation. Those broad
+results are **TIMING-FLAKY / INCONCLUSIVE, NOT GREEN**; this config-only correction
+does not fix them, change their assertions/timeouts or rerun the entire suite.
+
+Actual browser/AT acceptance remains **BLOCKED / NOT_RUN**. Playwright JSON lists
+represent collected-but-unexecuted cases as `skipped` with empty results; that is
+list-mode output, not new source skips or passing browser evidence. Native-player,
+Windows/device, GPU/models, security/lifecycle and broader V2 acceptance stay unproven.
+The separately blocked candidate and all gates remain untouched. Stage 11+ publication
+remains **BLOCKED pending user resolution**; no external upload, push, ref or PR action
+was attempted. Remote Draft PR #48 remains last verified at Stage 10 `61b1f039`.

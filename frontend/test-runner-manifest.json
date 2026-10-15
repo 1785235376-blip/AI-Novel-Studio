@@ -1,0 +1,26 @@
+{
+  "description": "Runner ownership for the frontend/e2e suites. Listing proves discovery only, never browser acceptance.",
+  "vitest": {
+    "config": "vite.config.ts",
+    "command": "pnpm test",
+    "browserDirectories": ["e2e", "tests/e2e", "tests/visual"]
+  },
+  "playwright": [
+    {
+      "config": "playwright.studio-release.config.ts",
+      "directory": "e2e",
+      "projects": 1,
+      "suites": {"e2e/studio-release-acceptance.spec.ts": 8}
+    },
+    {
+      "config": "playwright.prompt-acceptance.config.ts",
+      "directory": "e2e",
+      "projects": 3,
+      "projectNames": ["prompt-1366x768", "prompt-1440x900", "prompt-1920x1080"],
+      "suites": {
+        "e2e/prompt-acceptance-s0.spec.ts": 1,
+        "e2e/prompt-workspace-acceptance.spec.ts": 6
+      }
+    }
+  ]
+}
