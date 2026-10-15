@@ -7,12 +7,19 @@ looking at. Every provenance field is decided by the server.
 """
 from typing import Annotated
 
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 
 from .prompt_adoption import PromptAdoptionService
 
 MAX_ID = 240
+
+#: P3 (write-time source consistency between the Prompt read and the Creative commit) has NOT
+#: been verified: the read and the commit are two different owner operations with no proven
+#: unified lock order. The route is reachable, but a reachable write whose cross-owner
+#: consistency is unproven would be exactly the unsafe surface the directive forbids, so the
+#: write is FAIL-CLOSED here rather than merely reported as blocked. GET stays available.
+PROMPT_ADOPTION_WRITE_ENABLED = False
 
 
 class PromptAdoptionIn(BaseModel):
@@ -42,7 +49,13 @@ def create_prompt_adoption_router(adoption: PromptAdoptionService, invoke):
         """Adopt one verified Prompt revision into one storyboard shot.
 
         Starts no job, calls no model, and does not approve the shot.
+
+        FAIL-CLOSED: refuses with 503 until write-time source consistency is proven. The
+        refusal is a real behaviour with a regression test, not a note in a report.
         """
+        if not PROMPT_ADOPTION_WRITE_ENABLED:
+            raise HTTPException(503, {"code": "PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED",
+                                      "message": "采用写入在跨 owner 来源一致性验证完成前关闭。"})
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: adoption.adopt(
                           nid, scope, actor, document_id, shot_id, body, guard))

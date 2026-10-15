@@ -1,5 +1,43 @@
 # R3-I route-mount diagnosis (P0-A)
 
+> ## ⚠️ CORRECTION (supersedes everything below)
+>
+> **The conclusion below was WRONG. The prompt-adoption routes ARE mounted and reachable.**
+>
+> Root cause of the false conclusion: this environment runs **`fastapi 0.141.1` / `starlette 1.6.0`**,
+> whose `include_router` appends a **`_IncludedRouter` node** to `app.routes` instead of flattening
+> individual `APIRoute` objects. A control app proves it in the same interpreter:
+>
+> ```
+> raw app.routes: [Route('/openapi.json'), Route('/docs'), …, ('_IncludedRouter', '<none>')]
+> GET /api/probe-control -> 200 {"ok":true}          # routing works normally
+> ```
+>
+> Every probe below iterated `route.path`, got `''`/`<none>` for those wrapper nodes and never
+> recursed into them, so "no `/studio/` paths exist" was a **measurement artifact**, not a fact.
+> `_IncludedRouter` exposes `original_router`, `matches`, `handle` — **not** `path`/`routes`/`app`.
+>
+> **Reachability, measured with real ASGI requests against the real app** (`tests/test_round3i_adoption_mounted_api.py`, 6 passed):
+>
+> | Request | Response | Meaning |
+> | --- | --- | --- |
+> | `GET /api/health` | 200 | control: the app serves `/api` |
+> | `GET /api/projects/<missing>/studio/documents/d1/prompt-adoption` | 404 `{"detail":"Not found: does-not-exist","code":"HTTP_404"}` | **handler ran** — business 404 |
+> | same on `/api/v1` | identical | reachable under both prefixes |
+> | `POST …/shots/s1/prompt-adoption` `{}` | 422 `loc:["body","shot_id"]` | **route matched, DTO validated** |
+> | `GET …/nope-not-declared` | 404 `{"detail":"Not Found"}` | framework route-not-found (different shape) |
+>
+> The discriminating signal is the **response body shape**, not the status code. A route-path scan
+> must not be used to decide reachability in this environment.
+>
+> **Consequence:** the claim that `app.main.app` is not the API app is **withdrawn**. `app/main.py`
+> includes `api_router` and `experimental_router` at module level (lines 356–360) and `uvicorn
+> app.main:app` serves them; the 23-route count was the same `_IncludedRouter` artifact.
+>
+> **POST is fail-closed** (`PROMPT_ADOPTION_WRITE_ENABLED = False`, 503
+> `PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED`) with a regression test, because P3 write-time source
+> consistency is still unproven. GET is available.
+
 **HEAD `ed45e1a`** · interpreter `C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe` (3.11.9) ·
 cwd `D:\PoemSeed\Worktrees\studio-v2-audio-editing-20261014` · `EXPERIMENTAL_FEATURES=narrative_production_v2,asset_lineage_v2`
 
