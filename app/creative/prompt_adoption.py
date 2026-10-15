@@ -30,6 +30,7 @@ import copy
 
 from ..experimental.common import now
 from . import prompt_asset as prompt
+from .prompt_workspace import MAX_PROMPT_SCAN
 from .models import CreativeProductionDocumentIn
 
 #: `models.py` declares `frame_prompt: str = Field(default="", max_length=16000, strict=True)`.
@@ -326,27 +327,71 @@ class PromptAdoptionService:
                 # Source verification shares the ordinary read rules EXACTLY: same methods,
                 # same actor, same checks — only the lease acquisition is skipped because the
                 # phase already holds it. No payload read happens outside the owner's lease.
-                detail = self.prompts.detail(nid, scope, body.family_id, actor, lease=False)
+                # Read the source under the lease the phase ALREADY holds. No bible
+                # projection is entered: `_bible_indices` would re-acquire the asset scope
+                # and raise ASSET_PROJECT_SCOPE_NESTED. The same PURE projection the real
+                # `detail()` uses is applied to the same rows, so head identity, approval and
+                # history completeness are decided by the owner's own functions rather than a
+                # reimplementation.
+                rows, bodies, coverage = self.prompts._read_prompts(
+                    nid, scope, actor, limit=MAX_PROMPT_SCAN, include_deleted=True, lease=False)
+                detail = prompt.project_prompt_detail(
+                    body.family_id, rows, bible=None, asset_text=bodies,
+                    read_complete=not coverage.get("truncated", False))
+
+                target = next((item for item in rows if str(item.get("id")) == body.asset_id), None)
+                if target is None:
+                    raise FileNotFoundError(body.asset_id)
+                if prompt.family_of(target) != body.family_id:
+                    raise ValueError("PROMPT_ADOPTION_FAMILY_MISMATCH")
+                if prompt.revision_of(target) != body.revision:
+                    raise ValueError("PROMPT_ADOPTION_REVISION_MISMATCH")
+                if target.get("deleted_at"):
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_DELETED")
+                if prompt._text(target.get("kind")) != prompt.PROMPT_KIND:
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_NOT_PROMPT")
+                if prompt.authoring_state(target) != "ACTIVE":
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_NOT_ACTIVE")
+
+                # The mask lives in the ASSET PAYLOAD and is strictly validated. It is NOT in
+                # the body contract: reading it from the body silently yielded None and let
+                # masked revisions look adoptable. A payload that fails validation is refused
+                # rather than treated as unmasked.
+                payload_meta = prompt.validate_payload(prompt.prompt_payload(target))
+                if payload_meta.get("redacted") is True:
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_REDACTED")
+
+                # Approval comes from the owner's own recorded marker, never the caller.
+                if not target.get("approved_at"):
+                    raise ValueError("PROMPT_ADOPTION_NOT_APPROVED")
                 if detail["head_asset_id"] != body.asset_id or detail["revision"] != body.revision:
                     raise ValueError("PROMPT_ADOPTION_REVISION_NOT_HEAD")
-                if not detail.get("approved"):
-                    raise ValueError("PROMPT_ADOPTION_NOT_APPROVED")
-                if detail.get("redacted"):
-                    raise ValueError("PROMPT_ADOPTION_SOURCE_REDACTED")
-                if not detail.get("history_complete") or not detail.get("read_complete"):
+                if not detail.get("history_complete"):
                     raise ValueError("PROMPT_ADOPTION_SOURCE_INCOMPLETE")
-                body_read = self.prompts.revision_body(nid, scope, body.family_id,
-                                                       body.asset_id, actor, lease=False)
-                if body_read["state"] != prompt.BODY_COMPLETE:
-                    raise ValueError(f"PROMPT_ADOPTION_SOURCE_{body_read['state']}")
-                if not body_read["verified"] or body_read["digest_of"] != prompt.DIGEST_OF_ORIGINAL:
+                if not detail.get("read_complete") or coverage.get("truncated", False):
+                    # A truncated scan is not a complete history.
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_INCOMPLETE")
+
+                body_read = dict(bodies.get(body.asset_id) or {})
+                if body_read.get("state") != prompt.BODY_COMPLETE:
+                    raise ValueError(f"PROMPT_ADOPTION_SOURCE_{body_read.get('state', 'UNAVAILABLE')}")
+                if not body_read.get("decodable") or not body_read.get("body_validated"):
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_UNREADABLE")
+                if body_read.get("truncated"):
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_TRUNCATED")
+                # Re-verify the ORIGINAL bytes against the digest the owner recorded, exactly
+                # as the revision-body reader does.
+                recorded = prompt._text(target.get("sha256"))
+                if (not recorded or body_read.get("digest") != recorded
+                        or body_read.get("digest_of") != prompt.DIGEST_OF_ORIGINAL):
                     raise ValueError("PROMPT_ADOPTION_SOURCE_UNVERIFIED")
-                text = body_read["value"]
+                text = body_read.get("value")
                 if not isinstance(text, str):
                     raise ValueError("PROMPT_ADOPTION_SOURCE_UNREADABLE")
                 if body.expected_digest != body_read["digest"]:
                     raise ValueError("PROMPT_ADOPTION_DIGEST_MISMATCH")
                 if len(text) > FRAME_PROMPT_MAX:
+                    # Refuse; never truncate into something that looks like a full adoption.
                     raise ValueError("PROMPT_ADOPTION_TOO_LONG")
 
                 shot = self._shot(row, shot_id)
@@ -364,7 +409,15 @@ class PromptAdoptionService:
                     "digest": body_read["digest"], "digest_of": body_read["digest_of"],
                     "adopted_by": actor, "adopted_at": now(), "request_id": body.request_id,
                     "target_version": row.get("version"), "target_digest": creative.document_digest(row),
-                    "request_digest": want, "source_snapshot": self._source_snapshot(detail),
+                    # The revision this adoption produces. The read projection needs it to
+                    # decide `still_applied`, so it must be the REAL committed version.
+                    "result_version": row.get("version") + 1,
+                    "request_digest": want,
+                    # Bible character/scene/reference bindings were NOT projected on this path
+                    # (that projection re-acquires the lease and cannot run inside the phase),
+                    # so they are reported as unverified rather than as verified provenance.
+                    "source_snapshot": self._source_snapshot(detail),
+                    "source_bindings_verified": False,
                 }
                 updated, committed = creative.revise_in_state(
                     nid, scope, actor, state, document_id, body.expected_version, value,
@@ -372,6 +425,9 @@ class PromptAdoptionService:
                     server_proof=proof)
                 if committed is None:
                     raise ValueError("PROMPT_ADOPTION_PROOF_NOT_COMMITTED")
+                if committed.get("result_version") != updated.get("version"):
+                    # The proof must describe the version actually committed.
+                    raise ValueError("PROMPT_ADOPTION_RESULT_VERSION_MISMATCH")
                 result = {"replayed": False, "document_id": document_id, "shot_id": shot_id,
                           "version": updated.get("version"),
                           "digest": creative.document_digest(updated),

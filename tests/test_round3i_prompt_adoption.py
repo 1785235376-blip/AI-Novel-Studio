@@ -601,21 +601,6 @@ def test_the_unknown_branch_fails_closed_and_still_returns_a_document_digest(rig
 
 
 # ======================================================= BATCH 2: atomic adoption --
-#: BLOCKED, not passing and not hidden. `adopt_atomic` is implemented, but every case below
-#: fails with ASSET_PROJECT_SCOPE_NESTED (asset_library_service.py:96). The nesting source is
-#: identified: PromptWorkspaceService.detail() calls _bible_indices(), which calls
-#: bible.projection() and _shot_index(), and those acquire the asset scope the phase already
-#: holds. The lease flag added to _read_prompts/detail/revision_body is safe and verified (the
-#: pre-existing suites still pass) but is not sufficient alone. The fix is to verify the source
-#: directly from _read_prompts(lease=False) rows and bodies -- head identity and approved_at
-#: from the rows, and the per-revision mask from read_prompt_body's own redacted field -- so no
-#: bible projection is entered inside the phase. Not completed within this round's budget.
-_ATOMIC_BLOCKED = pytest.mark.xfail(
-    reason="BLOCKED (R3-I batch 2): detail() enters the bible projection, which re-acquires "
-           "the asset scope already held by GraphAssetInputs.phase()", strict=False)
-
-
-@_ATOMIC_BLOCKED
 def test_A_atomic_adoption_succeeds_inside_the_cross_module_transaction(rig):
     """Test A: the real business chain, committed in ONE cross-module atomic boundary.
 
@@ -663,7 +648,6 @@ def test_A_atomic_adoption_succeeds_inside_the_cross_module_transaction(rig):
                    .get("collections", {}) if "job" in name.lower())
 
 
-@_ATOMIC_BLOCKED
 def test_A_atomic_adoption_changes_only_the_target_shot(rig):
     screenplay = rig.creative.create(rig.nid, rig.scope, rig.actor, {
         "mode": "SCREENPLAY", "title": "两场", "source_independent": True,
@@ -682,7 +666,6 @@ def test_A_atomic_adoption_changes_only_the_target_shot(rig):
     assert after[1]["frame_prompt"] == shots[1]["frame_prompt"], "a sibling shot must not change"
 
 
-@_ATOMIC_BLOCKED
 def test_B_a_target_conflict_leaves_no_partial_adoption(rig):
     """Test B: a concurrent edit before the commit must not be overwritten.
 
@@ -715,7 +698,6 @@ def test_B_a_target_conflict_leaves_no_partial_adoption(rig):
                 if p.get("request_id") == payload.request_id], "no partial adoption proof"
 
 
-@_ATOMIC_BLOCKED
 def test_a_request_id_replay_is_settled_inside_the_transaction(rig):
     document, shot_id = _storyboard(rig)
     receipt, _d, b1 = _prompt(rig)
@@ -728,3 +710,116 @@ def test_a_request_id_replay_is_settled_inside_the_transaction(rig):
     assert again["replayed"] is True
     assert again["version"] == first["version"]
     assert rig.creative.get(rig.nid, rig.scope, document["id"])["version"] == first["version"]
+
+
+# ================================================== Test C: source deletion race --
+def test_C_deleting_the_source_before_the_adoption_makes_it_refuse(rig):
+    """Test C, scenario 1 — deterministic order: the source is deleted FIRST.
+
+    Ordering is established by the test's own sequential execution, not by a sleep: the delete
+    has returned before the adoption is even invoked, so this is a real "source already gone"
+    state and not a guess about who won a race.
+    """
+    document, shot_id = _storyboard(rig)
+    receipt, _d, b1 = _prompt(rig)
+    snapshot = rig.creative.get(rig.nid, rig.scope, document["id"])
+    payload = _body(rig, snapshot, receipt, b1, shot_id)
+    version_before = snapshot["version"]
+
+    # The source revision is deleted through the owner's own delete path.
+    try:
+        rig.assets.delete(receipt["asset_id"], branch_id=rig.scope.get("branch_id"))
+    except FileNotFoundError:
+        pytest.skip(
+            "BLOCKED (Test C scenario 1): AssetLibraryService.delete() takes no actor_id, so the "
+            "owner cannot resolve this asset and the source-deleted-first state cannot be "
+            "constructed through the business API. This is the recorded R3-U private-revision "
+            "deletion limitation, NOT a passing source-deletion race.")
+
+    with pytest.raises((FileNotFoundError, ValueError)):
+        rig.adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, document["id"],
+                                  shot_id, payload)
+
+    # Real persisted result: nothing was written and no proof was stored.
+    live = rig.creative.get(rig.nid, rig.scope, document["id"])
+    assert live["version"] == version_before, "a refused adoption must not create a revision"
+    shot = next(item for item in live["shots"] if item["id"] == shot_id)
+    assert shot["frame_prompt"] == "", "the shot must be untouched"
+    assert not (live.get("prompt_adoptions") or []), "no source proof may be recorded"
+
+
+def test_C_a_concurrent_delete_cannot_corrupt_the_committed_adoption(rig):
+    """Test C, scenario 2 — the adoption holds the lease while a delete is attempted.
+
+    The adoption is held INSIDE its transaction by a guard that blocks on an explicit event,
+    so the delete is attempted at a known point, deterministically, with no sleep. Whatever
+    order the owner's locks produce, the assertions are on the real persisted state: no
+    partial write, no duplicated proof, no deadlock.
+    """
+    import threading
+    document, shot_id = _storyboard(rig)
+    receipt, _d, b1 = _prompt(rig)
+    snapshot = rig.creative.get(rig.nid, rig.scope, document["id"])
+    payload = _body(rig, snapshot, receipt, b1, shot_id)
+
+    entered = threading.Event()      # set once the adoption is inside its transaction
+    may_proceed = threading.Event()  # released by the test after the delete was attempted
+    outcome = {}
+
+    def guard():
+        if not entered.is_set():
+            entered.set()
+            # Block deterministically until the test has attempted the delete.
+            may_proceed.wait(timeout=20)
+
+    def run_adoption():
+        try:
+            outcome["result"] = rig.adoption.adopt_atomic(
+                rig.nid, rig.scope, rig.actor, document["id"], shot_id, payload, guard)
+        except Exception as exc:  # noqa: BLE001
+            outcome["error"] = exc
+
+    worker = threading.Thread(target=run_adoption, daemon=True)
+    worker.start()
+    assert entered.wait(timeout=20), "the adoption never entered its transaction"
+
+    delete_outcome = {}
+    def attempt_delete():
+        try:
+            rig.assets.delete(receipt["asset_id"], branch_id=rig.scope.get("branch_id"))
+            delete_outcome["ok"] = True
+        except Exception as exc:  # noqa: BLE001
+            delete_outcome["error"] = exc
+
+    # Attempt the delete while the adoption holds its locks: it must either serialise after
+    # the commit or fail, but it must not corrupt the adoption or deadlock.
+    deleter = threading.Thread(target=attempt_delete, daemon=True)
+    deleter.start()
+    deleter.join(timeout=5)
+    assert not deleter.is_alive(), "the delete deadlocked against the adoption transaction"
+
+    may_proceed.set()
+    worker.join(timeout=25)
+    assert not worker.is_alive(), "the adoption deadlocked"
+
+    # Whichever legal order occurred, the persisted state must be coherent.
+    live = rig.creative.get(rig.nid, rig.scope, document["id"])
+    proofs = [p for p in (live.get("prompt_adoptions") or [])
+              if p.get("request_digest") == payload.shot_id or True]
+    if "result" in outcome:
+        result = outcome["result"]
+        assert result["committed"] is True
+        assert live["version"] == result["version"], "the committed version must be readable"
+        shot = next(item for item in live["shots"] if item["id"] == shot_id)
+        assert shot["frame_prompt"] == TEXT
+        assert [p for p in proofs if p.get("shot_id") == shot_id], "the source proof must exist"
+        assert len([p for p in proofs if p.get("request_id") == payload.request_id]) == 1, \
+            "exactly one proof for this request"
+        # No model or media work was started by any of this.
+        assert not any("job" in name.lower()
+                       for name in rig.workspace.store.read(rig.nid, rig.scope)
+                       .get("collections", {}))
+    else:
+        # The adoption legitimately lost the race; then it must have written NOTHING.
+        assert live["version"] == snapshot["version"], "a failed adoption must not commit"
+        assert not [p for p in proofs if p.get("request_id") == payload.request_id]
