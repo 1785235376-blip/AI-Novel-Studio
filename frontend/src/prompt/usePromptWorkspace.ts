@@ -94,6 +94,12 @@ export function usePromptWorkspace(options: Options) {
   // without this the version history and the comparison kept showing the pre-save revision
   // after a revision was saved — a real browser run could not reach 比较正文 at all.
   const detailFamilyRef = useRef<string | null>(null);
+  // Which detail read currently OWNS the shared `loading` flag. `loading` is one flag for
+  // the panel, so a retired read must not clear a flag that now belongs to a newer read —
+  // reproduced in PromptWorkspace.loadingOwner.test.tsx: A's stale failure cleared B's
+  // in-flight loading, leaving the panel looking ready with Save enabled while B was still
+  // loading.
+  const detailLoadingOwner = useRef(0);
   // Mirrors the family whose detail is on screen right now, so async work started earlier
   // can tell whether the user has since moved somewhere else.
 
@@ -192,10 +198,12 @@ export function usePromptWorkspace(options: Options) {
     // family B — reproduced in PromptWorkspace.scoping.test.tsx.
     compareEpoch.current += 1;
     const mine = ++detailEpoch.current;
+    detailLoadingOwner.current = mine;
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
       const detail = await client.readFamily(familyId);
       if (!alive.current || mine !== detailEpoch.current) return;
+      detailLoadingOwner.current = 0;
       setState(prev => {
         const existing = takeDraft(projectId, branchId, actor, familyId);
         const draft = existing ? reconcileStashed(existing) : {
@@ -211,10 +219,13 @@ export function usePromptWorkspace(options: Options) {
       });
     } catch (reason) {
       if (!alive.current) return;
-      // A retired read must still release the loading state it owns, otherwise an abandoned
-      // selection leaves the panel permanently busy.
+      // A retired read releases the loading state ONLY if it still owns it. Clearing it
+      // unconditionally would cancel the loading of whatever read took over — and its error
+      // belongs to a family the user has left, so it is not surfaced either.
       if (mine !== detailEpoch.current) {
-        setState(prev => (prev.loading ? { ...prev, loading: false } : prev));
+        if (detailLoadingOwner.current === mine) {
+          setState(prev => (prev.loading ? { ...prev, loading: false } : prev));
+        }
         return;
       }
       setState(prev => ({ ...prev, loading: false, error: message(reason, '读取该 Prompt 失败。') }));
