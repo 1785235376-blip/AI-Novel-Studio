@@ -6,6 +6,7 @@ import hashlib
 import re
 
 from ..experimental.common import DomainService, StaleSourceError, change_row, new_row
+from ..services.v1_capability_service import CapabilityVersionConflict
 from ..experimental.store import canonical
 from ..source_privacy import source_privacy_status
 from .models import CreativeProductionDocumentIn, CreativeDocumentDerive, DirectorNote

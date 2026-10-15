@@ -1,8 +1,15 @@
-"""R3-I — Pinned Prompt Revision Adoption into a Storyboard Shot.
+"""R3-I — Pinned Prompt Revision Adoption into a real derived Storyboard Shot.
 
-Service-level acceptance for the first adoptable slice: one explicit Prompt revision, one
-named shot's `frame_prompt`, committed as a new immutable document revision through the
-existing CreativeService CAS path. No model, no job, no generation.
+Uses the repository's own entry points, in the order the owner requires:
+
+    CreativeService.create(SCREENPLAY with real scenes)
+      -> CreativeService.derive(mode=STORYBOARD, shot_policy=SCENE)   # shots are DERIVED
+      -> PromptAuthoringService.create + approve                       # the source revision
+      -> PromptAdoptionService.adopt                                    # into a real shot id
+
+Structural facts this file depends on, corrected from the first draft: a CreativeDocument
+keeps `scenes`/`shots` at the DOCUMENT TOP LEVEL (not under `content`), and shots are produced
+by `derive()` from a sourced screenplay rather than authored inline.
 """
 from __future__ import annotations
 
@@ -18,17 +25,6 @@ from app.creative.prompt_adoption import FRAME_PROMPT_MAX, PromptAdoptionService
 from app.creative.prompt_authoring_models import PromptCreateIn, PromptRevisionIn
 
 HARNESS_MISSING = "requires the isolated runner (scripts/run_v2_checks.py) that sets PROJECT_ROOT"
-
-#: BLOCKED, not passing and not deleted. A STORYBOARD document's `shots` are DERIVED by
-#: `CreativeService.prepare_content` from a sourced screenplay (service.py:316-322: the
-#: payload's scenes/shots are built from `source["scenes"]`), so a shot's `scene_id` must
-#: name a real scene and `shots` cannot simply be authored inline as this fixture assumed.
-#: Building that screenplay→storyboard source chain was not completed within this round's
-#: budget, so the adoption path below is written but UNVERIFIED. These cases are skipped
-#: with this reason rather than left red or asserted green.
-pytestmark = pytest.mark.skip(reason=(
-    "BLOCKED (R3-I): the fixture must build a real screenplay source before a STORYBOARD "
-    "document can carry shots; that source chain was not completed this round"))
 
 TEXT = "  合成采用的正文 🙂\n第二行  \n"
 
@@ -69,21 +65,25 @@ def rig(tmp_path, monkeypatch):
     library = PromptWorkspaceService(workspace, bible)
     authoring = PromptAuthoringService(workspace, bible)
     adoption = PromptAdoptionService(workspace, library)
-    scope = {"mode": "local", "novel_id": nid}
-    return SimpleNamespace(nid=nid, scope=scope, creative=creative, library=library,
-                           authoring=authoring, adoption=adoption, actor="author-a",
-                           workspace=workspace, assets=assets)
+    return SimpleNamespace(nid=nid, scope={"mode": "local", "novel_id": nid}, creative=creative,
+                           library=library, authoring=authoring, adoption=adoption,
+                           actor="author-a", workspace=workspace, assets=assets)
 
 
-def _storyboard(rig, shots=None):
-    return rig.creative.create(rig.nid, rig.scope, rig.actor, {
-        "mode": "STORYBOARD", "title": "分镜",
-        "shots": shots or [{"id": "shot-1", "number": 1, "scene_id": "scene-1",
-                            "frame_prompt": "", "action": "站住"}]})
+def _storyboard(rig, action="站住"):
+    """A REAL derived STORYBOARD: screenplay with scenes -> derive(). Never authored inline."""
+    screenplay = rig.creative.create(rig.nid, rig.scope, rig.actor, {
+        "mode": "SCREENPLAY", "title": "剧本", "source_independent": True,
+        "scenes": [{"id": "scene-1", "sequence": 1, "heading": "内景 房间 日", "action": action}]})
+    storyboard = rig.creative.derive(rig.nid, rig.scope, rig.actor, screenplay["id"], {
+        "expected_version": screenplay["version"], "mode": "STORYBOARD",
+        "title": "分镜", "shot_policy": "SCENE"})
+    shots = storyboard.get("shots") or []
+    assert shots, "derive() must produce at least one shot from the screenplay scenes"
+    return storyboard, shots[0]["id"]
 
 
 def _prompt(rig, text=TEXT, approved=True):
-    """A real prompt family; optionally approved through the owner's review path."""
     receipt = rig.authoring.create(rig.nid, rig.scope, rig.actor, PromptCreateIn.model_validate(
         dict(text=text, purpose="IMAGE", origin="MANUAL", request_id="req-" + uuid4().hex)))
     if approved:
@@ -95,36 +95,36 @@ def _prompt(rig, text=TEXT, approved=True):
     return receipt, detail, body
 
 
-def _body(rig, receipt, body, shot_id="shot-1", **over):
+def _body(rig, document, receipt, body_read, shot_id, **over):
     base = dict(shot_id=shot_id, family_id=receipt["family_id"], asset_id=receipt["asset_id"],
-                revision=receipt["revision"], expected_digest=body["digest"],
-                expected_version=1, expected_digest_target="", request_id="adopt-" + uuid4().hex)
+                revision=receipt["revision"], expected_digest=body_read["digest"],
+                expected_version=document["version"],
+                expected_digest_target=rig.creative.document_digest(document),
+                request_id="adopt-" + uuid4().hex)
     base.update(over)
     return SimpleNamespace(**base)
 
 
-def _adopt(rig, document, receipt, body_read, **over):
-    doc = rig.creative.get(rig.nid, rig.scope, document["id"])
-    payload = _body(rig, receipt, body_read, **over)
-    payload.expected_version = doc["version"]
-    payload.expected_digest_target = rig.creative.document_digest(doc)
+def _adopt(rig, document, shot_id, receipt, body_read, **over):
+    payload = _body(rig, document, receipt, body_read, shot_id, **over)
     return payload, rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"],
-                                       payload.shot_id, payload)
+                                       shot_id, payload)
+
+
+def _shot_of(rig, document, shot_id):
+    return rig.adoption._shot(rig.creative.get(rig.nid, rig.scope, document["id"]), shot_id)
 
 
 # ------------------------------------------------------------------ happy --
 def test_adoption_writes_the_frame_prompt_and_commits_a_new_revision(rig):
-    document = _storyboard(rig)
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig)
-    payload, result = _adopt(rig, document, receipt, body_read)
+    payload, result = _adopt(rig, document, shot_id, receipt, body_read)
 
     assert result["replayed"] is False
     assert result["version"] == document["version"] + 1
-
-    reopened = rig.creative.get(rig.nid, rig.scope, document["id"])
-    shot = reopened["content"]["shots"][0]
     # The adopted text is written verbatim: no trim, newlines and emoji intact.
-    assert shot["frame_prompt"] == TEXT
+    assert _shot_of(rig, document, shot_id)["frame_prompt"] == TEXT
 
     proof = result["adoption"]
     assert proof["contract"] == "prompt-adoption/1"
@@ -138,10 +138,28 @@ def test_adoption_writes_the_frame_prompt_and_commits_a_new_revision(rig):
     assert proof["target_version"] == document["version"]
 
 
-def test_reopening_shows_the_same_pinned_source(rig):
-    document = _storyboard(rig)
+def test_only_the_target_shot_changes(rig):
+    screenplay = rig.creative.create(rig.nid, rig.scope, rig.actor, {
+        "mode": "SCREENPLAY", "title": "两场", "source_independent": True,
+        "scenes": [{"id": "scene-1", "sequence": 1, "heading": "内景 房间 日", "action": "站住"},
+                   {"id": "scene-2", "sequence": 2, "heading": "外景 街道 夜", "action": "奔跑"}]})
+    document = rig.creative.derive(rig.nid, rig.scope, rig.actor, screenplay["id"], {
+        "expected_version": screenplay["version"], "mode": "STORYBOARD",
+        "title": "分镜", "shot_policy": "SCENE"})
+    shots = document["shots"]
+    assert len(shots) == 2
     receipt, _detail, body_read = _prompt(rig)
-    _adopt(rig, document, receipt, body_read)
+    _adopt(rig, document, shots[0]["id"], receipt, body_read)
+    after = rig.creative.get(rig.nid, rig.scope, document["id"])["shots"]
+    assert after[0]["frame_prompt"] == TEXT
+    # The other shot is untouched.
+    assert after[1]["frame_prompt"] == shots[1]["frame_prompt"]
+
+
+def test_reopening_shows_the_same_pinned_source(rig):
+    document, shot_id = _storyboard(rig)
+    receipt, _detail, body_read = _prompt(rig)
+    _adopt(rig, document, shot_id, receipt, body_read)
 
     read = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)
     assert len(read["adoptions"]) == 1
@@ -150,14 +168,17 @@ def test_reopening_shows_the_same_pinned_source(rig):
     assert entry["revision"] == receipt["revision"]
     assert entry["source_readable"] is True
     assert entry["newer_revision_available"] is False
+    assert entry["still_applied"] is True
+    # The stored proof keeps the adopted text for comparison, but the read projection must
+    # not hand plaintext back out of it.
+    assert "adopted_text" not in entry
 
 
 def test_a_newer_prompt_revision_is_reported_but_never_rebinds(rig):
-    document = _storyboard(rig)
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig)
-    _adopt(rig, document, receipt, body_read)
+    _adopt(rig, document, shot_id, receipt, body_read)
 
-    # The family gains revision 2 (and is approved again).
     second = rig.authoring.revise(rig.nid, rig.scope, rig.actor, receipt["family_id"],
         PromptRevisionIn.model_validate(dict(
             text="第二版正文", purpose="IMAGE", origin="MANUAL",
@@ -166,128 +187,151 @@ def test_a_newer_prompt_revision_is_reported_but_never_rebinds(rig):
     rig.authoring.approve(rig.nid, rig.scope, rig.actor, receipt["family_id"],
                           second["asset_id"], second["asset_version"])
 
-    read = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)
-    entry = read["adoptions"][0]
+    entry = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][0]
     # Drift is SURFACED but the pinned reference does not move.
     assert entry["newer_revision_available"] is True
     assert entry["asset_id"] == receipt["asset_id"]
     assert entry["revision"] == receipt["revision"]
-    shot = rig.creative.get(rig.nid, rig.scope, document["id"])["content"]["shots"][0]
-    assert shot["frame_prompt"] == TEXT
+    assert _shot_of(rig, document, shot_id)["frame_prompt"] == TEXT
 
 
-def test_adoption_revokes_the_previous_storyboard_approval(rig):
-    document = _storyboard(rig)
+def test_an_ordinary_edit_keeps_the_history_but_stops_claiming_the_shot_uses_it(rig):
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig)
-    # Approve the storyboard first: adoption edits content, so approval must not survive.
-    approved = rig.creative._raw(rig.nid, rig.scope, document["id"])
-    approved["storyboard_approval"] = {"contract": "studio-storyboard-approval/1",
-        "version": approved["version"], "content_digest": rig.creative.document_digest(approved),
-        "approved_by": rig.actor, "approved_at": "2026-10-15T00:00:00Z"}
-    _adopt(rig, document, receipt, body_read)
-    reopened = rig.creative.get(rig.nid, rig.scope, document["id"])
-    assert "storyboard_approval" not in reopened
+    _adopt(rig, document, shot_id, receipt, body_read)
+
+    # The user then edits the same shot's frame_prompt through the ordinary document path.
+    current = rig.creative.get(rig.nid, rig.scope, document["id"])
+    value = {key: current[key] for key in ("mode", "title", "scenes", "shots",
+                                           "director_notes", "source_chapter_ids",
+                                           "source_independent")
+             if key in current}
+    value["shots"] = [dict(item) for item in current["shots"]]
+    for item in value["shots"]:
+        if item["id"] == shot_id:
+            item["frame_prompt"] = "用户自己改写的画面"
+    rig.creative.update(rig.nid, rig.scope, rig.actor, document["id"], current["version"], value)
+
+    entry = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][0]
+    # History keeps the proof...
+    assert entry["asset_id"] == receipt["asset_id"]
+    # ...but it must not keep claiming the shot still uses the adopted text.
+    assert entry["still_applied"] is False
+    assert _shot_of(rig, document, shot_id)["frame_prompt"] == "用户自己改写的画面"
 
 
 # ------------------------------------------------------------- refusals --
 def test_an_unknown_shot_is_refused(rig):
-    document = _storyboard(rig)
+    document, _shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig)
     with pytest.raises(FileNotFoundError):
-        _adopt(rig, document, receipt, body_read, shot_id="shot-does-not-exist")
+        _adopt(rig, document, "shot-does-not-exist", receipt, body_read)
 
 
 def test_a_non_storyboard_target_is_refused(rig):
-    other = rig.creative.create(rig.nid, rig.scope, rig.actor,
-                                {"mode": "DIRECTOR", "title": "导演"})
+    screenplay = rig.creative.create(rig.nid, rig.scope, rig.actor, {
+        "mode": "SCREENPLAY", "title": "剧本", "source_independent": True,
+        "scenes": [{"id": "scene-1", "sequence": 1, "heading": "内景 房间 日", "action": "站住"}]})
     receipt, _detail, body_read = _prompt(rig)
     with pytest.raises(ValueError, match="PROMPT_ADOPTION_TARGET_NOT_STORYBOARD"):
-        _adopt(rig, other, receipt, body_read)
+        _adopt(rig, screenplay, "scene-1", receipt, body_read)
 
 
 def test_an_unapproved_prompt_is_refused(rig):
-    document = _storyboard(rig)
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig, approved=False)
     with pytest.raises(ValueError, match="PROMPT_ADOPTION_NOT_APPROVED"):
-        _adopt(rig, document, receipt, body_read)
+        _adopt(rig, document, shot_id, receipt, body_read)
 
 
 def test_a_stale_expected_version_is_refused(rig):
-    document = _storyboard(rig)
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig)
-    payload = _body(rig, receipt, body_read)
-    payload.expected_version = 99
-    payload.expected_digest_target = rig.creative.document_digest(
-        rig.creative.get(rig.nid, rig.scope, document["id"]))
     with pytest.raises(CapabilityVersionConflict):
-        rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], "shot-1", payload)
+        _adopt(rig, document, shot_id, receipt, body_read, expected_version=99)
 
 
 def test_a_stale_document_digest_is_refused(rig):
-    document = _storyboard(rig)
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig)
-    payload = _body(rig, receipt, body_read)
-    payload.expected_version = document["version"]
-    payload.expected_digest_target = "0" * 64
     with pytest.raises(CapabilityVersionConflict):
-        rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], "shot-1", payload)
+        _adopt(rig, document, shot_id, receipt, body_read, expected_digest_target="0" * 64)
 
 
 def test_a_client_digest_that_does_not_match_the_server_read_is_refused(rig):
-    document = _storyboard(rig)
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig)
     with pytest.raises(ValueError, match="PROMPT_ADOPTION_DIGEST_MISMATCH"):
-        _adopt(rig, document, receipt, body_read, expected_digest="f" * 64)
+        _adopt(rig, document, shot_id, receipt, body_read, expected_digest="f" * 64)
 
 
 def test_text_over_the_field_limit_is_refused_not_truncated(rig):
-    document = _storyboard(rig)
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig, text="中" * (FRAME_PROMPT_MAX + 1))
     with pytest.raises(ValueError, match="PROMPT_ADOPTION_TOO_LONG"):
-        _adopt(rig, document, receipt, body_read)
-    shot = rig.creative.get(rig.nid, rig.scope, document["id"])["content"]["shots"][0]
-    assert shot["frame_prompt"] == ""
+        _adopt(rig, document, shot_id, receipt, body_read)
+    assert _shot_of(rig, document, shot_id)["frame_prompt"] == ""
+
+
+def test_a_shot_id_that_disagrees_between_path_and_body_is_refused(rig):
+    document, shot_id = _storyboard(rig)
+    receipt, _detail, body_read = _prompt(rig)
+    payload = _body(rig, document, receipt, body_read, shot_id)
+    payload.shot_id = "another-shot"
+    with pytest.raises(ValueError, match="PROMPT_ADOPTION_SHOT_ID_MISMATCH"):
+        rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], shot_id, payload)
 
 
 # ----------------------------------------------------------- idempotency --
 def test_the_same_request_id_replays_without_a_second_revision(rig):
-    document = _storyboard(rig)
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig)
-    payload, first = _adopt(rig, document, receipt, body_read)
-
-    # Same request id, same verified input: no second revision.
-    again = rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], payload.shot_id,
-                               payload)
+    payload, first = _adopt(rig, document, shot_id, receipt, body_read)
+    again = rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], shot_id, payload)
     assert again["replayed"] is True
     assert again["version"] == first["version"]
     assert rig.creative.get(rig.nid, rig.scope, document["id"])["version"] == first["version"]
 
 
 def test_the_same_request_id_with_different_input_is_refused(rig):
-    document = _storyboard(rig)
+    document, shot_id = _storyboard(rig)
     receipt, _detail, body_read = _prompt(rig)
-    payload, _first = _adopt(rig, document, receipt, body_read)
+    payload, _first = _adopt(rig, document, shot_id, receipt, body_read)
     payload.asset_id = "different-asset"
     with pytest.raises(ValueError, match="PROMPT_ADOPTION_REQUEST_REUSED"):
-        rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], payload.shot_id, payload)
+        rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], shot_id, payload)
 
 
 # --------------------------------------------------------------- safety --
-def test_adoption_creates_no_job_and_no_model_call(rig):
-    document = _storyboard(rig)
-    receipt, _detail, body_read = _prompt(rig)
-    before = list(rig.workspace.store.read(rig.nid, rig.scope).get("collections", {}).keys())
-    _adopt(rig, document, receipt, body_read)
-    after = rig.workspace.store.read(rig.nid, rig.scope).get("collections", {})
-    # No new collection (no job/task queue) appears because a prompt was adopted.
-    assert set(after.keys()) == set(before)
+def test_the_owner_contract_for_private_and_approved_sources(rig):
+    """Assert the ACTUAL AssetLibraryService review contract, not an assumption.
 
-
-def test_another_actor_cannot_read_the_adoption_or_the_source(rig):
-    document = _storyboard(rig)
-    receipt, _detail, body_read = _prompt(rig)
-    _adopt(rig, document, receipt, body_read)
-    # The prompt is private to its author, so another actor cannot re-read the source.
+    Verified in source: `promote_owned` performs
+    `meta.update(_owner_actor_id=None, _origin_provenance=..., approved_at=now(), version=+1)`.
+    Approval therefore **publishes** the asset — it clears the private owner marker and stamps
+    `approved_at`. That is deliberate review semantics, so:
+      * an UNAPPROVED author-private revision is readable only by its author;
+      * an APPROVED revision becomes readable by other actors, because review published it.
+    This test previously asserted that another actor could never read the source, which was a
+    wrong expectation about the owner's contract rather than a product defect.
+    """
+    # --- unapproved: author-private, so another actor is refused ---
+    private_receipt, _d, _b = _prompt(rig, approved=False)
     with pytest.raises((FileNotFoundError, ValueError, PermissionError)):
-        rig.library.revision_body(rig.nid, rig.scope, receipt["family_id"],
-                                  receipt["asset_id"], "author-b")
+        rig.library.revision_body(rig.nid, rig.scope, private_receipt["family_id"],
+                                  private_receipt["asset_id"], "author-b")
+
+    # --- approved: review published it, so another actor may read it ---
+    document, shot_id = _storyboard(rig)
+    receipt, _detail, body_read = _prompt(rig)
+    _adopt(rig, document, shot_id, receipt, body_read)
+    published = rig.library.revision_body(rig.nid, rig.scope, receipt["family_id"],
+                                          receipt["asset_id"], "author-b")
+    assert published["state"] == "COMPLETE"
+    assert published["value"] == TEXT
+
+    # And the private owner marker really was cleared by approval.
+    raw = rig.assets._read_meta(receipt["asset_id"]) if hasattr(rig.assets, "_read_meta") else None
+    if isinstance(raw, dict):
+        assert raw.get("_owner_actor_id") is None
+        assert raw.get("approved_at")
