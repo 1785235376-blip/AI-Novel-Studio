@@ -10,6 +10,7 @@ import { createStoryboardWorkspaceClient } from './storyboardWorkspaceClient';
 import { directorVsShotOverride } from './storyboardOps';
 import { DirectorGoalPanel } from './DirectorGoalPanel';
 import { ShotDetailPanel } from './ShotDetailPanel';
+import { PromptAdoptionDisclosure } from './PromptAdoptionDisclosure';
 import { ShotList } from './ShotList';
 import { ShotSendToPanel } from './ShotSendToPanel';
 import { useStoryboardWorkspace } from './useStoryboardWorkspace';
@@ -156,6 +157,17 @@ export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
           comparison={comparison}
           resolution={resolution}
           locked={controller.locked}
+        />
+        {/* R3-I: read-only adoption provenance, COLLAPSED BY DEFAULT so nothing is fetched until
+            the user asks. It reuses this panel's own transport, project id and document id and is
+            gated by the SAME read gate as the rest of the workspace (active / denied / isCurrent).
+            GET only: no POST, no model call, and no write affordance while the switch is closed. */}
+        <PromptAdoptionDisclosure
+          projectId={props.projectId}
+          documentId={props.directorDocumentId ?? controller.receipt?.document_snapshot.id ?? null}
+          shotId={controller.selected?.summary.shot_id ?? null}
+          transport={props.transport}
+          enabled={props.active && !props.denied && props.isCurrent()}
         />
         <ShotSendToPanel
           row={controller.selected}

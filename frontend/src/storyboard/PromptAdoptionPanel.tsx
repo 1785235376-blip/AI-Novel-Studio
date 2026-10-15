@@ -16,8 +16,6 @@ export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, 
   shotId: string | null;
   transport: StudioGraphTransport;
   enabled?: boolean;
-  /** Called after each read attempt with the fetched state, for host-side assertions. */
-  onState?: (state: 'IDLE' | 'LOADING' | 'READY' | 'ERROR') => void;
 }) {
   const [source, setSource] = useState<AdoptionSource | null>(null);
   const [state, setState] = useState<'IDLE' | 'LOADING' | 'READY' | 'ERROR'>('IDLE');

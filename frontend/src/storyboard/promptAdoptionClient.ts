@@ -63,6 +63,8 @@ function decodeSource(raw: unknown): AdoptionSource {
       message: '采用记录格式无效。' });
   }
   const row = raw as Record<string, unknown>;
+  // An UNKNOWN source state means the server could NOT confirm this revision's state.
+  const known = row.source_state === 'KNOWN';
   const revision = row.revision;
   if (typeof revision !== 'number' || !Number.isInteger(revision) || revision < 1) {
     throw new ApiError({ status: 200, code: ADOPTION_ERROR_CODES.unavailable,
@@ -78,11 +80,13 @@ function decodeSource(raw: unknown): AdoptionSource {
     adoptedBy: optionalText(row.adopted_by),
     adoptedAt: optionalText(row.adopted_at),
     resultVersion: typeof row.result_version === 'number' ? row.result_version : null,
-    // Absent flags refuse to true: an unconfirmable source must never look applied/readable.
+    // Absent flags refuse to true: an unconfirmable source must never look applied. Readability
+    // and drift are additionally gated on a CONFIRMED source state, so an UNKNOWN revision can
+    // never be presented as displayable nor as "no newer version".
     stillApplied: row.still_applied === true,
-    newerRevisionAvailable: row.newer_revision_available === true,
-    newerRevisionConfirmed: typeof row.newer_revision_available === 'boolean',
-    sourceReadable: row.source_readable === true,
+    newerRevisionAvailable: known && row.newer_revision_available === true,
+    newerRevisionConfirmed: known && typeof row.newer_revision_available === 'boolean',
+    sourceReadable: known && row.source_readable === true && row.source_redacted !== true,
     sourceState: optionalText(row.source_state) || 'UNKNOWN',
     sourceRedacted: row.source_redacted === true,
   };
@@ -103,7 +107,12 @@ export function decodeAdoptionProjection(raw: unknown): AdoptionProjection {
     throw new ApiError({ status: 200, code: ADOPTION_ERROR_CODES.unavailable,
       message: '文档版本无效。' });
   }
-  const adoptions = Array.isArray(body.adoptions) ? body.adoptions.map(decodeSource) : [];
+  if (!Array.isArray(body.adoptions)) {
+    // Silently treating this as [] would render "no adoption" for a malformed payload.
+    throw new ApiError({ status: 200, code: ADOPTION_ERROR_CODES.unavailable,
+      message: '采用记录的 adoptions 字段缺失或格式无效。' });
+  }
+  const adoptions = body.adoptions.map(decodeSource);
   return {
     contract: ADOPTION_PROJECTION_CONTRACT,
     documentId: text(body.document_id, 'document_id'),
