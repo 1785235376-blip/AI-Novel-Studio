@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+from pathlib import Path
 from uuid import uuid4
 
 import pytest
@@ -41,20 +42,28 @@ def ctx():
     assert data_path, (
         "NOVEL_DATA_PATH is not set: refusing to run, because the route-held service identity "
         "cannot be proven to use an isolated store")
-    resolved = os.path.abspath(data_path)
-    assert os.path.isabs(resolved), f"NOVEL_DATA_PATH must be absolute, got {resolved!r}"
+    raw_path = Path(data_path)
+    # Check the ORIGINAL value is absolute, before any abspath() could paper over a relative
+    # path by anchoring it to the current directory.
+    assert raw_path.is_absolute(), f"NOVEL_DATA_PATH must be absolute, got {data_path!r}"
+    resolved = raw_path.resolve()
 
     # The route-held ExperimentalStore really is rooted in that directory, and is File-backed.
-    store_root = os.path.abspath(str(getattr(inner, "root", "")))
+    store_root = Path(str(getattr(inner, "root", ""))).resolve()
     assert store_root == resolved, (
         f"route-held store root {store_root!r} != isolated NOVEL_DATA_PATH {resolved!r}: "
         "the routes captured a different service graph")
     assert getattr(inner, "backend", None) == "file", getattr(inner, "backend", None)
 
     # The route-held workspace's AssetLibraryService is rooted under the same isolated dir.
-    assets_root = os.path.abspath(str(getattr(svc.workspace.assets, "root", "")))
-    assert assets_root.startswith(resolved), (
-        f"asset root {assets_root!r} is outside the isolated root {resolved!r}")
+    # Path-aware containment, not a string prefix: "/tmp/ab" must not count as inside "/tmp/a".
+    assets_root = Path(str(getattr(svc.workspace.assets, "root", ""))).resolve()
+    assert assets_root.is_relative_to(resolved), (
+        f"asset root {assets_root} is not inside the isolated root {resolved}")
+    # The isolated root must really be the runner's per-label profile, so a test cannot
+    # accidentally point at a shared or permanent directory.
+    assert "v2-checks" in resolved.parts, (
+        f"the isolated root {resolved} is not a runner profile directory")
 
     # Every prompt service shares the SAME isolated workspace OBJECT, not merely a similar one.
     assert svc.workspace is exp_api.independent_workspace_service, \

@@ -78,6 +78,10 @@ def source_snapshot(root: Path) -> dict[str, str]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--postgres-url', default='')
+    # Collaboration authorization is OFF by default. A test that needs the REAL identity,
+    # membership and branch roles must ask for it explicitly, and the variable has to be
+    # exported BEFORE the pytest process starts importing app.main.
+    parser.add_argument('--collaboration-runtime', action='store_true')
     parser.add_argument("label")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
@@ -101,6 +105,9 @@ def main() -> int:
             env.pop(key, None)
     isolated = isolated_environment(root, profile)
     env.update(isolated)
+    if args.collaboration_runtime:
+        env['ENABLE_COLLABORATION_RUNTIME'] = 'true'
+        isolated['ENABLE_COLLABORATION_RUNTIME'] = 'true'
     if args.postgres_url:
         endpoint = urlparse(args.postgres_url)
         if endpoint.hostname not in {'127.0.0.1', 'localhost'} or not endpoint.path.startswith('/v2_'):
