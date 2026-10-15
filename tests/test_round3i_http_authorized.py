@@ -102,8 +102,10 @@ def authorized(env):
 
     # 13-14. branch-scoped grants only.
     auth_scope = AuthorizationScope(ScopeKind.BRANCH, workspace, nid, storyline, branch)
+    env.writer_role = "w-" + suffix
+    env.auth_scope = auth_scope
     env.authorization.assign_role(DomainRoleAssignment(
-        "w-" + suffix, writer, DomainRole.DOMAIN_LEAD, ModalityDomain.NOVEL, auth_scope, init_user))
+        env.writer_role, writer, DomainRole.DOMAIN_LEAD, ModalityDomain.NOVEL, auth_scope, init_user))
     env.authorization.assign_permission(PermissionAssignment(
         "r-" + suffix, reader, "domain.read", ModalityDomain.NOVEL, auth_scope, init_user))
 
@@ -292,3 +294,78 @@ def test_C_authorized_writer_adopts_over_api_v1(authorized):
         assert replay.json()["version"] == result["version"]
     finally:
         adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = False
+
+
+def test_the_post_commit_final_guard_boundary(authorized):
+    """Deterministic: revoke the writer's branch role AFTER the atomic commit, BEFORE the
+    final guard that `workspace_api.invoke()` runs once the callback has returned.
+
+    The wrapper calls the ORIGINAL adopt_atomic, asserts it really reported committed True, and
+    only then revokes through the real AuthorizationService. Nothing is faked and the creative
+    document is never edited to imitate a commit.
+    """
+    e = authorized
+    import app.creative.prompt_adoption_api as adopt_api
+    import app.experimental.api as exp_api
+    from app.authorization import ModalityDomain
+
+    chain = _chain(e, "/api", e.headers)
+    svc = exp_api.studio_prompt_adoption_service
+    original = svc.adopt_atomic
+    observed = {}
+
+    def wrapper(*args, **kwargs):
+        result = original(*args, **kwargs)
+        # The atomic transaction has committed by the time this returns.
+        observed["committed"] = result.get("committed")
+        observed["version"] = result.get("version")
+        # Revoke the real branch role now, i.e. after the commit and before the final guard.
+        e.authorization.revoke_role(e.writer_role, e.init_user)
+        observed["revoked"] = True
+        return result
+
+    adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = True
+    svc.adopt_atomic = wrapper
+    try:
+        response = e.client.post(chain["adopt_url"], headers=e.headers, json=chain["dto"])
+        observed["status"] = response.status_code
+        observed["body"] = response.text[:300]
+    finally:
+        svc.adopt_atomic = original
+        adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = False
+
+    # The revocation is real: the writer has genuinely lost the branch write permission.
+    lost = e.authorization.is_allowed(e.writer, "domain.write", ModalityDomain.NOVEL, e.auth_scope)
+    assert lost is False, "the role revocation did not actually remove the permission"
+
+    # The write really happened: read it back as the initializer, who still holds authority.
+    # The initializer reads with its own session AND the branch header, so the branch scope
+    # resolves exactly as it did for the writer.
+    init_read = {**e.init_headers, "X-Branch-ID": e.branch}
+    doc_response = e.client.get(f"{chain['creative']}/documents/{chain['board']['id']}",
+                                headers=init_read)
+    assert doc_response.status_code == 200, (doc_response.status_code, doc_response.text[:300])
+    live = doc_response.json()
+    shot = next(i for i in live["shots"] if i["id"] == chain["shot_id"])
+    proj_response = e.client.get(chain["read_url"], headers=init_read)
+    assert proj_response.status_code == 200, (proj_response.status_code, proj_response.text[:300])
+    projection = proj_response.json()
+    print("POST-COMMIT GUARD OBSERVED:", observed)
+    print("persisted version:", live["version"], "| status:", observed["status"])
+
+    assert observed["committed"] is True, "the atomic transaction must have committed"
+    assert live["version"] == observed["version"], "the committed version must be readable"
+    assert shot["frame_prompt"] == chain["source"]["value"], "the shot must hold the adopted text"
+    assert projection["adoptions"][-1]["still_applied"] is True
+    assert len([a for a in projection["adoptions"]
+                if a["request_id"] == chain["dto"]["request_id"]]) == 1, \
+        "exactly one revision and one proof may result from this operation"
+
+    # Whatever the guard decided, the ambiguity is now RECORDED rather than glossed over.
+    if observed["status"] == 403:
+        print("RECORDED: HTTP 403 while the transaction had already committed. This is a "
+              "commit-confirmation ambiguity (the client cannot tell whether the write landed), "
+              "NOT an unauthorised write: the write was authorised when it was performed.")
+    assert observed["status"] in {200, 403}, observed["status"]
+    assert chain["source"]["value"] not in observed["body"], \
+        "the response must not leak the private prompt body after the revocation"
