@@ -1811,3 +1811,18 @@ Focused navigation **5 passed**; prior combined scope plus task-center suites **
 geometry remains **BLOCKED / NOT_RUN**; baseline and hosted failures remain open. These usability
 slices do not constitute advanced production-chain acceptance. Commands and limitations:
 `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent visible Prompt body copy checkpoint
+
+Append-only observation after keyboard checkpoint `f411decb`. The editor now offers explicit
+copy of the current body, exact whitespace/Unicode preserved, without parameters or metadata.
+Clipboard success requires a resolved receipt; failures offer explicit manual selection.
+Late receipt feedback is invalidated on UI scope/draft/body changes and unmount; requests stay
+single-flight only within the mounted editor. Reopening can issue another explicit request while
+an old browser request remains unresolved; clipboard cancellation/order is not guaranteed. No automatic copy/retry, persistence, save, adoption, model or backend changes.
+
+Focused copy **12 passed**; final combined scope plus copy/integration/remount coverage **432 passed**
+(37 files), exit 0. Counts overlap. Type/build/token checks pass. Clipboard outcomes are mocked; real browser/device/geometry
+acceptance remains **BLOCKED / NOT_RUN**. Original advanced-chain, baseline and hosted limitations
+remain open. Audit boundaries and exact commands: `docs/delivery/v2-development/dot-usability-20261015.md`.

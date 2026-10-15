@@ -493,11 +493,106 @@ jsdom; they do not emulate browser-native Enter/Space clicks or prove screen-rea
 Real browser/geometry/assistive-technology acceptance remains **BLOCKED / NOT_RUN**. No original
 assertions, timeouts or snapshots changed. Prior baseline and hosted failures remain open.
 
-## Current handoff
+### Stage 8 publication
 
-Eight independent usability slices are implemented with preserved evidence; stage 8 publication
-SHA/tree will be recorded at the next checkpoint. This does not complete the original advanced roadmap. The absent pinned
-Prompt adoption workflow requires write-admission and File/PG acceptance outside this worker's
-scope. Real model/provider, GPU/Windows, browser and full production-chain acceptance remain
-blocked or unverified as previously recorded; historical CPU media evidence is not downgraded.
-No merge, release or deployment is implied. Blocked lifecycle work remains separate and unchanged.
+Remote `f411decb5b431658f4ae378be310fd607eb645f2`, tree
+`e79403c2c34e72fd1779d16482ab774bbafa42e1`, exactly matches reviewed/tested local
+`46c7c688656ead32af9df32f9868e3ff16bb4bb6`. Remote SHA and fetched tree verified; the combined
+command at the exact published SHA passed **418 tests**, 36 files, exit 0. PR #48 remains Draft.
+Exact-SHA hosted workflows are terminal failures: Cloud CI `38800005696`, Local Interop
+`38800005724`, Shared R123 `38800005867`. No hosted acceptance or workflow rerun is claimed.
+
+## Stage 9 — explicit visible Prompt body rescue and reuse
+
+### Verified gap and implementation
+
+Prompt draft bodies intentionally stay in memory and cannot be recovered after a reload. The
+editor lacked an explicit copy action, although the existing conflict dialog already offered
+clipboard/manual-copy recovery. This slice adds a user-controlled way to retain or reuse the
+current visible body before leaving, without changing draft persistence.
+
+- Explicit “复制当前正文” copies only the exact current body, preserving whitespace, CR/LF,
+  Unicode and emoji. It does not copy parameters, identifiers or metadata, save a revision,
+  invoke models, or create durable backup/import behavior.
+- Success appears only after clipboard completion. Within one mounted editor, only one request
+  can be pending at a time; no
+  automatic write or retry is performed. Empty/locked editor behavior remains locked.
+- Unsupported, rejected or throwing clipboard access offers an explicit “选中正文手动复制”
+  action and Ctrl+C/Command+C guidance. It does not request permissions repeatedly or use
+  an alternate hidden copying route.
+- Receipt attribution includes the UI project/branch/actor scope, draft identity and exact
+  body. Changing scope/draft/text or unmounting invalidates late feedback; editing away and
+  back also invalidates it. Rendering checks the source before displaying feedback.
+- A copy already requested from the browser cannot be cancelled here. Leaving ASSETS or
+  changing the host key unmounts the editor. Reopening resets its local in-flight guard and
+  permits a second **explicit** write while the first is unresolved. The old receipt never
+  updates the reopened UI, but cross-mount clipboard completion order is not guaranteed.
+  This is not global/reopen single-flight. Visible guidance asks the user to paste and check
+  the result and says leaving does not cancel the request. Actual clipboard/device behavior
+  is not verified by jsdom.
+
+Code files: `frontend/src/prompt/PromptEditorPanel.tsx`, new
+`PromptEditorPanel.copy.test.tsx`, one receipt-scope prop in `PromptWorkspace.tsx`, and one
+appended copy/no-POST/no-body-persistence integration in `PromptWorkspace.test.tsx`.
+
+### Verification
+
+Commands run from `frontend/`; counts overlap.
+
+| Command / checkpoint | Actual result | Exit |
+| --- | --- | --- |
+| `vitest run src/prompt/PromptEditorPanel.copy.test.tsx --maxWorkers=2 --minWorkers=1 --reporter=verbose` before implementation | 12 new failures (no copy control) | 1 |
+| Same focused command after initial implementation | 10 passed / 2 failed (stale pending-source wording) | 1 |
+| Same focused command after state-driven pending-source correction | 12 passed | 0 |
+| Stage-8 combined command plus the new copy test file | 430 passed, 37 files | 0 |
+| Same combined command with the workspace integration and final render-time source matching | 431 passed, 37 files | 0 |
+| Same combined command after adding the remount/second-click boundary regression | 432 passed, 37 files | 0 |
+| `tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs` | Pass; existing large-chunk warning unchanged | 0 |
+| `git diff --check` | Pass | 0 |
+
+Independent read-only review passed 29 overlapping existing scoped tests and 5 extra synthetic
+cases. It confirmed the per-mounted-editor boundary above; a remount-and-second-click regression
+is included, without adding a shared clipboard subsystem. This is accepted as a documented
+limitation, not evidence of global serialization or durable backup. Final static recheck verified
+the source/test hashes and truthful guidance after that regression was added; no new finding.
+
+No original assertions, timeouts or snapshots changed. All clipboard outcomes are synthetic.
+Browser/clipboard-device/assistive-technology/geometry acceptance remains **BLOCKED / NOT_RUN**.
+Original baseline and hosted workflow failures remain open.
+
+## Remaining original goals and handoff boundary
+
+These nine independently tested UX slices are not completion of the original advanced roadmap.
+The bounded follow-on audit distinguishes external blockers from work outside this UI assignment:
+
+- Pinned Prompt → production adoption is absent, but the existing gap report specifies a new
+  closed-admission write route, source-version verification and File/PG acceptance. That work
+  is outside this non-security UI worker and cannot be inferred from metadata placeholders.
+- A concrete next authoring capability is **outside this worker's narrow assignment, not
+  inherently platform-blocked**: `frontend/src/experimental/WorldPanel.tsx` offers only the
+  eight old `examples` kinds in its type selector. It omits `CHARACTER_VISUAL` and `SCENE_VISUAL`,
+  although `app/experimental/world.py` already defines/registers both typed models (lines
+  130–168). The existing WorldPanel save/edit/history path uses the original `/world/records`
+  owner and expected version; the Bible projection is deliberately read-only and consumes
+  these records. A next owner-based task can expose those existing kinds with guided fields,
+  then verify create → edit → reopen → Bible projection, retaining existing review/CAS behavior.
+  Existing test entry points are `tests/test_round2_bible.py` (visual-kind registration/schema),
+  `frontend/src/experimental/WorldPanel.test.tsx` and Bible projection tests. First confirm the
+  existing route is usable within current gates; do not enable endpoints or change auth, and
+  do not proceed if the path depends on the separately blocked lifecycle work.
+- Novel import already has bounded file selection, parsing preview, explicit confirmation and
+  candidate-review persistence. No missing independent import capability was established by
+  this bounded audit; it was not reimplemented or accepted end-to-end here.
+- Video/audio/NLE/model execution and the complete production chain still need their original
+  runtime and actual-artifact acceptance. Historical CPU media evidence remains historical
+  evidence and is not downgraded; it is not reused as this run's acceptance.
+- Browser launch has the recorded cloud socket blocker; real UI/clipboard/geometry checks,
+  Windows/GPU/installation and real-model acceptance remain unavailable or unverified here.
+- The separately blocked lifecycle candidate remains unchanged and externally blocked. No
+  policy/NSFW, authorization, endpoint-enabling or backend-lifecycle work was attempted here.
+
+Stage 9 is reviewed and tested; its publication SHA/tree receipt is maintained on the Draft PR
+linked below. The concrete WorldPanel candidate above is handed to the parent for broader owner-based
+continuation; it has not been implemented or tested in this slice. Public publication
+receipts are maintained on [Draft PR #48](https://github.com/1785235376-blip/AI-Novel-Studio/pull/48).
+No merge, release, deployment or whole-product completion is implied.

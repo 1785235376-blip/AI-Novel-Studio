@@ -83,6 +83,7 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
         <div className="prompt-detail-column">
           <PromptEditorPanel
             draft={state.draft} detail={detail} mode={mode}
+            copyScopeKey={JSON.stringify([projectId, branchId, actor])}
             locked={controller.locked || !writable} busy={state.loading}
             canSave={controller.canSave && writable}
             conflictCode={state.conflictCode} saveError={state.error}

@@ -302,3 +302,31 @@ describe('Prompt field error attribution', () => {
     expect(calls.every(method => method === 'GET')).toBe(true);
   });
 });
+
+describe('Prompt visible draft rescue', () => {
+  it('copies an edited body without submitting or persisting that body', async () => {
+    const original = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+    const copied: string[] = [];
+    Object.defineProperty(navigator, 'clipboard', { configurable: true,
+      value: { writeText: async (text: string) => { copied.push(text); } } });
+    try {
+      const { transport, calls } = transportWith({ library: fixture('empty-library.json') });
+      renderWorkspace(transport, { actor: 'copy-rescue-author' });
+      await screen.findByText('还没有 Prompt');
+      const text = '  手工保留正文🙂\n第二行\n';
+      fireEvent.change(screen.getByLabelText('正文'), { target: { value: text } });
+      expect(copied).toEqual([]);
+      fireEvent.click(screen.getByRole('button', { name: '复制当前正文' }));
+      await screen.findByText(/当前正文已复制到剪贴板/);
+      expect(copied).toEqual([text]);
+      expect(screen.getByText('有未保存修改')).toBeTruthy();
+      expect(calls.every(call => call.method === 'GET')).toBe(true);
+      const stored = Array.from({ length: localStorage.length }, (_, index) =>
+        localStorage.getItem(localStorage.key(index)!)).join('');
+      expect(stored).not.toContain(text);
+    } finally {
+      if (original) Object.defineProperty(navigator, 'clipboard', original);
+      else Reflect.deleteProperty(navigator, 'clipboard');
+    }
+  });
+});
