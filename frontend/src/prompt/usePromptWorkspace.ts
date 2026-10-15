@@ -224,7 +224,11 @@ export function usePromptWorkspace(options: Options) {
     // P0-B: always a genuinely fresh slot. Reusing the "new" key would resurrect the family
     // created a moment ago and silently turn the next save into a revision of it.
     clearDraftSlot(projectId, branchId, actor, 'new');
-    // A new draft leaves the family it was on, so its comparison must be retired too.
+    // A new draft leaves the family it was on, so any in-flight detail read and comparison
+    // for that family must be retired. Without bumping detailEpoch a late detail response
+    // refilled the old family over the brand-new draft — reproduced in
+    // PromptWorkspace.detailRace.test.tsx case P0-2.
+    detailEpoch.current += 1;
     compareEpoch.current += 1;
     setState(prev => ({ ...prev, detail: null, conflictCode: null, fieldError: null,
       draft: newDraft('new'), compare: { from: null, to: null, loading: false, error: null } }));
@@ -301,9 +305,16 @@ export function usePromptWorkspace(options: Options) {
       // otherwise be run over by this task — reproduced with a detail-derived assertion:
       // the version history showed family A's asset ids while family B was selected.
       const openBefore = detailFamilyRef.current;
+      // Capture the detail generation BEFORE awaiting: a selection that has merely STARTED
+      // (its detail read still in flight) has already bumped this, whereas detailFamilyRef
+      // only changes once a selection COMPLETES. Without this the user's in-progress switch
+      // was invisible and this stale task ran over it — reproduced in
+      // PromptWorkspace.detailRace.test.tsx case P0-1.
+      const detailEpochBefore = detailEpoch.current;
       await refresh();
       if (!alive.current) return;
-      // The selection changed while the list refresh was in flight: this task is stale.
+      if (detailEpoch.current !== detailEpochBefore) return;
+      // The selection also changed (or completed elsewhere) while the refresh was in flight.
       if (detailFamilyRef.current !== openBefore) return;
       // A brand-new family has no open detail yet (openBefore === null); refreshing it is
       // the normal creation path and must not be blocked.
