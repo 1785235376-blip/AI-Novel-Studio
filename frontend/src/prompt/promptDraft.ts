@@ -25,7 +25,7 @@
 
 import { PROMPT_BOUNDS } from './promptTypes';
 
-export type DraftState = 'DIRTY' | 'SUBMITTING' | 'SAVED' | 'UNKNOWN' | 'CONFLICT' | 'CLEAN';
+export type DraftState = 'DIRTY' | 'SUBMITTING' | 'SAVED' | 'UNKNOWN' | 'CONFLICT' | 'REJECTED' | 'CLEAN';
 
 export type DraftContent = {
   text: string;
@@ -57,6 +57,8 @@ export type Draft = {
   /** 只有 SUBMITTING / UNKNOWN 期间有意义。 */
   requestId: string | null;
   conflictCode: string | null;
+  /** A definite server refusal (4xx). Distinct from an unresolved conflict. */
+  rejectionCode: string | null;
   message: string | null;
 };
 
@@ -84,13 +86,14 @@ export function cloneContent(content: DraftContent): DraftContent {
 
 export function newDraft(key: string): Draft {
   return { key, familyId: null, baseAssetId: null, baseRevision: null, content: emptyContent(),
-    pending: null, state: 'CLEAN', requestId: null, conflictCode: null, message: null };
+    pending: null, state: 'CLEAN', requestId: null, conflictCode: null, rejectionCode: null,
+    message: null };
 }
 
 /** 本地是否有尚未确认保存的内容。 */
 export function hasUnconfirmedWork(draft: Draft): boolean {
   return draft.state === 'DIRTY' || draft.state === 'SUBMITTING'
-    || draft.state === 'UNKNOWN' || draft.state === 'CONFLICT';
+    || draft.state === 'UNKNOWN' || draft.state === 'CONFLICT' || draft.state === 'REJECTED';
 }
 
 /** 提交途中（含结果未知）输入必须被锁定：此刻改动内容会与已发出的请求不一致。 */
@@ -113,14 +116,20 @@ export function pendingMatchesContent(draft: Draft): boolean {
 const sameList = (a: readonly string[], b: readonly string[]): boolean =>
   a.length === b.length && a.every((value, index) => value === b[index]);
 
-/** 冲突未解决前不允许提交：必须先重新基准。 */
+/** 冲突未解决前不允许提交：必须先重新基准。明确拒绝（REJECTED）不属于冲突。 */
 export function needsRebase(draft: Draft): boolean {
-  return draft.state === 'CONFLICT' || (draft.conflictCode !== null && draft.state !== 'SAVED');
+  return draft.state === 'CONFLICT';
 }
 
-/** 是否允许发起一次新的提交（会申请新的 request_id）。 */
+/**
+ * 是否允许发起一次新的提交（会申请新的 request_id）。
+ *
+ * REJECTED 允许直接再提交（例如存储不足、参数被服务端否决后用户已修正），
+ * 但 SUBMITTING/UNKNOWN 绝不允许——那会制造第二个请求。
+ */
 export function canSubmit(draft: Draft): boolean {
-  return (draft.state === 'CLEAN' || draft.state === 'DIRTY')
+  return (draft.state === 'CLEAN' || draft.state === 'DIRTY' || draft.state === 'REJECTED')
+    // An unresolved conflict still requires an explicit rebase before a new request id.
     && draft.conflictCode === null && draft.requestId === null;
 }
 
@@ -128,7 +137,9 @@ export function editDraft(draft: Draft, patch: Partial<DraftContent>): Draft {
   // SUBMITTING / UNKNOWN：不得改动待提交快照，否则“已保存”的可能是另一份内容。
   if (isInputLocked(draft)) return draft;
   return { ...draft, content: cloneContent({ ...draft.content, ...patch }), state: 'DIRTY',
-    // 冲突标记保留到显式重新基准为止，因此编辑本身不等于“可以提交”。
+    // 冲突标记保留到显式重新基准为止；明确拒绝的原因在用户开始修改后即可清除。
+    conflictCode: draft.state === 'CONFLICT' ? draft.conflictCode : null,
+    rejectionCode: null,
     message: null };
 }
 
@@ -152,9 +163,13 @@ export function confirmSaved(draft: Draft, saved: {
   familyId: string; assetId: string; revision: number; idempotentReplay: boolean;
 }): Draft {
   const matched = draft.pending !== null && pendingMatchesContent(draft);
+  // P0-B: a create that started in the "new" slot must **adopt the new family as its key**.
+  // Otherwise the "new" slot keeps pointing at the family just created, and the next
+  // "新建 Prompt" silently turns into a revision of it.
+  const key = draft.familyId === null ? saved.familyId : draft.key;
   const base = {
-    ...draft, familyId: saved.familyId, baseAssetId: saved.assetId, baseRevision: saved.revision,
-    requestId: null, conflictCode: null, pending: null,
+    ...draft, key, familyId: saved.familyId, baseAssetId: saved.assetId, baseRevision: saved.revision,
+    requestId: null, conflictCode: null, rejectionCode: null, pending: null,
   };
   if (!matched) {
     return { ...base, state: 'DIRTY',
@@ -166,7 +181,18 @@ export function confirmSaved(draft: Draft, saved: {
 
 /** 409：保留草稿；该请求标识已被终局拒绝，立即作废。 */
 export function markConflict(draft: Draft, code: string, message: string): Draft {
-  return { ...draft, state: 'CONFLICT', conflictCode: code, message,
+  return { ...draft, state: 'CONFLICT', conflictCode: code, rejectionCode: null, message,
+    requestId: null, pending: null };
+}
+
+/**
+ * 服务端**明确拒绝**（4xx，非 409）：草稿保留、可以修正后重交，但**不是**“结果未知”。
+ *
+ * 这里作废 request_id 是安全的：明确的拒绝意味着这次写入没有发生，因此下一次提交用新标识
+ * 不会产生第二份修订。把 422/403 当成 UNKNOWN 会让界面永久停在“可能已保存、不能改标识”。
+ */
+export function markRejected(draft: Draft, code: string, message: string): Draft {
+  return { ...draft, state: 'REJECTED', conflictCode: null, rejectionCode: code, message,
     requestId: null, pending: null };
 }
 
@@ -215,7 +241,7 @@ export function rebaseDraft(draft: Draft, base: {
 /** 用户明确放弃本地内容（必须由用户操作触发）。 */
 export function discardDraft(draft: Draft): Draft {
   return { ...draft, content: emptyContent(), pending: null, state: 'CLEAN', requestId: null,
-    conflictCode: null, message: null };
+    conflictCode: null, rejectionCode: null, message: null };
 }
 
 // ---------------------------------------------------------- 刷新标记 --
@@ -329,6 +355,12 @@ export function dropStashedDrafts(projectId: string, branchId: string | null, ac
   for (const stored of [...inMemoryDrafts.keys()]) {
     if (stored.startsWith(`${scope}\u0000`)) inMemoryDrafts.delete(stored);
   }
+}
+
+/** Remove one slot. Used when a "new prompt" slot has been promoted to a family. */
+export function clearDraftSlot(projectId: string, branchId: string | null, actor: string,
+  key: string): void {
+  inMemoryDrafts.delete(storageKey(draftScopeKey(projectId, branchId, actor), key));
 }
 
 /** 仅测试与登出使用：清空全部内存草稿。 */

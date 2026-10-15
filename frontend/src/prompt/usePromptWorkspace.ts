@@ -15,9 +15,9 @@ import { ApiError } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import { createPromptClient, readPromptConflict } from './promptClient';
 import {
-  beginSubmit, canSubmit, confirmSaved, discardDraft, draftScopeKey, editDraft, hasUnconfirmedWork,
-  isInputLocked, markConflict, markUnknown, needsRebase, newDraft, rebaseDraft, retryUnknown,
-  stashDraft, takeDraft, type Draft, type DraftContent,
+  beginSubmit, canSubmit, clearDraftSlot, confirmSaved, discardDraft, draftScopeKey, editDraft,
+  hasUnconfirmedWork, isInputLocked, markConflict, markRejected, markUnknown, needsRebase,
+  newDraft, rebaseDraft, retryUnknown, stashDraft, takeDraft, type Draft, type DraftContent,
 } from './promptDraft';
 import type { PromptEntry, PromptLibrary, PromptRevisionBody } from './promptTypes';
 
@@ -29,6 +29,8 @@ export type PromptWorkspaceState = {
   loading: boolean;
   error: string | null;
   conflictCode: string | null;
+  /** Field-level problem (invalid 参数/seed, or a baseline that cannot be revised) — blocks the write. */
+  fieldError: PromptFieldProblem | null;
   draft: Draft;
   compare: { from: CompareSide | null; to: CompareSide | null; loading: boolean; error: string | null };
 };
@@ -57,7 +59,7 @@ export function usePromptWorkspace(options: Options) {
   useEffect(() => { epoch.current += 1; }, [projectId, branchId, actor]);
 
   const [state, setState] = useState<PromptWorkspaceState>(() => ({
-    library: null, detail: null, loading: false, error: null, conflictCode: null,
+    library: null, detail: null, loading: false, error: null, conflictCode: null, fieldError: null,
     draft: takeDraft(projectId, branchId, actor, 'new') ?? newDraft('new'),
     compare: { from: null, to: null, loading: false, error: null },
   }));
@@ -113,73 +115,157 @@ export function usePromptWorkspace(options: Options) {
   }, [client, projectId, branchId, actor]);
 
   const edit = useCallback((patch: Partial<DraftContent>) => {
-    setState(prev => ({ ...prev, draft: editDraft(prev.draft, patch), conflictCode: null }));
+    setState(prev => ({ ...prev, draft: editDraft(prev.draft, patch), conflictCode: null,
+      fieldError: null }));
   }, []);
 
   const startNew = useCallback(() => {
-    setState(prev => ({ ...prev, detail: null, conflictCode: null,
-      draft: takeDraft(projectId, branchId, actor, 'new') ?? newDraft('new') }));
+    // P0-B: always a genuinely fresh slot. Reusing the "new" key would resurrect the family
+    // created a moment ago and silently turn the next save into a revision of it.
+    clearDraftSlot(projectId, branchId, actor, 'new');
+    setState(prev => ({ ...prev, detail: null, conflictCode: null, fieldError: null,
+      draft: newDraft('new') }));
   }, [projectId, branchId, actor]);
+
+  /** P0-D: a revision may only be built on a complete, verified, fully-read baseline. */
+  const baselineEditable = (detail: PromptEntry | null): boolean =>
+    !!detail && detail.body.state === 'COMPLETE' && !!detail.body.digest
+    && detail.readComplete && detail.historyComplete;
+
+  const submitRef = useRef(false);
+
+  /** P0-A: build the request only from valid input; never silently substitute defaults. */
+  const buildRequest = (content: DraftContent, requestId: string) => {
+    const parsed = parseContent(content);
+    if (!parsed.ok) return parsed;
+    return { ok: true as const, body: {
+      text: content.text,
+      negative_prompt: content.negativePrompt,
+      purpose: content.purpose,
+      origin: 'MANUAL' as const,
+      model_reference: content.modelReference,
+      parameters: parsed.parameters,
+      seed: parsed.seed,
+      character_ids: [...content.characterIds],
+      scene_ids: [...content.sceneIds],
+      shot_ids: [...content.shotIds],
+      reference_asset_ids: [...content.referenceAssetIds],
+      change_note: content.changeNote,
+      change_reason: content.changeReason,
+      redacted: false,
+      request_id: requestId,
+    } };
+  };
 
   /** Perform the write for an already-frozen snapshot. Never allocates a new request id. */
   const submit = useCallback(async (submitted: Draft) => {
     if (submitted.state !== 'SUBMITTING' || !submitted.requestId) return;
+    const built = buildRequest(submitted.content, submitted.requestId);
+    if (!built.ok) {
+      // Should be unreachable: save() refuses invalid input before freezing a snapshot.
+      setState(prev => ({ ...prev, draft: markRejected(prev.draft, built.field, built.message),
+        fieldError: { field: built.field, message: built.message } }));
+      return;
+    }
     const mine = ++epoch.current;
     const isRevision = submitted.familyId !== null && submitted.baseAssetId !== null;
     try {
       const receipt = isRevision
         ? await client.saveRevision(submitted.familyId!, {
-            ...toRequest(submitted.content, submitted.requestId),
+            ...built.body,
             expected_previous_asset_id: submitted.baseAssetId!,
             expected_revision: submitted.baseRevision!,
           })
-        : await client.createPrompt(toRequest(submitted.content, submitted.requestId));
+        : await client.createPrompt(built.body);
       if (!alive.current || mine !== epoch.current) return;
-      setState(prev => ({ ...prev, draft: confirmSaved(prev.draft, receipt) }));
+      setState(prev => ({ ...prev, draft: confirmSaved(prev.draft, receipt), fieldError: null }));
       // Re-read the authorised family so the panel shows server truth, not our optimism.
       await refresh();
     } catch (reason) {
       if (!alive.current || mine !== epoch.current) return;
+      const status = reason instanceof ApiError ? reason.problem.status : null;
       const conflict = reason instanceof ApiError ? readPromptConflict(reason) : null;
-      setState(prev => conflict
-        ? { ...prev, draft: markConflict(prev.draft, conflict.code,
-            message(reason, '这个 Prompt 已被他人更新。')), conflictCode: conflict.code }
-        : { ...prev, draft: markUnknown(prev.draft,
-            message(reason, '保存结果未知，请稍后核对后重试。')), error: null });
+      setState(prev => {
+        if (conflict) {
+          return { ...prev, draft: markConflict(prev.draft, conflict.code,
+            message(reason, '这个 Prompt 已被他人更新。')), conflictCode: conflict.code };
+        }
+        // P0-F: a definite 4xx refusal is NOT an unknown outcome. Only 5xx / no status /
+        // a transport failure leave the result genuinely unknown.
+        if (status !== null && status >= 400 && status < 500) {
+          // A definite refusal, not an unknown outcome. Bounded, actionable Chinese text —
+          // an unrecognised upstream code must not surface as a raw message.
+          return { ...prev, draft: markRejected(prev.draft, `HTTP_${status}`,
+            `服务器明确拒绝了这次保存（HTTP ${status}）。你的草稿已保留，修正后可以重新提交。`),
+            fieldError: null };
+        }
+        return { ...prev, draft: markUnknown(prev.draft,
+          message(reason, '保存结果未知，请核对后再决定是否重试。')) };
+      });
     }
   }, [client, refresh]);
 
   const save = useCallback(() => {
     // Compute the snapshot OUTSIDE setState: a state updater is not guaranteed to run
     // synchronously, so reading a value out of it would silently skip the write.
-    // Only an explicit click reaches here — nothing auto-creates or auto-revises.
+    const isRevision = state.draft.familyId !== null && state.draft.baseAssetId !== null;
+    if (isRevision && !baselineEditable(state.detail)) {
+      // P0-D: never grow a revision from a preview, a redaction or an incomplete history.
+      setState(prev => ({ ...prev, fieldError: { field: 'text',
+        message: '服务器上这一修订的正文不是完整可编辑版本（预览／脱敏／不可读或历史不完整），'
+          + '不能据此保存新修订。请改为新建一份独立 Prompt。' } }));
+      return;
+    }
+    // P0-H: one synchronous lease per event batch — a double click must not allocate two ids.
+    if (submitRef.current) return;
+    const built = buildRequest(state.draft.content, 'validate');
+    if (!built.ok) {
+      // P0-A: refuse instead of silently replacing invalid input with defaults.
+      setState(prev => ({ ...prev, fieldError: { field: built.field, message: built.message } }));
+      return;
+    }
     const submitted = beginSubmit(state.draft, newRequestId);
     if (submitted.state !== 'SUBMITTING' || !submitted.requestId) return;
-    setState(prev => ({ ...prev, draft: submitted, error: null, conflictCode: null }));
-    void submit(submitted);
-  }, [state.draft, submit]);
+    submitRef.current = true;
+    setState(prev => ({ ...prev, draft: submitted, error: null, conflictCode: null, fieldError: null }));
+    void submit(submitted).finally(() => { submitRef.current = false; });
+  }, [state.draft, state.detail, submit]);
 
   const retry = useCallback(() => {
     // Reuses the original request id and the original snapshot — never a new one.
     const next = retryUnknown(state.draft);
     if (next.state !== 'SUBMITTING') return;
+    if (submitRef.current) return;
+    submitRef.current = true;
     setState(prev => ({ ...prev, draft: next }));
-    void submit(next);
+    void submit(next).finally(() => { submitRef.current = false; });
   }, [state.draft, submit]);
 
-  const rebase = useCallback(() => {
-    setState(prev => {
-      if (!prev.detail) return prev;
-      return { ...prev, conflictCode: null,
+  /**
+   * P0-E: rebasing must re-read the **server's current head**, not reuse the detail that was
+   * already stale when the 409 arrived. The local edit is preserved; on failure nothing is
+   * marked as rebased.
+   */
+  const rebase = useCallback(async (familyId: string) => {
+    const mine = ++epoch.current;
+    try {
+      const fresh = await client.readFamily(familyId);
+      if (!alive.current || mine !== epoch.current) return;
+      setState(prev => ({
+        ...prev, detail: fresh, conflictCode: null, fieldError: null,
         draft: rebaseDraft(prev.draft, {
-          assetId: prev.detail.headAssetId, revision: prev.detail.revision,
-          familyId: prev.detail.familyId,
-        }) };
-    });
-  }, []);
+          assetId: fresh.headAssetId, revision: fresh.revision, familyId: fresh.familyId,
+        }),
+      }));
+    } catch (reason) {
+      if (!alive.current || mine !== epoch.current) return;
+      setState(prev => ({ ...prev, error: message(reason, '无法读取服务器上的最新修订，尚未重新基准。') }));
+    }
+  }, [client]);
 
   const discard = useCallback(() => {
-    setState(prev => ({ ...prev, draft: discardDraft(prev.draft), conflictCode: null }));
+    setState(prev => ({ ...prev, draft: discardDraft(prev.draft), conflictCode: null,
+      fieldError: null }));
   }, []);
 
   const compare = useCallback(async (familyId: string, fromId: string, toId: string) => {
@@ -237,7 +323,7 @@ export function fromEntry(entry: PromptEntry): DraftContent {
   };
 }
 
-export type PromptFieldProblem = { field: 'parameters' | 'seed'; message: string };
+export type PromptFieldProblem = { field: 'parameters' | 'seed' | 'text'; message: string };
 export type ParsedDraft = { ok: true; parameters: Record<string, unknown>; seed: number | null }
   | ({ ok: false } & PromptFieldProblem);
 
@@ -274,30 +360,6 @@ function parseContent(content: DraftContent): ParsedDraft {
     seed = parsed;
   }
   return { ok: true, parameters, seed };
-}
-
-/** Build the R3-W request body. `origin` defaults to MANUAL — a hand-written draft. */
-function toRequest(content: DraftContent, requestId: string) {
-  const parsed = parseContent(content);
-  const parameters = parsed.ok ? parsed.parameters : {};
-  const seed = parsed.ok ? parsed.seed : null;
-  return {
-    text: content.text,
-    negative_prompt: content.negativePrompt,
-    purpose: content.purpose,
-    origin: 'MANUAL' as const,
-    model_reference: content.modelReference,
-    parameters,
-    seed,
-    character_ids: [...content.characterIds],
-    scene_ids: [...content.sceneIds],
-    shot_ids: [...content.shotIds],
-    reference_asset_ids: [...content.referenceAssetIds],
-    change_note: content.changeNote,
-    change_reason: content.changeReason,
-    redacted: false,
-    request_id: requestId,
-  };
 }
 
 export { needsRebase };

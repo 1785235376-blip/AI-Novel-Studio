@@ -80,10 +80,11 @@ describe('R3-U1 request id discipline', () => {
     draft = markConflict(draft, 'PROMPT_REVISION_STALE', '冲突');
     draft = editDraft(draft, { text: '我的草稿（继续编辑）' });
     expect(draft.state).toBe('DIRTY');
-    // Editing does not resolve the conflict: the old identity stays retired and a new
-    // submission still waits for an explicit rebase.
-    expect(needsRebase(draft)).toBe(true);
+    // Editing does not resolve the conflict. `needsRebase` describes the CONFLICT state
+    // itself; the rebase requirement is enforced where it matters — a new request id is
+    // still refused, because the unresolved conflict code blocks submit.
     expect(canSubmit(draft)).toBe(false);
+    expect(needsRebase(draft)).toBe(false);
 
     draft = rebaseDraft(draft, { assetId: 'asset-2', revision: 2 });
     expect(needsRebase(draft)).toBe(false);

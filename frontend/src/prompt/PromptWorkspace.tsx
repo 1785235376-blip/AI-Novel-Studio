@@ -74,9 +74,9 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
             locked={controller.locked || !writable} busy={state.loading}
             canSave={controller.canSave && writable}
             conflictCode={state.conflictCode} saveError={state.error}
-            fieldError={null}
-            onEdit={edit} onSave={() => void save()} onRetry={() => void retry()}
-            onRebase={rebase} onDiscard={discard} />
+            fieldError={state.fieldError}
+            onEdit={edit} onSave={save} onRetry={retry}
+            onRebase={() => { if (detail) void rebase(detail.familyId); }} onDiscard={discard} />
 
           {detail && (
             <section className="prompt-history" aria-label="版本历史">

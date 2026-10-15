@@ -269,9 +269,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   }, [client, current, guarded, projectId]);
   useEffect(() => { alive.current = true; void refresh(); return () => { alive.current = false; overviewEpoch.current++; storageEpoch.current++; selectionEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); }; }, [refresh]);
   useEffect(() => {
-    const warn = (event: BeforeUnloadEvent) => { if (dirty || busyRef.current) { event.preventDefault(); event.returnValue = ''; } };
+    const warn = (event: BeforeUnloadEvent) => { if (dirty || promptDirty || busyRef.current) { event.preventDefault(); event.returnValue = ''; } };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
-  }, [dirty]);
+  }, [dirty, promptDirty]);
   useEffect(() => {
     if (!overview || context.scope || context.sessionToken || context.actor || !current()) return;
     if (!rememberLocalWorkspaceSelection(projectId) || !rememberLocalStudioSelection(projectId, module, selected?.id)
