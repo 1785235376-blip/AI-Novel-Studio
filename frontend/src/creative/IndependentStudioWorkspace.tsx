@@ -5,6 +5,7 @@ import { useStudio } from '../store';
 import { useLocalHostSession } from '../localHostSession';
 import { AppShell, type ScopeLabels, type StudioModule } from '../ui/AppShell';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
+import { PromptWorkspace } from '../prompt/PromptWorkspace';
 import { AssetLibraryPanel, type AssetLibraryAdapter } from '../novel/AssetLibraryPanel';
 // UX-PRODUCT batch 4: the model/storage centre (UX-07) and the in-project hint
 // assistant (UX-08). Both are read-only and open on demand.
@@ -117,6 +118,11 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const workflowDirtyRef = useRef(false);
   const workflowDraftChanged = useCallback((value: boolean) => { workflowDirtyRef.current = value; setWorkflowDirty(value); }, []);
   const mediaDraftChanged = useCallback((value: boolean) => { mediaDirtyRef.current = value; setMediaDirty(value); }, []);
+  // The Prompt workspace holds a local draft (and possibly an in-flight submit). It joins the
+  // host's existing leave-confirmation rather than adding its own beforeunload.
+  const promptDirtyRef = useRef(false);
+  const [promptDirty, setPromptDirty] = useState(false);
+  const promptDraftChanged = useCallback((value: boolean) => { promptDirtyRef.current = value; setPromptDirty(value); }, []);
   const timelineDraftChanged = useCallback((value: boolean) => { timelineDirtyRef.current = value; setTimelineDirty(value); }, []);
   const verifiedCallback = useRef(onVerified); verifiedCallback.current = onVerified;
   const lastImport = useRef<{ body: string; key: string }>();
@@ -340,7 +346,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const navigate = (action: () => void) => {
     if (!current()) return;
     if (busyRef.current) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
-    if (dirty || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
+    if (dirty || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
     action();
   };
   const confirmNavigation = () => {
@@ -348,7 +354,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (busyRef.current || preferenceController.pending) { setNotice('当前操作尚未结束，未放弃输入或离开。请先核对结果。'); return; }
     const action = pendingNavigation; setPendingNavigation(undefined); setDiscard(false);
     setLineageDirty(false); setRelationshipDirty(false); setFormRevision(value => value + 1); preferenceController.discard(); graph.discard();
-    mediaDraftChanged(false); timelineDraftChanged(false); maskDraftChanged(false); workflow.skip(); setProductionRevision(value => value + 1); setProductionJob(undefined); action();
+    mediaDraftChanged(false); timelineDraftChanged(false); maskDraftChanged(false); promptDraftChanged(false); workflow.skip(); setProductionRevision(value => value + 1); setProductionJob(undefined); action();
   };
   const sidebar = <div className="independent-studio-sidebar"><h2>独立创作</h2><p>图片、视频和声音共享项目资产。连接其它模块由你决定。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button>
     <StudioWorkspacePreferencesForm controller={preferenceController} locked={graph.dirty || mediaDirty || timelineDirty || maskDirty} />
@@ -372,6 +378,19 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       if (id === projectId) { navigate(() => setWorkspaceView(resume.state === 'SAVED' ? resume.location.view : 'ASSETS')); setNotice('已回到本项目保存的位置。'); return; }
       setNotice(`项目“${id}”已经存在；请从项目列表打开它，当前工作区不会自动切换，也不会为它新建任何内容。`);
     }} mode={interfaceMode} onModeChange={changeInterfaceMode} />}
+    {workspaceView === 'ASSETS' && overview && !denied && (
+      <PromptWorkspace
+        key={`prompts:${cacheKey}`}
+        projectId={projectId}
+        branchId={null}
+        actor={cacheKey}
+        transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
+        scope={context.scope}
+        mode={interfaceMode}
+        writable={writable}
+        denied={denied || identityRetired}
+        onDirtyChange={promptDraftChanged} />
+    )}
     {workspaceView === 'ASSETS' && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
     {loading && <StatusMessage>正在核对项目与权限…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {denied ? <EmptyState title="当前会话无权访问此项目" detail="私人预览已关闭。重新核对身份与范围后再打开。" /> : !overview && !loading ? <Button onClick={() => void refresh()}>重新读取项目</Button> : null}
