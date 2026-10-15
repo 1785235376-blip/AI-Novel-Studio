@@ -1,7 +1,7 @@
 /**
  * UX-07 只读控制器。
  *
- * 状态机是显式的六值：`IDLE | LOADING | READY | EMPTY | DENIED | FAILED`。
+ * 状态机是显式的七值：`IDLE | LOADING | READY | EMPTY | PARTIAL | DENIED | FAILED`。
  * 关键约定（由测试断言）：
  * - 被拒绝的读取 → `DENIED`；**永不**渲染成 `EMPTY`（"没有可用模型"）。
  * - `EMPTY` 只表示"原 owner 成功返回、但注册表确实是空的"。
@@ -182,8 +182,18 @@ export function useModelCenter(props: ModelCenterControllerProps) {
         return;
       }
       if (notes.length) setProblem(notes[0]);
-      const empty = !nextCatalog || nextCatalog.models.length === 0;
-      setState(nextCatalog && !empty ? 'READY' : 'EMPTY');
+      // A successful storage read cannot prove that the model registry is empty.
+      // Preserve each source's outcome, including an incomplete runtime observation.
+      const catalogStatus = providedCatalog
+        ? { state: providedCatalog.models.length ? 'READY' : 'EMPTY' }
+        : result.status.catalog;
+      const storageStatus = providedStorage ? { state: 'READY' } : result.status.storage;
+      const complete = [catalogStatus, storageStatus].every(item => item.state === 'READY' || item.state === 'EMPTY');
+      if (!complete) {
+        setState(nextCatalog || nextStorage ? 'PARTIAL' : 'FAILED');
+        return;
+      }
+      setState(catalogStatus.state === 'EMPTY' ? 'EMPTY' : 'READY');
     } catch (reason) {
       if (request !== epoch.current || !admit() || controller.signal.aborted) return;
       const problem = problemOf(reason, MODEL_CENTER_CODES.readFailed.message);

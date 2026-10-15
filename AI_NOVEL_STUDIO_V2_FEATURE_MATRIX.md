@@ -1689,3 +1689,23 @@ defaults, and a **deliberate redaction precedent** (`production_lineage.py:289` 
 | Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
 
 This section adds current facts only.
+
+### 2026-10-15 — independent Model Center usability checkpoint
+
+Append-only observation on clean `045b865`; historical rows stay unchanged. Model Center now
+separates partial/failed/unavailable source reads from a genuinely empty registry, labels the
+catalog/runtime source correctly, preserves explicit retry, warns about retained facts and exposes
+loading via `aria-busy`. Existing original read endpoints and all backend gates are unchanged.
+
+Selected modelcenter jsdom suite: **104 passed**, exit 0. Adjacent frontend selection: **128 passed /
+1 failed**, exit 1; the same unchanged preference-CAS alert test fails on clean `045b865` (**7 passed /
+1 failed**). TypeScript, Vite build and token guard pass; AppShell jsdom contracts **31 passed**.
+Counts overlap. Browser launch is **BLOCKED** by cloud socket EPERM before page execution; no real
+geometry, model, Windows/GPU, backend or whole-product acceptance is claimed. The separately
+blocked lifecycle work is not part of this independent branch. Details and commands:
+`docs/delivery/v2-development/dot-usability-20261015.md`.
+
+Review follow-through on that checkpoint: two additional synthetic display regressions were
+reproduced and corrected (retained storage after 404, and initial-denied catalog advice).
+Final modelcenter **106 passed**; combined related frontend **161 passed / the same 1 baseline
+failure**, exits 0 and 1 respectively. No original assertion, snapshot or backend gate changed.

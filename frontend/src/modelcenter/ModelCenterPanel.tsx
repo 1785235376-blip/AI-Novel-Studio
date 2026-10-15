@@ -12,15 +12,15 @@ import { Button, EmptyState, StatusMessage } from '../ui/primitives';
 import { CapabilityMatrix } from './CapabilityMatrix';
 import { ModelDetailPanel } from './ModelDetailPanel';
 import { ProviderKeyState } from './ProviderKeyState';
-import { StoragePanel, StorageSourceNotice } from './StoragePanel';
+import { StoragePanel } from './StoragePanel';
 import { capabilityMatrix, orphanCandidates, storageReport } from './modelCenterOps';
 import type { ModelCenterSourceStatus } from './modelCenterClient';
 import { MODEL_CENTER_CODES, type ModelCenterPanelProps, type ModelCenterSurfaceState } from './modelCenterTypes';
 import { useModelCenter } from './useModelCenter';
 import './modelCenter.css';
 
-function StatusBanner({ state, code, message, hasModels }: {
-  state: ModelCenterSurfaceState; code?: string; message?: string; hasModels: boolean;
+function StatusBanner({ state, code, message }: {
+  state: ModelCenterSurfaceState; code?: string; message?: string;
 }) {
   if (state === 'DENIED') {
     return (
@@ -36,15 +36,32 @@ function StatusBanner({ state, code, message, hasModels }: {
       </StatusMessage>
     );
   }
-  if (state === 'EMPTY' && !hasModels) {
-    return <EmptyState title="注册表为空" detail="原 owner 成功返回，但模型注册表里没有任何模型。空注册表与读取失败是两回事，这里不会把它说成“没有可用模型”。" />;
-  }
+  if (state === 'PARTIAL') return <StatusMessage tone="warning">部分来源未能完整读取。下方分别列出已读取的事实与待重试的来源。</StatusMessage>;
   if (state === 'LOADING') return <StatusMessage>正在读取模型注册表、运行时状态与存储事实…</StatusMessage>;
   return null;
 }
 
 function sourceCode(status: ModelCenterSourceStatus): string | undefined {
   return 'code' in status ? status.code : undefined;
+}
+
+function CatalogSourceNotice({ status, hasCatalog, loading }: {
+  status: ModelCenterSourceStatus; hasCatalog: boolean; loading: boolean;
+}) {
+  if (loading) return null;
+  if (status.state === 'EMPTY') {
+    return <EmptyState title="注册表为空" detail="原 owner 成功返回，但模型注册表里没有任何模型。空注册表与读取失败是两回事，这里不会把它说成“没有可用模型”。" />;
+  }
+  if (status.state === 'READY') return null;
+  const label = status.state === 'DENIED' ? '模型注册表或运行时读取被拒绝（DENIED）'
+    : status.state === 'FAILED' ? '模型注册表或运行时读取失败（FAILED）'
+      : '模型注册表或运行时暂不可读取（UNAVAILABLE）';
+  return <>
+    <StatusMessage tone={status.state === 'UNAVAILABLE' ? 'warning' : 'error'}>
+      {label}。{sourceCode(status) ? `（${sourceCode(status)}）` : ''}请在服务恢复后重新读取模型注册表。
+    </StatusMessage>
+    {hasCatalog && <StatusMessage tone="warning">保留已读取的模型事实供对照；当前来源不完整，不能视为最新完整状态。</StatusMessage>}
+  </>;
 }
 
 export function ModelCenterPanel(props: ModelCenterPanelProps) {
@@ -64,7 +81,7 @@ export function ModelCenterPanel(props: ModelCenterPanelProps) {
 
   return (
     <section className="ui-panel model-center-panel" aria-label="模型中心与存储"
-      data-surface-state={controller.state} data-catalog-state={catalogStatus.state} data-storage-state={storageStatus.state}>
+      aria-busy={controller.state === 'LOADING'} data-surface-state={controller.state} data-catalog-state={catalogStatus.state} data-storage-state={storageStatus.state}>
       <header>
         <h2>模型中心与存储</h2>
         <Button disabled={!controller.canRead} onClick={() => void controller.reload()}>重新读取模型注册表</Button>
@@ -75,13 +92,13 @@ export function ModelCenterPanel(props: ModelCenterPanelProps) {
         界面显示为"未知"而不是补一个看起来更好的值。
       </p>
       {props.denied && <StatusMessage tone="error">当前会话无权查看模型中心（DENIED）。</StatusMessage>}
-      <StatusBanner state={controller.state} code={controller.problem?.code} message={controller.problem?.message}
-        hasModels={(controller.catalog?.models.length ?? 0) > 0} />
+      <StatusBanner state={controller.state} code={controller.problem?.code} message={controller.problem?.message} />
+      {!props.denied && controller.state !== 'IDLE' && controller.state !== 'DENIED' && <CatalogSourceNotice status={catalogStatus} hasCatalog={!!controller.catalog}
+        loading={controller.state === 'LOADING'} />}
 
       {controller.catalog ? (
         <>
-          {catalogStatus.state !== 'READY' && <StorageSourceNotice state={catalogStatus.state} code={sourceCode(catalogStatus)} />}
-          {matrix ? <CapabilityMatrix matrix={matrix} selected={selected?.id} onSelect={controller.select} /> : null}
+          {matrix && matrix.rows.length > 0 ? <CapabilityMatrix matrix={matrix} selected={selected?.id} onSelect={controller.select} /> : null}
         </>
       ) : null}
 
@@ -90,7 +107,7 @@ export function ModelCenterPanel(props: ModelCenterPanelProps) {
           admission={controller.storage?.admission} credentials={controller.credentials} />
       ) : null}
 
-      <StoragePanel report={report ?? storageReport(undefined)} orphans={orphans} loaded={!!report}
+      <StoragePanel report={report ?? storageReport(undefined)} orphans={orphans} loaded={!!report} loading={controller.state === 'LOADING' || controller.state === 'IDLE'}
         sourceState={storageStatus.state} sourceCode={sourceCode(storageStatus)}
         canReRead={controller.canRead} onReRead={() => void controller.reload()} />
 
