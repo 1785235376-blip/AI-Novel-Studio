@@ -231,22 +231,54 @@ class CreativeService(DomainService):
             raise ValueError("CREATIVE_DERIVED_SOURCE_REQUIRED")
         return self.create(nid, scope, actor, value, source_documents=source_documents, reauthorize=reauthorize)
 
-    def update(self, nid, scope, actor, rid, expected_version, value, *, reauthorize=lambda: None):
+    def update(self, nid, scope, actor, rid, expected_version, value, *, reauthorize=lambda: None,
+               expected_digest=None, server_proof=None):
+        """Content revision under CAS.
+
+        `expected_digest` and `server_proof` are backward-compatible internal parameters used
+        by the server-side Prompt adoption path (R3-I). Ordinary callers omit both and keep
+        the previous behaviour exactly.
+
+        * `expected_digest` is compared INSIDE the transaction, immediately before the write,
+          so a document that changed between the caller's read and this call is refused
+          rather than silently overwritten.
+        * `server_proof` is the server-verified adoption record. It is never taken from the
+          client: any client-supplied `prompt_adoptions` is discarded and the row's own
+          records are carried forward, so an ordinary PUT can neither forge, replace nor
+          delete a server-generated proof.
+        """
         self._expected(expected_version)
         with self.store.transaction(nid, scope) as state:
             row = state["collections"].get(self.COLLECTION, {}).get(rid)
             if row is None or row.get("novel_id") != nid or row.get("scope") != scope or row.get("status") == "ARCHIVED":
                 raise FileNotFoundError(rid)
             self.assert_current(nid, scope, row)
+            if expected_digest is not None and document_digest(row) != expected_digest:
+                raise CapabilityVersionConflict({
+                    "code": "CREATIVE_DOCUMENT_DIGEST_STALE",
+                    "version": row.get("version"), "current_digest": document_digest(row)})
             payload = self.prepare_content(nid, scope, value, source_documents=row.get("source_documents", {}))
             if payload["mode"] != row["mode"]:
                 raise ValueError("CREATIVE_MODE_IMMUTABLE")
             reauthorize()
+            # The row, not the request body, is the only source of adoption proofs.
+            existing_proofs = row.get("prompt_adoptions")
+            carried = copy.deepcopy(existing_proofs) if isinstance(existing_proofs, list) else []
+            payload.pop("prompt_adoptions", None)
             def replace_content(current):
                 from .storyboard import invalidate_storyboard
                 invalidate_storyboard(current, payload)
                 current.pop("visual_target", None)
                 current.update(payload)
+                proofs = copy.deepcopy(carried)
+                if server_proof is not None:
+                    proofs = [p for p in proofs
+                              if not (isinstance(p, dict) and p.get("shot_id") == server_proof.get("shot_id"))]
+                    proofs.append(copy.deepcopy(server_proof))
+                if proofs:
+                    current["prompt_adoptions"] = proofs
+                else:
+                    current.pop("prompt_adoptions", None)
             change_row(row, actor, expected_version, replace_content)
             self.assert_current(nid, scope, row)
             self.assert_capacity(state)
