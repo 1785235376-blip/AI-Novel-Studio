@@ -37,11 +37,23 @@ No `reset --hard`, `git clean`, force push, ref repair, ACL change or PATH rewri
 | Baseline verification | **DONE** | this file |
 | R3-R read-contract fixes | **DONE (R3-R-08 PARTIAL)** | `ROUND3R_READ_CONTRACT_REPORT.md`; repro **26 failed / 3 passed**; fix **197 passed / 60 skipped / exit 0**; PG **100 passed / exit 0** |
 | **§3 read follow-up** | **DONE** | `ROUND3S_READ_FOLLOWUP_REPORT.md`; repro `round3s-repro-r1` **3 mismatches**; fix `round3s-read-followup-r1` **154 passed / exit 0**; PG `round3s-read-followup-postgres` **83 passed / exit 0** |
-| R3-W dedicated authoring entry | `NOT_RUN` | **next action** |
+| **R3-W dedicated authoring** | **INCOMPLETE — 3 tests failing** | `ROUND3W_STATUS.md`; latest run `round3w-authoring-r7` **130 passed / 3 failed**. Defects D1 (invoker drops the conflict reason) and D2 (mid-write resume) are open. |
 | R3-U Prompt Workspace | `NOT_RUN` | — |
 | R3-I production application | `NOT_RUN` | — |
 | R3-GATE | `NOT_RUN` | — |
 | R4 asset relationship view | `NOT_RUN` | — |
+
+## R3-W resume point (read `ROUND3W_STATUS.md` first)
+
+1. **D1:** in `app/creative/workspace_api.py`'s studio `invoke` wrapper, map
+   `CapabilityVersionConflict` to a 409 that **preserves `exc.current`** (it is currently emptied to
+   `{}`). The service raises the correct payload — verified — so fix the transport, not the service.
+   Then T03/T05 should pass.
+2. **D2:** run `tests/test_round3w_authoring.py::test_t06_metadata_failure_then_retry_produces_exactly_one_revision`
+   and print the exception inside the resume branch; complete the resume so a retry after a mid-write
+   failure yields exactly one revision.
+3. Re-run W6 on File **and** real PostgreSQL; commit/push R3-W alone; **only then** produce
+   `ROUND3W_AUTHORING_REPORT.md`, `ROUND3W_DECISIONS.md`, `ROUND3W_HANDOFF.md`.
 
 ## Hash ledger (kept deliberately distinct — §2 of the directive)
 

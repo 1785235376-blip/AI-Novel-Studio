@@ -1,0 +1,45 @@
+......F.FFFF....                                                         [100%]
+================================== FAILURES ===================================
+___________ test_t03_a_stale_editor_cannot_write_the_next_revision ____________
+tests\test_round3w_authoring.py:207: in test_t03_a_stale_editor_cannot_write_the_next_revision
+    assert loser.json()["detail"]["code"] == "PROMPT_REVISION_STALE"
+E   AssertionError: assert 'EXPERIMENTAL...SION_CONFLICT' == 'PROMPT_REVISION_STALE'
+E     
+E     - PROMPT_REVISION_STALE
+E     + EXPERIMENTAL_VERSION_CONFLICT
+____ test_t04_repeating_the_same_request_does_not_create_a_second_revision ____
+tests\test_round3w_authoring.py:250: in test_t04_repeating_the_same_request_does_not_create_a_second_revision
+    assert again.status_code == 201
+E   assert 409 == 201
+E    +  where 409 = <Response [409 Conflict]>.status_code
+_______ test_t05_reusing_a_request_id_for_different_content_is_refused ________
+tests\test_round3w_authoring.py:267: in test_t05_reusing_a_request_id_for_different_content_is_refused
+    assert response.json()["detail"]["code"] == "PROMPT_REQUEST_ID_REUSED"
+E   AssertionError: assert 'EXPERIMENTAL...SION_CONFLICT' == 'PROMPT_REQUEST_ID_REUSED'
+E     
+E     - PROMPT_REQUEST_ID_REUSED
+E     + EXPERIMENTAL_VERSION_CONFLICT
+_____ test_t06_metadata_failure_then_retry_produces_exactly_one_revision ______
+tests\test_round3w_authoring.py:294: in test_t06_metadata_failure_then_retry_produces_exactly_one_revision
+    assert retry.status_code == 201, retry.text
+E   AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"asset idempotency key was used for a different upload"}}
+E   assert 422 == 201
+E    +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+___________________ test_t06b_a_lost_response_is_replayable ___________________
+tests\test_round3w_authoring.py:308: in test_t06b_a_lost_response_is_replayable
+    assert replay == {**first, "idempotent_replay": True} or replay["asset_id"] == first["asset_id"]
+                                                             ^^^^^^^^^^^^^^^^^^
+E   KeyError: 'asset_id'
+============================== warnings summary ===============================
+tests/test_round3w_authoring.py::test_t01_create_then_read_back_through_the_library
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_round3w_authoring.py::test_t03_a_stale_editor_cannot_write_the_next_revision
+FAILED tests/test_round3w_authoring.py::test_t04_repeating_the_same_request_does_not_create_a_second_revision
+FAILED tests/test_round3w_authoring.py::test_t05_reusing_a_request_id_for_different_content_is_refused
+FAILED tests/test_round3w_authoring.py::test_t06_metadata_failure_then_retry_produces_exactly_one_revision
+FAILED tests/test_round3w_authoring.py::test_t06b_a_lost_response_is_replayable
+5 failed, 11 passed, 1 warning in 4.70s

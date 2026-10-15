@@ -42,6 +42,7 @@ R3-R read-contract fixes (2026-10-15)
 from __future__ import annotations
 
 import hashlib
+import json
 from typing import Any, Iterable, Mapping
 
 PROMPT_LIBRARY_CONTRACT = "studio-prompt-library/1"
@@ -82,7 +83,12 @@ PAYLOAD_REQUIRED_KEYS: tuple[str, ...] = (
     "model_reference", "parameters", "seed", "reference_asset_ids", "output_asset_ids",
     "character_ids", "scene_ids", "shot_ids", "change_note", "change_reason", "redacted",
 )
-PAYLOAD_OPTIONAL_KEYS: tuple[str, ...] = ("previous_asset_id", "adopted_from")
+PAYLOAD_OPTIONAL_KEYS: tuple[str, ...] = ("previous_asset_id", "adopted_from", "request_id", "state")
+
+#: Authoring states. A revision that lost a concurrent race is `CONFLICTED`: its content
+#: is preserved and reported, but it is never presented as a valid revision.
+STATE_ACTIVE = "ACTIVE"
+STATE_CONFLICTED = "CONFLICTED"
 
 MAX_TEXT = 20000
 MAX_IDENTIFIER = 240
@@ -123,6 +129,11 @@ def _text(value: Any) -> str:
     if isinstance(value, (list, tuple)):
         return ", ".join(str(item).strip() for item in value if str(item).strip())
     return str(value).strip()
+
+
+def _clean(value: Any) -> str:
+    """Public alias of `_text`, for callers outside this module."""
+    return _text(value)
 
 
 def _identifiers(value: Any) -> list[str]:
@@ -275,6 +286,11 @@ def validate_payload(payload: Any) -> dict[str, Any]:
             return bad("PROMPT_PAYLOAD_ADOPTION_INVALID")
         if any(not isinstance(value, str) for value in adopted.values()):
             return bad("PROMPT_PAYLOAD_ADOPTION_INVALID")
+    for optional in ("request_id", "state"):
+        if optional in payload and (not isinstance(payload[optional], str) or not payload[optional].strip()):
+            return bad("PROMPT_PAYLOAD_TYPE_INVALID")
+    if payload.get("state") not in (None, STATE_ACTIVE, STATE_CONFLICTED):
+        return bad("PROMPT_PAYLOAD_TYPE_INVALID")
     return {"ok": True, "reason": None}
 
 
@@ -295,12 +311,50 @@ def is_prompt_asset(asset: Mapping[str, Any]) -> bool:
     return _text(asset.get("kind")) == PROMPT_KIND and not asset.get("deleted_at")
 
 
+def authoring_state(asset: Mapping[str, Any]) -> str:
+    """`ACTIVE` unless the revision lost a concurrent race.
+
+    A `CONFLICTED` revision keeps its content (nothing a user wrote is discarded) but is
+    excluded from the version chain and reported separately, so it can never be read as
+    the family's current revision.
+    """
+    return _text(prompt_payload(asset).get("state")) or STATE_ACTIVE
+
+
+def request_id_of(asset: Mapping[str, Any]) -> str:
+    """The authoring request that produced this asset, for exactly-once replay."""
+    return _text(prompt_payload(asset).get("request_id"))
+
+
+#: The authored content that identifies a request. Allocation fields (`family_id`,
+#: `revision`, `previous_asset_id`, `request_id`, `state`) are deliberately excluded, so
+#: the same request compares equal whatever the server allocated.
+CONTENT_KEYS: tuple[str, ...] = (
+    "purpose", "origin", "negative_prompt", "model_reference", "parameters", "seed",
+    "reference_asset_ids", "output_asset_ids", "character_ids", "scene_ids", "shot_ids",
+    "change_note", "change_reason", "redacted",
+)
+
+
+def content_digest(asset: Mapping[str, Any], text: str | None = None) -> str:
+    """Digest of the authored request content.
+
+    Built from `CONTENT_KEYS` only, so a client-side request digest and an asset-side
+    payload digest are directly comparable. Passing `text` folds the body bytes in.
+    """
+    payload = prompt_payload(asset)
+    basis = {key: payload.get(key) for key in CONTENT_KEYS}
+    digest_value = digest(json.dumps(basis, sort_keys=True, ensure_ascii=False, default=str))
+    return digest(f"{digest_value}:{digest(text)}") if text is not None else digest_value
+
+
 def build_payload(*, family_id: str, revision: int, purpose: str, origin: str,
                   negative_prompt: str = "", model_reference: str = "", parameters: Any = None,
                   seed: int | None = None, reference_asset_ids: Any = (), output_asset_ids: Any = (),
                   character_ids: Any = (), scene_ids: Any = (), shot_ids: Any = (),
                   change_note: str = "", change_reason: str = "", previous_asset_id: str | None = None,
-                  redacted: bool = False, source: Any = None) -> dict[str, Any]:
+                  redacted: bool = False, source: Any = None,
+                  request_id: str | None = None, state: str = STATE_ACTIVE) -> dict[str, Any]:
     """Build the payload stored under `parameters.prompt`.
 
     A pure builder: the asset owner performs the write, the CAS and the lineage
@@ -338,6 +392,9 @@ def build_payload(*, family_id: str, revision: int, purpose: str, origin: str,
     }
     if previous_asset_id:
         payload["previous_asset_id"] = _text(previous_asset_id)
+    if request_id:
+        payload["request_id"] = _text(request_id)
+    payload["state"] = state
     if isinstance(source, Mapping) and source:
         payload["adopted_from"] = {
             "owner": _text(source.get("owner")), "field": _text(source.get("field")),
@@ -351,6 +408,20 @@ def build_payload(*, family_id: str, revision: int, purpose: str, origin: str,
 def _revision_of(asset: Mapping[str, Any]) -> int:
     revision = prompt_payload(asset).get("revision")
     return revision if _is_business_int(revision) and revision >= 1 else 0
+
+
+def revision_of(asset: Mapping[str, Any]) -> int:
+    """Public revision accessor, so callers need not reach into a private helper."""
+    return _revision_of(asset)
+
+
+def family_of(asset: Mapping[str, Any]) -> str:
+    """Public family accessor (see `_family_of`)."""
+    return _family_of(asset)
+
+
+def asset_id_of(asset: Mapping[str, Any]) -> str:
+    return _text(asset.get("id"))
 
 
 def _family_of(asset: Mapping[str, Any]) -> str:
@@ -371,6 +442,9 @@ def families(assets: Iterable[Mapping[str, Any]], *, include_deleted: bool = Fal
         if _text(asset.get("kind")) != PROMPT_KIND:
             continue
         if not include_deleted and asset.get("deleted_at"):
+            continue
+        # A revision that lost a concurrent race is not part of the chain.
+        if authoring_state(asset) == STATE_CONFLICTED:
             continue
         grouped.setdefault(_family_of(asset), []).append(asset)
     for rows in grouped.values():
@@ -610,6 +684,12 @@ def project_prompt_library(assets: Iterable[Mapping[str, Any]] | None = None, *,
                               if validate_payload(prompt_payload(versions[-1]))["ok"]),
         "malformed": malformed,
         "malformed_count": len(malformed),
+        # Revisions that lost a concurrent race: preserved, reported, never presented as
+        # a valid revision of the family.
+        "conflicted": [{"asset_id": _text(row.get("id")), "family_id": _family_of(row),
+                        "revision": _revision_of(row), "request_id": request_id_of(row)}
+                       for row in rows if authoring_state(row) == STATE_CONFLICTED],
+        "conflicted_count": sum(1 for row in rows if authoring_state(row) == STATE_CONFLICTED),
         # Scanned assets and projected families are different quantities and are labelled
         # as such, so neither can be mistaken for the other or for a total.
         "scanned_assets": cover.get("returned", len(entries)),

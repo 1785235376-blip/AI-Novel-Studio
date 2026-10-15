@@ -338,7 +338,11 @@ def test_only_get_reaches_the_prompt_paths():
     for path in ("/api/projects/P1/studio/prompts", "/api/projects/P1/studio/prompts/fam1",
                  "/api/projects/P1/studio/prompts/context"):
         assert is_independent_studio_route("GET", path), path
-    for method, path in (("POST", "/api/projects/P1/studio/prompts"),
+    # Authoring is a deliberate, separately-admitted write surface (R3-W); the read
+    # routes themselves remain GET-only. Undeclared methods and shapes stay refused.
+    for method, path in (("PUT", "/api/projects/P1/studio/prompts"),
+                         ("DELETE", "/api/projects/P1/studio/prompts"),
+                         ("POST", "/api/projects/P1/studio/prompts/fam1"),
                          ("PUT", "/api/projects/P1/studio/prompts/fam1"),
                          ("DELETE", "/api/projects/P1/studio/prompts/fam1"),
                          ("GET", "/api/projects/P1/studio/prompts/a/b")):

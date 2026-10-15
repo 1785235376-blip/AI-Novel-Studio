@@ -1,0 +1,22 @@
+......F..FF............................................................. [ 54%]
+.............................................................            [100%]
+================================== FAILURES ===================================
+E   assert 'PROMPT_REVISION_STALE' in '{"detail":{"code":"EXPERIMENTAL_VERSION_CONFLICT","current":{}}}'
+     +  where '{"detail":{"code":"EXPERIMENTAL_VERSION_CONFLICT","current":{}}}' = <Response [409 Conflict]>.text
+D:\PoemSeed\Worktrees\studio-v2-audio-editing-20261014\tests\test_round3w_authoring.py:209: assert 'PROMPT_REVISION_STALE' in '{"detail":{"code":"EXPERIMENTAL_VERSION_CONFLICT","current":{}}}'
+E   assert 'PROMPT_REQUEST_ID_REUSED' in '{"detail":{"code":"EXPERIMENTAL_VERSION_CONFLICT","current":{}}}'
+     +  where '{"detail":{"code":"EXPERIMENTAL_VERSION_CONFLICT","current":{}}}' = <Response [409 Conflict]>.text
+D:\PoemSeed\Worktrees\studio-v2-audio-editing-20261014\tests\test_round3w_authoring.py:269: assert 'PROMPT_REQUEST_ID_REUSED' in '{"detail":{"code":"EXPERIMENTAL_VERSION_CONFLICT","current":{}}}'
+E   KeyError: 'asset_id'
+D:\PoemSeed\Worktrees\studio-v2-audio-editing-20261014\tests\test_round3w_authoring.py:303: KeyError: 'asset_id'
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_round3w_authoring.py::test_t03_a_stale_editor_cannot_write_the_next_revision
+FAILED tests/test_round3w_authoring.py::test_t05_reusing_a_request_id_for_different_content_is_refused
+FAILED tests/test_round3w_authoring.py::test_t06_metadata_failure_then_retry_produces_exactly_one_revision
+3 failed, 130 passed, 1 warning in 9.22s
