@@ -90,6 +90,10 @@ export function usePromptWorkspace(options: Options) {
   const identity = draftScopeKey(projectId, branchId, actor);
   const identityRef = useRef(identity);
   identityRef.current = identity;
+  // Which family's detail is currently open. `refresh()` only re-reads the LIBRARY, so
+  // without this the version history and the comparison kept showing the pre-save revision
+  // after a revision was saved — a real browser run could not reach 比较正文 at all.
+  const detailFamilyRef = useRef<string | null>(null);
 
   /**
    * Mount lifetime flag. The **setup must restore `true`**, not just the cleanup set
@@ -278,7 +282,17 @@ export function usePromptWorkspace(options: Options) {
       });
       // Re-read the authorised family so the panel shows server truth. A failure here only
       // surfaces a list error; it must not undo the confirmed save.
+      detailFamilyRef.current = receipt.familyId;
       await refresh();
+      // ...and re-read the OPEN detail, otherwise the version history and the comparison
+      // still describe the revision before this save.
+      const mine = ++detailEpoch.current;
+      try {
+        const fresh = await client.readFamily(receipt.familyId);
+        if (alive.current && mine === detailEpoch.current) {
+          setState(prev => ({ ...prev, detail: fresh }));
+        }
+      } catch { /* the save is still confirmed; keep the previous detail */ }
     } catch (reason) {
       if (!alive.current || identityRef.current !== capturedIdentity) return;
       const status = reason instanceof ApiError ? reason.problem.status : null;

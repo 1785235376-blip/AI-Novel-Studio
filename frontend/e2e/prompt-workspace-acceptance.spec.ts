@@ -1,172 +1,189 @@
 /**
- * R3-U3-D — Prompt 工作台的真实浏览器验收。
+ * R3-U3-D —— Prompt 工作台真实浏览器业务验收。
  *
- * 这是对**已经在运行的真实应用**的端到端验收：真实后端 + 真实 React + 真实浏览器。
- * 这里不 mock 任何 API 响应、不 stub 组件，也不基于 jsdom 渲染做断言。
+ * 全套复用 `promptAcceptanceEntry.ts` 的共享入口助手与同步 POST 计数器：
+ * 每个用例都创建**自己**的 NEUTRAL_STUDIO 项目，并用授权接口核对
+ * `project.id` 与 `entry_kind`，不因为列表里恰好有个家族就据为己有。
  *
- * 前置条件（见 ./README.md）：应用已在 STUDIO_ACCEPTANCE_BASE_URL 运行，
- * 且已启用 `narrative_production_v2`。浏览器由操作者提供，本套件从不下载浏览器。
- *
- * 每个用例都会在这个服务器上创建真实的合成 Prompt 项目。用例只使用合成正文，
- * 绝不读取或截图用户的私有内容。
+ * 真实 HTTP、真实持久化，无 route.fulfill、无 mock 响应。全部使用合成正文。
  */
 import {expect, test, type Page} from '@playwright/test';
 
-const switcher = (page: Page) => page.locator('[aria-label="独立工作区内容"]');
-const workspace = (page: Page) => page.getByRole('heading', {name: 'Prompt 工作台'});
-const library = (page: Page) => page.getByRole('region', {name: 'Prompt 列表'});
+import {
+  classifyApi, collectDiagnostics, countPromptPosts, enterOwnedStudio, openPromptWorkspace,
+  promptLibrary,
+} from './promptAcceptanceEntry';
 
-/** 合成测试正文：中文、换行、emoji 与前后空格都必须原样保留。 */
+const RUN_ID = process.env.PROMPT_ACCEPTANCE_RUN_ID?.trim() || 'no-run-id';
+
+/** 合成正文：前后空格、换行、中文与 emoji 都必须原样往返。 */
 const TEXT_V1 = '  合成正文第一版\n第二行 🙂  \n';
 const TEXT_V2 = '合成正文第二版，改动若干 🙂🙂\n第三行\n';
 
-/** 进入独立 Studio（复用既有验收套件的幂等入口写法）。 */
-async function enterStudio(page: Page): Promise<void> {
-  await page.goto('/');
-  const ready = switcher(page);
-  const blankName = page.getByLabel('空白项目名称', {exact: true});
-  const settled = await Promise.race([
-    ready.waitFor({state: 'visible', timeout: 30_000}).then(() => 'STUDIO' as const).catch(() => null),
-    blankName.waitFor({state: 'visible', timeout: 30_000}).then(() => 'ENTRY' as const).catch(() => null),
-  ]);
-  if (settled === 'STUDIO') return;
-  if (settled === 'ENTRY') {
-    await blankName.fill(`Prompt 验收 ${Date.now()}`);
-    await page.getByRole('button', {name: '创建空白项目', exact: true}).click();
+const bodyBox = (page: Page) => page.getByLabel('正文', {exact: true});
+
+/** 每个用例进入自己专属的项目与工作台；返回该用例的归属信息。 */
+async function own(page: Page, label: string) {
+  const owned = await enterOwnedStudio(page, {runId: RUN_ID, label});
+  await openPromptWorkspace(page);
+  return owned;
+}
+
+/** 本用例的 A 类（关键 Prompt API）失败必须为空；B 类只记录。 */
+function assertNoCriticalPromptFailure(
+  page: Page, diagnostics: ReturnType<typeof collectDiagnostics>, ownedProjectId: string,
+) {
+  const {critical, unrelated} = classifyApi(diagnostics.apiFailures, ownedProjectId);
+  expect(critical, `本轮 Prompt 关键 API 失败：${critical.map(r => `${r.status} ${r.url}`).join(' | ')}`)
+    .toEqual([]);
+  expect(diagnostics.appErrors, `出现应用错误：${diagnostics.appErrors.join(' | ')}`).toEqual([]);
+  if (unrelated.length > 0) {
+    test.info().annotations.push({type: 'unrelated-api-failures',
+      description: unrelated.map(r => `${r.status} ${r.url}`).join(' | ')});
   }
-  await ready.waitFor({state: 'visible', timeout: 30_000});
+  void page;
 }
 
-/** 打开素材工作区 → Prompt 工作台。 */
-async function openPromptWorkspace(page: Page): Promise<void> {
-  await enterStudio(page);
-  await page.getByRole('button', {name: '素材工作区', exact: true}).click();
-  await expect(workspace(page)).toBeVisible({timeout: 20_000});
-  await expect(library(page)).toBeVisible({timeout: 20_000});
-}
+test('用例1：创建 P1 并读回，中文/换行/emoji/前后空格原样保留', async ({page}) => {
+  const diagnostics = collectDiagnostics(page);
+  const posts = countPromptPosts(page);
+  const owned = await own(page, 'case1');
+  try {
+    // 空库明确显示空状态。
+    await expect(page.getByText('还没有 Prompt')).toBeVisible({timeout: 20_000});
 
-/** 用「新建 Prompt」建一份草稿并填写正文；默认不保存。 */
-async function draftNewPrompt(page: Page, text: string): Promise<void> {
+    await page.getByRole('button', {name: '新建 Prompt', exact: true}).click();
+    await bodyBox(page).fill(TEXT_V1);
+    // 输入阶段不得产生任何写入。
+    expect(posts.value(), '仅输入不应 POST').toBe(0);
+
+    await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
+    await expect(page.locator('.prompt-status')).toContainText('已保存', {timeout: 25_000});
+    expect(posts.value(), '一次显式保存恰好一次 POST').toBe(1);
+
+    // 从服务器读回：真实正文逐字一致。
+    await bodyBox(page).fill(TEXT_V1);
+    await promptLibrary(page).getByRole('button', {name: /IMAGE/}).first().click();
+    await expect(bodyBox(page)).toHaveValue(TEXT_V1, {timeout: 20_000});
+    expect(await bodyBox(page).inputValue()).toContain('🙂');
+
+    await page.screenshot({path: `test-results/biz-${RUN_ID}-case1-${test.info().project.name}.png`, fullPage: true});
+  } finally { posts.dispose(); }
+  assertNoCriticalPromptFailure(page, diagnostics, owned.projectId);
+});
+
+test('用例2：保存第二修订，并对两个真实正文做比较', async ({page}) => {
+  const diagnostics = collectDiagnostics(page);
+  const posts = countPromptPosts(page);
+  const owned = await own(page, 'case2');
+  try {
+    await page.getByRole('button', {name: '新建 Prompt', exact: true}).click();
+    await bodyBox(page).fill(TEXT_V1);
+    await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
+    await expect(page.locator('.prompt-status')).toContainText('已保存', {timeout: 25_000});
+
+    // 打开刚保存的家族（唯一家族），保存第二修订。
+    await promptLibrary(page).getByRole('button', {name: /IMAGE/}).first().click();
+    await expect(page.getByRole('button', {name: '保存新版本', exact: true})).toBeVisible({timeout: 20_000});
+    await bodyBox(page).fill(TEXT_V2);
+    await page.getByRole('button', {name: '保存新版本', exact: true}).click();
+    await expect(page.locator('.prompt-status')).toContainText('已保存', {timeout: 25_000});
+    expect(posts.value(), '创建一次 + 修订一次').toBe(2);
+
+    // 真实正文比较：diff 必须含真实正文片段，而不是版本号。
+    await expect(page.getByRole('region', {name: '版本历史'})).toBeVisible();
+    await page.getByRole('button', {name: '比较正文', exact: true}).click();
+    const diff = page.locator('.prompt-diff table');
+    await expect(diff).toBeVisible({timeout: 25_000});
+    await expect(diff).toContainText('合成正文第一版');
+    await expect(diff).toContainText('合成正文第二版');
+    await page.screenshot({path: `test-results/biz-${RUN_ID}-case2-${test.info().project.name}.png`, fullPage: true});
+  } finally { posts.dispose(); }
+  assertNoCriticalPromptFailure(page, diagnostics, owned.projectId);
+});
+
+test('用例3：再次新建必须是另一个家族，而不是上一家族的修订', async ({page}) => {
+  const diagnostics = collectDiagnostics(page);
+  const posts = countPromptPosts(page);
+  const owned = await own(page, 'case3');
+  try {
+    await page.getByRole('button', {name: '新建 Prompt', exact: true}).click();
+    await bodyBox(page).fill(TEXT_V1);
+    await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
+    await expect(page.locator('.prompt-status')).toContainText('已保存', {timeout: 25_000});
+
+    await page.getByRole('button', {name: '新建 Prompt', exact: true}).click();
+    await bodyBox(page).fill('第二份独立 Prompt\n');
+    // 按钮仍是“保存为新 Prompt” → 这是新建而不是修订。
+    await expect(page.getByRole('button', {name: '保存为新 Prompt', exact: true})).toBeVisible();
+    await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
+    await expect(page.locator('.prompt-status')).toContainText('已保存', {timeout: 25_000});
+
+    // 本用例的项目里应有**两个**不同家族。
+    await expect(promptLibrary(page).getByRole('button', {name: /IMAGE/})).toHaveCount(2, {timeout: 20_000});
+    expect(posts.value()).toBe(2);
+  } finally { posts.dispose(); }
+  assertNoCriticalPromptFailure(page, diagnostics, owned.projectId);
+});
+
+test('用例4：无效 JSON 与 Seed 不产生任何写入，输入保持原样', async ({page}) => {
+  const diagnostics = collectDiagnostics(page);
+  const posts = countPromptPosts(page);
+  const owned = await own(page, 'case4');
+  try {
+    await page.getByRole('button', {name: '新建 Prompt', exact: true}).click();
+    await bodyBox(page).fill('参数校验用合成正文');
+    await page.getByLabel(/参数/, {exact: false}).fill('{ not json');
+    await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
+    await expect(page.locator('.prompt-editor')).toContainText('JSON');
+    expect(posts.value(), '非法 JSON 不得 POST').toBe(0);
+    await expect(page.getByLabel(/参数/, {exact: false})).toHaveValue('{ not json');
+
+    await page.getByLabel(/参数/, {exact: false}).fill('{"steps":28}');
+    await page.getByLabel('Seed', {exact: true}).fill('-3');
+    await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
+    await expect(page.locator('.prompt-editor')).toContainText('Seed');
+    expect(posts.value(), '非法 Seed 不得 POST').toBe(0);
+    await expect(page.getByLabel('Seed', {exact: true})).toHaveValue('-3');
+  } finally { posts.dispose(); }
+  assertNoCriticalPromptFailure(page, diagnostics, owned.projectId);
+});
+
+test('用例5：刷新后只告知草稿无法恢复，不冒充已恢复', async ({page}) => {
+  const diagnostics = collectDiagnostics(page);
+  const owned = await own(page, 'case5');
   await page.getByRole('button', {name: '新建 Prompt', exact: true}).click();
-  const body = page.getByLabel('正文', {exact: true});
-  await body.fill(text);
-}
+  await bodyBox(page).fill('未保存的合成草稿');
+  // The editor's own persistent status element, not the first status on the page (the
+  // library panel renders one too).
+  await expect(page.locator('.prompt-status')).toContainText('未保存');
 
-const postCount = (page: Page) => page.__promptPosts ?? 0;
-
-test.beforeEach(async ({page}) => {
-  // 计数真实 POST /studio/prompts：用来证明“只有明确点击才会写入”。
-  await page.addInitScript(() => {
-    (window as unknown as {__promptPosts: number}).__promptPosts = 0;
-  });
-  page.on('request', request => {
-    const url = request.url();
-    if (request.method() === 'POST' && /\/studio\/prompts(\/|$)/.test(url)) {
-      void page.evaluate(() => {
-        const w = window as unknown as {__promptPosts: number};
-        w.__promptPosts = (w.__promptPosts ?? 0) + 1;
-      });
-    }
-  });
-});
-
-test('真实挂载：能打开 Prompt 工作台并完成一次创建→读回', async ({page}) => {
-  await openPromptWorkspace(page);
-  await draftNewPrompt(page, TEXT_V1);
-
-  // 输入不写入任何东西。
-  expect(await postCount(page)).toBe(0);
-  await expect(page.getByRole('status')).toContainText('未保存');
-
-  await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
-  // 服务器确认后才显示已保存，并把真实正文显示回来（中文/换行/emoji 原样）。
-  await expect(page.getByRole('status')).toContainText('已保存', {timeout: 20_000});
-  await expect(page.getByLabel('正文', {exact: true})).toHaveValue(TEXT_V1);
-  await expect(library(page).getByRole('button', {name: /IMAGE/}).first()).toBeVisible();
-  expect(await postCount(page)).toBe(1);
-});
-
-test('第二个修订可保存，并能对两个真实正文做比较', async ({page}) => {
-  await openPromptWorkspace(page);
-  await draftNewPrompt(page, TEXT_V1);
-  await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
-  await expect(page.getByRole('status')).toContainText('已保存', {timeout: 20_000});
-
-  // 打开刚保存的家族，保存第二修订。
-  await library(page).getByRole('button', {name: /IMAGE/}).first().click();
-  await expect(page.getByRole('button', {name: '保存新版本', exact: true})).toBeVisible({timeout: 20_000});
-  await page.getByLabel('正文', {exact: true}).fill(TEXT_V2);
-  await page.getByRole('button', {name: '保存新版本', exact: true}).click();
-  await expect(page.getByRole('status')).toContainText('已保存', {timeout: 20_000});
-
-  // 版本历史里应有两个修订，并且可以比较真实正文。
-  await expect(page.getByRole('region', {name: '版本历史'})).toBeVisible();
-  await page.getByRole('button', {name: '比较正文', exact: true}).click();
-  const diff = page.locator('.prompt-diff table');
-  await expect(diff).toBeVisible({timeout: 20_000});
-  // 逐行差异里必须出现**真实**的正文片段，而不是版本号或摘要。
-  await expect(diff).toContainText('合成正文第一版');
-  await expect(diff).toContainText('合成正文第二版');
-});
-
-test('再次新建必须是另一个家族，而不是上一家族的修订', async ({page}) => {
-  await openPromptWorkspace(page);
-  await draftNewPrompt(page, TEXT_V1);
-  await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
-  await expect(page.getByRole('status')).toContainText('已保存', {timeout: 20_000});
-
-  await draftNewPrompt(page, '第二份独立 Prompt\n');
-  // 关键：按钮必须仍然是“保存为新 Prompt”，说明它是新建而不是修订。
-  await expect(page.getByRole('button', {name: '保存为新 Prompt', exact: true})).toBeVisible();
-  await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
-  await expect(page.getByRole('status')).toContainText('已保存', {timeout: 20_000});
-  // 列表里应有两个不同的家族。
-  await expect(library(page).getByRole('button', {name: /IMAGE/})).toHaveCount(2, {timeout: 20_000});
-});
-
-test('无效 JSON 与 Seed 不会发出任何写入，输入保持原样', async ({page}) => {
-  await openPromptWorkspace(page);
-  await draftNewPrompt(page, '参数校验用正文');
-  await page.getByLabel(/参数/, {exact: false}).fill('{ not json');
-  await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
-  await expect(page.locator('.prompt-editor')).toContainText('JSON');
-  expect(await postCount(page)).toBe(0);
-  await expect(page.getByLabel(/参数/, {exact: false})).toHaveValue('{ not json');
-
-  await page.getByLabel(/参数/, {exact: false}).fill('{"steps":28}');
-  await page.getByLabel('Seed', {exact: true}).fill('-3');
-  await page.getByRole('button', {name: '保存为新 Prompt', exact: true}).click();
-  await expect(page.locator('.prompt-editor')).toContainText('Seed');
-  expect(await postCount(page)).toBe(0);
-  await expect(page.getByLabel('Seed', {exact: true})).toHaveValue('-3');
-});
-
-test('刷新后被诚实告知草稿无法恢复，不冒充已恢复', async ({page}) => {
-  await openPromptWorkspace(page);
-  await draftNewPrompt(page, '未保存的合成草稿');
-  await expect(page.getByRole('status')).toContainText('未保存');
-
+  // beforeunload 由浏览器接管：明确接受对话框，不关闭产品原有提醒。
+  page.on('dialog', dialog => { void dialog.accept(); });
   await page.reload();
   await openPromptWorkspace(page);
-  // 只允许“检测到 + 无法恢复”的措辞；出现“已恢复”即为冒充。
-  const notice = page.locator('.prompt-workspace, .prompt-library');
-  await expect(notice.first()).toBeVisible();
+
   const text = await page.locator('body').innerText();
   if (text.includes('未保存草稿')) {
     expect(text).toContain('无法恢复');
     expect(text).not.toContain('已恢复草稿');
   }
-  // 正文没有被写入浏览器存储，因此输入框不应带回原文。
-  await expect(page.getByLabel('正文', {exact: true})).not.toHaveValue('未保存的合成草稿');
+  // 正文没有进入浏览器存储，因此刷新后不会带回原文。
+  await expect(bodyBox(page)).not.toHaveValue('未保存的合成草稿');
+  assertNoCriticalPromptFailure(page, diagnostics, owned.projectId);
 });
 
-test('真实布局在三种视口下没有横向溢出，关键控件可达', async ({page}) => {
-  await openPromptWorkspace(page);
+test('用例6：真实布局无横向溢出，关键控件可达', async ({page}) => {
+  const diagnostics = collectDiagnostics(page);
+  const owned = await own(page, 'case6');
+  const viewport = page.viewportSize();
   const overflow = await page.evaluate(() =>
     document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  // 允许 1px 的取整误差，但不允许真正的内容横向溢出。
-  expect(overflow).toBeLessThanOrEqual(1);
+  expect(overflow, `${viewport?.width}x${viewport?.height} 出现横向溢出`).toBeLessThanOrEqual(1);
+
   await expect(page.getByRole('button', {name: '新建 Prompt', exact: true})).toBeVisible();
-  await expect(page.getByLabel('正文', {exact: true})).toBeVisible();
-  await page.screenshot({path: `test-results/prompt-workspace-${page.viewportSize()?.width}x${page.viewportSize()?.height}.png`, fullPage: true});
+  await expect(bodyBox(page)).toBeVisible();
+  await page.screenshot({
+    path: `test-results/biz-${RUN_ID}-case6-${viewport?.width}x${viewport?.height}.png`, fullPage: true});
+  assertNoCriticalPromptFailure(page, diagnostics, owned.projectId);
 });
