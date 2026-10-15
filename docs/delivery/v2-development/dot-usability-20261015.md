@@ -205,8 +205,61 @@ feedback. Both now have dedicated regressions and UI-only corrections. Browser l
 retried: browser/geometry remains **BLOCKED / NOT_RUN**. The full frontend suite, backend,
 Windows/GPU/live models and whole-product acceptance remain **NOT_RUN** for this stage.
 
+### Stage 3 publication
+
+Remote `8128b6c7d4ec87868a75eb1f3aeba81e86e79cbd`, tree
+`1a27ad4ffaf0d5354a898eb5801692d6f93e2ca6`, exactly matches local tested checkpoint
+`f2be68e8ae1de304224049d32e62e8839dca427a`. `git ls-remote` and fetched tree verification
+passed; PR #48 remains Draft. Exact-SHA PR workflows are terminal failures: Cloud CI
+`38791985318`, Local Interop `38791985536`, Shared R123 `38791985542`. No hosted pass or
+rerun is claimed.
+
+## Stage 4 — recoverable, task-specific export download feedback
+
+### Verified gap and implementation
+
+The original novel export center requested a browser download but left no visible handoff
+receipt or guidance for finding the file. A failed download from task A remained visible after
+selecting task B, and a thrown browser handoff exception escaped without cleaning its temporary
+anchor/blob URL. These are UI feedback/resource-cleanup issues in the existing download flow.
+
+- Report that the browser was asked to download the named file, and direct users to its download
+  list to confirm the actual save and location. Never claim a verified disk save.
+- Associate download errors and handoff feedback with the originating task. When another file is
+  pending, explain the existing wait instead of labelling the newly selected file as downloading.
+- A fresh attempt clears an old handoff receipt. URL/anchor handoff failure gives a recoverable
+  alert and cleans up the temporary anchor and any created URL.
+- Keep existing download route, returned bytes/filename, context, active-view guard and
+  single-download disabling unchanged. No new endpoint, credential, model call or backend change.
+
+Code files: `frontend/src/novel/ExportPanel.tsx` and new
+`frontend/src/novel/ExportPanel.downloadFeedback.test.tsx`. Existing UI classes/primitives are
+reused; there is no CSS or protected-shell change.
+
+### Verification and review
+
+Commands are from `frontend/`; counts overlap.
+
+| Command / checkpoint | Actual result | Exit |
+| --- | --- | --- |
+| `vitest run src/novel/ExportPanel.downloadFeedback.test.tsx --maxWorkers=2 --minWorkers=1 --reporter=verbose` on stage-3 source | 5 new failures and 1 uncaught simulated handoff error | 1 |
+| Four export test files after implementation | 33 passed / 1 new-test expectation failure: generic Error message was incorrectly expected to use the API fallback | 1 |
+| `vitest run src/novel/ExportPanel.downloadFeedback.test.tsx src/novel/ExportPanel.test.tsx src/novel/ExportPanel.recovery.test.tsx src/novel/ExportPanel.scope.test.tsx --maxWorkers=4 --minWorkers=1 --reporter=verbose` after correcting the new fixture and adding URL-creation coverage | 35 passed, 4 files | 0 |
+| Same four files plus `src/modelcenter src/prompt src/ui/AppShell.test.tsx src/ui/AppShell.projectNoun.test.tsx`, same worker/reporter options | 287 passed, 24 files | 0 |
+| `tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs` | Pass; existing large-chunk warning unchanged | 0 |
+| `git diff --check` | Pass | 0 |
+
+Independent read-only review checked the final source and six-test file, verified their hashes
+and diff hygiene, and found no actionable issue. It did not independently rerun the unit suite
+or validate a real browser download. No existing assertions, snapshots or test timeouts changed.
+
+Real browser/geometry/download-to-disk verification remains **BLOCKED / NOT_RUN** from the
+previously recorded cloud launch restriction; no browser retry was attempted. Full frontend,
+backend, live model/GPU/Windows and whole-product acceptance remain **NOT_RUN**. The earlier
+preference-CAS baseline failure and hosted workflow failures remain open.
+
 ## Current handoff
 
-Three independent usability slices are implemented with preserved evidence and Draft-only
-publication. Stage 3 publication SHA/tree will be recorded at the next checkpoint. No merge,
+Four independent usability slices are implemented with preserved evidence and Draft-only
+publication. Stage 4 publication SHA/tree will be recorded at the next checkpoint. No merge,
 release or deployment is implied. The blocked lifecycle work remains separate and unchanged.

@@ -1740,3 +1740,17 @@ failures; both passed unchanged in isolation and the bounded rerun, without time
 changes. Counts overlap. Browser/geometry remains **BLOCKED / NOT_RUN**; the earlier baseline
 preference-CAS failure and hosted workflow failures remain open. Detailed commands/limits:
 `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent export download feedback checkpoint
+
+Append-only observation after history-finder checkpoint `8128b6c7`. The existing novel export
+center now gives task-specific download errors and browser-handoff receipts, with download-list
+instructions that do not claim a verified disk save. Selecting a different task during a pending
+file request explains the existing wait. Browser handoff errors remain recoverable and release
+temporary resources. Original routes, returned artifacts, context and gates are unchanged.
+
+Export scope **35 passed** (4 files); combined prior-stage regression **287 passed** (24 files),
+exit 0; counts overlap. Type/build/token checks pass. Read-only code/test review found no
+new defect. Real browser downloads/geometry remain **BLOCKED / NOT_RUN**, and original baseline
+and hosted failures stay open. Details: `docs/delivery/v2-development/dot-usability-20261015.md`.

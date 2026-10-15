@@ -50,8 +50,33 @@ function ScopedExportPanel({novelId,scopeKey,requestContext,requestedTaskId}:{no
   const cancel=useMutation({mutationFn:(id:string)=>api.cancelExport(id,requestContext),onSuccess:(next)=>{if(active.current){client.setQueryData(['export-job',scopeKey,observerId,next.id],next);void client.invalidateQueries({queryKey:historyKey})}}});
   const retry=useMutation({mutationFn:(id:string)=>api.retryExport(id,requestContext),onSuccess:(job)=>{if(active.current){setJobId(job.id);void client.invalidateQueries({queryKey:historyKey})}}});
   const downloadJob=useMutation({mutationFn:(target:{id:string;filename:string})=>api.exportDownload(target.id,requestContext).then(blob=>({blob,filename:target.filename}))});
+  const [downloadFeedback,setDownloadFeedback]=useState<{id:string;filename:string;state:'HANDOFF'|'FAILED'}>();
   const job=selected.isError||history.isError?undefined:selected.data as ExportJob|undefined;
-  function download(){if(!job?.result?.filename)return;downloadJob.mutate({id:job.id,filename:job.result.filename},{onSuccess:({blob,filename})=>{if(!active.current)return;const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();window.setTimeout(()=>URL.revokeObjectURL(url),0)}})}
+  const downloadMatchesJob=downloadJob.variables?.id===job?.id;
+  const otherDownloadPending=downloadJob.isPending&&!downloadMatchesJob;
+  const currentDownloadFeedback=downloadFeedback?.id===job?.id?downloadFeedback:undefined;
+  function download(){
+    if(!job?.result?.filename)return;
+    const id=job.id;
+    setDownloadFeedback(undefined);
+    downloadJob.mutate({id,filename:job.result.filename},{onSuccess:({blob,filename})=>{
+      if(!active.current)return;
+      let url:string|undefined;
+      let anchor:HTMLAnchorElement|undefined;
+      try{
+        url=URL.createObjectURL(blob);
+        anchor=document.createElement('a');anchor.href=url;anchor.download=filename;
+        document.body.appendChild(anchor);anchor.click();
+        // A browser handoff is observable; the user's eventual save location is not.
+        setDownloadFeedback({id,filename,state:'HANDOFF'});
+      }catch{
+        setDownloadFeedback({id,filename,state:'FAILED'});
+      }finally{
+        anchor?.remove();
+        if(url){const temporaryUrl=url;window.setTimeout(()=>URL.revokeObjectURL(temporaryUrl),0)}
+      }
+    }});
+  }
   const label=job?({queued:'排队中',running:'处理中',succeeded:'已完成',failed:'失败',cancelled:'已取消'} as Record<string,string>)[job.status]||'未知状态':'选择格式';
   const busy= start.isPending||cancel.isPending||retry.isPending;
   return <Panel title="导出中心" actions={<Badge tone={job?.status==='succeeded'?'success':job?.status==='failed'?'error':job?.status==='cancelled'?'warning':'info'}>{label}</Badge>}>
@@ -69,7 +94,7 @@ function ScopedExportPanel({novelId,scopeKey,requestContext,requestedTaskId}:{no
     {start.error&&<ExportError error={start.error} fallback="导出任务创建失败，请重试。"/>}
     {(cancel.error||retry.error)&&<ExportError error={cancel.error||retry.error} fallback="导出任务操作失败，请重试。"/>}
     {selected.error&&<div className="export-error" role="alert"><ExportError error={selected.error} fallback="无法读取导出任务状态。"/><Button type="button" variant="ghost" disabled={selected.isFetching} onClick={()=>void selected.refetch()}>{selected.isFetching?'正在刷新…':'刷新任务状态'}</Button></div>}
-    {job&&<section className="export-job" aria-live="polite" aria-busy={selected.isFetching||busy}><header><strong>任务 {job.id.slice(0,8)} · 第 {job.attempt||1} 次</strong>{['queued','running'].includes(job.status)&&<LoaderCircle className="export-spin" aria-label="处理中"/>}</header>{['queued','running'].includes(job.status)&&<><div className="export-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={job.progress||0} aria-valuetext={`${job.progress||0}% · ${job.progress_message||'处理中'}`}><span style={{width:`${Math.max(0,Math.min(100,job.progress||0))}%`}}/></div><p className="novel-help">{job.progress_message||'处理中'} · {job.progress||0}%</p></>}<p className="novel-help">格式：{job.format} · 快照：{job.snapshot_id||'旧版任务未记录'}{job.recovery_count?` · 已恢复 ${job.recovery_count} 次`:''}</p>{!!job.missing_resources?.length&&<p className="novel-error">缺少 {job.missing_resources.length} 项资源，资源包不会生成不完整文件。</p>}{job.status==='failed'&&<ExportError error={job.error||new Error('导出失败')} fallback="导出失败。"/>}{job.status==='cancelled'&&<p className="novel-help">任务已取消，可重新尝试。</p>}{downloadJob.error&&<ExportError error={downloadJob.error} fallback="下载失败，请重试。"/>}{job.status==='succeeded'&&!job.result?.filename&&<p className="novel-error" role="alert">任务已完成，但下载文件信息缺失，请重新导出。</p>}<footer className="export-job__actions">{['queued','running'].includes(job.status)&&<Button type="button" variant="ghost" disabled={busy} onClick={()=>cancel.mutate(job.id)}>取消任务</Button>}{['failed','cancelled'].includes(job.status)&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>retry.mutate(job.id)}>重新尝试</Button>}{job.status==='succeeded'&&<Button type="button" variant="primary" disabled={downloadJob.isPending||!job.result?.filename} onClick={download}><Download aria-hidden="true"/>{downloadJob.isPending?'准备下载…':`下载 ${job.result?.filename||'导出文件'}`}</Button>}</footer></section>}
+    {job&&<section className="export-job" aria-live="polite" aria-busy={selected.isFetching||busy}><header><strong>任务 {job.id.slice(0,8)} · 第 {job.attempt||1} 次</strong>{['queued','running'].includes(job.status)&&<LoaderCircle className="export-spin" aria-label="处理中"/>}</header>{['queued','running'].includes(job.status)&&<><div className="export-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={job.progress||0} aria-valuetext={`${job.progress||0}% · ${job.progress_message||'处理中'}`}><span style={{width:`${Math.max(0,Math.min(100,job.progress||0))}%`}}/></div><p className="novel-help">{job.progress_message||'处理中'} · {job.progress||0}%</p></>}<p className="novel-help">格式：{job.format} · 快照：{job.snapshot_id||'旧版任务未记录'}{job.recovery_count?` · 已恢复 ${job.recovery_count} 次`:''}</p>{!!job.missing_resources?.length&&<p className="novel-error">缺少 {job.missing_resources.length} 项资源，资源包不会生成不完整文件。</p>}{job.status==='failed'&&<ExportError error={job.error||new Error('导出失败')} fallback="导出失败。"/>}{job.status==='cancelled'&&<p className="novel-help">任务已取消，可重新尝试。</p>}{downloadMatchesJob&&downloadJob.error&&<ExportError error={downloadJob.error} fallback="下载失败，请重试。"/>}{otherDownloadPending&&<p className="novel-help" role="status">正在准备另一项任务的文件 {downloadJob.variables?.filename}；完成后可下载当前文件。</p>}{currentDownloadFeedback?.state==='HANDOFF'&&<p className="novel-help" role="status">已请求浏览器下载 {currentDownloadFeedback.filename}。请在浏览器下载列表中确认是否已保存及文件位置；此处无法确认保存结果。</p>}{currentDownloadFeedback?.state==='FAILED'&&<p className="novel-error" role="alert">浏览器未能开始下载，请重试。可再次使用下方的下载按钮。</p>}{job.status==='succeeded'&&!job.result?.filename&&<p className="novel-error" role="alert">任务已完成，但下载文件信息缺失，请重新导出。</p>}<footer className="export-job__actions">{['queued','running'].includes(job.status)&&<Button type="button" variant="ghost" disabled={busy} onClick={()=>cancel.mutate(job.id)}>取消任务</Button>}{['failed','cancelled'].includes(job.status)&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>retry.mutate(job.id)}>重新尝试</Button>}{job.status==='succeeded'&&<Button type="button" variant="primary" disabled={downloadJob.isPending||!job.result?.filename} onClick={download}><Download aria-hidden="true"/>{downloadJob.isPending?(otherDownloadPending?'等待上一项下载…':'准备下载…'):`下载 ${job.result?.filename||'导出文件'}`}</Button>}</footer></section>}
   </Panel>
 }
 
