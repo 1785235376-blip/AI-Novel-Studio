@@ -63,8 +63,11 @@ def create_prompt_adoption_router(adoption: PromptAdoptionService, invoke):
 
         if not PROMPT_ADOPTION_WRITE_ENABLED:
             return invoke(nid, x_session_token, x_branch_id, "domain.write", refuse)
+        # The official write entry point is the ATOMIC path. The old `adopt()` left a window
+        # between verifying the source and committing the document, so it must no longer be
+        # reachable over HTTP now that adopt_atomic exists.
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: adoption.adopt(
+                      lambda actor, scope, guard: adoption.adopt_atomic(
                           nid, scope, actor, document_id, shot_id, body, guard))
 
     @router.get("/projects/{nid}/studio/documents/{document_id}/prompt-adoption")

@@ -728,7 +728,10 @@ def test_C_deleting_the_source_before_the_adoption_makes_it_refuse(rig):
 
     # The source revision is deleted through the owner's own delete path.
     try:
-        rig.assets.delete(receipt["asset_id"], branch_id=rig.scope.get("branch_id"))
+        # The owner binds assets to a project, so the delete runs inside that project's asset
+        # scope and through the owner's own method. The public delete rules are unchanged.
+        with rig.workspace._asset_scope(rig.nid, rig.scope):
+            rig.assets.delete(receipt["asset_id"], branch_id=rig.scope.get("branch_id"))
     except FileNotFoundError:
         pytest.skip(
             "BLOCKED (Test C scenario 1): AssetLibraryService.delete() takes no actor_id, so the "
@@ -786,7 +789,8 @@ def test_C_a_concurrent_delete_cannot_corrupt_the_committed_adoption(rig):
     delete_outcome = {}
     def attempt_delete():
         try:
-            rig.assets.delete(receipt["asset_id"], branch_id=rig.scope.get("branch_id"))
+            with rig.workspace._asset_scope(rig.nid, rig.scope):
+                rig.assets.delete(receipt["asset_id"], branch_id=rig.scope.get("branch_id"))
             delete_outcome["ok"] = True
         except Exception as exc:  # noqa: BLE001
             delete_outcome["error"] = exc
@@ -795,17 +799,30 @@ def test_C_a_concurrent_delete_cannot_corrupt_the_committed_adoption(rig):
     # the commit or fail, but it must not corrupt the adoption or deadlock.
     deleter = threading.Thread(target=attempt_delete, daemon=True)
     deleter.start()
-    deleter.join(timeout=5)
-    assert not deleter.is_alive(), "the delete deadlocked against the adoption transaction"
-
+    # Do NOT require the delete to have finished while the adoption holds its resources:
+    # waiting there is legal lock serialisation, not a deadlock. Record its state instead.
+    deleter.join(timeout=1.0)
+    blocked_while_held = deleter.is_alive()
     may_proceed.set()
     worker.join(timeout=25)
     assert not worker.is_alive(), "the adoption deadlocked"
+    deleter.join(timeout=25)
+    assert not deleter.is_alive(), "the delete deadlocked after the adoption released"
+    # The delete must have reached a definite outcome, never been lost.
+    assert ("ok" in delete_outcome) or ("error" in delete_outcome), \
+        "the delete produced no outcome at all"
+    assert not any("job" in name.lower()
+                   for name in rig.workspace.store.read(rig.nid, rig.scope).get("collections", {}))
+    outcome["delete_blocked_while_held"] = blocked_while_held
 
     # Whichever legal order occurred, the persisted state must be coherent.
     live = rig.creative.get(rig.nid, rig.scope, document["id"])
+    # Precise identity, no `or True`: the previous condition was a tautology and could not
+    # fail, so it proved nothing about which proof was stored.
     proofs = [p for p in (live.get("prompt_adoptions") or [])
-              if p.get("request_digest") == payload.shot_id or True]
+              if p.get("request_id") == payload.request_id
+              and p.get("document_id") == document["id"]
+              and p.get("shot_id") == shot_id]
     if "result" in outcome:
         result = outcome["result"]
         assert result["committed"] is True
@@ -823,3 +840,39 @@ def test_C_a_concurrent_delete_cannot_corrupt_the_committed_adoption(rig):
         # The adoption legitimately lost the race; then it must have written NOTHING.
         assert live["version"] == snapshot["version"], "a failed adoption must not commit"
         assert not [p for p in proofs if p.get("request_id") == payload.request_id]
+
+
+# ============================================ P0: a payload-masked source must be refused
+def test_a_payload_masked_revision_is_refused_and_writes_nothing(rig):
+    """The mask is read from the PAYLOAD, and the previous code never rejected anything.
+
+    `validate_payload` returns only {"ok", "reason"}; asking it for `redacted` always yielded
+    None, so a masked source was adoptable. This test creates a genuinely masked revision
+    through the business API and requires adopt_atomic to refuse it.
+    """
+    document, shot_id = _storyboard(rig)
+    first, _d, b1 = _prompt(rig)
+    masked = _masked_revision(rig, first["family_id"], first["asset_id"], 1,
+                              "被遮罩的正文", masked=True)
+    snapshot = rig.creative.get(rig.nid, rig.scope, document["id"])
+    body = rig.library.revision_body(rig.nid, rig.scope, first["family_id"],
+                                     masked["asset_id"], rig.actor)
+    # The payload really does carry the mask, and the body contract does not.
+    with rig.workspace._asset_scope(rig.nid, rig.scope):
+        payload_meta = rig.workspace.assets.get(masked["asset_id"], actor_id=rig.actor)
+    import app.creative.prompt_asset as _pa
+    assert _pa.prompt_payload(payload_meta).get("redacted") is True
+    assert "redacted" not in body
+
+    request = _body(rig, snapshot, masked, body, shot_id)
+    with pytest.raises(ValueError, match="PROMPT_ADOPTION_SOURCE_REDACTED"):
+        rig.adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, document["id"],
+                                  shot_id, request)
+
+    live = rig.creative.get(rig.nid, rig.scope, document["id"])
+    assert live["version"] == snapshot["version"], "a masked source must not create a revision"
+    shot = next(item for item in live["shots"] if item["id"] == shot_id)
+    assert shot["frame_prompt"] == "", "the shot must be untouched"
+    assert not (live.get("prompt_adoptions") or []), "no proof may be stored"
+    assert not any("job" in name.lower()
+                   for name in rig.workspace.store.read(rig.nid, rig.scope).get("collections", {}))

@@ -353,12 +353,18 @@ class PromptAdoptionService:
                 if prompt.authoring_state(target) != "ACTIVE":
                     raise ValueError("PROMPT_ADOPTION_SOURCE_NOT_ACTIVE")
 
-                # The mask lives in the ASSET PAYLOAD and is strictly validated. It is NOT in
-                # the body contract: reading it from the body silently yielded None and let
-                # masked revisions look adoptable. A payload that fails validation is refused
+                # The mask lives in the ASSET PAYLOAD. `validate_payload` returns ONLY
+                # {"ok", "reason"} -- it does not echo the payload -- so asking it for
+                # `redacted` always yielded None and this check never rejected anything. The
+                # two steps are now separate: validate the payload strictly, then read the
+                # flag from the PAYLOAD itself. A payload that fails validation is refused
                 # rather than treated as unmasked.
-                payload_meta = prompt.validate_payload(prompt.prompt_payload(target))
-                if payload_meta.get("redacted") is True:
+                payload = prompt.prompt_payload(target)
+                validation = prompt.validate_payload(payload)
+                if validation.get("ok") is not True:
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_METADATA_"
+                                     + str(validation.get("reason") or "INVALID"))
+                if payload.get("redacted") is True:
                     raise ValueError("PROMPT_ADOPTION_SOURCE_REDACTED")
 
                 # Approval comes from the owner's own recorded marker, never the caller.
