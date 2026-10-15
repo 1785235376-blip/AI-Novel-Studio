@@ -210,7 +210,13 @@ export function usePromptWorkspace(options: Options) {
           compare: { from: null, to: null, loading: false, error: null } };
       });
     } catch (reason) {
-      if (!alive.current || mine !== detailEpoch.current) return;
+      if (!alive.current) return;
+      // A retired read must still release the loading state it owns, otherwise an abandoned
+      // selection leaves the panel permanently busy.
+      if (mine !== detailEpoch.current) {
+        setState(prev => (prev.loading ? { ...prev, loading: false } : prev));
+        return;
+      }
       setState(prev => ({ ...prev, loading: false, error: message(reason, '读取该 Prompt 失败。') }));
     }
   }, [client, projectId, branchId, actor]);
@@ -230,8 +236,14 @@ export function usePromptWorkspace(options: Options) {
     // PromptWorkspace.detailRace.test.tsx case P0-2.
     detailEpoch.current += 1;
     compareEpoch.current += 1;
-    setState(prev => ({ ...prev, detail: null, conflictCode: null, fieldError: null,
-      draft: newDraft('new'), compare: { from: null, to: null, loading: false, error: null } }));
+    // `loading: false` is part of the same fix, not cosmetic: the detail read just retired
+    // returns early WITHOUT clearing the flag it set, so the panel stayed in a permanent
+    // loading state and the save button stayed disabled — reproduced in
+    // PromptWorkspace.detailRace2.test.tsx task C. Starting a new draft definitively ends
+    // that read, so it also ends the loading state it owns.
+    setState(prev => ({ ...prev, detail: null, loading: false, conflictCode: null,
+      fieldError: null, draft: newDraft('new'),
+      compare: { from: null, to: null, loading: false, error: null } }));
   }, [projectId, branchId, actor]);
 
   /** P0-D: a revision may only be built on a complete, verified, fully-read baseline. */
