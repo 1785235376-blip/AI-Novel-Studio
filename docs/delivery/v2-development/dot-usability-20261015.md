@@ -686,3 +686,108 @@ Browser launch/real geometry and assistive-technology verification remain BLOCKE
 there was no browser launch retry. Earlier baseline and hosted failures remain open. The separate
 blocked lifecycle candidate was not inspected, modified, tested or included. This authoring slice
 does not complete V2, replace runtime acceptance, or imply merge, release or deployment readiness.
+
+
+## Stage 11 — existing Director genre and shot-time authoring
+
+### Original owners, completed authoring controls
+
+The existing `DirectorVisualTarget.genre` and `ShotContinuity.time` fields were already typed
+and consumed by the Director/continuity projections, but absent from the original frontend
+editors. This slice exposes both through the existing visual-target and shot editor. It does
+not add a backend model, service, endpoint, write owner or gate. The read-only DirectorWorkspace
+stays read-only. No protected shell, shared primitive, stylesheet or dependency changed.
+
+- The document-level genre control writes `visual_target.genre`, distinct from the project's
+  inherited genre. It appears in the original document editor and its already-shared Director
+  proposal preparation/review editor. Existing explicit preparation/review paths remain intact;
+  no model is invoked automatically.
+- Shot time writes `continuity.time`. Guidance explains that scene time does not populate it,
+  and both adjacent shots need authored values before comparison. An empty side remains unknown.
+- Ordinary shot lighting continues to supply lighting continuity. Stored `continuity.lighting`
+  overrides remain preserved, without a second ambiguous lighting control.
+- Merely viewing or editing unrelated fields leaves absent optional fields absent. An explicitly
+  cleared control stores an empty string while retaining its sibling fields. Whole-target and
+  whole-continuity removal still use their original explicit controls. IDs, scene data, shot
+  links, director bindings and other shot/target fields remain unchanged. Frontend pass-through
+  tests also retain unrecognized nested data; this does not expand the strict backend schema.
+- Genre's 2,000 and time's 4,000 limits count Unicode code points to match the existing owner.
+  Over-limit text is retained with field-linked feedback and cannot be saved until corrected.
+  The document summary identifies over-limit time on unselected shots. The original busy and
+  read-only fieldset applies to the new controls. No trimming or truncation is performed on save.
+- Persistence stays on full-document POST/PUT, with the original `expected_version`, history,
+  explicit restore and conflict reconciliation. Local conflicting input survives until the
+  user explicitly chooses the checked server version. Restore creates a new current version.
+
+### Verification
+
+All results are synthetic and counts overlap. No new authorization fixture, security probe,
+PostgreSQL, browser, model, GPU, external paid API or media service was used.
+
+| Check | Actual result | Exit |
+| --- | --- | --- |
+| New `CreativeAuthoringFields.test.tsx`, before implementation | 12 failed: missing controls | 1 |
+| New field tests plus original shot-continuity tests | 16 passed, 2 files | 0 |
+| Focused authoring, original Director proposal/canvas and read-only Director projection suites | 60 passed, 7 files | 0 |
+| Prior ten-stage frontend scope plus this stage's relevant workspace/client/Director and static design-contract tests | 561 passed, 50 files | 0 |
+| Original isolated runner, Director projection/owner selection including new File roundtrip and Unicode limits | 39 passed, 2 existing route-authority/method tests deselected | 0 |
+
+Python command from the repository root:
+`PYTHONPATH="$PWD" /workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python scripts/run_v2_checks.py dot-usability-director-authoring -- python -m pytest tests/test_v2_director_workspace.py -q -k 'not requires_authority and not only_the_declared_methods'`.
+Only the installed interpreter/dependencies were reused; application imports resolve this clean
+worktree. No sibling candidate source, environment modification or service was involved. Raw
+receipts/logs are retained locally, not published as environment dumps. Existing `httpx`/Starlette
+deprecation warning remains.
+
+The new functional File test creates legacy-shaped v1, authors genre/time at v2, rereads through
+an independently constructed original File store/service and verifies complete history, clears
+one time and genre at v3, then restores v1 content as v4. The existing projection reports the
+saved document-authored genre, changed-time warning and ordinary shot-lighting differences.
+After one time is cleared, comparison is unknown rather than a false match or a break. A separate
+original Director-owner test creates genre without shots. Fixture route authority/flags establish
+functional behavior only, not live authorization, security isolation or production admission.
+Frontend integration checks create, full-payload update, in-flight duplicate-save prevention,
+reopen, history restore and explicit conflict replacement. Real browser and assistive-technology
+acceptance remains **BLOCKED / NOT_RUN**. Static token/geometry contracts are not pixel geometry
+or screenshot acceptance. Earlier baseline and hosted failures remain open.
+
+### Append-only correction to the Stage 9 audit
+
+Current source already contains Prompt-adoption implementation and a mounted read-only disclosure
+panel. Stage 9's “adoption absent” wording refers to an unavailable accepted write workflow, not
+absent source code. The write switch remains closed and acceptance unfinished. This stage neither
+rebuilds nor enables adoption, and does not supersede the earlier historical evidence.
+
+Publication and independent-review receipts are recorded on Draft PR #48. Eleven authoring/UX
+stages are not V2 completion, merge, release, deployment or full production-chain acceptance.
+
+Stage 11 build note: the first typecheck found five possibly-undefined `RequestInit` accesses
+in the new test assertions/helpers. These were corrected using the existing optional-access
+pattern, without changing assertions or production behavior. The subsequent
+`tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs` passed, exit 0; the existing
+>500 kB chunk warning remains. No test timeout or snapshot was weakened.
+
+Independent read-only review found no in-scope defect and independently ran **27 passed / 3 files**,
+exit 0: `CreativeAuthoringFields.test.tsx`, `CreativeStoryboardContinuity.phase4.test.tsx` and
+`AIDirectorPanel.test.tsx` with `--maxWorkers=4 --minWorkers=1 --reporter=verbose`.
+
+Combined frontend command from `frontend/`:
+`node_modules/.bin/vitest run src/modelcenter src/prompt src/delivery src/taskcenter src/novel/ExportPanel.downloadFeedback.test.tsx src/novel/ExportPanel.test.tsx src/novel/ExportPanel.recovery.test.tsx src/novel/ExportPanel.scope.test.tsx src/ui/AppShell.test.tsx src/ui/AppShell.projectNoun.test.tsx src/experimental/WorldPanel.test.tsx src/experimental/WorldPanel.visual.test.tsx src/creative/CreativeAuthoringFields.test.tsx src/creative/CreativeStoryboardContinuity.phase4.test.tsx src/creative/AIDirectorPanel.test.tsx src/creative/AIDirectorFastReceipt.test.tsx src/creative/CreativeProductionCanvas.test.tsx src/creative/CreativeWorkspace.test.tsx src/creative/client.test.ts src/creative/graphCanvasGeometry.test.ts src/director tests/uiContracts.test.ts --maxWorkers=4 --minWorkers=1 --reporter=verbose`.
+
+After all source/test edits, the reviewed combined frontend command was repeated successfully:
+**561 passed / 50 files**, exit 0. The isolated Python selection was also repeated under label
+`dot-usability-director-authoring-reviewed`: **39 passed / 2 deselected**, exit 0, with source
+hashes unchanged during the check. The same code passed type/build/token checks above.
+
+### Stage 11 publication status — blocked before remote mutation
+
+The reviewed code is committed locally. Publication of the updated existing feature matrix was
+rejected by an external approval requirement; the single evidence-backed identical retry was
+also rejected. The matrix change was checked to contain only 24 appended sanitized Stage 11
+lines, with no removals or credential/environment payload added. No alternative publication
+route or partial upload was attempted. No Stage 11 blob, remote commit, ref update or PR update
+succeeded. Draft PR #48 therefore still points to Stage 10 at
+`61b1f0390077b403b62cc57cbd50048d2324ae40`; the preceding publication-receipt sentence is an
+intended destination, not evidence that Stage 11 reached it. Publication now awaits explicit
+approval for the committed Stage 11 source/tests and sanitized documentation payload. The
+exact-published-SHA rerun and new hosted CI are **NOT_RUN** because no new published SHA exists.

@@ -1848,3 +1848,33 @@ uses first approved or first matching profile. Distinguishing remains owner/hist
 Bible dimensions. Browser/geometry remains **BLOCKED / NOT_RUN**; earlier baseline/hosted and
 advanced-runtime limitations remain open. This is not V2 completion, merge, release or deployment.
 Details: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — existing Director genre and shot-time authoring checkpoint
+
+Append-only observation after visual-authoring checkpoint `61b1f039`. Original document and
+shot editors now expose existing `visual_target.genre` and `continuity.time` fields, with the
+same full-document owner, expected version, explicit history restore and conflict recovery.
+The shared Director proposal editor also preserves and bounds genre. Optional fields stay
+omitted until edited; explicit empty values retain sibling data and links. Code-point limits
+match the original schema. Ordinary shot lighting and stored continuity overrides remain intact.
+No backend production model/service, endpoint/gate, protected shell, CSS or dependency changed.
+
+Synthetic focused frontend **60 passed / 7 files**, combined prior-stage and relevant regression
+**561 passed / 50 files**, and isolated original File-owner/projection selection **39 passed /
+2 existing authority/method tests deselected**. Counts overlap. The v1→v2→fresh-store reread→v3
+clear→v4 restore sequence verifies exact saved content/history, authored genre, changed-time
+warning and unknown one-sided time. Read-only Director projection remains read-only. Browser,
+real geometry, model/GPU and broader runtime acceptance remain unavailable/unverified. Baseline
+and hosted failures remain open. See `docs/delivery/v2-development/dot-usability-20261015.md`
+for commands, final review/publication evidence and limits.
+
+Clarification: Prompt adoption implementation already exists with a mounted read-only panel;
+its closed write path and unfinished acceptance are unchanged. Earlier “absent” wording is not
+an assertion of absent source code. No adoption or separately blocked lifecycle work was done.
+
+Stage 11 publication status: **LOCAL_REVIEWED / PUBLICATION_BLOCKED**. The initial upload of the
+updated existing matrix and one evidence-backed identical retry were rejected by an external
+approval requirement. No Stage 11 remote mutation or PR update succeeded; Draft PR #48 remains
+at `61b1f0390077b403b62cc57cbd50048d2324ae40`. Exact-published rerun/new hosted CI are NOT_RUN.
+No alternate upload route was attempted. See the appended publication status in the rolling report.
