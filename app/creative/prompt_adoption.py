@@ -110,19 +110,30 @@ class PromptAdoptionService:
                 entry["newer_revision_available"] = detail["revision"] > proof["revision"]
                 body = self.prompts.revision_body(nid, scope, proof["family_id"],
                                                   proof["asset_id"], actor)
-                # Display eligibility, not merely raw readability: the family projection's
-                # own mask flag and completeness participate, so a masked or incomplete
-                # revision cannot be re-exposed through this projection.
-                # Per-REVISION mask. `redacted` is a property of the individual asset
-                # payload, so the family head's flag must not stand in for the mask of the
-                # revision actually adopted: a masked v2 must not mask a readable v1, and a
-                # readable v2 must never unmask a masked v1.
-                entry["source_readable"] = bool(
-                    body["state"] == prompt.BODY_COMPLETE and body["verified"]
-                    and body.get("redacted") is not True
-                    and detail.get("history_complete") and detail.get("read_complete"))
-                entry["source_redacted"] = body.get("redacted") is True
+                # The mask is PER REVISION and lives in the family projection's `versions[]`
+                # rows (`redacted`, `available`, per asset_id). It is NOT in the revision-body
+                # contract, which carries only state/available/verified/read_complete — reading
+                # it from the body silently yielded None and let every masked revision look
+                # displayable.
+                row = next((item for item in (detail.get("versions") or [])
+                            if isinstance(item, dict)
+                            and item.get("asset_id") == proof.get("asset_id")), None)
+                if row is None or row.get("revision") != proof.get("revision"):
+                    # This revision's state cannot be confirmed: fail closed rather than
+                    # assume it is displayable.
+                    entry["source_state"] = "UNKNOWN"
+                    entry["source_readable"] = False
+                else:
+                    entry["source_state"] = "KNOWN"
+                    entry["source_redacted"] = row.get("redacted") is True
+                    entry["source_available"] = row.get("available") is not False
+                    entry["source_readable"] = bool(
+                        row.get("redacted") is not True
+                        and row.get("available") is not False
+                        and body["state"] == prompt.BODY_COMPLETE and body["verified"]
+                        and detail.get("history_complete") and detail.get("read_complete"))
             except (FileNotFoundError, ValueError, PermissionError, KeyError):
+                entry["source_state"] = "UNKNOWN"
                 entry["source_readable"] = False
             entries.append(entry)
         return {"contract": PROOF_CONTRACT, "document_id": document_id,
@@ -217,18 +228,20 @@ class PromptAdoptionService:
             "request_digest": want,
             "source_snapshot": self._source_snapshot(detail),
         }
+        # `sink` is filled by the OWNER, inside the commit transaction, with the exact proof
+        # it stored. Searching the returned row afterwards could fail only AFTER the write had
+        # committed, which would report failure for a version that really exists — and could
+        # report a proof that does not describe this operation. The owner's return value makes
+        # proof and commit consistent by construction, so there is no post-commit search.
+        sink: dict = {}
         updated = self.workspace.creative.update(
             nid, scope, actor, document_id, body.expected_version, value,
-            reauthorize=guard, expected_digest=body.expected_digest_target, server_proof=proof)
-        # Select the proof THIS request actually committed. Matching by shot_id alone returns
-        # the FIRST proof for the shot, which after A-then-B is A's superseded record — the
-        # second adoption would report the wrong asset, revision and digest.
-        stored = next((item for item in self._proofs(updated)
-                       if item.get("request_id") == body.request_id
-                       and item.get("request_digest") == want), None)
+            reauthorize=guard, expected_digest=body.expected_digest_target, server_proof=proof,
+            proof_sink=sink)
+        stored = sink.get("proof")
         if stored is None:
-            # The commit succeeded but the proof is not the one we submitted: refuse rather
-            # than report a record that does not describe this operation.
+            # Only reachable if the owner committed no proof at all: no version was created
+            # carrying this request, so refusing is accurate rather than a false failure.
             raise ValueError("PROMPT_ADOPTION_PROOF_NOT_COMMITTED")
         return {"replayed": False, "document_id": document_id, "shot_id": shot_id,
                 "version": updated.get("version"),

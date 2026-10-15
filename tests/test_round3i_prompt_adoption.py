@@ -442,3 +442,88 @@ def test_the_settled_request_still_conflicts_when_the_input_differs(rig):
     payload.asset_id = "not-the-settled-one"
     with pytest.raises(ValueError, match="PROMPT_ADOPTION_REQUEST_REUSED"):
         rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], shot_id, payload)
+
+
+# --------------------------------------------------- per-revision display mask --
+def _masked_revision(rig, family_id, previous_asset_id, revision, text, masked=True):
+    """Add a revision with an explicit per-revision `redacted` flag and approve it."""
+    from app.creative.prompt_authoring_models import PromptRevisionIn
+    receipt = rig.authoring.revise(rig.nid, rig.scope, rig.actor, family_id,
+        PromptRevisionIn.model_validate(dict(
+            text=text, purpose="IMAGE", origin="MANUAL", request_id="req-" + uuid4().hex,
+            expected_previous_asset_id=previous_asset_id, expected_revision=revision,
+            redacted=masked)))
+    rig.authoring.approve(rig.nid, rig.scope, rig.actor, family_id,
+                          receipt["asset_id"], receipt["asset_version"])
+    return receipt
+
+
+def test_a_masked_newer_revision_does_not_mask_the_readable_adopted_one(rig):
+    """The exact defect: the head's mask standing in for the adopted revision's own mask.
+
+    `revision_body` carries NO `redacted` field, so reading the mask from the body silently
+    yielded None and every masked revision looked displayable. The mask lives in the family
+    projection's `versions[]` rows, per asset_id.
+    """
+    document, shot_id = _storyboard(rig)
+    first, _d, b1 = _prompt(rig)                       # v1, unmasked
+    _adopt(rig, document, shot_id, first, b1)
+
+    # v2 arrives and IS masked; the family head's `redacted` therefore becomes True.
+    second = _masked_revision(rig, first["family_id"], first["asset_id"], 1,
+                              "第二版被遮罩", masked=True)
+    detail = rig.library.detail(rig.nid, rig.scope, first["family_id"], rig.actor)
+    assert detail["revision"] == second["revision"] and detail["redacted"] is True
+
+    entry = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][-1]
+    assert entry["asset_id"] == first["asset_id"], "the pinned reference must not move"
+    assert entry["source_state"] == "KNOWN"
+    assert entry["source_redacted"] is False, "a masked HEAD must not mask the adopted revision"
+    assert entry["source_readable"] is True, "the readable adopted revision became undisplayable"
+
+
+def test_a_masked_revision_cannot_be_adopted_at_all(rig):
+    """Real business path: a masked revision is refused as an adoption source.
+
+    This is why 'an old masked revision later unlocked by a readable new one' is NOT
+    constructible through the business API — a masked revision never becomes an adoption
+    source in the first place. The projection's fail-closed branch covers the case where a
+    source becomes masked AFTER adoption (storage-compatibility), which is a different test.
+    """
+    document, shot_id = _storyboard(rig)
+    first, _d, b1 = _prompt(rig)
+    masked = _masked_revision(rig, first["family_id"], first["asset_id"], 1,
+                              "被遮罩的第二版", masked=True)
+    detail = rig.library.detail(rig.nid, rig.scope, first["family_id"], rig.actor)
+    body = rig.library.revision_body(rig.nid, rig.scope, first["family_id"],
+                                     masked["asset_id"], rig.actor)
+    assert body["state"] == "COMPLETE"          # the bytes ARE readable...
+    assert "redacted" not in body, "…and the body contract deliberately does not carry the mask"
+    payload = _body(rig, document, masked, body, shot_id)
+    payload.revision = detail["revision"]
+    payload.expected_digest = body["digest"]
+    with pytest.raises(ValueError, match="PROMPT_ADOPTION_SOURCE_REDACTED"):
+        rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], shot_id, payload)
+
+
+def test_an_unconfirmable_revision_fails_closed_rather_than_displaying(rig):
+    """If the version row cannot be matched, display must FAIL CLOSED, not default to allow."""
+    document, shot_id = _storyboard(rig)
+    first, _d, b1 = _prompt(rig)
+    _adopt(rig, document, shot_id, first, b1)
+
+    entry = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][-1]
+    assert entry["source_state"] == "KNOWN" and entry["source_readable"] is True
+
+    # Corrupt the record so the adopted asset_id no longer appears in the family's versions:
+    # the projection must report UNKNOWN and NOT displayable instead of assuming permission.
+    proofs = rig.creative._raw(rig.nid, rig.scope, document["id"])
+    for item in proofs.get("prompt_adoptions", []):
+        item["asset_id"] = "no-such-asset-in-family"
+    rig.creative._write_raw(rig.nid, rig.scope, proofs) if hasattr(rig.creative, "_write_raw") else None
+    # If the store exposes no such helper the corruption is skipped rather than faked.
+    if not hasattr(rig.creative, "_write_raw"):
+        pytest.skip("store exposes no writable raw accessor; UNKNOWN branch not exercised here")
+    entry2 = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][-1]
+    assert entry2["source_state"] == "UNKNOWN"
+    assert entry2["source_readable"] is False

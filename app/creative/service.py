@@ -237,7 +237,7 @@ class CreativeService(DomainService):
         return self.create(nid, scope, actor, value, source_documents=source_documents, reauthorize=reauthorize)
 
     def update(self, nid, scope, actor, rid, expected_version, value, *, reauthorize=lambda: None,
-               expected_digest=None, server_proof=None):
+               expected_digest=None, server_proof=None, proof_sink=None):
         """Content revision under CAS.
 
         `expected_digest` and `server_proof` are backward-compatible internal parameters used
@@ -288,6 +288,12 @@ class CreativeService(DomainService):
                     current["prompt_adoptions"] = proofs
                 else:
                     current.pop("prompt_adoptions", None)
+                if server_proof is not None and proof_sink is not None:
+                    # Hand the caller the proof that was ACTUALLY stored, from inside the
+                    # commit transaction. A caller that searched the returned row afterwards
+                    # could fail only after the write had committed, reporting failure for a
+                    # version that really exists.
+                    proof_sink["proof"] = copy.deepcopy(server_proof)
             change_row(row, actor, expected_version, replace_content)
             self.assert_current(nid, scope, row)
             self.assert_capacity(state)
