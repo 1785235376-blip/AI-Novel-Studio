@@ -258,8 +258,11 @@ def test_unauthorized_callers_are_refused_and_change_nothing(authorized, case):
     adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = True
     try:
         response = e.client.post(chain["adopt_url"], headers=headers, json=chain["dto"])
-        assert response.status_code >= 400, (case, response.status_code, response.text[:300])
-        assert response.status_code != 200
+        # EXACT expectation per case. A blanket "anything >= 400" cannot tell a real
+        # authorization refusal from a DTO, routing or middleware problem.
+        expected = {"no_session": 401, "bad_session": 401, "wrong_branch": 403}[case]
+        assert response.status_code == expected, (case, response.status_code,
+                                                 response.text[:300])
         after = e.client.get(chain["read_url"], headers=e.headers).json()
         assert after["version"] == chain["target"]["version"], f"{case} wrote to the document"
         assert after["adoptions"] == []
@@ -290,8 +293,13 @@ def test_C_authorized_writer_adopts_over_api_v1(authorized):
         projection = e.client.get(chain["read_url"], headers=e.headers).json()
         assert projection["adoptions"][-1]["still_applied"] is True
         replay = e.client.post(chain["adopt_url"], headers=e.headers, json=chain["dto"])
+        assert replay.status_code == 200, (replay.status_code, replay.text[:300])
         assert replay.json()["replayed"] is True
         assert replay.json()["version"] == result["version"]
+        after = e.client.get(chain["read_url"], headers=e.headers).json()
+        assert after["version"] == result["version"], "a replay must not add a revision"
+        assert len([a for a in after["adoptions"]
+                    if a["request_id"] == chain["dto"]["request_id"]]) == 1
     finally:
         adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = False
 
@@ -361,11 +369,51 @@ def test_the_post_commit_final_guard_boundary(authorized):
                 if a["request_id"] == chain["dto"]["request_id"]]) == 1, \
         "exactly one revision and one proof may result from this operation"
 
-    # Whatever the guard decided, the ambiguity is now RECORDED rather than glossed over.
-    if observed["status"] == 403:
-        print("RECORDED: HTTP 403 while the transaction had already committed. This is a "
-              "commit-confirmation ambiguity (the client cannot tell whether the write landed), "
-              "NOT an unauthorised write: the write was authorised when it was performed.")
-    assert observed["status"] in {200, 403}, observed["status"]
+    # This deterministic injection must produce EXACTLY 403 PROJECT_SCOPE_FORBIDDEN: the write
+    # was authorised and committed, and only the final guard saw the revocation.
+    assert observed["status"] == 403, (observed["status"], observed["body"])
+    assert "PROJECT_SCOPE_FORBIDDEN" in observed["body"], observed["body"]
+    print("RECORDED: HTTP 403 PROJECT_SCOPE_FORBIDDEN while the transaction had already "
+          "committed. This is a commit-confirmation ambiguity, NOT an unauthorised write: the "
+          "write was authorised when it was performed.")
     assert chain["source"]["value"] not in observed["body"], \
         "the response must not leak the private prompt body after the revocation"
+
+    # ---------------- P1.2: real recovery, not an assertion that idempotency merely exists ----
+    from app.authorization import DomainRole, DomainRoleAssignment
+
+    # 1. the writer genuinely has no write authority on the branch right now
+    assert e.authorization.is_allowed(e.writer, "domain.write", ModalityDomain.NOVEL,
+                                      e.auth_scope) is False
+    # 2. restore a legal role for the SAME user on the SAME branch, under a NEW record id
+    restored_role = "restored-" + uuid4().hex[:10]
+    e.authorization.assign_role(DomainRoleAssignment(
+        restored_role, e.writer, DomainRole.DOMAIN_LEAD, ModalityDomain.NOVEL,
+        e.auth_scope, e.init_user))
+    # 3. the real authorization layer is in force again
+    assert e.authorization.is_allowed(e.writer, "domain.write", ModalityDomain.NOVEL,
+                                      e.auth_scope) is True
+
+    adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = True
+    try:
+        # 5. the IDENTICAL request: same request_id, actor, scope, target and body
+        recovered = e.client.post(chain["adopt_url"], headers=e.headers, json=chain["dto"])
+        assert recovered.status_code == 200, (recovered.status_code, recovered.text[:400])
+        # 6-7. reconciled, not re-executed
+        assert recovered.json()["replayed"] is True
+        assert recovered.json()["version"] == observed["version"]
+        # 8. still exactly one revision and exactly one proof
+        final_doc = e.client.get(f"{chain['creative']}/documents/{chain['board']['id']}",
+                                 headers=e.headers).json()
+        final_proj = e.client.get(chain["read_url"], headers=e.headers).json()
+        assert final_doc["version"] == observed["version"], "recovery must not add a revision"
+        assert len([a for a in final_proj["adoptions"]
+                    if a["request_id"] == chain["dto"]["request_id"]]) == 1, \
+            "recovery must not add a second proof"
+        # 10. no model or media work was started by the recovery
+        assert not any("job" in name.lower()
+                       for name in e.deps.experimental_store_placeholder
+                       ) if hasattr(e.deps, "experimental_store_placeholder") else True
+    finally:
+        adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = False
+    assert adopt_api.PROMPT_ADOPTION_WRITE_ENABLED is False
