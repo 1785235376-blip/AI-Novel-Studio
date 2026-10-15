@@ -23,7 +23,8 @@ const VIEWPORTS = [
 
 export default defineConfig({
   testDir: './e2e',
-  testMatch: /prompt-workspace-acceptance\.spec\.ts/,
+  // S0 (entry smoke) and the business cases share this config; run either by file name.
+  testMatch: /prompt-(workspace-acceptance|acceptance-s0)\.spec\.ts/,
   timeout: 90_000,
   expect: {timeout: 20_000},
   // Every case writes real revisions on the operator's running backend, so concurrent

@@ -62,8 +62,24 @@ const newRequestId = (): string =>
 
 export function usePromptWorkspace(options: Options) {
   const { projectId, branchId = null, actor, transport, scope, onDirtyChange } = options;
+
+  /**
+   * The host builds `studioTransport({...})` inline, so a NEW object arrives on every
+   * render. Depending on that identity rebuilds `client` -> `refresh` -> the mount effect,
+   * and each render starts another GET: a real-browser run showed the library pinned at
+   * "正在读取…". Holding the transport in a ref keeps the client stable for a given
+   * project/scope — the dependency that actually matters — while still calling the LATEST
+   * transport, so nothing stale or revoked is retained.
+   */
+  const transportRef = useRef(transport);
+  transportRef.current = transport;
+  const stableTransport = useMemo<StudioGraphTransport>(() => ({
+    json: (url, method, body, signal, idempotencyKey) =>
+      transportRef.current.json(url, method, body, signal, idempotencyKey),
+  }), []);
   const client = useMemo(
-    () => createPromptClient(projectId, transport, scope as never), [projectId, transport, scope]);
+    () => createPromptClient(projectId, stableTransport, scope as never),
+    [projectId, stableTransport, scope]);
 
   // Independent read lifetimes. A write is never identified by these.
   const libraryEpoch = useRef(0);
