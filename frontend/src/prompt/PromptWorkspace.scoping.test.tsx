@@ -152,7 +152,10 @@ describe('保存成功后迟到的家族 A 详情不得污染用户已切换到�
   it('场景 B：先完成 B 的详情，再释放保存后的 library 刷新，让 submit 之后才去读 A', async () => {
     const counters: Counters = {post: 0, famAGet: 0, libraryGet: 0};
     const libraryGate = gate();
-    const lateFamA = gate();
+    // A gate the product no longer waits on (the stale refresh is abandoned) must not be
+    // able to fail the test through its own watchdog, so give it a long budget and release
+    // it in finally regardless.
+    const lateFamA = gate(30_000);
     const transport = makeTransport({counters, libraryGate: libraryGate.promise,
       lateFamA: lateFamA.promise});
     try {
@@ -175,14 +178,84 @@ describe('保存成功后迟到的家族 A 详情不得污染用户已切换到�
       fireEvent.click(libraryItems()[1]);
       await waitFor(() => expect(bodyBox().value).toBe('家族 B 的正文'), {timeout: 3000});
 
-      // 放行 library 刷新 → submit 继续，此时它才发起 A 家族的详情再读。
+      // 放行 library 刷新 → submit 继续。因为用户在刷新期间已经切到 B，这次保存后的
+      // A 详情刷新属于**过期任务**，必须被整体放弃：既不能覆盖 B，也不应再发出请求
+      // （不发比“发了再丢弃”更强：既没有无谓写入，也没有可被误用的响应）。
       libraryGate.release();
-      await waitFor(() => expect(counters.famAGet).toBe(2), {timeout: 3000});
+      await new Promise(tick => setTimeout(tick, 80));
+      expect(counters.famAGet, '过期的 A 详情刷新不应再发出请求').toBe(1);
       lateFamA.release();
       await new Promise(tick => setTimeout(tick, 50));
 
       expect(bodyBox().value, '迟到的 A 详情覆盖了用户选择的 B').toBe('家族 B 的正文');
+
+      // The editor textbox renders the local DRAFT, so it cannot detect a `detail` overwrite.
+      // The version history is rendered FROM detail (PROFESSIONAL mode prints each row's
+      // assetId prefix), so this is the assertion that actually proves whose detail is shown.
+      const history = document.querySelector('[aria-label="版本历史"]');
+      expect(history, '版本历史区域必须存在').toBeTruthy();
+      const historyText = history?.textContent ?? '';
+      expect(historyText, '版本历史必须属于 B').toContain('fam-B-a1');
+      expect(historyText, '版本历史必须属于 B').toContain('fam-B-a2');
+      expect(historyText, '迟到的 A 详情污染了 B 的版本历史').not.toContain('fam-A-a1');
+      expect(historyText).not.toContain('fam-A-a2');
       expect(document.body.textContent).not.toContain('家族 A 的正文');
     } finally { libraryGate.release(); lateFamA.release(); }
+  });
+});
+
+describe('家族 A 尚未完成的正文比较不得回填到 B', () => {
+  it('放行 A 的两条正文 GET 后，B 下不得出现 A 的差异、明文或旧错误', async () => {
+    const counters: Counters = {post: 0, famAGet: 0, libraryGet: 0};
+    const bodyGate = gate();
+    const transport: StudioGraphTransport = {
+      async json<T>(url: string, method = 'GET'): Promise<T> {
+        if (isSavePost(url, method)) { counters.post += 1; return receipt('fam-A', 'fam-A-a2') as T; }
+        if (url.endsWith('/studio/prompts')) return twoFamilyLibrary() as T;
+        if (url.includes('/revisions/') && url.endsWith('/body')) {
+          // A 的两条正文读取被挂起；B 的正文读取（若发生）不挂起。
+          if (url.includes('fam-A')) await bodyGate.promise;
+          const raw = structuredClone(fixture('revision-1-body.json')) as Record<string, unknown>;
+          raw.value = url.includes('fam-A') ? '家族 A 的旧正文' : '家族 B 的旧正文';
+          raw.verified = true;
+          raw.read_complete = true;
+          raw.state = 'COMPLETE';
+          return raw as T;
+        }
+        if (url.includes('/fam-A')) return familyDetail('fam-A', '家族 A 的正文') as T;
+        return familyDetail('fam-B', '家族 B 的正文') as T;
+      },
+    };
+    try {
+      render(<StrictMode><PromptWorkspace projectId="p1" actor="author-a" transport={transport}
+        mode="PROFESSIONAL" writable denied={false} /></StrictMode>);
+      await waitFor(() => expect(libraryItems().length).toBe(2), {timeout: 3000});
+      fireEvent.click(libraryItems()[0]);
+      await waitFor(() => expect(bodyBox().value).toBe('家族 A 的正文'), {timeout: 3000});
+
+      // 启动 A 的比较：两条正文 GET 已发出但被挂起。
+      fireEvent.click(screen.getByRole('button', {name: '比较正文'}));
+      await waitFor(() => expect(
+        screen.getByRole('button', {name: '正在读取正文…'})).toBeTruthy(), {timeout: 3000});
+
+      // 用户在 A 的比较未完成时切到 B。
+      fireEvent.click(libraryItems()[1]);
+      await waitFor(() => expect(bodyBox().value).toBe('家族 B 的正文'), {timeout: 3000});
+      const history = document.querySelector('[aria-label="版本历史"]');
+      expect(history?.textContent ?? '').toContain('fam-B-a1');
+
+      // 放行 A 的迟到正文响应。
+      bodyGate.release();
+      await new Promise(tick => setTimeout(tick, 80));
+
+      // B 下不得出现 A 的差异、明文、旧 asset id 或旧错误，比较也不能永久 loading。
+      expect(document.querySelector('.prompt-diff table'), 'B 下出现了 A 的差异表').toBeNull();
+      expect(document.body.textContent).not.toContain('家族 A 的旧正文');
+      expect(document.body.textContent).not.toContain('无法读取该修订的正文');
+      expect(screen.queryByRole('button', {name: '正在读取正文…'}),
+        '比较状态被永久卡在 loading').toBeNull();
+      expect((document.querySelector('[aria-label="版本历史"]')?.textContent ?? ''))
+        .toContain('fam-B-a1');
+    } finally { bodyGate.release(); }
   });
 });

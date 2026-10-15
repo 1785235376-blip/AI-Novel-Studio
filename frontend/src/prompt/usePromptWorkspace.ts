@@ -94,6 +94,8 @@ export function usePromptWorkspace(options: Options) {
   // without this the version history and the comparison kept showing the pre-save revision
   // after a revision was saved — a real browser run could not reach 比较正文 at all.
   const detailFamilyRef = useRef<string | null>(null);
+  // Mirrors the family whose detail is on screen right now, so async work started earlier
+  // can tell whether the user has since moved somewhere else.
 
   /**
    * Mount lifetime flag. The **setup must restore `true`**, not just the cleanup set
@@ -136,6 +138,7 @@ export function usePromptWorkspace(options: Options) {
     draft: reconcileStashed(takeDraft(projectId, branchId, actor, 'new') ?? newDraft('new')),
     compare: { from: null, to: null, loading: false, error: null },
   }));
+  detailFamilyRef.current = state.detail?.familyId ?? null;
 
   /**
    * §1-A: the content-free marker finally drives the UI.
@@ -184,6 +187,10 @@ export function usePromptWorkspace(options: Options) {
   }, [client]);
 
   const selectFamily = useCallback(async (familyId: string) => {
+    // Retire any comparison still in flight for the family being left: otherwise its late
+    // response writes back into `compare` and family A's plaintext diff appears under
+    // family B — reproduced in PromptWorkspace.scoping.test.tsx.
+    compareEpoch.current += 1;
     const mine = ++detailEpoch.current;
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
@@ -217,8 +224,10 @@ export function usePromptWorkspace(options: Options) {
     // P0-B: always a genuinely fresh slot. Reusing the "new" key would resurrect the family
     // created a moment ago and silently turn the next save into a revision of it.
     clearDraftSlot(projectId, branchId, actor, 'new');
+    // A new draft leaves the family it was on, so its comparison must be retired too.
+    compareEpoch.current += 1;
     setState(prev => ({ ...prev, detail: null, conflictCode: null, fieldError: null,
-      draft: newDraft('new') }));
+      draft: newDraft('new'), compare: { from: null, to: null, loading: false, error: null } }));
   }, [projectId, branchId, actor]);
 
   /** P0-D: a revision may only be built on a complete, verified, fully-read baseline. */
@@ -286,16 +295,33 @@ export function usePromptWorkspace(options: Options) {
       });
       // Re-read the authorised family so the panel shows server truth. A failure here only
       // surfaces a list error; it must not undo the confirmed save.
-      detailFamilyRef.current = receipt.familyId;
+      //
+      // Bind this follow-up refresh to the family the user actually had open. `refresh()`
+      // is awaited before the epoch is taken, so a switch that happens during it would
+      // otherwise be run over by this task — reproduced with a detail-derived assertion:
+      // the version history showed family A's asset ids while family B was selected.
+      const openBefore = detailFamilyRef.current;
       await refresh();
-      // ...and re-read the OPEN detail, otherwise the version history and the comparison
-      // still describe the revision before this save.
+      if (!alive.current) return;
+      // The selection changed while the list refresh was in flight: this task is stale.
+      if (detailFamilyRef.current !== openBefore) return;
+      // A brand-new family has no open detail yet (openBefore === null); refreshing it is
+      // the normal creation path and must not be blocked.
+      if (openBefore !== null && openBefore !== receipt.familyId) return;
+
       const mine = ++detailEpoch.current;
       try {
         const fresh = await client.readFamily(receipt.familyId);
-        if (alive.current && mine === detailEpoch.current) {
-          setState(prev => ({ ...prev, detail: fresh }));
-        }
+        if (!alive.current || mine !== detailEpoch.current) return;
+        setState(prev => {
+          // Re-check inside the updater: everything above ran before this moment, so the
+          // selection could have moved again in between.
+          const stillOpen = prev.detail?.familyId ?? null;
+          if (stillOpen !== openBefore && !(openBefore === null && prev.detail === null)) {
+            return prev;
+          }
+          return { ...prev, detail: fresh };
+        });
       } catch { /* the save is still confirmed; keep the previous detail */ }
     } catch (reason) {
       if (!alive.current || identityRef.current !== capturedIdentity) return;
