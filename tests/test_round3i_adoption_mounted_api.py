@@ -65,16 +65,37 @@ def test_the_adoption_post_route_is_mounted_and_validates_its_dto(client):
     assert ("body", "shot_id") in fields
 
 
-def test_the_adoption_post_is_fail_closed_until_write_time_verification_is_proven(client):
-    """POST must refuse rather than perform an unverified cross-owner write."""
+def test_authorization_precedes_the_closed_state_refusal(client):
+    """Task C: a caller must not learn the feature is off before being authorized.
+
+    The closed-state 503 is raised INSIDE the authorized callback, so an anonymous caller gets
+    the owner's own 401 and a caller naming a missing project gets its own 404 — never a 503
+    that would confirm the project exists and the feature is merely disabled.
+    """
     from app.creative.prompt_adoption_api import PROMPT_ADOPTION_WRITE_ENABLED
     assert PROMPT_ADOPTION_WRITE_ENABLED is False, "write must stay closed until P3 is proven"
-    resp = client.post(f"{MISSING}/shots/s1/prompt-adoption", json={
-        "shot_id": "s1", "family_id": "f1", "asset_id": "a1", "revision": 1,
-        "expected_digest": "d" * 64, "expected_version": 1,
-        "expected_digest_target": "e" * 64, "request_id": "r1"})
-    assert resp.status_code == 503, "a fully valid body must still be refused while closed"
-    assert resp.json()["detail"]["code"] == "PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED"
+
+    body = {"shot_id": "s1", "family_id": "f1", "asset_id": "a1", "revision": 1,
+            "expected_digest": "d" * 64, "expected_version": 1,
+            "expected_digest_target": "e" * 64, "request_id": "r1"}
+    path = f"{MISSING}/shots/s1/prompt-adoption"
+
+    # Anonymous: never the closed-state 503. Measured behaviour is the project authority's
+    # own 404 for a nonexistent project (it resolves the project before the session check),
+    # so this asserts the security property that matters — the flag never answers first —
+    # rather than a status code I had assumed.
+    anon = client.post(path, json=body)
+    assert anon.status_code != 503, "an anonymous caller must not reach the closed-state answer"
+    assert anon.status_code in {401, 404}, anon.text[:120]
+
+    # Authorized-but-missing project: the project authority answers, not the flag.
+    scoped = client.post(path, json=body, headers={"X-Session-Token": "no-such-session"})
+    assert scoped.status_code != 503
+    assert scoped.status_code in {401, 404}
+
+    # NOTE: asserting the 503 for a FULLY AUTHORIZED caller needs a real project and session,
+    # which belongs to the end-to-end HTTP test. That test is NOT_RUN, so the 503 path is
+    # covered here only as far as authorization ordering allows — it is not claimed as passed.
 
 
 def test_wrong_methods_are_refused(client):

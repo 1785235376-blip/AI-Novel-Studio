@@ -113,10 +113,15 @@ class PromptAdoptionService:
                 # Display eligibility, not merely raw readability: the family projection's
                 # own mask flag and completeness participate, so a masked or incomplete
                 # revision cannot be re-exposed through this projection.
+                # Per-REVISION mask. `redacted` is a property of the individual asset
+                # payload, so the family head's flag must not stand in for the mask of the
+                # revision actually adopted: a masked v2 must not mask a readable v1, and a
+                # readable v2 must never unmask a masked v1.
                 entry["source_readable"] = bool(
                     body["state"] == prompt.BODY_COMPLETE and body["verified"]
-                    and not detail.get("redacted")
+                    and body.get("redacted") is not True
                     and detail.get("history_complete") and detail.get("read_complete"))
+                entry["source_redacted"] = body.get("redacted") is True
             except (FileNotFoundError, ValueError, PermissionError, KeyError):
                 entry["source_readable"] = False
             entries.append(entry)
@@ -162,6 +167,9 @@ class PromptAdoptionService:
             raise ValueError("PROMPT_ADOPTION_NOT_APPROVED")
         if detail.get("redacted"):
             raise ValueError("PROMPT_ADOPTION_SOURCE_REDACTED")
+        # `detail` describes the head, and only the head is adoptable, so this is the same
+        # revision; kept explicit so the check cannot silently start describing another one.
+
         if not detail.get("history_complete") or not detail.get("read_complete"):
             raise ValueError("PROMPT_ADOPTION_SOURCE_INCOMPLETE")
 
@@ -212,8 +220,16 @@ class PromptAdoptionService:
         updated = self.workspace.creative.update(
             nid, scope, actor, document_id, body.expected_version, value,
             reauthorize=guard, expected_digest=body.expected_digest_target, server_proof=proof)
+        # Select the proof THIS request actually committed. Matching by shot_id alone returns
+        # the FIRST proof for the shot, which after A-then-B is A's superseded record — the
+        # second adoption would report the wrong asset, revision and digest.
         stored = next((item for item in self._proofs(updated)
-                       if item.get("shot_id") == shot_id), proof)
+                       if item.get("request_id") == body.request_id
+                       and item.get("request_digest") == want), None)
+        if stored is None:
+            # The commit succeeded but the proof is not the one we submitted: refuse rather
+            # than report a record that does not describe this operation.
+            raise ValueError("PROMPT_ADOPTION_PROOF_NOT_COMMITTED")
         return {"replayed": False, "document_id": document_id, "shot_id": shot_id,
                 "version": updated.get("version"),
                 "digest": self.workspace.creative.document_digest(updated),

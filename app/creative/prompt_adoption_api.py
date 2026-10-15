@@ -53,9 +53,16 @@ def create_prompt_adoption_router(adoption: PromptAdoptionService, invoke):
         FAIL-CLOSED: refuses with 503 until write-time source consistency is proven. The
         refusal is a real behaviour with a regression test, not a note in a report.
         """
-        if not PROMPT_ADOPTION_WRITE_ENABLED:
+        def refuse(actor, scope, guard):
+            # Authorization has already run inside `invoke`, so an anonymous caller gets the
+            # owner's own 401 and a missing project its own 404. Raising the closed-state
+            # refusal BEFORE authorization would answer "feature exists but is off" to a
+            # caller who is not entitled to learn anything about the project at all.
             raise HTTPException(503, {"code": "PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED",
                                       "message": "采用写入在跨 owner 来源一致性验证完成前关闭。"})
+
+        if not PROMPT_ADOPTION_WRITE_ENABLED:
+            return invoke(nid, x_session_token, x_branch_id, "domain.write", refuse)
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: adoption.adopt(
                           nid, scope, actor, document_id, shot_id, body, guard))
