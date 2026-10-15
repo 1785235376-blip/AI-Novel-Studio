@@ -91,7 +91,20 @@ export function usePromptWorkspace(options: Options) {
   const identityRef = useRef(identity);
   identityRef.current = identity;
 
-  useEffect(() => () => { alive.current = false; }, []);
+  /**
+   * Mount lifetime flag. The **setup must restore `true`**, not just the cleanup set
+   * `false`: `main.tsx` renders under `<React.StrictMode>`, so in development every effect
+   * is replayed setup -> cleanup -> setup. With a cleanup-only effect the flag stayed
+   * `false` after the replay and every *successfully returned* read was then discarded by
+   * `if (!alive.current) return`, leaving the library pinned at "正在读取…" while the
+   * backend had already answered 200 — reproduced in PromptWorkspace.strictmode.test.tsx.
+   * Restoring it in setup keeps the real-unmount protection intact (a read that lands after
+   * an actual unmount is still ignored, which the third case asserts).
+   */
+  useEffect(() => {
+    alive.current = true;
+    return () => { alive.current = false; };
+  }, []);
   /**
    * A different identity invalidates in-flight reads; it must never inherit the previous
    * author's private text, and an old write must not be applied to the new identity.

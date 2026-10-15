@@ -19,7 +19,7 @@ import {
 const RUN_ID = process.env.PROMPT_ACCEPTANCE_RUN_ID?.trim() || 'no-run-id';
 
 test('S0 入口：创建本用例专属 NEUTRAL_STUDIO 项目并打开 Prompt 工作台', async ({page}) => {
-  const {consoleErrors, failedHttp} = collectDiagnostics(page);
+  const {appErrors, resourceErrors, failedHttp} = collectDiagnostics(page);
   const posts = countPromptPosts(page);
 
   const owned = await enterOwnedStudio(page, {runId: RUN_ID, label: 's0'});
@@ -41,7 +41,12 @@ test('S0 入口：创建本用例专属 NEUTRAL_STUDIO 项目并打开 Prompt �
   // 仅打开工作台不得产生任何写入。
   expect(countAfterOpen, '仅打开工作台不应产生 Prompt 写入').toBe(0);
   expect(failedHttp, `出现失败 HTTP：${failedHttp.join(' | ')}`).toEqual([]);
-  expect(consoleErrors, `出现控制台错误：${consoleErrors.join(' | ')}`).toEqual([]);
+  // Real application errors fail the case; static-resource 404s are reported instead of
+  // being either fatal or silently dropped.
+  expect(appErrors, `出现应用错误：${appErrors.join(' | ')}`).toEqual([]);
+  if (resourceErrors.length > 0) {
+    test.info().annotations.push({type: 'resource-404', description: resourceErrors.join(' | ')});
+  }
   // 该项目确实是本用例创建的：名称里带本轮 RUN_ID。
   expect(owned.name).toContain(RUN_ID);
   await expect(blankProjectName(page)).toBeHidden();

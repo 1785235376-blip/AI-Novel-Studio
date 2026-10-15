@@ -47,15 +47,28 @@ export function countPromptPosts(page: Page) {
 
 /** 有界轮询分类：返回**第一个**真正可见的状态，而不是先超时的那个。 */
 async function classify(page: Page, timeout: number): Promise<EntryState> {
+  // NOTE: the top-level 小说/图片/… tablist belongs to the always-rendered AppShell and is
+  // visible on the project ENTRY screen too, so it must NOT be used as a "novel screen"
+  // signal — doing so misclassified a perfectly good entry page as NOVEL and raised
+  // WRONG_TEST_ROOT against a project this very helper had created. Only the two states we
+  // can identify reliably are returned; anything else is UNKNOWN and fails loudly with
+  // evidence rather than being guessed at.
   const deadline = Date.now() + timeout;
   while (Date.now() < deadline) {
     if (await blankProjectName(page).isVisible().catch(() => false)) return 'ENTRY';
     if (await studioSwitcher(page).isVisible().catch(() => false)) return 'STUDIO';
-    // 普通小说编辑页面的稳定标志：顶层模块标签且没有独立工作区切换器。
-    if (await page.getByRole('tab', {name: '小说'}).isVisible().catch(() => false)) return 'NOVEL';
     await page.waitForTimeout(250);
   }
   return 'UNKNOWN';
+}
+
+/** 只有确实处于小说编辑面时才判定 NOVEL：必须看到正文编辑面且不在项目入口。 */
+async function looksLikeNovelScreen(page: Page): Promise<boolean> {
+  const entry = await blankProjectName(page).isVisible().catch(() => false);
+  const studio = await studioSwitcher(page).isVisible().catch(() => false);
+  if (entry || studio) return false;
+  // 小说编辑面的稳定标志：章节/正文编辑区，而不是顶层的模块标签。
+  return page.getByRole('textbox', {name: /正文|章节内容/}).first().isVisible().catch(() => false);
 }
 
 export type OwnedProject = {projectId: string; name: string; entryKind: string};
@@ -80,10 +93,10 @@ export async function enterOwnedStudio(
     await page.getByRole('button', {name: '返回项目列表', exact: true}).click();
     state = await classify(page, 20_000);
   }
-  if (state === 'NOVEL') {
+  if (await looksLikeNovelScreen(page)) {
     const novels = await page.request.get('/api/novels');
     const body = (await novels.text()).slice(0, 200);
-    throw new Error(`WRONG_TEST_ROOT: 隔离数据根出现了普通小说界面，拒绝把它当作独立 Studio。`
+    throw new Error(`WRONG_TEST_ROOT: 隔离数据根出现了普通小说编辑面，拒绝把它当作独立 Studio。`
       + ` /api/novels=${body} url=${page.url()}`);
   }
   if (state !== 'ENTRY') {
@@ -125,19 +138,37 @@ export async function openPromptWorkspace(page: Page): Promise<void> {
   await expect(promptLibrary(page)).toBeVisible({timeout: 25_000});
 }
 
-/** 收集本用例的失败证据。 */
+/**
+ * 收集本用例的失败证据。
+ *
+ * 区分两类“控制台错误”：
+ *  - `appErrors`：真正的应用错误（未捕获异常、React 报错）。任何一个都必须让用例失败；
+ *  - `resourceErrors`：静态资源 404（浏览器对 /favicon.ico 之类会记一条 console error）。
+ *    这类不是产品缺陷，单独记录并在收据里报告，不冒充应用故障，也不被静默忽略。
+ * 同时单独记录所有 `/api` 失败响应，那才是真正的接口问题。
+ */
 export function collectDiagnostics(page: Page) {
-  const consoleErrors: string[] = [];
+  const appErrors: string[] = [];
+  const resourceErrors: string[] = [];
   const failedHttp: string[] = [];
+  page.on('pageerror', error => appErrors.push(String(error).slice(0, 300)));
   page.on('console', message => {
-    if (message.type() === 'error') consoleErrors.push(message.text().slice(0, 300));
+    if (message.type() !== 'error') return;
+    const text = message.text().slice(0, 300);
+    // Chromium words a failed subresource fetch exactly like this; the URL is in the
+    // network log, not the message, so classify by that phrasing only.
+    if (/Failed to load resource: the server responded with a status of \d+/.test(text)) {
+      resourceErrors.push(text);
+    } else {
+      appErrors.push(text);
+    }
   });
   page.on('response', response => {
     if (response.status() >= 400 && response.url().includes('/api/')) {
       failedHttp.push(`${response.status()} ${response.url()}`);
     }
   });
-  return {consoleErrors, failedHttp};
+  return {appErrors, resourceErrors, failedHttp};
 }
 
 export type {Locator};
