@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
+import os
 import re
 import shlex
 import subprocess
@@ -176,6 +177,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--fresh-database", action="store_true",
                         help="create the explicitly named new database; reject existing names and retain all data")
     parser.add_argument("--user", default="postgres")
+    # Passed through to the inner runner so ENABLE_COLLABORATION_RUNTIME is exported before the
+    # pytest process imports the application. Default stays collaboration-off.
+    parser.add_argument("--collaboration-runtime", action="store_true")
     parser.add_argument("label")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
@@ -209,6 +213,11 @@ def main(argv: list[str] | None = None) -> int:
     evidence = root / "docs" / "delivery" / "v2-development"
     evidence.mkdir(parents=True, exist_ok=True)
     receipt_path = evidence / f"{args.label}-postgres-runtime.json"
+    # The effective feature configuration is recorded so a run cannot silently depend on
+    # whatever happened to be left in the caller's shell.
+    os.environ["EXPERIMENTAL_FEATURES"] = "narrative_production_v2,asset_lineage_v2"
+    os.environ.setdefault("ENABLE_CLOUD", "false")
+    os.environ.setdefault("MOCK_PROVIDER", "true")
     receipt = {
         "utc": utc_now(), "database_mode": "fresh" if args.fresh_database else "reuse",
         "database": args.database, "database_created": False,
@@ -237,8 +246,13 @@ def main(argv: list[str] | None = None) -> int:
         receipt["status"] = "checking"
         write_receipt(receipt_path, receipt)
         print(json.dumps(receipt), flush=True)
-        result = subprocess.run([sys.executable, str(root / "scripts/run_v2_checks.py"),
-                                 "--postgres-url", url, args.label, "--", *command], cwd=root)
+        inner = [sys.executable, str(root / "scripts/run_v2_checks.py"), "--postgres-url", url]
+        if args.collaboration_runtime:
+            # Must precede the positional label, and the inner runner exports it before the
+            # pytest process imports the application.
+            inner.append("--collaboration-runtime")
+        inner += [args.label, "--", *command]
+        result = subprocess.run(inner, cwd=root)
         receipt["checks_exit_code"] = result.returncode
         receipt["status"] = "PASS" if result.returncode == 0 else "FAIL"
         return result.returncode
