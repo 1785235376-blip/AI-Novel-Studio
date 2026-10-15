@@ -29,6 +29,8 @@ R3-R read-contract fixes (2026-10-15)
 """
 from __future__ import annotations
 
+from contextlib import nullcontext
+
 from ..experimental.common import now
 from . import prompt_asset as prompt
 from .prompt_asset import (
@@ -70,7 +72,8 @@ class PromptWorkspaceService:
                 view[key] = scope[key]
         return view
 
-    def _read_prompts(self, nid, scope, actor=None, *, limit=None, include_deleted=False):
+    def _read_prompts(self, nid, scope, actor=None, *, limit=None, include_deleted=False,
+                     lease=True):
         """Full metadata **and** bodies for prompt assets, in one asset lease.
 
         `asset_index` is deliberately a bounded projection that excludes `parameters`, so
@@ -88,7 +91,13 @@ class PromptWorkspaceService:
         branch_id = scope.get("branch_id")
         # Resolved at call time so the bound is a live policy, not a frozen default.
         limit = MAX_PROMPTS if limit is None else limit
-        with self.workspace._asset_scope(nid, scope):
+        # `lease=False` is used only by the cross-module atomic path, which already holds the
+        # asset lease through GraphAssetInputs.phase() and therefore may NOT acquire it again:
+        # AssetLibraryService.project_scope raises ASSET_PROJECT_SCOPE_NESTED. The body below is
+        # shared verbatim, and the owner's own list/content reads still receive the
+        # server-resolved actor, so no scope or permission rule is relaxed.
+        lease_scope = self.workspace._asset_scope(nid, scope) if lease else nullcontext()
+        with lease_scope:
             listed = self.workspace.assets.list(nid, branch_id=branch_id, actor_id=actor,
                                                 include_deleted=include_deleted)
             for row in listed:
@@ -184,7 +193,7 @@ class PromptWorkspaceService:
                          asset_owner="AssetLibraryService", bible_owner="bible_projection")
         return projected
 
-    def detail(self, nid, scope, family_id, actor=None):
+    def detail(self, nid, scope, family_id, actor=None, lease=True):
         """One family, scanned across the whole bounded prompt set.
 
         Detail must not 404 merely because the family sat beyond the library page.
@@ -192,7 +201,7 @@ class PromptWorkspaceService:
         self.workspace.store.key(nid, scope)
         self.workspace.novels.get(nid)
         rows, bodies, coverage = self._read_prompts(nid, scope, actor, limit=MAX_PROMPT_SCAN,
-                                                    include_deleted=True)
+                                                    include_deleted=True, lease=lease)
         projected = project_prompt_detail(
             family_id, rows, bible=self._bible_indices(nid, scope, rows, actor),
             asset_text=bodies, read_complete=not coverage["truncated"])
@@ -220,7 +229,7 @@ class PromptWorkspaceService:
         return projected
 
     # ------------------------------------------------- revision body (R3-U2) --
-    def revision_body(self, nid, scope, family_id, asset_id, actor=None):
+    def revision_body(self, nid, scope, family_id, asset_id, actor=None, lease=True):
         """One revision's **real** body, so version comparison can compare text.
 
         Why this exists: the family detail projection carries each revision's identity and
@@ -250,7 +259,7 @@ class PromptWorkspaceService:
         # `_read_prompts` already takes the asset lease (which cannot be nested), and it
         # reads every body under the caller's own actor.
         rows, bodies, coverage = self._read_prompts(nid, scope, actor,
-                                                    limit=MAX_PROMPT_SCAN, include_deleted=True)
+                                                    limit=MAX_PROMPT_SCAN, include_deleted=True, lease=lease)
         target = next((row for row in rows if _clean(row.get("id")) == asset_id), None)
         # Refuse a foreign/missing asset and a cross-family read alike: the family must
         # match, so this cannot be used to walk another family's revisions.

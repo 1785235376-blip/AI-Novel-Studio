@@ -49,8 +49,12 @@ _DOCUMENT_FIELDS = frozenset(CreativeProductionDocumentIn.model_fields)
 class PromptAdoptionService:
     """Adopt a verified Prompt revision into one storyboard shot."""
 
-    def __init__(self, workspace, prompts):
+    def __init__(self, workspace, prompts, phase_inputs=None):
         self.workspace, self.prompts = workspace, prompts
+        # Injected when the host already owns the project's cross-module transaction
+        # mechanism (ProductionExecutionService.timeline_inputs); otherwise built lazily
+        # over the same workspace, never as a second transaction owner.
+        self._inputs = phase_inputs
 
     # ------------------------------------------------------------- reads --
     @staticmethod
@@ -250,6 +254,138 @@ class PromptAdoptionService:
                 "version": updated.get("version"),
                 "digest": self.workspace.creative.document_digest(updated),
                 "adoption": {k: v for k, v in stored.items() if k != "adopted_text"}}
+
+    # ------------------------------------------------------------- atomic --
+    def _phase_inputs(self):
+        """The project's OWN cross-module transaction mechanism, not a new one.
+
+        `GraphAssetInputs.phase(writable=True)` already acquires, in the established order,
+        the project-owner transaction and then the asset lease, and commits with
+        `raw.clear(); raw.update(state)` while both are still held. `ProductionExecutionService`
+        builds one as `timeline_inputs`; the host object here supplies the same three
+        attributes that `phase()` actually uses.
+        """
+        if self._inputs is None:
+            from .graph_asset_inputs import GraphAssetInputs
+            creative = self.workspace.creative
+
+            class _PhaseHost:
+                pass
+
+            host = _PhaseHost()
+            host.workspace = self.workspace
+            host.store = self.workspace.store
+            host._capacity = staticmethod(creative.assert_capacity)
+            self._inputs = GraphAssetInputs(host)
+        return self._inputs
+
+    def adopt_atomic(self, nid, scope, actor, document_id, shot_id, body, guard=lambda: None):
+        """Adopt into one shot inside the cross-module atomic boundary.
+
+        Everything the unverified path did OUTSIDE a transaction now happens inside one: the
+        permission and project identity, the source asset read (under the lease the phase
+        already holds, so `lease=False` — `project_scope` refuses to nest), the target document
+        and shot, the idempotency record, the version and digest CAS, the write itself, and the
+        incarnation re-check. Success is reported only after the phase has exited normally and
+        the raw owner has committed.
+        """
+        if not isinstance(actor, str) or not actor.strip():
+            raise ValueError("PROMPT_ADOPTION_ACTOR_REQUIRED")
+        if getattr(body, "shot_id", shot_id) != shot_id:
+            raise ValueError("PROMPT_ADOPTION_SHOT_ID_MISMATCH")
+        self.workspace.store.key(nid, scope)
+        self.workspace.novels.get(nid)
+        creative = self.workspace.creative
+        want = self._request_digest(body, document_id, shot_id, actor, scope)
+        settled = {}
+
+        with self._phase_inputs().phase(nid, scope, actor, guard, writable=True) as state:
+            collection = state["collections"].get(creative.COLLECTION, {})
+            row = collection.get(document_id)
+            if row is None or prompt._text(row.get("status")) == "ARCHIVED":
+                raise FileNotFoundError(document_id)
+            if prompt._text(row.get("mode")) != "STORYBOARD":
+                raise ValueError("PROMPT_ADOPTION_TARGET_NOT_STORYBOARD")
+            if self._shot(row, shot_id) is None:
+                raise FileNotFoundError(shot_id)
+
+            # Idempotency is decided from the CURRENT transaction state, not a pre-transaction
+            # snapshot, so two concurrent requests cannot both see "not settled yet".
+            for proof in self._proofs(row):
+                if proof.get("request_id") != body.request_id:
+                    continue
+                if (proof.get("request_digest") != want
+                        or proof.get("document_id") != document_id
+                        or proof.get("shot_id") != shot_id):
+                    raise ValueError("PROMPT_ADOPTION_REQUEST_REUSED")
+                settled = {"replayed": True, "document_id": document_id, "shot_id": shot_id,
+                           "version": row.get("version"),
+                           "digest": creative.document_digest(row), "adoption": proof}
+                break
+            if not settled:
+                # Source verification shares the ordinary read rules EXACTLY: same methods,
+                # same actor, same checks — only the lease acquisition is skipped because the
+                # phase already holds it. No payload read happens outside the owner's lease.
+                detail = self.prompts.detail(nid, scope, body.family_id, actor, lease=False)
+                if detail["head_asset_id"] != body.asset_id or detail["revision"] != body.revision:
+                    raise ValueError("PROMPT_ADOPTION_REVISION_NOT_HEAD")
+                if not detail.get("approved"):
+                    raise ValueError("PROMPT_ADOPTION_NOT_APPROVED")
+                if detail.get("redacted"):
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_REDACTED")
+                if not detail.get("history_complete") or not detail.get("read_complete"):
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_INCOMPLETE")
+                body_read = self.prompts.revision_body(nid, scope, body.family_id,
+                                                       body.asset_id, actor, lease=False)
+                if body_read["state"] != prompt.BODY_COMPLETE:
+                    raise ValueError(f"PROMPT_ADOPTION_SOURCE_{body_read['state']}")
+                if not body_read["verified"] or body_read["digest_of"] != prompt.DIGEST_OF_ORIGINAL:
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_UNVERIFIED")
+                text = body_read["value"]
+                if not isinstance(text, str):
+                    raise ValueError("PROMPT_ADOPTION_SOURCE_UNREADABLE")
+                if body.expected_digest != body_read["digest"]:
+                    raise ValueError("PROMPT_ADOPTION_DIGEST_MISMATCH")
+                if len(text) > FRAME_PROMPT_MAX:
+                    raise ValueError("PROMPT_ADOPTION_TOO_LONG")
+
+                shot = self._shot(row, shot_id)
+                value = {key: copy.deepcopy(row[key]) for key in _DOCUMENT_FIELDS if key in row}
+                shots = [copy.deepcopy(item) for item in self._shots(row)]
+                for item in shots:
+                    if isinstance(item, dict) and item.get("id") == shot_id:
+                        item["frame_prompt"] = text
+                value["shots"] = shots
+                value.pop("prompt_adoptions", None)
+                proof = {
+                    "contract": PROOF_CONTRACT, "document_id": document_id, "shot_id": shot_id,
+                    "field": "frame_prompt", "family_id": body.family_id,
+                    "asset_id": body.asset_id, "revision": body.revision,
+                    "digest": body_read["digest"], "digest_of": body_read["digest_of"],
+                    "adopted_by": actor, "adopted_at": now(), "request_id": body.request_id,
+                    "target_version": row.get("version"), "target_digest": creative.document_digest(row),
+                    "request_digest": want, "source_snapshot": self._source_snapshot(detail),
+                }
+                updated, committed = creative.revise_in_state(
+                    nid, scope, actor, state, document_id, body.expected_version, value,
+                    reauthorize=guard, expected_digest=body.expected_digest_target,
+                    server_proof=proof)
+                if committed is None:
+                    raise ValueError("PROMPT_ADOPTION_PROOF_NOT_COMMITTED")
+                result = {"replayed": False, "document_id": document_id, "shot_id": shot_id,
+                          "version": updated.get("version"),
+                          "digest": creative.document_digest(updated),
+                          "adoption": {k: v for k, v in committed.items()
+                                       if k != "adopted_text"}}
+            else:
+                result = settled
+                shot = self._shot(row, shot_id)
+
+        # The phase has exited normally, so the incarnations matched and the raw owner has
+        # committed. Only NOW is success reported.
+        result["committed"] = True
+        result["generated_at"] = now()
+        return result
 
     # ------------------------------------------------------------ helpers --
     @staticmethod
