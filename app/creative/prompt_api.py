@@ -37,4 +37,19 @@ def create_prompt_router(prompts, invoke):
         return invoke(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: prompts.detail(nid, scope, family_id, actor))
 
+    # R3-U2: the narrow, read-only single-revision body. Registered after the family route
+    # but as an explicit longer path, so it cannot shadow `context` or the family detail.
+    @router.get("/projects/{nid}/studio/prompts/{family_id}/revisions/{asset_id}/body")
+    def prompt_revision_body(nid: str, family_id: str, asset_id: str,
+                             x_session_token: str | None = Header(None),
+                             x_branch_id: str | None = Header(None)):
+        """A revision's real body, read under the caller's own actor.
+
+        This does **not** widen `GET /studio/assets/{aid}/download`; it is a separate,
+        family-scoped, actor-resolved read so version comparison can be a true text diff.
+        """
+        return invoke(nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: prompts.revision_body(
+                          nid, scope, family_id, asset_id, actor))
+
     return router

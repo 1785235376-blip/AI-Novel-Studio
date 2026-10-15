@@ -30,6 +30,7 @@ R3-R read-contract fixes (2026-10-15)
 from __future__ import annotations
 
 from ..experimental.common import now
+from . import prompt_asset as prompt
 from .prompt_asset import (
     MAX_TEXT, PROMPT_KIND, PROMPT_LIBRARY_CONTRACT, is_prompt_asset, project_prompt_context,
     project_prompt_detail, project_prompt_library, read_prompt_body, shot_index,
@@ -44,6 +45,9 @@ MAX_TEXT_BYTES = 64 * 1024
 #: Detail needs the whole family, which may sit beyond the library page. This is its own
 #: (larger) bound, reported honestly through `read_complete`.
 MAX_PROMPT_SCAN = 2000
+
+#: Contract for the R3-U2 single-revision body read.
+REVISION_BODY_CONTRACT = "prompt-revision-body/1"
 
 
 def _clean(value) -> str:
@@ -214,3 +218,75 @@ class PromptWorkspaceService:
             document_id=document_id)
         projected.update(project_id=nid, scope=self._scope_view(nid, scope), generated_at=now())
         return projected
+
+    # ------------------------------------------------- revision body (R3-U2) --
+    def revision_body(self, nid, scope, family_id, asset_id, actor=None):
+        """One revision's **real** body, so version comparison can compare text.
+
+        Why this exists: the family detail projection carries each revision's identity and
+        change note but **not** its full body, and the generic download route calls the
+        asset owner's `content` **without the resolved actor** — which cannot read an
+        R3-W prompt draft, because those are private `owner_actor_id` assets. Comparing
+        version numbers or digests and calling it a text diff would be a lie.
+
+        Deliberately narrow, and it does not widen the generic download route:
+
+        * the caller must name **both** the family and the asset, and they must agree;
+        * the read runs under the caller's own resolved actor, so the owner's
+          private-owner filtering applies and another author gets nothing;
+        * a deleted revision returns a **tombstone**, never the old bytes;
+        * the body is bounded, and its original-byte SHA-256 is re-verified against a
+          fresh read before it is reported as `verified`;
+        * only the body contract is returned — no tokens, no private metadata, and no
+          prompt text is ever placed in an error body.
+        """
+        if not isinstance(asset_id, str) or not asset_id.strip():
+            raise ValueError("PROMPT_ASSET_REQUIRED")
+        family_id = _clean(family_id)
+        if not family_id:
+            raise ValueError("PROMPT_FAMILY_REQUIRED")
+        self.workspace.store.key(nid, scope)
+        self.workspace.novels.get(nid)
+        # `_read_prompts` already takes the asset lease (which cannot be nested), and it
+        # reads every body under the caller's own actor.
+        rows, bodies, coverage = self._read_prompts(nid, scope, actor,
+                                                    limit=MAX_PROMPT_SCAN, include_deleted=True)
+        target = next((row for row in rows if _clean(row.get("id")) == asset_id), None)
+        # Refuse a foreign/missing asset and a cross-family read alike: the family must
+        # match, so this cannot be used to walk another family's revisions.
+        if target is None or prompt.family_of(target) != family_id:
+            raise FileNotFoundError(asset_id)
+        deleted = bool(target.get("deleted_at"))
+        body = dict(bodies.get(asset_id) or {})
+        if deleted:
+            # A deleted revision is a tombstone: identity yes, bytes no.
+            body = {"state": "DELETED", "value": None, "digest": None, "digest_of": None,
+                    "truncated": False, "decodable": False, "body_validated": False,
+                    "tail_unverified": False, "original_length": None, "preview_length": 0,
+                    "limit": MAX_TEXT_BYTES, "fetch": "TOMBSTONE"}
+        # Verify the bytes we read against the digest the owner recorded when the asset
+        # was created. `read_prompt_body` hashes the ORIGINAL bytes, so this is a real
+        # end-to-end integrity check rather than a restatement of its own output.
+        recorded = _clean(target.get("sha256"))
+        verified = (not deleted and bool(recorded)
+                    and body.get("digest") == recorded
+                    and body.get("state") in (prompt.BODY_COMPLETE, prompt.BODY_TRUNCATED))
+        return {
+            "contract": REVISION_BODY_CONTRACT,
+            "project_id": nid,
+            "family_id": family_id,
+            "asset_id": asset_id,
+            "revision": prompt.revision_of(target),
+            "asset_version": target.get("version"),
+            "state": body.get("state", "UNAVAILABLE"),
+            "value": body.get("value"),
+            "truncated": bool(body.get("truncated", False)),
+            "decodable": bool(body.get("decodable", False)),
+            "digest": body.get("digest"),
+            "digest_of": body.get("digest_of"),
+            "original_length": body.get("original_length"),
+            "available": not deleted,
+            "verified": verified,
+            "read_complete": not coverage.get("truncated", False),
+            "generated_at": now(),
+        }
