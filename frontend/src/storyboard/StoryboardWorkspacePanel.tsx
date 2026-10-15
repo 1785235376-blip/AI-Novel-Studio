@@ -159,12 +159,15 @@ export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
           locked={controller.locked}
         />
         {/* R3-I: read-only adoption provenance, COLLAPSED BY DEFAULT so nothing is fetched until
-            the user asks. It reuses this panel's own transport, project id and document id and is
-            gated by the SAME read gate as the rest of the workspace (active / denied / isCurrent).
-            GET only: no POST, no model call, and no write affordance while the switch is closed. */}
+            the user asks. It reuses this panel's own transport and read gate. The target document
+            is the STORYBOARD document: directorDocumentId can point at a DIFFERENT director
+            document, so it must not be used here or the projection would be requested for the
+            wrong document. GET only: no POST and no write affordance while the switch is closed. */}
         <PromptAdoptionDisclosure
           projectId={props.projectId}
-          documentId={props.directorDocumentId ?? controller.receipt?.document_snapshot.id ?? null}
+          documentId={controller.receipt?.document_snapshot.id ?? null}
+          identity={props.identity}
+          read={props.read}
           shotId={controller.selected?.summary.shot_id ?? null}
           transport={props.transport}
           enabled={props.active && !props.denied && props.isCurrent()}

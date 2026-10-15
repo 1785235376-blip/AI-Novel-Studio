@@ -10,12 +10,17 @@ import { Panel } from '../ui/primitives';
 import { createPromptAdoptionClient, type AdoptionSource } from './promptAdoptionClient';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 
-export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, enabled = true }: {
+export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, enabled = true,
+                                       identity: hostIdentity, read }: {
   projectId: string;
   documentId: string | null;
   shotId: string | null;
   transport: StudioGraphTransport;
   enabled?: boolean;
+  /** Host identity, so a stale response can be recognised as belonging to another selection. */
+  identity?: string;
+  /** The host's own read gate; when supplied every read goes through it. */
+  read?: <T>(work: () => Promise<T>) => Promise<T>;
 }) {
   const [source, setSource] = useState<AdoptionSource | null>(null);
   const [state, setState] = useState<'IDLE' | 'LOADING' | 'READY' | 'ERROR'>('IDLE');
@@ -23,7 +28,8 @@ export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, 
   // Every read carries the identity it was issued for. A late response for a previous
   // project/document/shot must never overwrite the current selection.
   const epoch = useRef(0);
-  const identity = `${projectId}\u0000${documentId ?? ''}\u0000${shotId ?? ''}`;
+  const identity = hostIdentity
+    ?? `${projectId}\u0000${documentId ?? ''}\u0000${shotId ?? ''}`;
 
   // Unmounting invalidates every in-flight read, so a transport that ignores AbortSignal
   // still cannot write state into an unmounted panel.
@@ -44,7 +50,11 @@ export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, 
     setState('LOADING');
     setError(null);
     const client = createPromptAdoptionClient(projectId, transport);
-    void client.forShot(documentId, shotId, controller.signal)
+    const work = () => client.forShot(documentId, shotId, controller.signal);
+    // The host's read gate is applied to the adoption read too, so a denied or deactivated host
+    // refuses it exactly as it refuses the storyboard read.
+    const pending = read ? read(work) : work();
+    void pending
       .then(found => {
         if (mine !== epoch.current) return;   // a newer selection owns the panel now
         setSource(found);
@@ -59,7 +69,7 @@ export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, 
         setError(reason instanceof Error ? reason.message : '无法读取采用记录。');
       });
     return () => { controller.abort(); };
-  }, [identity, enabled, projectId, documentId, shotId, transport]);
+  }, [identity, enabled, projectId, documentId, shotId, transport, read]);
 
   return (
     <Panel title="Prompt 采用来源">
