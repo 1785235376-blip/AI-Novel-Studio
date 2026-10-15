@@ -911,3 +911,14 @@ editor or completion claim for all Audio Studio requirements.
 Final expanded frontend rerun after the two selector-only corrections: **2074 passed / 131 files**,
 exit 0. No skip or timeout change. Final `tsc -b` after those test edits also passes, exit 0.
 The separate successful Vite/token build above uses identical production code.
+
+### Stage 12 local commit and review checkpoint
+
+Implementation commit: `a8c2f2df4c1ecce5fb4c0e6293a1b4fac1375cb9`;
+implementation tree: `9e517487aef6519875fd4b182cbf88856d3f08d0`.
+All 17 changed files are enumerated by that local commit; its parent is the preserved Stage 11
+checkpoint. The independent reviewer also checked the subsequent two test-selector diffs and
+found no concern: exact conflict message/alert role is stronger than the ambiguous global wait,
+and all downstream draft/source/version/no-extra-write assertions remain. This append-only local
+documentation checkpoint changes no production or tests. Exact-local reruns and resource receipts
+are retained with the local handoff; no published SHA or remote acceptance is claimed.

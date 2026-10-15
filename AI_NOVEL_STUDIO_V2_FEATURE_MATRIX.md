@@ -1907,3 +1907,7 @@ remains **BLOCKED**; no upload/ref/PR mutation was retried. PR #48 remains last 
 Final expanded frontend rerun: **2074 passed / 131 files**, exit 0; final typecheck passes.
 The two corrected conflict-selector failures are closed at test level only; no production or
 security acceptance is inferred. Earlier failed receipts are retained rather than rewritten.
+Local implementation commit: `a8c2f2df4c1ecce5fb4c0e6293a1b4fac1375cb9`, tree
+`9e517487aef6519875fd4b182cbf88856d3f08d0`; independent review also cleared both selector-only
+corrections. The following documentation-only checkpoint does not alter production/test bytes.
+Publication remains blocked and was not attempted.
