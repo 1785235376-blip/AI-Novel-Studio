@@ -9,10 +9,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import type { StudioInterfaceMode } from '../creative/studioWorkspaceResume';
-import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
+import { Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { PromptEditorPanel } from './PromptEditorPanel';
 import { PromptLibraryPanel } from './PromptLibraryPanel';
 import { RevisionDiff } from './PromptRevisionDiff';
+import { PromptVersionHistory } from './PromptVersionHistory';
 import { needsRebase } from './promptDraft';
 import { usePromptWorkspace } from './usePromptWorkspace';
 import './promptWorkspace.css';
@@ -98,18 +99,9 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
                   下面显示的不是一段可信的完整历史，请不要把某一版当作权威最新版。
                 </StatusMessage>
               )}
-              <ol className="prompt-version-list">
-                {[...versions].sort((a, b) => b.revision - a.revision).map(row => (
-                  <li key={row.assetId}>
-                    <span>修订 {row.revision}</span>
-                    {row.assetId === detail.headAssetId && <Badge tone="info">当前</Badge>}
-                    {!row.available && <Badge tone="warning">已删除 / 不可读</Badge>}
-                    {row.redacted && <Badge tone="warning">已脱敏</Badge>}
-                    {row.changeNote && <span className="prompt-version-note">{row.changeNote}</span>}
-                    {mode === 'PROFESSIONAL' && <code>{row.assetId.slice(0, 8)}</code>}
-                  </li>
-                ))}
-              </ol>
+              <PromptVersionHistory key={detail.familyId} versions={versions} headAssetId={detail.headAssetId}
+                professional={mode === 'PROFESSIONAL'} fromId={fromId} toId={toId}
+                onSelectFrom={setFromId} onSelectTo={setToId} />
               {detail.anomalies.length > 0 && (
                 <ul className="prompt-anomalies">
                   {detail.anomalies.map(row => <li key={row.kind}>{row.kind} {row.detail}</li>)}

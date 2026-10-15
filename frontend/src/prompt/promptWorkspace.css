@@ -168,3 +168,5 @@
 .prompt-diff-controls label { display: flex; align-items: center; gap: var(--space-2); }
 .prompt-diff-controls input:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .prompt-diff-placeholder { color: var(--color-text-muted); font-family: var(--font-ui); font-style: italic; }
+
+.prompt-version-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }

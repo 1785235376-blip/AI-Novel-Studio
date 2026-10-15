@@ -186,3 +186,52 @@ describe('R3-U3-C1 Prompt workspace (jsdom)', () => {
     await waitFor(() => expect(screen.getByRole('region', { name: 'Prompt 列表' })).toBeTruthy());
   });
 });
+
+describe('Prompt history finder', () => {
+  it('exposes authored change reasons and searches only loaded revision records', async () => {
+    const { transport, calls } = transportWith({});
+    renderWorkspace(transport);
+    fireEvent.click((await screen.findAllByRole('button', { name: /IMAGE/ }))[0]);
+    const search = await screen.findByRole('searchbox', { name: '搜索版本记录' });
+    expect(screen.getByText('修改原因：合成调整')).toBeTruthy();
+    expect(screen.getByText('修改原因：合成第一版')).toBeTruthy();
+    const before = calls.length;
+    fireEvent.change(search, { target: { value: '合成调整' } });
+    expect(document.querySelectorAll('.prompt-version-list li')).toHaveLength(1);
+    expect(screen.getByText('修改原因：合成调整')).toBeTruthy();
+    expect(screen.queryByText('修改原因：合成第一版')).toBeNull();
+    expect(screen.getByText(/当前显示 1 条/)).toBeTruthy();
+    expect(calls).toHaveLength(before);
+    fireEvent.click(screen.getByRole('button', { name: '清除版本搜索' }));
+    expect(document.querySelectorAll('.prompt-version-list li')).toHaveLength(2);
+  });
+
+  it('offers a recoverable no-match message while preserving the complete history warning', async () => {
+    const detail = structuredClone(fixture('detail.json')) as Record<string, unknown>;
+    detail.history_complete = false;
+    const { transport } = transportWith({ detail });
+    renderWorkspace(transport);
+    fireEvent.click((await screen.findAllByRole('button', { name: /IMAGE/ }))[0]);
+    fireEvent.change(await screen.findByRole('searchbox', { name: '搜索版本记录' }), { target: { value: '找不到的修改原因' } });
+    expect(screen.getByText('已加载记录中没有匹配的版本')).toBeTruthy();
+    expect(screen.getByText(/修订链\*\*不完整\*\*/)).toBeTruthy();
+    expect(screen.getByRole('button', { name: '清除版本搜索' })).toBeTruthy();
+  });
+
+  it('selects a comparison from history without reading bodies or writing until explicitly requested', async () => {
+    const { transport, calls } = transportWith({});
+    const detail = fixture('detail.json') as { versions: { asset_id: string }[] };
+    renderWorkspace(transport);
+    fireEvent.click((await screen.findAllByRole('button', { name: /IMAGE/ }))[0]);
+    await screen.findByRole('searchbox', { name: '搜索版本记录' });
+    const before = calls.length;
+    fireEvent.click(screen.getByRole('button', { name: '将修订 2 选作旧版' }));
+    fireEvent.click(screen.getByRole('button', { name: '将修订 1 选作新版' }));
+    expect((screen.getByLabelText('对比旧版') as HTMLSelectElement).value).toBe(detail.versions[1].asset_id);
+    expect((screen.getByLabelText('与新版') as HTMLSelectElement).value).toBe(detail.versions[0].asset_id);
+    expect(calls).toHaveLength(before);
+    fireEvent.click(screen.getByRole('button', { name: '比较正文' }));
+    await waitFor(() => expect(calls.filter(call => call.url.endsWith('/body'))).toHaveLength(2));
+    expect(calls.every(call => call.method === 'GET')).toBe(true);
+  });
+});

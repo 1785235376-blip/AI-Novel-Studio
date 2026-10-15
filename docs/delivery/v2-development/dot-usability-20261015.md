@@ -148,8 +148,65 @@ pagination, revision-number-only changes, exact spaces/tabs/CR/Unicode, incomple
 empty/newline differences and a high-change 64-KiB body. The revision-number-only case was then
 added to the project suite; production code did not change after review.
 
+### Stage 2 publication
+
+Remote `253964fe48b54f22bf4c8c0aa7b13dc6d25a0b1b`, tree
+`90c3a0c15682492f0a5299cbb0ddbfcf9ed176df`, exactly matches local tested checkpoint
+`41a660a59422e2dfc2e91a4eb2506bb54bdc695b`. `git ls-remote` and fetched tree verification
+passed. PR #48 remains Draft. The exact-SHA PR-run query reports terminal failures for
+Cloud CI `38790478163`, Shared R123 `38790478159`, and Local Interop `38790478199`;
+no hosted acceptance is claimed, and these runs were not retried.
+
+## Stage 3 — find and select existing Prompt history records
+
+### Verified gap and implementation
+
+The existing authorized version rows already contain `changeReason`, but the old history list
+only displayed `changeNote`. It also had no record search or in-row comparison selection, so a
+user had to translate a meaningful history record back into a revision number in a separate
+picker. No additional historical body or metadata endpoint is needed for this improvement.
+
+- Display the existing optional authored reason, without synthesizing absent reasons.
+- Search loaded records by revision number, note or reason; explicitly report the loaded scope
+  and result count, and distinguish no loaded history from no matching search result.
+- Select the old/new comparison side directly from a record. Selection only changes the existing
+  pickers; the existing explicit comparison button remains responsible for reading bodies.
+- Preserve incomplete-history warnings and record availability/redaction labels. No backend,
+  read admission, masking, save, adoption, transport or storage behavior changes.
+- Clear search returns keyboard focus to the input. Selected sides remain visible through
+  `已选旧版` / `已选新版` text and `aria-pressed` even after focus moves elsewhere.
+
+Files: new `frontend/src/prompt/PromptVersionHistory.tsx` and `.test.tsx`, plus the existing
+`PromptWorkspace.tsx`, `PromptWorkspace.test.tsx` and token-only `promptWorkspace.css`.
+
+### Verification and review
+
+Commands are from `frontend/`; counts overlap and are not a total of unique tests.
+
+| Command / checkpoint | Actual result | Exit |
+| --- | --- | --- |
+| Focused new `Prompt history finder` tests in `PromptWorkspace.test.tsx`, before implementation | 3 new failures / 11 deselected | 1 |
+| Full `PromptWorkspace.test.tsx` after implementation | 14 passed | 0 |
+| `vitest run src/prompt --reporter=verbose` while adding history unit coverage | 112 passed / 1 new-test failure from an unsupported Vitest matcher | 1 |
+| Type check at that intermediate checkpoint | New test's unsupported matcher rejected; assertion was rewritten with equivalent supported matchers | 1 |
+| Unbounded combined Model Center/Prompt/AppShell run overlapping a build | 248 passed / 2 existing scoping-test failures (one timeout); failed logs retained | 1 |
+| `vitest run src/prompt/PromptWorkspace.scoping.test.tsx --reporter=verbose` without build overlap | All 3 unchanged cases passed | 0 |
+| `vitest run src/prompt/PromptVersionHistory.test.tsx -t 'returns keyboard\|keeps selected' --reporter=verbose` before review corrections | 2 new failures / 5 deselected | 1 |
+| `vitest run src/modelcenter src/prompt src/ui/AppShell.test.tsx src/ui/AppShell.projectNoun.test.tsx --maxWorkers=4 --minWorkers=1 --reporter=verbose` on final stage code, no build overlap | 252 passed, 20 files | 0 |
+| `tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs` | Pass; existing large-chunk warning unchanged | 0 |
+| `git diff --check` | Pass | 0 |
+
+The two failed combined-run cases were not hidden, skipped or relaxed. Their isolated and
+bounded-worker reruns pass; concurrent resource contention is a possible explanation, not a
+proven root cause. The unrelated preference-CAS baseline failure remains open outside this scope.
+
+Read-only review reproduced clear-search focus loss and identified invisible selected-state
+feedback. Both now have dedicated regressions and UI-only corrections. Browser launch was not
+retried: browser/geometry remains **BLOCKED / NOT_RUN**. The full frontend suite, backend,
+Windows/GPU/live models and whole-product acceptance remain **NOT_RUN** for this stage.
+
 ## Current handoff
 
-Two independent usability slices are implemented with preserved evidence and Draft-only
-publication. Stage 2 publication SHA/tree will be recorded at the next checkpoint; no merge,
+Three independent usability slices are implemented with preserved evidence and Draft-only
+publication. Stage 3 publication SHA/tree will be recorded at the next checkpoint. No merge,
 release or deployment is implied. The blocked lifecycle work remains separate and unchanged.

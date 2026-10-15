@@ -1724,3 +1724,19 @@ New focused tests **9 passed**; final combined Prompt/Model Center/AppShell sele
 failure is still open. Browser/real geometry remains **BLOCKED / NOT_RUN**; no backend,
 Windows/GPU/model or complete product acceptance is claimed. Commands and exact-stage handoff:
 `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent Prompt history finder checkpoint
+
+Append-only observation after comparison checkpoint `253964fe`. Existing loaded version records
+now expose their already-returned change reason, record search with honest loaded-scope counts,
+and direct selection of the existing old/new comparison pickers. Search clearing returns focus;
+selected comparison sides have visible text. Comparison still requires the original explicit
+button, with existing incomplete/masked/unavailable behavior unchanged. No new endpoint or write.
+
+Final bounded-worker Model Center/Prompt/AppShell selection **252 passed** (20 files), exit 0;
+type/build/token checks pass. An earlier concurrent unbounded run had two existing scoping-case
+failures; both passed unchanged in isolation and the bounded rerun, without timeout/assertion
+changes. Counts overlap. Browser/geometry remains **BLOCKED / NOT_RUN**; the earlier baseline
+preference-CAS failure and hosted workflow failures remain open. Detailed commands/limits:
+`docs/delivery/v2-development/dot-usability-20261015.md`.
