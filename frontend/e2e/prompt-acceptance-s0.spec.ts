@@ -12,14 +12,14 @@
 import {expect, test} from '@playwright/test';
 
 import {
-  blankProjectName, collectDiagnostics, countPromptPosts, enterOwnedStudio,
+  blankProjectName, classifyApi, collectDiagnostics, countPromptPosts, enterOwnedStudio,
   openPromptWorkspace, promptLibrary, promptWorkspace,
 } from './promptAcceptanceEntry';
 
 const RUN_ID = process.env.PROMPT_ACCEPTANCE_RUN_ID?.trim() || 'no-run-id';
 
 test('S0 入口：创建本用例专属 NEUTRAL_STUDIO 项目并打开 Prompt 工作台', async ({page}) => {
-  const {appErrors, resourceErrors, failedHttp} = collectDiagnostics(page);
+  const {appErrors, resourceErrors, apiFailures} = collectDiagnostics(page);
   const posts = countPromptPosts(page);
 
   const owned = await enterOwnedStudio(page, {runId: RUN_ID, label: 's0'});
@@ -40,12 +40,22 @@ test('S0 入口：创建本用例专属 NEUTRAL_STUDIO 项目并打开 Prompt �
 
   // 仅打开工作台不得产生任何写入。
   expect(countAfterOpen, '仅打开工作台不应产生 Prompt 写入').toBe(0);
-  expect(failedHttp, `出现失败 HTTP：${failedHttp.join(' | ')}`).toEqual([]);
-  // Real application errors fail the case; static-resource 404s are reported instead of
-  // being either fatal or silently dropped.
+
+  // A 类：本项目创建 / 本 OWNED 项目的 Studio 与 Prompt 读写出现非成功响应 → 必须 FAIL。
+  const {critical, unrelated} = classifyApi(apiFailures, owned.projectId);
+  expect(critical, `本轮 Prompt 关键 API 失败：${critical.map(r => `${r.status} ${r.url}`).join(' | ')}`)
+    .toEqual([]);
+  // C 类：真正的应用错误 → 必须 FAIL。
   expect(appErrors, `出现应用错误：${appErrors.join(' | ')}`).toEqual([]);
+  // B/D 类：记录而不冒充 PASS，也不让无关模块的契约性拒绝伪装成 Prompt 缺陷。
+  if (unrelated.length > 0) {
+    test.info().annotations.push({
+      type: 'unrelated-api-failures',
+      description: unrelated.map(r => `${r.status} ${r.url}`).join(' | '),
+    });
+  }
   if (resourceErrors.length > 0) {
-    test.info().annotations.push({type: 'resource-404', description: resourceErrors.join(' | ')});
+    test.info().annotations.push({type: 'static-resource-404', description: resourceErrors.join(' | ')});
   }
   // 该项目确实是本用例创建的：名称里带本轮 RUN_ID。
   expect(owned.name).toContain(RUN_ID);

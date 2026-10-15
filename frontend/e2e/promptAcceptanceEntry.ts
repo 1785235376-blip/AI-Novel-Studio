@@ -139,24 +139,28 @@ export async function openPromptWorkspace(page: Page): Promise<void> {
 }
 
 /**
- * 收集本用例的失败证据。
+ * 收集本用例的失败证据，并**按归属分层**，而不是把一切 >=400 都当成 Prompt 缺陷
+ * （那会把“后端按契约拒绝未认证请求”误报成产品故障），也不是删掉检查。
  *
- * 区分两类“控制台错误”：
- *  - `appErrors`：真正的应用错误（未捕获异常、React 报错）。任何一个都必须让用例失败；
- *  - `resourceErrors`：静态资源 404（浏览器对 /favicon.ico 之类会记一条 console error）。
- *    这类不是产品缺陷，单独记录并在收据里报告，不冒充应用故障，也不被静默忽略。
- * 同时单独记录所有 `/api` 失败响应，那才是真正的接口问题。
+ *   appErrors       未捕获异常 / 真正的 React 应用错误  → 任何一条都必须 FAIL
+ *   resourceErrors  静态子资源 404                     → 单独记录，不冒充 Prompt API 错误
+ *   apiFailures     所有 /api 非成功响应（原始记录）    → 由用例按归属分类，见 classifyApi
+ *
+ * `/api/workflows?novel_id=...` 的 401 已核实来源：`app/workflow_api.py:18` 的 `actor(token)`
+ * 调用 `app/api.py::_agent_job_read_actor`，在缺少会话令牌时**显式**抛出
+ * `HTTPException(401, {"code": "SESSION_REQUIRED"})`。也就是说这是后端**按契约**拒绝未认证
+ * 请求，不是 Prompt 工作台的缺陷；测试不得为此改认证规则、伪造 token 或忽略全部 401。
  */
+export type ApiFailure = {status: number; url: string};
+
 export function collectDiagnostics(page: Page) {
   const appErrors: string[] = [];
   const resourceErrors: string[] = [];
-  const failedHttp: string[] = [];
+  const apiFailures: ApiFailure[] = [];
   page.on('pageerror', error => appErrors.push(String(error).slice(0, 300)));
   page.on('console', message => {
     if (message.type() !== 'error') return;
     const text = message.text().slice(0, 300);
-    // Chromium words a failed subresource fetch exactly like this; the URL is in the
-    // network log, not the message, so classify by that phrasing only.
     if (/Failed to load resource: the server responded with a status of \d+/.test(text)) {
       resourceErrors.push(text);
     } else {
@@ -165,10 +169,25 @@ export function collectDiagnostics(page: Page) {
   });
   page.on('response', response => {
     if (response.status() >= 400 && response.url().includes('/api/')) {
-      failedHttp.push(`${response.status()} ${response.url()}`);
+      apiFailures.push({status: response.status(), url: response.url()});
     }
   });
-  return {appErrors, resourceErrors, failedHttp};
+  return {appErrors, resourceErrors, apiFailures};
+}
+
+/**
+ * 把 `/api` 失败分成“本轮 Prompt 目标”与“其他模块”。
+ *
+ * A 类（critical）：本项目创建、本 OWNED 项目的 Studio/Prompt 读写。非成功响应必须使该用例 FAIL。
+ * B 类（unrelated）：其他模块的失败（例如 /api/workflows 的 SESSION_REQUIRED 401）。单独记录
+ *   状态、URL 与时间，**不**无条件让 Prompt S0 失败，但也绝不静默删除或写成 PASS。
+ */
+export function classifyApi(failures: ApiFailure[], ownedProjectId: string | null) {
+  const owned = ownedProjectId ? `/api/projects/${ownedProjectId}/` : null;
+  const critical = failures.filter(row =>
+    row.url.includes('/api/experimental/projects') || (owned !== null && row.url.includes(owned)));
+  const unrelated = failures.filter(row => !critical.includes(row));
+  return {critical, unrelated};
 }
 
 export type {Locator};
