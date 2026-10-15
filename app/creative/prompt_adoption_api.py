@@ -14,6 +14,10 @@ from .prompt_adoption import PromptAdoptionService
 
 MAX_ID = 240
 
+#: A digest is a lowercase 64-character hex SHA-256 and nothing else. The previous bound was
+#: merely "1 to 128 characters", which let malformed digests reach the business layer.
+SHA256_HEX = Annotated[str, Field(strict=True, pattern=r"^[0-9a-f]{64}$")]
+
 #: P3 (write-time source consistency between the Prompt read and the Creative commit) has NOT
 #: been verified: the read and the commit are two different owner operations with no proven
 #: unified lock order. The route is reachable, but a reachable write whose cross-owner
@@ -31,10 +35,11 @@ class PromptAdoptionIn(BaseModel):
     asset_id: Annotated[str, Field(min_length=1, max_length=MAX_ID, strict=True)]
     revision: Annotated[int, Field(ge=1, le=100000, strict=True)]
     #: The digest the user was shown. Checked against the server's own read; never trusted.
-    expected_digest: Annotated[str, Field(min_length=1, max_length=128, strict=True)]
+    #: Lowercase 64-char hex SHA-256 only; a malformed digest is a 422, not a business error.
+    expected_digest: SHA256_HEX
     #: The document version/digest the user was looking at — real CAS.
     expected_version: Annotated[int, Field(ge=1, strict=True)]
-    expected_digest_target: Annotated[str, Field(min_length=1, max_length=128, strict=True)]
+    expected_digest_target: SHA256_HEX
     #: Fixed request identity, so a lost response is replayable rather than duplicated.
     request_id: Annotated[str, Field(min_length=1, max_length=MAX_ID, strict=True)]
 
