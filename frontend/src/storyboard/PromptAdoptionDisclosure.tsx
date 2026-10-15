@@ -19,8 +19,9 @@ export function PromptAdoptionDisclosure({ projectId, documentId, shotId, transp
   enabled: boolean;
   /** Host identity: project, branch, actor and collaboration scope. */
   identity?: string;
-  /** The host's OWN read gate. Every adoption read goes through it when supplied. */
-  read?: <T>(work: () => Promise<T>) => Promise<T>;
+  /** The host's OWN read gate. Every adoption read goes through it when supplied. The signal is
+      forwarded so a cancelled read is cancelled at the host too, rather than only locally. */
+  read?: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>;
 }) {
   // The open state is BOUND TO AN IDENTITY rather than reset by an effect. When any part of the
   // identity changes, `open` is already false in the SAME render - the previous selection's
@@ -29,6 +30,18 @@ export function PromptAdoptionDisclosure({ projectId, documentId, shotId, transp
   const currentIdentity = [identity ?? '', projectId, documentId ?? '', shotId ?? '',
                            enabled ? '1' : '0'].join('\u0000');
   const [openForIdentity, setOpenForIdentity] = useState<string | null>(null);
+  const [seenIdentity, setSeenIdentity] = useState<string | null>(null);
+
+  // SYNCHRONOUS identity reset, in the render phase. An effect would leave one committed frame
+  // showing the previous selection's provenance. More importantly, simply comparing
+  // `openForIdentity === currentIdentity` is not enough: after A -> B -> A the stored identity
+  // still equals A again, so the panel would silently RE-OPEN without the user asking. Clearing
+  // the stored identity whenever the identity string changes makes the expansion a one-shot that
+  // can only be re-armed by a click.
+  if (seenIdentity !== currentIdentity) {
+    setSeenIdentity(currentIdentity);
+    setOpenForIdentity(null);
+  }
   const open = openForIdentity === currentIdentity;
 
   const available = enabled && Boolean(documentId) && Boolean(shotId);

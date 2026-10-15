@@ -7,6 +7,8 @@
  * deliberately ROUTES by URL so an adoption request can never be satisfied by a generic document
  * mock, and every case asserts on the request log rather than only on rendered text.
  */
+import { StrictMode } from 'react';
+
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -167,5 +169,102 @@ describe('mounted adoption disclosure', () => {
     fireEvent.click(screen.getByRole('button', { name: '查看 Prompt 采用来源' }));
     await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy());
     expect(screen.queryByText('此镜头尚未采用任何 Prompt 修订。')).toBeNull();
+  });
+});
+
+
+describe('identity lifetime, the host read gate and StrictMode', () => {
+  it('A -> B -> A stays COLLAPSED and issues no further adoption GET', async () => {
+    const { transport, log } = routedTransport(url =>
+      adoptionBody([row({ asset_id: url.includes('board-A') ? 'asset-A' : 'asset-B' })],
+                   url.includes('board-A') ? 'board-A' : 'board-B'));
+    const view = (documentId: string) => (
+      <PromptAdoptionDisclosure projectId="p1" documentId={documentId} shotId="shot-1"
+                                transport={transport} enabled identity="scope-1" />);
+    const { rerender } = render(view('board-A'));
+    fireEvent.click(screen.getByRole('button', { name: '查看 Prompt 采用来源' }));
+    await waitFor(() => expect(screen.getByText(/asset-A/)).toBeTruthy());
+    const afterA = log.length;
+
+    // Switch to B: the previous provenance must be gone and nothing re-requested automatically.
+    rerender(view('board-B'));
+    await waitFor(() => expect(screen.queryByText(/asset-A/)).toBeNull());
+    expect(log.length).toBe(afterA);
+
+    // Back to A with the SAME identity: the panel must NOT silently re-open. Comparing
+    // `openForIdentity === currentIdentity` alone would re-open here, because the stored
+    // identity equals A again.
+    rerender(view('board-A'));
+    await new Promise(resolve => setTimeout(resolve, 30));
+    expect(screen.queryByText(/asset-A/)).toBeNull();
+    expect(log.length).toBe(afterA);
+    // Only an explicit click may read again.
+    fireEvent.click(screen.getByRole('button', { name: '查看 Prompt 采用来源' }));
+    await waitFor(() => expect(screen.getByText(/asset-A/)).toBeTruthy());
+    expect(log.length).toBe(afterA + 1);
+  });
+
+  it('a scope change with identical project/document/shot closes the panel', async () => {
+    const { transport, log } = routedTransport(() => adoptionBody([row()], 'board-1'));
+    const view = (identity: string) => (
+      <PromptAdoptionDisclosure projectId="p1" documentId="board-1" shotId="shot-1"
+                                transport={transport} enabled identity={identity} />);
+    const { rerender } = render(view('branch-1|actor-1'));
+    fireEvent.click(screen.getByRole('button', { name: '查看 Prompt 采用来源' }));
+    await waitFor(() => expect(screen.getByText(/asset-1/)).toBeTruthy());
+    const before = log.length;
+    // Same project, document and shot, different branch/actor: the collaboration scope changed.
+    rerender(view('branch-2|actor-2'));
+    await waitFor(() => expect(screen.queryByText(/asset-1/)).toBeNull());
+    expect(log.length).toBe(before);
+  });
+
+  it('a read gate that refuses issues NO adoption GET', async () => {
+    const { transport, log } = routedTransport(() => adoptionBody([row()], 'board-1'));
+    const gate = <T,>(work: () => Promise<T>): Promise<T> => Promise.reject(new Error('DENIED'));
+    render(<PromptAdoptionDisclosure projectId="p1" documentId="board-1" shotId="shot-1"
+                                     transport={transport} enabled identity="scope" read={gate} />);
+    fireEvent.click(screen.getByRole('button', { name: '查看 Prompt 采用来源' }));
+    await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy());
+    // The gate refused before the transport was ever touched.
+    expect(log).toEqual([]);
+  });
+
+  it('the adoption read passes through the host gate and receives the cancel signal', async () => {
+    const { transport, log } = routedTransport(() => adoptionBody([row()], 'board-1'));
+    const calls: { signal: AbortSignal | undefined }[] = [];
+    const gate = <T,>(work: () => Promise<T>, signal?: AbortSignal): Promise<T> => {
+      calls.push({ signal });
+      return work();
+    };
+    render(<PromptAdoptionDisclosure projectId="p1" documentId="board-1" shotId="shot-1"
+                                     transport={transport} enabled identity="scope" read={gate} />);
+    fireEvent.click(screen.getByRole('button', { name: '查看 Prompt 采用来源' }));
+    await waitFor(() => expect(screen.getByText(/asset-1/)).toBeTruthy());
+    expect(calls.length).toBe(1);
+    // The gate is handed a real AbortSignal, so cancelling locally also cancels at the host.
+    expect(calls[0].signal).toBeInstanceOf(AbortSignal);
+    expect(log.length).toBe(1);
+  });
+
+  it('under StrictMode the expanded panel does not accumulate requests or leak a stale source', async () => {
+    const { transport, log } = routedTransport(() => adoptionBody([row()], 'board-1'));
+    render(
+      <StrictMode>
+        <PromptAdoptionDisclosure projectId="p1" documentId="board-1" shotId="shot-1"
+                                  transport={transport} enabled identity="scope" />
+      </StrictMode>);
+    expect(log).toEqual([]);              // still nothing while collapsed
+    fireEvent.click(screen.getByRole('button', { name: '查看 Prompt 采用来源' }));
+    await waitFor(() => expect(screen.getByText(/asset-1/)).toBeTruthy());
+    // RECORDED HONESTLY: StrictMode replays effects in development, so the read may be issued
+    // more than once. The assertion is on the OUTCOME (one visible source, no stale restore)
+    // and on the count being bounded, not on a single-GET claim copied from a plain mount.
+    expect(log.length).toBeGreaterThanOrEqual(1);
+    expect(log.length).toBeLessThanOrEqual(2);
+    expect(log.every(entry => entry.method === 'GET')).toBe(true);
+    // Collapsing leaves no stale source on screen.
+    fireEvent.click(screen.getByRole('button', { name: '隐藏 Prompt 采用来源' }));
+    await waitFor(() => expect(screen.queryByText(/asset-1/)).toBeNull());
   });
 });

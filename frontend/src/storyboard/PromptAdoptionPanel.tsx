@@ -19,8 +19,9 @@ export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, 
   enabled?: boolean;
   /** Host identity, so a stale response can be recognised as belonging to another selection. */
   identity?: string;
-  /** The host's own read gate; when supplied every read goes through it. */
-  read?: <T>(work: () => Promise<T>) => Promise<T>;
+  /** The host's own read gate; when supplied every read goes through it, with the cancellation
+      signal forwarded so a cancelled read is cancelled at the host too. */
+  read?: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>;
 }) {
   const [source, setSource] = useState<AdoptionSource | null>(null);
   const [state, setState] = useState<'IDLE' | 'LOADING' | 'READY' | 'ERROR'>('IDLE');
@@ -53,7 +54,7 @@ export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, 
     const work = () => client.forShot(documentId, shotId, controller.signal);
     // The host's read gate is applied to the adoption read too, so a denied or deactivated host
     // refuses it exactly as it refuses the storyboard read.
-    const pending = read ? read(work) : work();
+    const pending = read ? read(work, controller.signal) : work();
     void pending
       .then(found => {
         if (mine !== epoch.current) return;   // a newer selection owns the panel now
