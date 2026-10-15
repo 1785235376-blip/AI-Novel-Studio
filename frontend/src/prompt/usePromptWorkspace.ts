@@ -92,12 +92,24 @@ export function usePromptWorkspace(options: Options) {
   identityRef.current = identity;
 
   useEffect(() => () => { alive.current = false; }, []);
-  // A different identity invalidates in-flight reads; it must never inherit the previous
-  // author's private text, and an old write must not be applied to the new identity.
+  /**
+   * A different identity invalidates in-flight reads; it must never inherit the previous
+   * author's private text, and an old write must not be applied to the new identity.
+   *
+   * It must ALSO settle the panel. The identity can change shortly after mount (the host's
+   * cache key settles asynchronously), and an invalidated read returns early WITHOUT
+   * clearing `loading` — observed in a real browser as a Prompt list pinned at
+   * "正在读取…" even though the backend had already answered 200 twice. Resetting the read
+   * state here avoids stranding a spinner that nothing is left to clear.
+   */
   useEffect(() => {
     libraryEpoch.current += 1;
     detailEpoch.current += 1;
     compareEpoch.current += 1;
+    setState(prev => (prev.library === null && prev.detail === null && !prev.loading
+      ? prev
+      : { ...prev, library: null, detail: null, loading: false, error: null,
+        compare: { from: null, to: null, loading: false, error: null } }));
   }, [projectId, branchId, actor]);
 
   const [state, setState] = useState<PromptWorkspaceState>(() => ({
