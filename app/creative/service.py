@@ -236,73 +236,79 @@ class CreativeService(DomainService):
             raise ValueError("CREATIVE_DERIVED_SOURCE_REQUIRED")
         return self.create(nid, scope, actor, value, source_documents=source_documents, reauthorize=reauthorize)
 
-    def update(self, nid, scope, actor, rid, expected_version, value, *, reauthorize=lambda: None,
-               expected_digest=None, server_proof=None, proof_sink=None):
-        """Content revision under CAS.
+    def revise_in_state(self, nid, scope, actor, state, rid, expected_version, value, *,
+                        reauthorize=lambda: None, expected_digest=None, server_proof=None):
+        """Revision write inside an ALREADY-OPEN transaction state.
 
-        `expected_digest` and `server_proof` are backward-compatible internal parameters used
-        by the server-side Prompt adoption path (R3-I). Ordinary callers omit both and keep
-        the previous behaviour exactly.
+        Extracted so that `update()` and the cross-module prompt-adoption path apply the SAME
+        rules -- prepare_content, assert_current, expected_version, expected_digest, change_row,
+        assert_capacity, invalidate_storyboard and the established history semantics. The caller
+        owns the transaction; this method never opens one, so a caller that already holds the
+        scope and asset leases cannot nest an incompatible owner lock (calling `update()` from
+        inside `GraphAssetInputs.phase()` would re-acquire the project owner).
 
-        * `expected_digest` is compared INSIDE the transaction, immediately before the write,
-          so a document that changed between the caller's read and this call is refused
-          rather than silently overwritten.
-        * `server_proof` is the server-verified adoption record. It is never taken from the
-          client: any client-supplied `prompt_adoptions` is discarded and the row's own
-          records are carried forward, so an ordinary PUT can neither forge, replace nor
-          delete a server-generated proof.
+        Returns `(row, committed_proof)`.
         """
         self._expected(expected_version)
-        # Set only after the transaction has actually committed: handing the caller a proof
-        # while assert_current / assert_capacity / reauthorize could still fail would report an
-        # adoption for a transaction that rolled back.
-        committed_proof = None
+        row = state["collections"].get(self.COLLECTION, {}).get(rid)
+        if row is None or row.get("novel_id") != nid or row.get("scope") != scope or row.get("status") == "ARCHIVED":
+            raise FileNotFoundError(rid)
+        self.assert_current(nid, scope, row)
+        if expected_digest is not None and document_digest(row) != expected_digest:
+            raise CapabilityVersionConflict({
+                "code": "CREATIVE_DOCUMENT_DIGEST_STALE",
+                "version": row.get("version"), "current_digest": document_digest(row)})
+        payload = self.prepare_content(nid, scope, value, source_documents=row.get("source_documents", {}))
+        if payload["mode"] != row["mode"]:
+            raise ValueError("CREATIVE_MODE_IMMUTABLE")
+        reauthorize()
+        # The row, not the request body, is the only source of adoption proofs.
+        existing_proofs = row.get("prompt_adoptions")
+        carried = copy.deepcopy(existing_proofs) if isinstance(existing_proofs, list) else []
+        payload.pop("prompt_adoptions", None)
+
+        def replace_content(current):
+            from .storyboard import invalidate_storyboard
+            invalidate_storyboard(current, payload)
+            current.pop("visual_target", None)
+            current.update(payload)
+            proofs = copy.deepcopy(carried)
+            if server_proof is not None:
+                # APPEND, never replace: superseded adoptions stay in the document's history so
+                # a retry of an already-settled request id can be recognised from the server's
+                # own record instead of re-applying an older adoption over a newer one.
+                proofs.append(copy.deepcopy(server_proof))
+                if len(proofs) > MAX_PROMPT_ADOPTIONS:
+                    proofs = proofs[-MAX_PROMPT_ADOPTIONS:]
+            if proofs:
+                current["prompt_adoptions"] = proofs
+            else:
+                current.pop("prompt_adoptions", None)
+
+        change_row(row, actor, expected_version, replace_content)
+        self.assert_current(nid, scope, row)
+        self.assert_capacity(state)
+        reauthorize()
+        committed = copy.deepcopy(server_proof) if server_proof is not None else None
+        return copy.deepcopy(row), committed
+
+    def update(self, nid, scope, actor, rid, expected_version, value, *, reauthorize=lambda: None,
+               expected_digest=None, server_proof=None, proof_sink=None):
+        """Content revision under CAS, opening its own transaction.
+
+        Delegates to `revise_in_state` so the normal write path and the prompt-adoption path
+        cannot drift apart. `proof_sink`, when supplied, receives the committed proof only AFTER
+        the transaction has committed: publishing it earlier would hand a caller a proof for a
+        transaction that later rolled back in assert_current, assert_capacity or reauthorize.
+
+        `expected_digest`, `server_proof` and `proof_sink` are backward-compatible internal
+        parameters; ordinary callers omit all three and keep the previous behaviour exactly.
+        """
         with self.store.transaction(nid, scope) as state:
-            row = state["collections"].get(self.COLLECTION, {}).get(rid)
-            if row is None or row.get("novel_id") != nid or row.get("scope") != scope or row.get("status") == "ARCHIVED":
-                raise FileNotFoundError(rid)
-            self.assert_current(nid, scope, row)
-            if expected_digest is not None and document_digest(row) != expected_digest:
-                raise CapabilityVersionConflict({
-                    "code": "CREATIVE_DOCUMENT_DIGEST_STALE",
-                    "version": row.get("version"), "current_digest": document_digest(row)})
-            payload = self.prepare_content(nid, scope, value, source_documents=row.get("source_documents", {}))
-            if payload["mode"] != row["mode"]:
-                raise ValueError("CREATIVE_MODE_IMMUTABLE")
-            reauthorize()
-            # The row, not the request body, is the only source of adoption proofs.
-            existing_proofs = row.get("prompt_adoptions")
-            carried = copy.deepcopy(existing_proofs) if isinstance(existing_proofs, list) else []
-            payload.pop("prompt_adoptions", None)
-            def replace_content(current):
-                from .storyboard import invalidate_storyboard
-                invalidate_storyboard(current, payload)
-                current.pop("visual_target", None)
-                current.update(payload)
-                proofs = copy.deepcopy(carried)
-                if server_proof is not None:
-                    # APPEND, never replace: superseded adoptions stay in the document's
-                    # history so a retry of an already-settled request id can be recognised
-                    # and settled from the server's own record instead of re-applying an
-                    # older adoption over a newer one.
-                    proofs.append(copy.deepcopy(server_proof))
-                    if len(proofs) > MAX_PROMPT_ADOPTIONS:
-                        proofs = proofs[-MAX_PROMPT_ADOPTIONS:]
-                if proofs:
-                    current["prompt_adoptions"] = proofs
-                else:
-                    current.pop("prompt_adoptions", None)
-                if server_proof is not None:
-                    nonlocal committed_proof
-                    committed_proof = copy.deepcopy(server_proof)
-            change_row(row, actor, expected_version, replace_content)
-            self.assert_current(nid, scope, row)
-            self.assert_capacity(state)
-            reauthorize()
-            result = copy.deepcopy(row)
-        # Only now has the transaction committed. If any check above raised, this line is
-        # never reached and the caller sees no proof at all -- which is accurate, because no
-        # version carrying this request was created.
+            result, committed_proof = self.revise_in_state(
+                nid, scope, actor, state, rid, expected_version, value,
+                reauthorize=reauthorize, expected_digest=expected_digest,
+                server_proof=server_proof)
         if proof_sink is not None:
             proof_sink["proof"] = committed_proof
         return result
