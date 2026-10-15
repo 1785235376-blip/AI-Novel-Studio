@@ -244,6 +244,21 @@ export function discardDraft(draft: Draft): Draft {
     conflictCode: null, rejectionCode: null, message: null };
 }
 
+// ------------------------------------------------- P0-C：重新挂载核对 --
+
+/**
+ * 重新挂载时，内存里的 SUBMITTING 草稿背后已经没有在途请求了。
+ *
+ * 若原样保留，界面会永远停在“正在提交…”。这里把它转成**结果待核对**：保留原
+ * request_id 与不可变快照，只允许用户显式核对或重试，绝不凭空新建请求。
+ */
+export function reconcileStashed(draft: Draft): Draft {
+  if (draft.state !== 'SUBMITTING') return draft;
+  return { ...draft, state: 'UNKNOWN',
+    message: '上一次提交的结果尚未核对（页面曾在你保存时离开）。'
+      + '请先核对服务器上的修订；确有必要时可用同一请求标识显式重试。' };
+}
+
 // ---------------------------------------------------------- 刷新标记 --
 
 const markerKey = 'studio.prompt-draft-marker.v1:local-author:file';

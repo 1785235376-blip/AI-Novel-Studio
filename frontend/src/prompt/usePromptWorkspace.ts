@@ -4,10 +4,15 @@
  * 组件只负责呈现与收集输入；**所有**保存规则都在这里，并且复用已经验证过的
  * `promptClient` / `promptDraft`，不在组件里重写持久化逻辑，也不新建第二个资产 owner。
  *
- * 关键约定：
- * - 只有 `readFamily` 拿到的 head 才是 rebase 的依据；
- * - 过期异步结果不得覆盖新项目／新选择（按 epoch 丢弃）；
- * - UNKNOWN 绝不自动重发；409 必须显式 rebase 后才能申请新的 request_id。
+ * P0-C：**读取与写入使用彼此独立的生命周期**。以前一个 `epoch` 同时服务
+ * refresh / selectFamily / submit / rebase / compare，保存途中任何一次读取都会让 epoch 增加，
+ * 把真正成功的回执当成过时结果丢弃，草稿永久停在 SUBMITTING。
+ *
+ * 现在的规则：
+ * - 每个读操作有自己的序列号（library / detail / compare），只有同类读取能互相作废；
+ * - 写入绑定精确的 `project|branch|actor` 身份 + `request_id`，
+ *   只有身份被撤销、或那份草稿已被替换，写入结果才不予应用；
+ * - 无关读取**不能**取消写入。
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -17,11 +22,16 @@ import { createPromptClient, readPromptConflict } from './promptClient';
 import {
   beginSubmit, canSubmit, clearDraftSlot, confirmSaved, discardDraft, draftScopeKey, editDraft,
   hasUnconfirmedWork, isInputLocked, markConflict, markRejected, markUnknown, needsRebase,
-  newDraft, rebaseDraft, retryUnknown, stashDraft, takeDraft, type Draft, type DraftContent,
+  newDraft, rebaseDraft, reconcileStashed, retryUnknown, stashDraft, takeDraft,
+  type Draft, type DraftContent,
 } from './promptDraft';
 import type { PromptEntry, PromptLibrary, PromptRevisionBody } from './promptTypes';
 
 export type CompareSide = { assetId: string; revision: number; body: PromptRevisionBody };
+
+export type PromptFieldProblem = { field: 'parameters' | 'seed' | 'text'; message: string };
+export type ParsedDraft = { ok: true; parameters: Record<string, unknown>; seed: number | null }
+  | ({ ok: false } & PromptFieldProblem);
 
 export type PromptWorkspaceState = {
   library: PromptLibrary | null;
@@ -44,6 +54,8 @@ type Options = {
   onDirtyChange?: (value: boolean) => void;
 };
 
+const UNKNOWN_VALUE = 'UNKNOWN';
+
 const newRequestId = (): string =>
   (globalThis.crypto?.randomUUID?.() ?? `req-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
@@ -52,56 +64,66 @@ export function usePromptWorkspace(options: Options) {
   const client = useMemo(
     () => createPromptClient(projectId, transport, scope as never), [projectId, transport, scope]);
 
-  const epoch = useRef(0);
+  // Independent read lifetimes. A write is never identified by these.
+  const libraryEpoch = useRef(0);
+  const detailEpoch = useRef(0);
+  const compareEpoch = useRef(0);
   const alive = useRef(true);
+  const submitRef = useRef(false);
+  const identity = draftScopeKey(projectId, branchId, actor);
+  const identityRef = useRef(identity);
+  identityRef.current = identity;
+
   useEffect(() => () => { alive.current = false; }, []);
-  // A different identity must never show the previous one's private text.
-  useEffect(() => { epoch.current += 1; }, [projectId, branchId, actor]);
+  // A different identity invalidates in-flight reads; it must never inherit the previous
+  // author's private text, and an old write must not be applied to the new identity.
+  useEffect(() => {
+    libraryEpoch.current += 1;
+    detailEpoch.current += 1;
+    compareEpoch.current += 1;
+  }, [projectId, branchId, actor]);
 
   const [state, setState] = useState<PromptWorkspaceState>(() => ({
     library: null, detail: null, loading: false, error: null, conflictCode: null, fieldError: null,
-    draft: takeDraft(projectId, branchId, actor, 'new') ?? newDraft('new'),
+    // A draft found in SUBMITTING has no request behind it any more (P0-C item 8): it is
+    // reconciled to "outcome to be verified" rather than hanging forever.
+    draft: reconcileStashed(takeDraft(projectId, branchId, actor, 'new') ?? newDraft('new')),
     compare: { from: null, to: null, loading: false, error: null },
   }));
 
-  // Persist the in-session draft, scoped by project|branch|actor.
   useEffect(() => {
     stashDraft(projectId, branchId, actor, state.draft);
     onDirtyChange?.(hasUnconfirmedWork(state.draft));
   }, [projectId, branchId, actor, state.draft, onDirtyChange]);
 
   const message = (reason: unknown, fallback: string): string => {
-    if (reason instanceof ApiError) {
-      const conflict = readPromptConflict(reason);
-      if (conflict) return reason.problem.message || fallback;
-      return reason.problem.message || fallback;
-    }
+    if (reason instanceof ApiError) return reason.problem.message || fallback;
     return reason instanceof Error ? reason.message : fallback;
   };
 
   const refresh = useCallback(async () => {
-    const mine = ++epoch.current;
+    const mine = ++libraryEpoch.current;
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
       const library = await client.readLibrary();
-      if (!alive.current || mine !== epoch.current) return;
+      if (!alive.current || mine !== libraryEpoch.current) return;
       setState(prev => ({ ...prev, library, loading: false }));
     } catch (reason) {
-      if (!alive.current || mine !== epoch.current) return;
+      if (!alive.current || mine !== libraryEpoch.current) return;
+      // A failed list read must never touch the draft: a confirmed save stays confirmed.
       setState(prev => ({ ...prev, loading: false, error: message(reason, '读取 Prompt 失败。') }));
     }
   }, [client]);
 
   const selectFamily = useCallback(async (familyId: string) => {
-    const mine = ++epoch.current;
+    const mine = ++detailEpoch.current;
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
       const detail = await client.readFamily(familyId);
-      if (!alive.current || mine !== epoch.current) return;
+      if (!alive.current || mine !== detailEpoch.current) return;
       setState(prev => {
         const existing = takeDraft(projectId, branchId, actor, familyId);
-        // A brand-new family starts from the server head; the user's unsaved work is kept.
-        const draft = existing ?? {
+        const draft = existing ? reconcileStashed(existing) : {
           ...newDraft(familyId), familyId,
           baseAssetId: detail.headAssetId, baseRevision: detail.revision,
           content: fromEntry(detail),
@@ -109,7 +131,7 @@ export function usePromptWorkspace(options: Options) {
         return { ...prev, detail, draft, loading: false, conflictCode: null };
       });
     } catch (reason) {
-      if (!alive.current || mine !== epoch.current) return;
+      if (!alive.current || mine !== detailEpoch.current) return;
       setState(prev => ({ ...prev, loading: false, error: message(reason, '读取该 Prompt 失败。') }));
     }
   }, [client, projectId, branchId, actor]);
@@ -131,8 +153,6 @@ export function usePromptWorkspace(options: Options) {
   const baselineEditable = (detail: PromptEntry | null): boolean =>
     !!detail && detail.body.state === 'COMPLETE' && !!detail.body.digest
     && detail.readComplete && detail.historyComplete;
-
-  const submitRef = useRef(false);
 
   /** P0-A: build the request only from valid input; never silently substitute defaults. */
   const buildRequest = (content: DraftContent, requestId: string) => {
@@ -157,17 +177,23 @@ export function usePromptWorkspace(options: Options) {
     } };
   };
 
-  /** Perform the write for an already-frozen snapshot. Never allocates a new request id. */
+  /**
+   * Perform the write for an already-frozen snapshot. Never allocates a new request id.
+   *
+   * P0-C: the result is routed by **identity + request id**, never by an epoch. A refresh,
+   * a comparison or a host re-render cannot cancel it; only losing the identity or
+   * replacing that draft can.
+   */
   const submit = useCallback(async (submitted: Draft) => {
     if (submitted.state !== 'SUBMITTING' || !submitted.requestId) return;
-    const built = buildRequest(submitted.content, submitted.requestId);
+    const requestId = submitted.requestId;
+    const capturedIdentity = identityRef.current;
+    const built = buildRequest(submitted.content, requestId);
     if (!built.ok) {
-      // Should be unreachable: save() refuses invalid input before freezing a snapshot.
       setState(prev => ({ ...prev, draft: markRejected(prev.draft, built.field, built.message),
         fieldError: { field: built.field, message: built.message } }));
       return;
     }
-    const mine = ++epoch.current;
     const isRevision = submitted.familyId !== null && submitted.baseAssetId !== null;
     try {
       const receipt = isRevision
@@ -177,15 +203,24 @@ export function usePromptWorkspace(options: Options) {
             expected_revision: submitted.baseRevision!,
           })
         : await client.createPrompt(built.body);
-      if (!alive.current || mine !== epoch.current) return;
-      setState(prev => ({ ...prev, draft: confirmSaved(prev.draft, receipt), fieldError: null }));
-      // Re-read the authorised family so the panel shows server truth, not our optimism.
+      if (!alive.current) return;
+      // The identity was revoked or replaced while the write was in flight: the result must
+      // not be shown to whoever is looking now.
+      if (identityRef.current !== capturedIdentity) return;
+      setState(prev => {
+        // The user moved to another draft: never misapply this receipt to it.
+        if (prev.draft.requestId !== requestId) return prev;
+        return { ...prev, draft: confirmSaved(prev.draft, receipt), fieldError: null };
+      });
+      // Re-read the authorised family so the panel shows server truth. A failure here only
+      // surfaces a list error; it must not undo the confirmed save.
       await refresh();
     } catch (reason) {
-      if (!alive.current || mine !== epoch.current) return;
+      if (!alive.current || identityRef.current !== capturedIdentity) return;
       const status = reason instanceof ApiError ? reason.problem.status : null;
       const conflict = reason instanceof ApiError ? readPromptConflict(reason) : null;
       setState(prev => {
+        if (prev.draft.requestId !== requestId) return prev;
         if (conflict) {
           return { ...prev, draft: markConflict(prev.draft, conflict.code,
             message(reason, '这个 Prompt 已被他人更新。')), conflictCode: conflict.code };
@@ -193,8 +228,8 @@ export function usePromptWorkspace(options: Options) {
         // P0-F: a definite 4xx refusal is NOT an unknown outcome. Only 5xx / no status /
         // a transport failure leave the result genuinely unknown.
         if (status !== null && status >= 400 && status < 500) {
-          // A definite refusal, not an unknown outcome. Bounded, actionable Chinese text —
-          // an unrecognised upstream code must not surface as a raw message.
+          // Bounded, actionable Chinese text — an unrecognised upstream code must not
+          // surface as a raw message.
           return { ...prev, draft: markRejected(prev.draft, `HTTP_${status}`,
             `服务器明确拒绝了这次保存（HTTP ${status}）。你的草稿已保留，修正后可以重新提交。`),
             fieldError: null };
@@ -247,10 +282,10 @@ export function usePromptWorkspace(options: Options) {
    * marked as rebased.
    */
   const rebase = useCallback(async (familyId: string) => {
-    const mine = ++epoch.current;
+    const mine = ++detailEpoch.current;
     try {
       const fresh = await client.readFamily(familyId);
-      if (!alive.current || mine !== epoch.current) return;
+      if (!alive.current || mine !== detailEpoch.current) return;
       setState(prev => ({
         ...prev, detail: fresh, conflictCode: null, fieldError: null,
         draft: rebaseDraft(prev.draft, {
@@ -258,7 +293,7 @@ export function usePromptWorkspace(options: Options) {
         }),
       }));
     } catch (reason) {
-      if (!alive.current || mine !== epoch.current) return;
+      if (!alive.current || mine !== detailEpoch.current) return;
       setState(prev => ({ ...prev, error: message(reason, '无法读取服务器上的最新修订，尚未重新基准。') }));
     }
   }, [client]);
@@ -269,21 +304,21 @@ export function usePromptWorkspace(options: Options) {
   }, []);
 
   const compare = useCallback(async (familyId: string, fromId: string, toId: string) => {
-    const mine = ++epoch.current;
+    const mine = ++compareEpoch.current;
     setState(prev => ({ ...prev, compare: { ...prev.compare, loading: true, error: null } }));
     try {
       const [from, to] = await Promise.all([
         client.readRevisionBody(familyId, fromId),
         client.readRevisionBody(familyId, toId),
       ]);
-      if (!alive.current || mine !== epoch.current) return;
+      if (!alive.current || mine !== compareEpoch.current) return;
       setState(prev => ({ ...prev, compare: {
         loading: false, error: null,
         from: { assetId: fromId, revision: from.revision, body: from },
         to: { assetId: toId, revision: to.revision, body: to },
       } }));
     } catch (reason) {
-      if (!alive.current || mine !== epoch.current) return;
+      if (!alive.current || mine !== compareEpoch.current) return;
       setState(prev => ({ ...prev, compare: {
         ...prev.compare, loading: false, error: message(reason, '无法读取该修订的正文。') } }));
     }
@@ -299,11 +334,12 @@ export function usePromptWorkspace(options: Options) {
 /** Library entry → editable content. Hand-written drafts are MANUAL and never claimed as AI. */
 export function fromEntry(entry: PromptEntry): DraftContent {
   const field = (name: string): unknown => entry.fields.find(row => row.field === name)?.value;
-  const asText = (value: unknown): string => (typeof value === 'string' && value !== 'UNKNOWN' ? value : '');
+  const asText = (value: unknown): string =>
+    (typeof value === 'string' && value !== UNKNOWN_VALUE ? value : '');
   const list = (values: string[]): string[] => [...values];
   return {
-    text: entry.body.state === 'COMPLETE' || entry.body.state === 'TRUNCATED'
-      ? (entry.body.value ?? '') : '',
+    // A preview or a redaction is NOT an editable full body (P0-D): only COMPLETE prefills.
+    text: entry.body.state === 'COMPLETE' ? (entry.body.value ?? '') : '',
     negativePrompt: asText(field('negative_prompt')),
     purpose: (['IMAGE', 'VIDEO', 'AUDIO', 'TEXT'] as const)
       .find(value => value === entry.purpose) ?? 'IMAGE',
@@ -322,10 +358,6 @@ export function fromEntry(entry: PromptEntry): DraftContent {
     changeReason: '',
   };
 }
-
-export type PromptFieldProblem = { field: 'parameters' | 'seed' | 'text'; message: string };
-export type ParsedDraft = { ok: true; parameters: Record<string, unknown>; seed: number | null }
-  | ({ ok: false } & PromptFieldProblem);
 
 /**
  * Parse the local draft's 参数/seed. An invalid value stays in the draft and blocks saving —
@@ -353,9 +385,10 @@ function parseContent(content: DraftContent): ParsedDraft {
   let seed: number | null = null;
   if (content.seed.trim()) {
     const parsed = Number(content.seed);
-    if (!Number.isInteger(parsed) || parsed < 0) {
+    // Match the server DTO: a non-negative safe integer, never a coerced default.
+    if (!Number.isSafeInteger(parsed) || parsed < 0) {
       return { ok: false, field: 'seed',
-        message: 'Seed 必须是非负整数；当前输入已保留，未提交。' };
+        message: 'Seed 必须是非负安全整数；当前输入已保留，未提交。' };
     }
     seed = parsed;
   }
