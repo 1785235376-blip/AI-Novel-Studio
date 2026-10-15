@@ -26,13 +26,21 @@ from app.creative.prompt_authoring_models import PromptCreateIn, PromptRevisionI
 
 HARNESS_MISSING = "requires the isolated runner (scripts/run_v2_checks.py) that sets PROJECT_ROOT"
 
+#: Same convention as tests/test_v2_creative_foundation.py: the endpoint is opt-in, and the
+#: conftest skips the postgres variant unless STORAGE_BACKEND=postgres together with
+#: TEST_POSTGRES_DATABASE_URL are supplied. There is no fallback to File.
+TEST_URL = os.getenv("TEST_POSTGRES_DATABASE_URL", "")
+
 TEXT = "  合成采用的正文 🙂\n第二行  \n"
 
 
-@pytest.fixture
-def rig(tmp_path, monkeypatch):
+@pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                        pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+def rig(request, tmp_path, monkeypatch):
     if os.environ.get("PROJECT_ROOT") is None:
         pytest.skip(HARNESS_MISSING)
+    backend = request.param
+    url = TEST_URL if backend == "postgres" else ""
     from app.config import Settings
     from app.creative.bible_workspace import BibleWorkspaceService
     from app.creative.prompt_authoring import PromptAuthoringService
@@ -49,13 +57,27 @@ def rig(tmp_path, monkeypatch):
 
     monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2,asset_lineage_v2")
     monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+    if backend == "postgres" and not url:
+        pytest.fail("postgres variant requested without TEST_POSTGRES_DATABASE_URL")
     bundle = create_repository_bundle(
-        Settings(storage_backend="file", database_url="", novel_data=tmp_path,
+        Settings(storage_backend=backend, database_url=url, novel_data=tmp_path,
                  enable_cloud=False, mock_provider=True), data_root=tmp_path)
     novels, chapters = NovelService(bundle.novels, bundle.chapters), ChapterService(bundle.chapters)
     nid = "r3i-" + uuid4().hex
     novels.create({"id": nid, "title": "R3I"})
-    raw = ExperimentalStore(tmp_path, "file", "")
+    raw = ExperimentalStore(tmp_path, backend, url)
+    # Prove the backend identity instead of trusting the parameter.
+    assert raw.backend == backend, f"ExperimentalStore reported {raw.backend!r}, wanted {backend!r}"
+    if backend == "postgres":
+        # A REAL PostgreSQL connection, schema and table must be present. Any failure here is
+        # an error, never a quiet fall back to File.
+        with raw._connect() as connection:
+            version = connection.execute("SHOW server_version").fetchone()[0]
+            table = connection.execute(
+                "SELECT to_regclass('public.experimental_scope_documents')").fetchone()[0]
+            assert table is not None, "experimental_scope_documents is missing: migrations not applied"
+            dsn = connection.execute("SELECT current_database()").fetchone()[0]
+        print(f"[R3-I] postgres backend: server {version}, database {dsn}, table {table}")
     creative = CreativeService(raw, novels, chapters)
     assets = AssetLibraryService(tmp_path)
     workspace = IndependentWorkspaceService(
@@ -67,7 +89,8 @@ def rig(tmp_path, monkeypatch):
     adoption = PromptAdoptionService(workspace, library)
     return SimpleNamespace(nid=nid, scope={"mode": "local", "novel_id": nid}, creative=creative,
                            library=library, authoring=authoring, adoption=adoption,
-                           actor="author-a", workspace=workspace, assets=assets)
+                           actor="author-a", workspace=workspace, assets=assets,
+                           backend=backend, url=url, root=tmp_path, store=raw)
 
 
 def _storyboard(rig, action="站住"):
@@ -876,3 +899,51 @@ def test_a_payload_masked_revision_is_refused_and_writes_nothing(rig):
     assert not (live.get("prompt_adoptions") or []), "no proof may be stored"
     assert not any("job" in name.lower()
                    for name in rig.workspace.store.read(rig.nid, rig.scope).get("collections", {}))
+
+
+# ============================================ PostgreSQL / File backend receipt --
+def test_the_rig_uses_the_requested_backend(rig):
+    """No silent fallback: the rig must report the backend it was asked for."""
+    assert rig.backend in {"file", "postgres"}
+    assert rig.store.backend == rig.backend
+    if rig.backend == "postgres":
+        assert rig.url, "postgres mode must have a real endpoint"
+        with rig.store._connect() as connection:
+            assert connection.execute(
+                "SELECT to_regclass('public.experimental_scope_documents')").fetchone()[0]
+
+
+def test_atomic_adoption_persists_and_reopens_through_a_fresh_store_connection(rig):
+    """The core receipt, on BOTH backends, with a genuinely new store instance on reopen."""
+    from app.creative.service import CreativeService
+    from app.experimental.store import ExperimentalStore
+
+    document, shot_id = _storyboard(rig)
+    receipt, _d, b1 = _prompt(rig)
+    snapshot = rig.creative.get(rig.nid, rig.scope, document["id"])
+    request = _body(rig, snapshot, receipt, b1, shot_id)
+
+    result = rig.adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, document["id"],
+                                       shot_id, request)
+    assert result["committed"] is True
+    assert result["version"] == snapshot["version"] + 1
+
+    # A SEPARATE store connection, not the one that wrote.
+    reopened_store = ExperimentalStore(rig.root, rig.backend, rig.url)
+    assert reopened_store.backend == rig.backend
+    reopened = CreativeService(reopened_store, rig.creative.novels, rig.creative.chapters)
+    live = reopened.get(rig.nid, rig.scope, document["id"])
+    assert live["version"] == result["version"]
+    shot = next(item for item in live["shots"] if item["id"] == shot_id)
+    assert shot["frame_prompt"] == TEXT
+    proofs = [p for p in (live.get("prompt_adoptions") or [])
+              if p.get("request_id") == request.request_id]
+    assert len(proofs) == 1
+    assert proofs[0]["result_version"] == result["version"]
+
+    # The same request_id retried must not add a second write.
+    again = rig.adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, document["id"],
+                                      shot_id, request)
+    assert again["replayed"] is True
+    assert again["version"] == result["version"]
+    assert reopened.get(rig.nid, rig.scope, document["id"])["version"] == result["version"]
