@@ -17,8 +17,8 @@ def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|assets(?:/[^/]+(?:/download)?)?|director/workspace/[^/]+))?",
-        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|assets(?:/[^/]+/(?:restore|relationships|mask))?))",
+        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/download)?)?|director/workspace/[^/]+))?",
+        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/[^/]+/(?:restore|relationships|mask))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
@@ -72,7 +72,8 @@ class ManualMaskRoute(PrivateProductionRoute):
 
 def create_independent_workspace_router(service, authorize, require_flag, *, create_project, workspace_writer,
                                     graph_service=None, require_host_session=None, model_host_authority=None, production_service=None,
-                                    bible_service=None, prompt_service=None, prompt_authoring_service=None):
+                                    bible_service=None, prompt_service=None, prompt_authoring_service=None,
+                                    prompt_adoption_service=None):
     router = APIRouter(tags=["Independent Studios V2"], route_class=PrivateProductionRoute)
 
     def access(nid, token, branch, permission):
@@ -272,6 +273,12 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
     if prompt_authoring_service is not None:
         from .prompt_authoring_api import create_prompt_authoring_router
         router.include_router(create_prompt_authoring_router(prompt_authoring_service, invoke))
+
+    if prompt_adoption_service is not None:
+        # R3-I: two closed routes only — adopt into a STORYBOARD shot, and read the pinned
+        # adoptions. No generic owner write surface is opened.
+        from .prompt_adoption_api import create_prompt_adoption_router
+        router.include_router(create_prompt_adoption_router(prompt_adoption_service, invoke))
 
     if production_service is not None:
         from .production_execution_api import create_production_execution_router
