@@ -1709,3 +1709,18 @@ Review follow-through on that checkpoint: two additional synthetic display regre
 reproduced and corrected (retained storage after 404, and initial-denied catalog advice).
 Final modelcenter **106 passed**; combined related frontend **161 passed / the same 1 baseline
 failure**, exits 0 and 1 respectively. No original assertion, snapshot or backend gate changed.
+
+### 2026-10-15 — independent Prompt text comparison usability checkpoint
+
+Append-only observation after Model Center checkpoint `3b740033`. Existing verified revision-body
+reads now feed exact absent-versus-blank line comparison, 100-row display pages and an explicit
+changed-lines filter. Original line numbers and full totals remain; a 64-KiB newline-heavy test
+covers 65,537 positions without rendering every row. The comparison is labelled positional,
+not semantically aligned. No historical metadata is invented and no API, save, model or gate
+behavior changed.
+
+New focused tests **9 passed**; final combined Prompt/Model Center/AppShell selection **242 passed**
+(19 files), exit 0. Type/build/token checks pass. The separately recorded preference-CAS baseline
+failure is still open. Browser/real geometry remains **BLOCKED / NOT_RUN**; no backend,
+Windows/GPU/model or complete product acceptance is claimed. Commands and exact-stage handoff:
+`docs/delivery/v2-development/dot-usability-20261015.md`.

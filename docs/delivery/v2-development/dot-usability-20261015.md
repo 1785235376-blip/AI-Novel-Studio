@@ -11,7 +11,7 @@
 ## Queue
 
 1. Model Center honest partial-read / loading / retry feedback: implemented and selected verification recorded below.
-2. Audit Prompt comparison usability against the existing read-only contract; implement only a verified independent gap. Historical metadata is not exposed by the current revision-body contract, so no new backend projection is assumed.
+2. Prompt blank-line comparison and bounded navigation: implemented and selected verification recorded below. Historical metadata is not exposed by the current revision-body contract, so no new backend projection was added.
 
 ## Stage 1 — truthful Model Center read outcomes
 
@@ -82,6 +82,74 @@ No permission or transport behavior changed.
   instead, with full source-tree equivalence checked; commit metadata may therefore differ from
   the preserved local checkpoint. No credentials or raw logs are included.
 
+### Publication and exact-source follow-up
+
+Stage 1 remote commit: `3b74003346bc920e2fd971f9897f5478e5800f5f`.
+Full tree `d40457ad103fa084b52289ded8dd0a7b4a227dc5` equals reviewed local
+`5d4b891ee1347d3a6db6d3040bf83bace9cc8a57`. Both `git ls-remote` and fetched object/tree
+verification succeeded. Modelcenter tests were rerun on the fetched published commit:
+**106 passed**, exit 0. Local pre-publication checkpoints remain preserved.
+
+Draft [PR #48](https://github.com/1785235376-blip/AI-Novel-Studio/pull/48) targets
+`feature/v2-narrative-platform`, leaving PR #47 and main unchanged.
+
+The connector's exact-SHA PR-workflow query returned three terminal failed runs:
+Cloud CI `38789080100`, Local Interop V1 `38789080080`, Shared R123 evidence `38789080141`.
+Their returned job lists contain 15 failed jobs with null steps and log URLs; no test-execution
+receipt was provided. This is **not hosted acceptance**, and no jobs were rerun. The connector
+query covers PR-triggered runs only; no complete push-workflow inventory is claimed.
+
+## Stage 2 — exact, navigable Prompt text comparison
+
+### Verified gap and implementation
+
+The existing comparison used the empty string for both an absent line and an authored blank
+line. As a result, `first line` versus `first line\n` reported zero changed lines. It also rendered
+all lines in one table; a valid newline-heavy 64-KiB body can contain 65,537 line positions.
+
+- Missing and blank lines are now different values, explicitly labelled `无此行` and `空行`.
+- Full comparison totals are retained while at most 100 text rows are rendered per page.
+- Users can navigate pages or select `仅显示差异行`; original line numbers are retained, and
+  filter/revision changes reset the page instead of leaving the user at an empty offset.
+- The existing positional comparison is described honestly; it does not claim automatic line
+  alignment or semantic diffing. Whitespace and trailing newlines remain significant.
+- The existing complete/verified/read-complete condition and incomplete-body warning remain.
+  Controls operate only on the already-loaded bodies, without another request, write, model call,
+  browser storage, or new history projection. The parent workspace's masked-body handling stays
+  unchanged.
+
+### Files and checks
+
+Files: `frontend/src/prompt/PromptRevisionDiff.tsx` and `.test.tsx` (new),
+`frontend/src/prompt/PromptWorkspace.tsx` (extract/re-export existing display),
+`frontend/src/prompt/promptWorkspace.css` (existing tokens only).
+
+Commands are from `frontend/`; counts overlap.
+
+| Command | Actual result | Exit |
+| --- | --- | --- |
+| `vitest run src/prompt/PromptRevisionDiff.test.tsx --reporter=verbose` before implementation | 6 new failures / 1 unchanged incomplete-body pass | 1 |
+| Same command after implementation | 7 passed | 0 |
+| Same command after adding the 64-KiB newline-heavy boundary case | 8 passed; full totals, final differing line reachable, DOM remains bounded | 0 |
+| Same focused command after the review-requested revision-number-only reset case | 9 passed | 0 |
+| `vitest run src/prompt --reporter=verbose` before adding the boundary case | 103 passed, 15 files | 0 |
+| `vitest run src/modelcenter src/prompt src/ui/AppShell.test.tsx src/ui/AppShell.projectNoun.test.tsx --reporter=verbose` on final stage code | 242 passed, 19 files | 0 |
+| `tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs` | Pass; existing large-chunk warning unchanged | 0 |
+| Repo-root `git diff --check` plus local inspection of new CSS token names against `tokens.css` and absence of new raw colors/pixel sizes | Pass | 0 |
+
+The earlier adjacent preference-CAS failure remains open and is not covered by the 242-test
+selection. Browser launch remains **BLOCKED** by the stage-1 platform socket failure and was not
+retried; geometry/screenshots, backend, real models/GPU/Windows and whole-product acceptance
+are **NOT_RUN** for this frontend stage.
+
+Independent read-only review found no new defect. It ran the then-eight project tests plus six
+isolated synthetic cases (14 passed, a separate overlapping run), checking sparse filtered
+pagination, revision-number-only changes, exact spaces/tabs/CR/Unicode, incomplete transitions,
+empty/newline differences and a high-change 64-KiB body. The revision-number-only case was then
+added to the project suite; production code did not change after review.
+
 ## Current handoff
 
-Stage 1 is ready for a Draft-only review checkpoint, with the limits above. Publication SHA and remote verification are recorded in the task handoff and will be appended here at the next checkpoint. No merge or release is authorized by this delivery.
+Two independent usability slices are implemented with preserved evidence and Draft-only
+publication. Stage 2 publication SHA/tree will be recorded at the next checkpoint; no merge,
+release or deployment is implied. The blocked lifecycle work remains separate and unchanged.
