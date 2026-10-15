@@ -330,8 +330,63 @@ are jsdom contracts, not assistive-technology acceptance. Full frontend, backend
 GPU/Windows and whole-product acceptance remain **NOT_RUN**. The earlier baseline and hosted
 workflow failures remain open.
 
+### Stage 5 publication
+
+Remote `04147ab4fcfdde2dc7f3ee2cc8656fbc290fa83f`, tree
+`8a7cf10daf21f486a9c7b15a08b70aa63ffa0ecc`, exactly matches reviewed/tested local
+`6850bb1e7210150341c8b81ca00aa8f6e7610f7f`. `git ls-remote` and fetched tree verification
+passed, and PR #48 remains Draft. Exact-SHA PR workflows are terminal failures: Cloud CI
+`38796237363`, Local Interop `38796237258`, Shared R123 `38796237291`. No hosted pass or
+workflow rerun is claimed.
+
+## Stage 6 — accurate receipt read state and loaded-history scope
+
+### Verified gap and implementation
+
+`ReceiptRecoveryPanel` originally described an absent page as a successful empty service result
+even during IDLE, LOADING and FAILED states. It did not warn that `next_offset` meant only part of
+the history was loaded. A completed task lacking a filename also displayed the unfinished-task
+wording, despite the separate completed badge.
+
+- Distinguish not-yet-read, loading, failed and successfully empty states. Loading is exposed
+  with `aria-busy`; failed reads retain an explicit path to the existing manual read control.
+- Mark retained rows as previously loaded facts while refresh is incomplete or failed.
+- Label counts as loaded records and explain a supplied next-page marker, including offset zero.
+  Users are directed to the original export center for pagination; no new reads are started.
+- Distinguish a completed task's missing filename from an unfinished task and direct the user
+  to the original export center to check the file.
+- Changes are presentation-only. Recovery callbacks, controller, client, endpoints, gates,
+  dispatch/cancel behavior, CSS and shared primitives are unchanged.
+
+Code files: `frontend/src/delivery/ReceiptRecoveryPanel.tsx`, new
+`ReceiptRecoveryPanel.test.tsx`, the outer empty-page labels in `DeliveryCenterPanel.tsx`,
+and appended integration tests in `DeliveryCenterPanel.test.tsx`.
+
+### Verification
+
+Commands are from `frontend/`; counts overlap.
+
+| Command / checkpoint | Actual result | Exit |
+| --- | --- | --- |
+| `vitest run src/delivery/ReceiptRecoveryPanel.test.tsx --maxWorkers=2 --minWorkers=1 --reporter=verbose` before implementation | 8 new failures / 1 unchanged empty-state pass | 1 |
+| `vitest run src/delivery --maxWorkers=4 --minWorkers=1 --reporter=verbose` before the two extra integration cases | 64 passed, 5 files | 0 |
+| Stage-5 final combined command plus `src/delivery`, after adding loading-to-empty and failure-to-explicit-read integration cases | 362 passed, 30 files | 0 |
+| Focused empty-page/non-null-cursor integration before review correction | 2 failed / 13 deselected | 1 |
+| Same combined command after aligning outer EMPTY badge/heading/detail with page-limited evidence | 364 passed, 30 files | 0 |
+| `tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs` | Pass; existing large-chunk warning unchanged | 0 |
+| `git diff --check` | Pass | 0 |
+
+Read-only review found that an empty page with a remaining cursor could still trigger the outer
+project-wide empty-history statement. Offset-zero and offset-50 regressions reproduced this;
+the outer EMPTY badge, heading and detail now describe only the empty page in that case.
+
+No original assertions, timeouts, or snapshots changed. The loading/recovery tests use controlled
+synthetic reads; they do not prove live backend service recovery. Browser/geometry remains
+**BLOCKED / NOT_RUN**, and full frontend, backend, live models, GPU/Windows and whole-product
+acceptance remain **NOT_RUN**. Original baseline and hosted workflow failures remain open.
+
 ## Current handoff
 
-Five independent usability slices are implemented with preserved evidence and Draft-only
-publication. Stage 5 publication SHA/tree will be recorded at the next checkpoint. No merge,
+Six independent usability slices are implemented with preserved evidence and Draft-only
+publication. Stage 6 publication SHA/tree will be recorded at the next checkpoint. No merge,
 release or deployment is implied. The blocked lifecycle work remains separate and unchanged.

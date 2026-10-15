@@ -1770,3 +1770,17 @@ exit 0, including mode-switch → correction → explicit-save integration. Coun
 Type/build/token checks pass. Browser/assistive-technology/geometry checks remain
 **BLOCKED / NOT_RUN**; baseline and hosted failures stay open. Exact commands and limits:
 `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent export receipt display checkpoint
+
+Append-only observation after editor-guidance checkpoint `04147ab4`. The receipt view now keeps
+unread/loading/failed states distinct from a successful empty page, marks retained loaded rows,
+and warns when a next-page marker means history is incomplete. Completed jobs without a filename
+have explicit metadata guidance. This is display-only; no recovery action, controller, endpoint,
+gate, dispatch/cancel behavior or style change.
+
+Initial delivery scope **64 passed**; final prior-stage combined scope including two further
+read/recovery integrations and reviewed empty-page/cursor cases **364 passed** (30 files), exit 0. Counts overlap. Type/build/token
+checks pass. Browser/geometry remains **BLOCKED / NOT_RUN**, and baseline/hosted failures remain
+open. Commands and limitations: `docs/delivery/v2-development/dot-usability-20261015.md`.
