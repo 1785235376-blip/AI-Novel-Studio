@@ -1797,3 +1797,17 @@ capability, endpoint, controller, CSS or shared primitive changes.
 Focused display tests **5 passed**; prior-stage combined scope **369 passed** (31 files), exit 0.
 Counts overlap. Type/build/token checks pass. Browser/geometry remains **BLOCKED / NOT_RUN**; baseline and hosted failures
 remain open. Commands and limits: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent Task Center keyboard checkpoint
+
+Append-only observation after object-format checkpoint `4f9f1e1f`. Queue tabs now support manual
+Left/Right/Home/End focus navigation, one active tab stop, and instance-unique tab/panel links.
+Focus does not read or activate a queue; native buttons retain the existing activation callback.
+Inactive queue contents remain unmounted. No task/review/controller/client/endpoint/style changes.
+
+Focused navigation **5 passed**; prior combined scope plus task-center suites **418 passed**
+(36 files), exit 0. Counts overlap. Type/build/token checks pass. Browser/assistive-technology/
+geometry remains **BLOCKED / NOT_RUN**; baseline and hosted failures remain open. These usability
+slices do not constitute advanced production-chain acceptance. Commands and limitations:
+`docs/delivery/v2-development/dot-usability-20261015.md`.

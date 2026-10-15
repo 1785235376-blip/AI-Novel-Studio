@@ -435,8 +435,69 @@ real browser/geometry/focus-device acceptance remains **BLOCKED / NOT_RUN**. Exi
 and hosted failures remain open. Full frontend, backend, models, GPU/Windows and whole-product
 acceptance are not claimed.
 
+### Stage 7 publication
+
+Remote `4f9f1e1fc20577e6db86dbceb78a51ba171a67a4`, tree
+`2f135185f093228819dfd3a081703ce35a2e718e`, exactly matches reviewed/tested local
+`b337a3c9798fe0f8f0bf4036c71ed51c4a87633b`. `git ls-remote` and fetched tree verification
+passed. An initial post-publication combined run had **367 passed / 2 failed**, exit 1, both
+initial download-button queries in the export-feedback suite. That suite then passed unchanged
+in isolation (**6 passed**, exit 0), and the unchanged combined command, explicitly checking
+published HEAD first, passed **369 tests**, 31 files, exit 0. The first run overlapped completion
+of the identical-tree fetch/switch; no code changed, and the failure's root cause is not proven.
+Failure logs remain retained; assertions and timeouts were not weakened.
+
+PR #48 remains Draft and records this nuance. Exact-SHA hosted workflows are terminal failures:
+Cloud CI `38798788469`, Local Interop `38798788145`, Shared R123 `38798788108`.
+
+## Stage 8 — keyboard access to task-center queues
+
+### Verified gap and implementation
+
+The existing Task Center used `tablist` / `tab` roles without arrow-key navigation, a single
+active tab stop, or tab-to-panel links. This is a concrete keyboard navigation gap under the
+project design-system rules and the [WAI tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/).
+
+- Left/Right arrows wrap focus between queue tabs; Home/End focus the first/last tab.
+- Navigation is manual activation: focus movement does not select another queue or read it.
+  Native button activation retains the existing `setQueue` callback. Vertical arrows, Tab,
+  and Alt/Ctrl/Meta shortcuts are left to the browser.
+- Instance-unique tab/panel IDs provide `aria-controls` and `aria-labelledby`; only the selected
+  tab is in the page tab sequence. Inactive panels are empty hidden placeholders, so their
+  original queue contents remain unmounted.
+- Existing queue controllers, reads, task actions, review decisions, source navigation, CSS
+  and shared primitives are unchanged. Visible instructions explain manual activation.
+
+Code files: `frontend/src/taskcenter/TaskCenter.tsx`, root panel attributes in `TaskList.tsx`
+and `ReviewInbox.tsx`, and new `TaskCenter.navigation.test.tsx`.
+
+### Verification
+
+Commands run from `frontend/`; counts overlap.
+
+| Command / checkpoint | Actual result | Exit |
+| --- | --- | --- |
+| `vitest run src/taskcenter/TaskCenter.navigation.test.tsx --maxWorkers=2 --minWorkers=1 --reporter=verbose` before implementation | 4 new failures / 1 unchanged pass | 1 |
+| Same focused command after implementation | 5 passed | 0 |
+| Stage-7 combined command plus `src/taskcenter` | 418 passed, 36 files | 0 |
+| `tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs` after the final wording correction | Pass; existing large-chunk warning unchanged | 0 |
+| `git diff --check` | Pass | 0 |
+
+Independent read-only review found no scoped defect and passed 8 overlapping isolated tests:
+the 5 candidate cases plus hidden-content unmounting, cached-return, native-key pass-through,
+and separate-root ID/focus checks.
+
+The wording correction removed an implication that every activation reads: cached queues retain
+their existing on-demand behavior. Tests cover focus, attributes and explicit click activation in
+jsdom; they do not emulate browser-native Enter/Space clicks or prove screen-reader behavior.
+Real browser/geometry/assistive-technology acceptance remains **BLOCKED / NOT_RUN**. No original
+assertions, timeouts or snapshots changed. Prior baseline and hosted failures remain open.
+
 ## Current handoff
 
-Seven independent usability slices are implemented with preserved evidence and Draft-only
-publication. Stage 7 publication SHA/tree will be recorded at the next checkpoint. No merge,
-release or deployment is implied. The blocked lifecycle work remains separate and unchanged.
+Eight independent usability slices are implemented with preserved evidence; stage 8 publication
+SHA/tree will be recorded at the next checkpoint. This does not complete the original advanced roadmap. The absent pinned
+Prompt adoption workflow requires write-admission and File/PG acceptance outside this worker's
+scope. Real model/provider, GPU/Windows, browser and full production-chain acceptance remain
+blocked or unverified as previously recorded; historical CPU media evidence is not downgraded.
+No merge, release or deployment is implied. Blocked lifecycle work remains separate and unchanged.

@@ -82,9 +82,11 @@ function TaskCard({ controller, task }: { controller: TaskCenterController; task
 }
 
 /** 任务队列：过滤在按需刷新时生效；按钮可用性只看原 owner 的 `actions`。 */
-export function TaskList({ controller }: { controller: TaskCenterController }) {
+export function TaskList({ controller, panelId, labelledBy }: {
+  controller: TaskCenterController; panelId?: string; labelledBy?: string;
+}) {
   const { filters, setFilters } = controller;
-  return <section className="task-center__queue" role="tabpanel" aria-label="任务队列">
+  return <section className="task-center__queue" role="tabpanel" id={panelId} aria-labelledby={labelledBy} aria-label="任务队列">
     <form className="task-center__filters" onSubmit={event => { event.preventDefault(); controller.applyFilters(); }}>
       <label className="task-center__field"><span>按任务 ID、类型或阶段搜索</span>
         <input maxLength={160} value={filters.query} onChange={event => setFilters({ query: event.target.value })} />
