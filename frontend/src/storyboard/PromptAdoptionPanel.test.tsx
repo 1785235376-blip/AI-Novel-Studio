@@ -69,8 +69,9 @@ describe('read-only adoption panel', () => {
   });
 
   it('a stale response cannot overwrite a newer selection', async () => {
-    let releaseFirst: (() => void) | null = null;
-    const first = new Promise<void>(resolve => { releaseFirst = resolve; });
+    // A mutable holder: assigning through a plain `let` narrows to never under strict TS.
+    const gate: { release?: () => void } = {};
+    const first = new Promise<void>(resolve => { gate.release = resolve; });
     let call = 0;
     const transport: StudioGraphTransport = {
       async json<T>(url: string): Promise<T> {
@@ -92,7 +93,7 @@ describe('read-only adoption panel', () => {
         <PromptAdoptionPanel projectId="p1" documentId="doc-1" shotId="shot-2" transport={transport} />
       </StrictMode>);
     await waitFor(() => expect(screen.getByText(/NEW-asset/)).toBeTruthy());
-    releaseFirst?.();
+    gate.release?.();
     await new Promise(resolve => setTimeout(resolve, 30));
     expect(screen.queryByText(/OLD-asset/)).toBeNull();
     expect(screen.getByText(/NEW-asset/)).toBeTruthy();
