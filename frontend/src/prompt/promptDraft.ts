@@ -8,11 +8,19 @@
  *   UNKNOWN     结果未知（超时/断网/响应丢失）——**绝不自动重发**
  *   CONFLICT    409 冲突，草稿保留
  *
- * 关于本地持久化：仓库既有的 `studioWorkspaceResume` 明确声明
+ * R3-U1 修复的核心不变量：**提交的是一份不可变快照（`pending`）**。
+ * SUBMITTING / UNKNOWN 期间禁止修改待提交快照（UI 据此禁用输入），
+ * `confirmSaved` 只在被回执确认的就是那份快照时才置为 SAVED —— 因此
+ * “提交途中输入的新文本”永远不会被显示成“已保存”。
+ *
+ * request_id 规则：
+ *   UNKNOWN 且内容与快照完全一致 → 允许用户显式重试，复用原 request_id
+ *   被拒绝（CONFLICT）或已完成（SAVED）→ 立即作废该标识；必须重新基准后才能申请新的标识
+ *
+ * 关于本地持久化：仓库既有 `studioWorkspaceResume` 明确声明
  * “No drafts, prompts, outputs, tokens, credentials or execution receipts are stored.”
- * 因此这里**不把 Prompt 正文写入 localStorage**。刷新后正文无法恢复，但也不允许
- * “无提示”地消失：只持久化一个**不含内容**的标记（家族、基准修订、是否存在草稿），
- * 刷新后据此明确告知用户草稿存在但内容无法恢复。
+ * 因此这里**不把 Prompt 正文写入 localStorage**。只持久化一个**不含内容**的标记，
+ * 刷新后据此明确告知用户草稿存在但**内容无法恢复** —— 检测到草稿不等于恢复草稿。
  */
 
 import { PROMPT_BOUNDS } from './promptTypes';
@@ -41,9 +49,12 @@ export type Draft = {
   /** 编辑所依据的修订身份（新建时为 null）。 */
   baseAssetId: string | null;
   baseRevision: number | null;
+  /** 用户正在编辑的内容。 */
   content: DraftContent;
+  /** 已提交、不可变的快照。非 SUBMITTING/UNKNOWN 时为 null。 */
+  pending: DraftContent | null;
   state: DraftState;
-  /** 只有 SUBMITTING / UNKNOWN 期间有意义；同一份草稿必须复用同一个标识。 */
+  /** 只有 SUBMITTING / UNKNOWN 期间有意义。 */
   requestId: string | null;
   conflictCode: string | null;
   message: string | null;
@@ -57,56 +68,96 @@ export const emptyContent = (): DraftContent => ({
 
 export function newDraft(key: string): Draft {
   return { key, familyId: null, baseAssetId: null, baseRevision: null, content: emptyContent(),
-    state: 'CLEAN', requestId: null, conflictCode: null, message: null };
+    pending: null, state: 'CLEAN', requestId: null, conflictCode: null, message: null };
 }
 
-/** 本地是否有尚未确认保存的内容。SAVED/CLEAN 之外的任何状态都算。 */
+/** 本地是否有尚未确认保存的内容。 */
 export function hasUnconfirmedWork(draft: Draft): boolean {
   return draft.state === 'DIRTY' || draft.state === 'SUBMITTING'
     || draft.state === 'UNKNOWN' || draft.state === 'CONFLICT';
 }
 
-/** 正文是否真的变化过（与服务器上的基准比较）。 */
-export function isModified(draft: Draft, base: { text: string; negativePrompt: string }): boolean {
-  return draft.content.text !== base.text || draft.content.negativePrompt !== base.negativePrompt;
+/** 提交途中（含结果未知）输入必须被锁定：此刻改动内容会与已发出的请求不一致。 */
+export function isInputLocked(draft: Draft): boolean {
+  return draft.state === 'SUBMITTING' || draft.state === 'UNKNOWN';
+}
+
+/** 待提交快照与当前内容是否一致。 */
+export function pendingMatchesContent(draft: Draft): boolean {
+  if (!draft.pending) return false;
+  const a = draft.pending;
+  const b = draft.content;
+  return a.text === b.text && a.negativePrompt === b.negativePrompt && a.purpose === b.purpose
+    && a.modelReference === b.modelReference && a.parameters === b.parameters && a.seed === b.seed
+    && a.changeNote === b.changeNote && a.changeReason === b.changeReason
+    && sameList(a.characterIds, b.characterIds) && sameList(a.sceneIds, b.sceneIds)
+    && sameList(a.shotIds, b.shotIds) && sameList(a.referenceAssetIds, b.referenceAssetIds);
+}
+
+const sameList = (a: readonly string[], b: readonly string[]): boolean =>
+  a.length === b.length && a.every((value, index) => value === b[index]);
+
+/** 冲突未解决前不允许提交：必须先重新基准。 */
+export function needsRebase(draft: Draft): boolean {
+  return draft.state === 'CONFLICT' || (draft.conflictCode !== null && draft.state !== 'SAVED');
+}
+
+/** 是否允许发起一次新的提交（会申请新的 request_id）。 */
+export function canSubmit(draft: Draft): boolean {
+  return (draft.state === 'CLEAN' || draft.state === 'DIRTY')
+    && draft.conflictCode === null && draft.requestId === null;
 }
 
 export function editDraft(draft: Draft, patch: Partial<DraftContent>): Draft {
-  // 结果未知时的输入先被拒绝：必须由用户决定重试还是放弃，不能悄悄改掉待确认内容。
-  if (draft.state === 'UNKNOWN') return draft;
-  return { ...draft, content: { ...draft.content, ...patch },
-    state: draft.state === 'SUBMITTING' ? 'SUBMITTING' : 'DIRTY', message: null };
+  // SUBMITTING / UNKNOWN：不得改动待提交快照，否则“已保存”的可能是另一份内容。
+  if (isInputLocked(draft)) return draft;
+  return { ...draft, content: { ...draft.content, ...patch }, state: 'DIRTY',
+    // 冲突标记保留到显式重新基准为止，因此编辑本身不等于“可以提交”。
+    message: null };
 }
 
 /**
- * 提交。`allocate` 只在**第一次**提交时调用；重试必须复用同一个 request_id，
- * 这样服务端 R3-W 的幂等才能把它识别为同一次请求。
+ * 提交。第一次提交时冻结快照并申请 request_id；已在途则原样返回。
  */
 export function beginSubmit(draft: Draft, allocate: () => string): Draft {
   if (draft.state === 'SUBMITTING') return draft;
-  const requestId = draft.requestId ?? allocate();
-  return { ...draft, state: 'SUBMITTING', requestId, conflictCode: null, message: null };
+  if (!canSubmit(draft)) return draft;
+  return { ...draft, state: 'SUBMITTING', pending: { ...draft.content },
+    requestId: allocate(), conflictCode: null, message: null };
 }
 
+/**
+ * 服务器回执。**只有被确认的就是那份快照时才置为 SAVED。**
+ *
+ * 若内容与快照不一致（防御性分支：锁定生效前的历史状态），则保持 DIRTY，
+ * 让未提交的改动继续显示为“未保存”，而不是冒充已保存。
+ */
 export function confirmSaved(draft: Draft, saved: {
   familyId: string; assetId: string; revision: number; idempotentReplay: boolean;
 }): Draft {
-  return { ...draft, familyId: saved.familyId, baseAssetId: saved.assetId,
-    baseRevision: saved.revision, state: 'SAVED', requestId: null, conflictCode: null,
+  const matched = draft.pending !== null && pendingMatchesContent(draft);
+  const base = {
+    ...draft, familyId: saved.familyId, baseAssetId: saved.assetId, baseRevision: saved.revision,
+    requestId: null, conflictCode: null, pending: null,
+  };
+  if (!matched) {
+    return { ...base, state: 'DIRTY',
+      message: '服务器已保存的是提交时的内容；此后的改动仍未保存。' };
+  }
+  return { ...base, state: 'SAVED',
     message: saved.idempotentReplay ? '这次提交与服务器上已有的修订一致，没有重复创建。' : null };
 }
 
-/** 409：保留草稿与 request_id，让用户重新加载后再决定。 */
+/** 409：保留草稿；该请求标识已被终局拒绝，立即作废。 */
 export function markConflict(draft: Draft, code: string, message: string): Draft {
-  return { ...draft, state: 'CONFLICT', conflictCode: code, message };
+  return { ...draft, state: 'CONFLICT', conflictCode: code, message,
+    requestId: null, pending: null };
 }
 
 /**
  * 网络/超时/响应丢失：结果**未知**。
  *
- * 关键点：这里保留 `requestId`，并且不自动重试。用户下一次显式提交会复用同一个
- * request_id，服务端据此返回同一次修订（或者明确告知该标识已用于别的内容），
- * 所以不会产生第二份修订。
+ * 保留 requestId 与快照，并且不自动重试。
  */
 export function markUnknown(draft: Draft, message: string): Draft {
   return { ...draft, state: 'UNKNOWN', message };
@@ -115,16 +166,39 @@ export function markUnknown(draft: Draft, message: string): Draft {
 /**
  * 用户在“结果未知”后显式重试。
  *
- * 复用同一个 request_id 是**唯一**安全的做法：换新标识就会真的创建第二份修订。
+ * 只有内容与快照**完全一致**时才允许复用原 request_id —— 换新标识会真的创建第二份修订，
+ * 而内容若已改变则原标识代表的已不是同一份请求。
  */
 export function retryUnknown(draft: Draft): Draft {
   if (draft.state !== 'UNKNOWN' || !draft.requestId) return draft;
+  if (!pendingMatchesContent(draft)) return draft;
   return { ...draft, state: 'SUBMITTING', message: null };
+}
+
+/**
+ * 用户显式把草稿重新基准到服务器上的某个修订（解决冲突后的必要一步）。
+ * 这是唯一允许在冲突之后申请新 request_id 的入口。
+ */
+export function rebaseDraft(draft: Draft, base: {
+  assetId: string; revision: number; content?: DraftContent; familyId?: string | null;
+}): Draft {
+  return {
+    ...draft,
+    familyId: base.familyId === undefined ? draft.familyId : base.familyId,
+    baseAssetId: base.assetId,
+    baseRevision: base.revision,
+    content: base.content ?? draft.content,
+    state: 'DIRTY',
+    pending: null,
+    requestId: null,
+    conflictCode: null,
+    message: '已重新基准到服务器上的最新修订。请核对后再次保存。',
+  };
 }
 
 /** 用户明确放弃本地内容（必须由用户操作触发）。 */
 export function discardDraft(draft: Draft): Draft {
-  return { ...draft, content: emptyContent(), state: 'CLEAN', requestId: null,
+  return { ...draft, content: emptyContent(), pending: null, state: 'CLEAN', requestId: null,
     conflictCode: null, message: null };
 }
 
@@ -185,10 +259,55 @@ export function clearDraftMarker(storage?: Pick<Storage, 'removeItem'>): void {
   try { (storage ?? globalThis.localStorage).removeItem(markerKey); } catch { /* storage may be blocked */ }
 }
 
-/** 刷新后给用户的说明：明确说明内容**无法**恢复，而不是假装恢复了。 */
+/**
+ * 刷新后给用户的说明。
+ *
+ * 措辞必须准确：这是**检测到**曾经有草稿，不是**恢复**了草稿。正文没有进入浏览器存储，
+ * 因此无法恢复。绝不能把“检测到草稿”说成“已恢复草稿”。
+ */
 export function markerNotice(marker: DraftMarker): string | null {
   if (marker.state !== 'EXISTS') return null;
   const where = marker.familyId ? '这个家族的' : '新建 Prompt 的';
   return `检测到${where}未保存草稿。出于安全考虑，正文不会写入浏览器存储，因此刷新后无法恢复；`
     + '请重新编辑，或先加载服务器上的已授权版本。';
+}
+
+// ------------------------------------------------- 会话内草稿隔离 --
+
+/**
+ * 同一会话内的内存草稿存储。
+ *
+ * 指令 §6 要求：项目/分支/身份切换时绝不能把上一个人的私有正文显示给下一个人。
+ * 因此草稿按 `project|branch|actor` 三元组隔离，切换身份只会取到属于自己的草稿。
+ */
+const inMemoryDrafts = new Map<string, Draft>();
+
+export function draftScopeKey(projectId: string, branchId: string | null, actor: string): string {
+  return `${projectId}\u0000${branchId ?? ''}\u0000${actor}`;
+}
+
+function storageKey(scope: string, key: string): string {
+  return `${scope}\u0000${key}`;
+}
+
+/** 会话内读写：跨模块跳转保留，跨项目/身份不串台。 */
+export function stashDraft(projectId: string, branchId: string | null, actor: string, draft: Draft): void {
+  inMemoryDrafts.set(storageKey(draftScopeKey(projectId, branchId, actor), draft.key), draft);
+}
+
+export function takeDraft(projectId: string, branchId: string | null, actor: string,
+  key: string): Draft | null {
+  return inMemoryDrafts.get(storageKey(draftScopeKey(projectId, branchId, actor), key)) ?? null;
+}
+
+export function dropStashedDrafts(projectId: string, branchId: string | null, actor: string): void {
+  const scope = draftScopeKey(projectId, branchId, actor);
+  for (const stored of [...inMemoryDrafts.keys()]) {
+    if (stored.startsWith(`${scope}\u0000`)) inMemoryDrafts.delete(stored);
+  }
+}
+
+/** 仅测试与登出使用：清空全部内存草稿。 */
+export function clearAllStashedDrafts(): void {
+  inMemoryDrafts.clear();
 }
