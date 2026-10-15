@@ -1826,3 +1826,25 @@ Focused copy **12 passed**; final combined scope plus copy/integration/remount c
 (37 files), exit 0. Counts overlap. Type/build/token checks pass. Clipboard outcomes are mocked; real browser/device/geometry
 acceptance remains **BLOCKED / NOT_RUN**. Original advanced-chain, baseline and hosted limitations
 remain open. Audit boundaries and exact commands: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — guided character and scene visual authoring checkpoint
+
+Append-only observation after Prompt body-copy checkpoint `9e5eb187`. The existing WorldPanel
+now exposes its owner's already typed CHARACTER_VISUAL and SCENE_VISUAL kinds with guided
+fields, schema-aligned Unicode counts, up to 50 declared reference IDs, and existing versioned
+save/review/reopen/history actions. All eight original JSON kinds remain. Approved visual edits
+are locked, including an active draft approved during editing, without dropping unsaved input.
+No backend schema/service, route/gate, authorization, protected shell, shared primitive or CSS changes.
+
+Focused WorldPanel **15 passed**; prior-stage combined frontend scope **447 passed** (39 files);
+original isolated File-owner/Bible functional selection **34 passed / 3 existing route authority
+or method checks deselected**. Counts overlap. Type/build/token checks and independent scoped
+review pass. One synthetic profile per subject was created, edited, reloaded, rejected/reopened
+and projected as non-authoritative REVIEW with exact history and explicit unknown/unresolved data.
+Stub route authority is functional evidence only, not live authorization or security isolation.
+References do not prove asset bytes. New profiles do not replace Canon automatically; Bible still
+uses first approved or first matching profile. Distinguishing remains owner/history data outside
+Bible dimensions. Browser/geometry remains **BLOCKED / NOT_RUN**; earlier baseline/hosted and
+advanced-runtime limitations remain open. This is not V2 completion, merge, release or deployment.
+Details: `docs/delivery/v2-development/dot-usability-20261015.md`.

@@ -560,7 +560,10 @@ No original assertions, timeouts or snapshots changed. All clipboard outcomes ar
 Browser/clipboard-device/assistive-technology/geometry acceptance remains **BLOCKED / NOT_RUN**.
 Original baseline and hosted workflow failures remain open.
 
-## Remaining original goals and handoff boundary
+## Remaining original goals and handoff boundary (Stage 9 snapshot)
+
+The WorldPanel candidate identified here is implemented in Stage 10 below. Other limitations
+remain open; this section retains the prior checkpoint context.
 
 These nine independently tested UX slices are not completion of the original advanced roadmap.
 The bounded follow-on audit distinguishes external blockers from work outside this UI assignment:
@@ -596,3 +599,90 @@ linked below. The concrete WorldPanel candidate above is handed to the parent fo
 continuation; it has not been implemented or tested in this slice. Public publication
 receipts are maintained on [Draft PR #48](https://github.com/1785235376-blip/AI-Novel-Studio/pull/48).
 No merge, release, deployment or whole-product completion is implied.
+
+
+## Stage 10 — guided character and scene visual authoring
+
+### Existing owner, newly usable fields
+
+The WorldPanel selector previously offered only eight JSON-based world record kinds, despite
+`WorldService` already registering `CHARACTER_VISUAL` and `SCENE_VISUAL`. Both visual kinds are
+now selectable and expose labeled subject IDs and authored visual fields through existing
+`Field`, `Form`, `Button` and status primitives. The old eight examples and JSON editor remain.
+No backend production code, schema, service, route, admission, flag, middleware, protected shell,
+shared primitive or stylesheet changed. Bible remains the original read-only projection.
+
+- Character: existing character ID, appearance, clothing, distinguishing marks and declared
+  reference asset IDs. Scene: existing location ID, architecture, material, lighting, weather,
+  mood, time of day and declared reference asset IDs.
+- Required title and subject, Unicode code-point counts/limits matching the existing schema,
+  field-linked over-limit feedback, nonnegative integer event order, optional chapter,
+  and an explicitly editable reference list capped at 50. Subject/reference IDs are sent as
+  entered without trimming, splitting commas, lowercasing or inventing IDs.
+- Saves retain the original POST/PUT owner paths and exact `expected_version`. Editing hydrates
+  all visual fields. The shared action guard prevents duplicate in-flight submits; a failed
+  edit preserves entered values and version for explicit retry. Visual controls are disabled
+  during an in-flight action. Cancel retains the pre-existing local form behavior without
+  issuing a mutation. Review/reopen/history keep their original paths and row versions.
+- Approved visual rows have a disabled edit button. If the active visual edit is approved,
+  its unsaved input and original expected version are preserved while editing/save are locked.
+  A successful own approval also locks the draft when the subsequent reload fails.
+  Visible guidance says approved profiles
+  are immutable, creating a profile does not automatically replace Canon, and Bible selects
+  the first approved match or otherwise the first match, not the latest profile.
+- Blank visual dimensions stay UNKNOWN. Distinguishing marks remain stored/editable/history
+  data, not an extra Bible dimension. References are declarations, never proof of asset bytes.
+  Scene reference IDs remain stored/projected metadata, outside the seven scene dimensions.
+
+### Synthetic verification
+
+Counts overlap. New functional tests use only synthetic records and fixture-owned File stores;
+no model inference, real assets, PostgreSQL, GPU or external paid API is involved.
+
+| Check | Actual result | Exit |
+| --- | --- | --- |
+| New WorldPanel visual test file, baseline before implementation | 12 failed: missing entry/controls | 1 |
+| Focused WorldPanel tests after implementation | 12 passed / 1 new 50-row setup timed out | 1 |
+| Same focused tests after hydrating 49 references, then exercising add-50/remove/save (no timeout increase) | 13 passed, 2 files | 0 |
+| Previous nine-stage combined frontend command plus both WorldPanel files | 445 passed, 39 files | 0 |
+| Original isolated runner, Bible functional selection and new two-kind owner roundtrip, initial | 31 passed / 2 failed: new test expected a nonexistent projection ID field | 1 |
+| Same Python selection after aligning that new assertion to existing record-status/value fields | 33 passed / 3 deselected | 0 |
+
+Python command: `python scripts/run_v2_checks.py dot-usability-visual-roundtrip -- python -m pytest tests/test_round2_bible.py -q -k 'not requires_authority and not only_the_declared_methods and not get_only'`.
+The installed Python interpreter was reused without changes; imports were verified to resolve
+this clean worktree. Its historical location is not used as a source checkout. The three existing
+route authority/method assertions were excluded from this functional slice. Full machine receipts
+and synthetic logs are retained locally rather than published as raw environment dumps.
+
+The new owner roundtrip creates one profile per subject in REVIEW, edits at v1 → v2, reloads a
+fresh original service/store against the same temporary File persistence, rejects at v2 → v3,
+reopens at v3 → v4, checks exact values and prior-history versions, then reads the existing Bible
+route. REVIEW stays non-authoritative and Canon stays empty; unknown dimensions and unresolved
+references remain explicit. The fixture's stub authority and opt-in test flags establish only
+functional projection behavior, not live authorization, security isolation or production gate
+acceptance. No new authorization fixture or security probe was added.
+
+Final reviewed verification (overlapping counts):
+
+- WorldPanel focused tests: **15 passed** across 2 files, including code-point boundary and
+  approve-while-editing regressions. Independent scoped reviewer also ran these 15 successfully
+  and reported the final diff clean. The earlier visual-focused baseline had 12 missing-entry
+  failures; no original assertion, timeout or snapshot was weakened.
+- Prior nine-stage frontend scope plus both WorldPanel files: **447 passed**, 39 files, exit 0.
+  Command from `frontend/`: `node_modules/.bin/vitest run src/modelcenter src/prompt src/delivery src/taskcenter src/novel/ExportPanel.downloadFeedback.test.tsx src/novel/ExportPanel.test.tsx src/novel/ExportPanel.recovery.test.tsx src/novel/ExportPanel.scope.test.tsx src/ui/AppShell.test.tsx src/ui/AppShell.projectNoun.test.tsx src/experimental/WorldPanel.test.tsx src/experimental/WorldPanel.visual.test.tsx --maxWorkers=4 --minWorkers=1 --reporter=verbose`.
+- Final isolated Python selection after adding the schema Unicode regression: **34 passed**,
+  3 existing route authority/method tests deselected, exit 0. Runner label
+  `dot-usability-visual-roundtrip-reviewed`; sources unchanged during the check. The original
+  `httpx`/Starlette deprecation warning remains; no dependency changes.
+- Final reviewed `tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs`: **PASS**,
+  exit 0; existing >500 kB chunk warning unchanged. Build ran after tests, not concurrently.
+- `git diff --check`: **PASS**.
+- The approval-while-editing issue was identified by independent review and corrected locally;
+  the existing owner already refused edits to approved records. This is an immutable-UI fix,
+  with no lifecycle, authorization or security-acceptance claim.
+
+Publication receipts are maintained on Draft PR #48 and the final handoff checkpoint.
+Browser launch/real geometry and assistive-technology verification remain BLOCKED / NOT_RUN;
+there was no browser launch retry. Earlier baseline and hosted failures remain open. The separate
+blocked lifecycle candidate was not inspected, modified, tested or included. This authoring slice
+does not complete V2, replace runtime acceptance, or imply merge, release or deployment readiness.
