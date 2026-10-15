@@ -1,120 +1,116 @@
-"""R3-I — REAL collaboration-authorized HTTP adoption.
+"""R3-I — REAL collaboration-authorized HTTP adoption (A), read-only refusal (B), /api/v1 (C).
 
-Runs under `scripts/run_v2_checks.py --collaboration-runtime`, so ENABLE_COLLABORATION_RUNTIME is
-exported BEFORE app.main is imported and `settings.enable_collaboration_runtime` is genuinely True
-rather than patched after the fact.
+Run with:  python scripts/run_v2_checks.py --collaboration-runtime r3i-auth-file -- \
+             python -m pytest tests/test_round3i_http_authorized.py -q -rs
 
-Identity, membership, branch and role fixtures use the project's own services (that is legitimate
-test-environment initialisation). Every CREATIVE, PROMPT and ADOPTION operation goes through the
-real HTTP routes with real session and branch headers. `adopt_atomic()` is never called directly.
+The fixture reuses the application's OWN service graph from `app.dependencies`, so the session
+resolver, scope service, identity service and authorization service used to build the fixtures
+are the very same objects the HTTP routes use. It does NOT build a second bundle, scope service
+or resolver, and it does not patch them.
+
+CORRECTED ORDERING: `CollaborationScopeService.create_storyline` raises
+"project does not belong to workspace" when `project_workspace(item.project_id) != workspace_id`.
+The project must therefore be created FIRST (over real HTTP, by the initializing user), and the
+storyline and branches created afterwards with the REAL project id.
 """
 from __future__ import annotations
 
 import hashlib
 import os
-from dataclasses import replace
-from pathlib import Path
 from types import SimpleNamespace
 from uuid import uuid4
 
 import pytest
 
-pytestmark = [
-    pytest.mark.file_backend_only,
-    # BLOCKED, not passing and not hidden. The collaboration identity/workspace/branch fixtures
-    # are built and the HTTP chain is ready, but the fixture cannot yet bind the synthetic
-    # project to its workspace: CollaborationScopeService.link_project(workspace, nid) raises
-    # ValueError("project does not belong to workspace") for a novel created through this
-    # fixture own bundle. That is the single remaining blocker for tests A (authorized /api
-    # adoption), B (read-only refusal) and C (/api/v1). Raising the skip rather than leaving a
-    # red suite or asserting green.
-    pytest.mark.skip(reason="BLOCKED: link_project rejects the synthetic project binding; "
-                            "authorized HTTP A/B/C not yet achieved"),
-]
+pytestmark = pytest.mark.file_backend_only
 
 
 @pytest.fixture(scope="module")
 def env():
     if os.environ.get("PROJECT_ROOT") is None:
         pytest.skip("requires the isolated runner")
-    data_path = os.environ.get("NOVEL_DATA_PATH")
-    assert data_path, "NOVEL_DATA_PATH must be set by the runner"
-    root = Path(data_path).resolve()
-
     from fastapi.testclient import TestClient
 
-    from app.config import Settings
-    from app.main import app as application
+    from app import dependencies as deps
+    import app.api as api
     import app.main as main
-    from app.repositories.factory import create_repository_bundle
-    from app.services.authorization_service import AuthorizationService
-    from app.services.collaboration_scope_service import CollaborationScopeService
-    from app.services.identity_service import IdentityService
-    from app.services.membership_authorization_service import MembershipAuthorizationService
-    from app.trusted_sessions import TrustedSessionResolver
 
-    config = Settings(storage_backend="file", database_url="", novel_data=root,
-                      enable_collaboration_runtime=True, enable_packaged_runtime=False,
-                      mock_provider=True, enable_cloud=False)
-    bundle = create_repository_bundle(config, data_root=root)
-    scopes = CollaborationScopeService(bundle.scope, bundle.novels)
-    identity = IdentityService(bundle.identity, scopes)
-    authorization = AuthorizationService(bundle.authorization, scopes)
-    membership = MembershipAuthorizationService(identity, authorization)
-    sessions = TrustedSessionResolver()
-
-    # The real app settings must genuinely have collaboration on.
+    # Collaboration must genuinely be on, and the app and its API layer must share ONE graph.
     assert getattr(main.settings, "enable_collaboration_runtime", False) is True, \
-        "app.main.settings.enable_collaboration_runtime is False: run with --collaboration-runtime"
+        "run with --collaboration-runtime so ENABLE_COLLABORATION_RUNTIME is exported first"
+    assert api.trusted_session_resolver is deps.trusted_session_resolver, \
+        "app.api and app.dependencies use different session resolvers"
 
-    # The HTTP middleware must use THIS resolver instance.
-    original_resolver = getattr(main, "trusted_session_resolver", None)
-    main.trusted_session_resolver = sessions
-
-    client = TestClient(application, raise_server_exceptions=False)
-    yield SimpleNamespace(client=client, main=main, bundle=bundle, scopes=scopes,
-                          identity=identity, authorization=authorization, membership=membership,
-                          sessions=sessions, config=config, root=root, api=main)
-    main.trusted_session_resolver = original_resolver
+    return SimpleNamespace(
+        client=TestClient(main.app, raise_server_exceptions=False),
+        main=main, api=api, deps=deps,
+        novels=deps.novel_service,
+        scopes=deps.collaboration_scope_service,
+        identity=deps.identity_service,
+        authorization=deps.authorization_service,
+        membership=deps.membership_authorization_service,
+        sessions=deps.trusted_session_resolver,
+        data_path=os.environ.get("NOVEL_DATA_PATH"),
+    )
 
 
 @pytest.fixture
-def authorized(env, monkeypatch):
-    """One workspace, one project, a writer with a BRANCH role and a reader with read only."""
+def authorized(env):
+    from app.actor_context import SessionContext
     from app.authorization import (AuthorizationScope, DomainRole, DomainRoleAssignment,
                                    ModalityDomain, PermissionAssignment, ScopeKind)
     from app.collaboration import Branch, Storyline, Workspace
     from app.identity import User, WorkspaceMembership
-    from app.actor_context import SessionContext
 
     suffix = uuid4().hex[:10]
-    workspace, storyline, branch, other = (f"w-{suffix}", f"s-{suffix}", f"b-{suffix}",
-                                           f"x-{suffix}")
-    writer, reader = f"writer-{suffix}", f"reader-{suffix}"
+    workspace, storyline = f"w-{suffix}", f"s-{suffix}"
+    branch, other = f"b-{suffix}", f"x-{suffix}"
+    init_user, writer, reader = f"init-{suffix}", f"writer-{suffix}", f"reader-{suffix}"
+    client = env.client
+
+    # 1. workspace
     env.scopes.create_workspace(Workspace(workspace, "R3-I authorized"))
-    env.scopes.create_storyline(Storyline(storyline, workspace, None, "Main"))
-    for bid in (branch, other):
-        env.scopes.create_branch(Branch(bid, workspace, None, storyline, bid))
-    for user in (writer, reader):
+    # 2-5. identities, memberships and real sessions on the SAME resolver the routes use.
+    for user in (init_user, writer, reader):
         env.identity.create_user(User(user, user))
         env.identity.add_membership(WorkspaceMembership("m-" + user, user, workspace))
         env.sessions.register(user, SessionContext("session-" + user, "client-" + user,
-                                                  user, workspace))
-
-    auth_scope = AuthorizationScope(ScopeKind.BRANCH, workspace, None, storyline, branch)
+                                                   user, workspace))
+    # 4. the initializer holds a WORKSPACE-scope NOVEL lead, which is what lets it create the
+    #    project. The business writer deliberately does NOT get a workspace-wide grant, or the
+    #    cross-branch refusal test would be a false positive.
     env.authorization.assign_role(DomainRoleAssignment(
-        "role-" + suffix, writer, DomainRole.DOMAIN_LEAD, ModalityDomain.NOVEL, auth_scope, writer))
-    # The reader gets READ ONLY: no domain.write anywhere.
+        "init-" + suffix, init_user, DomainRole.DOMAIN_LEAD, ModalityDomain.NOVEL,
+        AuthorizationScope(ScopeKind.WORKSPACE, workspace, None, None, None), init_user))
+
+    # 6-7. create the project over REAL HTTP as the initializing user.
+    init_headers = {"X-Session-Token": init_user}
+    project = client.post("/api/experimental/projects", headers=init_headers,
+                          json={"title": "R3-I auth " + suffix})
+    assert project.status_code == 201, (project.status_code, project.text[:400])
+    nid = project.json()["id"]
+
+    # 8-9. prove the binding instead of assuming it.
+    assert env.novels.get(nid) is not None, "the project must exist in the app's own novel service"
+    bound = env.scopes.repository.project_workspace(nid)
+    assert bound == workspace, f"project bound to {bound!r}, expected {workspace!r}"
+
+    # 10-11. NOW the storyline and branches, with the real project id.
+    env.scopes.create_storyline(Storyline(storyline, workspace, nid, "Main"))
+    for bid in (branch, other):
+        env.scopes.create_branch(Branch(bid, workspace, nid, storyline, bid))
+
+    # 13-14. branch-scoped grants only.
+    auth_scope = AuthorizationScope(ScopeKind.BRANCH, workspace, nid, storyline, branch)
+    env.authorization.assign_role(DomainRoleAssignment(
+        "w-" + suffix, writer, DomainRole.DOMAIN_LEAD, ModalityDomain.NOVEL, auth_scope, init_user))
     env.authorization.assign_permission(PermissionAssignment(
-        "read-" + suffix, reader, "domain.read", ModalityDomain.NOVEL, auth_scope, writer))
+        "r-" + suffix, reader, "domain.read", ModalityDomain.NOVEL, auth_scope, init_user))
 
-    # A project created through the real service, then bound to the workspace and branch.
-    nid = "r3iauth-" + suffix
-    env.bundle.novels.create({"id": nid, "title": "R3-I authorized " + suffix})
-    env.scopes.link_project(workspace, nid)
-
-    env.nid, env.workspace, env.storyline, env.branch, env.other = nid, workspace, storyline, branch, other
-    env.writer, env.reader = writer, reader
+    env.nid, env.workspace, env.storyline = nid, workspace, storyline
+    env.branch, env.other = branch, other
+    env.init_user, env.writer, env.reader = init_user, writer, reader
+    env.init_headers = init_headers
     env.headers = {"X-Session-Token": writer, "X-Branch-ID": branch}
     env.reader_headers = {"X-Session-Token": reader, "X-Branch-ID": branch}
     env.wrong_branch_headers = {"X-Session-Token": writer, "X-Branch-ID": other}
@@ -122,21 +118,22 @@ def authorized(env, monkeypatch):
 
 
 def _chain(e, prefix, headers):
-    """Run the real HTTP business chain and return the identifiers and DTO."""
+    """The full real HTTP business chain. No service call replaces an HTTP call."""
     c, nid = e.client, e.nid
-    creative, studio = f"{prefix}/novels/{nid}/experimental/creative", f"{prefix}/projects/{nid}/studio"
+    creative = f"{prefix}/novels/{nid}/experimental/creative"
+    studio = f"{prefix}/projects/{nid}/studio"
 
     screenplay = c.post(f"{creative}/documents", headers=headers, json={
         "mode": "SCREENPLAY", "title": "R3-I 授权剧本", "source_independent": True,
         "scenes": [{"id": "scene-1", "sequence": 1, "heading": "内景 房间 日",
                     "action": "人物走向窗边"}]})
-    assert screenplay.status_code == 201, ("screenplay", screenplay.status_code, screenplay.text[:300])
+    assert screenplay.status_code == 201, ("screenplay", screenplay.status_code, screenplay.text[:400])
     sp = screenplay.json()
 
     derived = c.post(f"{creative}/documents/{sp['id']}/derive", headers=headers, json={
         "expected_version": sp["version"], "mode": "STORYBOARD",
         "title": "R3-I 授权分镜", "shot_policy": "SCENE"})
-    assert derived.status_code == 201, ("derive", derived.status_code, derived.text[:300])
+    assert derived.status_code == 201, ("derive", derived.status_code, derived.text[:400])
     board = derived.json()
     shot_id = (board.get("shots") or [{}])[0].get("id")
     assert shot_id, "derive must return a real shot"
@@ -144,18 +141,18 @@ def _chain(e, prefix, headers):
     prompt = c.post(f"{studio}/prompts", headers=headers, json={
         "text": "电影感中景，人物站在窗前，柔和侧光", "purpose": "IMAGE", "origin": "MANUAL",
         "request_id": "auth-prompt-" + uuid4().hex[:8]})
-    assert prompt.status_code == 201, ("prompt", prompt.status_code, prompt.text[:300])
+    assert prompt.status_code == 201, ("prompt", prompt.status_code, prompt.text[:400])
     p = prompt.json()
     approved = c.post(f"{studio}/prompts/{p['family_id']}/revisions/{p['asset_id']}/approve",
                       headers=headers, params={"expected_version": p["asset_version"]})
-    assert approved.status_code == 200, ("approve", approved.status_code, approved.text[:300])
+    assert approved.status_code == 200, ("approve", approved.status_code, approved.text[:400])
 
     body = c.get(f"{studio}/prompts/{p['family_id']}/revisions/{p['asset_id']}/body",
                  headers=headers)
-    assert body.status_code == 200, ("body", body.status_code, body.text[:300])
+    assert body.status_code == 200, ("body", body.status_code, body.text[:400])
     source = body.json()
     read = c.get(f"{studio}/documents/{board['id']}/prompt-adoption", headers=headers)
-    assert read.status_code == 200, ("read", read.status_code, read.text[:300])
+    assert read.status_code == 200, ("read", read.status_code, read.text[:400])
     target = read.json()
 
     dto = {"shot_id": shot_id, "family_id": p["family_id"], "asset_id": p["asset_id"],
@@ -169,52 +166,34 @@ def _chain(e, prefix, headers):
             "read_url": f"{studio}/documents/{board['id']}/prompt-adoption"}
 
 
-def test_the_real_actor_is_not_the_local_fallback(authorized):
-    """Prove the request is resolved through real collaboration identity, not `local-author`."""
+def test_the_actor_is_a_real_collaboration_identity(authorized):
     e = authorized
     resolved = e.sessions.resolve(e.headers["X-Session-Token"])
     assert resolved.actor_id == e.writer
-    assert resolved.actor_id != "local-author"
+    assert resolved.actor_id != "local-author", "the request must not fall back to local-author"
     assert resolved.workspace_id == e.workspace
-    # And a real membership exists for that actor in that workspace.
     assert e.identity.get_membership(e.writer, e.workspace) is not None
 
 
-def test_authorized_writer_completes_the_adoption_over_api(authorized, monkeypatch):
-    """A: the real authorized writer adopts over /api; the reader cannot."""
+def test_A_authorized_writer_adopts_over_api(authorized):
     e = authorized
     import app.creative.prompt_adoption_api as adopt_api
 
     chain = _chain(e, "/api", e.headers)
     c = e.client
-
-    # Closed switch first: an AUTHORIZED writer still gets the closed response.
     closed = c.post(chain["adopt_url"], headers=e.headers, json=chain["dto"])
     assert closed.status_code == 503, (closed.status_code, closed.text[:300])
     assert c.get(chain["read_url"], headers=e.headers).json()["version"] == chain["target"]["version"]
 
-    adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = True   # in-process only
+    adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = True
     try:
-        # B: the READ-ONLY user must be refused while the switch is ON, so the refusal cannot
-        # be confused with the feature simply being disabled.
-        denied = c.post(chain["adopt_url"], headers=e.reader_headers, json=chain["dto"])
-        assert denied.status_code in {401, 403, 404, 409, 422, 501}, \
-            (denied.status_code, denied.text[:300])
-        assert denied.status_code != 200, "a read-only user must not be able to adopt"
-        unchanged = c.get(chain["read_url"], headers=e.headers).json()
-        assert unchanged["version"] == chain["target"]["version"]
-        assert unchanged["adoptions"] == []
-        # The refusal must not leak the private prompt text.
-        assert chain["source"]["value"] not in denied.text
-
-        # A: the authorized writer succeeds.
         ok = c.post(chain["adopt_url"], headers=e.headers, json=chain["dto"])
-        assert ok.status_code == 200, (ok.status_code, ok.text[:400])
+        assert ok.status_code == 200, ("adopt", ok.status_code, ok.text[:400])
         result = ok.json()
         assert result["committed"] is True
         assert result["version"] == chain["target"]["version"] + 1
         proof = result["adoption"]
-        assert proof["family_id"] == chain["prompt"]["family_id"]
+        assert proof["adopted_by"] == e.writer, f"proof adopted_by {proof['adopted_by']!r}"
         assert proof["asset_id"] == chain["prompt"]["asset_id"]
         assert proof["revision"] == 1
         assert proof["digest"] == chain["source"]["digest"]
@@ -222,12 +201,11 @@ def test_authorized_writer_completes_the_adoption_over_api(authorized, monkeypat
 
         live = c.get(f"{chain['creative']}/documents/{chain['board']['id']}", headers=e.headers).json()
         shot = next(i for i in live["shots"] if i["id"] == chain["shot_id"])
-        assert shot["frame_prompt"] == chain["source"]["value"], "text must be verbatim"
+        assert shot["frame_prompt"] == chain["source"]["value"]
         assert hashlib.sha256(shot["frame_prompt"].encode()).hexdigest() == proof["digest"]
 
         projection = c.get(chain["read_url"], headers=e.headers).json()
-        entry = projection["adoptions"][-1]
-        assert entry["still_applied"] is True
+        assert projection["adoptions"][-1]["still_applied"] is True
         assert projection["version"] == result["version"]
 
         replay = c.post(chain["adopt_url"], headers=e.headers, json=chain["dto"])
@@ -243,21 +221,25 @@ def test_authorized_writer_completes_the_adoption_over_api(authorized, monkeypat
     assert adopt_api.PROMPT_ADOPTION_WRITE_ENABLED is False
 
 
-def test_authorized_writer_completes_the_adoption_over_api_v1(authorized):
-    """C: the same real chain under /api/v1."""
+def test_B_a_read_only_user_is_refused_by_the_authorization_layer(authorized):
+    """The switch is ON, so a refusal here is authorization, not the feature being disabled."""
     e = authorized
     import app.creative.prompt_adoption_api as adopt_api
 
-    chain = _chain(e, "/api/v1", e.headers)
+    chain = _chain(e, "/api", e.headers)
     adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = True
     try:
-        ok = e.client.post(chain["adopt_url"], headers=e.headers, json=chain["dto"])
-        assert ok.status_code == 200, (ok.status_code, ok.text[:400])
-        assert ok.json()["committed"] is True
+        denied = e.client.post(chain["adopt_url"], headers=e.reader_headers, json=chain["dto"])
+        assert denied.status_code == 403, ("read-only must be 403", denied.status_code,
+                                           denied.text[:400])
+        after = e.client.get(chain["read_url"], headers=e.headers).json()
+        assert after["version"] == chain["target"]["version"], "a refused write must not commit"
+        assert after["adoptions"] == []
         live = e.client.get(f"{chain['creative']}/documents/{chain['board']['id']}",
                             headers=e.headers).json()
         shot = next(i for i in live["shots"] if i["id"] == chain["shot_id"])
-        assert shot["frame_prompt"] == chain["source"]["value"]
+        assert shot["frame_prompt"] == "", "a refused write must not touch the shot"
+        assert chain["source"]["value"] not in denied.text, "the refusal leaked the prompt text"
     finally:
         adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = False
 
@@ -274,11 +256,39 @@ def test_unauthorized_callers_are_refused_and_change_nothing(authorized, case):
     adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = True
     try:
         response = e.client.post(chain["adopt_url"], headers=headers, json=chain["dto"])
-        assert response.status_code != 200, (case, response.status_code, response.text[:300])
-        assert response.status_code >= 400
+        assert response.status_code >= 400, (case, response.status_code, response.text[:300])
+        assert response.status_code != 200
         after = e.client.get(chain["read_url"], headers=e.headers).json()
         assert after["version"] == chain["target"]["version"], f"{case} wrote to the document"
         assert after["adoptions"] == []
         assert chain["source"]["value"] not in response.text
+    finally:
+        adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = False
+
+
+def test_C_authorized_writer_adopts_over_api_v1(authorized):
+    e = authorized
+    import app.creative.prompt_adoption_api as adopt_api
+
+    chain = _chain(e, "/api/v1", e.headers)
+    adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = True
+    try:
+        ok = e.client.post(chain["adopt_url"], headers=e.headers, json=chain["dto"])
+        assert ok.status_code == 200, (ok.status_code, ok.text[:400])
+        result = ok.json()
+        assert result["committed"] is True
+        assert result["version"] == chain["target"]["version"] + 1
+        proof = result["adoption"]
+        assert proof["adopted_by"] == e.writer
+        assert proof["digest"] == chain["source"]["digest"]
+        live = e.client.get(f"{chain['creative']}/documents/{chain['board']['id']}",
+                            headers=e.headers).json()
+        shot = next(i for i in live["shots"] if i["id"] == chain["shot_id"])
+        assert shot["frame_prompt"] == chain["source"]["value"]
+        projection = e.client.get(chain["read_url"], headers=e.headers).json()
+        assert projection["adoptions"][-1]["still_applied"] is True
+        replay = e.client.post(chain["adopt_url"], headers=e.headers, json=chain["dto"])
+        assert replay.json()["replayed"] is True
+        assert replay.json()["version"] == result["version"]
     finally:
         adopt_api.PROMPT_ADOPTION_WRITE_ENABLED = False
