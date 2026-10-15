@@ -8,9 +8,15 @@ Date: 2026-10-15 · PR #47 (Draft) · `main` frozen at `fed2404c`
 ## 0. Evidence discipline (read this before trusting any row)
 
 `AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md` states its own provenance: **"M0 source inventory,
-2026-10-09… Audited HEAD `4350a61`"**. It is ~6 weeks and many commits behind this HEAD, so per the
-directive its `MISSING` entries are **not** treated as current facts. This report re-derives status
-from the source tree as it exists now.
+2026-10-09… Audited HEAD `4350a61`"**. This HEAD is dated **2026-10-15**, so M0 is **six days**
+behind — not six weeks. An earlier revision of this report said "~6 weeks", which was a factual
+error and is corrected here.
+
+Six days is still enough for the `MISSING` column to be stale in places, because the intervening
+work landed several rounds (R3-W, R3-U1/U2/U3-A/B/C, R3-U3-D) that M0 could not have seen. So its
+`MISSING` entries are still **not** treated as current facts, but the reason is the rounds that
+landed in those days, not the length of the interval. This report re-derives status from the source
+tree as it exists now.
 
 **What this report is based on, and what it is not:**
 
@@ -24,6 +30,32 @@ from the source tree as it exists now.
 round.** No row below is marked `IMPLEMENTED` on level C alone. Where capability rests on level C,
 the row says so. Model execution, GPU and clean-Windows acceptance were not run and are out of
 scope for this round.
+
+### Three distinct evidence statements — do not collapse these into one
+
+1. **This round did not execute the full production chain.** No novel→…→export run was performed
+   here, and no row in §1 is promoted on the strength of this round's work.
+2. **Phase 6 did verify real CPU audio/video processing and MP4 output.** That is a genuine,
+   *previously recorded* success at evidence level C — see `PHASE6_AUDIO_EDITING_REPORT.md`. It must
+   not be downgraded to "unverified", and equally it must not be recycled as evidence for this
+   round's chain, for AI generation quality, or for GPU/model acceptance.
+3. **The complete AI narrative production chain and real local-model runs still have no product
+   acceptance.** No round has produced an artefact end-to-end through the AI stages under
+   acceptance, and local inference remains `LOCAL_REQUIRED`.
+
+### A-level audit
+
+Each level-A row in §1 rests on a suite **actually executed in this session** — not on another
+test's green result:
+
+| Row | Suite actually run | Where |
+| --- | --- | --- |
+| 小说 Novel | `tests/test_round2_bible.py` | R3-R / R3-U3 regression runs (exit 0) |
+| 导演 Director, 镜头 Shot | `tests/test_v2_director_workspace.py` | same runs (exit 0) |
+| 图像 Image, asset owner | `tests/test_v2_creative_workflows.py`, `tests/test_asset_library.py` | same runs (exit 0) |
+| Prompt authoring/read | `tests/test_round3w_*.py`, `tests/test_round3r/s_*.py`, `tests/test_round3u_revision_body.py` | R3-W / R3-R / R3-S / R3-U2 runs (exit 0) |
+
+Nothing in §1 was promoted from level C to level A on the basis that some other test passed.
 
 ---
 
@@ -61,6 +93,7 @@ output under this round's acceptance.
 | Model centre / provider registry | **PARTIAL** | B (`app/model_center`, `frontend/src/modelcenter`) |
 | **Prompt → production application** | **MISSING** | R3-I never started: no route applies a chosen revision to a creative draft |
 | Cross-stage provenance graph | **MISSING** | Round 4 not started; only `asset_relationships_v2` edges exist |
+| **Real CPU media processing (FFmpeg) and MP4 output** | **PARTIAL — real, historically verified** | C: `PHASE6_AUDIO_EDITING_REPORT.md` records actual CPU audio/video processing with MP4 output. Real work; not re-run this round and **not** evidence of AI generation quality |
 | Local model inference | **LOCAL_REQUIRED** | needs the user's own runtime; never run here |
 | Cloud API providers | **BLOCKED by policy** | paid APIs excluded by standing instruction |
 | Windows/GPU/installation acceptance | **NOT_RUN** | out of scope until functional completion |
@@ -83,7 +116,25 @@ output under this round's acceptance.
 
 ---
 
-## 4. Recommended next slice
+## 3b. R3-I target-owner reconnaissance (done, so it need not be repeated)
+
+The directive requires choosing a target owner that genuinely supports persisted revisions, CAS and
+identity isolation, and forbids writing metadata behind the owner's back. Verified in source:
+
+* **`CreativeService` is a valid target.** `app/creative/service.py` exposes `document_digest`,
+  an `expected == {version, digest}` contract enforced by `_expected` and `assert_current`,
+  `new_row`/`change_row` with retained history, and `update(nid, scope, actor, rid,
+  expected_version, value, *, reauthorize)` at line 234 which commits through
+  `change_row(row, actor, expected_version, replace_content)`.
+* **Consequence:** adoption should be committed as a **new revision via `CreativeService.update`**
+  with the document's expected version+digest, not by mutating stored metadata directly. Note that
+  `update()` runs `value` through `prepare_content`, so the adoption block must be accepted by that
+  schema (or carried in the document's existing content payload) — resolving that is the first
+  implementation step, and it was **not** done this round.
+* The generic `{owner}` route sketched in §4 is **not** to be built: the directive explicitly warns
+  against a泛化 write API accepting every owner type.
+
+
 
 **Slice: R3-I — pinned Prompt revision adoption into an existing creative draft.**
 
