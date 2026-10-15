@@ -211,7 +211,14 @@ def test_C2_a_delete_waits_for_the_held_lease_and_leaves_a_coherent_state(rig):
 
     # Real persisted state, not merely "the threads exited".
     assert "result" in outcome or "error" in outcome, "the adoption produced no outcome"
-    assert "ok" in delete_outcome or "error" in delete_outcome, "the delete produced no outcome"
+    # The delete must reach an EXPLICABLE outcome: success through the owner, or one of the
+    # owner's own defined refusals. An arbitrary exception is not an acceptable result.
+    assert ("ok" in delete_outcome) != ("error" in delete_outcome), \
+        "the delete produced no definite outcome"
+    if "error" in delete_outcome:
+        assert isinstance(delete_outcome["error"], (FileNotFoundError, ValueError,
+                                                   PermissionError)), \
+            f"the delete failed with an unexpected error: {delete_outcome['error']!r}"
     live = rig.creative.get(rig.nid, rig.scope, board["id"])
     proofs = [p for p in (live.get("prompt_adoptions") or [])
               if p.get("request_id") == request.request_id
@@ -228,6 +235,17 @@ def test_C2_a_delete_waits_for_the_held_lease_and_leaves_a_coherent_state(rig):
         assert not proofs
     assert not any("job" in name.lower()
                    for name in rig.workspace.store.read(rig.nid, rig.scope).get("collections", {}))
+
+    # Read the persisted effect through the PRODUCT's own projection: if the source really was
+    # deleted, the projection must say so rather than still offering it as readable.
+    projection = rig.adoption.read(rig.nid, rig.scope, board["id"], rig.actor)
+    entry = next((e for e in projection["adoptions"]
+                  if e.get("request_id") == request.request_id), None)
+    if "ok" in delete_outcome and entry is not None:
+        assert entry["source_readable"] is False, \
+            "a deleted source must not still be reported as readable"
+        # History survives the deletion even though readability does not.
+        assert entry["asset_id"] == receipt["asset_id"]
 
 
 # ================================================================= A: two prompts, one shot --
@@ -247,6 +265,14 @@ def test_A_two_different_prompts_to_one_shot_let_exactly_one_win(rig):
     losers = [k for k, v in out.items() if v[0] == "error"]
     assert len(winners) == 1, f"exactly one adoption may win, got {out}"
     assert len(losers) == 1
+    # The loser must fail for a DEFINED reason: a version/digest conflict or a defined
+    # adoption refusal. Any other exception is a bug, not a legitimate race outcome.
+    from app.services.v1_capability_service import CapabilityVersionConflict
+    loser_exc = out[losers[0]][1]
+    assert isinstance(loser_exc, CapabilityVersionConflict) or (
+        isinstance(loser_exc, ValueError)
+        and str(loser_exc).startswith("PROMPT_ADOPTION")), \
+        f"the loser failed for an undefined reason: {loser_exc!r}"
 
     live = rig.creative.get(rig.nid, rig.scope, board["id"])
     # Exactly one new revision, and it holds the WINNER's text.
@@ -279,34 +305,65 @@ def test_B_two_identical_request_ids_produce_exactly_one_revision(rig):
               if p.get("request_id") == request.request_id
               and p.get("document_id") == board["id"] and p.get("shot_id") == shot_id]
     assert len(proofs) == 1, "exactly one proof may exist for one request identity"
-    # At least one caller observed success; the other either succeeded as a replay or was
-    # refused by CAS -- never a second write.
-    assert any(v[0] == "ok" for v in out.values())
+    # At least one caller observed success; the other either replayed the SAME committed result
+    # or was refused by CAS -- never a second write.
+    successes = [v[1] for v in out.values() if v[0] == "ok"]
+    assert successes, "at least one caller must succeed"
+    for result in successes:
+        assert result["version"] == live["version"], \
+            "every success must describe the same committed version"
+    replay_flags = [r["replayed"] for r in successes]
+    if len(successes) == 2:
+        assert sorted(replay_flags) == [False, True], \
+            "a second identical success must be reported as a replay, not a second write"
 
 
 # ================================================ E: authorization revoked before commit --
-def test_E_a_revoked_authorization_blocks_the_commit(rig):
+class _RevokeBeforeCommitInputs(_SignallingInputs):
+    """Revoke authorization only AFTER the in-transaction revision has completed.
+
+    Counting guard calls does NOT establish this: `phase()` itself calls guard twice before the
+    adoption business logic is reached, so a "refuse from call 2" rule aborts far too early and
+    proves nothing about rolling back a completed in-memory revision. This wrapper lets every
+    guard call succeed until the body has finished, then revokes, so the refusal lands on the
+    real phase's own post-yield guard -- i.e. after `revise_in_state` succeeded and before the
+    outer commit.
+    """
+
+    def __init__(self, inner, revoked: threading.Event):
+        super().__init__(inner, threading.Event())
+        self._revoked = revoked
+
+    @contextmanager
+    def phase(self, nid, scope, actor, guard, *, writable=False):
+        def wrapped_guard():
+            if self._revoked.is_set():
+                raise PermissionError("AUTHORIZATION_REVOKED")
+            return guard()
+
+        with self._inner.phase(nid, scope, actor, wrapped_guard, writable=writable) as state:
+            yield state
+            # The adoption body has completed, including revise_in_state.
+            self._revoked.set()
+
+
+def test_E_a_revoked_authorization_rolls_back_a_completed_revision(rig):
     board, shot_id = _storyboard(rig)
     receipt, body = _prompt(rig, TEXT_A)
     request = _request(rig, board, receipt, body, shot_id)
 
-    calls = {"n": 0}
+    adoption = PromptAdoptionService(rig.workspace, rig.library)
+    adoption._inputs = _RevokeBeforeCommitInputs(adoption._phase_inputs(), threading.Event())
 
-    def guard():
-        # `reauthorize` is invoked before the write and again in the post-write checks. Refusing
-        # from the second call onward simulates the grant being withdrawn mid-operation.
-        calls["n"] += 1
-        if calls["n"] >= 2:
-            raise PermissionError("AUTHORIZATION_REVOKED")
+    with pytest.raises(PermissionError, match="AUTHORIZATION_REVOKED"):
+        adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, board["id"], shot_id, request)
 
-    with pytest.raises(PermissionError):
-        rig.adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, board["id"], shot_id,
-                                  request, guard)
-
+    # The revision was completed in memory and then the authorization was revoked: the real
+    # persisted result must contain none of it.
     live = rig.creative.get(rig.nid, rig.scope, board["id"])
-    assert live["version"] == board["version"], "a revoked request must not commit"
+    assert live["version"] == board["version"], "a revoked request must not commit a version"
     shot = next(item for item in live["shots"] if item["id"] == shot_id)
-    assert shot["frame_prompt"] == ""
+    assert shot["frame_prompt"] == "", "the shot must be unchanged"
     assert not (live.get("prompt_adoptions") or []), "no proof for a revoked request"
 
 
@@ -328,3 +385,42 @@ def test_F_a_failed_outer_commit_persists_nothing_and_reports_nothing(rig):
     shot = next(item for item in live["shots"] if item["id"] == shot_id)
     assert shot["frame_prompt"] == "", "a rolled-back transaction must leave the shot unchanged"
     assert not (live.get("prompt_adoptions") or []), "no proof may survive a failed commit"
+
+
+# ============================== G: a real STORE commit failure, distinct from test F --
+def test_G_a_store_level_commit_failure_persists_nothing(rig):
+    """Test F aborts BEFORE the outer commit; this injects a failure INTO the commit itself.
+
+    The File store's transaction object is made to fail on its final write, which is a storage
+    failure rather than a control-flow abort. Nothing may be persisted and no success may be
+    reported.
+    """
+    board, shot_id = _storyboard(rig)
+    receipt, body = _prompt(rig, TEXT_A)
+    request = _request(rig, board, receipt, body, shot_id)
+
+    store = rig.workspace.store            # CreativeProjectStore
+    raw_store = store.store                # the underlying File store
+    original = raw_store.transaction.__class__
+
+    class _FailingDoc(dict):
+        def clear(self_inner):
+            raise OSError("INJECTED_STORE_COMMIT_FAILURE")
+
+    @contextmanager
+    def failing_transaction(nid, scope):
+        with raw_store.transaction(nid, scope) as doc:
+            yield _FailingDoc(doc)
+
+    raw_store.transaction = failing_transaction
+    try:
+        with pytest.raises((OSError, RuntimeError, ValueError)):
+            rig.adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, board["id"], shot_id, request)
+    finally:
+        del raw_store.transaction
+
+    live = rig.creative.get(rig.nid, rig.scope, board["id"])
+    assert live["version"] == board["version"], "a store commit failure must persist no version"
+    shot = next(item for item in live["shots"] if item["id"] == shot_id)
+    assert shot["frame_prompt"] == ""
+    assert not (live.get("prompt_adoptions") or []), "no proof may survive a store failure"
