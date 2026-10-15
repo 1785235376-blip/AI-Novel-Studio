@@ -46,8 +46,54 @@ No `reset --hard`, `git clean`, force push, ref repair, ACL change or PATH rewri
 
 ## R3-U breakpoint (resume here)
 
-**R3-U1 `ddd56ca` · R3-U2 `e622d12` · R3-U3-A contract alignment · R3-U3-B snapshot/aliasing — all done and pushed.**
-Frontend: **52 tests pass**, `tsc --noEmit` exit 0. 0 tracked dirty. PG cluster stopped.
+> **CURRENT AUTHORITATIVE STATE — 2026-10-15, after `2e0cd43`.** Earlier sections in this file
+> (including any `1bce019` HEAD reference or "R3-W NOT_RUN") are historical records, not the
+> current status.
+
+**Pushed and verified on `feature/v2-narrative-platform`:** R3-U1 `ddd56ca` · R3-U2 `e622d12` ·
+R3-U3-A `8c0c1e8` · R3-U3-B `95ffb59` · R3-U3-C1 `54487af` · R3-U3-C2-P0 `76008c4` ·
+**R3-U3-C2-P0-C `f7b43dc`** · **R3-U3-C2-P0-I `2e0cd43`**.
+Frontend: **81 tests pass**, `tsc --noEmit` exit 0, `vite build` OK. 0 tracked dirty. PG stopped.
+
+### Done this round
+
+* **P0-C (reproduced, then fixed):** the single shared `epoch` served refresh / selectFamily /
+  submit / rebase / compare, so a concurrent read discarded a genuine 201 and the draft hung at
+  "正在提交…". Reads now have independent lifetimes (`libraryEpoch` / `detailEpoch` /
+  `compareEpoch`) and the **write is bound to `project|branch|actor` + `request_id`**, never to an
+  epoch. A failed follow-up list read no longer regresses a confirmed save, and a draft found in
+  `SUBMITTING` on remount is reconciled via `reconcileStashed` to "outcome to be verified"
+  (keeping the original request id and snapshot) instead of hanging. Host transport stability is now
+  a performance follow-up, not a correctness dependency.
+* **P0-I (measured, then fixed in the UI):** with a real File service and real routes, a revision
+  marked `redacted:true` is masked in Library/Detail while `…/revisions/{asset_id}/body` still
+  returns it `COMPLETE` (unauthorised authors get nothing from any route). The owner's authorised
+  read contract and the generic download route were **not** changed. The default compare UI now
+  checks each selected revision's own flag and refuses with an explanation. **R3-R-08 stays
+  `PARTIAL`** — a display mask is not an access-control claim.
+
+### Next concrete action — R3-U3-D (NOT_RUN)
+
+Stand up a temporary, isolated localhost acceptance service (never the user's Strata on 8080, never
+port 8100) with real File + real PostgreSQL backends; run Playwright against the genuinely rendered
+React app at **1366×768 / 1440×900 / 1920×1080** with screenshots and console-error evidence. jsdom
+and fixture replay must not be presented as browser acceptance. User path: Studio → ASSETS → Prompt
+工作台 → create P1 → read back → save revision 2 → compare real text → create P2 (must be a
+different family) → invalid JSON/seed → unsaved-draft warning → 409 rebase → delayed POST with
+refresh/compare/rerender → masked/preview/deleted states → permission isolation → NOVICE/
+PROFESSIONAL share one draft.
+
+**Only after D may** `ROUND3U_PROMPT_WORKSPACE_REPORT.md`, `_DECISIONS.md` and `_HANDOFF.md` be
+generated. `ROUND3U_STATUS.md` (PARTIAL) remains authoritative until then.
+
+### Still NOT_RUN / PARTIAL (must not be reported as PASS)
+
+`real refresh draft-text restore` **PARTIAL** (the marker only warns; no plaintext is written to
+browser storage) · `cross-process concurrency` **NOT_RUN** (R3-GATE must retest
+`_asset_scope → project_scope → workspace_mutation`, whose `with` does span the `yield`) ·
+`write-time binding target verification` **NOT_RUN** · `private-revision deletion / tombstone`
+**NOT_RUN** (owner `delete()` has no `actor_id`) · real browser acceptance **NOT_RUN**.
+
 
 ### R3-U3-A / B — done (real producer contract + snapshot freeze)
 
