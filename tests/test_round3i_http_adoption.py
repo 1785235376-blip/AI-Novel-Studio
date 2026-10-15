@@ -35,15 +35,38 @@ def ctx():
     # The ROUTE-HELD service, not a fresh one.
     svc = exp_api.studio_prompt_adoption_service
     inner = getattr(svc.workspace.creative.store, "store", svc.workspace.creative.store)
+    # FAIL-CLOSED: a missing NOVEL_DATA_PATH is a hard failure, never a skipped assertion.
+    # Without it there is no proof these routes use an isolated store rather than real data.
     data_path = os.environ.get("NOVEL_DATA_PATH")
-    if data_path:
-        # Real runtime identity: the store the routes use must sit in this isolated root.
-        assert str(getattr(inner, "root", "")) == data_path, (
-            f"the route-held store root {getattr(inner, 'root', None)!r} is not the isolated "
-            f"NOVEL_DATA_PATH {data_path!r}: the routes captured a different service graph")
-    assert getattr(inner, "backend", None) == "file"
+    assert data_path, (
+        "NOVEL_DATA_PATH is not set: refusing to run, because the route-held service identity "
+        "cannot be proven to use an isolated store")
+    resolved = os.path.abspath(data_path)
+    assert os.path.isabs(resolved), f"NOVEL_DATA_PATH must be absolute, got {resolved!r}"
+
+    # The route-held ExperimentalStore really is rooted in that directory, and is File-backed.
+    store_root = os.path.abspath(str(getattr(inner, "root", "")))
+    assert store_root == resolved, (
+        f"route-held store root {store_root!r} != isolated NOVEL_DATA_PATH {resolved!r}: "
+        "the routes captured a different service graph")
+    assert getattr(inner, "backend", None) == "file", getattr(inner, "backend", None)
+
+    # The route-held workspace's AssetLibraryService is rooted under the same isolated dir.
+    assets_root = os.path.abspath(str(getattr(svc.workspace.assets, "root", "")))
+    assert assets_root.startswith(resolved), (
+        f"asset root {assets_root!r} is outside the isolated root {resolved!r}")
+
+    # Every prompt service shares the SAME isolated workspace OBJECT, not merely a similar one.
+    assert svc.workspace is exp_api.independent_workspace_service, \
+        "the adoption service does not use the route-held workspace"
+    assert svc.prompts.workspace is svc.workspace, \
+        "PromptWorkspaceService uses a different workspace"
+    assert exp_api.studio_prompt_service.workspace is svc.workspace, \
+        "the route-held PromptWorkspaceService uses a different workspace"
+    assert exp_api.studio_prompt_authoring_service.workspace is svc.workspace, \
+        "the route-held PromptAuthoringService uses a different workspace"
     return {"client": TestClient(app, raise_server_exceptions=False), "svc": svc,
-            "adopt_api": adopt_api, "data_path": data_path}
+            "adopt_api": adopt_api, "data_path": resolved}
 
 
 @pytest.fixture
