@@ -9,11 +9,12 @@
 
 import { ApiError, type CollaborationContext } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
-import { promptEntry, promptInvalid, promptLibrary, promptReceipt } from './promptContract';
+import { promptEntry, promptInvalid, promptLibrary, promptReceipt, promptRevisionBody } from './promptContract';
 import {
   PROMPT_BOUNDS, PROMPT_ERROR_CODES,
   type PromptConflict, type PromptCreateRequest, type PromptLibrary, type PromptEntry,
-  type PromptReceipt, type PromptRevisionRequest, type PromptWorkspaceClient,
+  type PromptReceipt, type PromptRevisionBody, type PromptRevisionRequest,
+  type PromptWorkspaceClient,
 } from './promptTypes';
 
 /** 后端机器码 → 有界用户文案。 */
@@ -85,7 +86,8 @@ export function promptCreateBody(body: PromptCreateRequest): Record<string, unkn
   };
 }
 
-export function promptRevisionBody(body: PromptRevisionRequest): Record<string, unknown> {
+/** 修订请求体：在创建请求体之上加上“预期上一版本”身份。 */
+export function promptRevisionRequest(body: PromptRevisionRequest): Record<string, unknown> {
   return {
     ...promptCreateBody(body),
     expected_previous_asset_id: body.expected_previous_asset_id,
@@ -129,6 +131,17 @@ export function createPromptClient(
           `${root}/${segment(familyId)}`, 'GET', undefined, signal));
       } catch (reason) { throw refusal(reason); }
     },
+    async readRevisionBody(familyId, assetId, signal) {
+      requireOwnProject();
+      if (!familyId.trim() || !assetId.trim()) promptInvalid();
+      try {
+        // R3-U2：家族与资产必须同时指名，服务端会核对二者一致、并在调用者自己的 actor
+        // 下读取。这里**不**改用 generic asset download，也不放宽历史 GET。
+        return promptRevisionBody(await transport.json<unknown>(
+          `${root}/${segment(familyId)}/revisions/${segment(assetId)}/body`,
+          'GET', undefined, signal));
+      } catch (reason) { throw refusal(reason); }
+    },
     async createPrompt(body) {
       requireOwnProject();
       try {
@@ -140,7 +153,7 @@ export function createPromptClient(
       requireOwnProject();
       try {
         return promptReceipt(await transport.json<unknown>(
-          `${root}/${segment(familyId)}/revisions`, 'POST', promptRevisionBody(body), undefined,
+          `${root}/${segment(familyId)}/revisions`, 'POST', promptRevisionRequest(body), undefined,
           body.request_id));
       } catch (reason) { throw refusal(reason); }
     },

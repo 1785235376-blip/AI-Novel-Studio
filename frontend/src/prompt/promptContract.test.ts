@@ -20,10 +20,15 @@ const version = (over: Record<string, unknown> = {}) => ({
 });
 
 const entry = (over: Record<string, unknown> = {}) => ({
-  contract: 'prompt-library/1', family_id: 'fam-1', head_asset_id: 'asset-1', revision: 1,
+  contract: 'studio-prompt-library/1', family_id: 'fam-1', head_asset_id: 'asset-1', revision: 1,
   asset_version: 2, purpose: 'IMAGE', origin: 'MANUAL', review_status: 'DRAFT', approved: false,
   redacted: false, body: body(),
-  bindings: { characters: [{ id: 'c1', resolution: 'KNOWN', label: '林向晚' }], scenes: [], shots: [], assets: [] },
+  // Real producer shape (__fixtures__/library.json): group-level and row-level
+  // verification, and each row carries its kind.
+  bindings: {
+    characters: [{ kind: 'CHARACTER', id: 'c1', resolution: 'KNOWN', verification: 'INDEX_SUPPLIED' }],
+    scenes: [], shots: [], assets: [], verification: 'INDEX_SUPPLIED',
+  },
   unresolved_bindings: [], reference_asset_ids: [], output_asset_ids: [], anomalies: [],
   versions: [version()],
   fields: [field('text', '一个瘦高的男人站在雨里\n第二行 🙂\n'), field('negative_prompt', 'UNKNOWN', false),
@@ -32,7 +37,7 @@ const entry = (over: Record<string, unknown> = {}) => ({
 });
 
 const library = (over: Record<string, unknown> = {}) => ({
-  contract: 'prompt-library/1', entries: [entry()], prompt_count: 1, revision_count: 1,
+  contract: 'studio-prompt-library/1', entries: [entry()], prompt_count: 1, revision_count: 1,
   malformed: [], malformed_count: 0, conflicted: [], conflicted_count: 0, scanned_assets: 1,
   projected_families: 1, returned: 1, limit: 200, truncated: false, has_more: false,
   total_known: false, read_complete: true, unknown_is_explicit: true, bible_index_supplied: true, ...over,

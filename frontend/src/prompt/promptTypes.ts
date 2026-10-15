@@ -5,8 +5,22 @@
  * 以及 Round 3 只读投影。
  */
 
-export const PROMPT_CONTRACT = 'prompt-library/1';
-export const PROMPT_DETAIL_CONTRACT = 'prompt-library/1';
+/**
+ * 生产者契约常量。以**真实后端响应**为准（`scripts/capture_prompt_contract_fixture.py`
+ * 会重新采集），library 与 detail 是**两个不同的**常量，不能共用一个。
+ */
+export const PROMPT_CONTRACT = 'studio-prompt-library/1';
+export const PROMPT_DETAIL_CONTRACT = 'studio-prompt-detail/1';
+export const PROMPT_REVISION_BODY_CONTRACT = 'prompt-revision-body/1';
+
+/** 采集时生产者在用的全部契约字面值，用于拒绝未知契约而不是静默接受。 */
+export const KNOWN_PROMPT_CONTRACTS = [
+  PROMPT_CONTRACT, PROMPT_DETAIL_CONTRACT, PROMPT_REVISION_BODY_CONTRACT,
+] as const;
+
+/** 绑定行的核实来源。`INDEX_SUPPLIED` 只是“索引里查到了”，**不是**已审批或保存时校验。 */
+export const BINDING_VERIFICATIONS = ['INDEX_SUPPLIED', 'UNKNOWN'] as const;
+export type BindingVerification = (typeof BINDING_VERIFICATIONS)[number];
 
 /** 未知（后端明确标注的 UNKNOWN）永远不等于空字符串。 */
 export const UNKNOWN = 'UNKNOWN';
@@ -61,12 +75,40 @@ export type PromptVersionRow = {
   available: boolean;
 };
 
-export type PromptBindingRow = { id: string; resolution: 'KNOWN' | 'UNKNOWN'; label: string | null };
+export type PromptBindingRow = {
+  /** 绑定类别，例如 CHARACTER，由生产者给出。 */
+  kind: string;
+  id: string;
+  resolution: 'KNOWN' | 'UNKNOWN';
+  /** 核实来源；`INDEX_SUPPLIED` 仅表示索引中存在该目标。 */
+  verification: BindingVerification;
+};
 export type PromptBindings = {
   characters: PromptBindingRow[];
   scenes: PromptBindingRow[];
   shots: PromptBindingRow[];
   assets: PromptBindingRow[];
+  /** 整组绑定的核实来源，与行级字段一致。 */
+  verification: BindingVerification;
+};
+
+/** R3-U2 单修订正文读取的返回契约。 */
+export type PromptRevisionBody = {
+  familyId: string;
+  assetId: string;
+  revision: number;
+  assetVersion: number | null;
+  state: BodyState;
+  value: string | null;
+  truncated: boolean;
+  decodable: boolean;
+  digest: string | null;
+  digestOf: string | null;
+  originalLength: number | null;
+  available: boolean;
+  /** 与 owner 记录的原字节 SHA-256 一致才为 true。 */
+  verified: boolean;
+  readComplete: boolean;
 };
 
 export type PromptAnomaly = { kind: string; detail: string };
@@ -157,6 +199,8 @@ export type PromptRevisionRequest = PromptCreateRequest & {
 export type PromptWorkspaceClient = {
   readLibrary(signal?: AbortSignal): Promise<PromptLibrary>;
   readFamily(familyId: string, signal?: AbortSignal): Promise<PromptEntry>;
+  /** R3-U2：单个修订的**真实**正文，只有它才能支撑真正的正文比较。 */
+  readRevisionBody(familyId: string, assetId: string, signal?: AbortSignal): Promise<PromptRevisionBody>;
   createPrompt(body: PromptCreateRequest): Promise<PromptReceipt>;
   saveRevision(familyId: string, body: PromptRevisionRequest): Promise<PromptReceipt>;
   approveRevision(familyId: string, assetId: string, expectedVersion: number): Promise<unknown>;

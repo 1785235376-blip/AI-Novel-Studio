@@ -10,10 +10,11 @@
 
 import { ApiError } from '../api';
 import {
-  PROMPT_BOUNDS, PROMPT_ERROR_CODES, UNKNOWN,
-  type BodyState, type PromptAnomaly, type PromptBindingRow, type PromptBindings,
-  type PromptBody, type PromptEntry, type PromptField, type PromptLibrary,
-  type PromptReceipt, type PromptVersionRow,
+  BINDING_VERIFICATIONS, KNOWN_PROMPT_CONTRACTS, PROMPT_BOUNDS, PROMPT_CONTRACT,
+  PROMPT_DETAIL_CONTRACT, PROMPT_ERROR_CODES, PROMPT_REVISION_BODY_CONTRACT, UNKNOWN,
+  type BindingVerification, type BodyState, type PromptAnomaly, type PromptBindingRow,
+  type PromptBindings, type PromptBody, type PromptEntry, type PromptField, type PromptLibrary,
+  type PromptReceipt, type PromptRevisionBody, type PromptVersionRow,
 } from './promptTypes';
 
 const { responseInvalid } = PROMPT_ERROR_CODES;
@@ -140,23 +141,31 @@ function promptVersion(value: unknown): PromptVersionRow {
 
 function bindingRow(value: unknown): PromptBindingRow {
   const row = record(value);
-  const id = identifier(row.id);
+  closed(row, ['kind', 'id', 'resolution', 'verification']);
   const resolution = text(row.resolution, 16);
   if (resolution !== 'KNOWN' && resolution !== UNKNOWN) promptInvalid();
+  const verification = text(row.verification, 32);
+  // `INDEX_SUPPLIED` 表示“索引里查到了”，绝不是“已审批”或“保存时校验过”。
+  if (!(BINDING_VERIFICATIONS as readonly string[]).includes(verification)) promptInvalid();
   return {
-    id, resolution,
-    label: row.label === undefined || row.label === null ? null : text(row.label, 240),
+    kind: text(row.kind, 32, false),
+    id: identifier(row.id),
+    resolution: resolution as 'KNOWN' | 'UNKNOWN',
+    verification: verification as BindingVerification,
   };
 }
 
 function bindings(value: unknown): PromptBindings {
   const row = record(value);
-  closed(row, ['characters', 'scenes', 'shots', 'assets']);
+  closed(row, ['characters', 'scenes', 'shots', 'assets', 'verification']);
+  const verification = text(row.verification, 32);
+  if (!(BINDING_VERIFICATIONS as readonly string[]).includes(verification)) promptInvalid();
   return {
     characters: list(row.characters, PROMPT_BOUNDS.bindings, bindingRow),
     scenes: list(row.scenes, PROMPT_BOUNDS.bindings, bindingRow),
     shots: list(row.shots, PROMPT_BOUNDS.bindings, bindingRow),
     assets: list(row.assets, PROMPT_BOUNDS.bindings, bindingRow),
+    verification: verification as BindingVerification,
   };
 }
 
@@ -171,6 +180,14 @@ function anomaly(value: unknown): PromptAnomaly {
   return { kind, detail };
 }
 
+/** 生产者声明的契约字面值必须是我们认识的那一个，未知契约一律拒绝。 */
+function contractOf(row: Record<string, unknown>, expected: string): void {
+  const value = text(row.contract, 64, false);
+  if (value !== expected || !(KNOWN_PROMPT_CONTRACTS as readonly string[]).includes(value)) {
+    promptInvalid();
+  }
+}
+
 /** 一个家族条目。`head_asset_id` 是 library 的字段名，`asset_id` 属于回执。 */
 export function promptEntry(value: unknown): PromptEntry {
   const row = record(value);
@@ -178,7 +195,10 @@ export function promptEntry(value: unknown): PromptEntry {
     'origin', 'review_status', 'approved', 'redacted', 'body', 'bindings', 'unresolved_bindings',
     'reference_asset_ids', 'output_asset_ids', 'anomalies', 'versions', 'fields',
     'history_complete', 'read_complete'],
-  ['used_by', 'schema_version', 'advisory_only', 'execution_authority', 'auto_modify']);
+  // 生产者在 library 与 detail 两种 envelope 下都会带上下列字段；允许缺席以便前向兼容，
+  // 但一旦出现就必须是已知形状（未知键仍然被拒绝）。
+  ['used_by', 'schema_version', 'advisory_only', 'execution_authority', 'auto_modify',
+    'project_id', 'scope', 'generated_at', 'scan_truncated']);
   const review = text(row.review_status, 16);
   if (review !== 'DRAFT' && review !== 'APPROVED') promptInvalid();
   const revision = count(row.revision);
@@ -211,8 +231,13 @@ export function promptLibrary(value: unknown): PromptLibrary {
   closed(row, ['contract', 'entries', 'prompt_count', 'revision_count', 'malformed', 'malformed_count',
     'conflicted', 'conflicted_count', 'scanned_assets', 'projected_families', 'returned', 'limit',
     'truncated', 'has_more', 'total_known', 'read_complete'],
+  // 生产者的真实 envelope（见 __fixtures__/library.json）：这些字段确实存在，且服务层
+  // 还会附加 project_id/scope/generated_at/asset_owner/bible_owner。全部按可缺席处理，
+  // 但未知键仍然被拒绝。
   ['unknown_is_explicit', 'bible_index_supplied', 'schema_version', 'advisory_only',
-    'execution_authority', 'auto_modify']);
+    'execution_authority', 'auto_modify', 'required_fields', 'purposes', 'origins',
+    'binding_kinds', 'project_id', 'scope', 'generated_at', 'asset_owner', 'bible_owner']);
+  contractOf(row, PROMPT_CONTRACT);
   const entries = list(row.entries, PROMPT_BOUNDS.versions, promptEntry);
   const conflicted = list(row.conflicted, PROMPT_BOUNDS.versions, item => {
     const conf = record(item);
@@ -255,5 +280,48 @@ export function promptReceipt(value: unknown): PromptReceipt {
     textDigest: text(row.text_digest, 128, false),
     idempotentReplay: flag(row.idempotent_replay),
     previousAssetId: optionalIdentifier(row.previous_asset_id),
+  };
+}
+
+/**
+ * R3-U2 单修订正文。只有这里返回 `verified` 且 `state === 'COMPLETE'` 的内容才可以当作
+ * **完整正文**参与比较；TRUNCATED 只是预览，REDACTED/DELETED/UNAVAILABLE/UNDECODABLE 不是正文。
+ */
+export function promptRevisionBody(value: unknown): PromptRevisionBody {
+  const row = record(value);
+  closed(row, ['contract', 'project_id', 'family_id', 'asset_id', 'revision', 'asset_version',
+    'state', 'value', 'truncated', 'decodable', 'digest', 'digest_of', 'original_length',
+    'available', 'verified', 'read_complete', 'generated_at']);
+  contractOf(row, PROMPT_REVISION_BODY_CONTRACT);
+  const states: readonly BodyState[] = ['COMPLETE', 'TRUNCATED', 'UNDECODABLE', 'REDACTED',
+    'DELETED', 'UNAVAILABLE'];
+  const state = text(row.state, 32) as BodyState;
+  if (!states.includes(state)) promptInvalid();
+  const raw = row.value;
+  if (raw !== null && typeof raw !== 'string') promptInvalid();
+  const carriesText = state === 'COMPLETE' || state === 'TRUNCATED';
+  if (carriesText && typeof raw !== 'string') promptInvalid();
+  if (!carriesText && raw !== null) promptInvalid();
+  const verified = flag(row.verified);
+  // 声称“已验证”却不带摘要是自相矛盾的。
+  if (verified && (row.digest === null || row.digest === undefined)) promptInvalid();
+  const revision = count(row.revision);
+  if (revision < 1) promptInvalid();
+  return {
+    familyId: identifier(row.family_id),
+    assetId: identifier(row.asset_id),
+    revision,
+    assetVersion: optionalCount(row.asset_version),
+    state,
+    value: typeof raw === 'string' ? text(raw, PROMPT_BOUNDS.textBytes, true) : null,
+    truncated: flag(row.truncated),
+    decodable: flag(row.decodable),
+    digest: row.digest === null || row.digest === undefined ? null : text(row.digest, 128, false),
+    digestOf: row.digest_of === null || row.digest_of === undefined
+      ? null : text(row.digest_of, 32, false),
+    originalLength: optionalCount(row.original_length),
+    available: flag(row.available),
+    verified,
+    readComplete: flag(row.read_complete),
   };
 }
