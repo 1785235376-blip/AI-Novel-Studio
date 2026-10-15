@@ -38,7 +38,49 @@ No `reset --hard`, `git clean`, force push, ref repair, ACL change or PATH rewri
 | R3-R read-contract fixes | **DONE (R3-R-08 PARTIAL)** | `ROUND3R_READ_CONTRACT_REPORT.md`; repro **26 failed / 3 passed**; fix **197 passed / 60 skipped / exit 0**; PG **100 passed / exit 0** |
 | **§3 read follow-up** | **DONE** | `ROUND3S_READ_FOLLOWUP_REPORT.md`; repro `round3s-repro-r1` **3 mismatches**; fix `round3s-read-followup-r1` **154 passed / exit 0**; PG `round3s-read-followup-postgres` **83 passed / exit 0** |
 | **R3-W dedicated authoring** | **DONE** | `ROUND3W_AUTHORING_REPORT.md` / `_DECISIONS.md` / `_HANDOFF.md`; File `round3w-authoring-r10` **202 passed / 60 skipped / exit 0**; real PostgreSQL `round3w-authoring-postgres` **79 passed / exit 0**. D1 fixed (prompt-specific whitelisted 409); D2 confirmed a test-contract error (`head_asset_id` vs `asset_id`). |
-| R3-U Prompt Workspace | `NOT_RUN` | **next action** (see `ROUND3W_HANDOFF.md`) |
+| R3-U Prompt Workspace | **PARTIAL** — data layer + U1/U2 done, **React UI NOT_RUN** | `ROUND3U_STATUS.md`. U1 `ddd56ca` (pending-snapshot safety, 33 frontend tests). U2 `e622d12` (narrow revision-body read, 7 backend tests + 115 regression). |
+| R3-U3 React UI + browser acceptance | `NOT_RUN` | **next action** — see below |
+| R3-I production application | `NOT_RUN` | — |
+| R3-GATE | `NOT_RUN` | — |
+| R4 asset relationship view | `NOT_RUN` | — |
+
+## R3-U breakpoint (resume here)
+
+**Done and pushed:** `ddd56ca` (R3-U1), `e622d12` (R3-U2). Remote feature head =
+`e622d1271adb9d0fd6bf48c76e228c7f8009ca98`. 0 tracked dirty. PG cluster stopped.
+
+**Next concrete action — R3-U3, the real React Workspace** (this is the only thing standing
+between R3-U and COMPLETE):
+
+1. `frontend/src/prompt/PromptWorkspace.tsx` + child components + a `usePromptWorkspace` hook,
+   consuming the **already-verified** `promptContract.ts` / `promptClient.ts` / `promptDraft.ts`.
+2. Mount inside `IndependentStudioWorkspace` using the existing **ASSETS tab / tool-workspace**
+   pattern. Do **not** add a top-level `ModuleSwitcher` entry and do **not** touch protected
+   surfaces (`docs/ui/protected_ui_surfaces.md`).
+3. Library (list, search, filter by purpose/model/review status, incomplete-read banner from
+   `truncated`/`hasMore`, and explicit states for loading/empty/no-permission/network/contract
+   error/conflict/deleted) · Editor (all fields; **save only on explicit click**; inputs disabled
+   while `isInputLocked(draft)`; double-submit guard; `aria-live` status) · Version History
+   (APPROVED vs DRAFT distinct; `DUPLICATE_REVISION`/`CONFLICTED`/`REVISION_UNAVAILABLE` shown,
+   never inferred from version numbers) · Version Comparison via the new
+   `GET …/revisions/{asset_id}/body` route (real text diff; unavailable/redacted/deleted ⇒
+   "cannot compare this field") · bindings view (KNOWN/UNKNOWN; write-time reference check stays
+   `NOT_RUN` and must not be relabelled VERIFIED).
+4. Reuse `StudioInterfaceMode` (`NOVICE`/`PROFESSIONAL`) — no second mode concept.
+5. New CSS under `frontend/src/prompt/` uses DS-v1.0 tokens only, and must be **self-verified**:
+   `scripts/check_ui_design_tokens.mjs` only walks `frontend/src/ui`.
+6. Then: jsdom/Testing-Library component tests → `tsc --noEmit` → Vite production build →
+   Playwright at 1366x768 / 1440x900 / 1920x1080 against a **localhost test service, never the
+   user's Strata on 8080**.
+
+**Only after that may** `ROUND3U_PROMPT_WORKSPACE_REPORT.md`, `_DECISIONS.md` and `_HANDOFF.md` be
+generated (plus FEATURE_MATRIX + this file). While R3-U3 is unfinished, `ROUND3U_STATUS.md`
+(PARTIAL) is the authoritative status — do not produce a pseudo-complete report.
+
+**Still `NOT_RUN` and must be reported as such:** real browser acceptance · real refresh draft
+restore (the marker only *detects* a lost draft; text is never written to browser storage, so
+restore is `PARTIAL` by design) · cross-process concurrency · write-time reference verification ·
+the R3-U2 tombstone branch against a real deleted revision (blocked: `delete()` has no `actor_id`).
 | R3-I production application | `NOT_RUN` | — |
 | R3-GATE | `NOT_RUN` | — |
 | R4 asset relationship view | `NOT_RUN` | — |
