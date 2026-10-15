@@ -7,6 +7,10 @@ import re
 
 from ..experimental.common import DomainService, StaleSourceError, change_row, new_row
 from ..services.v1_capability_service import CapabilityVersionConflict
+
+#: Adoption proofs are append-only history. Bound the list so a long-lived document cannot
+#: grow without limit; the oldest entries are dropped first.
+MAX_PROMPT_ADOPTIONS = 200
 from ..experimental.store import canonical
 from ..source_privacy import source_privacy_status
 from .models import CreativeProductionDocumentIn, CreativeDocumentDerive, DirectorNote
@@ -273,9 +277,13 @@ class CreativeService(DomainService):
                 current.update(payload)
                 proofs = copy.deepcopy(carried)
                 if server_proof is not None:
-                    proofs = [p for p in proofs
-                              if not (isinstance(p, dict) and p.get("shot_id") == server_proof.get("shot_id"))]
+                    # APPEND, never replace: superseded adoptions stay in the document's
+                    # history so a retry of an already-settled request id can be recognised
+                    # and settled from the server's own record instead of re-applying an
+                    # older adoption over a newer one.
                     proofs.append(copy.deepcopy(server_proof))
+                    if len(proofs) > MAX_PROMPT_ADOPTIONS:
+                        proofs = proofs[-MAX_PROMPT_ADOPTIONS:]
                 if proofs:
                     current["prompt_adoptions"] = proofs
                 else:

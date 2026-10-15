@@ -335,3 +335,110 @@ def test_the_owner_contract_for_private_and_approved_sources(rig):
     if isinstance(raw, dict):
         assert raw.get("_owner_actor_id") is None
         assert raw.get("approved_at")
+
+
+# ------------------------------------------- proof hygiene and history idempotency --
+def _ordinary_edit(rig, document, shot_id, text):
+    """Edit one shot through the ordinary document path (no adoption)."""
+    current = rig.creative.get(rig.nid, rig.scope, document["id"])
+    value = {key: current[key] for key in ("mode", "title", "scenes", "shots", "director_notes",
+                                           "source_chapter_ids", "source_independent")
+             if key in current}
+    value["shots"] = [dict(item) for item in current["shots"]]
+    for item in value["shots"]:
+        if item["id"] == shot_id:
+            item["frame_prompt"] = text
+    return rig.creative.update(rig.nid, rig.scope, rig.actor, document["id"],
+                               current["version"], value)
+
+
+def test_the_proof_records_a_digest_and_never_a_second_copy_of_the_body(rig):
+    document, shot_id = _storyboard(rig)
+    receipt, _detail, body_read = _prompt(rig)
+    _adopt(rig, document, shot_id, receipt, body_read)
+
+    row = rig.creative.get(rig.nid, rig.scope, document["id"])
+    proof = row["prompt_adoptions"][-1]
+    assert "adopted_text" not in proof, "the proof must not keep a second copy of the prompt body"
+    assert proof["digest"] == body_read["digest"]
+    # No field of the PROOF may carry the body. The whole-row text count is NOT asserted:
+    # the document's own content history legitimately retains the shot's previous content,
+    # which is a different thing from the proof duplicating the prompt.
+    for key, value in proof.items():
+        assert value != TEXT, f"proof field {key!r} carries the prompt body"
+        assert not (isinstance(value, str) and len(value) > 400), (
+            f"proof field {key!r} is implausibly long for provenance metadata")
+
+def test_editing_and_typing_the_same_text_back_does_not_restore_the_claim(rig):
+    document, shot_id = _storyboard(rig)
+    receipt, _detail, body_read = _prompt(rig)
+    _adopt(rig, document, shot_id, receipt, body_read)
+    assert rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][-1]["still_applied"]
+
+    _ordinary_edit(rig, document, shot_id, "别的画面")
+    assert not rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][-1]["still_applied"]
+
+    # Typing the ORIGINAL text back is an incidental coincidence, not a restored adoption.
+    _ordinary_edit(rig, document, shot_id, TEXT)
+    assert _shot_of(rig, document, shot_id)["frame_prompt"] == TEXT
+    entry = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][-1]
+    assert entry["still_applied"] is False, (
+        "content equality alone must not resurrect a historical adoption claim")
+    # ...and the historical proof is preserved, not cleared.
+    assert entry["asset_id"] == receipt["asset_id"]
+
+
+def test_editing_another_shot_leaves_the_adoption_current(rig):
+    screenplay = rig.creative.create(rig.nid, rig.scope, rig.actor, {
+        "mode": "SCREENPLAY", "title": "两场", "source_independent": True,
+        "scenes": [{"id": "scene-1", "sequence": 1, "heading": "内景 房间 日", "action": "站住"},
+                   {"id": "scene-2", "sequence": 2, "heading": "外景 街道 夜", "action": "奔跑"}]})
+    document = rig.creative.derive(rig.nid, rig.scope, rig.actor, screenplay["id"], {
+        "expected_version": screenplay["version"], "mode": "STORYBOARD",
+        "title": "分镜", "shot_policy": "SCENE"})
+    shots = document["shots"]
+    receipt, _detail, body_read = _prompt(rig)
+    _adopt(rig, document, shots[0]["id"], receipt, body_read)
+    # Editing a DIFFERENT shot advances the document version...
+    _ordinary_edit(rig, document, shots[1]["id"], "第二个镜头的画面")
+    entry = rig.adoption.read(rig.nid, rig.scope, document["id"], rig.actor)["adoptions"][-1]
+    # ...so by the strict rule the recorded adoption is no longer current, even though this
+    # shot's own text is untouched. Reported accurately rather than guessed either way.
+    assert entry["still_applied"] is False
+    assert _shot_of(rig, document, shots[0]["id"])["frame_prompt"] == TEXT
+
+
+def test_a_settled_request_id_is_not_replayed_over_a_newer_adoption(rig):
+    document, shot_id = _storyboard(rig)
+    first, _d1, b1 = _prompt(rig)
+    payload, result_a = _adopt(rig, document, shot_id, first, b1)
+
+    # A second, different adoption on the SAME shot, with its own request id.
+    second, _d2, b2 = _prompt(rig, text="第二份采用的正文")
+    doc_now = rig.creative.get(rig.nid, rig.scope, document["id"])
+    payload_b = _body(rig, doc_now, second, b2, shot_id)
+    result_b = rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], shot_id, payload_b)
+    assert result_b["replayed"] is False
+    assert _shot_of(rig, document, shot_id)["frame_prompt"] == "第二份采用的正文"
+
+    # Retrying the ORIGINAL request must be settled from the server's own history: no new
+    # revision, and it must not write the older adoption back over the newer one.
+    replay = rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], shot_id, payload)
+    assert replay["replayed"] is True
+    assert replay["version"] == result_b["version"]
+    assert rig.creative.get(rig.nid, rig.scope, document["id"])["version"] == result_b["version"]
+    assert _shot_of(rig, document, shot_id)["frame_prompt"] == "第二份采用的正文"
+    assert result_a["version"] < result_b["version"]
+
+
+def test_the_settled_request_still_conflicts_when_the_input_differs(rig):
+    document, shot_id = _storyboard(rig)
+    first, _d1, b1 = _prompt(rig)
+    payload, _a = _adopt(rig, document, shot_id, first, b1)
+    second, _d2, b2 = _prompt(rig, text="另一份正文")
+    doc_now = rig.creative.get(rig.nid, rig.scope, document["id"])
+    _b = _body(rig, doc_now, second, b2, shot_id)
+    rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], shot_id, _b)
+    payload.asset_id = "not-the-settled-one"
+    with pytest.raises(ValueError, match="PROMPT_ADOPTION_REQUEST_REUSED"):
+        rig.adoption.adopt(rig.nid, rig.scope, rig.actor, document["id"], shot_id, payload)

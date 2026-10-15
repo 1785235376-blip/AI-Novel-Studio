@@ -83,33 +83,45 @@ class PromptAdoptionService:
         """The pinned adoptions recorded on the document, plus drift and readability."""
         self.workspace.store.key(nid, scope)
         self.workspace.novels.get(nid)
+        value = self.workspace.creative.get(nid, scope, document_id)
         row = self._document(nid, scope, actor, document_id)
         current = {item.get("id"): item for item in self._shots(row) if isinstance(item, dict)}
+        version = row.get("version")
         entries = []
         for proof in self._proofs(row):
             entry = dict(proof)
             entry["newer_revision_available"] = False
             entry["source_readable"] = True
-            # A proof is only CURRENT for this shot if the shot's text still is the adopted
-            # text. An ordinary edit afterwards keeps the proof in history but must not keep
-            # claiming the shot still uses the original Prompt body.
+            # A proof is CURRENT for its shot only while the document is still exactly the
+            # revision the adoption produced. Content equality alone is not enough: a user can
+            # edit the shot and type the same text back, which advances the document version
+            # and must NOT restore a claim that the shot still carries that adoption.
             shot = current.get(proof.get("shot_id")) or {}
-            entry["still_applied"] = shot.get("frame_prompt") == proof.get("adopted_text")
+            held = shot.get("frame_prompt")
+            entry["still_applied"] = bool(
+                proof.get("result_version") is not None
+                and version == proof.get("result_version")
+                and isinstance(held, str)
+                and prompt.digest(held.encode("utf-8")) == proof.get("digest"))
+            # The proof records a digest, never the body: no plaintext is handed back here.
             entry.pop("adopted_text", None)
             try:
                 detail = self.prompts.detail(nid, scope, proof["family_id"], actor)
                 entry["newer_revision_available"] = detail["revision"] > proof["revision"]
                 body = self.prompts.revision_body(nid, scope, proof["family_id"],
                                                   proof["asset_id"], actor)
-                # A masked, deleted or unreadable source keeps its historical proof but must
-                # not have its plaintext re-exposed through this projection.
-                entry["source_readable"] = (body["state"] == prompt.BODY_COMPLETE
-                                            and bool(body["verified"]))
+                # Display eligibility, not merely raw readability: the family projection's
+                # own mask flag and completeness participate, so a masked or incomplete
+                # revision cannot be re-exposed through this projection.
+                entry["source_readable"] = bool(
+                    body["state"] == prompt.BODY_COMPLETE and body["verified"]
+                    and not detail.get("redacted")
+                    and detail.get("history_complete") and detail.get("read_complete"))
             except (FileNotFoundError, ValueError, PermissionError, KeyError):
                 entry["source_readable"] = False
             entries.append(entry)
         return {"contract": PROOF_CONTRACT, "document_id": document_id,
-                "version": row.get("version"),
+                "version": version,
                 "digest": self.workspace.creative.document_digest(row),
                 "adoptions": entries, "generated_at": now()}
 
@@ -184,9 +196,15 @@ class PromptAdoptionService:
             "field": "frame_prompt",
             "family_id": body.family_id, "asset_id": body.asset_id, "revision": body.revision,
             "digest": body_read["digest"], "digest_of": body_read["digest_of"],
-            "adopted_text": text,
+            # The digest IS the record. The body is deliberately NOT stored again: keeping a
+            # second permanent copy of the prompt text inside the creative document would
+            # duplicate private content into another owner's history and would defeat the
+            # source's own redaction and deletion semantics.
             "adopted_by": actor, "adopted_at": now(), "request_id": body.request_id,
             "target_version": row.get("version"),
+            # The revision this adoption produced. `still_applied` compares the document's
+            # current version against it, so an edit-and-revert cannot resurrect the claim.
+            "result_version": row.get("version") + 1,
             "target_digest": self.workspace.creative.document_digest(row),
             "request_digest": want,
             "source_snapshot": self._source_snapshot(detail),
