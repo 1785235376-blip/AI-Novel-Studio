@@ -20,9 +20,10 @@ import { ApiError } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import { createPromptClient, readPromptConflict } from './promptClient';
 import {
-  beginSubmit, canSubmit, clearDraftSlot, confirmSaved, discardDraft, draftScopeKey, editDraft,
-  hasUnconfirmedWork, isInputLocked, markConflict, markRejected, markUnknown, needsRebase,
-  newDraft, rebaseDraft, reconcileStashed, retryUnknown, stashDraft, takeDraft,
+  beginSubmit, canSubmit, clearDraftMarker, clearDraftSlot, confirmSaved, discardDraft,
+  draftScopeKey, editDraft, hasUnconfirmedWork, isInputLocked, markConflict, markRejected,
+  markUnknown, markerNotice, needsRebase, newDraft, readDraftMarker, rebaseDraft,
+  reconcileStashed, rememberDraftMarker, retryUnknown, stashDraft, takeDraft,
   type Draft, type DraftContent,
 } from './promptDraft';
 import type { PromptEntry, PromptLibrary, PromptRevisionBody } from './promptTypes';
@@ -91,9 +92,31 @@ export function usePromptWorkspace(options: Options) {
     compare: { from: null, to: null, loading: false, error: null },
   }));
 
+  /**
+   * §1-A: the content-free marker finally drives the UI.
+   *
+   * The marker never holds prompt text, so it can only ever say "an unsaved draft existed
+   * and cannot be restored" — the wording must never read as a recovery. Reading it once on
+   * mount is what turns a silent loss into a stated one.
+   */
+  const [restoreNotice, setRestoreNotice] = useState<string | null>(
+    () => markerNotice(readDraftMarker(projectId)));
+
   useEffect(() => {
     stashDraft(projectId, branchId, actor, state.draft);
     onDirtyChange?.(hasUnconfirmedWork(state.draft));
+    // Keep the marker in step with reality: present while work is unconfirmed, cleared as
+    // soon as the server has confirmed it.
+    if (hasUnconfirmedWork(state.draft)) {
+      rememberDraftMarker(projectId, {
+        familyId: state.draft.familyId,
+        baseRevision: state.draft.baseRevision,
+        requestId: state.draft.requestId,
+      });
+    } else {
+      clearDraftMarker();
+      setRestoreNotice(null);
+    }
   }, [projectId, branchId, actor, state.draft, onDirtyChange]);
 
   const message = (reason: unknown, fallback: string): string => {
@@ -327,6 +350,7 @@ export function usePromptWorkspace(options: Options) {
   return {
     state, refresh, selectFamily, startNew, edit, save, retry, rebase, discard, compare,
     locked: isInputLocked(state.draft), canSave: canSubmit(state.draft),
+    restoreNotice,
     scopeKey: draftScopeKey(projectId, branchId, actor),
   };
 }

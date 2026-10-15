@@ -65,6 +65,12 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
         这里不会调用任何模型，也不会因为输入而自动创建内容。
       </p>
 
+      {/* §1-A: an unsaved draft detected after a reload is *stated*, never "restored".
+          Prompt text is deliberately never written to browser storage. */}
+      {controller.restoreNotice && (
+        <StatusMessage tone="warning">{controller.restoreNotice}</StatusMessage>
+      )}
+
       <div className="prompt-workspace">
         <PromptLibraryPanel
           library={state.library} loading={state.loading} error={state.error}
