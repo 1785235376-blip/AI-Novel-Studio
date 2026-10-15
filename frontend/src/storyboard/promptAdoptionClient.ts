@@ -25,6 +25,8 @@ export type AdoptionSource = {
   stillApplied: boolean;
   /** The family has a newer revision; the pinned reference has NOT moved. */
   newerRevisionAvailable: boolean;
+  /** Whether the server actually reported the drift flag, as opposed to it being absent. */
+  newerRevisionConfirmed: boolean;
   /** Display eligibility of the pinned revision right now. */
   sourceReadable: boolean;
   /** KNOWN when the revision's state could be confirmed, UNKNOWN when it could not. */
@@ -79,6 +81,7 @@ function decodeSource(raw: unknown): AdoptionSource {
     // Absent flags refuse to true: an unconfirmable source must never look applied/readable.
     stillApplied: row.still_applied === true,
     newerRevisionAvailable: row.newer_revision_available === true,
+    newerRevisionConfirmed: typeof row.newer_revision_available === 'boolean',
     sourceReadable: row.source_readable === true,
     sourceState: optionalText(row.source_state) || 'UNKNOWN',
     sourceRedacted: row.source_redacted === true,
@@ -138,11 +141,25 @@ export function createPromptAdoptionClient(
       // Read-only GET. No body, no idempotency key, no write affordance.
       const raw = await transport.json<unknown>(
         `${root}/${documentId(id)}/prompt-adoption`, 'GET', undefined, signal);
-      return decodeAdoptionProjection(raw);
+      const projection = decodeAdoptionProjection(raw);
+      // The projection must describe the document we asked about; anything else is refused
+      // rather than displayed against the wrong board.
+      if (projection.documentId !== id) {
+        throw new ApiError({ status: 200, code: ADOPTION_ERROR_CODES.unavailable,
+          message: '采用记录属于其他分镜文档。' });
+      }
+      return projection;
     },
     async forShot(id, shotId, signal) {
       const projection = await this.read(id, signal);
-      return projection.adoptions.find(row => row.shotId === shotId) ?? null;
+      // Proofs are APPENDED in order, so the CURRENT source for a shot is the LAST matching
+      // record. Using find() returned the FIRST (oldest) adoption and presented a superseded
+      // revision as the shot's current source. History is untouched: the full array is still
+      // available from read().
+      for (let index = projection.adoptions.length - 1; index >= 0; index -= 1) {
+        if (projection.adoptions[index].shotId === shotId) return projection.adoptions[index];
+      }
+      return null;
     },
   };
 }

@@ -126,9 +126,39 @@ describe('read-only adoption panel', () => {
       },
     };
     const client = createPromptAdoptionClient('proj 1', transport);
-    const found = await client.forShot('doc/1', 'shot-1');
-    expect(found?.assetId).toBe('asset-1');
+    // The transport answers with document_id 'doc-1' while we asked for 'doc/1': the projection
+    // must describe the document we requested, so a mismatch is REFUSED rather than displayed
+    // against the wrong board.
+    await expect(client.forShot('doc/1', 'shot-1')).rejects.toThrow(/其他分镜文档/);
     expect(seen).toEqual(['GET /api/projects/proj%201/studio/documents/doc%2F1/prompt-adoption']);
+  });
+
+  it('accepts a matching document and reports the latest adoption for the shot', async () => {
+    const seen: string[] = [];
+    const transport: StudioGraphTransport = {
+      async json<T>(url: string, method?: string): Promise<T> {
+        seen.push(`${method ?? 'GET'} ${url}`);
+        return projection({ adoptions: [
+          { request_id: 'req-A', shot_id: 'shot-1', family_id: 'fam-A', asset_id: 'asset-A',
+            revision: 1, digest: 'a'.repeat(64), adopted_by: 'w', adopted_at: 't',
+            result_version: 2, still_applied: false, newer_revision_available: false,
+            source_readable: true, source_state: 'KNOWN', source_redacted: false },
+          { request_id: 'req-B', shot_id: 'shot-1', family_id: 'fam-B', asset_id: 'asset-B',
+            revision: 2, digest: 'b'.repeat(64), adopted_by: 'w', adopted_at: 't',
+            result_version: 3, still_applied: true, newer_revision_available: false,
+            source_readable: true, source_state: 'KNOWN', source_redacted: false },
+        ] }) as T;
+      },
+    };
+    const client = createPromptAdoptionClient('p1', transport);
+    const found = await client.forShot('doc-1', 'shot-1');
+    // Proofs are appended, so the CURRENT source is the LAST match, not the first.
+    expect(found?.assetId).toBe('asset-B');
+    expect(found?.requestId).toBe('req-B');
+    // The history is still reachable from the raw projection.
+    const all = await client.read('doc-1');
+    expect(all.adoptions.map(a => a.assetId)).toEqual(['asset-A', 'asset-B']);
+    expect(seen.length).toBe(2);
   });
 
   it('rejects a foreign contract instead of guessing', () => {

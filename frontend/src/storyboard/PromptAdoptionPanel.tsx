@@ -16,6 +16,8 @@ export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, 
   shotId: string | null;
   transport: StudioGraphTransport;
   enabled?: boolean;
+  /** Called after each read attempt with the fetched state, for host-side assertions. */
+  onState?: (state: 'IDLE' | 'LOADING' | 'READY' | 'ERROR') => void;
 }) {
   const [source, setSource] = useState<AdoptionSource | null>(null);
   const [state, setState] = useState<'IDLE' | 'LOADING' | 'READY' | 'ERROR'>('IDLE');
@@ -25,14 +27,21 @@ export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, 
   const epoch = useRef(0);
   const identity = `${projectId}\u0000${documentId ?? ''}\u0000${shotId ?? ''}`;
 
+  // Unmounting invalidates every in-flight read, so a transport that ignores AbortSignal
+  // still cannot write state into an unmounted panel.
+  useEffect(() => () => { epoch.current += 1; }, []);
+
   useEffect(() => {
+    // The epoch advances on EVERY dependency change, including disabling or clearing the
+    // selection. Previously those paths returned before bumping it, so a late response from a
+    // transport that ignores AbortSignal could restore stale provenance.
+    const mine = ++epoch.current;
     if (!enabled || !documentId || !shotId) {
       setSource(null);
       setState('IDLE');
       setError(null);
       return;
     }
-    const mine = ++epoch.current;
     const controller = new AbortController();
     setState('LOADING');
     setError(null);
@@ -76,16 +85,25 @@ export function PromptAdoptionPanel({ projectId, documentId, shotId, transport, 
           <dt>采用结果版本</dt><dd>{source.resultVersion ?? '未知'}</dd>
           <dt>当前是否仍然生效</dt>
           <dd className={source.stillApplied ? 'is-applied' : 'is-stale'}>
-            {source.stillApplied ? '仍然生效' : '已失效（镜头内容已被修改）'}
+            {/* A version change anywhere in the document can make the recorded adoption not
+                current, so the reason is NOT guessed as "this shot was edited". When the flag
+                is absent the state is genuinely unconfirmed. */}
+            {source.stillApplied ? '仍然生效' : '当前版本无法确认该采用仍然生效'}
           </dd>
           <dt>来源是否可展示</dt>
           <dd className={source.sourceReadable ? 'is-readable' : 'is-masked'}>
+            {/* UNKNOWN must never be presented as displayable, and the reason is only named
+                when the server actually confirmed a mask. */}
             {source.sourceReadable
               ? '可展示'
-              : source.sourceRedacted ? '来源已被遮罩' : '来源当前不可读'}
+              : source.sourceRedacted ? '来源已被遮罩'
+                : source.sourceState === 'UNKNOWN' ? '无法确认来源状态，暂不展示'
+                  : '来源当前不可读'}
           </dd>
           <dt>是否存在更新版本</dt>
-          <dd>{source.newerRevisionAvailable ? '存在更新版本，需要重新采用' : '无更新版本'}</dd>
+          <dd>{source.newerRevisionConfirmed
+            ? (source.newerRevisionAvailable ? '存在更新版本，需要重新采用' : '无更新版本')
+            : '无法确认是否存在更新版本'}</dd>
         </dl>
       )}
     </Panel>
