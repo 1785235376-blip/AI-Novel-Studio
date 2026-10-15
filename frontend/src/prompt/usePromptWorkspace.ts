@@ -196,7 +196,11 @@ export function usePromptWorkspace(options: Options) {
           baseAssetId: detail.headAssetId, baseRevision: detail.revision,
           content: fromEntry(detail),
         };
-        return { ...prev, detail, draft, loading: false, conflictCode: null };
+        // The previous family's comparison belongs to that family. Leaving it in place would
+        // show family A's plaintext diff under family B — reproduced in
+        // PromptWorkspace.scoping.test.tsx before this fix.
+        return { ...prev, detail, draft, loading: false, conflictCode: null,
+          compare: { from: null, to: null, loading: false, error: null } };
       });
     } catch (reason) {
       if (!alive.current || mine !== detailEpoch.current) return;
