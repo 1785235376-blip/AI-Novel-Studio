@@ -388,39 +388,64 @@ def test_F_a_failed_outer_commit_persists_nothing_and_reports_nothing(rig):
 
 
 # ============================== G: a real STORE commit failure, distinct from test F --
-def test_G_a_store_level_commit_failure_persists_nothing(rig):
-    """Test F aborts BEFORE the outer commit; this injects a failure INTO the commit itself.
+def test_G_a_real_file_atomic_write_failure_persists_nothing(rig):
+    """Test F aborts BEFORE the outer commit; this fails the REAL persistence write.
 
-    The File store's transaction object is made to fail on its final write, which is a storage
-    failure rather than a control-flow abort. Nothing may be persisted and no success may be
-    reported.
+    The previous version of this test was a false positive and is replaced. It wrapped
+    `raw_store.transaction` with a function that called `raw_store.transaction` again -- i.e.
+    itself -- and accepted RuntimeError, of which RecursionError is a subclass, so a stack
+    overflow could be mistaken for a storage failure. It also never reached the real commit.
+
+    This version injects at the actual boundary the File backend uses:
+    `atomic_write(path, canonical(doc))` in app/experimental/store.py line 109. A counter proves
+    the path was really reached, the failure carries a specific marker, and only this round's
+    isolated scope file is targeted.
     """
+    import app.experimental.store as store_mod
+
     board, shot_id = _storyboard(rig)
     receipt, body = _prompt(rig, TEXT_A)
     request = _request(rig, board, receipt, body, shot_id)
 
-    store = rig.workspace.store            # CreativeProjectStore
-    raw_store = store.store                # the underlying File store
-    original = raw_store.transaction.__class__
+    scope_key = rig.workspace.store.key(rig.nid, rig.scope)
+    original_atomic_write = store_mod.atomic_write
+    calls = {"n": 0}
 
-    class _FailingDoc(dict):
-        def clear(self_inner):
-            raise OSError("INJECTED_STORE_COMMIT_FAILURE")
+    def failing_atomic_write(path, text):
+        # Only this test's own scope document; anything else goes through untouched.
+        if scope_key in str(path):
+            calls["n"] += 1
+            raise OSError("INJECTED_FILE_ATOMIC_WRITE_FAILURE")
+        return original_atomic_write(path, text)
 
-    @contextmanager
-    def failing_transaction(nid, scope):
-        with raw_store.transaction(nid, scope) as doc:
-            yield _FailingDoc(doc)
-
-    raw_store.transaction = failing_transaction
+    store_mod.atomic_write = failing_atomic_write
+    raised = None
     try:
-        with pytest.raises((OSError, RuntimeError, ValueError)):
-            rig.adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, board["id"], shot_id, request)
+        try:
+            rig.adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, board["id"],
+                                      shot_id, request)
+        except BaseException as exc:  # noqa: BLE001
+            raised = exc
     finally:
-        del raw_store.transaction
+        # Restore unconditionally so no other test inherits the injected failure.
+        store_mod.atomic_write = original_atomic_write
 
+    # The REAL commit path must have been reached; otherwise this proves nothing.
+    assert calls["n"] >= 1, "the File atomic_write commit boundary was never reached"
+    assert raised is not None, "the adoption reported success despite a failed commit"
+    assert isinstance(raised, OSError), f"unexpected failure type: {raised!r}"
+    assert "INJECTED_FILE_ATOMIC_WRITE_FAILURE" in str(raised)
+
+    # Reopen the real store and confirm nothing changed.
     live = rig.creative.get(rig.nid, rig.scope, board["id"])
-    assert live["version"] == board["version"], "a store commit failure must persist no version"
+    assert live["version"] == board["version"], "a failed commit must persist no version"
     shot = next(item for item in live["shots"] if item["id"] == shot_id)
-    assert shot["frame_prompt"] == ""
-    assert not (live.get("prompt_adoptions") or []), "no proof may survive a store failure"
+    assert shot["frame_prompt"] == "", "a failed commit must leave the shot unchanged"
+    assert not (live.get("prompt_adoptions") or []), "no proof may survive a failed commit"
+
+    # And a retry with the injection removed must now work, proving the store was restored.
+    retry = _request(rig, rig.creative.get(rig.nid, rig.scope, board["id"]),
+                     receipt, body, shot_id)
+    result = rig.adoption.adopt_atomic(rig.nid, rig.scope, rig.actor, board["id"],
+                                       shot_id, retry)
+    assert result["committed"] is True, "the store was not restored after the injection"
