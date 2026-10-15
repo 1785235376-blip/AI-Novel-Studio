@@ -40,11 +40,49 @@ from typing import Any
 from uuid import uuid4
 
 from ..experimental.common import now
+from ..services.asset_library_service import AssetIdempotencyConflict
 from ..services.v1_capability_service import CapabilityVersionConflict
 from . import prompt_asset as prompt
 
 #: Feature required for a studio-bound asset (the owner enforces the binding).
 REQUIRED_FEATURES = ("narrative_production_v2",)
+
+#: The **only** fields a prompt conflict may disclose. Deliberately excludes user text,
+#: negative prompts, internal owner markers, project bindings, credentials and any other
+#: family's asset ids.
+CONFLICT_PUBLIC_FIELDS: tuple[str, ...] = (
+    "code", "family_id", "revision", "expected_revision", "current_revision", "retryable",
+)
+
+
+class PromptAuthoringConflict(Exception):
+    """A prompt-authoring conflict with a strictly whitelisted public body.
+
+    The shared studio invoker deliberately reduces `CapabilityVersionConflict.current` to
+    `{"version", "status"}` so a conflict cannot smuggle raw internal snapshots or denied
+    parent ids. That is a safety property for every existing API and is **left untouched**.
+    A prompt conflict therefore travels as its own exception and is rendered by the prompt
+    routes from `CONFLICT_PUBLIC_FIELDS` alone, so the client can recognise the cause and
+    reload without any new disclosure.
+    """
+
+    def __init__(self, code: str, **fields):
+        allowed = set(CONFLICT_PUBLIC_FIELDS) - {"code"}
+        self.code = code
+        self.fields = {key: value for key, value in fields.items() if key in allowed}
+        super().__init__(code)
+
+    def public(self) -> dict:
+        return {"code": self.code, **self.fields}
+
+
+def _as_prompt_conflict(exc, code, **fields):
+    """Convert an owner CAS failure without forwarding its internal `current` payload."""
+    version = exc.current.get("version") if isinstance(exc.current, dict) else None
+    merged = dict(fields)
+    if isinstance(version, int):
+        merged.setdefault("current_revision", None)
+    return PromptAuthoringConflict(code, **merged)
 
 
 class PromptAuthoringService:
@@ -149,17 +187,24 @@ class PromptAuthoringService:
                     stored_digest = prompt.digest(stored) if stored is not None else None
                     if (prompt.content_digest(replay) != wanted
                             or stored_digest != prompt.digest(body.text.encode("utf-8"))):
-                        raise CapabilityVersionConflict({
-                            "code": "PROMPT_REQUEST_ID_REUSED",
-                            "asset_id": prompt.asset_id_of(replay),
-                            "request_id": body.request_id})
+                        # The request identity has been spent on different content. Never
+                        # rebind the stored body to new metadata.
+                        raise PromptAuthoringConflict("PROMPT_REQUEST_ID_REUSED", retryable=False)
                     return self._receipt(replay, body, replay=True,
                                          revision=prompt.revision_of(replay),
                                          previous=prompt.prompt_payload(replay).get("previous_asset_id"))
-                # The body asset exists but its payload write did not finish (W4.2). The
-                # attempt never became a valid revision, so it is **resumed** on the same
-                # asset rather than duplicated — and no allocation from the lost attempt
-                # is reused, because none was ever persisted.
+                # The body asset exists but its payload write did not finish (W4.2). It is
+                # resumed on the same asset — but only if its stored bytes are still this
+                # request's bytes. Resuming onto different text would bind the OLD body to
+                # NEW metadata, so that case is refused instead of completed.
+                try:
+                    pending_bytes = self.workspace.assets.content(
+                        prompt.asset_id_of(replay), branch_id=branch_id, actor_id=actor)
+                except (FileNotFoundError, ValueError, PermissionError):
+                    pending_bytes = None
+                if pending_bytes is None or prompt.digest(pending_bytes) != prompt.digest(
+                        body.text.encode("utf-8")):
+                    raise PromptAuthoringConflict("PROMPT_REQUEST_ID_REUSED", retryable=False)
                 resume_asset = replay
 
             groups = prompt.families(rows)
@@ -175,12 +220,10 @@ class PromptAuthoringService:
                 head_id = prompt.asset_id_of(head)
                 # A stale editor must not write the next revision.
                 if head_revision != body.expected_revision or head_id != body.expected_previous_asset_id:
-                    raise CapabilityVersionConflict({
-                        "code": "PROMPT_REVISION_STALE",
-                        "expected_revision": body.expected_revision,
-                        "current_revision": head_revision,
-                        "current_asset_id": head_id,
-                        "family_id": family_id})
+                    raise PromptAuthoringConflict(
+                        "PROMPT_REVISION_STALE", family_id=family_id,
+                        expected_revision=body.expected_revision, current_revision=head_revision,
+                        retryable=True)
                 revision, previous = head_revision + 1, head_id
 
             payload = prompt.build_payload(
@@ -196,26 +239,37 @@ class PromptAuthoringService:
             # (2) Bytes first. `idempotency_key` makes this exactly-once at the owner too,
             #     and raises if the key was already used for different content. A resumed
             #     attempt already owns its asset, so it skips creation entirely.
-            if resume_asset is not None:
-                asset = self.workspace.assets.update_metadata(
-                    prompt.asset_id_of(resume_asset),
-                    {"parameters": {prompt.PAYLOAD_KEY: payload}},
-                    branch_id=branch_id, expected_version=resume_asset.get("version"),
-                    actor_id=actor, guard=guard)
-            else:
-                created = self.workspace.assets.create(
-                    nid, f"prompt-{family_id[:8]}-r{revision}.txt",
-                    base64.b64encode(body.text.encode("utf-8")).decode(),
-                    media_type="text/plain", kind=prompt.PROMPT_KIND,
-                    idempotency_key=body.request_id, branch_id=branch_id,
-                    required_features=REQUIRED_FEATURES, owner_actor_id=actor, guard=guard)
+            try:
+                if resume_asset is not None:
+                    asset = self.workspace.assets.update_metadata(
+                        prompt.asset_id_of(resume_asset),
+                        {"parameters": {prompt.PAYLOAD_KEY: payload}},
+                        branch_id=branch_id, expected_version=resume_asset.get("version"),
+                        actor_id=actor, guard=guard)
+                else:
+                    created = self.workspace.assets.create(
+                        nid, f"prompt-{family_id[:8]}-r{revision}.txt",
+                        base64.b64encode(body.text.encode("utf-8")).decode(),
+                        media_type="text/plain", kind=prompt.PROMPT_KIND,
+                        idempotency_key=body.request_id, branch_id=branch_id,
+                        required_features=REQUIRED_FEATURES, owner_actor_id=actor, guard=guard)
 
-                # (3) Then the payload. A replay of the same payload is a no-op at the
-                #     owner, so an interrupted run leaves no half-version behind.
-                asset = self.workspace.assets.update_metadata(
-                    created["id"], {"parameters": {prompt.PAYLOAD_KEY: payload}},
-                    branch_id=branch_id, expected_version=created.get("version"), actor_id=actor,
-                    guard=guard)
+                    # (3) Then the payload. A replay of the same payload is a no-op at the
+                    #     owner, so an interrupted run leaves no half-version behind.
+                    asset = self.workspace.assets.update_metadata(
+                        created["id"], {"parameters": {prompt.PAYLOAD_KEY: payload}},
+                        branch_id=branch_id, expected_version=created.get("version"),
+                        actor_id=actor, guard=guard)
+            except CapabilityVersionConflict as exc:
+                # The owner's own CAS lost. Surface the cause without forwarding its
+                # internal `current` snapshot (which the shared wrapper would strip anyway).
+                raise PromptAuthoringConflict(
+                    "PROMPT_ASSET_VERSION_CONFLICT", family_id=family_id, revision=revision,
+                    retryable=True) from None
+            except AssetIdempotencyConflict:
+                # The owner already spent this request id on different bytes.
+                raise PromptAuthoringConflict(
+                    "PROMPT_REQUEST_ID_REUSED", retryable=False) from None
 
             # (4) Deterministic conflict rule. Ordering by asset id is arbitrary but total,
             #     so both racers agree on the same winner without a shared lock.
@@ -231,12 +285,9 @@ class PromptAuthoringService:
                     asset_id,
                     {"parameters": {prompt.PAYLOAD_KEY: {**payload, "state": prompt.STATE_CONFLICTED}}},
                     branch_id=branch_id, expected_version=asset.get("version"), actor_id=actor)
-                raise CapabilityVersionConflict({
-                    "code": "PROMPT_REVISION_CONFLICT",
-                    "family_id": family_id, "revision": revision,
-                    "conflicted_asset_id": asset_id,
-                    "winner_asset_id": min(prompt.asset_id_of(row) for row in rivals),
-                    "note": "your content was preserved as a conflicted revision; reload and re-apply it"})
+                raise PromptAuthoringConflict(
+                    "PROMPT_REVISION_CONFLICT", family_id=family_id, revision=revision,
+                    retryable=True)
 
             return self._receipt(asset, body, replay=False, revision=revision, previous=previous)
 

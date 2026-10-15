@@ -12,9 +12,21 @@ prompt; they are not a back door for an AI to overwrite one:
 
 The three read-only GETs stay read-only; authoring never mutates them.
 """
-from fastapi import APIRouter, Header, Query
+from fastapi import APIRouter, Header, HTTPException, Query
 
+from .prompt_authoring import PromptAuthoringConflict
 from .prompt_authoring_models import PromptCreateIn, PromptRevisionIn
+
+
+def _conflict(exc: PromptAuthoringConflict) -> HTTPException:
+    """Render a prompt conflict from its strict whitelist only.
+
+    The shared studio invoker reduces every `CapabilityVersionConflict` to `{version,
+    status}` so a conflict cannot leak internal snapshots. Rather than weaken that
+    safety property for all APIs, the prompt routes answer with their own whitelisted
+    409, which lets a client recognise the cause and reload.
+    """
+    return HTTPException(409, exc.public())
 
 
 def create_prompt_authoring_router(prompts, invoke):
@@ -23,23 +35,32 @@ def create_prompt_authoring_router(prompts, invoke):
     @router.post("/projects/{nid}/studio/prompts", status_code=201)
     def create_prompt(nid: str, body: PromptCreateIn, x_session_token: str | None = Header(None),
                       x_branch_id: str | None = Header(None)):
-        return invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: prompts.create(nid, scope, actor, body, guard))
+        try:
+            return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                          lambda actor, scope, guard: prompts.create(nid, scope, actor, body, guard))
+        except PromptAuthoringConflict as exc:
+            raise _conflict(exc) from None
 
     @router.post("/projects/{nid}/studio/prompts/{family_id}/revisions", status_code=201)
     def revise_prompt(nid: str, family_id: str, body: PromptRevisionIn,
                       x_session_token: str | None = Header(None),
                       x_branch_id: str | None = Header(None)):
-        return invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: prompts.revise(nid, scope, actor, family_id, body, guard))
+        try:
+            return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                          lambda actor, scope, guard: prompts.revise(nid, scope, actor, family_id, body, guard))
+        except PromptAuthoringConflict as exc:
+            raise _conflict(exc) from None
 
     @router.post("/projects/{nid}/studio/prompts/{family_id}/revisions/{asset_id}/approve")
     def approve_revision(nid: str, family_id: str, asset_id: str, expected_version: int = Query(ge=1),
                          x_session_token: str | None = Header(None),
                          x_branch_id: str | None = Header(None)):
         """Reuse the owner's review path. Approval is never taken from client input."""
-        return invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: prompts.approve(
-                          nid, scope, actor, family_id, asset_id, expected_version, guard))
+        try:
+            return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                          lambda actor, scope, guard: prompts.approve(
+                              nid, scope, actor, family_id, asset_id, expected_version, guard))
+        except PromptAuthoringConflict as exc:
+            raise _conflict(exc) from None
 
     return router

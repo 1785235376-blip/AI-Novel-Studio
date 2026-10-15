@@ -37,23 +37,24 @@ No `reset --hard`, `git clean`, force push, ref repair, ACL change or PATH rewri
 | Baseline verification | **DONE** | this file |
 | R3-R read-contract fixes | **DONE (R3-R-08 PARTIAL)** | `ROUND3R_READ_CONTRACT_REPORT.md`; repro **26 failed / 3 passed**; fix **197 passed / 60 skipped / exit 0**; PG **100 passed / exit 0** |
 | **§3 read follow-up** | **DONE** | `ROUND3S_READ_FOLLOWUP_REPORT.md`; repro `round3s-repro-r1` **3 mismatches**; fix `round3s-read-followup-r1` **154 passed / exit 0**; PG `round3s-read-followup-postgres` **83 passed / exit 0** |
-| **R3-W dedicated authoring** | **INCOMPLETE — 3 tests failing** | `ROUND3W_STATUS.md`; latest run `round3w-authoring-r7` **130 passed / 3 failed**. Defects D1 (invoker drops the conflict reason) and D2 (mid-write resume) are open. |
-| R3-U Prompt Workspace | `NOT_RUN` | — |
+| **R3-W dedicated authoring** | **DONE** | `ROUND3W_AUTHORING_REPORT.md` / `_DECISIONS.md` / `_HANDOFF.md`; File `round3w-authoring-r10` **202 passed / 60 skipped / exit 0**; real PostgreSQL `round3w-authoring-postgres` **79 passed / exit 0**. D1 fixed (prompt-specific whitelisted 409); D2 confirmed a test-contract error (`head_asset_id` vs `asset_id`). |
+| R3-U Prompt Workspace | `NOT_RUN` | **next action** (see `ROUND3W_HANDOFF.md`) |
 | R3-I production application | `NOT_RUN` | — |
 | R3-GATE | `NOT_RUN` | — |
 | R4 asset relationship view | `NOT_RUN` | — |
 
-## R3-W resume point (read `ROUND3W_STATUS.md` first)
+## Next exact action (resume point) — R3-U
 
-1. **D1:** in `app/creative/workspace_api.py`'s studio `invoke` wrapper, map
-   `CapabilityVersionConflict` to a 409 that **preserves `exc.current`** (it is currently emptied to
-   `{}`). The service raises the correct payload — verified — so fix the transport, not the service.
-   Then T03/T05 should pass.
-2. **D2:** run `tests/test_round3w_authoring.py::test_t06_metadata_failure_then_retry_produces_exactly_one_revision`
-   and print the exception inside the resume branch; complete the resume so a retry after a mid-write
-   failure yields exactly one revision.
-3. Re-run W6 on File **and** real PostgreSQL; commit/push R3-W alone; **only then** produce
-   `ROUND3W_AUTHORING_REPORT.md`, `ROUND3W_DECISIONS.md`, `ROUND3W_HANDOFF.md`.
+Operable Prompt Workspace per `ROUND3W_HANDOFF.md`: create, edit a **local** draft, save a revision,
+version history, version compare, bind characters/scenes/shots/reference assets, show unverified
+references, handle `409` without discarding the draft, and recover after offline/refresh/reopen.
+Save happens **only** on explicit user confirmation.
+
+Constraints: `docs/ui/design_system.md` + `docs/ui/protected_ui_surfaces.md` + the
+`ai-novel-studio-ui` skill (read from `.codex/skills/ai-novel-studio-ui/SKILL.md` if it is not in the
+skill menu); reuse tokens/primitives/AppShell; no protected-surface change; no second system.
+`check_ui_design_tokens.mjs` only walks `frontend/src/ui`, so new module CSS must be self-verified.
+Then frontend tests + TypeScript + production build, then commit/push R3-U alone.
 
 ## Hash ledger (kept deliberately distinct — §2 of the directive)
 

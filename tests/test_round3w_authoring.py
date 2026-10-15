@@ -206,8 +206,11 @@ def test_t03_a_stale_editor_cannot_write_the_next_revision(rig):
     assert loser.status_code == 409
     # The shared invoker wraps a CAS conflict as EXPERIMENTAL_VERSION_CONFLICT and carries
     # the reason under `current`; the client must still see the specific cause.
-    assert "PROMPT_REVISION_STALE" in loser.text
-    assert "current_revision" in loser.text
+    assert loser.json()["detail"]["code"] == "PROMPT_REVISION_STALE"
+    assert loser.json()["detail"]["current_revision"] == 2
+    # Only whitelisted fields may cross the boundary.
+    assert set(loser.json()["detail"]) <= {
+        "code", "family_id", "revision", "expected_revision", "current_revision", "retryable"}
 
 
 def test_t03b_two_active_revisions_are_reported_rather_than_hidden(rig):
@@ -266,7 +269,9 @@ def test_t05_reusing_a_request_id_for_different_content_is_refused(rig):
                             "request_id": body.request_id})
     response = _post_create(rig, reused)
     assert response.status_code == 409
-    assert "PROMPT_REQUEST_ID_REUSED" in response.text
+    assert response.json()["detail"]["code"] == "PROMPT_REQUEST_ID_REUSED"
+    # A conflict must never echo user text back to the caller.
+    assert "完全不同的内容" not in response.text
 
     library = rig.client.get(f"/api/projects/{rig.nid}/studio/prompts",
                              headers={"x-session-token": "author-a"}).json()
@@ -299,8 +304,12 @@ def test_t06_metadata_failure_then_retry_produces_exactly_one_revision(rig, monk
     assert library["prompt_count"] == 1
     assert library["revision_count"] == 1
     assert library["entries"][0]["revision"] == 1
-    # The retry returned the same revision the interrupted first attempt had produced.
-    assert library["entries"][0]["asset_id"] == retry.json()["asset_id"]
+    # D2 correction: the library entry exposes `head_asset_id`; `asset_id` is the write
+    # receipt's field. The original assertion applied the receipt's name to the library
+    # projection, which is a test-contract error, not a failed resume. The invariant it
+    # was protecting is unchanged: the retry must resolve to the revision the interrupted
+    # first attempt had already produced.
+    assert library["entries"][0]["head_asset_id"] == retry.json()["asset_id"]
 
 
 def test_t06b_a_lost_response_is_replayable(rig):

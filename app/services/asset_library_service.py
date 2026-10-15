@@ -796,6 +796,16 @@ class AssetLibraryService:
                     key in fields and fields[key] != meta.get(key)
                     for key in ("source_job_id", "provider_id", "model_id", "parameters", "approved_at", "source_asset_ids")):
                 raise ValueError("TEXT_RESULT_PROVENANCE_IMMUTABLE")
+            if meta.get("kind") == "prompt" and any(
+                    key in fields and fields[key] != meta.get(key)
+                    for key in ("source_job_id", "provider_id", "model_id", "approved_at",
+                                "source_asset_ids")):
+                # A prompt revision's provenance and approval identity are fixed once the
+                # revision exists. The review path (`promote_owned`) sets `approved_at`
+                # directly rather than through this method, so approval still works and
+                # cannot be self-granted by an ordinary metadata write. Other asset kinds
+                # are untouched.
+                raise ValueError("PROMPT_REVISION_IDENTITY_IMMUTABLE")
             if "_manual_mask_origin" in meta:
                 origin = self._manual_record(meta)
                 if any(key in fields and fields[key] != meta.get(key) for key in
