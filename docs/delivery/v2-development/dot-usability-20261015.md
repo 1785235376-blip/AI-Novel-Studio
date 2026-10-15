@@ -385,8 +385,58 @@ synthetic reads; they do not prove live backend service recovery. Browser/geomet
 **BLOCKED / NOT_RUN**, and full frontend, backend, live models, GPU/Windows and whole-product
 acceptance remain **NOT_RUN**. Original baseline and hosted workflow failures remain open.
 
+### Stage 6 publication
+
+Remote `b863f99b4ff37eb62eedf6aadb9301c90a7902db`, tree
+`8ced8bf5a721f36089f2355e85fd00d45044810f`, exactly matches reviewed/tested local
+`b31017094c77a3e380727ae8c4f7611122edf215`. `git ls-remote` and fetched tree verification
+passed; the combined command was rerun on that exact published SHA: **364 passed**, 30 files,
+exit 0. Independent review reran 13 scoped display tests and closed the partial-history issue.
+PR #48 remains Draft. Exact-SHA hosted workflows are terminal failures: Cloud CI `38797755972`,
+Local Interop `38797756438`, Shared R123 `38797755786`; no hosted acceptance or rerun is claimed.
+
+## Stage 7 — recoverable object-format inspection
+
+### Verified gap and implementation
+
+`ItemExportPanel` retained the previous successful format verdict when the user changed the
+format, even though it cleared the previous refusal. Changing the kind filter could also hide
+the checked object while leaving its verdict visible. A filter with no matching loaded objects
+showed an unexplained empty list.
+
+- Clear check feedback on explicit format or kind changes. A fresh verdict still requires the
+  existing explicit check button; changing a selector does not claim fresh success.
+- Explain an empty kind filter separately from an empty catalog, with scope limited to loaded
+  objects. The shared-button action restores all kinds through the existing filter callback.
+- Return focus to the kind selector when the recovery button disappears. Preserve the existing
+  handover selection; no selection or dispatch callback is invoked by checking/filtering.
+- No operation, capability, backend, controller, client, shared primitive or CSS changes.
+
+Code files: `frontend/src/delivery/ItemExportPanel.tsx` and new `ItemExportPanel.test.tsx`.
+
+### Verification
+
+Commands run from `frontend/`; counts overlap.
+
+| Command / checkpoint | Actual result | Exit |
+| --- | --- | --- |
+| `vitest run src/delivery/ItemExportPanel.test.tsx --maxWorkers=2 --minWorkers=1 --reporter=verbose` before implementation | 3 new failures / 2 unchanged passes | 1 |
+| Same focused command after implementation | 5 passed | 0 |
+| Stage-6 combined command, including the new delivery test file | 369 passed, 31 files | 0 |
+| `tsc -b && vite build && node ../scripts/check_ui_design_tokens.mjs` | Pass; existing large-chunk warning unchanged | 0 |
+| `git diff --check` | Pass | 0 |
+
+Independent read-only review found no in-scope defect and passed 7 isolated tests: the 5 added
+cases plus 2 extra cases covering repeated recovery, preserved format/selection, and no automatic
+explicit-format check. This review count overlaps the project suite.
+
+No original assertions, timeouts or snapshots changed. These are synthetic React/jsdom checks;
+real browser/geometry/focus-device acceptance remains **BLOCKED / NOT_RUN**. Existing baseline
+and hosted failures remain open. Full frontend, backend, models, GPU/Windows and whole-product
+acceptance are not claimed.
+
 ## Current handoff
 
-Six independent usability slices are implemented with preserved evidence and Draft-only
-publication. Stage 6 publication SHA/tree will be recorded at the next checkpoint. No merge,
+Seven independent usability slices are implemented with preserved evidence and Draft-only
+publication. Stage 7 publication SHA/tree will be recorded at the next checkpoint. No merge,
 release or deployment is implied. The blocked lifecycle work remains separate and unchanged.

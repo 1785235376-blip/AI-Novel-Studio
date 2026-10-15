@@ -1784,3 +1784,16 @@ Initial delivery scope **64 passed**; final prior-stage combined scope including
 read/recovery integrations and reviewed empty-page/cursor cases **364 passed** (30 files), exit 0. Counts overlap. Type/build/token
 checks pass. Browser/geometry remains **BLOCKED / NOT_RUN**, and baseline/hosted failures remain
 open. Commands and limitations: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent object-format inspection checkpoint
+
+Append-only observation after receipt-display checkpoint `b863f99b`. Explicit format/kind
+changes clear the previous check feedback; a new verdict requires the existing check button.
+An empty loaded-kind filter is explained separately from an empty catalog, with an all-kinds
+recovery action that restores focus and preserves the handover selection. No operation,
+capability, endpoint, controller, CSS or shared primitive changes.
+
+Focused display tests **5 passed**; prior-stage combined scope **369 passed** (31 files), exit 0.
+Counts overlap. Type/build/token checks pass. Browser/geometry remains **BLOCKED / NOT_RUN**; baseline and hosted failures
+remain open. Commands and limits: `docs/delivery/v2-development/dot-usability-20261015.md`.
