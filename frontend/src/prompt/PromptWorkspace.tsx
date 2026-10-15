@@ -34,6 +34,10 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
   const { state, refresh, selectFamily, startNew, edit, save, retry, rebase, discard, compare } = controller;
   const [fromId, setFromId] = useState('');
   const [toId, setToId] = useState('');
+  // P0-I: `redacted` is a **display mask** chosen on a revision, not an access control.
+  // The authorised body route still serves those bytes (measured), so the default compare
+  // UI must not silently reveal a revision the family explicitly marked as masked.
+  const [maskNotice, setMaskNotice] = useState<string | null>(null);
 
   useEffect(() => { void refresh(); /* read the authorised library once the panel mounts */ }, [refresh]);
 
@@ -126,10 +130,25 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
                       ))}
                     </select>
                     <Button disabled={!fromId || !toId || comparison.loading}
-                      onClick={() => void compare(detail.familyId, fromId, toId)}>
+                      onClick={() => {
+                        const masked = versions.filter(
+                          row => row.redacted && (row.assetId === fromId || row.assetId === toId));
+                        if (masked.length > 0) {
+                          // Refuse by default; this is not an unlock feature and needs no
+                          // new permission system. The authorised raw read still exists
+                          // outside this panel.
+                          setMaskNotice('选中的修订包含已标记为「展示遮罩」的版本'
+                            + `（修订 ${masked.map(row => row.revision).join('、')}），`
+                            + '默认不参与明文比较。请改选未遮罩的修订。');
+                          return;
+                        }
+                        setMaskNotice(null);
+                        void compare(detail.familyId, fromId, toId);
+                      }}>
                       {comparison.loading ? '正在读取正文…' : '比较正文'}
                     </Button>
                   </div>
+                  {maskNotice && <StatusMessage tone="warning">{maskNotice}</StatusMessage>}
                   {comparison.error && <StatusMessage tone="error">{comparison.error}</StatusMessage>}
                   {comparison.from && comparison.to && (
                     <RevisionDiff
