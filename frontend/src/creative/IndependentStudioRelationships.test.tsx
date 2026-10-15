@@ -63,7 +63,7 @@ describe('studio relationship ownership and draft integration', () => {
 
   it('preserves CAS-conflicted input and source version until an explicit reload', async () => {
     relationshipStatus = 409; const { choose } = await mount(); choose(); fireEvent.change(screen.getByLabelText('关联理由'), { target: { value: '发生冲突仍保留' } }); fireEvent.click(screen.getByRole('button', { name: '保存关联' }));
-    await screen.findByRole('alert'); expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).value).toBe('发生冲突仍保留');
+    expect((await screen.findByText('版本或来源已经变化。当前草稿已保留，请核对服务端版本。')).getAttribute('role')).toBe('alert'); expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).value).toBe('发生冲突仍保留');
     expect(screen.getByRole('region', { name: '独立资产来源' }).textContent).toContain('版本 v2'); expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(1);
   });
 

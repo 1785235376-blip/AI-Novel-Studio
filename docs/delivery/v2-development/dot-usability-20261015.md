@@ -791,3 +791,123 @@ succeeded. Draft PR #48 therefore still points to Stage 10 at
 intended destination, not evidence that Stage 11 reached it. Publication now awaits explicit
 approval for the committed Stage 11 source/tests and sanitized documentation payload. The
 exact-published-SHA rerun and new hosted CI are **NOT_RUN** because no new published SHA exists.
+
+## Stage 12 — bounded standalone MP3 export (local only)
+
+### Current handoff index and actual scope
+
+This append supersedes the initial report's frontend-only scope for this stage: the original
+standalone audio trim/export owner now supports explicit MP3 in addition to omitted/default WAV
+and explicit FLAC. Requirement: current-source gap in `AUDIO-12` (§14.3) and the user's approved
+old/new advanced-capability continuation. Stage 11 and all earlier checkpoints remain intact.
+The starting local commit is `e4cb8f571fea0137f08c40ea510da823589b1d27`; this stage remains on
+`work/dot-usability-handoff11-20261015`. No new queue, registry, provider, asset owner or review
+owner was created. No voice/model generation or normalization capability is implied.
+
+The sibling lifecycle/security candidate stays **BLOCKED**, with its known defect and unfinished
+acceptance unchanged. No lifecycle/security implementation, PostgreSQL, permission/gate, release,
+main, tag, dependency, protected shell or user-device change was made here. All Stage 11/later
+publication is still **BLOCKED pending explicit user resolution**. No new upload, push, ref or PR
+mutation was attempted. Draft PR #48 remains the last verified Stage 10 head `61b1f039`; no new
+hosted CI or exact-published acceptance exists.
+
+### New behavior and bounded codec contract
+
+- The existing Audio Inspector selects MP3 explicitly; leaving the format blank still omits the
+  control and preserves legacy WAV request/recipe identities. Changing format invalidates the
+  existing preview confirmation. Preview, queue, execute and review remain separate actions.
+- Only local `libmp3lame` is used, with explicit CBR 128 kb/s at 32000/44100/48000 Hz and 64 kb/s
+  at 8000/11025/12000/16000/22050/24000 Hz. Mono/stereo and existing reviewed gain are preserved.
+  Unsupported requested rates are rejected in DTO, owner and client; no silent substitute rate,
+  encoder or format is selected. Missing encoder/ffprobe produces `STUDIO_AUDIO_MP3_TOOL_UNAVAILABLE`.
+- MP3 clips are 10 ms–120 s. The new minimum follows observed native behavior: one-millisecond
+  LAME files at lower rates decode to 47 samples instead of the requested 8–44 samples. Independent
+  tiny-file probes verified 10 ms at every supported rate. WAV/FLAC minimums are unchanged.
+- Actual output is checked as an MP3 stream with the requested sample rate, channels and bitrate,
+  then decoded through the original cancellable process owner to a size-capped private S16 file.
+  Output and decoded-PCM SHA256, sample count, decoded bytes and measured duration are persisted.
+  `audio/mpeg` is bound to the existing original receipt and candidate. A `.mp3` filename alone
+  cannot satisfy proof. S16 describes decoded PCM; MP3 has no lossless/S16 bit-depth claim.
+- Gapless decoded duration must match within one sample. Container duration separately permits
+  at most three MPEG frames plus 2 ms rounding, and no more than 1 ms below decoded duration.
+  The original 25 MiB encoded/decoded budget and process limits remain. Container delay/padding
+  is displayed separately, rather than passed off as requested duration.
+- Original private-candidate, explicit review, version checks, source bindings, cancellation,
+  failure and unknown-publication/no-automatic-replay behavior remain. Recovery consumes the
+  existing persisted proof without reencoding. Encoder failure and cancellation clean owned
+  temporary files; the source waveform remains byte-identical.
+
+### Actual functional evidence and files
+
+A self-created 440 Hz WAV passes original File preview → idempotent queue → real native encode
+→ private candidate → fresh service/store reopen → explicit review → approved asset → reopen.
+Independent ffprobe and ffmpeg decoding verify MP3/22050 Hz/mono/64 kb/s/700 ms and 15,435 decoded
+samples (30,870 S16 bytes). The gain test compares interior RMS to the expected half-amplitude
+sine with a documented 10% lossy tolerance; it does not assert lossless sample equality or human
+perceived quality. Stereo exports cover all nine rates at 713 ms; mono covers all nine rates
+at the 10 ms boundary. Mounted original Host API tests verify real bytes, `audio/mpeg`, exact
+candidate digest, private-before-review and approved/reopened receipt. This is functional File
+and mounted-fixture evidence, not live authorization/isolation acceptance.
+
+Production changes: `app/creative/production_execution_models.py`,
+`app/services/studio_audio_execution.py`, new `app/services/studio_audio_mp3_profile.py`,
+`StudioMediaExecutionPanel.tsx`, `useStudioMediaExecution.ts`, `studioProductionClient.ts`.
+Tests: new `test_v2_audio_mp3.py`, `test_v2_audio_mp3_api.py`, `studioAudioMp3Contract.test.tsx`
+and synthetic `fixtures/audio-mp3.capture.json`; existing FLAC exclusion examples now reject
+lowercase `mp3` while uppercase MP3 is explicitly tested as supported. Existing WAV display
+assertion follows the format-neutral empty-measurement copy. No assertions were removed.
+
+### Separately identified test-selector correction
+
+The expanded frontend run found two existing tests assuming a single global `alert`:
+`IndependentStudioWorkspace.test.tsx` preference-CAS and `IndependentStudioRelationships.test.tsx`
+relationship-CAS. Both were reproduced in an isolated, unchanged `e4cb8f5` frontend archive:
+**2 failed / 11 passed**, exit 1. Existing mocked unrelated reads also expose network alerts,
+so a global single-alert wait is ambiguous despite the correct conflict alert being present.
+Only those two waits now require the exact version-conflict message and assert `role="alert"`.
+Every later draft, source/version, module and no-dispatch assertion is retained. No timeout,
+skip, fixture coverage, route behavior or security expectation was weakened. This corrects
+those two previously recorded baseline test failures; their historical failed evidence remains.
+
+### Verification receipts and limits
+
+Counts below overlap and must not be added. Raw failure/success logs, exact commands, source-hash
+receipts and synthetic media are retained locally; environment/source-hash dumps are not committed.
+
+- Before implementation, new Python contracts: **5 failed**, plus 10 File fixture setup errors
+  from an omitted owned `--basetemp` and 10 unrun PostgreSQL cases. New UI selection test: **1 failed**
+  because MP3 was absent. The fixture command was corrected without changing fixture assertions.
+- Initial native proof exposed the `audio/mp3` MIME assumption; it was corrected to `audio/mpeg`.
+  Subsequent new-test accessor/actor errors and the 1 ms native timing failures are preserved.
+- New backend/actual mounted API selection: **39 passed / 31 PostgreSQL cases deselected**, exit 0.
+- Final original WAV/FLAC plus MP3 codec/owner/mounted functional selection: **116 passed /
+  76 deselected**, exit 0; source snapshot unchanged during the run. Deselection covers PostgreSQL
+  parameterizations and the existing FLAC revocation probe, not a suppressed codec failure.
+- New/existing audio frontend selection: **155 passed / 4 files**, exit 0.
+- Expanded prior-stage plus all creative frontend before the selector correction: **2072 passed /
+  2 failed / 131 files**, exit 1. The two failures above were verified against unchanged baseline.
+- Typecheck, Vite build and token guard **PASS**, exit 0; existing large-chunk warning remains.
+  Initial typecheck rejected a new test's raw-JSON cast (`needs_reconciliation: null`); the test
+  now obtains the typed job through the existing checked client decoder. No contract was relaxed.
+- Independent read-only review found no in-scope production defect. It separately passed **45/45**
+  real encode/probe/decode boundary combinations: 8k/44.1k/96k source rates into five MP3 rates,
+  stereo, 10 ms at source start/middle/end. Captured MP3 bytes were independently re-probed and
+  re-decoded with every measured field matching; exact legacy WAV hashes were retained.
+
+Backend command from repository root, using the installed Python interpreter/dependencies only:
+`PYTHONPATH="$PWD" python scripts/run_v2_checks.py dot-usability-mp3-regression -- python -m pytest tests/test_v2_audio_mp3.py tests/test_v2_audio_mp3_api.py tests/test_v2_audio_wav_controls.py tests/test_v2_audio_flac.py tests/test_v2_audio_wav_controls_api.py::test_mounted_real_pcm_proof_private_candidate_explicit_review_and_fixture tests/test_v2_audio_wav_controls_api.py::test_pcm_capacity_and_unknown_controls_are_structured_errors tests/test_v2_audio_flac_api.py::test_mounted_flac_proof_private_candidate_review_and_safe_capture -q -m 'not postgres_backend_only' -k 'not revoke_during_flac' --basetemp=.runtime/v2-checks/dot-usability-mp3-regression/pytest`.
+The installed sibling interpreter was used without inspecting/importing sibling candidate source,
+changing its environment, or starting a database/service.
+
+Expanded frontend command is the Stage 11 combined command recorded above with `src/creative`
+added after `vitest run`; Vitest deduplicates overlapping paths. Workers stay at `--maxWorkers=4
+--minWorkers=1 --reporter=verbose`. Build is sequential `tsc -b && vite build && node
+../scripts/check_ui_design_tokens.mjs`. All UI evidence is jsdom/static; browser/socket restriction
+was not retried. Real browser pixels, assistive technology, native audio-player, Windows/GPU/model,
+full V2, authorization/security and release acceptance remain **NOT_RUN / BLOCKED / LOCAL_REQUIRED**
+as previously applicable. MP3 improves one original audio delivery path; it is not a new audio
+editor or completion claim for all Audio Studio requirements.
+
+Final expanded frontend rerun after the two selector-only corrections: **2074 passed / 131 files**,
+exit 0. No skip or timeout change. Final `tsc -b` after those test edits also passes, exit 0.
+The separate successful Vite/token build above uses identical production code.

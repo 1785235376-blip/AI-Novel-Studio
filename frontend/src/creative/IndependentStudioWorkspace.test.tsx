@@ -121,7 +121,7 @@ describe('independent studio original owner integration', () => {
     fireEvent.click(screen.getByText('创作意图与推荐布局'));
     fireEvent.click(screen.getByLabelText('图片设计'));
     fireEvent.click(screen.getByRole('button', { name: '保存创作偏好' }));
-    await screen.findByRole('alert');
+    expect((await screen.findByText('版本或来源已经变化。当前草稿已保留，请核对服务端版本。')).getAttribute('role')).toBe('alert');
     expect((screen.getByLabelText('图片设计') as HTMLInputElement).checked).toBe(true);
     expect(screen.getAllByRole('tab')).toHaveLength(8);
     fireEvent.click(within(screen.getByRole('tablist', { name: '创作模块' })).getByRole('tab', { name: '小说' }));

@@ -1878,3 +1878,32 @@ updated existing matrix and one evidence-backed identical retry were rejected by
 approval requirement. No Stage 11 remote mutation or PR update succeeded; Draft PR #48 remains
 at `61b1f0390077b403b62cc57cbd50048d2324ae40`. Exact-published rerun/new hosted CI are NOT_RUN.
 No alternate upload route was attempted. See the appended publication status in the rolling report.
+
+### 2026-10-15 — original standalone MP3 export checkpoint (local only)
+
+Current-source `AUDIO-12` gap advanced: the original standalone trim/export DTO, recipe, Audio
+Inspector and actual receipt path now accept explicit MP3 while preserving omitted/default WAV
+and explicit FLAC. No parallel job, provider, Asset or Review owner. Local libmp3lame CBR profiles
+are 128 kb/s at 32/44.1/48 kHz and 64 kb/s at the six supported lower rates; mono/stereo, reviewed
+gain, 10 ms–120 s interval and 25 MiB encoded/decoded bound are explicit. Unsupported rates and
+sub-10-ms clips are rejected; missing encoder/ffprobe yields an honest unavailable receipt.
+Actual MP3 stream probe, bounded gapless PCM decode, exact output/decoded digests and duration
+proof are persisted. Decoded timing allows one sample; container padding is separately bounded
+and disclosed. S16 decode is not a lossless claim. Candidates remain private until explicit
+review; failure/cancellation cleanup and original unknown-result recovery/no-replay remain.
+
+Synthetic original File owner and mounted functional regression **116 passed / 76 deselected**;
+new/existing audio frontend **155 passed / 4 files**. Counts overlap. Independent review passed
+45 real minimum-duration codec combinations, re-probed captured bytes and exact legacy hashes.
+An expanded 131-file frontend run exposed two old ambiguous global-alert waits; both reproduced
+in unchanged `e4cb8f5`. Their correction asserts exact conflict text plus alert role and retains
+all draft/version/no-dispatch checks. Historical failures stay recorded. Current final rerun and
+local commit details follow in the rolling report `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+This is local synthetic CPU codec/functional evidence only. Browser/native-player/Windows/GPU,
+real-model, live authorization/isolation and broader Audio Studio/V2 acceptance are unproven.
+The blocked lifecycle/security candidate and all gates remain untouched. Stage 11/later publication
+remains **BLOCKED**; no upload/ref/PR mutation was retried. PR #48 remains last verified Stage 10.
+Final expanded frontend rerun: **2074 passed / 131 files**, exit 0; final typecheck passes.
+The two corrected conflict-selector failures are closed at test level only; no production or
+security acceptance is inferred. Earlier failed receipts are retained rather than rewritten.
