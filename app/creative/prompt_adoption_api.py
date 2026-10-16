@@ -18,11 +18,10 @@ MAX_ID = 240
 #: merely "1 to 128 characters", which let malformed digests reach the business layer.
 SHA256_HEX = Annotated[str, Field(strict=True, pattern=r"^[0-9a-f]{64}$")]
 
-#: P3 (write-time source consistency between the Prompt read and the Creative commit) has NOT
-#: been verified: the read and the commit are two different owner operations with no proven
-#: unified lock order. The route is reachable, but a reachable write whose cross-owner
-#: consistency is unproven would be exactly the unsafe surface the directive forbids, so the
-#: write is FAIL-CLOSED here rather than merely reported as blocked. GET stays available.
+#: The shared-phase implementation and owner binding checks do not themselves authorize
+#: opening the production route. P3 requires retained File/PostgreSQL, cross-process
+#: revocation and actual browser acceptance at the final source state. Keep this release
+#: gate closed until that evidence is reviewed explicitly; GET stays available.
 PROMPT_ADOPTION_WRITE_ENABLED = False
 
 

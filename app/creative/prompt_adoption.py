@@ -29,7 +29,10 @@ from __future__ import annotations
 import copy
 
 from ..experimental.common import now
+from ..experimental.store import canonical
 from . import prompt_asset as prompt
+from .bible_workspace import BibleWorkspaceService
+from .director_intent import project_shot_cards
 from .prompt_workspace import MAX_PROMPT_SCAN
 from .models import CreativeProductionDocumentIn
 
@@ -327,9 +330,10 @@ class PromptAdoptionService:
                 # Source verification shares the ordinary read rules EXACTLY: same methods,
                 # same actor, same checks — only the lease acquisition is skipped because the
                 # phase already holds it. No payload read happens outside the owner's lease.
-                # Read the source under the lease the phase ALREADY holds. No bible
-                # projection is entered: `_bible_indices` would re-acquire the asset scope
-                # and raise ASSET_PROJECT_SCOPE_NESTED. The same PURE projection the real
+                # Read the source under the lease the phase ALREADY holds. No aggregate
+                # bible projection is entered: it would re-acquire the asset scope and
+                # raise ASSET_PROJECT_SCOPE_NESTED. Binding owners are read below without
+                # opening another lease. The same PURE projection the real
                 # `detail()` uses is applied to the same rows, so head identity, approval and
                 # history completeness are decided by the owner's own functions rather than a
                 # reimplementation.
@@ -400,6 +404,7 @@ class PromptAdoptionService:
                     # Refuse; never truncate into something that looks like a full adoption.
                     raise ValueError("PROMPT_ADOPTION_TOO_LONG")
 
+                bindings = self._write_time_bindings(nid, scope, actor, row, payload, guard)
                 shot = self._shot(row, shot_id)
                 value = {key: copy.deepcopy(row[key]) for key in _DOCUMENT_FIELDS if key in row}
                 shots = [copy.deepcopy(item) for item in self._shots(row)]
@@ -419,11 +424,11 @@ class PromptAdoptionService:
                     # decide `still_applied`, so it must be the REAL committed version.
                     "result_version": row.get("version") + 1,
                     "request_digest": want,
-                    # Bible character/scene/reference bindings were NOT projected on this path
-                    # (that projection re-acquires the lease and cannot run inside the phase),
-                    # so they are reported as unverified rather than as verified provenance.
-                    "source_snapshot": self._source_snapshot(detail),
-                    "source_bindings_verified": False,
+                    # These are observations at this commit, not review markers or render
+                    # authority. Historical/replayed proofs never claim targets are current.
+                    "source_snapshot": bindings,
+                    "source_binding_contract": "prompt-adoption-bindings/1",
+                    "source_bindings_verified": True,
                 }
                 updated, committed = creative.revise_in_state(
                     nid, scope, actor, state, document_id, body.expected_version, value,
@@ -450,6 +455,100 @@ class PromptAdoptionService:
         return result
 
     # ------------------------------------------------------------ helpers --
+    def _write_time_bindings(self, nid, scope, actor, document, payload, guard):
+        """Resolve declared bindings through their owners inside the held phase.
+
+        The phase holds scope -> assets -> project through commit. File story-record
+        writes use that project's lifecycle lock; PostgreSQL story-record writers take
+        the same novel FOR UPDATE, conflicting with the held owner KEY SHARE. No bible
+        aggregate, second transaction, asset scope, or replacement owner is entered.
+
+        Canonical shot bindings use the existing document_id:number projection.
+        Raw shot IDs remain compatible only within this explicit target document.
+        Existence here is neither approval nor permission to execute a model.
+        """
+        if not self._phase_inputs().in_phase(nid, scope, actor):
+            raise ValueError("PROMPT_ADOPTION_BINDING_PHASE_REQUIRED")
+        identity = self.workspace.store.incarnation(nid)
+        snapshots = []
+
+        def snapshot(kind, identifier, owner, value, **extra):
+            snapshots.append({"kind": kind, "id": identifier, "owner": owner,
+                "resolution": prompt.KNOWN, "verification": "WRITE_TIME_OWNER_LEASE",
+                "project_incarnation": identity, "digest": prompt.digest(canonical(value)), **extra})
+
+        def unavailable():
+            # Do not disclose which private/foreign target failed or echo its content.
+            raise ValueError("PROMPT_ADOPTION_BINDING_UNAVAILABLE")
+
+        for field, dataset, kind in (("character_ids", "characters", "CHARACTER"),
+                                     ("scene_ids", "locations", "SCENE")):
+            declared = payload[field]
+            if not declared:
+                continue
+            guard()
+            rows = BibleWorkspaceService._scoped(self.workspace.novels.data_set(nid, dataset), scope)
+            for identifier in declared:
+                matches = [item for item in rows if item.get("id") == identifier]
+                if len(matches) != 1:
+                    unavailable()
+                value = matches[0]
+                if (value.get("deleted_at") or value.get("is_archived") is True
+                        or value.get("status") in {"ARCHIVED", "DELETED"}):
+                    unavailable()
+                snapshot(kind, identifier, "NovelService." + dataset, value)
+            guard()
+
+        cards = project_shot_cards(document) if payload["shot_ids"] else []
+        shot_index = prompt.shot_index([{"document_id": document["id"], "cards": cards}])["entries"]
+        for identifier in payload["shot_ids"]:
+            guard()
+            entry = shot_index.get(identifier)
+            actual_id = entry["shot_id"] if entry is not None else identifier
+            matches = [item for item in self._shots(document)
+                       if isinstance(item, dict) and item.get("id") == actual_id]
+            if len(matches) != 1:
+                unavailable()
+            shot = matches[0]
+            key = f"{document['id']}:{shot.get('number')}"
+            # shot_index is the established pure projection, but its dict cannot
+            # represent duplicate numbers. Refuse an ambiguous source rather than
+            # trusting whichever card happened to overwrite the same key last.
+            if (type(shot.get("number")) is not int or shot["number"] < 1
+                    or sum(f"{document['id']}:{card.get('number')}" == key for card in cards) != 1
+                    or any(item.get("id") == identifier and item.get("id") != actual_id
+                           for item in self._shots(document) if isinstance(item, dict))):
+                unavailable()
+            snapshot("SHOT", identifier, "CreativeService", matches[0],
+                     document_id=document["id"], version=document["version"],
+                     document_digest=self.workspace.creative.document_digest(document),
+                     shot_key=key, shot_id=actual_id)
+
+        # Preserve each declaration's role even when an asset is both reference/output.
+        for field in ("reference_asset_ids", "output_asset_ids"):
+            for identifier in payload[field]:
+                guard()
+                try:
+                    value = self.workspace.assets.get(identifier, branch_id=scope.get("branch_id"),
+                                                      actor_id=actor)
+                    if (value.get("novel_id") != nid or value.get("branch_id") != scope.get("branch_id")
+                            or type(value.get("version")) is not int or not 1 <= value["version"] <= 2**53 - 1
+                            or not isinstance(value.get("kind"), str) or not value["kind"]):
+                        unavailable()
+                    # The original owner's read verifies the original bytes as well as
+                    # actor, branch and incarnation; a metadata-only hit is insufficient.
+                    self.workspace.assets.content(identifier, branch_id=scope.get("branch_id"),
+                                                  actor_id=actor)
+                except (FileNotFoundError, PermissionError, ValueError):
+                    unavailable()
+                snapshot("ASSET", identifier, "AssetLibraryService", {
+                    "id": value["id"], "version": value["version"], "sha256": value["sha256"],
+                    "kind": value["kind"]}, role=field, version=value["version"],
+                    asset_digest=value["sha256"], asset_kind=value["kind"])
+                guard()
+        guard()
+        return snapshots
+
     @staticmethod
     def _source_snapshot(detail) -> list:
         """Binding targets the adopted revision declared, as the server resolved them.
