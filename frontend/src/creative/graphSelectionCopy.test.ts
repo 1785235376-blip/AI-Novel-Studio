@@ -1,9 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import * as graphDraft from './graphDraft';
+afterEach(() => vi.restoreAllMocks());
 import { blankGraph } from './graphDraft';
 import { graphSelectionCopy } from './graphSelectionCopy';
 import { modelCatalog } from './studioGraphModel.testFixtures';
 import type { StudioGraphDefinition } from './studioGraphTypes';
-const graph = (): StudioGraphDefinition => ({ ...blankGraph(), nodes: ['a', 'b', 'c'].map((id, i) => ({ id, definition_id: 'text_input', definition_version: 1, enabled: true, parameters: { text: id }, position: { x: i * 100, y: 0 } })), edges: [{ id: 'ab', source_node_id: 'a', source_port: 'text', target_node_id: 'b', target_port: 'text' }, { id: 'bc', source_node_id: 'b', source_port: 'text', target_node_id: 'c', target_port: 'text' }] });
+const graph = (): StudioGraphDefinition => ({ ...blankGraph(), nodes: ['a', 'b', 'c'].map((id, i) => ({ id, definition_id: (i === 0 ? 'text_input' : i === 1 ? 'draft_prepare' : 'human_review'), definition_version: 1, enabled: true, parameters: i === 0 ? { text: id } : {}, position: { x: i * 100, y: 0 } })), edges: [{ id: 'ab', source_node_id: 'a', source_port: 'text', target_node_id: 'b', target_port: 'text' }, { id: 'bc', source_node_id: 'b', source_port: 'draft', target_node_id: 'c', target_port: 'draft' }] });
 describe('same graph copy planning', () => {
   it('deep copies exact parameters with new IDs and only remapped internal edges', () => {
     const source = graph(); source.nodes[0].parameters = { document_snapshot: { id: 'doc', version: 7, digest: 'a'.repeat(64) }, asset_id: 'asset', version: 2, digest: 'b'.repeat(64) };
@@ -33,4 +35,27 @@ describe('same graph copy planning', () => {
     source.nodes = Array.from({ length: 4 }, (_, i) => ({ ...graph().nodes[0], id: String(i), definition_id: 'media_generate' }));
     expect(() => graphSelectionCopy(source, ['0'], modelCatalog())).toThrow(/媒体生成/);
   });
+  it('rejects a generated ID collision without mutation', () => {
+    const source = graph(), before = structuredClone(source);
+    vi.spyOn(graphDraft, 'graphId').mockReturnValue('a');
+    expect(() => graphSelectionCopy(source, ['a'], modelCatalog())).toThrow(/标识冲突/);
+    expect(source).toEqual(before);
+  });
+  it.each([1, 3] as const)('accepts exactly the schema %s node budget and rejects one over', schema => {
+    const source = graph(), limit = schema === 1 ? 16 : 24;
+    source.schema_version = schema;
+    source.nodes = Array.from({ length: limit - 1 }, (_, i) => ({ ...graph().nodes[0], id: 'node_' + i })); source.edges = [];
+    const result = graphSelectionCopy(source, ['node_0'], modelCatalog());
+    expect(result.definition.nodes).toHaveLength(limit);
+    expect(() => graphSelectionCopy(result.definition, ['node_0'], modelCatalog())).toThrow(/数量限制/);
+  });
+  it('accepts exactly 40 edges and rejects 41 before application', () => {
+    const source = graph();
+    // A budget-only fixture: topology validity remains the original save owner's job.
+    source.edges = Array.from({ length: 20 }, (_, i) => ({ ...graph().edges[0], id: 'edge_' + i }));
+    expect(graphSelectionCopy(source, ['a', 'b'], modelCatalog()).definition.edges).toHaveLength(40);
+    source.edges.push({ ...graph().edges[1], id: 'external' });
+    expect(() => graphSelectionCopy(source, ['a', 'b'], modelCatalog())).toThrow(/数量限制/);
+  });
+
 });

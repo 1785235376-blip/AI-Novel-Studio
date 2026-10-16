@@ -26,3 +26,14 @@ it('rechecks synchronous busy fence before atomic application', async () => {
   busy = false; act(() => hook.result.current.pasteSelectionCopy()); expect(hook.result.current.draft.nodes).toHaveLength(2);
   act(() => hook.result.current.pasteSelectionCopy()); expect(hook.result.current.draft.nodes).toHaveLength(2);
 });
+
+it('does not resurrect a preview after draft edit and undo return to identical source', async () => {
+  const initial = props(), hook = renderHook(() => useStudioGraphEditorController(initial));
+  await waitFor(() => expect(hook.result.current.editable).toBe(true));
+  act(() => hook.result.current.addNode()); act(() => hook.result.current.previewSelectionCopy());
+  const source = structuredClone(hook.result.current.draft);
+  act(() => hook.result.current.change({ ...source, title: 'Changed' }));
+  act(() => hook.result.current.travel(false)); expect(hook.result.current.draft).toEqual(source);
+  expect(hook.result.current.currentCopy).toBeUndefined();
+  act(() => hook.result.current.pasteSelectionCopy()); expect(hook.result.current.draft.nodes).toHaveLength(1);
+});

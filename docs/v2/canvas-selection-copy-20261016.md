@@ -20,6 +20,10 @@ Paste is available only for the same owner identity/client/graph/selection epoch
 
 Browser/visual/native keyboard/IME/assistive technology/performance, PostgreSQL/P0/security, Windows/GPU/provider/user-computer/full RC NOT_RUN. Canonical image-workspace reference inspected; no protected shell/token changes. P0 remains BLOCKED, R3-GATE HOLD, production Prompt Adoption writes disabled. No push or hosted CI because cost is unknown.
 
+## Review additions
+
+Independent review requested stronger tests. Added valid text-input → draft-prepare → human-review topology, generated-ID collision rejection, exact 16/24-node and 40-edge boundary tests, and draft edit/undo ABA invalidation. Existing owner/client/inactive fences were already covered. The 40-edge test is explicitly budget-only. Preview preserves editable drafts, including incomplete inputs; typed topology and source authorization remain the original save owner’s responsibility. Production implementation unchanged. Focused review suite and TypeScript receipt recorded separately, not added to overlapping 226-test totals.
+
 ## Handoff
 
 Independent parent review before further tracked edits. Cross-canvas copy requires explicit current-owner and source-validation design; it is not delivered here. Nested subgraphs, durable unsaved recovery and full large-display acceptance remain open. Preserve historical evidence and all environment/cost/denial boundaries.

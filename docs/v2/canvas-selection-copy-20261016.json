@@ -70,12 +70,28 @@
       "receipt_sha256": "a76f1d3fd6fdf2f6c1874fcae250e30d0c6b674e6769c12147756fa15f29fe81",
       "log": "docs/delivery/v2-development/canvas-copy-token.log",
       "log_sha256": "282be1324ac8b80cf8e180bac535f8de61166aa290813f08f289988e4f424d82"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/graphSelectionCopy.test.ts src/creative/graphSelectionCopyController.test.tsx && ./node_modules/.bin/tsc -b"
+      ],
+      "started_utc": "2026-10-16T09:54:28.030664+00:00",
+      "finished_utc": "2026-10-16T09:54:54.186312+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-copy-review-tests.json",
+      "receipt_sha256": "38f1391a5ec851ad0a6ce9251b92b81969bf0d91fec7c2b2226b3557285f3876",
+      "log": "docs/delivery/v2-development/canvas-copy-review-tests.log",
+      "log_sha256": "2b81bef4236e5c9d0deef529a7266a2eeb22f75bf75ae72631fec1ce21aa2bae"
     }
   ],
   "changed_source_sha256": {
     "frontend/src/creative/graphSelectionCopy.ts": "c4341ef9113fc9b5a216581ab34cf3b0d4933dbdcd0623903e087b04257cb075",
-    "frontend/src/creative/graphSelectionCopy.test.ts": "df2e61c69eb3190013522d3db03f4b1aa6da5082f219cbae058e250c690898da",
-    "frontend/src/creative/graphSelectionCopyController.test.tsx": "e0ed2ef55901a01c2320925fb9632a6be6c57c65d52b1ba07ce541890ece78b3",
+    "frontend/src/creative/graphSelectionCopy.test.ts": "cfd2cc07b7743724742f08841c11a2d9ccaaed32011bb60ea459820270518910",
+    "frontend/src/creative/graphSelectionCopyController.test.tsx": "f2f6570144b83cdce7e9ba8a03884795ff2103342a6fccb0c4b4b28282c3f581",
     "frontend/src/creative/useStudioGraphEditorController.ts": "6ee4a4c8679e1075c93dbb9c59169a9bfeb435f02f219b6edd8d2b06c5733db3",
     "frontend/src/creative/studioGraphEditorView.tsx": "1be54d09d65c18aa80caa3384423158871e323d3de58d001c76f9b5cdccb3819",
     "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "7bb15692c810118f426ba19639dabfbe94f3fd7fa8920f4145ceb22df11f531b",
@@ -93,5 +109,6 @@
     "full RC",
     "hosted CI"
   ],
-  "push": "NOT_ATTEMPTED_COST_UNKNOWN"
+  "push": "NOT_ATTEMPTED_COST_UNKNOWN",
+  "review_additions": "18 focused tests plus tsc passed after strengthening tests only; production code unchanged from c9df4e9"
 }
