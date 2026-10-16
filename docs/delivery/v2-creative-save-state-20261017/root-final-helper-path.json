@@ -1,0 +1,9 @@
+{
+  "phase": "Preparation before any final source freeze or final runtime",
+  "component_owner_helper": ".runtime/creative_save_verify.py",
+  "root_final_helper": ".runtime/creative_save_final_verify.py",
+  "source_original_unchanged": true,
+  "root_final_helper_sha256": "4ef24abc0f8e7261b220daf9e40d38aa9bb95e0c5ebf78a4ea56938e305806e0",
+  "reason": "Component owner uses the earlier shared helper name for mounted/related/tsc. Root creates a separate full-src/build/visual/tokens helper instead of overwriting it.",
+  "product_test_or_gate_source_change": false
+}

@@ -1,0 +1,89 @@
+{
+  "utc": "2026-10-16T20:00:39.968042+00:00",
+  "status": "CANDIDATE_SOURCE_REVIEW_PASS",
+  "base": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+  "sources_utf8_lf": {
+    "frontend/src/App.tsx": "f8b38726789f1ac5f4b4c20723487e70e366404623473b7a9fcee8b3d1de2212",
+    "frontend/src/creative/CreativeWorkspace.tsx": "5cda949edec0d5fd3fcd4ba28154eafc214108875708e650199da48afc637f8e",
+    "frontend/src/creative/CreativeCanvas.tsx": "e03fb5e1a000233b873475bc7bea459843b60aef1490842f27f6597db70dfc92",
+    "frontend/src/creative/CreativeWorkspace.saveState.regression.test.tsx": "dd3604e0027566d9d79cccb71043ac982985cbfaf072276016b838958b299444",
+    "frontend/src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx": "dba1f85aa973323d3bd5e9e3a497d3f42531f9898236ba81988abc7547ec3bcd"
+  },
+  "protected_guard_blocks": {
+    "app_navigation_entry_handler_query_overview": {
+      "source": "frontend/src/App.tsx",
+      "baseline_sha256": "167b3196cea78d050a54f6ff4d22b8f3b6dbedc0097fb23cb2c256a038397f06",
+      "raw_block_present": true
+    },
+    "app_requested_asset_origin_fence": {
+      "source": "frontend/src/App.tsx",
+      "baseline_sha256": "41c349957eee70b1f37927633722c6e7b08e537cf5faf8db325560199b9575d9",
+      "raw_block_present": true
+    },
+    "app_open_v2_explicit_novel_intent": {
+      "source": "frontend/src/App.tsx",
+      "baseline_sha256": "f373e5c7b7b6545fa36b2ec8da1f91d0cc4e7f006db7b272ad81ea18dec14252",
+      "raw_block_present": true
+    },
+    "app_synchronous_subscription_observe": {
+      "source": "frontend/src/App.tsx",
+      "baseline_sha256": "da436655eb7d3d4b3f671e411a832e6ea5340a3e861806f40bb8536a03a6f933",
+      "raw_block_present": true
+    },
+    "app_local_connection_authority_effect": {
+      "source": "frontend/src/App.tsx",
+      "baseline_sha256": "cf09275f969550d59515fb34a3613f4264359599d8d7b00daeb39770d7eed0fa",
+      "raw_block_present": true
+    },
+    "creative_adoption_host_version_and_draft_fence": {
+      "source": "frontend/src/creative/CreativeWorkspace.tsx",
+      "baseline_sha256": "9018ba973321738fd97904f56ddf52b3b62c6090e33d5fe1eecc87e395725c3e",
+      "raw_block_present": true
+    }
+  },
+  "adoption_other60_raw_unchanged": true,
+  "navigation_other4_raw_unchanged": true,
+  "existing1118_test_gate_raw_unchanged": true,
+  "R1_verify_finding": "CLOSED: exact originating mode and Draft object fence before publishing serverCandidate or notice; stale error suppressed, original 401/403 deny retained",
+  "reviewed_existing_evidence": {
+    "creative-save-owner-boundary-red-r1.vitest.json": {
+      "sha256": "af7b88dc04e830015998288a37aa27f2a2d0397ecdc23a5449b36543ff23076a",
+      "passed": 20,
+      "failed": 7,
+      "files": 2,
+      "late_verification": [
+        {
+          "name": "Creative current document save-state ownership does not attach a late verification candidate to a different clean document after an uncertain derive",
+          "status": "failed"
+        }
+      ]
+    },
+    "creative-save-owner-boundary-green-r1.vitest.json": {
+      "sha256": "dcc2c6cd9dfad469d219f273b17cbb45142d70108d5012de5da48dcf0eef74b4",
+      "passed": 27,
+      "failed": 0,
+      "files": 2,
+      "late_verification": [
+        {
+          "name": "Creative current document save-state ownership does not attach a late verification candidate to a different clean document after an uncertain derive",
+          "status": "passed"
+        }
+      ]
+    },
+    "creative-save-related-green-r1.vitest.json": {
+      "sha256": "a427219495cb3b665c485b5ecc5bde7a8c148063f2c6c024c16290b5af3b1cfe",
+      "passed": 99,
+      "failed": 0,
+      "files": 7,
+      "late_verification": [
+        {
+          "name": "Creative current document save-state ownership does not attach a late verification candidate to a different clean document after an uncertain derive",
+          "status": "passed"
+        }
+      ]
+    }
+  },
+  "runtime_acceptance": "NOT_EVALUATED: mounted receipts are component evidence, no browser/PG/model acceptance inferred",
+  "reviewer_executed_tests_or_collection": false,
+  "source_or_manifest_edits": false
+}

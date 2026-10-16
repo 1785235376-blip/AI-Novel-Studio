@@ -1,0 +1,32 @@
+[
+  {
+    "original": "docs/delivery/v2-development/creative-save-browser-file-final-r1.json",
+    "mirror": "runner-receipts/creative-save-browser-file-final-r1.json",
+    "sha256": "fc474c8777cbbde6b2550542e93516dbb689f271645ac621ea70282f8e09d837",
+    "byte_exact": true
+  },
+  {
+    "original": "docs/delivery/v2-development/creative-save-browser-file-final-r1.log",
+    "mirror": "runner-receipts/creative-save-browser-file-final-r1.log",
+    "sha256": "dcffff63bf4a8d0ef97dc31b4f884792e1adf1482cb98ba902a15b7bf6ea5c77",
+    "byte_exact": true
+  },
+  {
+    "original": "docs/delivery/v2-development/creative-save-browser-pg-final-r1.json",
+    "mirror": "runner-receipts/creative-save-browser-pg-final-r1.json",
+    "sha256": "350e4c1e702f8674aec9dfa9b51514b535a265f5a8c13d176df274f36c016c43",
+    "byte_exact": true
+  },
+  {
+    "original": "docs/delivery/v2-development/creative-save-browser-pg-final-r1.log",
+    "mirror": "runner-receipts/creative-save-browser-pg-final-r1.log",
+    "sha256": "2dcdf80b61f68fe1aae730ab76bd0f584de26fda2693093bc27a2d5c97d27b89",
+    "byte_exact": true
+  },
+  {
+    "original": "docs/delivery/v2-development/creative-save-browser-pg-final-r1-postgres-runtime.json",
+    "mirror": "runner-receipts/creative-save-browser-pg-final-r1-postgres-runtime.json",
+    "sha256": "eaf987003e5595e7e3e3e849663f85bf1cd350d40586130deb88383a808abd48",
+    "byte_exact": true
+  }
+]

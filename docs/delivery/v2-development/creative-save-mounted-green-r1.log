@@ -1,0 +1,402 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ❯ src/creative/CreativeWorkspace.saveState.regression.test.tsx (12 tests | 1 failed) 1488ms
+   × Creative current document save-state ownership > uses the original optional-field projection when an added visual target is explicitly removed 100ms
+     → Found multiple elements with the role "button" and name "移除此文档视觉目标"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<button[39m
+  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+[36m>[39m
+  [0m移除此文档视觉目标[0m
+[36m</button>[39m
+
+Ignored nodes: comments, script, style
+[36m<button[39m
+  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [33mdisabled[39m=[32m""[39m
+[36m>[39m
+  [0m移除此文档视觉目标[0m
+[36m</button>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"NOVEL"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"[39m
+              [36m/...
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  03:55:56
+   Duration  2.98s (transform 549ms, setup 11ms, collect 904ms, tests 1.49s, environment 396ms, prepare 56ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-creative-save-state-20261017/creative-save-mounted-green-r1.vitest.json
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/CreativeWorkspace.saveState.regression.test.tsx > Creative current document save-state ownership > uses the original optional-field projection when an added visual target is explicitly removed
+TestingLibraryElementError: Found multiple elements with the role "button" and name "移除此文档视觉目标"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<button[39m
+  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+[36m>[39m
+  [0m移除此文档视觉目标[0m
+[36m</button>[39m
+
+Ignored nodes: comments, script, style
+[36m<button[39m
+  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [33mdisabled[39m=[32m""[39m
+[36m>[39m
+  [0m移除此文档视觉目标[0m
+[36m</button>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"NOVEL"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"[39m
+              [36m/...
+ ❯ Object.getElementError ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/creative/CreativeWorkspace.saveState.regression.test.tsx:100:28
+     98|     fireEvent.change(screen.getByLabelText('视觉风格'), { target: { va…
+     99|     expect(within(canvas()).getByText('未保存')).toBeTruthy();
+    100|     fireEvent.click(screen.getByRole('button', { name: '移除此文档视觉…
+       |                            ^
+    101|     expect(within(canvas()).getByText('已保存 · v1')).toBeTruthy(); ex…
+    102|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

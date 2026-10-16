@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx (1 test) 177ms
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 2724ms
+
+ Test Files  2 passed (2)
+      Tests  27 passed (27)
+   Start at  03:59:10
+   Duration  4.09s (transform 554ms, setup 18ms, collect 1.53s, tests 2.90s, environment 796ms, prepare 106ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-creative-save-state-20261017/creative-save-owner-boundary-green-r1.vitest.json

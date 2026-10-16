@@ -1,0 +1,99 @@
+{
+  "utc": "2026-10-16T20:11:13.774103+00:00",
+  "head_at_check": "5c17750bd59c76ed4fb060716d61019151a3ef42",
+  "source_count": 2310,
+  "receipt_checks": [
+    {
+      "receipt": "docs/delivery/v2-development/creative-save-browser-file-final-r1.json",
+      "sha256": "fc474c8777cbbde6b2550542e93516dbb689f271645ac621ea70282f8e09d837",
+      "log_sha256": "dcffff63bf4a8d0ef97dc31b4f884792e1adf1482cb98ba902a15b7bf6ea5c77",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2310
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-save-browser-pg-final-r1.json",
+      "sha256": "350e4c1e702f8674aec9dfa9b51514b535a265f5a8c13d176df274f36c016c43",
+      "log_sha256": "2dcdf80b61f68fe1aae730ab76bd0f584de26fda2693093bc27a2d5c97d27b89",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2310
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-save-src-final-r1.json",
+      "sha256": "c0261f02ade135017a037f76513795a2a5c25e2ab1f832f98cc21dbf5ff7e110",
+      "log_sha256": "c58f9f5dfa7e16cf114f06b22dbf80bf89e3360f5d0189a9074cf6b571b5f8a5",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2310
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-save-build-final-r1.json",
+      "sha256": "f39bdad1fde6b4a364994b31603d09e20840a268e7fa2185d766b55edd344f6b",
+      "log_sha256": "4f4789413c9935caa3d2801afefc9bcc15919c7c7ae1c92e35fe1b1aebb41fa8",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2310
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-save-visual-final-r1.json",
+      "sha256": "6a2bb40e2c189668ea075e5d026168895ddb80ce6f30fa3362230e9a34849acb",
+      "log_sha256": "617dfa663eac73ae3e1591aadecec6a735f034393d335b04f5c9b60883a1653f",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2310
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-save-tokens-final-r1.json",
+      "sha256": "728ab43f8953aed7e23a6af4b0cc5ab95c6211bd81afbdc7c1b68826aeacb17d",
+      "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2310
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-save-ci-selfchecks-final-r1.json",
+      "sha256": "927df9990f172376b5887fefa74b6052d088548b16d1687b065d2f1e62b694c8",
+      "log_sha256": "2f8d075b80768d363ca1f41a7df38b9d8c6475a97e4d42ddd5f372bf070c6803",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2310
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-save-collection-final-r1.json",
+      "sha256": "12f7eb6469ba6d39d62ef64dc30434f9caeac7fcc9dfe527b9f0c4b9e2e43fc5",
+      "log_sha256": "74b6a1e4b2d21df0dcd4fc5872fadba6b03543ab6db37c064c6463c5eb575955",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2310
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-save-collection-confirmation-r1.json",
+      "sha256": "2c8a7b6634cc092914c2a682948318b0fd31962fdb4faaf5a417b453dc9dc56d",
+      "log_sha256": "e7687092e4ad3c1164a62509e18c7829121c9c758ff381032a92710a404c20d3",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2310
+    }
+  ],
+  "changed_source_sha256": {
+    "frontend/playwright.creative-save-live.config.ts": "e2dde17606c8c966c8cec26e09b052b927f42b36859c4b809e97a09ce58afe40",
+    "frontend/src/App.tsx": "f8b38726789f1ac5f4b4c20723487e70e366404623473b7a9fcee8b3d1de2212",
+    "frontend/src/creative/CreativeCanvas.tsx": "e03fb5e1a000233b873475bc7bea459843b60aef1490842f27f6597db70dfc92",
+    "frontend/src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx": "dba1f85aa973323d3bd5e9e3a497d3f42531f9898236ba81988abc7547ec3bcd",
+    "frontend/src/creative/CreativeWorkspace.saveState.regression.test.tsx": "dd3604e0027566d9d79cccb71043ac982985cbfaf072276016b838958b299444",
+    "frontend/src/creative/CreativeWorkspace.tsx": "5cda949edec0d5fd3fcd4ba28154eafc214108875708e650199da48afc637f8e",
+    "frontend/tests/e2e/v2-creative-save-live.spec.ts": "fecf742eb37493238f121a1b54dae581830dcd70cf02340804e6739af44e9254",
+    "scripts/run_v2_creative_save_state_browser.py": "1f41bbf11eb8608ee4db4504cac5d06d281b321c82f6ecd1cadee6e5b550ba62"
+  },
+  "claim": "Exact current backend/frontend/runner/test sources match every selected successful original-runner snapshot; no source drift permitted."
+}

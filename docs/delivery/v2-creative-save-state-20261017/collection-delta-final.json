@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-16T20:03:52.031883+00:00",
+  "base": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+  "nodes_before": 15142,
+  "nodes_after": 15142,
+  "added_nodes": [],
+  "removed_or_reordered_nodes": [],
+  "literal_collection_rows_raw_equal": true,
+  "classifications_skips_external_gates_equal": true,
+  "manifest_sources_before": 2367,
+  "manifest_sources_after": 2372,
+  "new_source_paths": [
+    "frontend/playwright.creative-save-live.config.ts",
+    "frontend/src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx",
+    "frontend/src/creative/CreativeWorkspace.saveState.regression.test.tsx",
+    "frontend/tests/e2e/v2-creative-save-live.spec.ts",
+    "scripts/run_v2_creative_save_state_browser.py"
+  ],
+  "existing_authorized_changes": [
+    "frontend/src/App.tsx",
+    "frontend/src/creative/CreativeCanvas.tsx",
+    "frontend/src/creative/CreativeWorkspace.tsx"
+  ],
+  "source_map_count": 2310,
+  "source_map_sha256": "783255e32b4a193965a8162becfe7df605eb76e99ee41b729f4fe28517999f9f",
+  "manifest_sha256": "9d9b8157f1f342ff680e6119b4338a30332a1cec970d5cb00faa10fc01193aca",
+  "historical_cumulative_extension_nodes_from_9151": 5991,
+  "round_added_nodes": 0,
+  "API_CATALOG_historical_source_changes_are_not_round_delta": {
+    "API_CATALOG.json": {
+      "sha256": "7bf604c6054300a11e06243d5ffbb15ec791266249a30d04a7303887ec8c7881",
+      "raw_equal_to_454": true,
+      "baseline_manifest_and_current_equal": true
+    },
+    "API_CATALOG.md": {
+      "sha256": "9433c648bf511e49a9b1e2fc58aa971b07cfef0df3f4529c45588e4f4bdac72e",
+      "raw_equal_to_454": true,
+      "baseline_manifest_and_current_equal": true
+    },
+    "API_CATALOG_DETAIL.json.gz": {
+      "sha256": "647fab1ae139a420bd20e68db768cef926950083114d7b58d227093caad414c5",
+      "raw_equal_to_454": true,
+      "baseline_manifest_and_current_equal": true
+    }
+  },
+  "HEAD_byte_binding": "DEFERRED until browser harness and manifest commits",
+  "scope": "inventory only; not 15142 executed tests"
+}

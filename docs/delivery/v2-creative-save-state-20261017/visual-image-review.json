@@ -1,0 +1,635 @@
+{
+  "inspected_pngs": 78,
+  "per_backend": 39,
+  "viewports": [
+    "1366x768",
+    "1440x900",
+    "1920x1080"
+  ],
+  "rows": [
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "12089a4f5ac39014589dcfab4c22aa1de1a67265be842cde62f8d2e86d493bc5",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "1e9b40ff3c67b30a0437ba4315ede3768e82f73f6f43da88bf93acda5ffd8320",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "83f56ca0767e7b871a804e1c534709e0de9deea0505415949baba5d0ff9e3585",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "42029868bef3095b0ede4aa8e172701e5adeadc8f045da8bb7efd7366d608ced",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "b9459cec8f426f97c07961bf92dd4d350c527ac3b5fa42f0420ca8da2668c4f0",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "500664944e7939d5d6d2128b71b39704c8005f82fe41125cc29078a540148423",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/current-saved-v1-and-other-stage-real-dirty.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "98ae72a16d93d9d2c741d98534a3d84fe933de277cfe677ad32bbcff9afd651e",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-real-put-held-saving-and-navigation-fenced.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "751174c78bee589efb262f133b3ec4f853cd33b2062222108e007bee15f58c38",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v1-dirty-real-input.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "8a986e1298a34f4bab893a5b1cd7bae85363cb7962487b136ab5f56a658fcf3b",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v1-initial-current-saved.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "b7113806910eaaf156906726ffd9d98894f0127ff11d6c4278b12dcc5ec7c48a",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v2-refresh-reopen-saved.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "c2d1b356df51a40516642eaa8bca3c919fc32bc1b5d7cef80a5ab609d91aa56a",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v2-save-receipt-and-original-owner-readback.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "bf10ca14a58cbe7abc1349eda494cd6cf038706a2ead96e1eb2f4aa57f0ab485",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/current-saved-v1-and-other-stage-real-dirty.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "fcb3c6a55664fb2c97e376723cae7cf9f3248e2a6e65c1b8e167b2c8354981e3",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-real-put-held-saving-and-navigation-fenced.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "930c141857599e54e9c7fa28e0d7bfcdf8ba2aa6b0bc13002fb7f583689c0a3c",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v1-dirty-real-input.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "8a5406f93cbb19cf06b24b7d4162a76008e300aed67ba062fe3558e000df3f57",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v1-initial-current-saved.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "89553998dac46bd3fd124cf794bda602858327d1558dbf7037af9148f361af36",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v2-refresh-reopen-saved.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "8b69f2c9c12618700a1a8cd5bde1a730cfc497d82af4ad2294c4287d4c1cb4b3",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v2-save-receipt-and-original-owner-readback.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "ca9868965ea5bedb194f9dc2e02227bcf7c738b658f811f1f620c6be9ae7f75c",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/current-saved-v1-and-other-stage-real-dirty.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "b8df448191847b9c4ab4d094db9a98358baf30e066fc9aa14254897b74b61b22",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-real-put-held-saving-and-navigation-fenced.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "396ee13395bd84b22cfb6000a6d3faa898a70050c851539760bf39309b0ce11a",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v1-dirty-real-input.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "fa0a19e7c29a125a357ec4628fe8c5ae9041c69a706b81306670977906e1c553",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v1-initial-current-saved.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "e7b9ac433199f6dae7b4a7c8cf59bfa4fc6882dfaee05d1570ce06f74b1a6115",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v2-refresh-reopen-saved.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "c078167bbc6802059c41f8223e67a95c8f7ba43b0377bd06fb547071f2bbc1c2",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v2-save-receipt-and-original-owner-readback.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "6545ae3ff16dec8433c653e3f439c54b4795ada6285d1ff15258f0a25f8aebe6",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "7ac8c2a07a1b57c14e14383798db22b5194ffcb3d861ef51684ba0722fa27006",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/offline-unknown-keeps-local-draft-and-current-status.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "a0845c60d443d12afc8297a8cb465a071b25ed0e6359482547d0b882733d5bea",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "2c3f7c56619972a862b2f645b3f71b3304d5e806edaf63e60bc2e1d8df09d5b8",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-cas409-keeps-local-draft-and-server-v2.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "2be25f43447c2841d36ccb1b1e720fcca4ae86a38e6b5dd71d48c81d0790c9e4",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-verify-get-held-does-not-claim-save-write.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "320d6978c103f987380efbce2a089778035e522883e1afcb6f1621f04d019efd",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "69e0a2fcd998b9b0fca3d255548f420f2b8ef276dd1fd32fdfc6c0f02f5ab7b4",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/offline-unknown-keeps-local-draft-and-current-status.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "fd628d32023348b73aaa2b426f6427d84ad6971db9260adf628b801f74968e12",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "8169dfe1d447f4004e9606f6652d93db1a2be402609ec7ce675911e2abaf2455",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-cas409-keeps-local-draft-and-server-v2.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2083ce47b6199d11a1bf4623f69aa774754d679db6dfa9d489ea4e780fc5ae52",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-verify-get-held-does-not-claim-save-write.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "6b3412163efad3d42acb3330ec13dc8e3d26f2c46ad7aa98a5b91e510ef51343",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "3abba473b6fe07f33c4867c01d49b55dca3932a21bcb178fbb2afaf6e7a06aab",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/offline-unknown-keeps-local-draft-and-current-status.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "e0691d610d0ed47827a8db18c5870839d00d04ff5fd547ab55f57c357de5df35",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4fb05bee4b070eb06cf98e6633732f52849459dfb5979ae4ddd79667649dfe51",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-cas409-keeps-local-draft-and-server-v2.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4f2cfb397ea38f9dfcb051bc25dc45673d06993d85b82d60700aa426a71a7112",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "file",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-verify-get-held-does-not-claim-save-write.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "afbe8ef057735a057dd0aa2f2d276749b08c2ad6f6e17dd6c0455d4ca90c129d",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "12089a4f5ac39014589dcfab4c22aa1de1a67265be842cde62f8d2e86d493bc5",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "1e9b40ff3c67b30a0437ba4315ede3768e82f73f6f43da88bf93acda5ffd8320",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "83f56ca0767e7b871a804e1c534709e0de9deea0505415949baba5d0ff9e3585",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "42029868bef3095b0ede4aa8e172701e5adeadc8f045da8bb7efd7366d608ced",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "b9459cec8f426f97c07961bf92dd4d350c527ac3b5fa42f0420ca8da2668c4f0",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "500664944e7939d5d6d2128b71b39704c8005f82fe41125cc29078a540148423",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/current-saved-v1-and-other-stage-real-dirty.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "98ae72a16d93d9d2c741d98534a3d84fe933de277cfe677ad32bbcff9afd651e",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-real-put-held-saving-and-navigation-fenced.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "751174c78bee589efb262f133b3ec4f853cd33b2062222108e007bee15f58c38",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v1-dirty-real-input.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "8a986e1298a34f4bab893a5b1cd7bae85363cb7962487b136ab5f56a658fcf3b",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v1-initial-current-saved.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "b7113806910eaaf156906726ffd9d98894f0127ff11d6c4278b12dcc5ec7c48a",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v2-refresh-reopen-saved.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "c2d1b356df51a40516642eaa8bca3c919fc32bc1b5d7cef80a5ab609d91aa56a",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v2-save-receipt-and-original-owner-readback.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "bf10ca14a58cbe7abc1349eda494cd6cf038706a2ead96e1eb2f4aa57f0ab485",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/current-saved-v1-and-other-stage-real-dirty.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "fcb3c6a55664fb2c97e376723cae7cf9f3248e2a6e65c1b8e167b2c8354981e3",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-real-put-held-saving-and-navigation-fenced.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "930c141857599e54e9c7fa28e0d7bfcdf8ba2aa6b0bc13002fb7f583689c0a3c",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v1-dirty-real-input.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "8a5406f93cbb19cf06b24b7d4162a76008e300aed67ba062fe3558e000df3f57",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v1-initial-current-saved.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "89553998dac46bd3fd124cf794bda602858327d1558dbf7037af9148f361af36",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v2-refresh-reopen-saved.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "8b69f2c9c12618700a1a8cd5bde1a730cfc497d82af4ad2294c4287d4c1cb4b3",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v2-save-receipt-and-original-owner-readback.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "ca9868965ea5bedb194f9dc2e02227bcf7c738b658f811f1f620c6be9ae7f75c",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/current-saved-v1-and-other-stage-real-dirty.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "b8df448191847b9c4ab4d094db9a98358baf30e066fc9aa14254897b74b61b22",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-real-put-held-saving-and-navigation-fenced.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "396ee13395bd84b22cfb6000a6d3faa898a70050c851539760bf39309b0ce11a",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v1-dirty-real-input.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "fa0a19e7c29a125a357ec4628fe8c5ae9041c69a706b81306670977906e1c553",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v1-initial-current-saved.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "e7b9ac433199f6dae7b4a7c8cf59bfa4fc6882dfaee05d1570ce06f74b1a6115",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v2-refresh-reopen-saved.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "c078167bbc6802059c41f8223e67a95c8f7ba43b0377bd06fb547071f2bbc1c2",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v2-save-receipt-and-original-owner-readback.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "6545ae3ff16dec8433c653e3f439c54b4795ada6285d1ff15258f0a25f8aebe6",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "7ac8c2a07a1b57c14e14383798db22b5194ffcb3d861ef51684ba0722fa27006",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/offline-unknown-keeps-local-draft-and-current-status.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "a0845c60d443d12afc8297a8cb465a071b25ed0e6359482547d0b882733d5bea",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "2c3f7c56619972a862b2f645b3f71b3304d5e806edaf63e60bc2e1d8df09d5b8",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-cas409-keeps-local-draft-and-server-v2.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "2be25f43447c2841d36ccb1b1e720fcca4ae86a38e6b5dd71d48c81d0790c9e4",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-verify-get-held-does-not-claim-save-write.png",
+      "width": 1366,
+      "height": 768,
+      "sha256": "320d6978c103f987380efbce2a089778035e522883e1afcb6f1621f04d019efd",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "69e0a2fcd998b9b0fca3d255548f420f2b8ef276dd1fd32fdfc6c0f02f5ab7b4",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/offline-unknown-keeps-local-draft-and-current-status.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "fd628d32023348b73aaa2b426f6427d84ad6971db9260adf628b801f74968e12",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "8169dfe1d447f4004e9606f6652d93db1a2be402609ec7ce675911e2abaf2455",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-cas409-keeps-local-draft-and-server-v2.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2083ce47b6199d11a1bf4623f69aa774754d679db6dfa9d489ea4e780fc5ae52",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-verify-get-held-does-not-claim-save-write.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "6b3412163efad3d42acb3330ec13dc8e3d26f2c46ad7aa98a5b91e510ef51343",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "3abba473b6fe07f33c4867c01d49b55dca3932a21bcb178fbb2afaf6e7a06aab",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/offline-unknown-keeps-local-draft-and-current-status.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "e0691d610d0ed47827a8db18c5870839d00d04ff5fd547ab55f57c357de5df35",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4fb05bee4b070eb06cf98e6633732f52849459dfb5979ae4ddd79667649dfe51",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-cas409-keeps-local-draft-and-server-v2.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4f2cfb397ea38f9dfcb051bc25dc45673d06993d85b82d60700aa426a71a7112",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    },
+    {
+      "backend": "pg",
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-verify-get-held-does-not-claim-save-write.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "afbe8ef057735a057dd0aa2f2d276749b08c2ad6f6e17dd6c0455d4ca90c129d",
+      "inspection": "Actual original PNG viewed independently; no crop or generated replacement."
+    }
+  ]
+}

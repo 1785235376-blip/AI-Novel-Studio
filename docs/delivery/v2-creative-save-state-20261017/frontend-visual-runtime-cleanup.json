@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-16T20:03:53.1123950Z",
+  "port": 5174,
+  "listeners": [],
+  "webserver_pid_from_original_log": 86928,
+  "webserver_still_present": false,
+  "process": null,
+  "stopped_by_original_playwright_owner": true,
+  "manual_termination_performed": false
+}

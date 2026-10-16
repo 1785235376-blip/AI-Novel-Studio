@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-16T20:11:15.841011+00:00",
+  "owned_loopback_connect_exit": {
+    "8138": 10035,
+    "5208": 10035,
+    "50678": 10035,
+    "5174": 10035
+  },
+  "independent_listener_process_audit": "docs/delivery/v2-creative-save-state-20261017/final-runtime-cleanup.json",
+  "independent_listener_process_audit_sha256": "c671799c2f531857922dfa91da6d52a06a43ce807d4d3ada018471a307c44828",
+  "owned_services_accepting_connections": [],
+  "drive_d_bytes": {
+    "total": 1785315979264,
+    "used": 1610707705856,
+    "free": 174608273408
+  },
+  "space_reclaimed_claim": false,
+  "before_round_free_space_available": false,
+  "retained": [
+    "raw failure/pass/interruption receipts and browser screenshots",
+    "owned validation profiles, asset bytes and PostgreSQL databases",
+    "previously retained baseline regression worktree"
+  ],
+  "cleanup_scope": "Owned services stopped. No recursive filesystem cleanup attempted in this round."
+}

@@ -1,0 +1,1256 @@
+{
+  "token_sha256": "ed8a7eea95173f8a3eb2b62ad27e211eaa1196e9b4c915e1bcebaecbb291ac8c",
+  "response_fabrication": false,
+  "identity_or_state_injection": false,
+  "production_gate_override": false,
+  "model_execution": "NOT_REQUESTED",
+  "model_counter": "NOT_INSTRUMENTED",
+  "records": [
+    {
+      "phase": "ordinary_production_adoption_gate",
+      "write_enabled": false,
+      "document_id": "5768ae72-8021-4038-9897-d24380f88afe"
+    },
+    {
+      "phase": "original_manual_document_created",
+      "source": "original_api",
+      "project_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+      "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+      "owner": {
+        "mode": "STORYBOARD",
+        "title": "手动文档 故障保留",
+        "source_chapter_ids": [],
+        "source_independent": true,
+        "scenes": [
+          {
+            "id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "heading": "INT. SAVE ROOM - DAY",
+            "time": "",
+            "location": "",
+            "characters": [],
+            "action": "原始手动内容 故障保留",
+            "dialogue": [],
+            "emotion": "",
+            "director_notes": []
+          }
+        ],
+        "shots": [
+          {
+            "id": "1864853c-5fe7-4a47-ac9d-f2edd05128e0",
+            "number": 1,
+            "scene_id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "shot_size": "MEDIUM",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "duration_seconds": 5,
+            "frame_prompt": "原始手动画面 故障保留",
+            "composition": "",
+            "lens": "",
+            "lighting": "",
+            "environment": "",
+            "sound": "",
+            "color": "",
+            "action": "",
+            "dialogue": [],
+            "sound_effect": "",
+            "director_notes": []
+          }
+        ],
+        "director_notes": [],
+        "video_plan": null,
+        "script": null,
+        "schema_version": 1,
+        "source_evidence": {},
+        "source_privacy": {},
+        "source_documents": {},
+        "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+        "status": "DRAFT",
+        "privacy_level": "LOCAL_ONLY",
+        "id": "5768ae72-8021-4038-9897-d24380f88afe",
+        "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+        "scope": {
+          "mode": "collaboration",
+          "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "workspace_id": "workspace-a",
+          "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+          "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d"
+        },
+        "version": 1,
+        "created_by": "local-author",
+        "updated_by": "local-author",
+        "created_at": "2026-10-16T20:02:04.409154+00:00",
+        "updated_at": "2026-10-16T20:02:04.409154+00:00",
+        "history": []
+      }
+    },
+    {
+      "phase": "ordinary_production_adoption_gate",
+      "write_enabled": false,
+      "document_id": "1d419682-9add-453d-8748-84e9bdca2ae7"
+    },
+    {
+      "phase": "original_manual_document_created",
+      "source": "original_api",
+      "project_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+      "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+      "owner": {
+        "mode": "STORYBOARD",
+        "title": "手动文档 核对期间的 B",
+        "source_chapter_ids": [],
+        "source_independent": true,
+        "scenes": [
+          {
+            "id": "26ab5a3b-d2e1-4b4c-a7c5-7f609429d524",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "heading": "INT. SAVE ROOM - DAY",
+            "time": "",
+            "location": "",
+            "characters": [],
+            "action": "原始手动内容 核对期间的 B",
+            "dialogue": [],
+            "emotion": "",
+            "director_notes": []
+          }
+        ],
+        "shots": [
+          {
+            "id": "eb27c2d3-6c7c-481b-851a-c78599b1d849",
+            "number": 1,
+            "scene_id": "26ab5a3b-d2e1-4b4c-a7c5-7f609429d524",
+            "shot_size": "MEDIUM",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "duration_seconds": 5,
+            "frame_prompt": "原始手动画面 核对期间的 B",
+            "composition": "",
+            "lens": "",
+            "lighting": "",
+            "environment": "",
+            "sound": "",
+            "color": "",
+            "action": "",
+            "dialogue": [],
+            "sound_effect": "",
+            "director_notes": []
+          }
+        ],
+        "director_notes": [],
+        "video_plan": null,
+        "script": null,
+        "schema_version": 1,
+        "source_evidence": {},
+        "source_privacy": {},
+        "source_documents": {},
+        "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+        "status": "DRAFT",
+        "privacy_level": "LOCAL_ONLY",
+        "id": "1d419682-9add-453d-8748-84e9bdca2ae7",
+        "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+        "scope": {
+          "mode": "collaboration",
+          "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "workspace_id": "workspace-a",
+          "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+          "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d"
+        },
+        "version": 1,
+        "created_by": "local-author",
+        "updated_by": "local-author",
+        "created_at": "2026-10-16T20:02:04.469725+00:00",
+        "updated_at": "2026-10-16T20:02:04.469725+00:00",
+        "history": []
+      }
+    },
+    {
+      "phase": "offline_before_dispatch_owner_unchanged",
+      "source": "standalone_original_owner_readback",
+      "owner": {
+        "created_at": "2026-10-16T20:02:04.409154+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [],
+        "id": "5768ae72-8021-4038-9897-d24380f88afe",
+        "mode": "STORYBOARD",
+        "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+        "scenes": [
+          {
+            "action": "原始手动内容 故障保留",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. SAVE ROOM - DAY",
+            "id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+          "mode": "collaboration",
+          "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "action": "",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "原始手动画面 故障保留",
+            "id": "1864853c-5fe7-4a47-ac9d-f2edd05128e0",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {},
+        "source_evidence": {},
+        "source_independent": true,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "手动文档 故障保留",
+        "updated_at": "2026-10-16T20:02:04.409154+00:00",
+        "updated_by": "local-author",
+        "version": 1,
+        "video_plan": null
+      },
+      "overview": {
+        "project": {
+          "id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "title": "真实创作保存 creative-save-1440x900 不确定与冲突",
+          "incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "project_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+      "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d"
+    },
+    {
+      "phase": "offline_transport_failure",
+      "backend_response_fabricated": false,
+      "failure_before_dispatch": true,
+      "post_commit_receipt_loss_claimed": false
+    },
+    {
+      "phase": "offline-unknown-keeps-local-draft-and-current-status",
+      "source": "original_browser_dom_read_only",
+      "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n1864853c-5fe7-4a47-ac9d-f2edd05128e0\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+      "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+      "title": "手动文档 故障保留",
+      "action": "网络故障必须保留的本地草稿 🙂"
+    },
+    {
+      "phase": "second_original_owner_put_200",
+      "expected_version": 1,
+      "owner": {
+        "created_at": "2026-10-16T20:02:04.409154+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [
+          {
+            "created_at": "2026-10-16T20:02:04.409154+00:00",
+            "created_by": "local-author",
+            "director_notes": [],
+            "id": "5768ae72-8021-4038-9897-d24380f88afe",
+            "mode": "STORYBOARD",
+            "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+            "privacy_level": "LOCAL_ONLY",
+            "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+            "scenes": [
+              {
+                "action": "原始手动内容 故障保留",
+                "characters": [],
+                "dialogue": [],
+                "director_notes": [],
+                "emotion": "",
+                "heading": "INT. SAVE ROOM - DAY",
+                "id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+                "location": "",
+                "sequence": 1,
+                "source_chapter_id": null,
+                "time": ""
+              }
+            ],
+            "schema_version": 1,
+            "scope": {
+              "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+              "mode": "collaboration",
+              "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+              "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+              "workspace_id": "workspace-a"
+            },
+            "script": null,
+            "shots": [
+              {
+                "action": "",
+                "camera_angle": "EYE_LEVEL",
+                "camera_motion": "STATIC",
+                "color": "",
+                "composition": "",
+                "dialogue": [],
+                "director_notes": [],
+                "duration_seconds": 5,
+                "environment": "",
+                "frame_prompt": "原始手动画面 故障保留",
+                "id": "1864853c-5fe7-4a47-ac9d-f2edd05128e0",
+                "lens": "",
+                "lighting": "",
+                "number": 1,
+                "scene_id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+                "shot_size": "MEDIUM",
+                "sound": "",
+                "sound_effect": ""
+              }
+            ],
+            "source_chapter_ids": [],
+            "source_documents": {},
+            "source_evidence": {},
+            "source_independent": true,
+            "source_privacy": {},
+            "status": "DRAFT",
+            "title": "手动文档 故障保留",
+            "updated_at": "2026-10-16T20:02:04.409154+00:00",
+            "updated_by": "local-author",
+            "version": 1,
+            "video_plan": null
+          }
+        ],
+        "id": "5768ae72-8021-4038-9897-d24380f88afe",
+        "mode": "STORYBOARD",
+        "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+        "scenes": [
+          {
+            "id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "heading": "INT. SAVE ROOM - DAY",
+            "time": "",
+            "location": "",
+            "characters": [],
+            "action": "另一个原 owner 真实写入 v2",
+            "dialogue": [],
+            "emotion": "",
+            "director_notes": []
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+          "mode": "collaboration",
+          "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "id": "1864853c-5fe7-4a47-ac9d-f2edd05128e0",
+            "number": 1,
+            "scene_id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "shot_size": "MEDIUM",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "duration_seconds": 5,
+            "frame_prompt": "原始手动画面 故障保留",
+            "composition": "",
+            "lens": "",
+            "lighting": "",
+            "environment": "",
+            "sound": "",
+            "color": "",
+            "action": "",
+            "dialogue": [],
+            "sound_effect": "",
+            "director_notes": []
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {},
+        "source_evidence": {},
+        "source_independent": true,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "手动文档 故障保留",
+        "updated_at": "2026-10-16T20:02:06.463550+00:00",
+        "updated_by": "local-author",
+        "version": 2,
+        "video_plan": null
+      }
+    },
+    {
+      "phase": "real_original_derive_cas409_clean_blocked_origin",
+      "status": 409,
+      "request_body": {
+        "expected_version": 1,
+        "mode": "PRODUCTION"
+      },
+      "problem": {
+        "detail": {
+          "code": "EXPERIMENTAL_VERSION_CONFLICT",
+          "current": {
+            "version": 2,
+            "status": "DRAFT"
+          }
+        },
+        "code": "EXPERIMENTAL_VERSION_CONFLICT",
+        "message": "EXPERIMENTAL_VERSION_CONFLICT",
+        "details": {
+          "code": "EXPERIMENTAL_VERSION_CONFLICT",
+          "current": {
+            "version": 2,
+            "status": "DRAFT"
+          }
+        },
+        "request_id": "b7ed67b5-449c-4b08-8bc7-fde9a86fe893"
+      }
+    },
+    {
+      "phase": "real-verify-get-held-does-not-claim-save-write",
+      "source": "original_browser_dom_read_only",
+      "canvas_text": "Creative Canvas\n手动文档 故障保留\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n1864853c-5fe7-4a47-ac9d-f2edd05128e0\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+      "footer_text": "当前分镜：核对服务端版本中… · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+      "title": "手动文档 故障保留",
+      "action": "原始手动内容 故障保留"
+    },
+    {
+      "phase": "late_verify_a_does_not_change_clean_b_owner",
+      "source": "standalone_original_owner_readback",
+      "owner": {
+        "created_at": "2026-10-16T20:02:04.469725+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [],
+        "id": "1d419682-9add-453d-8748-84e9bdca2ae7",
+        "mode": "STORYBOARD",
+        "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+        "scenes": [
+          {
+            "action": "原始手动内容 核对期间的 B",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. SAVE ROOM - DAY",
+            "id": "26ab5a3b-d2e1-4b4c-a7c5-7f609429d524",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+          "mode": "collaboration",
+          "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "action": "",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "原始手动画面 核对期间的 B",
+            "id": "eb27c2d3-6c7c-481b-851a-c78599b1d849",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "26ab5a3b-d2e1-4b4c-a7c5-7f609429d524",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {},
+        "source_evidence": {},
+        "source_independent": true,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "手动文档 核对期间的 B",
+        "updated_at": "2026-10-16T20:02:04.469725+00:00",
+        "updated_by": "local-author",
+        "version": 1,
+        "video_plan": null
+      },
+      "overview": {
+        "project": {
+          "id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "title": "真实创作保存 creative-save-1440x900 不确定与冲突",
+          "incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "project_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+      "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d"
+    },
+    {
+      "phase": "late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1",
+      "source": "original_browser_dom_read_only",
+      "canvas_text": "Creative Canvas\n手动文档 核对期间的 B\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 核对期间的 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\neb27c2d3-6c7c-481b-851a-c78599b1d849\n\n原始手动画面 核对期间的 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+      "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+      "title": "手动文档 核对期间的 B",
+      "action": "原始手动内容 核对期间的 B"
+    },
+    {
+      "phase": "real_ui_original_cas_conflict",
+      "status": 409,
+      "problem": {
+        "detail": {
+          "code": "EXPERIMENTAL_VERSION_CONFLICT",
+          "current": {
+            "version": 2,
+            "status": "DRAFT"
+          }
+        },
+        "code": "EXPERIMENTAL_VERSION_CONFLICT",
+        "message": "EXPERIMENTAL_VERSION_CONFLICT",
+        "details": {
+          "code": "EXPERIMENTAL_VERSION_CONFLICT",
+          "current": {
+            "version": 2,
+            "status": "DRAFT"
+          }
+        },
+        "request_id": "e20e6f06-4c96-4740-9a8f-8b8fd57823a0"
+      },
+      "request_body": {
+        "mode": "STORYBOARD",
+        "title": "手动文档 故障保留",
+        "source_chapter_ids": [],
+        "source_independent": true,
+        "scenes": [
+          {
+            "action": "本地旧v1上的独立编辑，409后仍保留",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. SAVE ROOM - DAY",
+            "id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "director_notes": [],
+        "shots": [
+          {
+            "action": "",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "原始手动画面 故障保留",
+            "id": "1864853c-5fe7-4a47-ac9d-f2edd05128e0",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "video_plan": null,
+        "expected_version": 1
+      }
+    },
+    {
+      "phase": "conflict_original_owner_keeps_external_version_two",
+      "source": "standalone_original_owner_readback",
+      "owner": {
+        "created_at": "2026-10-16T20:02:04.409154+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [
+          {
+            "created_at": "2026-10-16T20:02:04.409154+00:00",
+            "created_by": "local-author",
+            "director_notes": [],
+            "id": "5768ae72-8021-4038-9897-d24380f88afe",
+            "mode": "STORYBOARD",
+            "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+            "privacy_level": "LOCAL_ONLY",
+            "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+            "scenes": [
+              {
+                "action": "原始手动内容 故障保留",
+                "characters": [],
+                "dialogue": [],
+                "director_notes": [],
+                "emotion": "",
+                "heading": "INT. SAVE ROOM - DAY",
+                "id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+                "location": "",
+                "sequence": 1,
+                "source_chapter_id": null,
+                "time": ""
+              }
+            ],
+            "schema_version": 1,
+            "scope": {
+              "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+              "mode": "collaboration",
+              "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+              "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+              "workspace_id": "workspace-a"
+            },
+            "script": null,
+            "shots": [
+              {
+                "action": "",
+                "camera_angle": "EYE_LEVEL",
+                "camera_motion": "STATIC",
+                "color": "",
+                "composition": "",
+                "dialogue": [],
+                "director_notes": [],
+                "duration_seconds": 5,
+                "environment": "",
+                "frame_prompt": "原始手动画面 故障保留",
+                "id": "1864853c-5fe7-4a47-ac9d-f2edd05128e0",
+                "lens": "",
+                "lighting": "",
+                "number": 1,
+                "scene_id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+                "shot_size": "MEDIUM",
+                "sound": "",
+                "sound_effect": ""
+              }
+            ],
+            "source_chapter_ids": [],
+            "source_documents": {},
+            "source_evidence": {},
+            "source_independent": true,
+            "source_privacy": {},
+            "status": "DRAFT",
+            "title": "手动文档 故障保留",
+            "updated_at": "2026-10-16T20:02:04.409154+00:00",
+            "updated_by": "local-author",
+            "version": 1,
+            "video_plan": null
+          }
+        ],
+        "id": "5768ae72-8021-4038-9897-d24380f88afe",
+        "mode": "STORYBOARD",
+        "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+        "scenes": [
+          {
+            "action": "另一个原 owner 真实写入 v2",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. SAVE ROOM - DAY",
+            "id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+          "mode": "collaboration",
+          "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "action": "",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "原始手动画面 故障保留",
+            "id": "1864853c-5fe7-4a47-ac9d-f2edd05128e0",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {},
+        "source_evidence": {},
+        "source_independent": true,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "手动文档 故障保留",
+        "updated_at": "2026-10-16T20:02:06.463550+00:00",
+        "updated_by": "local-author",
+        "version": 2,
+        "video_plan": null
+      },
+      "overview": {
+        "project": {
+          "id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "title": "真实创作保存 creative-save-1440x900 不确定与冲突",
+          "incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "project_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+      "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d"
+    },
+    {
+      "phase": "real-cas409-keeps-local-draft-and-server-v2",
+      "source": "original_browser_dom_read_only",
+      "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n1864853c-5fe7-4a47-ac9d-f2edd05128e0\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+      "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+      "title": "手动文档 故障保留",
+      "action": "本地旧v1上的独立编辑，409后仍保留"
+    },
+    {
+      "phase": "real-cas409-author-keeps-local-draft-after-owner-check",
+      "source": "original_browser_dom_read_only",
+      "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n1864853c-5fe7-4a47-ac9d-f2edd05128e0\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+      "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+      "title": "手动文档 故障保留",
+      "action": "本地旧v1上的独立编辑，409后仍保留"
+    },
+    {
+      "phase": "owned_project_cleanup",
+      "project_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+      "status": 204
+    }
+  ],
+  "dispatches": [
+    {
+      "phase": "original_verify_get_late_other_document",
+      "url": "http://127.0.0.1:5208/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/documents/5768ae72-8021-4038-9897-d24380f88afe",
+      "method": "GET",
+      "project_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+      "document_id": "5768ae72-8021-4038-9897-d24380f88afe",
+      "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+      "token_sha256": "ed8a7eea95173f8a3eb2b62ad27e211eaa1196e9b4c915e1bcebaecbb291ac8c",
+      "held_at": 1792180926623,
+      "original_request_body": null,
+      "request_not_dispatched_until_release": true,
+      "response_fabricated": false,
+      "other_clean_document_current_before_release_at": 1792180926745,
+      "continue_at": 1792180926745,
+      "continue_returned": true,
+      "status": 200,
+      "response_raw_body": "{\"created_at\":\"2026-10-16T20:02:04.409154+00:00\",\"created_by\":\"local-author\",\"director_notes\":[],\"history\":[{\"created_at\":\"2026-10-16T20:02:04.409154+00:00\",\"created_by\":\"local-author\",\"director_notes\":[],\"id\":\"5768ae72-8021-4038-9897-d24380f88afe\",\"mode\":\"STORYBOARD\",\"novel_id\":\"1da65bfa-9b04-4641-a3d9-2bc9b4dd5252\",\"privacy_level\":\"LOCAL_ONLY\",\"project_incarnation\":\"file:67797198-63e1-4d5a-957e-dd2690fa4bab\",\"scenes\":[{\"action\":\"原始手动内容 故障保留\",\"characters\":[],\"dialogue\":[],\"director_notes\":[],\"emotion\":\"\",\"heading\":\"INT. SAVE ROOM - DAY\",\"id\":\"5263f899-86b2-4499-9d8a-b1f538dde31a\",\"location\":\"\",\"sequence\":1,\"source_chapter_id\":null,\"time\":\"\"}],\"schema_version\":1,\"scope\":{\"branch_id\":\"a5be2ee9-e004-4c13-9dfa-8631ac2a372d\",\"mode\":\"collaboration\",\"novel_id\":\"1da65bfa-9b04-4641-a3d9-2bc9b4dd5252\",\"storyline_id\":\"5206432f-070a-4943-9cb2-62d8efec7642\",\"workspace_id\":\"workspace-a\"},\"script\":null,\"shots\":[{\"action\":\"\",\"camera_angle\":\"EYE_LEVEL\",\"camera_motion\":\"STATIC\",\"color\":\"\",\"composition\":\"\",\"dialogue\":[],\"director_notes\":[],\"duration_seconds\":5,\"environment\":\"\",\"frame_prompt\":\"原始手动画面 故障保留\",\"id\":\"1864853c-5fe7-4a47-ac9d-f2edd05128e0\",\"lens\":\"\",\"lighting\":\"\",\"number\":1,\"scene_id\":\"5263f899-86b2-4499-9d8a-b1f538dde31a\",\"shot_size\":\"MEDIUM\",\"sound\":\"\",\"sound_effect\":\"\"}],\"source_chapter_ids\":[],\"source_documents\":{},\"source_evidence\":{},\"source_independent\":true,\"source_privacy\":{},\"status\":\"DRAFT\",\"title\":\"手动文档 故障保留\",\"updated_at\":\"2026-10-16T20:02:04.409154+00:00\",\"updated_by\":\"local-author\",\"version\":1,\"video_plan\":null}],\"id\":\"5768ae72-8021-4038-9897-d24380f88afe\",\"mode\":\"STORYBOARD\",\"novel_id\":\"1da65bfa-9b04-4641-a3d9-2bc9b4dd5252\",\"privacy_level\":\"LOCAL_ONLY\",\"project_incarnation\":\"file:67797198-63e1-4d5a-957e-dd2690fa4bab\",\"scenes\":[{\"action\":\"另一个原 owner 真实写入 v2\",\"characters\":[],\"dialogue\":[],\"director_notes\":[],\"emotion\":\"\",\"heading\":\"INT. SAVE ROOM - DAY\",\"id\":\"5263f899-86b2-4499-9d8a-b1f538dde31a\",\"location\":\"\",\"sequence\":1,\"source_chapter_id\":null,\"time\":\"\"}],\"schema_version\":1,\"scope\":{\"branch_id\":\"a5be2ee9-e004-4c13-9dfa-8631ac2a372d\",\"mode\":\"collaboration\",\"novel_id\":\"1da65bfa-9b04-4641-a3d9-2bc9b4dd5252\",\"storyline_id\":\"5206432f-070a-4943-9cb2-62d8efec7642\",\"workspace_id\":\"workspace-a\"},\"script\":null,\"shots\":[{\"action\":\"\",\"camera_angle\":\"EYE_LEVEL\",\"camera_motion\":\"STATIC\",\"color\":\"\",\"composition\":\"\",\"dialogue\":[],\"director_notes\":[],\"duration_seconds\":5,\"environment\":\"\",\"frame_prompt\":\"原始手动画面 故障保留\",\"id\":\"1864853c-5fe7-4a47-ac9d-f2edd05128e0\",\"lens\":\"\",\"lighting\":\"\",\"number\":1,\"scene_id\":\"5263f899-86b2-4499-9d8a-b1f538dde31a\",\"shot_size\":\"MEDIUM\",\"sound\":\"\",\"sound_effect\":\"\"}],\"source_chapter_ids\":[],\"source_documents\":{},\"source_evidence\":{},\"source_independent\":true,\"source_privacy\":{},\"status\":\"DRAFT\",\"title\":\"手动文档 故障保留\",\"updated_at\":\"2026-10-16T20:02:06.463550+00:00\",\"updated_by\":\"local-author\",\"version\":2,\"video_plan\":null}",
+      "response_body_sha256": "4ab1c6ae53f18ec9b61ce0b01ebde02ab501e7411cbcf3e0889c5705573a2e3b",
+      "response_body": {
+        "created_at": "2026-10-16T20:02:04.409154+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [
+          {
+            "created_at": "2026-10-16T20:02:04.409154+00:00",
+            "created_by": "local-author",
+            "director_notes": [],
+            "id": "5768ae72-8021-4038-9897-d24380f88afe",
+            "mode": "STORYBOARD",
+            "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+            "privacy_level": "LOCAL_ONLY",
+            "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+            "scenes": [
+              {
+                "action": "原始手动内容 故障保留",
+                "characters": [],
+                "dialogue": [],
+                "director_notes": [],
+                "emotion": "",
+                "heading": "INT. SAVE ROOM - DAY",
+                "id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+                "location": "",
+                "sequence": 1,
+                "source_chapter_id": null,
+                "time": ""
+              }
+            ],
+            "schema_version": 1,
+            "scope": {
+              "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+              "mode": "collaboration",
+              "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+              "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+              "workspace_id": "workspace-a"
+            },
+            "script": null,
+            "shots": [
+              {
+                "action": "",
+                "camera_angle": "EYE_LEVEL",
+                "camera_motion": "STATIC",
+                "color": "",
+                "composition": "",
+                "dialogue": [],
+                "director_notes": [],
+                "duration_seconds": 5,
+                "environment": "",
+                "frame_prompt": "原始手动画面 故障保留",
+                "id": "1864853c-5fe7-4a47-ac9d-f2edd05128e0",
+                "lens": "",
+                "lighting": "",
+                "number": 1,
+                "scene_id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+                "shot_size": "MEDIUM",
+                "sound": "",
+                "sound_effect": ""
+              }
+            ],
+            "source_chapter_ids": [],
+            "source_documents": {},
+            "source_evidence": {},
+            "source_independent": true,
+            "source_privacy": {},
+            "status": "DRAFT",
+            "title": "手动文档 故障保留",
+            "updated_at": "2026-10-16T20:02:04.409154+00:00",
+            "updated_by": "local-author",
+            "version": 1,
+            "video_plan": null
+          }
+        ],
+        "id": "5768ae72-8021-4038-9897-d24380f88afe",
+        "mode": "STORYBOARD",
+        "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:67797198-63e1-4d5a-957e-dd2690fa4bab",
+        "scenes": [
+          {
+            "action": "另一个原 owner 真实写入 v2",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. SAVE ROOM - DAY",
+            "id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "a5be2ee9-e004-4c13-9dfa-8631ac2a372d",
+          "mode": "collaboration",
+          "novel_id": "1da65bfa-9b04-4641-a3d9-2bc9b4dd5252",
+          "storyline_id": "5206432f-070a-4943-9cb2-62d8efec7642",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "action": "",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "原始手动画面 故障保留",
+            "id": "1864853c-5fe7-4a47-ac9d-f2edd05128e0",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "5263f899-86b2-4499-9d8a-b1f538dde31a",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {},
+        "source_evidence": {},
+        "source_independent": true,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "手动文档 故障保留",
+        "updated_at": "2026-10-16T20:02:06.463550+00:00",
+        "updated_by": "local-author",
+        "version": 2,
+        "video_plan": null
+      },
+      "response_at": 1792180926772
+    }
+  ],
+  "calls": [
+    {
+      "path": "/api/novels",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "path": "/api/text-models",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "path": "/api/collaboration/admin/workspaces",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/writing-goal",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/chapters/archived",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/media-tasks",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/storylines/5206432f-070a-4943-9cb2-62d8efec7642/branches/a5be2ee9-e004-4c13-9dfa-8631ac2a372d/chapters",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/storylines/5206432f-070a-4943-9cb2-62d8efec7642/branches/a5be2ee9-e004-4c13-9dfa-8631ac2a372d/bootstrap",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio/prompts",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/capabilities",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/creation-reference-data",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/model-center/local-ai/environment",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/documents",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio/prompts",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/director-proposals",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/adaptation-proposals/model-routes",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/adaptation-proposals",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/media-tasks",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/writing-goal",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/storylines/5206432f-070a-4943-9cb2-62d8efec7642/branches/a5be2ee9-e004-4c13-9dfa-8631ac2a372d/bootstrap",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/chapters/archived",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/documents/5768ae72-8021-4038-9897-d24380f88afe",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/storylines/5206432f-070a-4943-9cb2-62d8efec7642/branches/a5be2ee9-e004-4c13-9dfa-8631ac2a372d/chapters",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/documents/5768ae72-8021-4038-9897-d24380f88afe/derive",
+      "method": "POST",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/documents/5768ae72-8021-4038-9897-d24380f88afe",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/documents/5768ae72-8021-4038-9897-d24380f88afe",
+      "method": "PUT",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/documents/5768ae72-8021-4038-9897-d24380f88afe",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "failures": [
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio/assets",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio/assets",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/capabilities",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/adaptation-proposals",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/adaptation-proposals/model-routes",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/model-center/local-ai/environment",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/director-proposals",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/documents/5768ae72-8021-4038-9897-d24380f88afe",
+      "method": "PUT",
+      "failure": "net::ERR_INTERNET_DISCONNECTED"
+    }
+  ],
+  "errors": [],
+  "cleanupErrors": []
+}

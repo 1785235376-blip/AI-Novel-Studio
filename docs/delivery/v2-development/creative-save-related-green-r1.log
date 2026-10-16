@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/AppLocalEntryAuthorityRace.test.tsx (4 tests) 561ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 2685ms
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 2940ms
+ ✓ src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx (2 tests) 300ms
+ ✓ src/AppModuleNavigationIntent.test.tsx (34 tests) 2454ms
+ ✓ src/creative/CreativeProductionCanvas.test.tsx (3 tests) 146ms
+ ✓ src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx (1 test) 179ms
+
+ Test Files  7 passed (7)
+      Tests  99 passed (99)
+   Start at  03:59:36
+   Duration  7.41s (transform 2.34s, setup 61ms, collect 8.45s, tests 9.27s, environment 2.99s, prepare 407ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-creative-save-state-20261017/creative-save-related-green-r1.vitest.json

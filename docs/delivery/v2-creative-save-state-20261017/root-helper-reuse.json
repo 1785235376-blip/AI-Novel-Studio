@@ -1,0 +1,68 @@
+{
+  "scope": "New ignored helpers only, replacing round paths/base/labels. Original helpers and old evidence remain unchanged.",
+  "copies": [
+    {
+      "original": ".runtime/nav_intent_verify.py",
+      "original_sha256": "87726b771deddb64b5e31a493e7963799ab0d1cc4468e83177393c659b44812f",
+      "copy": ".runtime/creative_save_verify.py",
+      "copy_sha256": "4ef24abc0f8e7261b220daf9e40d38aa9bb95e0c5ebf78a4ea56938e305806e0",
+      "original_unchanged": true
+    },
+    {
+      "original": ".runtime/nav_intent_ci.py",
+      "original_sha256": "7a609f6784991507b4769204ec24d715b7ff8dca7fee4c7c78c15a5de0b24bd1",
+      "copy": ".runtime/creative_save_ci.py",
+      "copy_sha256": "e081cf495e6427546f0c8d65fc6fc306c6ed907b3d19eb5157369d812939a827",
+      "original_unchanged": true
+    },
+    {
+      "original": ".runtime/nav_intent_publication.py",
+      "original_sha256": "a63c3c6cd0898e3bdf464b7bb89c414b5c36e40b3061b25df2444b16f63aae39",
+      "copy": ".runtime/creative_save_publication.py",
+      "copy_sha256": "0f276c38fa7f65609e3daf4b8a40bffab40492b493f4097eda1e40858d307536",
+      "original_unchanged": true
+    },
+    {
+      "original": ".runtime/nav_intent_git_sources.py",
+      "original_sha256": "20a9f01865b0da55692772137336850f9aa0f5de59349598da9a2c8cbe48cd73",
+      "copy": ".runtime/creative_save_git_sources.py",
+      "copy_sha256": "c1e00d84220bf962935383dd9666803e39761ec122711f7189aa804aad86a34b",
+      "original_unchanged": true
+    },
+    {
+      "original": ".runtime/nav_intent_manifest_sources.py",
+      "original_sha256": "268ebc4c88a3cf96e68d7185b81139f6fa4a60a4af7f6ff767fc0216c92495fe",
+      "copy": ".runtime/creative_save_manifest_sources.py",
+      "copy_sha256": "1fb3d54477b80eead3df839c97a986eb17c96d672848903c7b0a58ca48ac80e4",
+      "original_unchanged": true
+    },
+    {
+      "original": ".runtime/nav_intent_finalize.py",
+      "original_sha256": "16fb9f14004eae85adb00b52c7527f57ff42f33ded277f28fea99707faaf3861",
+      "copy": ".runtime/creative_save_finalize.py",
+      "copy_sha256": "cf37998da3a0eb8b4f7af2e54638ae075572d2125262ab9a1af8171866e22544",
+      "original_unchanged": true
+    },
+    {
+      "original": ".runtime/nav_intent_review_evidence.py",
+      "original_sha256": "ca409fb83c83d713cf3cf7079e57a15b8d0184af66733fafc394866ccdf91dcc",
+      "copy": ".runtime/creative_save_review_evidence.py",
+      "copy_sha256": "95b741f14cc5dc3a979701aed9b48f660c673b4a3161a5dbc8706d24714d80f6",
+      "original_unchanged": true
+    },
+    {
+      "original": ".runtime/nav_intent_transport.py",
+      "original_sha256": "3a9eb3bff6835d2105bd5e4aa19e36fdf2eb216ab18b28707b8b2628746d154e",
+      "copy": ".runtime/creative_save_transport.py",
+      "copy_sha256": "36936440969b8b42950af8f6fadfcb9c3c4a9205cfb3ee3bc43bee1d10ff07dd",
+      "original_unchanged": true
+    },
+    {
+      "original": ".runtime/nav_intent_freeze.py",
+      "original_sha256": "1adea89611b20ecfefe3430548796657c9339ccdc560232c2827130946dc174f",
+      "copy": ".runtime/creative_save_freeze.py",
+      "copy_sha256": "f059bebe3b31084265e83e1d1522ff9b877ea9dae5b7f1c2822b90565a888532",
+      "original_unchanged": true
+    }
+  ]
+}

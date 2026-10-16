@@ -1792,3 +1792,22 @@ PR仍Draft/open，main/V1 frozen refs未动，完整V2仍PARTIAL、非freeze/RC�
 | Hosted/总体 | GitHub账单锁使job steps为空，单独BLOCKED；完整V2 PARTIAL。生产adoption、installer/clean-machine、真实模型/GPU及原全链路边界继续保留。 |
 
 自有API/Vite/PG已停止，所有失败/通过证据、profile与数据库保留；未递归清理或宣称磁盘回收。待账单锁解除后重跑最终HEAD hosted CI；生产adoption闸门继续关闭。
+
+
+<!-- V2-CREATIVE-SAVE-STATE-20261017 -->
+## 2026-10-17 — Creative 保存状态修复检查点
+
+本节追加事实并保留全部历史。基线454ccd8；当前保存版本、未保存/待核对与其他阶段草稿已在原owner内分别显示；等值/撤回编辑、非SAVE假保存中及旧VERIFY候选跨文档窗口已修复。
+稳定切片逐个提交并推送PR #47，实现/清单HEAD `5c17750bd59c76ed4fb060716d61019151a3ef42`；本节与原始证据独立提交。PR仍Draft/open，main/V1 frozen refs未变；完整V2 PARTIAL、未freeze/RC，生产adoption literal False继续关闭。
+详见[最终Creative保存状态验收](docs/delivery/v2-creative-save-state-20261017/V2_CREATIVE_SAVE_STATE_ROUND_REPORT.md)。
+
+| 范围 | 本轮结果 |
+| --- | --- |
+| 原owner | 完整可写内容比较保留空白/Unicode/数组顺序；当前SAVE/VERIFY/DERIVE/RESTORE分开；其他草稿和原退出/权限保护保留。旧导航与adoption CAS guard原字节保留。 |
+| 真实File/PG Edge | 各9 passed、0skip/0flaky，三视口；首开v1、真保存CASv2/readback/刷新、离线保稿、真409与显式核对、旧VERIFY/历史读回隔离。PG新空库OID29705、原20迁移。 |
+| 前端 | 新27回归（26完整原UI、1制作callback替换契约），相关99含新27；完整src4269 passed/6既有skip/0failed，393文件；build、原visual7和token52 PASS。 |
+| 来源/清单 | 2310 runner源、2372manifest输入与HEAD raw bytes绑定；双collection15142原rows/order/classification保持，INVENTORY_ONLY；原CI自检166 PASS。 |
+| 保护/边界 | 原750 frozen tests/gates、752产物、9151manifest、1118旧test/gate保持；不是全V1 runtime或旧全链路重跑声明。离线发生在派发前，不冒称已提交响应丢失。 |
+| Hosted/总体 | 原GitHub账单锁使job steps为空，独立BLOCKED；完整V2 PARTIAL。生产adoption、installer/clean-machine、真实模型/GPU与原全链路边界继续保留。 |
+
+自有验收服务已停；所有失败/通过证据、profile与数据库保留，未递归删除或宣称空间回收。待账单锁解除后重跑最终HEAD hosted CI；生产adoption闸门继续关闭。
