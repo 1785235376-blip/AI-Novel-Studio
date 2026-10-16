@@ -50,7 +50,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     {props.assetHandoff && <section aria-label={`素材引用交接到${handoffLabel}制作`}>
       <h3>素材引用交接到{handoffLabel}制作</h3>
       <p>{props.assetHandoff.reference.asset_id} · v{props.assetHandoff.reference.version} · {props.assetHandoff.reference.digest}</p>
-      <p>{handoffLabel === '视频' ? '须明确选择“图片生成视频”或“视频生成视频”，且来源类型必须匹配、来源槽为空。视频转视频是否可执行仍以原服务能力为准；当前本地路线不执行参考视频。' : '仅支持下方明确选择的“参考图片生成图片”操作。'}核对只读取元数据；加入前再次核对版本，不更改提示词、服务商或参数，也不覆盖已有基础图。</p>
+      <p>{handoffLabel === '视频' ? '须明确选择“图片生成视频”或“视频生成视频”，且来源类型必须匹配、来源槽为空。视频转视频是否可执行仍以原服务能力为准；当前本地路线不执行参考视频。' : draft.operation === 'm5.image.reference' ? '当前为“多参考图生成图片”：须明确选择支持此操作的服务商配置，按当前上限追加参考图（最多五张），新参考权重为 1，保留已有参考权重、用途与说明。' : '须在下方明确选择“参考图片生成图片”或“多参考图生成图片”。前者使用原基础图输入规则，后者追加加权参考图。'}核对只读取元数据；加入前再次核对版本，不更改提示词、服务商或参数，也不覆盖已有基础图。</p>
       <Button disabled={!state.canHandoff || state.providerLoading || state.handoffPending || state.handoffDone} onClick={() => void state.readHandoff(false)}>核对{handoffLabel}交接版本</Button>
       {state.handoffAsset && <><p>{state.handoffAsset.filename} · {state.handoffAsset.kind} · {state.handoffAsset.size} 字节</p><Button disabled={!state.canHandoff || state.handoffPending} onClick={() => void state.readHandoff(true)}>明确加入{handoffLabel}制作草稿</Button></>}
       <Button disabled={state.handoffDone} onClick={state.cancelHandoff}>取消{handoffLabel}交接</Button>

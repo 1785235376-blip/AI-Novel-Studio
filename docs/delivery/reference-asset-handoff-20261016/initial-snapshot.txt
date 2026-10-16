@@ -1,0 +1,9 @@
+d91e5c85eff52ca36e312eda3d1df3d9d971f529
+ M src/creative/StudioMediaExecutionPanel.tsx
+ M src/creative/useStudioMediaExecution.ts
+?? ../docs/delivery/reference-asset-handoff-20261016/
+?? node_modules
+?? src/creative/StudioReferenceAssetHandoff.additive.test.tsx
+264b8bb9341eeb7dfb761fde1805ffc8edc12ed60a65795430691bfa35777be4  src/creative/useStudioMediaExecution.ts
+05b25d32f0cec494ca77928adc21f53000c6a0f74c532fd0d119b1adcdddc31e  src/creative/StudioMediaExecutionPanel.tsx
+9d912595861f98deef7285aed5396252150f26e33730739ac0e923d978b5e8cb  src/creative/StudioReferenceAssetHandoff.additive.test.tsx

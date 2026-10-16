@@ -1,0 +1,5 @@
+frontend/src/creative/StudioMediaExecutionPanel.tsx
+frontend/src/creative/useStudioMediaExecution.ts
+264b8bb9341eeb7dfb761fde1805ffc8edc12ed60a65795430691bfa35777be4  frontend/src/creative/useStudioMediaExecution.ts
+05b25d32f0cec494ca77928adc21f53000c6a0f74c532fd0d119b1adcdddc31e  frontend/src/creative/StudioMediaExecutionPanel.tsx
+ea41b1771d1e5870afa4e92f5820e98c6201131c814ea084252cb55eb48bb1bd  frontend/src/creative/StudioReferenceAssetHandoff.additive.test.tsx

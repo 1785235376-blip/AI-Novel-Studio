@@ -1,0 +1,23 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-reference-handoff/frontend
+
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3142ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 540ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 638ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1257ms
+ ✓ src/creative/StudioReferenceAssetHandoff.additive.test.tsx (50 tests) 2861ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 839ms
+ ✓ src/creative/StudioMediaRouteChoice.test.tsx (9 tests) 465ms
+ ✓ src/creative/StudioImageAssetHandoff.test.tsx (22 tests) 1246ms
+ ✓ src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx (1 test) 1544ms
+   ✓ image runtime source roles through the mounted original workspace > migration: requires fresh cloud consent after reference weights change and never falls back or sends automatically 1543ms
+ ✓ src/creative/StudioVideoAssetHandoff.test.tsx (26 tests) 1454ms
+ ✓ src/creative/StudioReferenceRoute.compatibility.test.tsx (5 tests) 436ms
+ ✓ src/creative/AssetReferenceInspection.test.tsx (12 tests) 235ms
+ ✓ src/creative/studioImageRuntimeContract.test.ts (11 tests) 12ms
+
+ Test Files  10 passed (10)
+      Tests  162 passed (162)
+   Start at  08:34:11
+   Duration  20.64s (transform 1.87s, setup 65ms, collect 3.92s, tests 12.23s, environment 2.71s, prepare 499ms)
+

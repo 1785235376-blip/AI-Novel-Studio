@@ -1,0 +1,53 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-reference-handoff/frontend
+
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3264ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 518ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 686ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1292ms
+ ❯ src/creative/StudioReferenceAssetHandoff.additive.test.tsx (50 tests | 1 failed) 2846ms
+   × explicit asset handoff into original weighted image references > fences delayed acceptance after unmount 59ms
+     → expected { id: 'source', …(10) } to be undefined
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 803ms
+ ✓ src/creative/StudioMediaRouteChoice.test.tsx (9 tests) 468ms
+ ✓ src/creative/StudioImageAssetHandoff.test.tsx (22 tests) 1232ms
+ ✓ src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx (1 test) 1495ms
+   ✓ image runtime source roles through the mounted original workspace > migration: requires fresh cloud consent after reference weights change and never falls back or sends automatically 1494ms
+ ✓ src/creative/StudioVideoAssetHandoff.test.tsx (26 tests) 1440ms
+ ✓ src/creative/StudioReferenceRoute.compatibility.test.tsx (5 tests) 416ms
+ ✓ src/creative/AssetReferenceInspection.test.tsx (12 tests) 238ms
+ ✓ src/creative/studioImageRuntimeContract.test.ts (11 tests) 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/StudioReferenceAssetHandoff.additive.test.tsx > explicit asset handoff into original weighted image references > fences delayed acceptance after unmount
+AssertionError: expected { id: 'source', …(10) } to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+Object {
+  "branch_id": null,
+  "created_at": "",
+  "filename": "source.png",
+  "id": "source",
+  "kind": "image",
+  "media_type": "image/png",
+  "novel_id": "cutout-project",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "size": 100,
+  "updated_at": "",
+  "version": 2,
+}
+
+ ❯ src/creative/StudioReferenceAssetHandoff.additive.test.tsx:98:168
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 9 passed (10)
+      Tests  1 failed | 161 passed (162)
+   Start at  08:32:54
+   Duration  20.55s (transform 1.92s, setup 59ms, collect 3.94s, tests 12.21s, environment 2.68s, prepare 484ms)
+

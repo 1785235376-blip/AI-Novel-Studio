@@ -79,6 +79,21 @@ function imageSources(draft: Draft): ProductionSource[] {
   const inputs = [draft.imageSource, ...draft.imageReferences.map(reference => reference.source), draft.maskSource].filter((row): row is ProductionSource => !!row);
   return inputs.filter((row, index) => inputs.findIndex(value => value.id === row.id) === index);
 }
+// Shared insertion policy for the original reference picker and explicit asset handoff.
+function appendImageReference(old: Draft, asset: StudioAsset, provider?: ProductionProvider, handoff = false): Draft {
+  if (!provider?.image_capabilities) throw new Error('请明确选择支持当前图片参考操作的服务商配置。');
+  if (handoff && (provider.operation_id !== old.operation || mediaProviderKey(provider) !== old.providerKey
+    || provider.capability !== 'IMAGE' || provider.local !== (old.route === 'local'))) throw new Error('请明确选择支持当前图片参考操作的服务商配置。');
+  if (!usableAsset(asset, 'image') || asset.manual_mask) throw new Error('参考素材不可用，请重新读取素材。');
+  if (asset.id === old.imageSource?.id) throw new Error('基础图不能同时作为辅助参考，请选择不同素材。');
+  if (handoff && (old.maskSource || old.operation === 'm5.image.reference' && old.imageSource)) throw new Error('已有基础图或遮罩绑定；请先用原输入控件调整。');
+  if (handoff && (old.sources.some(source => source.id === asset.id) || old.imageReferences.some(reference => reference.source.id === asset.id))) throw new Error('此素材已绑定；请使用原输入控件明确移除或调整，不会覆盖已有绑定。');
+  if (handoff && JSON.stringify(old.sources) !== JSON.stringify(imageSources(old))) throw new Error('当前输入无法安全追加；请先用原输入控件调整。');
+  const limit = old.operation === 'm5.image.i2i' ? Math.min(4, Math.max(0, provider.image_capabilities.reference_limit - 1)) : handoff ? Math.min(5, provider.image_capabilities.reference_limit) : provider.image_capabilities.reference_limit;
+  if ((handoff && !Number.isSafeInteger(limit)) || old.imageReferences.length >= limit) throw new Error('参考图数量超过当前路线的上限。');
+  const next = { ...old, imageReferences: [...old.imageReferences, { source: imageSnapshot(asset), weight: '1' }], allowCloud: false };
+  return { ...next, sources: imageSources(next) };
+}
 function sourcesCurrent(originalSources: (ProductionSource | RecordedMediaCommand['source_snapshots'][number])[], assets: StudioAsset[], operation?: string) {
   const sources = originalSources.filter((source): source is ProductionSource => source.kind === 'ASSET');
   if (operation === 'm5.image.cutout') {
@@ -284,7 +299,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     edit({ ...old, parameters: next });
   }
   const handoffOperation = (operation: MediaOperation) => latest.current.assetHandoff?.target === 'VIDEO'
-    ? operation === 'm7.video.i2v' || operation === 'm7.video.v2v' : operation === 'm5.image.i2i';
+    ? operation === 'm7.video.i2v' || operation === 'm7.video.v2v' : operation === 'm5.image.i2i' || operation === 'm5.image.reference';
   // Metadata-only handoff. The existing controller remains the sole draft owner.
   async function readHandoff(apply: boolean) {
     const request = latest.current.assetHandoff;
@@ -305,28 +320,36 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (!editable() || handoffRevision.current !== revision) {
         setHandoffAsset(undefined); setHandoffNotice('草稿、服务配置或编辑状态已变化；请重新核对。'); return;
       }
-      if (!apply) { setHandoffAsset({ asset, request, revision }); return; }
       const old = draftRef.current;
+      if (!apply && old.operation !== 'm5.image.reference') { setHandoffAsset({ asset, request, revision }); return; }
       const listed = latest.current.assets.find(row => row.id === asset.id);
       if (!listed || !exactHandoffAsset(listed, request.reference) || listed.kind !== kind || listed.manual_mask) {
         setHandoffAsset(undefined); setHandoffNotice('当前素材列表尚未核对同一版本；请明确读取当前素材版本后重试。'); return;
       }
       const chosen = providersRef.current.find(row => mediaProviderKey(row) === old.providerKey && row.operation_id === old.operation);
-      if (old.sources.some(row => row.id === asset.id)) { setHandoffNotice('此素材已绑定；请使用原输入控件明确移除或调整，不会覆盖已有绑定。'); return; }
-      if (video) {
-        if (old.sources.length || old.imageSource || old.imageReferences.length || old.maskSource) {
-          setHandoffNotice('已有来源绑定；请先用原输入控件移除，不会覆盖已有来源。'); return;
-        }
-        edit({ ...old, sources: [{ id: asset.id, kind: 'ASSET', asset_kind: kind as 'image' | 'video', version: asset.version, digest: asset.sha256 }], allowCloud: false });
-      } else if (chosen?.image_capabilities) {
-        if (old.imageSource || old.sources.length !== old.imageReferences.length || old.imageReferences.length + 1 > chosen.image_capabilities.reference_limit) {
-          setHandoffNotice('已有基础图或超过当前路线输入上限；请先用原输入控件调整。'); return;
-        }
-        const next = { ...old, imageSource: imageSnapshot(asset), allowCloud: false };
-        edit({ ...next, sources: imageSources(next) });
+      if (old.operation === 'm5.image.reference') {
+        let next: Draft;
+        try { next = appendImageReference(old, asset, chosen, true); }
+        catch (reason) { setHandoffAsset(undefined); setHandoffNotice(reason instanceof Error ? reason.message : '当前输入无法安全追加。'); return; }
+        if (!apply) { setHandoffAsset({ asset, request, revision }); return; }
+        edit(next);
       } else {
-        if (old.sources.length >= 5 || old.imageSource || old.imageReferences.length || old.maskSource) { setHandoffNotice('当前输入无法安全追加；请先用原输入控件调整。'); return; }
-        edit({ ...old, sources: [...old.sources, imageSnapshot(asset)], allowCloud: false });
+        if (old.sources.some(row => row.id === asset.id)) { setHandoffNotice('此素材已绑定；请使用原输入控件明确移除或调整，不会覆盖已有绑定。'); return; }
+        if (video) {
+          if (old.sources.length || old.imageSource || old.imageReferences.length || old.maskSource) {
+            setHandoffNotice('已有来源绑定；请先用原输入控件移除，不会覆盖已有来源。'); return;
+          }
+          edit({ ...old, sources: [{ id: asset.id, kind: 'ASSET', asset_kind: kind as 'image' | 'video', version: asset.version, digest: asset.sha256 }], allowCloud: false });
+        } else if (chosen?.image_capabilities) {
+          if (old.imageSource || old.sources.length !== old.imageReferences.length || old.imageReferences.length + 1 > chosen.image_capabilities.reference_limit) {
+            setHandoffNotice('已有基础图或超过当前路线输入上限；请先用原输入控件调整。'); return;
+          }
+          const next = { ...old, imageSource: imageSnapshot(asset), allowCloud: false };
+          edit({ ...next, sources: imageSources(next) });
+        } else {
+          if (old.sources.length >= 5 || old.imageSource || old.imageReferences.length || old.maskSource) { setHandoffNotice('当前输入无法安全追加；请先用原输入控件调整。'); return; }
+          edit({ ...old, sources: [...old.sources, imageSnapshot(asset)], allowCloud: false });
+        }
       }
       handoffConsumed.current = request; setHandoffAsset(undefined);
       setHandoffNotice(`已加入原${video ? '视频' : '图片'}制作草稿；旧制作预览与云端确认已清除。尚未预检、入队或执行。`);
@@ -391,15 +414,13 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (!provider?.image_capabilities) return;
     const asset = latest.current.assets.find(row => row.id === id && usableAsset(row, 'image') && !row.manual_mask);
     if (checked && !asset) { setError('参考素材不可用，请重新读取素材。'); return; }
-    const references = old.imageReferences.filter(reference => reference.source.id !== id);
-    if (checked && asset) {
-      if (asset.id === old.imageSource?.id) { setError('基础图不能同时作为辅助参考，请选择不同素材。'); return; }
-      const limit = old.operation === 'm5.image.i2i' ? Math.min(4, Math.max(0, provider.image_capabilities.reference_limit - 1)) : provider.image_capabilities.reference_limit;
-      if (references.length >= limit) { setError('参考图数量超过当前路线的上限。'); return; }
-      references.push({ source: imageSnapshot(asset), weight: '1' });
-    }
-    const next = { ...old, imageReferences: references, allowCloud: false }; edit({ ...next, sources: imageSources(next) });
+    const next = { ...old, imageReferences: old.imageReferences.filter(reference => reference.source.id !== id), allowCloud: false };
+    const without = { ...next, sources: imageSources(next) };
+    if (!checked || !asset) { edit(without); return; }
+    try { edit(appendImageReference(without, asset, provider)); }
+    catch (reason) { setError(reason instanceof Error ? reason.message : '参考素材不可用，请重新读取素材。'); }
   }
+
   function changeReferenceWeight(id: string, weight: string) {
     const old = draftRef.current;
     const next = { ...old, imageReferences: old.imageReferences.map(reference => reference.source.id === id ? { ...reference, weight } : reference), allowCloud: false };

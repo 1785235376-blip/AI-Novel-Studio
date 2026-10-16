@@ -1,0 +1,6 @@
+8bb4d2b52c290351f009158954df709094dd1d6f0f45fdeae3c95168d31f8399  docs/delivery/reference-asset-handoff-20261016/build.log
+489383a2430c861f10ee9177ec1db7f459a7054bdb2fc846d23bb58cf4fc5060  docs/delivery/reference-asset-handoff-20261016/focused-tests-final.log
+0d605e98c765862b918f936bbb07f76dc55f16624b7ded7ca3b338af263f8c57  docs/delivery/reference-asset-handoff-20261016/focused-tests-initial.log
+723d664ec3964c5c380d6589ec4e65da840c4ddc8ded4710c900acf02ce91945  docs/delivery/reference-asset-handoff-20261016/focused-tests-repeated-initial.log
+dd550905f9c94e014525af5138a341c8a87a571f81a2e82feea2fdb2585e4f4d  docs/delivery/reference-asset-handoff-20261016/tokens.log
+2b6c646827ea6a1346efaa5d010fc5eeb7ad89a73ae1803bec8ad6d2a435cebe  docs/delivery/reference-asset-handoff-20261016/typecheck.log

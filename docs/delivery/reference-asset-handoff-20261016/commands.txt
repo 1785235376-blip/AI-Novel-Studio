@@ -1,0 +1,6 @@
+# From frontend; unchanged default timeouts; one worker; no cache
+node node_modules/vitest/vitest.mjs run --maxWorkers=1 --minWorkers=1 --no-cache src/creative/StudioReferenceAssetHandoff.additive.test.tsx src/creative/StudioImageAssetHandoff.test.tsx src/creative/StudioVideoAssetHandoff.test.tsx src/creative/StudioTimelineAssetHandoff.test.tsx src/creative/StudioImageRuntimeProduction.test.tsx src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx src/creative/StudioReferenceRoute.compatibility.test.tsx src/creative/StudioMediaRouteChoice.test.tsx src/creative/studioImageRuntimeContract.test.ts src/creative/AssetReferenceInspection.test.tsx
+node node_modules/typescript/bin/tsc -b --force
+node node_modules/vite/bin/vite.js build
+# From repository root
+node scripts/check_ui_design_tokens.mjs
