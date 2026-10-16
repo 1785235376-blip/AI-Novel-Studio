@@ -1,0 +1,18 @@
+{
+  "frontend/src/experimental/offlineSyncClient.ts": {
+    "sha256": "afd1564923d28ed278d2ee378ca1ed426b2e3c804dd31441d971019634cf646c",
+    "git_blob": "c81dcd124325942ba65674bde0fb1b2f53c43e7d"
+  },
+  "frontend/src/experimental/OfflineSyncPanel.tsx": {
+    "sha256": "1d26d6f9d6d6e28b6bdd8e62ec23908cc04cf05b164a0cc251aa9ed8f4e04af3",
+    "git_blob": "b6cff6a5eb8c4e0d79c49b9f70ccf64933181858"
+  },
+  "frontend/src/experimental/OfflineSyncRecoveryStatus.tsx": {
+    "sha256": "acdb1442498076dcf79e50fbcad1ab0b129eb401f040dd0a384095ceea90cb37",
+    "git_blob": "16c24c30bff94064ad364fb36569919180352589"
+  },
+  "frontend/src/experimental/OfflineSyncRecoveryStatus.test.tsx": {
+    "sha256": "e34b1f2699f9276228aba6ded4a75de9bd0e641997b9fd25673917b08bf3b958",
+    "git_blob": "0bd940efab8ec877292f01ec7c599a2d85cdb117"
+  }
+}

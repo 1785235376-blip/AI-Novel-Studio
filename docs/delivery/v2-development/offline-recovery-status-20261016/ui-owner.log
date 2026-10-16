@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/experimental/OfflineSyncPanel.test.tsx (11 tests) 870ms
+ ✓ src/experimental/OfflineSyncRecoveryStatus.test.tsx (22 tests) 553ms
+
+ Test Files  2 passed (2)
+      Tests  33 passed (33)
+   Start at  06:47:37
+   Duration  2.81s (transform 179ms, setup 25ms, collect 370ms, tests 1.42s, environment 614ms, prepare 108ms)
+

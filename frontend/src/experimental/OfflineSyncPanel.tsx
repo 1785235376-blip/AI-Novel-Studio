@@ -1,3 +1,4 @@
+import { OfflineSyncRecoveryStatus } from './OfflineSyncRecoveryStatus';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
@@ -81,13 +82,24 @@ function Receive({ api, channel, catalog, blocked, reload }: { api: SyncApi; cha
     {!!receipt && <Field label="可复制给发送端的接收回执"><textarea readOnly value={JSON.stringify(receipt, null, 2)} /></Field>}{action.feedback}</Panel>;
 }
 function Inbox({ api, row, blocked, reload }: { api: SyncApi; row: SyncRow; blocked: boolean; reload: () => void }) {
-  const [plan, setPlan] = useState<SyncPlan>(), [choices, setChoices] = useState<SyncChoices>({}), [ack, setAck] = useState(false), [recovery, setRecovery] = useState<SyncRecovery>();
+  const [plan, setPlan] = useState<SyncPlan>(), [choices, setChoices] = useState<SyncChoices>({}), [ack, setAck] = useState(false);
+  const [recoveryResult, setRecovery] = useState<{ epoch: number; value: SyncRecovery }>();
   const action = useAction(), alive = useAlive();
+  const recoveryKey = JSON.stringify([row.id, row.version, row.status, row.target_chapter_id, row.selection_withdrawn, blocked]);
+  const recoveryOwner = useRef({ key: recoveryKey, epoch: 0 });
+  if (recoveryOwner.current.key !== recoveryKey) recoveryOwner.current = { key: recoveryKey, epoch: recoveryOwner.current.epoch + 1 };
+  const recovery = recoveryResult?.epoch === recoveryOwner.current.epoch ? recoveryResult.value : undefined;
+  async function readRecovery() {
+    const epoch = ++recoveryOwner.current.epoch;
+    setRecovery(undefined);
+    const result = await api.recovery(row);
+    if (alive.current && recoveryOwner.current.epoch === epoch && result.id === row.id && result.version === row.version) setRecovery({ epoch, value: result });
+  }
   useEffect(() => { setPlan(undefined); setRecovery(undefined); setAck(false); }, [row.version]);
   return <article className="experimental-record"><Badge>{labels[row.status]} · #{row.sequence} · v{row.version}</Badge><p>消息 {row.id} · {row.target_chapter_id || '待审阅新增章节'} · {row.operation}</p>{row.selection_withdrawn && <p>此章节已撤回，历史候选和未知结果保留；不能再应用或采用。</p>}
     {row.status === 'PENDING_REVIEW' && <><Button disabled={blocked || action.busy} onClick={() => void action.run(async () => { const result = await api.review(row, choices); if (alive.current) { setPlan(result); setAck(false); } }, '已读取当前本机、初始基线和收到的候选。')}>读取当前三方差异</Button><Button disabled={blocked || action.busy} onClick={() => void action.run(async () => { setChoices({}); setPlan(undefined); setAck(false); const result = await api.review(row, {}); if (alive.current) setPlan(result); }, '已丢弃旧选择并读取最新差异，尚未应用。')}>清除旧选择并重新读取</Button>
       {plan && <><Details value={{ base: plan.base, local: plan.current, incoming: plan.incoming }} label="完整候选与当前版本" />{plan.segments.map((segment, index) => <div className="experimental-record" key={segment.id || index}><Badge>{segment.kind}</Badge><Details value={segment} label={'差异 ' + (index + 1)} />{segment.kind === 'CONFLICT' && segment.id && <Field label={'冲突选择 ' + (index + 1)}><select value={choices[segment.id] || ''} disabled={blocked || action.busy} onChange={e => { const selected = e.target.value as 'LOCAL' | 'INCOMING'; setChoices({ ...choices, [segment.id!]: selected }); setAck(false); setPlan({ ...plan, can_apply: false }); }}><option value="" disabled>必须明确选择</option><option value="LOCAL">保留本机候选</option><option value="INCOMING">采用收到的候选</option></select></Field>}</div>)}{!plan.can_apply && <StatusMessage tone="warning">还有未核对的冲突或限制。作出选择后重新读取三方差异以确认最终版本。{plan.blocked.join(' / ')}</StatusMessage>}
         <label className="experimental-check"><input type="checkbox" checked={ack} disabled={!plan.can_apply} onChange={e => setAck(e.target.checked)} />已核对差异，允许通过原章节权限与版本检查应用</label><Button disabled={blocked || action.busy || !plan.can_apply || !ack} onClick={() => void action.run(async () => { try { await api.apply(row, plan); } finally { if (alive.current) { setPlan(undefined); setAck(false); reload(); } } }, '已通过原章节服务应用并保留历史。')}>应用已核对的候选</Button></>}
     </>}
-    {['UNKNOWN', 'CLAIMED'].includes(row.status) && <><p>可能已写入，禁止自动重试。读取原章节检查点与当前结果；部分新增章节会保留，可在原编辑器核对。</p><Button disabled={blocked || action.busy} onClick={() => void action.run(async () => { const result = await api.recovery(row); if (alive.current) setRecovery(result); }, '已读取原章节实际状态。')}>核对未知写入结果</Button>{recovery && <><Details value={recovery} label="恢复观察，不自动重放" /><Button disabled={blocked || action.busy || !recovery.can_adopt} onClick={() => void action.run(async () => { try { await api.recovery(row, recovery); } finally { if (alive.current) reload(); } }, '完全匹配的已有结果已由人工确认，不重复写入。')}>确认采用完全匹配的已有结果</Button><Button disabled={blocked || action.busy} onClick={() => void action.run(async () => { try { await api.recovery(row, recovery, true); } finally { if (alive.current) reload(); } }, '该未知记录已人工关闭。原稿、候选和部分新增结果仍保留，未重试写入。')}>保留所有候选并关闭此未知记录</Button></>}</>}{action.feedback}</article>;
+    {['UNKNOWN', 'CLAIMED'].includes(row.status) && <><p>可能已写入，禁止自动重试。读取原服务对检查点与当前状态的比较；详细正文和历史仍在原编辑器核对，部分新增章节会保留。</p><Button disabled={blocked || action.busy} onClick={() => void action.run(readRecovery, '已读取原章节实际状态。')}>核对未知写入结果</Button>{recovery && <><OfflineSyncRecoveryStatus row={row} recovery={recovery} /><Button disabled={blocked || action.busy || !recovery.can_adopt} onClick={() => void action.run(async () => { try { await api.recovery(row, recovery); } finally { if (alive.current) reload(); } }, '完全匹配的已有结果已由人工确认，不重复写入。')}>确认采用完全匹配的已有结果</Button><Button disabled={blocked || action.busy} onClick={() => void action.run(async () => { try { await api.recovery(row, recovery, true); } finally { if (alive.current) reload(); } }, '该未知记录已人工关闭。原稿、候选和部分新增结果仍保留，未重试写入。')}>保留所有候选并关闭此未知记录</Button></>}</>}{action.feedback}</article>;
 }
