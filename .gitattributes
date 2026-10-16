@@ -2,6 +2,7 @@
 docs/delivery/v2-development/** -text
 docs/delivery/v2-retirement-canvas-20261016/** -text
 docs/delivery/v2-r3-prompt-20261016/** -text
+docs/delivery/v2-r3-adoption-ui-20261017/** -text
 
 # V2 source manifests pin these existing CRLF bytes on every platform.
 # Keep default whitespace checks and recognize CR as the line terminator.
