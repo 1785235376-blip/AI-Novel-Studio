@@ -632,7 +632,7 @@ class GraphCanvasNote(Strict):
 
 class GraphPresentation(Strict):
     """Bounded display-only metadata, never execution input or authority."""
-    notes: list[GraphCanvasNote] | None = Field(default=None, min_length=1, max_length=128, strict=True)
+    notes: list[GraphCanvasNote] | None = Field(default=None, min_length=1, max_length=1024, strict=True)
     comment: str | None = Field(default=None, strict=True, max_length=2000)
 
     @model_validator(mode="after")

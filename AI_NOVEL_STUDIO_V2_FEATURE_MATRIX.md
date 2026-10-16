@@ -2091,3 +2091,40 @@ review edits; its explicit-discard/read-then-adopt correction is a separate next
 slice. Browser, PostgreSQL, real-model/GPU and release acceptance remain open.
 The prior blocked lifecycle/security candidate was not run or modified; production
 prompt-adoption writes remain disabled. No push, hosted CI or publication occurred.
+
+### 2026-10-16 — persisted 1024 display-note slice (local only)
+
+The existing original graph `presentation.notes` field now admits up to **1024
+plain-text display notes**. This does not claim 1000 asset/reference/execution
+nodes. The original 256-code-point item, 12000-code-point aggregate, 96000-byte
+canonical definition, record/scope/history and 16/24-node/40-edge execution budgets
+remain intact. No new owner, collection or workflow engine is introduced.
+
+Large boards use a 20-result searchable note directory. Card rendering stays at
+most 128 even for overlapping or not-yet-measured notes; selected/dragged content
+is retained within that cap. The editor explicitly discloses omitted-card counts
+and keeps the full saved list. Search/page navigation does not mutate notes or
+camera, and original editor focus/IME and undo/save ownership remain.
+
+The UI byte estimate reserves two extra bytes only for bounded exact integers,
+covering Python float `.0` normalization after JSON negative-zero normalization;
+all other numbers keep the old 32-byte reserve. Shared JS-wire/Python-canonical
+fixtures and exact byte boundaries cover Unicode, escapes and numeric spelling.
+
+Real File verification includes 1000/1024 distinct Chinese-label create/save/
+restart-reopen, original history and CAS, legacy digest restoration, unchanged
+execution digest, and atomic rejection after the original history quota. Initial
+File **87 passed / 4 PostgreSQL cases deselected** and frontend **243 passed / 5
+files** are retained with their source-state qualifications. Final independent
+results and stable-tree receipt follow in
+`docs/delivery/v2-development/large-display-notes-20261016/README.md`.
+
+This is persisted display-text and component evidence, not browser response/heap
+acceptance, PostgreSQL, real-model or whole-V2 acceptance. Historical geometry-only
+1000-object evidence remains distinct. Browser socket restrictions were not
+retried; blocked lifecycle/security work, production gates and publication remain
+untouched.
+Final display-note verification: **244 passed / 5 frontend files** under independent
+review; **87 passed / 4 PostgreSQL cases deselected** in the final unchanged-source
+File receipt. The cap is for persisted text display notes only; all original
+execution, canonical-byte, history and scope limits remain unchanged.

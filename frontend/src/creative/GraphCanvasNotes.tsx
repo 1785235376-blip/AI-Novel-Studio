@@ -3,14 +3,17 @@ import type { PointerEvent } from 'react';
 import { Button } from '../ui/primitives';
 import type { StudioGraphCanvasNote, StudioGraphDefinition, StudioGraphPosition } from './studioGraphTypes';
 import { clampGraphPosition, graphScreenToWorld } from './graphCanvasGeometry';
-import { GRAPH_NOTE_HEIGHT, GRAPH_NOTE_WIDTH, withGraphNotes, visibleGraphNotes } from './graphCanvasNotes';
+import { GRAPH_NOTE_HEIGHT, GRAPH_NOTE_WIDTH, GRAPH_NOTE_LIMIT, GRAPH_NOTE_RENDER_LIMIT, withGraphNotes, visibleGraphNotes, graphNoteDisplayWindow } from './graphCanvasNotes';
+
+import { GraphNoteNavigator } from './GraphNoteNavigator';
 
 type Props = { definition: StudioGraphDefinition; blocked: boolean; owner?: string | number;
   selected: string | null; onSelect: (id: string | null) => void;
   onChange: (definition: StudioGraphDefinition, record?: boolean) => void };
-export function GraphNoteEditor({ definition, blocked, owner, selected, onSelect, onChange }: Props) {
+export function GraphNoteEditor({ definition, blocked, owner, selected, onSelect, onChange, size = null, displayViewport = definition.viewport }: Props & { size?: { width: number; height: number } | null; displayViewport?: StudioGraphDefinition['viewport'] }) {
   const textId = useId();
   const notes = definition.presentation?.notes || [], note = notes.find(item => item.id === selected);
+  const visibility = graphNoteDisplayWindow(notes, displayViewport, size, selected);
   const [error, setError] = useState(false);
   const [composition, setComposition] = useState<string | null>(null);
   const composing = useRef(false);
@@ -30,15 +33,15 @@ export function GraphNoteEditor({ definition, blocked, owner, selected, onSelect
     setError(false); onChange(next, true); return true;
   }
   return <section className="graph-canvas__groups graph-canvas__annotation" aria-label="空间便笺" onKeyDown={event => event.stopPropagation()}>
-    <Button type="button" disabled={blocked || notes.length >= 128} onClick={() => {
+    <Button type="button" disabled={blocked || notes.length >= GRAPH_NOTE_LIMIT} onClick={() => {
       if (blocked) return;
       let serial = 1; while (notes.some(item => item.id === `note_${serial}`)) serial++;
       const id = `note_${serial}`, point = graphScreenToWorld({ x: 32, y: 32 }, definition.viewport);
       if (apply([...notes, { id, text: '', position: { x: clampGraphPosition(point.x), y: clampGraphPosition(point.y) } }])) onSelect(id);
     }}>在视口左上添加便笺</Button>
-    <label>空间便笺目录<select value={note?.id || ''} disabled={blocked} onChange={event => onSelect(event.target.value || null)}>
+    {notes.length > GRAPH_NOTE_RENDER_LIMIT ? <GraphNoteNavigator notes={notes} owner={owner} blocked={blocked} onSelect={onSelect} /> : <label>空间便笺目录<select value={note?.id || ''} disabled={blocked} onChange={event => onSelect(event.target.value || null)}>
       <option value="">选择便笺</option>{notes.map(item => <option key={item.id} value={item.id}>{item.id} · {Array.from(item.text).slice(0, 24).join('') || '空便笺'}</option>)}
-    </select></label>
+    </select></label>}
     {note && <>
       <label htmlFor={textId}>便笺文本 {note.id}</label>
       <textarea key={JSON.stringify([owner, selected, blocked, editorEpoch.current])} id={textId} aria-label="便笺文本" rows={2} value={composing.current && compositionSource.current === definition ? composition ?? note.text : note.text} disabled={blocked}
@@ -60,7 +63,8 @@ export function GraphNoteEditor({ definition, blocked, owner, selected, onSelect
         if (apply(notes.filter(item => item.id !== note.id))) onSelect(null);
       }}>移除所选便笺</Button>
     </>}
-    <p className="graph-canvas__help">{notes.length}/128 张空间便笺；每张 256 个 Unicode 字符，合计 12000 字符，整图仍受 96000 字节限制。新增位于视口左上 32 像素处，可能重叠，可拖动标题或编辑坐标。仅纯文本展示，无端口或模型输入；使用原图保存与撤销。小地图仅显示执行节点。</p>
+    <p className="graph-canvas__help">{notes.length}/{GRAPH_NOTE_LIMIT} 张空间便笺；每张 256 个 Unicode 字符，合计 12000 字符，整图仍受 96000 字节限制。新增位于视口左上 32 像素处，可能重叠，可拖动标题或编辑坐标。仅纯文本展示，无端口或模型输入；使用原图保存与撤销。同时最多显示 {GRAPH_NOTE_RENDER_LIMIT} 张便笺卡片；尺寸未就绪或重叠过多时使用目录选择，完整内容仍保存在原图。小地图仅显示执行节点。</p>
+    {visibility.omitted > 0 && <p role="status" className="graph-canvas__help">{size ? '当前视区' : '视口尺寸尚未确认'}有 {visibility.candidates} 张候选便笺，显示 {visibility.shown.length} 张，暂未绘制 {visibility.omitted} 张。完整内容未删除；用目录查找并选择，可查看与编辑任意便笺。</p>}
     {error && <p role="alert" className="graph-canvas__help">便笺、坐标或整图容量超限，本次修改未应用，原图已保留。</p>}
   </section>;
 }

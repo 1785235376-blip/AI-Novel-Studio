@@ -1,0 +1,15 @@
+{
+  "app/creative/graph_models.py": "a294844ac4fa3e2a2d5e3f0fab4a2ba3eb180a61a738fd691bf3a3bdd6b0363d",
+  "frontend/src/creative/GraphCanvas.tsx": "152f5de859cd75cadc24840e7f519db183b1780ff0b03a95fd52fa3aee9dc5bc",
+  "frontend/src/creative/GraphCanvasLargeNotes.test.tsx": "3418d0861d3663d7c13d85439c3f55034f89f5b3cc54e010a54d7f3c41e52b28",
+  "frontend/src/creative/GraphCanvasNotes.tsx": "86f83aa42409245ec03d5ee4f4c956312c61b9044bd6b4fb22f9d83fd349a0eb",
+  "frontend/src/creative/GraphNoteNavigator.tsx": "3c764d100f03cfce365e8982aee0d7026b469b5a4a0d2f225fc18638ce9b17ef",
+  "frontend/src/creative/graphCanvasLargeNotes.test.ts": "9a655be16c05d556d5b0e8e34749bada0481a9b0aa30e05b9264327f0dde99a9",
+  "frontend/src/creative/graphCanvasNotes.test.ts": "b2b34c63d306374f49a211ce45c88b510227ce9da19b03e55097240fc5ca926a",
+  "frontend/src/creative/graphCanvasNotes.ts": "b3f3d0a5e0e9aa88dcb789e84d6fda17f6012028357545d08e30ed7d7d460222",
+  "frontend/src/creative/studioGraphClient.test.ts": "bf588163b48ac538f6f04b6cef46d514d44bac1c4673337cf369c2463ebdc5e4",
+  "frontend/src/creative/studioGraphClient.ts": "17878c77ffeac030b08f9f3fac2e4602e6f0ad58b9daaf128071caa38c60eb5e",
+  "tests/fixtures/v2_graph_note_numbers.json": "3d2136ea25a8d02344e083c47b810c50c35f0546f45f31709aa0e2cef6ef62bc",
+  "tests/test_v2_canvas_large_notes.py": "51c4e16af771d5d24f66010fcd2530da453dcd7eecb59df6001eeb84b7f8b73e",
+  "tests/test_v2_graph_presentation_contract.py": "853f9b64f8308e8bbf5a4daacad74c92809d84762ca2386118262cba042be89a"
+}

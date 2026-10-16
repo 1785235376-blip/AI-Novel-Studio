@@ -12,7 +12,7 @@ describe('bounded independent display notes', () => {
     expect(withGraphNotes(graph(), [])).not.toHaveProperty('presentation');
   });
   it('enforces count, aggregate codepoints, coordinates, IDs and conservative UTF-8 owner budget', () => {
-    expect(withGraphNotes(graph(), notes(129))).toBeNull();
+    expect(withGraphNotes(graph(), notes(1025))).toBeNull();
     expect(withGraphNotes(graph(), notes(47, '🎬'.repeat(256)))).toBeNull();
     expect(withGraphNotes(graph(), notes(46, '🎬'.repeat(256)))).not.toBeNull();
     const exact = notes(46, '🎬'.repeat(256)); exact.push({ id: 'last', text: '🎬'.repeat(224), position: { x: 0, y: 0 } });

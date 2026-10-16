@@ -302,7 +302,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
           x: clampGraphPosition(viewportSize.width / 2 - (node.position.x + GRAPH_NODE_WIDTH / 2) * definition.viewport.zoom),
           y: clampGraphPosition(viewportSize.height / 2 - (node.position.y + graphNodeHeight(displayIndex.descriptors.get(node.definition_id)) / 2) * definition.viewport.zoom) } }, true);
       }} />
-    <GraphNoteEditor definition={definition} blocked={blocked || !!activeGesture} owner={interactionKey}
+    <GraphNoteEditor definition={definition} size={viewportSize} displayViewport={visible.viewport} blocked={blocked || !!activeGesture} owner={interactionKey}
       selected={selectedNote} onSelect={setSelectedNote} onChange={onDefinitionChange} />
     <GraphVisualGroups definition={definition} selected={selected} blocked={blocked || !!activeGesture} interactionKey={interactionKey}
       onChange={onDefinitionChange} onSelect={onSelectionChange} />

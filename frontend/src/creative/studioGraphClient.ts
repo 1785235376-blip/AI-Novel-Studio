@@ -337,7 +337,7 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
     if (!Object.keys(presentation).length || Object.keys(presentation).some(key => !['comment', 'groups', 'view', 'notes'].includes(key))) invalid(input);
     result.presentation = {};
     if (presentation.notes !== undefined) {
-      if (!Array.isArray(presentation.notes) || !presentation.notes.length || presentation.notes.length > 128) invalid(input);
+      if (!Array.isArray(presentation.notes) || !presentation.notes.length || presentation.notes.length > 1024) invalid(input);
       const ids = new Set<string>();
       result.presentation.notes = presentation.notes.map(value => {
         const note = record(value, input), point = record(note.position, input);

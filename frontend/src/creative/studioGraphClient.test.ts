@@ -78,10 +78,18 @@ describe('scoped graph transport', () => {
     await client.save(graphId, { expected_version: 3, definition: original.definition });
     expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
   });
+  it.each([1, 2, 3, 4, 5] as const)('roundtrips 1024 concise Chinese display notes through original save/get in schema %s', async schema_version => {
+    const original = graph(); original.definition = { ...definition(), schema_version, nodes: [], edges: [],
+      presentation: { notes: Array.from({ length: 1024 }, (_, i) => ({ id: `note_${i + 1}`, text: `雨夜·镜头${String(i + 1).padStart(4, '0')}`, position: { x: (i % 40) * 320, y: Math.floor(i / 40) * 220 } })) } };
+    fetchMock.mockResolvedValue(reply(original)); const client = studioClient(projectId, context()).graphs;
+    expect((await client.get(graphId)).definition).toEqual(original.definition);
+    await client.save(graphId, { expected_version: 3, definition: original.definition });
+    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
+  });
   it.each([null, [], [{}], ...['n\n', 'n\r'].map(id => ({ id, text: '', position: { x: 0, y: 0 } })).map(note => [note]), [{ id: 'n', text: '🎬'.repeat(257), position: { x: 0, y: 0 } }],
     [{ id: 'n', text: '', position: { x: 100001, y: 0 } }],
     [{ id: 'n', text: '', position: { x: 0, y: 0 }, ports: [] }],
-    Array.from({ length: 129 }, (_, i) => ({ id: `n${i}`, text: '', position: { x: 0, y: 0 } })),
+    Array.from({ length: 1025 }, (_, i) => ({ id: `n${i}`, text: '', position: { x: 0, y: 0 } })),
     Array.from({ length: 47 }, (_, i) => ({ id: `n${i}`, text: 'a'.repeat(256), position: { x: 0, y: 0 } })),
     [{ id: 'n', text: '', position: { x: 0, y: 0 } }, { id: 'n', text: '', position: { x: 0, y: 0 } }]])('rejects malformed display notes %j', async notes => {
     const original = graph();

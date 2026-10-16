@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/GraphCanvas.test.tsx (96 tests) 5114ms
+   ✓ controlled typed graph canvas > creates, selects, drags, renames and removes persisted groups while retaining annotation 302ms
+   ✓ measured viewport rendering > filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing 620ms
+ ✓ src/creative/GraphCanvasLargeNotes.test.tsx (4 tests) 523ms
+ ✓ src/creative/studioGraphClient.test.ts (118 tests) 129ms
+ ✓ src/creative/graphCanvasLargeNotes.test.ts (23 tests) 42ms
+ ✓ src/creative/graphCanvasNotes.test.ts (3 tests) 9ms
+
+ Test Files  5 passed (5)
+      Tests  244 passed (244)
+   Start at  05:54:22
+   Duration  8.18s (transform 476ms, setup 38ms, collect 861ms, tests 5.82s, environment 598ms, prepare 250ms)
+

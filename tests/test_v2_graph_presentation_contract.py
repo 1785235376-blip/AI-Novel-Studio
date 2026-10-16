@@ -155,7 +155,7 @@ def test_independent_notes_roundtrip_without_execution_or_legacy_digest_change(s
     [{'id': 'n', 'text': '', 'position': {'x': float('nan'), 'y': 0}}],
     [{'id': 'n', 'text': '', 'position': {'x': 0, 'y': 0}, 'port': 'text'}],
     [{'id': 'n', 'text': '', 'position': {'x': 0, 'y': 0}}] * 2,
-    [{'id': f'n{i}', 'text': '', 'position': {'x': 0, 'y': 0}} for i in range(129)],
+    [{'id': f'n{i}', 'text': '', 'position': {'x': 0, 'y': 0}} for i in range(1025)],
     [{'id': f'n{i}', 'text': 'a' * 256, 'position': {'x': 0, 'y': 0}} for i in range(47)],
 ])
 def test_independent_notes_reject_bad_data(notes):
