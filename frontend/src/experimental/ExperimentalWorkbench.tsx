@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useId, useMemo, useRef, useState } from 'react';
 import { FlaskConical } from 'lucide-react';
 import type { Chapter, CollaborationContext } from '../api';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
@@ -20,6 +20,7 @@ import { StoryGraphPanel } from './StoryGraphPanel';
 import { ModelBrokerPanel } from './ModelBrokerPanel';
 import { ProductionLineagePanel } from './ProductionLineagePanel';
 import { StyleAnalysisPanel } from './StyleAnalysisPanel';
+import type { JudgeRevisionIntent } from './judgeRevisionHandoff';
 import { NarrativeJudgePanel } from './NarrativeJudgePanel';
 import { ChangeImpactPanel } from './ChangeImpactPanel';
 import { StorySimulatorPanel } from './StorySimulatorPanel';
@@ -50,6 +51,17 @@ import { EXPERIMENTAL_TABS } from './experimentalNavigation';
 export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavigate, currentAnchor, requestedTab, workspaceSection, focusActive, onFocusChange, onPreferencesChange, onReferencesChange, onUseCharacter, onExitCharacter, activeCharacterId, onOpenGeneration, onUseStyle, currentSelection, saved, onChapterSaved, revisionGeneration, localDraftState, saveFailure, workspaceView, onWorkspaceViewChange, onWorkspaceSaved, requestedTask }: { novelId: string; chapter?: Chapter; context: CollaborationContext; flags?: ExperimentalFlags; onNavigate?: (target: WorkspaceNavigation) => void; currentAnchor?: WorkspaceAnchor; requestedTab?: string; workspaceSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; focusActive?: boolean; onFocusChange?: (active: boolean) => void; onPreferencesChange?: (preferences: WritingFocusPreferences) => void; onReferencesChange?: () => void; onUseCharacter?: (characterId: string, chapterId: string, sceneId?: string) => void; onExitCharacter?: () => void; activeCharacterId?: string; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void>; onUseStyle?: (id: string) => void; currentSelection?: { from: number; to: number; text: string }; saved?: boolean; onChapterSaved?: (chapter: Chapter) => void; revisionGeneration?: RevisionGenerationOptions; localDraftState?: DraftStatus[]; saveFailure?: boolean; workspaceView?: WorkspaceView; onWorkspaceViewChange?: (view: WorkspaceView) => void; onWorkspaceSaved?: () => void; requestedTask?: { id: string; authority?: string; parent_id?: string } }) {
   const client = useMemo(() => experimentalClient(novelId, context), [novelId, context.sessionToken, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId, context.actor?.id]);
   const [selected, setSelected] = useState(requestedTab || 'advanced_planning_v2');
+  const [judgeRevision, setJudgeRevision] = useState<{ client: typeof client; chapter: string; intent: JudgeRevisionIntent }>();
+  const chapterSnapshot = JSON.stringify(chapter);
+  const handoffKey = JSON.stringify([chapterSnapshot, saved, enabled(flags, 'narrative_quality_judge_v2'), enabled(flags, 'revision_intelligence_v2')]);
+  const handoffLive = useRef({ client, key: handoffKey, epoch: 0 });
+  if (handoffLive.current.client !== client || handoffLive.current.key !== handoffKey) {
+    handoffLive.current = { client, key: handoffKey, epoch: handoffLive.current.epoch + 1 };
+  }
+  const handoffEpoch = handoffLive.current.epoch;
+  useLayoutEffect(() => { setJudgeRevision(undefined); }, [client, handoffKey]);
+  const revisionIntent = saved && judgeRevision?.client === client && judgeRevision.chapter === chapterSnapshot
+    && enabled(flags, 'narrative_quality_judge_v2') && enabled(flags, 'revision_intelligence_v2') ? judgeRevision.intent : undefined;
   const [toolQuery, setToolQuery] = useState('');
   const filterInput = useRef<HTMLInputElement>(null);
   const filterHintId = useId(), toolNavigationId = useId();
@@ -75,7 +87,10 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     {active === 'model_broker_v2' && <ModelBrokerPanel saved={saved} client={client} novelId={novelId} context={context} chapter={chapter} benchmarkEnabled={enabled(flags, 'model_benchmark_v2')} onOpenGeneration={onOpenGeneration} />}
     {active === 'asset_lineage_v2' && <ProductionLineagePanel client={client} manifestsEnabled={enabled(flags, 'production_manifest_v2')} onNavigate={onNavigate} />}
     {active === 'style_dna_v2' && <StyleAnalysisPanel client={client} chapter={chapter} requestedJobId={requestedTask?.authority === 'style_model_job' ? requestedTask.id : undefined} onNavigate={onNavigate} onUseStyle={onUseStyle} />}
-    {active === 'narrative_quality_judge_v2' && <NarrativeJudgePanel client={client} requestedJobId={requestedTask?.authority === 'judge_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={onNavigate} />}
+    {active === 'narrative_quality_judge_v2' && <NarrativeJudgePanel client={client} requestedJobId={requestedTask?.authority === 'judge_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={onNavigate} onPrepareRevision={saved && enabled(flags, 'revision_intelligence_v2') ? intent => {
+      if (handoffLive.current.epoch !== handoffEpoch || handoffLive.current.client !== client) return;
+      setJudgeRevision({ client, chapter: chapterSnapshot, intent }); setSelected('revision_intelligence_v2'); setToolQuery('');
+    } : undefined} />}
     {active === 'change_impact_v2' && <ChangeImpactPanel client={client} onNavigate={onNavigate} />}
     {active === 'story_simulator_v2' && <StorySimulatorPanel client={client} requestedJobId={requestedTask?.authority === 'simulator_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={onNavigate} />}
     {active === 'research_library_v2' && <ResearchLibraryPanel client={client} />}
@@ -94,7 +109,7 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     {active === 'safe_batches_v2' && <SafeBatchesPanel client={client} />}
     {active === 'ai_director_v2' && <DirectorPanel client={client} />}
     {active === 'timeline_exchange_v2' && <TimelineExchangePanel client={client} />}
-    {active === 'revision_intelligence_v2' && <RevisionIntelligencePanel client={client} chapter={chapter} requestedJobId={requestedTask?.authority === 'revision_model_job' ? requestedTask.id : undefined} selection={currentSelection} saved={saved} onChapterSaved={onChapterSaved} generation={revisionGeneration} onHistory={() => onNavigate?.({ kind: 'feature', id: 'history', feature: 'history' })} />}
+    {active === 'revision_intelligence_v2' && <RevisionIntelligencePanel judgeIntent={revisionIntent} client={client} chapter={chapter} requestedJobId={requestedTask?.authority === 'revision_model_job' ? requestedTask.id : undefined} selection={currentSelection} saved={saved} onChapterSaved={onChapterSaved} generation={revisionGeneration} onHistory={() => onNavigate?.({ kind: 'feature', id: 'history', feature: 'history' })} />}
     {active === 'writing_focus_v2' && <WritingFocusPanel client={client} chapter={chapter} flags={flags} onNavigate={onNavigate} focusActive={focusActive} onFocusChange={onFocusChange} onPreferencesChange={onPreferencesChange} onReferencesChange={onReferencesChange} />}
     {active === 'local_ai_workflow_inspector_v2' && <WorkflowInspectionPanel client={client} />}
     {active === 'workspace_tools_v2' && <WorkspaceToolsPanel client={client} chapter={chapter} flags={flags} onNavigate={onNavigate} currentAnchor={currentAnchor} initialSection={workspaceSection} focusActive={focusActive} saveFailure={saveFailure} workspaceView={workspaceView} onWorkspaceViewChange={onWorkspaceViewChange} onWorkspaceSaved={onWorkspaceSaved} />}
