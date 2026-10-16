@@ -2154,3 +2154,26 @@ Browser, PostgreSQL, real-model and release acceptance are still separate. The
 adjacent internal proposal-review preservation fix is already independently
 recorded at `director-review-preservation-20261016`; the earlier open-gap note is
 historical to its preceding integration slice.
+
+
+### 2026-10-16 — exact short-media Asset → Timeline handoff (local only)
+
+The original handoff and ordinary Asset picker now obtain a bounded default only
+from the existing APPROVED audio-trim / Timeline-output receipt, with exact
+project/branch, output ID, approved Asset version, digest, kind and measured
+producer profile checks. An 800 ms FLAC, 700 ms gapless MP3 or 400 ms video no
+longer receives a fabricated 1000 ms source range. Unknown imported media requires
+explicit range entry; partial input is retained and explicit ranges are not
+silently truncated. Image behavior, original save/render/review ownership and
+permissions remain unchanged. There is no new duration probe or storage owner.
+
+Actual mounted UI → original File Save → CPU MP4 → decoded picture/PCM → human
+output review → fresh-owner reopen is proven for all four short-media cases,
+including an explicit-range imported video. The preserved native RED failed at
+original render before this fix. Final verification: **12 passed / 9 PostgreSQL
+cases deselected**, source-stable; independent frontend **87 passed**, adjacent
+Timeline/NLE/client **116 passed**, and typecheck/build/token guard pass. Exact
+commands, actual codec/source/output hashes and the retained development failures
+are in `docs/delivery/v2-development/short-media-handoff-20261016/README.md`.
+This is local CPU and mounted component evidence; browser, PostgreSQL, real-model,
+GPU, external-NLE and release acceptance remain separate.

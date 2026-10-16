@@ -1,0 +1,42 @@
+{
+  "frontend/src/creative/studioTimelineAssetRange.ts": {
+    "git_blob": "427d78c542e830babd2eb0f4ead37327f3f4e8a0",
+    "sha256": "5dd3f76d107b4a4db87bb491bd07098cc75378b223cfa7d72aa5bd29b7cd14e8"
+  },
+  "frontend/src/creative/StudioTimelineAssetPicker.tsx": {
+    "git_blob": "675427ebbd301f604e219178c656c529df842ff3",
+    "sha256": "85e8c63a4c5a9cc3dcdce8a5c674d6a42c07ee76a61caaeb0e5823c6f95ca2c3"
+  },
+  "frontend/src/creative/StudioTimelineAssetHandoff.tsx": {
+    "git_blob": "c0e2293e5e98295141c9aba22b028bb74a7b2dbb",
+    "sha256": "cae5b338ddf9fe467bd50ffe87b55177b368d1fe86860fc27b172a096e837923"
+  },
+  "frontend/src/creative/StudioTimelineEditor.tsx": {
+    "git_blob": "0ccd28ba7a4083cc7ea25084118dfccab53a0a85",
+    "sha256": "2bc968401095407d97f5c6c8717d214cbd27af50364ed512d04cb8cc96c7c66f"
+  },
+  "frontend/src/creative/studioClient.ts": {
+    "git_blob": "4fa28b0bdee55b3bc9ecca0235804f34ca9ab1b9",
+    "sha256": "495ed436ccdbe8194ab72ce4af916a1730e4a6bdd7c8c17a021d3aff46fa9509"
+  },
+  "frontend/src/creative/studioTimelineAssetRange.test.tsx": {
+    "git_blob": "022b4d570a087220cff80b548183c8a071a843fe",
+    "sha256": "eb293c8e462f394f4f1a8b2c670d7e8722075b8e98a4165bd6b8621769cf13e1"
+  },
+  "frontend/src/creative/StudioTimelineShortMedia.bridge.test.tsx": {
+    "git_blob": "d10c659c774029f27d7bd3e8c2ac9d3adb74e336",
+    "sha256": "200865828f3960602fc744534b1b9ee10193c3d4f490503389f94176c7d74541"
+  },
+  "frontend/src/creative/StudioTimelineAssetHandoff.test.tsx": {
+    "git_blob": "926f9cccfda5e370cbd8837caea5cc444a72fa45",
+    "sha256": "c33361f40f84f7382cb02bc4da4b51fbf97113f6ce543afb5fea8b317bae1bde"
+  },
+  "frontend/src/creative/IndependentStudioWorkspace.test.tsx": {
+    "git_blob": "891c3cd22a2500a8462e6bb1edb98b11fc702608",
+    "sha256": "8e20681a7e02fad408afbc631d7b608d703d668dc0d83d68be78b323a1f831dd"
+  },
+  "tests/test_v2_timeline_short_media_handoff.py": {
+    "git_blob": "b66b66dc2a69e45446d43db4f892e367ed59047f",
+    "sha256": "5539a3689244cef218e94dab11677588c07aec4704b2cc670ebd57f9b81f5f3a"
+  }
+}

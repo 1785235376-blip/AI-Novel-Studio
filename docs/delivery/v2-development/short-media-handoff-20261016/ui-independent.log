@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (23 tests) 8043ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 302ms
+   ✓ mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance 451ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块 682ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块 676ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块 693ms
+   ✓ mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch 344ms
+   ✓ mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch 331ms
+   ✓ relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes 784ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"version":3} 477ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"} 439ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"} 407ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"} 444ms
+   ✓ relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch 540ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 873ms
+ ✓ src/creative/studioTimelineAssetRange.test.tsx (43 tests) 226ms
+ ✓ src/creative/StudioTimelineShortMedia.bridge.test.tsx (1 test) 91ms
+
+ Test Files  4 passed (4)
+      Tests  87 passed (87)
+   Start at  06:31:40
+   Duration  13.97s (transform 1.75s, setup 27ms, collect 2.77s, tests 9.23s, environment 1.24s, prepare 201ms)
+

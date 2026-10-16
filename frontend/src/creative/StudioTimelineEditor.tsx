@@ -1,3 +1,4 @@
+import { StudioTimelineAssetPicker } from './StudioTimelineAssetPicker';
 import { appendTimelineAsset, StudioTimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
@@ -34,6 +35,8 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   const [nleNotice, setNleNotice] = useState('');
   useEffect(() => { setPicked({}); setClipEdits({}); }, [props.client]);
   const clipElements = useRef(new Map<string, HTMLElement>()), composing = useRef(false);
+  const pickerOwner = useRef({ client: props.client, generation: 0 });
+  if (pickerOwner.current.client !== props.client) pickerOwner.current = { client: props.client, generation: pickerOwner.current.generation + 1 };
   useEffect(() => { composing.current = false; }, [props.client]);
   const latestReview = useRef({ c, props }); latestReview.current = { c, props };
   const reviewGeneration = c.getHandoffRevision();
@@ -57,10 +60,6 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     const tracks = input.timeline.tracks, index = tracks.findIndex(track => track.id === id), target = index + direction;
     if (index < 0 || target < 0 || target >= tracks.length) return;
     [tracks[index], tracks[target]] = [tracks[target], tracks[index]]; tracks.forEach((track, order) => { track.order = order; });
-  });
-  const addClip = (trackId: string) => c.change(input => {
-    const asset = props.assets.find(row => row.id === picked[trackId]);
-    if (asset) appendTimelineAsset(input, trackId, asset);
   });
   const locked = !c.canEdit || props.busy;
   const readLocked = c.denied || props.busy || !!c.pending || c.transfer.locked || c.playback.locked || c.sourceEdit.locked;
@@ -90,7 +89,8 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     </section>}
     {props.assetHandoff && <StudioTimelineAssetHandoff key={props.assetHandoff.id}
       request={props.assetHandoff} draft={draft} canEdit={c.canEdit} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision}
-      onApply={(trackId, asset) => c.change(input => appendTimelineAsset(input, trackId, asset))} />}
+      readJob={(owner, id) => props.read(() => props.client.get(owner, id))}
+      onApply={(trackId, asset, range) => c.change(input => appendTimelineAsset(input, trackId, asset, range))} />}
     <StudioTimelineSourceEditPanel controller={c.sourceEdit} source={c.base} assets={props.assets} />
     <fieldset disabled={locked}><legend>时间线参数</legend>
       <p>{extended ? '扩展编辑版本 2：可使用静态画面、速度、淡入淡出和片段音量。' : '原时间线版本：保存与渲染保持原有字段和行为。'}</p>
@@ -120,7 +120,10 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       <label>选择已有{track.kind === 'VIDEO' ? extended ? '视频或静态画面' : '视频' : '音频'}素材<select value={picked[track.id] ?? ''} onChange={event => { const value = event.currentTarget.value; setPicked(values => ({ ...values, [track.id]: value })); }}>
         <option value="">请选择素材</option>{props.assets.filter(asset => sourceFits(track, asset.kind) && !asset.deleted_at).map(asset => <option key={asset.id} value={asset.id}>{asset.filename} · {asset.kind} · v{asset.version}</option>)}
       </select></label>
-      <Button disabled={!picked[track.id] || clipsCount >= 30} onClick={() => addClip(track.id)}>将所选素材加入轨道</Button>
+      <StudioTimelineAssetPicker key={JSON.stringify([pickerOwner.current.generation, track.id, picked[track.id], props.assets.find(row => row.id === picked[track.id])?.version, props.assets.find(row => row.id === picked[track.id])?.sha256])}
+        asset={props.assets.find(row => row.id === picked[track.id])} canEdit={!locked && !track.locked && clipsCount < 30} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision}
+        readJob={(owner, id) => props.read(() => props.client.get(owner, id))}
+        onApply={range => c.change(input => { const asset = props.assets.find(row => row.id === picked[track.id]); if (asset) appendTimelineAsset(input, track.id, asset, range); })} />
       {!track.clips.length && <p>此轨道尚无片段，保存前请加入素材或移除此轨道。</p>}
       {track.clips.map((clip, clipIndex) => <section key={clip.id} tabIndex={-1} ref={element => { if (element) clipElements.current.set(clip.id, element); else clipElements.current.delete(clip.id); }} aria-label={`轨道 ${index + 1} 片段 ${clipIndex + 1}`}>
         <h4>{props.assets.find(asset => asset.id === clip.source_snapshot.id)?.filename ?? '素材不可用'} · 片段 {clipIndex + 1}</h4>

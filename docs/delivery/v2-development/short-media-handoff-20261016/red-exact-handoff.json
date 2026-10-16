@@ -1,0 +1,57 @@
+{
+  "profile": "short-media-handoff-red",
+  "runner_exit": 1,
+  "renderer_assertion": "FAILED != SUCCEEDED",
+  "exact_asset": {
+    "id": "121a9177-c0ac-47ef-91db-b126bd438625",
+    "kind": "audio",
+    "version": 2,
+    "sha256": "d89d780d65707fda7b05044c9694fb31252bfd0479ea0738d78f1e43e775b8c5",
+    "media_type": "audio/flac"
+  },
+  "original_approved_receipt": {
+    "id": "audio-16179dc6-0999-4fd4-9d93-402f6facf908",
+    "status": "APPROVED",
+    "approved_asset_version": 2,
+    "output_candidate": {
+      "id": "121a9177-c0ac-47ef-91db-b126bd438625",
+      "version": 1,
+      "digest": "d89d780d65707fda7b05044c9694fb31252bfd0479ea0738d78f1e43e775b8c5",
+      "kind": "audio"
+    },
+    "media_measurement": {
+      "duration_ms": 800,
+      "byte_count": 14345,
+      "sample_rate": 22050,
+      "channels": 1,
+      "sample_width": 2,
+      "container": "flac",
+      "audio_codec": "flac",
+      "profile_validation": "FLAC_STREAMINFO_PCM_VERIFIED",
+      "output_sha256": "d89d780d65707fda7b05044c9694fb31252bfd0479ea0738d78f1e43e775b8c5",
+      "total_samples": 17640,
+      "decoded_pcm_bytes": 35280,
+      "streaminfo_md5": "0bdacabe67ae0f4eddae3d009d77e047",
+      "decoded_pcm_sha256": "7aafbc4f3577d34e39ac1f2156261678c08eb1c21b3e180f89aedc69a105b9ef"
+    }
+  },
+  "mounted_handoff_clip": {
+    "id": "a817feff-f402-44c5-81c5-980bcbb57dd9",
+    "source_snapshot": {
+      "id": "121a9177-c0ac-47ef-91db-b126bd438625",
+      "kind": "ASSET",
+      "asset_kind": "audio",
+      "version": 2,
+      "digest": "d89d780d65707fda7b05044c9694fb31252bfd0479ea0738d78f1e43e775b8c5"
+    },
+    "start_ms": 0,
+    "in_ms": 0,
+    "out_ms": 1000,
+    "speed_num": 1,
+    "speed_den": 1,
+    "muted": false,
+    "gain_db": 0,
+    "fade_in_ms": 0,
+    "fade_out_ms": 0
+  }
+}

@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 919ms
+ ✓ src/creative/studioTimelineAssetRange.test.tsx (43 tests) 198ms
+ ✓ src/creative/StudioTimelineShortMedia.bridge.test.tsx (1 test) 106ms
+
+ Test Files  3 passed (3)
+      Tests  64 passed (64)
+   Start at  06:24:22
+   Duration  3.43s (transform 406ms, setup 25ms, collect 752ms, tests 1.22s, environment 884ms, prepare 155ms)
+

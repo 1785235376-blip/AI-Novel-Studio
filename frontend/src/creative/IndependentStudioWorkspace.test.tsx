@@ -164,6 +164,7 @@ describe('mounted original asset browser to timeline handoff', () => {
     await waitFor(() => expect((screen.getByRole('button', { name: '添加视频轨道' }) as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(screen.getByRole('button', { name: '添加视频轨道' })); fireEvent.click(screen.getByRole('button', { name: '核对交接素材版本' }));
     const select = await screen.findByLabelText('交接目标轨道'); fireEvent.change(select, { target: { value: (select as HTMLSelectElement).options[1].value } });
+    fireEvent.change(screen.getByLabelText('交接来源终点（毫秒）'), { target: { value: '1000' } });
     expect(screen.getByText(/未保存 · 1 条轨道 · 0 个片段/)).toBeTruthy(); fireEvent.click(screen.getByRole('button', { name: '明确加入原时间线草稿' }));
     await screen.findByText(/已把核对的原素材版本加入/); expect(screen.getByText(/未保存 · 1 条轨道 · 1 个片段/)).toBeTruthy();
     expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);

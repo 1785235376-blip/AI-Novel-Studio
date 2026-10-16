@@ -37,7 +37,7 @@ export type StudioLineageOrigin = 'ORIGINAL_INPUT' | 'GENERATED_RESULT' | 'DERIV
 export type StudioLineageLink = { id?: string; label?: string; version?: number; digest?: string; state: string };
 /** The existing production-lineage projection, not a second asset owner. */
 export type ProductionLineage = AssetProvenance;
-export type StudioAsset = Asset & { version: number; manual_mask?: StudioMaskReceipt };
+export type StudioAsset = Asset & { version: number; manual_mask?: StudioMaskReceipt; provenance?: Asset['provenance'] & { source_task_id?: string | null } };
 export type StudioReferenceKind = AssetRelationshipReferenceKind;
 export type StudioReference = AssetRelationshipReference;
 export type StudioReferences = { items: StudioReference[]; read_only: true; content_copied: false };

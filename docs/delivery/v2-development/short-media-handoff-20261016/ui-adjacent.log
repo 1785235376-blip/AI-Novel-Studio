@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 85ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 424ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 746ms
+ ✓ src/creative/TimelineTransferReview.test.tsx (19 tests) 1699ms
+   ✓ locates the exact original mounted clip without saving, granting consent or discarding local controls 335ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 229ms
+ ✓ src/creative/creativeProductionClient.test.ts (2 tests) 4ms
+
+ Test Files  6 passed (6)
+      Tests  116 passed (116)
+   Start at  06:32:29
+   Duration  7.18s (transform 749ms, setup 43ms, collect 1.43s, tests 3.19s, environment 1.50s, prepare 313ms)
+

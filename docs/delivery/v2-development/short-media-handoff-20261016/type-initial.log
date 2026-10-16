@@ -1,0 +1,2 @@
+frontend/src/creative/studioTimelineAssetRange.ts(22,8): error TS18048: 'measured.duration_ms' is possibly 'undefined'.
+frontend/src/creative/studioTimelineAssetRange.ts(22,37): error TS18048: 'measured.duration_ms' is possibly 'undefined'.

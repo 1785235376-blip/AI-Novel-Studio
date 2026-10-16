@@ -1,0 +1,27 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_actual_short_flac_handoff_renders_reviews_and_reopens[file] _______
+
+editing = namespace(nid='v2-independent-9f74f385f3044603a7a31c52e6c0c3bb', scope={'mode': 'local', 'novel_id': 'v2-independent-9...'created_at': '2026-10-16T21:18:51.240902+00:00', 'updated_at': '2026-10-16T21:18:51.240902+00:00', 'branch_id': None})
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-integration/.runtime/v2-checks/short-media-handoff-red/pytest-tmp/test_actual_short_flac_handoff0')
+
+    def test_actual_short_flac_handoff_renders_reviews_and_reopens(editing, tmp_path):
+        e = editing; asset, receipt = trimmed(e)
+        assert receipt['media_measurement']['duration_ms'] == 800
+        draft = mounted_handoff(tmp_path, asset, receipt, e.timeline['timeline'])
+        row = e.production.timeline_save(e.nid, e.scope, e.actor, None, {'expected_version': 0, **draft}, lambda: None)
+        job = e.production.timeline_render(e.nid, e.scope, e.actor, row['id'], {'expected_version': row['version'],
+            'reviewed_timeline_digest': row['timeline_digest'], 'request_id': 'actual-short-handoff'}, lambda: None)
+        # RED before the fix: the real renderer measures the 800 ms source and
+        # rejects the mounted handoff's fabricated 1000 ms out-point.
+>       assert job['status'] == 'SUCCEEDED', {'job': job, 'handed_clip': draft['timeline']['tracks'][-1]['clips'][0]}
+E       AssertionError: {'handed_clip': {'fade_in_ms': 0, 'fade_out_ms': 0, 'gain_db': 0, 'id': 'a817feff-f402-44c5-81c5-980bcbb57dd9', ...}, 'job': {'approved_asset_version': None, 'attempt': None, 'automatic_replay': False, 'branch_id': None, ...}}
+E       assert 'FAILED' == 'SUCCEEDED'
+E         
+E         - SUCCEEDED
+E         + FAILED
+
+tests/test_v2_timeline_short_media_handoff.py:39: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_v2_timeline_short_media_handoff.py::test_actual_short_flac_handoff_renders_reviews_and_reopens[file]
+1 failed, 1 deselected in 6.75s
