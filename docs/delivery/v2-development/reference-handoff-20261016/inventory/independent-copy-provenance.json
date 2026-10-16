@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "source": "/tmp/dot-reference-handoff-source-review-20261016.json",
+      "path": "independent-source-review.json",
+      "sha256": "5ca0ecffe0a30a5b3f8bf0be31e44ebf248b2685d319ccdc48b3726265d92376",
+      "exact_bytes": true
+    },
+    {
+      "source": "/tmp/dot-reference-handoff-inventory-review-20261016.json",
+      "path": "independent-review.json",
+      "sha256": "dfdbde268da7874f6f13a22b630e77ef6e965ddbdb55decb281b21079885be47",
+      "exact_bytes": true
+    },
+    {
+      "source": "/tmp/dot-reference-handoff-candidate-review-20261016.json",
+      "path": "independent-candidate-review.json",
+      "sha256": "99c4bde2d4a2ae84b765b204b4ca2c42a6a2d062f2aef942854f17d4f0fa82b3",
+      "exact_bytes": true
+    }
+  ]
+}

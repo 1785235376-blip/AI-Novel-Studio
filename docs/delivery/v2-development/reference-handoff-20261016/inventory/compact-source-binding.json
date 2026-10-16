@@ -1,0 +1,56 @@
+{
+  "source_checkpoint": "d86442164f745020f7e692daacc62d84b0b3357b",
+  "baseline_manifest": {
+    "commit": "d91e5c85eff52ca36e312eda3d1df3d9d971f529",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "5590bbfc4ee4c8b287ceea729af9419d19695439ff11a735f64b2a3c37551f79"
+  },
+  "candidate_sha256": "7ebea9c335c45a200ef07f2609e4cb1ad7113c6780400b143d122d7692a7a7b4",
+  "complete_source_map_entries": 2578,
+  "complete_source_map_serialization": "UTF-8 JSON.stringify(sorted path-to-SHA256 object), no trailing newline",
+  "complete_source_map_sha256": "29f01222dc5a674128981ff7adb0b9f0b30ee5d74132208e14e9dd5935ac09e6",
+  "complete_source_map_reconstruction": "Take baseline source_files, apply the three exact delta entries below and sort paths. This equals the whole candidate source_files map.",
+  "source_delta": [
+    {
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "before": "d799468cc6db435a8953cbbb6761610706cc89df1fa130e0fa14d58b4babfaab",
+      "after": "05b25d32f0cec494ca77928adc21f53000c6a0f74c532fd0d119b1adcdddc31e"
+    },
+    {
+      "path": "frontend/src/creative/StudioReferenceAssetHandoff.additive.test.tsx",
+      "before": null,
+      "after": "ea41b1771d1e5870afa4e92f5820e98c6201131c814ea084252cb55eb48bb1bd"
+    },
+    {
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "before": "ab13db814823e007df2429b159579480dae034425223e1dad1d6bc2a13d5f1a1",
+      "after": "264b8bb9341eeb7dfb761fde1805ffc8edc12ed60a65795430691bfa35777be4"
+    }
+  ],
+  "protected_old_entries_exact": 1267,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "source_before_after_exact": true,
+  "companion_before_after_exact": true,
+  "raw_inventory": {
+    "committed_reference": "docs/delivery/v2-development/ci-reconciliation-20261016/inventory/raw-review-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+    "sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+    "review_archive_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+    "candidate_archive_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+    "confirmation_archive_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+    "rows": 15617,
+    "byte_identical": true
+  },
+  "tests_executed": false
+}

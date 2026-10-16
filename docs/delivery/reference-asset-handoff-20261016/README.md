@@ -32,3 +32,5 @@ Final checks: forced `tsc -b --force` PASS; `vite build` PASS (existing large-ch
 Independent verification passed 110 overlapping cases across six suites with unchanged frontend source/config snapshots. Its raw receipt/log and before/after maps are preserved in `independent/`; these are not additional unique tests. Raw evidence retains its original formatting, including any EOF whitespace warnings.
 
 Staged full diff-check: exit 2 from preserved raw log whitespace/EOF only; the same check excluding raw logs passes. Raw evidence was not normalized.
+
+Inventory binding staging note: `git diff --cached --check` reported exit 2 for one trailing space in the preserved `inventory/confirmation-launcher.mjs` invocation artifact. Its reviewed bytes/hash were retained. This artifact warning does not change the successful collection/closure proof or product-source checks.

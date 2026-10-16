@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+    "-c",
+    "import json, sys, site; print(json.dumps({\"executable\":sys.executable,\"prefix\":sys.prefix,\"sys_path\":sys.path,\"user_site\":site.ENABLE_USER_SITE,\"meta_path\":[getattr(x,\"__module__\",type(x).__module__)+\".\"+getattr(x,\"__name__\",type(x).__name__) for x in sys.meta_path],\"startup_hooks\":[x for x in sys.modules if x in (\"sitecustomize\",\"usercustomize\",\"_virtualenv\") or \"__editable__\" in x]}))"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"executable\": \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python\", \"prefix\": \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1\", \"sys_path\": [\"\", \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python312.zip\", \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12\", \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/lib-dynload\", \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages\"], \"user_site\": false, \"meta_path\": [\"_frozen_importlib.BuiltinImporter\", \"_frozen_importlib.FrozenImporter\", \"_frozen_importlib_external.PathFinder\"], \"startup_hooks\": []}\n",
+  "stderr": ""
+}
