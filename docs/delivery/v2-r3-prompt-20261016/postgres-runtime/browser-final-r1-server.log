@@ -1,0 +1,15 @@
+2026-10-16 16:41:38.517 UTC [79452] LOG:  starting PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit
+2026-10-16 16:41:38.518 UTC [79452] LOG:  listening on IPv4 address "127.0.0.1", port 50678
+2026-10-16 16:41:38.549 UTC [78020] LOG:  database system was shut down at 2026-10-16 16:41:17 UTC
+2026-10-16 16:41:38.571 UTC [79452] LOG:  database system is ready to accept connections
+2026-10-16 16:44:16.431 UTC [81272] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+	
+2026-10-16 16:44:16.431 UTC [82836] LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+	
+2026-10-16 16:44:16.721 UTC [79452] LOG:  received fast shutdown request
+2026-10-16 16:44:16.725 UTC [79452] LOG:  aborting any active transactions
+2026-10-16 16:44:16.731 UTC [79452] LOG:  background worker "logical replication launcher" (PID 78952) exited with exit code 1
+2026-10-16 16:44:16.731 UTC [77820] LOG:  shutting down
+2026-10-16 16:44:16.733 UTC [77820] LOG:  checkpoint starting: shutdown immediate
+2026-10-16 16:44:17.610 UTC [77820] LOG:  checkpoint complete: wrote 1147 buffers (28.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.020 s, sync=0.845 s, total=0.880 s; sync files=569, longest=0.005 s, average=0.002 s; distance=6226 kB, estimate=6226 kB; lsn=0/5D9BA50, redo lsn=0/5D9BA50
+2026-10-16 16:44:17.622 UTC [79452] LOG:  database system is shut down

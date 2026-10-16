@@ -1,0 +1,66 @@
+{
+  "file": [
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-file-final-r4/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1366x768/real-private-prompt-tombstone-history.png",
+      "sha256": "cafb85cba7c6d0b4c54eb8241071db289ee1e405453038659b60db072b7e2785",
+      "bytes": 67482
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-file-final-r4/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1366x768/real-private-prompt-two-revisions.png",
+      "sha256": "22215717b2ad08bc6bfe1ad913fa0aa1a3ad62e38613aeedf755e42a19af08b9",
+      "bytes": 74506
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-file-final-r4/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1440x900/real-private-prompt-tombstone-history.png",
+      "sha256": "1251473484958bde8280b48a3d7da2356f00b903f6819a8107e2cc1f4a85abac",
+      "bytes": 81722
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-file-final-r4/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1440x900/real-private-prompt-two-revisions.png",
+      "sha256": "7d01dfbfe59ff56a71841c84c38bc10e126c80a2c8f147e5d246b439bd1f2b26",
+      "bytes": 80841
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-file-final-r4/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1920x1080/real-private-prompt-tombstone-history.png",
+      "sha256": "abe168089409efb73fca4cedb74f0c9099b1ca77f0debd778a7bf6f309deb486",
+      "bytes": 104407
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-file-final-r4/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1920x1080/real-private-prompt-two-revisions.png",
+      "sha256": "f2fcbbcf81ff3979b3237b7dc6a6d8c44254fd90c81839a98dea1e0393ee3e89",
+      "bytes": 105372
+    }
+  ],
+  "postgres": [
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-pg-final-r1/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1366x768/real-private-prompt-tombstone-history.png",
+      "sha256": "9feea389c827928815d40400573588e9f80e4b856e40ea28a63ca77f6bef53fc",
+      "bytes": 67780
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-pg-final-r1/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1366x768/real-private-prompt-two-revisions.png",
+      "sha256": "1c3d7473b62b14b41ec869aeea6ace524a3b94c2553471e3ba4b98f8eb028fbc",
+      "bytes": 74586
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-pg-final-r1/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1440x900/real-private-prompt-tombstone-history.png",
+      "sha256": "4e9c7449f8c7262b6ef4ced344333d183cf21408b62e95396d0dce15d60588da",
+      "bytes": 81392
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-pg-final-r1/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1440x900/real-private-prompt-two-revisions.png",
+      "sha256": "de538ee3635628eafc13c0db42308687622e180e8e22b440a6a571db60db00f4",
+      "bytes": 82557
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-pg-final-r1/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1920x1080/real-private-prompt-tombstone-history.png",
+      "sha256": "79f96453ed25a5367374fbb533d36c56bcc4c81818d63736a32436845d1b3727",
+      "bytes": 104772
+    },
+    {
+      "path": "docs/delivery/v2-r3-prompt-20261016/browser-pg-final-r1/test-results/v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1920x1080/real-private-prompt-two-revisions.png",
+      "sha256": "7c4791a2e85859890c6c55943798f948ba692cba8c9e0de795bed51f1e985d89",
+      "bytes": 105656
+    }
+  ]
+}

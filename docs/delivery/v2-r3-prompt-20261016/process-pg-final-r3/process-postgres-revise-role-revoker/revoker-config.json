@@ -1,0 +1,24 @@
+{
+  "backend": "postgres",
+  "operation": "revise",
+  "revocation": "role",
+  "nid": "r3-i-auth-4ec601af74",
+  "workspace": "w-4ec601af74",
+  "branch": "b-4ec601af74",
+  "actor": "writer-4ec601af74",
+  "admin": "init-4ec601af74",
+  "assignment": "w-4ec601af74",
+  "url": "/api/projects/r3-i-auth-4ec601af74/studio/prompts/28bdf614-43d0-4bb7-85fd-d64c52c04d23/revisions",
+  "method": "POST",
+  "body": {
+    "text": "PRIVATE process authoring 中文 🙂\n",
+    "purpose": "IMAGE",
+    "origin": "MANUAL",
+    "request_id": "01d6369391c747f289fdc8fc602046ff",
+    "expected_revision": 1,
+    "expected_previous_asset_id": "007fe0c9-5e2c-44c3-ad50-bf9ceb038218"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-combined-pg-final-r3\\temp\\test_independent_process_revoc17\\process-postgres-revise-role-revoker",
+  "pause_writer": false,
+  "pause_revoker": true
+}

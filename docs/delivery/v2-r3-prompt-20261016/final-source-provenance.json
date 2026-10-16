@@ -1,0 +1,96 @@
+{
+  "status": "PASS",
+  "source_count": 2290,
+  "source_map_sha256": "6e2ae8c5feb5672a0a4b8c273cea61ee539e464624bdfc7690392a3d1b35f55c",
+  "source_map_sha256_definition": "SHA256(UTF8(json.dumps(map,sort_keys=True,separators=(comma,colon))))",
+  "current_source_differences": [],
+  "all_four_runs_equal_current_sources": true,
+  "selected_source_sha256": {
+    "tests/test_v2_prompt_process_revocation.py": "9f950759d06f07e0dbc2927f4ce812ec58210a479305e275f2e476233b87661c",
+    "scripts/run_v2_prompt_r3_browser.py": "83a7c384dd4a871d11fa880b9e3c6ecee7ee34c8388e51bc5a26deba37d0c74d",
+    "frontend/playwright.prompt-r3-live.config.ts": "d4bfb90bd1422738fed650a3161f9414f6557fbe305a9a82ee139c38a90afccf",
+    "frontend/tests/e2e/v2-prompt-r3-live.spec.ts": "6ee8e331cd394186f8ca3c0dfcd4d89eae79fce90d3cd5bcc901ac836cceee9d",
+    "app/api.py": "acdca1488e4906b47a71d06cad2655374fef7cbdffdbeebea49200adc77f6a47",
+    "app/experimental/api.py": "0a68f5ef4e73640b71754326e269c6ebdea8d93327eea5067c559176f269f98a",
+    "app/trusted_sessions.py": "11f2520cade262fae3317e23c4379b0d376359faecc1df33160a4f1ba80c67bd",
+    "app/creative/workspace_api.py": "ce558660a30e1015d7cb41a94c04faacd226fecf97caaec3b231c1e92a67165d",
+    "app/creative/prompt_authoring.py": "aa65f5260c77a27fc459ff5432c2e2addfc3a5ec9706fe7d3a802b81aae2aa27",
+    "app/creative/prompt_adoption_api.py": "538d0e6533424cfca404a58fbbbd5047c83b12bcb0f0166dc04fa8a191fa7a0b",
+    "tests/test_v2_private_prompt_lifecycle.py": "3bfe0227fb25db5b5c12acc8a39c27bddc3eecae90e54e8dbb020aa6cc8baf62",
+    "tests/test_round3_prompt_write_time_bindings.py": "e2cadb984e60ac7e80291c8183384fbb527e9c18973a465f579c6f4d43f24512"
+  },
+  "runs": {
+    "r3-prompt-process-file-final-r3": {
+      "status": "PASS",
+      "head": "618affbca0aaf20d5bc669d697d8e2b1abb9b3fa",
+      "sources_changed_during_check": false,
+      "started_utc": "2026-10-16T16:18:37.404564+00:00",
+      "finished_utc": "2026-10-16T16:22:14.279542+00:00",
+      "command": [
+        "D:\\PoemSeed\\Cache\\Tests\\expansion-20261013-97da10e1\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_v2_prompt_process_revocation.py",
+        "-m",
+        "file_backend_only",
+        "--basetemp",
+        ".runtime/v2-checks/r3-prompt-process-file-final-r3/temp",
+        "-x"
+      ]
+    },
+    "r3-prompt-browser-file-final-r4": {
+      "status": "PASS",
+      "head": "618affbca0aaf20d5bc669d697d8e2b1abb9b3fa",
+      "sources_changed_during_check": false,
+      "started_utc": "2026-10-16T16:18:37.404564+00:00",
+      "finished_utc": "2026-10-16T16:19:03.143368+00:00",
+      "command": [
+        "D:\\PoemSeed\\Cache\\Tests\\expansion-20261013-97da10e1\\venv\\Scripts\\python.exe",
+        "scripts/run_v2_prompt_r3_browser.py",
+        "--label",
+        "browser-file-final-r4",
+        "--storage-backend",
+        "file"
+      ]
+    },
+    "r3-prompt-combined-pg-final-r3": {
+      "status": "PASS",
+      "head": "f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5",
+      "sources_changed_during_check": false,
+      "started_utc": "2026-10-16T16:18:39.615982+00:00",
+      "finished_utc": "2026-10-16T16:41:16.703113+00:00",
+      "command": [
+        "D:\\PoemSeed\\Cache\\Tests\\expansion-20261013-97da10e1\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_v2_prompt_process_revocation.py",
+        "tests/test_v2_private_prompt_lifecycle.py",
+        "tests/test_round3_prompt_write_time_bindings.py",
+        "tests/test_round3i_http_authorized_pg.py",
+        "tests/test_round3i_pg_incarnation.py",
+        "-m",
+        "postgres_backend_only",
+        "--basetemp",
+        ".runtime/v2-checks/r3-prompt-combined-pg-final-r3/temp",
+        "-x"
+      ]
+    },
+    "r3-prompt-browser-pg-final-r1": {
+      "status": "PASS",
+      "head": "f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5",
+      "sources_changed_during_check": false,
+      "started_utc": "2026-10-16T16:41:39.690617+00:00",
+      "finished_utc": "2026-10-16T16:44:16.454524+00:00",
+      "command": [
+        "D:\\PoemSeed\\Cache\\Tests\\expansion-20261013-97da10e1\\venv\\Scripts\\python.exe",
+        "scripts/run_v2_prompt_r3_browser.py",
+        "--label",
+        "browser-pg-final-r1",
+        "--storage-backend",
+        "postgres"
+      ]
+    }
+  }
+}

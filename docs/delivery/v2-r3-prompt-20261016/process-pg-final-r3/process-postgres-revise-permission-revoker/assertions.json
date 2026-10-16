@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "backend": "postgres",
+  "operation": "revise",
+  "revocation": "permission",
+  "first": "revoker",
+  "writer_pid": 83408,
+  "revoker_pid": 74480,
+  "parent_pid": 75876,
+  "production_gate": false,
+  "same_issued_token_reused_after_revocation": true,
+  "negative_status": 403,
+  "negative_code": "PROJECT_SCOPE_FORBIDDEN",
+  "authority_lock_witness": {
+    "kind": "POSTGRES_ADVISORY_AUTHORIZATION",
+    "holder_pid": 74480,
+    "waiter_pid": 83408,
+    "holder_postgres_pid": 79808,
+    "waiter_postgres_pid": 83196,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      79808
+    ],
+    "acquired_before_release": false
+  }
+}

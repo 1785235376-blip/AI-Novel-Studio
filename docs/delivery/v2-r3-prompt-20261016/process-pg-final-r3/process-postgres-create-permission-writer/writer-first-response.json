@@ -1,0 +1,14 @@
+{
+  "pid": 79440,
+  "status": 201,
+  "body": {
+    "family_id": "702cb36f-307a-476b-8f42-1b651bfa9dec",
+    "asset_id": "c10fded9-4d5c-452c-90e1-7b6e73349618",
+    "revision": 1,
+    "asset_version": 2,
+    "text_digest": "106617f2358cf1e51fa81d57cc4f51c823039757e9abf100b594396b4d07c6c5",
+    "idempotent_replay": false,
+    "previous_asset_id": null,
+    "payload_digest": "f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"
+  }
+}

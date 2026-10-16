@@ -1,0 +1,22 @@
+{
+  "backend": "file",
+  "operation": "create",
+  "revocation": "role",
+  "nid": "r3-i-auth-f8b5746567",
+  "workspace": "w-f8b5746567",
+  "branch": "b-f8b5746567",
+  "actor": "writer-f8b5746567",
+  "admin": "init-f8b5746567",
+  "assignment": "w-f8b5746567",
+  "url": "/api/projects/r3-i-auth-f8b5746567/studio/prompts",
+  "method": "POST",
+  "body": {
+    "text": "PRIVATE process authoring 中文 🙂\n",
+    "purpose": "IMAGE",
+    "origin": "MANUAL",
+    "request_id": "2aeffdb7bd2d40278cbb957bee777293"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r2\\temp\\test_independent_process_revoc4\\process-file-create-role-writer",
+  "pause_writer": true,
+  "pause_revoker": false
+}

@@ -1,0 +1,90 @@
+....F
+================================== FAILURES ===================================
+_ test_independent_process_revocation_serializes_prompt_commit[writer-role-create-file] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/.runtime/v2-checks/r3-prompt-process-file-final-r2/temp/test_independent_process_revoc4')
+backend = 'file', operation = 'create', revocation = 'role', first = 'writer'
+
+    @pytest.mark.parametrize("backend", [pytest.param("file", marks=pytest.mark.file_backend_only),
+                                       pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    @pytest.mark.parametrize("operation", ["create", "revise", "delete", "adopt"])
+    @pytest.mark.parametrize("revocation", ["membership", "role", "permission"])
+    @pytest.mark.parametrize("first", ["writer", "revoker"])
+    def test_independent_process_revocation_serializes_prompt_commit(tmp_path, backend, operation, revocation, first):
+        assert os.environ.get("PROJECT_ROOT"), "use the original isolated V2 runner"
+        from app.authorization import DomainRole, DomainRoleAssignment, ModalityDomain, PermissionAssignment
+        from r3i_authorized_shared import build_authorized, chain
+        e = build_authorized(_runtime(backend))
+        e.scope = {"mode": "collaboration", "novel_id": e.nid, "workspace_id": e.workspace,
+                   "storyline_id": e.storyline, "branch_id": e.branch}
+        flow = chain(e, "/api", e.headers)
+        assignment = e.writer_role
+        if revocation == "permission":
+            e.authorization.revoke_role(e.writer_role, e.init_user)
+            assignment = "write-" + uuid4().hex
+            for permission, identity in [("domain.read", "read-" + uuid4().hex), ("domain.write", assignment)]:
+                e.authorization.assign_permission(PermissionAssignment(identity, e.writer, permission,
+                    ModalityDomain.NOVEL, e.auth_scope, e.init_user))
+        url = flow["studio"] + "/prompts"
+        body = {"text": "PRIVATE process authoring \u4e2d\u6587 \U0001f642\\n", "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex}
+        if operation == "revise":
+            url += "/" + flow["prompt"]["family_id"] + "/revisions"
+            body.update(expected_revision=1, expected_previous_asset_id=flow["prompt"]["asset_id"])
+        elif operation == "delete":
+            # chain() deliberately approves its adoption source, which promotes it
+            # to a shared asset. Deletion here must target an actually private one.
+            private = e.client.post(flow["studio"] + "/prompts", headers=e.headers,
+                json={"text": "PRIVATE unapproved deletion target", "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex})
+            assert private.status_code == 201, private.text
+            receipt = private.json()
+            url = flow["studio"] + f"/assets/{receipt['asset_id']}?expected_version={receipt['asset_version']}"
+            body = None
+        elif operation == "adopt":
+            url, body = flow["adopt_url"], flow["dto"]
+        folder = tmp_path / f"process-{backend}-{operation}-{revocation}-{first}"
+        folder.mkdir()
+        config = {"backend": backend, "operation": operation, "revocation": revocation, "nid": e.nid,
+            "workspace": e.workspace, "branch": e.branch, "actor": e.writer, "admin": e.init_user,
+            "assignment": assignment, "url": url, "method": "DELETE" if operation == "delete" else "POST", "body": body, "ipc": str(folder),
+            "pause_writer": first == "writer", "pause_revoker": first == "revoker"}
+        before = _private_state(e)
+        processes = []
+        try:
+            leader = _spawn(first, config, folder, processes)
+            _wait(folder / f"{first}-persistence.json", leader)
+            second = "revoker" if first == "writer" else "writer"
+            follower = _spawn(second, config, folder, processes)
+            _wait(folder / f"{second}-attempt.json", follower)
+            # Observe its actual original OS/advisory lock acquisition, beyond the
+            # API's initial authorization reads. PostgreSQL itself proves blockers.
+>           witness = _blocked_witness(config, folder, first, second, follower)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_prompt_process_revocation.py:313: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_v2_prompt_process_revocation.py:85: in _blocked_witness
+    _wait(folder / f"{follower}-authority-attempt.json", process)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/.runtime/v2-checks/r3-prompt-process-file-final-r2/temp/test_independent_process_revoc4/process-file-create-role-writer/revoker-authority-attempt.json')
+process = <Popen: returncode: 1 args: ['D:\\PoemSeed\\Cache\\Tests\\expansion-20261013...>
+seconds = 45
+
+    def _wait(path, process=None, seconds=45):
+        deadline = time.monotonic() + seconds
+        while not Path(path).exists():
+            if process is not None and process.poll() is not None:
+>               raise AssertionError(f"worker exited {process.returncode} before {Path(path).name}")
+E               AssertionError: worker exited 1 before revoker-authority-attempt.json
+
+tests\test_v2_prompt_process_revocation.py:34: AssertionError
+============================== warnings summary ===============================
+tests/test_v2_prompt_process_revocation.py::test_independent_process_revocation_serializes_prompt_commit[writer-membership-create-file]
+  D:\PoemSeed\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_prompt_process_revocation.py::test_independent_process_revocation_serializes_prompt_commit[writer-role-create-file]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 4 passed, 24 deselected, 1 warning in 57.91s

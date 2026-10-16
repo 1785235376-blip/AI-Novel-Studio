@@ -1,0 +1,24 @@
+{
+  "backend": "postgres",
+  "operation": "revise",
+  "revocation": "permission",
+  "nid": "r3-i-auth-5ac97466ff",
+  "workspace": "w-5ac97466ff",
+  "branch": "b-5ac97466ff",
+  "actor": "writer-5ac97466ff",
+  "admin": "init-5ac97466ff",
+  "assignment": "write-4838cace4fca44c89d1dcb66f4951713",
+  "url": "/api/projects/r3-i-auth-5ac97466ff/studio/prompts/263a46f5-05f2-4a00-a1de-defdf31b5ae4/revisions",
+  "method": "POST",
+  "body": {
+    "text": "PRIVATE process authoring 中文 🙂\n",
+    "purpose": "IMAGE",
+    "origin": "MANUAL",
+    "request_id": "85afeb4c3ddd44a2b5ab36a4f7ea17b2",
+    "expected_revision": 1,
+    "expected_previous_asset_id": "a761a1cd-7df0-4a60-8847-211be9893556"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-combined-pg-final-r3\\temp\\test_independent_process_revoc21\\process-postgres-revise-permission-revoker",
+  "pause_writer": false,
+  "pause_revoker": true
+}

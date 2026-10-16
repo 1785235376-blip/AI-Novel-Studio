@@ -1,0 +1,71 @@
+{
+  "pid": 77104,
+  "status": 200,
+  "body": {
+    "id": "d37d2db2-f3fe-4c12-b506-81a7632950fa",
+    "novel_id": "r3-i-auth-1abf36f5ea",
+    "filename": "prompt-8a217626-r1.txt",
+    "kind": "prompt",
+    "media_type": "text/plain",
+    "size": 34,
+    "sha256": "509601d35863025018df1fda2b6130b89a6b002774836864495dcafcdddbcee3",
+    "branch_id": "b-1abf36f5ea",
+    "created_at": "2026-10-16T16:19:02.250777+00:00",
+    "updated_at": "2026-10-16T16:19:05.929972+00:00",
+    "version": 3,
+    "deleted_at": "2026-10-16T16:19:05.929972+00:00",
+    "idempotency_key": "59fa66204d8440fcb2e36cca4a45c8a3",
+    "parameters": {
+      "prompt": {
+        "contract": "prompt-asset/1",
+        "family_id": "8a217626-2c3c-4666-a354-df99c7b7e9c2",
+        "revision": 1,
+        "purpose": "IMAGE",
+        "origin": "MANUAL",
+        "negative_prompt": "",
+        "model_reference": "",
+        "parameters": {},
+        "seed": null,
+        "reference_asset_ids": [],
+        "output_asset_ids": [],
+        "character_ids": [],
+        "scene_ids": [],
+        "shot_ids": [],
+        "change_note": "",
+        "change_reason": "",
+        "redacted": false,
+        "request_id": "59fa66204d8440fcb2e36cca4a45c8a3",
+        "state": "ACTIVE"
+      }
+    },
+    "provenance": {
+      "id": "d37d2db2-f3fe-4c12-b506-81a7632950fa",
+      "label": "prompt-8a217626-r1.txt",
+      "kind": "prompt",
+      "version": 3,
+      "digest": "509601d35863025018df1fda2b6130b89a6b002774836864495dcafcdddbcee3",
+      "deleted": true,
+      "integrity": "DELETED",
+      "origin": "UNDECLARED",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "",
+      "parents": [],
+      "sources": [],
+      "producer": {
+        "declared_by": null,
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": true,
+      "source_task_id": null
+    },
+    "relationships": []
+  }
+}

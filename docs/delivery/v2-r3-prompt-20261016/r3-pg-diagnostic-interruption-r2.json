@@ -1,0 +1,33 @@
+{
+  "status": "INTERRUPTED_DIAGNOSTIC",
+  "reason": "Test-only File lock witness must observe first contended original lock; stable pytest parameter-ID change also requires a final frozen inventory",
+  "label": "r3-prompt-combined-pg-final-r2",
+  "target_pid": 79772,
+  "verified_parent_pid": 68812,
+  "verified_executable": "D:\\PoemSeed\\Tools\\python-3.12.9-build\\python.exe",
+  "observed_direct_children": 0,
+  "requested_utc": "2026-10-16T16:16:01.73031Z",
+  "preserve_original_receipts": true,
+  "finished_utc": "2026-10-16T16:17:09.0443402Z",
+  "server_stop": "stopped",
+  "cleanup_status": "completed",
+  "independent_pg_ctl_status_exit": 3,
+  "owned_python_remaining": 0,
+  "original_receipts": [
+    {
+      "path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-development\\r3-prompt-combined-pg-final-r2-postgres-runtime.json",
+      "bytes": 9720,
+      "sha256": "6bdd7d64fe9c1d824926170e672e40b070628a910b6a6b48a931821a4e00a377"
+    },
+    {
+      "path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-development\\r3-prompt-combined-pg-final-r2.json",
+      "bytes": 541425,
+      "sha256": "5a911b377aa6fd08d6ce52988e09bfae300922b536485578a0bc4113ce57d0f5"
+    },
+    {
+      "path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-development\\r3-prompt-combined-pg-final-r2.log",
+      "bytes": 12,
+      "sha256": "fb3a85cd297aacb976a843a7a21df19eec92701e4e67a41d1a406e0498c7d307"
+    }
+  ]
+}

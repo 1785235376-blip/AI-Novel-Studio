@@ -1,0 +1,17 @@
+{
+  "backend": "postgres",
+  "operation": "delete",
+  "revocation": "role",
+  "nid": "r3-i-auth-d589d2db8a",
+  "workspace": "w-d589d2db8a",
+  "branch": "b-d589d2db8a",
+  "actor": "writer-d589d2db8a",
+  "admin": "init-d589d2db8a",
+  "assignment": "w-d589d2db8a",
+  "url": "/api/projects/r3-i-auth-d589d2db8a/studio/assets/d7b0952c-80a5-4fe0-9334-a2c60d5064d7?expected_version=2",
+  "method": "DELETE",
+  "body": null,
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-combined-pg-final-r3\\temp\\test_independent_process_revoc18\\process-postgres-delete-role-revoker",
+  "pause_writer": false,
+  "pause_revoker": true
+}

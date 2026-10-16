@@ -1,0 +1,17 @@
+{
+  "backend": "file",
+  "operation": "delete",
+  "revocation": "membership",
+  "nid": "r3-i-auth-cf385e45fa",
+  "workspace": "w-cf385e45fa",
+  "branch": "b-cf385e45fa",
+  "actor": "writer-cf385e45fa",
+  "admin": "init-cf385e45fa",
+  "assignment": "w-cf385e45fa",
+  "url": "/api/projects/r3-i-auth-cf385e45fa/studio/assets/3f7fc462-39b4-45f3-8eae-ebf14244d4c9?expected_version=2",
+  "method": "DELETE",
+  "body": null,
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\temp\\test_independent_process_revoc14\\process-file-delete-membership-revoker",
+  "pause_writer": false,
+  "pause_revoker": true
+}

@@ -1,0 +1,12 @@
+{
+  "kind": "POSTGRES_ADVISORY_AUTHORIZATION",
+  "holder_pid": 71520,
+  "waiter_pid": 78132,
+  "holder_postgres_pid": 48640,
+  "waiter_postgres_pid": 74476,
+  "wait_event_type": "Lock",
+  "pg_blocking_pids": [
+    48640
+  ],
+  "acquired_before_release": false
+}

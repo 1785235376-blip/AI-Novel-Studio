@@ -1,0 +1,8 @@
+{
+  "pid": 78548,
+  "mode": "session",
+  "operation": "revoke",
+  "returncode": 0,
+  "timed_out": false,
+  "child_stopped": true
+}

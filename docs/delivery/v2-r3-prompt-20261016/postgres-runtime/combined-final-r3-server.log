@@ -1,0 +1,21 @@
+2026-10-16 16:18:37.413 UTC [51536] LOG:  starting PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit
+2026-10-16 16:18:37.414 UTC [51536] LOG:  listening on IPv4 address "127.0.0.1", port 50678
+2026-10-16 16:18:37.472 UTC [83428] LOG:  database system was shut down at 2026-10-16 16:16:03 UTC
+2026-10-16 16:18:37.494 UTC [51536] LOG:  database system is ready to accept connections
+2026-10-16 16:23:37.466 UTC [70628] LOG:  checkpoint starting: time
+2026-10-16 16:25:44.248 UTC [70628] LOG:  checkpoint complete: wrote 1164 buffers (28.4%); 0 WAL file(s) added, 0 removed, 1 recycled; write=125.843 s, sync=0.918 s, total=126.782 s; sync files=571, longest=0.005 s, average=0.002 s; distance=6396 kB, estimate=6396 kB; lsn=0/542D750, redo lsn=0/53EE048
+2026-10-16 16:28:37.261 UTC [70628] LOG:  checkpoint starting: time
+2026-10-16 16:28:45.421 UTC [70628] LOG:  checkpoint complete: wrote 78 buffers (1.9%); 0 WAL file(s) added, 0 removed, 0 recycled; write=8.054 s, sync=0.093 s, total=8.161 s; sync files=48, longest=0.003 s, average=0.002 s; distance=497 kB, estimate=5806 kB; lsn=0/547AB20, redo lsn=0/546A6B8
+2026-10-16 16:32:18.816 UTC [51536] LOG:  could not reserve shared memory region (addr=000002033FD90000) for child 00000000000009C8: error code 487
+2026-10-16 16:33:37.427 UTC [70628] LOG:  checkpoint starting: time
+2026-10-16 16:33:53.462 UTC [70628] LOG:  checkpoint complete: wrote 149 buffers (3.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=15.857 s, sync=0.162 s, total=16.035 s; sync files=69, longest=0.005 s, average=0.003 s; distance=999 kB, estimate=5325 kB; lsn=0/55AE590, redo lsn=0/55646A0
+2026-10-16 16:34:46.199 UTC [51536] LOG:  could not reserve shared memory region (addr=000002033FD90000) for child 0000000000001494: error code 487
+2026-10-16 16:38:37.475 UTC [70628] LOG:  checkpoint starting: time
+2026-10-16 16:38:54.076 UTC [70628] LOG:  checkpoint complete: wrote 157 buffers (3.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=16.449 s, sync=0.137 s, total=16.601 s; sync files=70, longest=0.003 s, average=0.002 s; distance=1182 kB, estimate=4911 kB; lsn=0/56D4588, redo lsn=0/568BFD0
+2026-10-16 16:41:17.000 UTC [51536] LOG:  received fast shutdown request
+2026-10-16 16:41:17.005 UTC [51536] LOG:  aborting any active transactions
+2026-10-16 16:41:17.010 UTC [51536] LOG:  background worker "logical replication launcher" (PID 82144) exited with exit code 1
+2026-10-16 16:41:17.011 UTC [70628] LOG:  shutting down
+2026-10-16 16:41:17.013 UTC [70628] LOG:  checkpoint starting: shutdown immediate
+2026-10-16 16:41:17.160 UTC [70628] LOG:  checkpoint complete: wrote 160 buffers (3.9%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.131 s, total=0.150 s; sync files=65, longest=0.003 s, average=0.002 s; distance=1004 kB, estimate=4520 kB; lsn=0/5787120, redo lsn=0/5787120
+2026-10-16 16:41:17.170 UTC [51536] LOG:  database system is shut down

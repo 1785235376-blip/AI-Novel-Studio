@@ -1,0 +1,43 @@
+{
+  "utc": "2026-10-16T16:16:47.329547+00:00",
+  "kind": "sole-pytest-parameter-id-migration",
+  "tests_executed": false,
+  "path": "tests/test_v2_graph_schema_version_gate.py",
+  "before_sha256": "f8a8d53a4cf3772238b9eda2b5952ccd339ad7c4ab3e49e31948c2e0eb9c8966",
+  "after_sha256": "3808d405b39b9256b22147d691a10848734ef1b45d0ace78bd860ed78274e0d4",
+  "byte_delta": {
+    "before_expression": "ids=lambda value: repr(value)",
+    "after_expression": "ids=lambda value: 'opaque-object' if type(value) is object else repr(value)",
+    "replacement_count": 1,
+    "all_other_bytes_identical": true
+  },
+  "ast_proof": {
+    "whole_module_equal_after_restoring_only_ids_expression": true,
+    "illegal_versions_expression_unchanged": true,
+    "test_body_and_assertions_unchanged": true,
+    "parameter_count": 13,
+    "first_12_ids_unchanged": [
+      "0",
+      "6",
+      "-1",
+      "99",
+      "1.0",
+      "2.0",
+      "'4'",
+      "'1'",
+      "True",
+      "False",
+      "[1]",
+      "{'version': 4}"
+    ],
+    "last_input_type": "object",
+    "new_last_id": "opaque-object"
+  },
+  "head_pointer_node": "tests/test_v2_graph_schema_version_gate.py::test_illegal_version_is_refused[<object object at 0x000001B9BFA0FCC0>]",
+  "intermediate_pointer_node": "tests/test_v2_graph_schema_version_gate.py::test_illegal_version_is_refused[<object object at 0x000001A6538420D0>]",
+  "stable_node": "tests/test_v2_graph_schema_version_gate.py::test_illegal_version_is_refused[opaque-object]",
+  "in_frozen_9151_source_manifest": false,
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "v2_manifest_edited": false,
+  "ci_gate_or_skip_policy_edited": false
+}

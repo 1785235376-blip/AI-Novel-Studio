@@ -1,0 +1,12 @@
+{
+  "frontend/e2e/promptAcceptanceEntry.ts": {
+    "head_sha256": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "current_sha256": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "unchanged_from_head": true
+  },
+  "frontend/e2e/prompt-workspace-acceptance.spec.ts": {
+    "head_sha256": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "current_sha256": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "unchanged_from_head": true
+  }
+}

@@ -1721,3 +1721,30 @@ production adoption gate 在验证成立前保持关闭。复用现有 `_write`�
 
 原始失败记录全部保留；本轮 API/Vite/PG 已停止。自动审批复核阻止临时目录/worktree 清理，保留 profile、
 PG 数据与 baseline regression worktree，未通过其他删除路径绕过，也未宣称回收磁盘空间。
+
+
+<!-- V2-R3-PROMPT-20261017 -->
+## 2026-10-17 — R3 Prompt 后续最终检查点
+
+本节追加当前事实，早期记录及失败回执保留；取代上节 R3 write-time binding、私有 tombstone、跨进程撤权与 PG browser 未完成的状态。
+从 `618affbca0aaf20d5bc669d697d8e2b1abb9b3fa` 继续；五个独立实现/清单/字节包装切片均已逐个推送 PR #47 原分支，
+实现 HEAD `f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5`，本节与原始证据另作独立提交。PR 仍为 Draft，main/frozen refs 未改。
+完整结论、原始回执、失败与边界见 [R3 最终报告](docs/delivery/v2-r3-prompt-20261016/V2_R3_PROMPT_ROUND_REPORT.md)。
+
+| 项目 | 当前结论 |
+| --- | --- |
+| Adoption write-time binding | 原 `GraphAssetInputs.phase` 内解析并验证 Character/Scene/目标 Shot/引用与输出 Asset，原 project/asset/Creative 租约覆盖提交。新提交凭证为 `prompt-adoption-bindings/1`、`source_bindings_verified=True`；是写入时快照，不代替审批或执行权限。 |
+| Private Prompt / tombstone / retry | 原 AssetLibrary/lifecycle 持 actor；删除保留不可变字节和旧 revision，tombstone 继续作为 CAS head/请求记账；完成 replay 严格绑定路由和前驱；失败恢复绑定服务器首次 origin，旧来源不明请求 fail-closed。 |
+| Cross-process revocation | File 24 passed、真实 PG 24 passed；create/revise/delete/adopt × 三类撤权 × 两种提交顺序。实际共享原 OS lock / PG `pg_blocking_pids` holder-waiter 证明，原已发 session 撤权后精确403、合法新作者正控制。不是所有路由或跨进程 session registry 的保证。 |
+| 真实 File 最终组 | 私有84、bindings43、authority74、授权/scope55、独立进程24 passed；各组有重叠，不相加为唯一覆盖数。 |
+| 真实 PostgreSQL 最终组合 | 103 passed、99 deselected，新空库 OID23468；原20 migrations，源码无漂移，数据库保留、服务已停止。 |
+| 真实 Edge 浏览器 | File 三视口3 passed，另一个全新 PG 库 OID24389三视口3 passed；原 LocalSessionBootstrap/HTTP，无 response mock。实际UI创建/修订/版本比较，真实浏览器HTTP删除后验证UI tombstone/history；没有删除按钮成功写声明。 |
+| Production adoption | `PROMPT_ADOPTION_WRITE_ENABLED=False` 继续关闭；真实浏览器请求为503 `PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED`。后端正向 adoption 仅在显式隔离测试内启用，不因此开放生产。 |
+| Frontend / CI self-check | src 4163 passed、6 skipped；tsc/Vite build PASS。225项既有V2 ID模块/CI自检通过，UI token guard52文件通过。全目录Vitest误收集三个既有Playwright suite的失败保留。 |
+| 字节与 frozen | 2290 runner源码、2352全V2清单输入与实现HEAD raw bytes相同；750 frozen test/gate sources、752保护产物与9151 manifest原字节不变。不是全部V1 app源码或V1运行验收声明。 |
+| 增量清单 | 15118项、208新增、一个显式V2参数ID稳定迁移，双次字面ID/顺序收集一致；`INVENTORY_ONLY`，不是15118通过。 |
+| Hosted CI | BLOCKED：GitHub账户billing issue，job未启动/steps为空；不记产品测试失败，也不记hosted PASS。 |
+| 总体 V2 / release | PARTIAL；完整Canvas/Director/媒体/NLE/3D/Tutor等既有边界保留。生产adoption UI成功写、全V2集成、Windows installer/clean-machine、真实模型/GPU不由本轮建立PASS。 |
+
+后续入口：解除外部账户账单锁后重跑最终 HEAD 托管 CI，并继续既有全 V2 产品验收；生产 adoption 闸门仍关闭。
+原始失败/中断、截图、profile、PG数据库和先前保留baseline worktree均保留；自有API/Vite/PG已停止，不宣称回收磁盘空间。

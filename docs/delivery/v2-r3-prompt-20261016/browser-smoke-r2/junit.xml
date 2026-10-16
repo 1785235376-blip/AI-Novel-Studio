@@ -1,0 +1,6 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="6.363181000000001">
+<testsuite name="v2-prompt-r3-live.spec.ts" timestamp="2026-10-16T15:54:07.707Z" hostname="prompt-r3-1366x768" tests="1" failures="0" skipped="0" time="5.278" errors="0">
+<testcase name="real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption" classname="v2-prompt-r3-live.spec.ts" time="5.278">
+</testcase>
+</testsuite>
+</testsuites>

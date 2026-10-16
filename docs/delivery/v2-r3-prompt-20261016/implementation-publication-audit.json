@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-16T16:43:54.233862+00:00",
+  "head": "f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5",
+  "remote_refs": {
+    "refs/heads/feature/v2-narrative-platform": "f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5",
+    "refs/heads/main": "fed2404c8e30b44061b7139dced45b7f3301601c",
+    "refs/heads/work/dot-astra-v1-rc-r2": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0"
+  },
+  "pull_request": {
+    "baseRefName": "main",
+    "headRefName": "feature/v2-narrative-platform",
+    "headRefOid": "f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5",
+    "isDraft": true,
+    "number": 47,
+    "state": "OPEN",
+    "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/47"
+  },
+  "tracked_worktree_status": "",
+  "ahead_behind": "0\t0",
+  "commits_since_618affb": [
+    "49e2daa510878346b6dcaa05394dc512af00efd6 fix(prompt): preserve private tombstones and retry identity",
+    "89c6b50dec0bfc16c09a3944963f38a35b59e622 fix(prompt): bind adoption inputs through original owner leases",
+    "51473a9f9c5ddd8e3ad0493bd7ee1f2b25c6283a fix(auth): fence prompt commits against concurrent revocation",
+    "f8e97b167cb77c96d2885d0256e9a1083127e863 test(v2): stabilize schema case identity and extend collection",
+    "f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5 fix(ci): preserve manifest-pinned source bytes across checkouts"
+  ],
+  "production_adoption_gate": false,
+  "status": "PUBLISHED_DRAFT_PROTECTED_REFS_UNCHANGED",
+  "boundary": "Git publication audit only. Hosted CI is a separately recorded external blocker."
+}

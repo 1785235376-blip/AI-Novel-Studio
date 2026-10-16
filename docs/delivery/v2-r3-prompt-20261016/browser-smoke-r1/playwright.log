@@ -1,0 +1,34 @@
+
+Running 1 test using 1 worker
+
+(node:79892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:79892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  1 [prompt-r3-1366x768] › tests\e2e\v2-prompt-r3-live.spec.ts:7:1 › real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption (5.2s)
+
+
+  1) [prompt-r3-1366x768] › tests\e2e\v2-prompt-r3-live.spec.ts:7:1 › real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 404
+    Received: 200
+
+      113 |     const restored = await request.post(`${base}/assets/${second.asset_id}/restore`, { headers,
+      114 |       data: { expected_version: deleted.body.version } });
+    > 115 |     expect(restored.status()).toBe(404); expect((await restored.json()).detail.code).toBe('EXPERIMENTAL_NOT_FOUND');
+          |                               ^
+      116 |     const geometry = await page.evaluate(() => ({ width: innerWidth,
+      117 |       scrollWidth: document.documentElement.scrollWidth, headerHeight: document.querySelector('.global-header')!.getBoundingClientRect().height }));
+      118 |     expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.width); expect(geometry.headerHeight).toBe(56);
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-r3-live.spec.ts:115:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-r3-prompt-20261016\browser-smoke-r1\test-results\v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-r3-prompt-20261016\browser-smoke-r1\test-results\v2-prompt-r3-live-real-Pro-cf28b--closed-production-adoption-prompt-r3-1366x768\error-context.md
+
+  1 failed
+    [prompt-r3-1366x768] › tests\e2e\v2-prompt-r3-live.spec.ts:7:1 › real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption 

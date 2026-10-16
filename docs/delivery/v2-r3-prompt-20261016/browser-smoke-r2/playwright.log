@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:79088) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:79088) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 1 [prompt-r3-1366x768] › tests\e2e\v2-prompt-r3-live.spec.ts:7:1 › real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption (5.3s)
+
+  1 passed (6.4s)

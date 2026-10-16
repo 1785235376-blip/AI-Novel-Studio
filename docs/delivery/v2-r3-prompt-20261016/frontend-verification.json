@@ -1,0 +1,52 @@
+{
+  "src_vitest": {
+    "command": "node node_modules/vitest/vitest.mjs run src --maxWorkers=4 --minWorkers=1",
+    "exit_code": 0,
+    "passed": 4163,
+    "skipped": 6,
+    "failed": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "exit_code": 0,
+    "steps": [
+      "tsc -b",
+      "vite build"
+    ],
+    "warning": "existing large chunks"
+  },
+  "initial_all_directory_discovery": {
+    "exit_code": 1,
+    "passed_tests": 4197,
+    "failed_suite_paths": [
+      "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/e2e/prompt-acceptance-s0.spec.ts",
+      "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/e2e/prompt-workspace-acceptance.spec.ts",
+      "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/e2e/studio-release-acceptance.spec.ts"
+    ],
+    "reason": "Existing frontend/e2e Playwright scripts are not excluded by original Vitest config. Their framework functions refuse Vitest collection; no frontend config or existing frontend test edited."
+  },
+  "tracked_frontend_product_changes_since_base": [],
+  "raw_files": [
+    {
+      "path": "frontend-src-final.json",
+      "sha256": "11a108483b6c94c9c8ee211683300cad9b7d686737572eecdc32fc2a10e6a7f3"
+    },
+    {
+      "path": "frontend-src-final.log",
+      "sha256": "6aa389c0bc3966293334048f656cc0826d43cabb5701b5ba24f088b6748ae634"
+    },
+    {
+      "path": "frontend-build.log",
+      "sha256": "d4038c2de658eef968ebe8aa90f13ea8107b39c7053e6bb49f67bac6cd555739"
+    },
+    {
+      "path": "frontend-full.json",
+      "sha256": "9630d34da0dd3b1ad0687f6460efa71d0e476fb4d04d7710f26e9a787b4c205b"
+    },
+    {
+      "path": "frontend-full.log",
+      "sha256": "51a2a356b45243b18c4eefaed15af18b2a2bd85cb10a33af5b62e88622068c78"
+    }
+  ],
+  "scope": "Frontend src regression and build only; separate real browser receipts prove runtime. No model/GPU acceptance."
+}

@@ -1,0 +1,20 @@
+{
+  "backend": "real File",
+  "storage_backend": "file",
+  "database_identity": null,
+  "asset_storage_owner": "original File AssetLibraryService",
+  "identity_owner": "LocalSessionBootstrap",
+  "development_sessions": false,
+  "response_mocks": false,
+  "production_adoption_gate": false,
+  "model_execution": "NOT_REQUESTED",
+  "model_counter": "NOT_INSTRUMENTED",
+  "health_storage": "file",
+  "bootstrap_status": 200,
+  "workspace_status": 200,
+  "playwright_exit": 0,
+  "owned_vite_pid": 79236,
+  "owned_vite_stopped": true,
+  "owned_backend_pid": 76388,
+  "owned_backend_stopped": true
+}
