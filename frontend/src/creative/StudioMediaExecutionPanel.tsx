@@ -165,6 +165,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
           {state.candidate?.kind === 'audio' && <audio src={state.candidate.url} style={{ maxWidth: '100%' }} controls preload="metadata" aria-label="本任务的音频候选" onError={() => state.mediaFailed(state.candidate?.binding || '')} />}
           {['AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING'].includes(job.status) && <><label><input type="checkbox" disabled={state.locked || !props.canReview || state.uncertain || !state.candidate} checked={state.outputReviewed} onChange={event => state.confirmReview(event.target.checked)} />已查看本次候选，确认采用当前任务版本与输出摘要</label>
             <Button disabled={!state.canAction('review')} loading={state.pending === 'review'} onClick={() => void state.action('review')}>明确审核并入素材库</Button></>}
+          {job.status === 'APPROVED' && props.onOpenApprovedAsset && job.approved_asset_version !== null && <Button disabled={!state.canRead || state.uncertain} onClick={() => props.onOpenApprovedAsset?.(job)}>打开本任务已审核素材</Button>}
           {job.status === 'APPROVED' && <StatusMessage tone="success">原任务已审核入库。产品里程碑验收状态仍为 LOCAL_REQUIRED。</StatusMessage>}
         </section>}
       </section>}
