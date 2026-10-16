@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { connectionIssue } from '../creative/graphDraft';
-import { GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT, GRAPH_NODE_HEADER_HEIGHT } from '../creative/graphCanvasGeometry';
+import { graphNodeHeight, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT, GRAPH_NODE_HEADER_HEIGHT } from '../creative/graphCanvasGeometry';
 import type {
   StudioGraphCatalog, StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphDefinitionId,
   StudioGraphEdge, StudioGraphNode, StudioGraphParameters, StudioGraphPort, StudioGraphPortType,
@@ -186,6 +186,22 @@ describe('canvas ops · deterministic auto layout', () => {
     expect(once.nodes.map(row => row.position)).toEqual([
       { x: 0, y: 0 }, { x: 0, y: rowStride }, { x: GRAPH_NODE_WIDTH + 96, y: 0 }, { x: 2 * (GRAPH_NODE_WIDTH + 96), y: 0 },
     ]);
+  });
+
+  it('preserves exact source pins and camera while leaving room for tall catalog cards', () => {
+    const before = graph({ schema_version: 4, viewport: { x: -450, y: 700, zoom: 0.5 }, nodes: [
+      node('director', 'director_plan', { document_snapshot: { id: 'director-original', version: 7, digest: 'a'.repeat(64) } }),
+      node('asset', 'asset_reference', { asset_id: 'original-asset', version: 9, digest: 'b'.repeat(64), kind: 'image' }),
+    ] });
+    const tall = entry('director_plan', Array.from({ length: 6 }, (_, i) => port(`input${i}`, 'TEXT')), []);
+    const after = autoLayout(before, { definitions: [tall] });
+    expect(after.nodes[1].position.y).toBe(graphNodeHeight(tall) + 48);
+    expect(after.viewport).toBe(before.viewport);
+    for (let index = 0; index < before.nodes.length; index++) {
+      expect(after.nodes[index].parameters).toBe(before.nodes[index].parameters);
+      expect({ ...after.nodes[index], position: before.nodes[index].position }).toEqual(before.nodes[index]);
+    }
+    expect(classifyGraphChange(before, after)).toMatchObject({ verdict: 'PRESENTATION', reasonCodes: ['POSITION_CHANGED'] });
   });
 
   it('returns a new definition and never mutates the input', () => {

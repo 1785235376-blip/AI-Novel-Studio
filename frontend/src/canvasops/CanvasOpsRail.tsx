@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StatusMessage } from '../ui/primitives';
+import { Button, StatusMessage } from '../ui/primitives';
 import type { StudioGraphCatalog, StudioGraphDefinition } from '../creative/studioGraphTypes';
 import { autoLayout, classifyGraphChange, normalizeLocalCanvasState } from './canvasOps';
 import type { LocalCanvasState } from './canvasOpsTypes';
@@ -10,7 +10,7 @@ import { NodePalettePanel } from './NodePalettePanel';
 import './canvasOps.css';
 
 /**
- * 画布操作栏组合 props。**冻结**：由 Lead 接进现有创作图编辑器，
+ * 画布操作栏组合 props：接进现有创作图编辑器，
  * 所有变更都通过原控制器的回调完成，本组件自身不改图、不保存、不发请求。
  */
 export type CanvasOpsRailProps = {
@@ -35,6 +35,8 @@ export type CanvasOpsRailProps = {
   onConnect: () => void;
   onSelect: (ids: string[]) => void;
   onTravel: (direction: 'UNDO' | 'REDO') => void;
+  /** Optional for preview-only consumers; the original owner computes and applies current positions. */
+  onApplyLayout?: () => void;
 };
 
 /**
@@ -51,11 +53,11 @@ export function CanvasOpsRail(props: CanvasOpsRailProps) {
   const {
     catalog, definition, base, selected, past, future, editable, protectedNodeIds, kind,
     sourcePort, targetPort, connectionExplanation, local, onLocal, onKind, onSourcePort,
-    onTargetPort, onAddNode, onConnect, onSelect, onTravel,
+    onTargetPort, onAddNode, onConnect, onSelect, onTravel, onApplyLayout,
   } = props;
   const normalized = useMemo(() => normalizeLocalCanvasState(local), [local]);
   const localState = normalized.state;
-  const layoutPreview = useMemo(() => autoLayout(definition), [definition]);
+  const layoutPreview = useMemo(() => autoLayout(definition, { definitions: catalog?.definitions }), [definition, catalog?.definitions]);
   const layoutImpact = useMemo(() => classifyGraphChange(definition, layoutPreview), [definition, layoutPreview]);
   /** 本地草稿差异由定义本身比较得出，不用撤销栈深度猜测。 */
   const draftImpact = useMemo(() => classifyGraphChange(base, definition), [base, definition]);
@@ -87,8 +89,11 @@ export function CanvasOpsRail(props: CanvasOpsRailProps) {
         （原因：{layoutImpact.reasonCodes.join('、')}）。它不会改动参数、来源绑定、启用状态、连接或图格式。
       </p>
       <p className="canvas-ops__note">
-        自动布局是纯函数结果，必须由原控制器的 <code>change()</code> 提交才能进入本地撤销/重做栈；本批冻结的 props 未包含该回调，因此这里只做预览，绝不直接修改草稿。
+        应用只将节点坐标写入当前草稿，保留未保存的文字、来源绑定和视口；通过原控制器的 <code>change()</code> 进入撤销/重做栈。保存创作图后才会持久化；保存冲突或回执不确定时保留草稿，不自动覆盖或重试。
       </p>
+      <Button disabled={!editable || !onApplyLayout || moved === 0 || layoutImpact.verdict !== 'PRESENTATION'}
+        onClick={() => { if (editable && moved > 0 && layoutImpact.verdict === 'PRESENTATION') onApplyLayout?.(); }}>应用自动布局到草稿</Button>
+      {!onApplyLayout && <p>当前视图仅提供布局预览。</p>}
     </section>
   </section>;
 }

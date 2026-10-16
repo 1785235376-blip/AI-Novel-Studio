@@ -1,0 +1,106 @@
+{
+  "baseline_commit": "a5b23eaeca7bc33f98f5d1426a6e37c1d5ecf204",
+  "scope": "Original-owner layout apply; existing camera/position persistence confirmed, no new store/schema/budgets",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/GraphDirectorConsole.test.tsx src/creative/studioGraphClient.test.ts src/creative/studioProductionGraphClient.test.ts src/creative/CreativeAuthoringFields.test.tsx src/creative/CreativeWorkspace.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T08:20:22.769690+00:00",
+      "finished_utc": "2026-10-16T08:20:33.130720+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-layout-final-ui.json",
+      "receipt_sha256": "f730437f8af17a009b6f24a53b8f6d041e861d9106c739b1fc393c2dae84f1cd",
+      "log": "docs/delivery/v2-development/canvas-layout-final-ui.log",
+      "log_sha256": "a92559e1b65591664dd5d862c05a9540ebcc1517e0c83297c699e327ee9c9585"
+    },
+    {
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-usability/../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_empty_disconnected_graphs_reopen_without_chapter_or_model[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_create_idempotency_and_cas_conflicts_preserve_input[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_concurrent_save_has_one_real_cas_winner[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_failed_scope_write_preserves_previous_complete_definition[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-layout-final-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T08:22:16.123712+00:00",
+      "finished_utc": "2026-10-16T08:22:24.837664+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-layout-final-file-public.json",
+      "receipt_sha256": "c5402906a26a48423f834b0b0e65a8feb692b934d350a6d64def1ca4b2b6f728",
+      "log": "docs/delivery/v2-development/canvas-layout-final-file-public.log",
+      "log_sha256": "2fad2d7d85bec1cceb9aa4c090ac1abbf4f5a7bff729fa6870052d8ff5f85862"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc --noEmit && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T08:21:26.813852+00:00",
+      "finished_utc": "2026-10-16T08:21:59.806515+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-layout-build.json",
+      "receipt_sha256": "b195918120afc467d035d1f412fd98caa54b8cb6530a378d255f81d330ebf3e2",
+      "log": "docs/delivery/v2-development/canvas-layout-build.log",
+      "log_sha256": "61f5b55ee727bc59f31fd2c6f4757a6b227b37b5ff7cad4241cf690f42e56c27"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; const files=[\"frontend/src/canvasops/CanvasOpsRail.tsx\",\"frontend/src/creative/studioGraphEditorView.tsx\"]; if(files.some(p=>/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\")))) throw new Error(\"Raw color\"); console.log(\"Changed UI surfaces use existing primitives; no raw colors (2 files).\");"
+      ],
+      "started_utc": "2026-10-16T08:22:17.607277+00:00",
+      "finished_utc": "2026-10-16T08:22:17.669789+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-layout-token-scope.json",
+      "receipt_sha256": "71cbdd9619417774a8320ee67a3364f3466b8ba92dddc4afc2f172cae767afa2",
+      "log": "docs/delivery/v2-development/canvas-layout-token-scope.log",
+      "log_sha256": "fd3f190604b5c1a345c551a4dc0e8239fd72e0f150b2bbad3558e4a95d130d90"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 280,
+    "files": 13,
+    "skipped": 0,
+    "environment": "jsdom/mock transport"
+  },
+  "file_owner_tests": 5,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "discovery": "410 unit files; Playwright list only, no browser",
+  "source_sha256": {
+    "frontend/src/canvasops/CanvasOpsRail.tsx": "e36387f6419c152735c2921943c23998434e224a0dfa9b9f2604c1e066f358e3",
+    "frontend/src/canvasops/canvasOps.test.ts": "c284713bc1788998f17cf46ad5f47520749e25f6dc9307f94185786adf86d3e7",
+    "frontend/src/canvasops/canvasOpsPanels.test.tsx": "e3cee8da677f5780cca7c5846f88238dcf30a9dde069fdb83be6f987d2fc3b9a",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "6e22698c129811704c854d5d4d8648cbb630a3a9f5dad5d450f9ba233f31c568",
+    "frontend/src/creative/StudioProductionGraphEditor.test.tsx": "ea8d02e95aab8e3ce0bb4e60384c66dbedb3c39134e1d977e3991a151c6e9c45",
+    "frontend/src/creative/studioGraphEditorView.tsx": "51f335923721cad99ac1d1c06944f8efa89f92fb5051a9e30c2adbd63d95b173",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "f96236b6119e1c1f25c1d36549260db856ff06d3e6ed2c11baca3846c960ab0d",
+    "tests/test_v2_creative_graph_persistence.py": "4d07c83e6fb3628f1b455bf99afb39588b20436e6137fe045658b775030ccfa5"
+  },
+  "not_run": [
+    "P0 lifecycle/security (BLOCKED and excluded)",
+    "PG",
+    "browser screenshots/FPS/memory/native IME",
+    "Windows/GPU/provider/complete RC",
+    "push/hosted CI"
+  ]
+}

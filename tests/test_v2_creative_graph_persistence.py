@@ -211,3 +211,27 @@ def test_failed_scope_write_preserves_previous_complete_definition(rig, monkeypa
         owner.save(rig.nid, rig.scope, rig.actor, graph["id"], {
             "expected_version": 1, "definition": {**graph["definition"], "title": "Not committed"}})
     assert rig.raw_store.read(rig.nid, rig.scope) == old
+
+
+def test_presentation_positions_and_camera_reopen_with_original_cas_owner(rig):
+    """Presentation is already graph-owned; no independent preferences store."""
+    original = create(rig)
+    layout = deepcopy(original['definition'])
+    layout['viewport'] = {'x': 123.0, 'y': -45.0, 'zoom': 1.4}
+    for index, node in enumerate(layout['nodes']):
+        node['position'] = {'x': index * 336.0, 'y': 48.0}
+    updated = save(rig, original, layout)
+    assert updated['definition'] == layout
+    assert updated['definition_digest'] != original['definition_digest']
+    assert updated['execution_digest'] == original['execution_digest']
+    assert updated['version'] == original['version'] + 1
+    # A fresh service instance reads the durable original row by stable graph ID.
+    reopened = service(rig).get(rig.nid, rig.scope, rig.actor, original['id'])
+    assert reopened == updated
+    alternate = deepcopy(layout)
+    alternate['viewport']['x'] = -600.0
+    with pytest.raises(CapabilityVersionConflict):
+        save(rig, original, alternate)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
+    assert alternate['viewport']['x'] == -600.0
+    assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}

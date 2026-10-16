@@ -1,3 +1,4 @@
+import { autoLayout } from '../canvasops/canvasOps';
 import type { GraphDirectorSource } from './GraphDirectorConsole';
 import type { StoryboardReceipt } from './studioStoryboardContract';
 import { productionGraphDefinitions, type PlanningDocument } from './studioProductionGraphContract';
@@ -158,6 +159,12 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (record) { const previous = structuredClone(draftRef.current); setPast(rows => [...rows.slice(-49), previous]); setFuture([]); }
     draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
   }, [editable, current, isBusy, invalidateCandidate]);
+  function applyAutoLayout() {
+    if (!editable || !current() || locked()) return;
+    // Derive from the live draft, never a retained preview or saved version.
+    // Original change() owns history, binding guards and the eventual CAS save.
+    change(autoLayout(draftRef.current, { definitions: catalog?.definitions }));
+  }
   function navigate(work: () => void) {
     if (!current() || locked() || externalDirty || executionDirty) return;
     if (dirty || blocked) { setDiscardConfirmed(false); setPendingNavigation(() => work); return; }
@@ -390,7 +397,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
     loadVideoCatalog, videoSchemaConfirmed, confirmVideoSchema, upgradeVideoSchema, shotParent, chooseShotParent, shotReceipt, shotChoice, chooseShot, shotLoading, loadShotReceipt,
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
-    discard, load, loadImageCatalog, change, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
+    discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
     setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,

@@ -63,6 +63,23 @@ describe('Production Graph UI keeps original controller and execution authority'
     expect(input.definition.nodes[2].parameters.parameters).toEqual({ scale: 4 });
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.previewMedia).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled(); expect(client.graphs.executeMedia).not.toHaveBeenCalled();
   });
+  it('lays out already-saved Director pins without rewriting their source or executing', async () => {
+    mount(); await enter(); await production(); change('节点类型', 'director_plan');
+    click('明确读取已保存导演与分镜文档'); await screen.findByRole('option', { name: 'Synthetic Director · v3' });
+    change('原创作文档', document.id); click('添加节点');
+    click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
+    const original = structuredClone(vi.mocked(client.graphs.create).mock.calls[0][0].definition);
+    vi.mocked(client.graphs.save).mockImplementation(async (_id, input) => ({ ...imageGraphRecord(), version: 2, definition: input.definition,
+      reference_states: [{ node_id: original.nodes[0].id, state: 'CURRENT' }] }));
+    click('应用自动布局到草稿'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    const updated = vi.mocked(client.graphs.save).mock.calls[0][1];
+    expect(updated.expected_version).toBe(1);
+    expect(updated.definition.viewport).toEqual(original.viewport);
+    expect(updated.definition.edges).toEqual(original.edges);
+    expect(updated.definition.nodes[0].position).toEqual({ x: 0, y: 0 });
+    expect({ ...updated.definition.nodes[0], position: original.nodes[0].position }).toEqual(original.nodes[0]);
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
+  });
   it('ignores late document references after a same-token Host replacement', async () => {
     const late = deferred<{ documents: PlanningDocument[] }>(); vi.mocked(client.graphs.planningDocuments!).mockReturnValue(late.promise);
     mount(); await enter(); await production(); change('节点类型', 'director_plan'); click('明确读取已保存导演与分镜文档');

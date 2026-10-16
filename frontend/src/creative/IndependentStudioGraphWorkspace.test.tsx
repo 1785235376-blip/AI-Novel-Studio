@@ -8,6 +8,7 @@ import { useLocalHostSession } from '../localHostSession';
 import { IndependentStudioWorkspace } from './IndependentStudioWorkspace';
 import { studioClient, type StudioClient, type StudioOverview } from './studioClient';
 import type { StudioGraphCatalog, StudioGraphDefinitionId, StudioGraphRecord, StudioGraphCreateInput, StudioGraphSaveInput } from './studioGraphTypes';
+import { autoLayout } from '../canvasops/canvasOps';
 import { blankGraph } from './graphDraft';
 import { modelCatalog } from './studioGraphModel.testFixtures';
 
@@ -93,6 +94,72 @@ describe('independent studio graph content integration', () => {
     await screen.findByText('创作图已保存 · v1。没有自动创建运行。'); expect(saved.definition.nodes.map(node => node.definition_id)).toEqual(['text_input']); expect(saved.definition.edges).toEqual([]);
     add('director_note'); click('撤销图编辑'); click('保存创作图'); expect(client.graphs.save).not.toHaveBeenCalled(); expect(client.graphs.createRun).not.toHaveBeenCalled();
   });
+  it('applies layout over dirty author text with one undo step, saves the camera, and restores both on reopen', async () => {
+    saved.definition = { ...blankGraph(), viewport: { x: 123, y: -45, zoom: 1.4 }, nodes: [
+      { id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: 500, y: 400 }, parameters: { text: '原文字' } },
+      { id: 'director', definition_id: 'director_note', definition_version: 1, enabled: false, position: { x: -200, y: 300 }, parameters: { note: '保留导演备注' } },
+    ] };
+    const before = structuredClone(saved.definition), mounted = mount(); await enter(); await open();
+    fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+    fireEvent.change(screen.getByLabelText('作者输入文本'), { target: { value: '未保存文字保持' } });
+    const edited = { ...before, nodes: before.nodes.map(row => row.id === 'text' ? { ...row, parameters: { text: '未保存文字保持' } } : row) };
+    const expected = autoLayout(edited, { definitions: catalog().definitions });
+    click('应用自动布局到草稿');
+    expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('0');
+    expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('未保存文字保持');
+    expect(client.graphs.save).not.toHaveBeenCalled();
+    click('撤销图编辑'); expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('500');
+    expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('未保存文字保持');
+    click('重做图编辑'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    expect(client.graphs.save).toHaveBeenCalledWith('saved-graph', { expected_version: 1, definition: expected });
+    expect(saved.definition).toEqual(expected);
+    mounted.unmount(); mount(); await enter(); await open();
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(123px, -45px) scale(1.4)');
+    fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+    expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('0');
+    expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('未保存文字保持');
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
+  it('restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent', async () => {
+    const first = { ...record(), definition: { ...blankGraph(), viewport: { x: 10, y: 20, zoom: 1.2 }, nodes: [
+      { id: 'text', definition_id: 'text_input' as const, definition_version: 1 as const, enabled: true, position: { x: 500, y: 400 }, parameters: { text: '图 A' } },
+    ] } };
+    const second = { ...record(), id: 'graph-b', definition: { ...blankGraph(), title: '同名也按 ID', viewport: { x: -20, y: -30, zoom: 0.7 } } };
+    saved = first; rows = [first, second];
+    vi.mocked(client.graphs.get).mockImplementation(async graphId => structuredClone(graphId === first.id ? first : second));
+    mount(); await enter(); await open(); click('应用自动布局到草稿');
+    fireEvent.change(screen.getByLabelText('已保存创作图'), { target: { value: second.id } });
+    expect(client.graphs.get).toHaveBeenCalledTimes(1);
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(10px, 20px) scale(1.2)');
+    fireEvent.click(screen.getByLabelText('确认放弃图草稿'));
+    click('确认切换创作图');
+    await waitFor(() => expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-20px, -30px) scale(0.7)'));
+    fireEvent.change(screen.getByLabelText('已保存创作图'), { target: { value: first.id } });
+    await waitFor(() => expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(10px, 20px) scale(1.2)'));
+    expect(client.graphs.save).not.toHaveBeenCalled();
+  });
+  it.each([409, 0, 500])('preserves layout and viewport on save failure %s, with explicit checked adoption only', async status => {
+    saved.definition = { ...blankGraph(), viewport: { x: 99, y: 80, zoom: 1.5 }, nodes: [
+      { id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: 500, y: 400 }, parameters: { text: '作者文字' } },
+    ] };
+    const mounted = mount(); await enter(); await open();
+    fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+    click('应用自动布局到草稿');
+    vi.mocked(client.graphs.save).mockRejectedValueOnce(new ApiError({ status, code: status === 409 ? 'CREATIVE_GRAPH_VERSION_CONFLICT' : 'UNKNOWN', message: '保存未确认' }));
+    click('保存创作图'); await screen.findByText('保存版本或回执不确定。草稿已保留，不会自动覆盖或重试。');
+    expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('0');
+    expect((screen.getByRole('button', { name: '应用自动布局到草稿' }) as HTMLButtonElement).disabled).toBe(true);
+    saved = { ...saved, version: 2, definition: { ...saved.definition, viewport: { x: -77, y: 20, zoom: 0.8 } } }; rows = [saved];
+    click('核对图服务端版本'); await screen.findByRole('region', { name: '图服务端版本' });
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(99px, 80px) scale(1.5)');
+    expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('0');
+    fireEvent.click(screen.getByLabelText('确认放弃当前图草稿，采用已核对服务端版本')); click('采用图服务端版本');
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-77px, 20px) scale(0.8)');
+    expect(client.graphs.save).toHaveBeenCalledTimes(1); expect(client.graphs.createRun).not.toHaveBeenCalled();
+    mounted.unmount(); mount(); await enter(); await open();
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-77px, 20px) scale(0.8)');
+  });
+
   it('retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version', async () => {
     mount(); await enter(); await open(); fireEvent.change(title(), { target: { value: '我的未保存输入' } });
     vi.mocked(client.graphs.save).mockRejectedValueOnce(new ApiError({ status: 409, code: 'CREATIVE_GRAPH_VERSION_CONFLICT', message: '版本冲突' }));
