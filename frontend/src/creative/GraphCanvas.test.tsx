@@ -740,3 +740,150 @@ it('hides child compact controls under collapsed parents and expands both for se
   expect(document.querySelector('[data-graph-node-id="prepare"]')).toBeTruthy();
   expect(changes).not.toHaveBeenCalled();
 });
+
+describe('independent persisted canvas notes', () => {
+  it('authors plain text, moves and removes notes without graph selection or execution nodes', () => {
+    const { changes, selections } = setup({ selectedNodeIds: ['source'] });
+    fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+    expect(changes.mock.calls.at(-1)![0].presentation.notes).toEqual([{ id: 'note_1', text: '', position: { x: 32, y: 32 } }]);
+    const text = '<img src=x> 🎬\nScene';
+    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: text } });
+    expect(document.querySelector('[data-graph-note-id] img')).toBeNull();
+    fireEvent.change(screen.getByLabelText('便笺 X'), { target: { value: -240 } });
+    const card = screen.getByRole('button', { name: '选择便笺 note_1' });
+    down(card, 100, 100);
+    fireEvent.pointerMove(card, { pointerId: 1, clientX: 132, clientY: 116 });
+    const before = changes.mock.calls.length;
+    fireEvent.pointerUp(card, { pointerId: 1, clientX: 132, clientY: 116 });
+    expect(changes).toHaveBeenCalledTimes(before + 1);
+    const updated = changes.mock.calls.at(-1)![0];
+    expect(updated.presentation.notes[0]).toEqual({ id: 'note_1', text, position: { x: -208, y: 48 } });
+    expect(updated.nodes).toEqual(initial().nodes); expect(updated.edges).toEqual(initial().edges);
+    expect(selections).not.toHaveBeenCalled();
+    fireEvent.keyDown(card, { key: 'Delete' }); expect(changes).toHaveBeenCalledTimes(before + 1);
+    fireEvent.click(screen.getByRole('button', { name: '移除所选便笺' }));
+    expect(changes.mock.calls.at(-1)![0]).toEqual(initial());
+  });
+  it('rejects Unicode and shared UTF-8 payload overflow before changing the original draft', () => {
+    const definition = initial(); definition.nodes[0].parameters = { text: 'a'.repeat(96000) };
+    const { changes, rerender } = setup({ definition });
+    fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+    expect(screen.getByRole('alert').textContent).toContain('容量超限'); expect(changes).not.toHaveBeenCalled();
+    rerender({ definition: initial() }); fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: '🎬'.repeat(256) } });
+    expect(changes.mock.calls.at(-1)![0].presentation.notes[0].text).toBe('🎬'.repeat(256));
+    const before = changes.mock.calls.length;
+    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: '🎬'.repeat(257) } });
+    expect(changes).toHaveBeenCalledTimes(before); expect(screen.getByRole('alert')).toBeTruthy();
+  });
+  it.each([{ readonly: true }, { busy: true }])('blocks note mutations for %j', flags => {
+    const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+    const { changes } = setup({ ...flags, definition });
+    fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+    const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
+    fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('culls offscreen notes while the explicit directory retains access without graph mutation', () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, width: 800, height: 600, right: 800, bottom: 600, toJSON: () => ({}) });
+    const notes = Array.from({ length: 128 }, (_, i) => ({ id: `n${i}`, text: `Scene ${i}`, position: { x: (i % 16) * 1000, y: Math.floor(i / 16) * 1000 } }));
+    const { changes } = setup({ definition: { ...initial(), presentation: { notes } } });
+    expect(document.querySelectorAll('[data-graph-note-id]').length).toBe(1);
+    fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'n100' } });
+    expect(document.querySelectorAll('[data-graph-note-id]').length).toBe(2);
+    expect((screen.getByLabelText('便笺文本') as HTMLTextAreaElement).value).toBe('Scene 100');
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('cancels a note drag on owner replacement and blur without touching graph gestures', () => {
+    const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+    const { changes, rerender } = setup({ definition, interactionKey: 'a' });
+    const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
+    rerender({ interactionKey: 'b' }); fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+    expect(changes).not.toHaveBeenCalled();
+    down(card, 0, 0); fireEvent.blur(window); fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+    expect(changes).not.toHaveBeenCalled();
+  });
+});
+
+it('note movement does not apply staged node alignment or consume pending connection selection', () => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+  const onPortSelect = vi.fn();
+  const { changes, selections } = setup({ definition, selectedNodeIds: ['source', 'prepare'], connectionNodeIds: ['source'], onPortSelect });
+  fireEvent.click(screen.getByRole('button', { name: '预览左对齐' }));
+  const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
+  fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+  const result = changes.mock.calls.at(-1)![0];
+  expect(result.nodes).toEqual(definition.nodes); expect(result.edges).toEqual(definition.edges);
+  expect(result.presentation.notes[0].position).toEqual({ x: 80, y: 80 });
+  expect(onPortSelect).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+});
+
+it('commits Unicode composition once, rejects whole oversized input and cancels stale composition', () => {
+  const { changes, rerender } = setup({ interactionKey: 'a' });
+  fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+  const editor = screen.getByLabelText('便笺文本');
+  expect(editor.hasAttribute('maxlength')).toBe(false);
+  const before = changes.mock.calls.length;
+  fireEvent.compositionStart(editor);
+  fireEvent.change(editor, { target: { value: '中文🎬' } });
+  expect(changes).toHaveBeenCalledTimes(before);
+  fireEvent.compositionEnd(editor, { data: '中文🎬' });
+  expect(changes).toHaveBeenCalledTimes(before + 1);
+  expect(changes.mock.calls.at(-1)![0].presentation.notes[0].text).toBe('中文🎬');
+  fireEvent.change(editor, { target: { value: '🎬'.repeat(257) } });
+  expect(changes).toHaveBeenCalledTimes(before + 1);
+  expect((editor as HTMLTextAreaElement).value).toBe('中文🎬');
+  fireEvent.compositionStart(editor); fireEvent.change(editor, { target: { value: 'Cancelled' } });
+  rerender({ interactionKey: 'b' }); fireEvent.compositionEnd(editor, { data: 'Cancelled' }); fireEvent.change(editor, { target: { value: 'Cancelled' } });
+  expect(changes).toHaveBeenCalledTimes(before + 1);
+});
+
+it.each(['cancel', 'escape', 'capture', 'readonly', 'busy'] as const)('cancels note drag on %s', reason => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+  const { changes, rerender } = setup({ definition });
+  const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
+  fireEvent.pointerMove(card, { pointerId: 1, clientX: 80, clientY: 80 });
+  if (reason === 'cancel') fireEvent.pointerCancel(card, { pointerId: 1 });
+  if (reason === 'capture') fireEvent.lostPointerCapture(card, { pointerId: 1 });
+  if (reason === 'escape') fireEvent.keyDown(card, { key: 'Escape' });
+  if (reason === 'readonly') rerender({ readonly: true });
+  if (reason === 'busy') rerender({ busy: true });
+  fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+  expect(changes).not.toHaveBeenCalled();
+});
+
+it.each(['selection', 'readonly', 'busy'] as const)('discards note composition on %s without writing another note', reason => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }, { id: 'other', text: 'Other', position: { x: 0, y: 0 } }] } };
+  const { changes, rerender } = setup({ definition });
+  fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'n' } });
+  const editor = screen.getByLabelText('便笺文本');
+  fireEvent.compositionStart(editor); fireEvent.change(editor, { target: { value: '候选' } });
+  if (reason === 'selection') fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'other' } });
+  if (reason === 'readonly') rerender({ readonly: true });
+  if (reason === 'busy') rerender({ busy: true });
+  fireEvent.compositionEnd(editor, { data: '候选' }); fireEvent.change(editor, { target: { value: '候选' } }); expect(changes).not.toHaveBeenCalled();
+});
+
+it('remounts a composing note input when the original definition is replaced', () => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+  const { changes, rerender } = setup({ definition });
+  fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'n' } });
+  const abandoned = screen.getByLabelText('便笺文本');
+  fireEvent.compositionStart(abandoned); fireEvent.change(abandoned, { target: { value: '候选' } });
+  rerender({ definition: { ...definition, title: 'Other revision' } });
+  const current = screen.getByLabelText('便笺文本'); expect(current).not.toBe(abandoned);
+  fireEvent.compositionEnd(abandoned); fireEvent.change(abandoned, { target: { value: '候选' } });
+  expect(changes).not.toHaveBeenCalled(); expect((current as HTMLTextAreaElement).value).toBe('Keep');
+});
+
+it.each(['tool', 'alt', 'middle'] as const)('pans from a note header with %s without editing the note', mode => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+  const { changes, selections } = setup({ definition });
+  if (mode === 'tool') fireEvent.click(screen.getByRole('button', { name: '平移画布' }));
+  const card = screen.getByRole('button', { name: '选择便笺 n' });
+  down(card, 0, 0, { altKey: mode === 'alt', button: mode === 'middle' ? 1 : 0 });
+  move(80, 64); up(80, 64);
+  expect(changes).toHaveBeenCalledTimes(1);
+  expect(changes.mock.calls[0][0]).toEqual({ ...definition, viewport: { x: 80, y: 64, zoom: 1 } });
+  expect(selections).not.toHaveBeenCalled(); expect(screen.queryByLabelText('便笺文本')).toBeNull();
+});

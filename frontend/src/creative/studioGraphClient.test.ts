@@ -69,6 +69,25 @@ describe('scoped graph transport', () => {
     expect((await client.save(graphId, { expected_version: 3, definition: original.definition })).definition).toEqual(original.definition);
     expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
   });
+  it.each([1, 2, 3, 4, 5] as const)('roundtrips 128 display notes in schema %s independently of DAG', async schema_version => {
+    const original = graph(); original.definition = { ...definition(), schema_version, nodes: [], edges: [],
+      presentation: { notes: Array.from({ length: 128 }, (_, i) => ({ id: `n${i}`, text: `Scene ${i} 🎬 <b>plain</b>`, position: { x: i * 300, y: 0 } })) } };
+    fetchMock.mockResolvedValue(reply(original));
+    const client = studioClient(projectId, context()).graphs;
+    expect((await client.get(graphId)).definition).toEqual(original.definition);
+    await client.save(graphId, { expected_version: 3, definition: original.definition });
+    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
+  });
+  it.each([null, [], [{}], ...['n\n', 'n\r'].map(id => ({ id, text: '', position: { x: 0, y: 0 } })).map(note => [note]), [{ id: 'n', text: '🎬'.repeat(257), position: { x: 0, y: 0 } }],
+    [{ id: 'n', text: '', position: { x: 100001, y: 0 } }],
+    [{ id: 'n', text: '', position: { x: 0, y: 0 }, ports: [] }],
+    Array.from({ length: 129 }, (_, i) => ({ id: `n${i}`, text: '', position: { x: 0, y: 0 } })),
+    Array.from({ length: 47 }, (_, i) => ({ id: `n${i}`, text: 'a'.repeat(256), position: { x: 0, y: 0 } })),
+    [{ id: 'n', text: '', position: { x: 0, y: 0 } }, { id: 'n', text: '', position: { x: 0, y: 0 } }]])('rejects malformed display notes %j', async notes => {
+    const original = graph();
+    fetchMock.mockResolvedValue(reply({ ...original, definition: { ...original.definition, presentation: { notes } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toThrow();
+  });
   it.each([null, {}, { show_grid: 1, snap: false, grid_step: 24, show_minimap: true },
     { show_grid: true, snap: false, grid_step: 48, show_minimap: true },
     { show_grid: true, snap: false, grid_step: NaN, show_minimap: true },

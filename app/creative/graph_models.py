@@ -624,9 +624,23 @@ class GraphViewPreferences(Strict):
         return value
 
 
+class GraphCanvasNote(Strict):
+    id: Id
+    text: str = Field(strict=True, max_length=256)
+    position: Position
+
+
 class GraphPresentation(Strict):
     """Bounded display-only metadata, never execution input or authority."""
+    notes: list[GraphCanvasNote] | None = Field(default=None, min_length=1, max_length=128, strict=True)
     comment: str | None = Field(default=None, strict=True, max_length=2000)
+
+    @model_validator(mode="after")
+    def bounded_notes(self):
+        if self.notes and (len({note.id for note in self.notes}) != len(self.notes)
+                           or sum(len(note.text) for note in self.notes) > 12000):
+            raise ValueError("CREATIVE_GRAPH_NOTES_CAPACITY_OR_ID")
+        return self
     view: GraphViewPreferences | None = None
     groups: list[GraphVisualGroup] | None = Field(default=None, min_length=1, max_length=24, strict=True)
 

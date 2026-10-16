@@ -69,3 +69,9 @@
 .graph-canvas__group-collapsed .graph-canvas__help{border:0;overflow-wrap:anywhere}
 .graph-canvas__navigation-results{display:grid;gap:var(--space-1);max-height:320px;overflow:auto}
 .graph-canvas__navigation-results [aria-selected=true]{background:var(--color-selection-bg);border-color:var(--color-selection-border)}
+
+/* Independent display notes: no ports; text scrolls within fixed world bounds. */
+.graph-canvas__note{position:absolute;box-sizing:border-box;pointer-events:auto;border:var(--border-default);border-radius:var(--radius-lg);background:var(--color-bg-surface);display:flex;flex-direction:column;overflow:hidden}
+.graph-canvas__note.is-selected{border-color:var(--color-selection-border)}
+.graph-canvas__note>.ui-button{flex:none;justify-content:flex-start;border-bottom:var(--border-default);cursor:grab}
+.graph-canvas__note>p{margin:0;padding:var(--space-2);font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;overflow:auto;user-select:text}

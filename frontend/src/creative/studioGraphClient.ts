@@ -333,8 +333,21 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
     viewport: { ...position(viewport, input), zoom: number(viewport.zoom, 0.35, 2.5, input) } };
   if (row.presentation !== undefined) {
     const presentation = record(row.presentation, input);
-    if (!Object.keys(presentation).length || Object.keys(presentation).some(key => !['comment', 'groups', 'view'].includes(key))) invalid(input);
+    if (!Object.keys(presentation).length || Object.keys(presentation).some(key => !['comment', 'groups', 'view', 'notes'].includes(key))) invalid(input);
     result.presentation = {};
+    if (presentation.notes !== undefined) {
+      if (!Array.isArray(presentation.notes) || !presentation.notes.length || presentation.notes.length > 128) invalid(input);
+      const ids = new Set<string>();
+      result.presentation.notes = presentation.notes.map(value => {
+        const note = record(value, input), point = record(note.position, input);
+        if (Object.keys(note).length !== 3 || Object.keys(note).some(key => !['id', 'text', 'position'].includes(key))
+          || Object.keys(point).length !== 2 || Object.keys(point).some(key => !['x', 'y'].includes(key))) invalid(input);
+        const id = text(note.id, 64, input), content = text(note.text, 512, input, true);
+        if (!/^[A-Za-z][A-Za-z0-9_-]{0,63}(?![\s\S])/.test(id) || ids.has(id) || Array.from(content).length > 256) invalid(input);
+        ids.add(id); return { id, text: content, position: position(point, input) };
+      });
+      if (result.presentation.notes.reduce((sum, note) => sum + Array.from(note.text).length, 0) > 12000) invalid(input);
+    }
     if (presentation.comment !== undefined) {
       const comment = text(presentation.comment, 4000, input, true);
       if (Array.from(comment).length > 2000) invalid(input);

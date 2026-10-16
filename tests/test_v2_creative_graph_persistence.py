@@ -387,3 +387,22 @@ def test_nested_visual_groups_original_owner_reopen_remove_and_cas(rig):
     assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id'])['definition'] == promoted
     restored = save(rig, updated, original['definition'])
     assert restored['definition_digest'] == original['definition_digest']
+
+
+def test_canvas_notes_original_owner_reopen_move_remove_and_cas(rig):
+    original = create(rig)
+    draft = deepcopy(original['definition'])
+    draft['presentation'] = {'notes': [{'id': f'n{i}', 'text': f'Scene {i} 🎬', 'position': {'x': float(i * 300), 'y': 0.0}} for i in range(128)]}
+    updated = save(rig, original, draft)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
+    assert updated['execution_digest'] == original['execution_digest']
+    assert updated['definition']['nodes'] == original['definition']['nodes']
+    with pytest.raises(CapabilityVersionConflict):
+        save(rig, original, draft)
+    changed = deepcopy(draft)
+    changed['presentation']['notes'][0].update(text='Edited', position={'x': -800.0, 'y': 600.0})
+    updated = save(rig, updated, changed)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id'])['definition'] == changed
+    removed = save(rig, updated, original['definition'])
+    assert removed['definition_digest'] == original['definition_digest']
+    assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}

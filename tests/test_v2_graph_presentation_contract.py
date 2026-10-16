@@ -134,3 +134,49 @@ def test_visual_hierarchy_rejects_self_missing_null_cycle_and_depth(parents):
         parse_graph({'title': 'Hierarchy', 'nodes': [
             {'id': name, 'definition_id': 'text_input'} for name in ['root', 'child', 'third']],
             'presentation': {'groups': groups}})
+
+
+@pytest.mark.parametrize('schema', [1, 2, 3, 4, 5])
+def test_independent_notes_roundtrip_without_execution_or_legacy_digest_change(schema):
+    old = parse_graph({'schema_version': schema, 'title': 'Graph'}).model_dump()
+    notes = [{'id': f'note_{i}', 'text': f'场景 {i} 🎬 <b>plain</b>', 'position': {'x': float(i * 300), 'y': -100000.0}} for i in range(128)]
+    new = {**old, 'presentation': {'notes': notes}}
+    assert parse_graph(new).model_dump() == new
+    assert digest(execution_definition(old)) == digest(execution_definition(new))
+    assert digest(parse_graph(old).model_dump()) == digest(old)
+    assert not new['nodes'] and not new['edges']
+
+
+@pytest.mark.parametrize('notes', [None, [], {}, [None],
+    [{'id': 'bad id', 'text': '', 'position': {'x': 0, 'y': 0}}],
+    [{'id': 'n', 'text': '🎬' * 257, 'position': {'x': 0, 'y': 0}}],
+    [{'id': 'n', 'text': 1, 'position': {'x': 0, 'y': 0}}],
+    [{'id': 'n', 'text': '', 'position': {'x': 100001, 'y': 0}}],
+    [{'id': 'n', 'text': '', 'position': {'x': float('nan'), 'y': 0}}],
+    [{'id': 'n', 'text': '', 'position': {'x': 0, 'y': 0}, 'port': 'text'}],
+    [{'id': 'n', 'text': '', 'position': {'x': 0, 'y': 0}}] * 2,
+    [{'id': f'n{i}', 'text': '', 'position': {'x': 0, 'y': 0}} for i in range(129)],
+    [{'id': f'n{i}', 'text': 'a' * 256, 'position': {'x': 0, 'y': 0}} for i in range(47)],
+])
+def test_independent_notes_reject_bad_data(notes):
+    with pytest.raises(ValidationError):
+        parse_graph({'title': 'Graph', 'presentation': {'notes': notes}})
+
+
+def test_notes_do_not_raise_total_owner_payload_limit():
+    from app.creative.graph_models import MAX_DEFINITION_BYTES
+    assert MAX_DEFINITION_BYTES == 96000
+    with pytest.raises(ValidationError, match='CREATIVE_GRAPH_DEFINITION_CAPACITY'):
+        parse_graph({'title': 'Graph', 'nodes': [
+            {'id': f't{i}', 'definition_id': 'text_input', 'parameters': {'text': 'a' * 8000}} for i in range(10)],
+            'presentation': {'notes': [{'id': f'n{i}', 'text': '🎬' * 250, 'position': {'x': i, 'y': i}} for i in range(40)]}})
+
+
+def test_notes_exact_aggregate_codepoint_boundary():
+    notes = [{'id': f'n{i}', 'text': '🎬' * 256, 'position': {'x': 0.0, 'y': 0.0}} for i in range(46)]
+    notes.append({'id': 'last', 'text': '🎬' * 224, 'position': {'x': 0.0, 'y': 0.0}})
+    graph = {'title': 'Graph', 'presentation': {'notes': notes}}
+    assert len(parse_graph(graph).presentation.notes) == 47
+    notes[-1]['text'] += 'a'
+    with pytest.raises(ValidationError, match='CREATIVE_GRAPH_NOTES_CAPACITY_OR_ID'):
+        parse_graph(graph)

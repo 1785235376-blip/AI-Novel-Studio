@@ -148,6 +148,22 @@ describe('independent studio graph content integration', () => {
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
   });
 
+  it('saves independent notes with original undo, redo, reopen and removal', async () => {
+    const before = structuredClone(saved.definition), mounted = mount(); await enter(); await open();
+    click('在视口左上添加便笺');
+    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: 'Scene 🎬' } });
+    click('撤销图编辑'); expect((screen.getByLabelText('便笺文本') as HTMLTextAreaElement).value).toBe('');
+    click('重做图编辑'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    expect(saved.definition.presentation!.notes![0].text).toBe('Scene 🎬');
+    expect(saved.definition.nodes).toEqual(before.nodes);
+    mounted.unmount(); mount(); await enter(); await open();
+    fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'note_1' } });
+    expect((screen.getByLabelText('便笺文本') as HTMLTextAreaElement).value).toBe('Scene 🎬');
+    click('移除所选便笺'); click('保存创作图'); await screen.findByText('创作图已保存 · v3。没有自动创建运行。');
+    expect(saved.definition).toEqual(before);
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
+
   it('saves/reopens graph annotation with original undo, redo, removal and no model dispatch', async () => {
     saved.definition.nodes = [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true,
       position: { x: 48, y: 64 }, parameters: { text: 'Original author text' } }];
@@ -164,6 +180,13 @@ describe('independent studio graph content integration', () => {
     click('移除画布说明'); click('保存创作图'); await screen.findByText('创作图已保存 · v3。没有自动创建运行。');
     expect(saved.definition).toEqual(before);
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
+
+  it('guards departure when only an independent note is unsaved', async () => {
+    mount(); await enter(); await open(); click('在视口左上添加便笺');
+    click('素材工作区'); await screen.findByText('有未保存的创作图输入。可以继续编辑，或确认放弃后离开。');
+    click('继续编辑'); expect(screen.getByLabelText('便笺文本')).toBeTruthy();
+    expect(client.graphs.save).not.toHaveBeenCalled();
   });
 
   it('warns before leaving when only the graph annotation changed', async () => {

@@ -1,0 +1,153 @@
+{
+  "baseline_commit": "ece0ac7c5206904e4ba97aaa73d7e10403a3ac3e",
+  "scope": "128 independent plain-text spatial note cards in original Graph presentation; 1000 persisted-object acceptance remains PARTIAL",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasNotes.test.ts src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/studioGraphClient.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T14:00:40.906224+00:00",
+      "finished_utc": "2026-10-16T14:01:15.674487+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-notes-accepted-ui.log",
+      "log_sha256": "5f6afae73a41563cb07a35b19ce9511224e447ee5625f0c857d910e6bbde49d6",
+      "receipt": "docs/delivery/v2-development/canvas-notes-accepted-ui.json",
+      "receipt_sha256": "e193299ffceaffc22c935a2a722a2c0e88db8193034bbc7023449e0b678398a6"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_graph_presentation_contract.py",
+        "tests/test_v2_creative_graph_persistence.py::test_canvas_notes_original_owner_reopen_move_remove_and_cas[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_nested_visual_groups_original_owner_reopen_remove_and_cas[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-notes-final-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T13:58:49.035544+00:00",
+      "finished_utc": "2026-10-16T13:58:58.670840+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-notes-final-file.log",
+      "log_sha256": "5f808f39c19e66ca133aea6552c268d1654841f3ca39c4b4e50514ed21a3e515",
+      "receipt": "docs/delivery/v2-development/canvas-notes-final-file.json",
+      "receipt_sha256": "58b37b9a25b43efd81e47c92d55b59f993782659b2282b2bc352d1ba86791a18"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T14:00:40.906457+00:00",
+      "finished_utc": "2026-10-16T14:01:25.344993+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-notes-accepted-build.log",
+      "log_sha256": "03dcce9736d90189e4132717805cae9bc812f2eb49713f257b7c516988946c59",
+      "receipt": "docs/delivery/v2-development/canvas-notes-accepted-build.json",
+      "receipt_sha256": "93d5fb6523eeab66bb3a015a1f330939c8b7a3e834156ecb7ea9d2a05382adf3"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for (const p of [\"frontend/src/creative/GraphCanvasNotes.tsx\", \"frontend/src/creative/graphCanvas.css\"]) if (/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Notes reuse DS primitives/tokens; fixed world geometry covered by pure tests. Browser NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T14:01:15.165727+00:00",
+      "finished_utc": "2026-10-16T14:01:15.251495+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-notes-token.log",
+      "log_sha256": "080b22e8c7321e8101266b9a13270a165a5346fb13e28dd13b540e07c0ddfa3c",
+      "receipt": "docs/delivery/v2-development/canvas-notes-token.json",
+      "receipt_sha256": "d79ba233aac6fe5c6d581f0bbe40ebdfe2545da3d8da2bb650ba3ba581e71c9a"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/GraphCanvas.test.tsx src/creative/graphCanvasNotes.test.ts src/creative/studioGraphClient.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx"
+      ],
+      "started_utc": "2026-10-16T14:00:56.813212+00:00",
+      "finished_utc": "2026-10-16T14:01:28.884498+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-notes-independent-pan-ui.log",
+      "log_sha256": "5a81fa60c51375f956c3d27b9948d8c91bbf582e3669fd301ac3880bec0c84ef",
+      "receipt": "docs/delivery/v2-development/canvas-notes-independent-pan-ui.json",
+      "receipt_sha256": "98d5c5d59f7fcd6b4d4021dde6e6990578669cf40cc0da9948c6a32f6ad88f1a"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_graph_presentation_contract.py",
+        "tests/test_v2_creative_graph_persistence.py::test_canvas_notes_original_owner_reopen_move_remove_and_cas[file]",
+        "--basetemp=.runtime/v2-checks/canvas-notes-independent-final-schema/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T13:59:14.818043+00:00",
+      "finished_utc": "2026-10-16T13:59:23.103470+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-notes-independent-final-schema.log",
+      "log_sha256": "8e677014532bba352975fac6a198bb5320a58b4502d506098810b84ad92aaa79",
+      "receipt": "docs/delivery/v2-development/canvas-notes-independent-final-schema.json",
+      "receipt_sha256": "43b1b6a31e90adce2075ace1477f4f72579a88fca536888399ca69f4334ed79b"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 387,
+    "files": 11,
+    "environment": "mocked jsdom/transport and pure geometry"
+  },
+  "backend_contract_tests": 81,
+  "file_owner_tests": 2,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "source_sha256": {
+    "app/creative/graph_models.py": "860a40181d7ace791af62748691b3b3958811547dd874a71ef430f138223ec17",
+    "frontend/src/creative/GraphCanvas.test.tsx": "88befc61c831311a672e58efa63a18b784d6581b0cef9661715d87432922e6d7",
+    "frontend/src/creative/GraphCanvas.tsx": "aeee53fbf149b06322ceb716122741bc9654d0b845acd85a226baa0b7e8ad56d",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "eab9b0ed4a9b740fb196b7e4484b9619e553bfb06f2aeb70fc08c5533d33e7a2",
+    "frontend/src/creative/graphCanvas.css": "e9738d4df6b6bd5830987e293b35912f7df1a8cdddc9febe3e3757ee8f809b33",
+    "frontend/src/creative/studioGraphClient.test.ts": "0c89deccade879344b722392ae6eec9fdc10080819521e89caceae3faf635eb0",
+    "frontend/src/creative/studioGraphClient.ts": "16c6e21ac0fa8ab60c660135cd9e694bd0f3d55ebcc9405eecf431a64657f5e6",
+    "frontend/src/creative/studioGraphTypes.ts": "f59378edbd3ace92a8987bfae202b68caf60710d2a222a6087cdc6236bdbcd3c",
+    "tests/test_v2_creative_graph_persistence.py": "1732ee5a0c0430eacc3fdac1fb9090f54ec240a7ad93fa9e6fe6b7b702582fe9",
+    "tests/test_v2_graph_presentation_contract.py": "e39d7bf5a77808652cb49320765e47a65153c0dfa356a5fcd5c9108c7a9a1103",
+    "frontend/src/creative/GraphCanvasNotes.tsx": "5a184a50fd92ad98491a48136994869ca0905ddbb70a058b57b8ad8b8cec0c7e",
+    "frontend/src/creative/graphCanvasNotes.ts": "64ccbc8f6b86cc71a515949148defec9de46228756873f5be3735bd15a7e13af",
+    "frontend/src/creative/graphCanvasNotes.test.ts": "6de597906709023b513037833b2fac1e4a79dab1093540f7c1ce985d719a4924",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5"
+  },
+  "initial_failures": [
+    "canvas-notes-ui: oversized test fixture still fit conservative capacity; corrected fixture, not guard"
+  ],
+  "review_fixes": [
+    "Note movement must not apply unconfirmed node alignment",
+    "Remove native maxlength truncation; fence composition and abandon old input on identity/revision changes",
+    "Exact JS note ID matching for newline/CR",
+    "Pan tool/Alt/middle header gestures delegate to original camera"
+  ],
+  "not_run": [
+    "Browser/native/visual/HTTP/FPS/memory",
+    "PG/P0/security lifecycle (BLOCKED and excluded)",
+    "Windows/GPU/provider/user computer/full RC",
+    "push/hosted CI"
+  ]
+}

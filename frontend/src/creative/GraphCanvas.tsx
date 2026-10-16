@@ -14,6 +14,7 @@ import { collapseGraphDisplay, createGraphDisplayIndex, projectGraphDisplay, pro
 import { GraphNodeNavigator } from './GraphNodeNavigator';
 import { GraphVisualGroups } from './GraphVisualGroups';
 import './graphCanvas.css';
+import { GraphNoteEditor, GraphNoteCards } from './GraphCanvasNotes';
 
 export type { GraphCanvasNodeDefinition, GraphCanvasPort } from './graphCanvasGeometry';
 export type GraphCanvasPortSelection = { nodeId: string; portId: string; direction: 'input' | 'output' };
@@ -56,6 +57,8 @@ const sameIds = (a: readonly string[], b: readonly string[]) => a.length === b.l
 export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSelectionChange, onDefinitionChange,
   onPortSelect, protectedNodeIds = [], connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
   const blocked = readonly || busy;
+  const [selectedNote, setSelectedNote] = useState<string | null>(null);
+  useEffect(() => { setSelectedNote(null); }, [interactionKey, preferencesSource]);
   const viewportRef = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
   const wheelUntil = useRef(0);
@@ -299,6 +302,8 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
           x: clampGraphPosition(viewportSize.width / 2 - (node.position.x + GRAPH_NODE_WIDTH / 2) * definition.viewport.zoom),
           y: clampGraphPosition(viewportSize.height / 2 - (node.position.y + graphNodeHeight(displayIndex.descriptors.get(node.definition_id)) / 2) * definition.viewport.zoom) } }, true);
       }} />
+    <GraphNoteEditor definition={definition} blocked={blocked || !!activeGesture} owner={interactionKey}
+      selected={selectedNote} onSelect={setSelectedNote} onChange={onDefinitionChange} />
     <GraphVisualGroups definition={definition} selected={selected} blocked={blocked || !!activeGesture} interactionKey={interactionKey}
       onChange={onDefinitionChange} onSelect={onSelectionChange} />
     <div className="graph-canvas__annotation" onKeyDown={event => event.stopPropagation()}>
@@ -433,6 +438,8 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
           <defs><marker id={markerId} viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" /></marker></defs>
           {display.edges.map(edge => <path key={edge.id} data-graph-edge-id={edge.id} d={graphEdgePath(edge.start, edge.end)} markerEnd={`url(#${markerId})`} />)}
         </svg>
+        <GraphNoteCards definition={definition} blocked={blocked || !!activeGesture} owner={interactionKey}
+          selected={selectedNote} onSelect={setSelectedNote} onChange={onDefinitionChange} size={viewportSize} panMode={tool === 'pan'} displayViewport={visible.viewport} />
         {renderedNodes.map(node => {
           const descriptor = displayIndex.descriptors.get(node.definition_id);
           const label = descriptor?.label || GRAPH_NODE_LABELS[node.definition_id] || node.definition_id;
@@ -469,7 +476,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
         })}
       </div>
       {marquee && <div className="graph-canvas__marquee" data-testid="graph-selection-marquee" style={marquee} />}
-      {!definition.nodes.length && <p className="graph-canvas__empty">从节点目录添加第一个节点，再选择输入和输出端口连接。</p>}
+      {!definition.nodes.length && !definition.presentation?.notes?.length && <p className="graph-canvas__empty">从节点目录添加第一个节点，再选择输入和输出端口连接。</p>}
     </div>
     {showMiniMap && <div className="graph-canvas__minimap-row">
       <Button type="button" variant="ghost" className="graph-canvas__minimap" aria-label="小地图导航" aria-describedby={`${descriptionId}-minimap`}
