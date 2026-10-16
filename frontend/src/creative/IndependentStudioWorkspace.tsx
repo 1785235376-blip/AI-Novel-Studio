@@ -1,3 +1,4 @@
+import type { TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ApiError, apiErrorView, api, type Asset, type CollaborationContext, type ModelCenterModel } from '../api';
@@ -88,6 +89,8 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [productionStage, setProductionStage] = useState<StudioWorkspaceStage>(resume.state === 'SAVED' ? resume.location.stage : 'M4');
   const [graphLocation, setGraphLocation] = useState<Pick<StudioWorkspaceLocation, 'graphId' | 'runId'>>(resume.state === 'SAVED'
     ? { graphId: resume.location.graphId, runId: resume.location.runId } : {});
+  const [assetHandoff, setAssetHandoff] = useState<TimelineAssetHandoff>();
+  useEffect(() => { if (workspaceView !== 'PRODUCTION') setAssetHandoff(undefined); }, [workspaceView]);
   const [modelOpen, setModelOpen] = useState(false), [guideOpen, setGuideOpen] = useState(false), [deliveryOpen, setDeliveryOpen] = useState(false);
 const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 'PRODUCTION';
   // Presentation-only interface mode. Both modes share the same project, assets,
@@ -140,9 +143,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (!sameStudioIdentity() || !sameHostIdentity()) authorityLost.current = true;
     return alive.current && !revoked.current && !authorityLost.current;
   }, [sameStudioIdentity, sameHostIdentity]);
-  const deny = useCallback(() => { revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
+  const deny = useCallback(() => { revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setAssetHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
   const retireIdentity = useCallback(() => {
-    authorityLost.current = true; setIdentityRetired(true);
+    authorityLost.current = true; setIdentityRetired(true); setAssetHandoff(undefined);
     selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++;
     overviewReading.current?.abort(); storageRequest.current?.abort();
     setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined);
@@ -439,7 +442,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} canReview={overview.capabilities.can_review === true}
         busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} mutate={graphMutation} cutoutExecution={cutoutExecution}
         onDirtyChange={mediaDraftChanged} onUnavailable={deny} externalJob={productionJob?.client === productionClient ? productionJob.job : undefined} onApproved={productionApproved} onOpenApprovedAsset={openApprovedAsset} />
-      <StudioTimelineEditor key={`timeline:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows} projectId={projectId}
+      <StudioTimelineEditor key={`timeline:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows} projectId={projectId} assetHandoff={assetHandoff}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}
         isCurrent={current} read={guarded} mutate={graphMutation} onDirtyChange={timelineDraftChanged} onUnavailable={deny}
         onJob={job => { if (current()) setProductionJob({ client: productionClient, job }); }} />
@@ -450,7 +453,16 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       scope={context.scope} identity={cacheKey} active={workspaceView === 'ASSETS' && !denied && !identityRetired}
       denied={denied || identityRetired} busy={busy} isCurrent={current} read={guarded} mutate={graphMutation}
       selectedId={selected?.id} onSelect={assetId => navigate(() => { void refreshSelectedAsset(assetId); })}
-      onSendTo={(target, reference) => setNotice(`已准备把素材 ${reference.asset_id} · v${reference.version} · 摘要 ${reference.digest.slice(0, 12)}… 送往 ${target}。目标模块不会被自动执行，请在对应工作区明确使用该版本；这里只传递原资产 ID、版本与摘要。`)}
+      onSendTo={(target, reference) => {
+        if (target !== 'TIMELINE') { setNotice(`已准备把素材 ${reference.asset_id} · v${reference.version} · 摘要 ${reference.digest.slice(0, 12)}… 送往 ${target}。目标模块不会被自动执行，请在对应工作区明确使用该版本；这里只传递原资产 ID、版本与摘要。`); return; }
+        const epoch = selectionEpoch.current;
+        navigate(() => {
+          if (!current() || epoch !== selectionEpoch.current) return;
+          const exact = { ...reference };
+          setAssetHandoff({ id: crypto.randomUUID(), reference: exact, readAsset: () => guarded(() => client.asset(exact.asset_id)) });
+          setWorkspaceView('PRODUCTION');
+        });
+      }}
       onUnavailable={deny} />}
     {productionView && !denied && <>
       <Button aria-expanded={guideOpen} onClick={() => setGuideOpen(true)}>按需打开项目提示助手</Button>

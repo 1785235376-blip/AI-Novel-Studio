@@ -1,0 +1,91 @@
+{
+  "baseline_commit": "97ae193694dab8e01bc86951fa6f576d9945a522",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/StudioTimelineAssetHandoff.test.tsx src/creative/IndependentStudioWorkspace.test.tsx src/creative/IndependentStudioIdentity.regression.test.tsx src/creative/IndependentStudioReadFences.test.tsx src/creative/TimelineSourceEditing.phase6.test.tsx src/novel/AssetLibraryPanel.test.tsx src/assetbrowser/AssetBrowserPanel.test.tsx src/delivery/DeliveryCenterPanel.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T10:25:47.890952+00:00",
+      "finished_utc": "2026-10-16T10:25:55.636959+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/timeline-handoff-reviewed-ui.log",
+      "log_sha256": "075d85d9a7776ab3e2f6bd2ff11c30844760544090e1a32c46614ff2d3d5376d",
+      "receipt": "docs/delivery/v2-development/timeline-handoff-reviewed-ui.json",
+      "receipt_sha256": "66860bdc28bff32faffa9bc3e79b0048300afe812c13cdc80ce682a03911bfea"
+    },
+    {
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-usability/../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_timeline_asset_handoff.py::test_exact_asset_draft_save_reopen_and_cas[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/timeline-handoff-reviewed-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T10:25:56.032763+00:00",
+      "finished_utc": "2026-10-16T10:26:04.284452+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/timeline-handoff-reviewed-file.log",
+      "log_sha256": "06e7191a5f8acab6e265b040ad158280041555e6719ae61cfa9dee66fa6a1786",
+      "receipt": "docs/delivery/v2-development/timeline-handoff-reviewed-file.json",
+      "receipt_sha256": "0d55cb2515472006cbdcf773df93ea5b5ef98fac271f44986ae053124ef8c871"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T10:26:20.995486+00:00",
+      "finished_utc": "2026-10-16T10:26:55.177724+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/timeline-handoff-reviewed-build.log",
+      "log_sha256": "32df64cb0c078308cd67b773dc7c609595c3b3a80d04c1d9ff3cdfe3a4467903",
+      "receipt": "docs/delivery/v2-development/timeline-handoff-reviewed-build.json",
+      "receipt_sha256": "7c021c504ef037aa99e9f986aa3761c344c9e6b50decf8924f2f9dad3e2d497a"
+    }
+  ],
+  "changed_source_sha256": {
+    "frontend/src/creative/StudioTimelineAssetHandoff.tsx": "9f3b5c315656a0d0bd7e2e8ca9f6dceecf75ab497698a81eb1cde7fea87c2495",
+    "frontend/src/creative/StudioTimelineAssetHandoff.test.tsx": "203f2cec2c5428ecdccbad1d7a3edb3b6f4a065885a34397663b4085953484bd",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "7e0b2936482db579e70d70ff82f45801214c190fb407c67b8dc9a8847ae90cbc",
+    "frontend/src/creative/IndependentStudioWorkspace.test.tsx": "2aac3c4a20bc3cf6fae4f0db9eaa3fe7e60ba441f3ca4cb89050321adfbc862f",
+    "frontend/src/creative/StudioTimelineEditor.tsx": "2a94ab2a98d0f678f68189d6af5abcdee497bc815279633054294c91c09ae9da",
+    "frontend/src/creative/useStudioTimelineEditor.ts": "1ebd9d517095a6c094756ebe1feddb065e7436bcbda4ce79dd24b3a294994a93",
+    "tests/test_v2_timeline_asset_handoff.py": "7ac2724ae4aac24f4f5a958f6dee28d2324d7c35d10eabbbbb54464351837930"
+  },
+  "results": {
+    "mocked_ui_tests": 110,
+    "original_nonsecurity_file_tests": 1,
+    "public_contracts": 30,
+    "public_source_files": 487
+  },
+  "not_run": [
+    "browser/visual/native input",
+    "PostgreSQL/P0/security lifecycle",
+    "Windows/GPU/provider/user computer",
+    "hosted CI",
+    "full RC"
+  ],
+  "blocked": [
+    "Unified delivery lacks authoritative entitlement producer; default deny retained",
+    "P0 platform BLOCKED; R3-GATE HOLD"
+  ],
+  "cleanup": [
+    ".runtime/v2-checks/timeline-handoff-file",
+    ".runtime/v2-checks/timeline-handoff-final-ui",
+    ".runtime/v2-checks/timeline-handoff-final-build",
+    ".runtime/v2-checks/timeline-handoff-reviewed-ui",
+    ".runtime/v2-checks/timeline-handoff-reviewed-file",
+    ".runtime/v2-checks/timeline-handoff-reviewed-build"
+  ]
+}

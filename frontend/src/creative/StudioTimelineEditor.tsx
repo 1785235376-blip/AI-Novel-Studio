@@ -1,3 +1,4 @@
+import { appendTimelineAsset, StudioTimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useEffect, useState } from 'react';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { TIMELINE_LIMITS, timelineClipDuration, timelineSourceState, type StudioTimelineClip, type StudioTimelineDraft, type StudioTimelineTrack } from './studioTimelineTypes';
@@ -52,17 +53,9 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     if (index < 0 || target < 0 || target >= tracks.length) return;
     [tracks[index], tracks[target]] = [tracks[target], tracks[index]]; tracks.forEach((track, order) => { track.order = order; });
   });
-  const addClip = (trackId: string) => changeTrack(trackId, (track, input) => {
-    const asset = props.assets.find(row => row.id === picked[trackId] && sourceFits(track, row.kind) && !row.deleted_at);
-    if (!asset || input.timeline.tracks.reduce((total, row) => total + row.clips.length, 0) >= TIMELINE_LIMITS.clips) return;
-    const kind = asset.kind as 'image' | 'video' | 'audio';
-    const placement = track.clips.reduce((latest, clip) => Math.max(latest, clip.start_ms + timelineClipDuration(clip)), 0);
-    if (!Number.isFinite(placement) || placement >= input.timeline.duration_ms) return;
-    track.clips.push({ id: crypto.randomUUID(), source_snapshot: { id: asset.id, kind: 'ASSET', asset_kind: kind, version: asset.version, digest: asset.sha256 },
-      start_ms: placement, in_ms: 0, out_ms: Math.min(1000, input.timeline.duration_ms - placement),
-      ...(track.kind === 'VIDEO' ? { x: 0, y: 0, width: input.timeline.width, height: input.timeline.height } : {}),
-      ...(input.timeline.schema_version === 2 ? { speed_num: 1, speed_den: 1, muted: false, gain_db: 0, fade_in_ms: 0, fade_out_ms: 0,
-        ...(track.kind === 'VIDEO' ? { opacity: 1, include_audio: false } : {}) } : {}) });
+  const addClip = (trackId: string) => c.change(input => {
+    const asset = props.assets.find(row => row.id === picked[trackId]);
+    if (asset) appendTimelineAsset(input, trackId, asset);
   });
   const locked = !c.canEdit || props.busy;
   const readLocked = c.denied || props.busy || !!c.pending || c.transfer.locked || c.playback.locked || c.sourceEdit.locked;
@@ -90,6 +83,9 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       <Button disabled={readLocked || !c.adoptConfirmed || c.attempt?.state === 'UNKNOWN'} onClick={() => c.adoptCandidate(false)}>采用服务端时间线</Button>
       <Button disabled={readLocked || !c.adoptConfirmed || !props.canMutate || c.attempt?.state === 'UNKNOWN'} onClick={() => c.adoptCandidate(true)}>保留草稿并基于此版本编辑</Button>
     </section>}
+    {props.assetHandoff && <StudioTimelineAssetHandoff key={props.assetHandoff.id}
+      request={props.assetHandoff} draft={draft} canEdit={c.canEdit} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision}
+      onApply={(trackId, asset) => c.change(input => appendTimelineAsset(input, trackId, asset))} />}
     <StudioTimelineSourceEditPanel controller={c.sourceEdit} source={c.base} assets={props.assets} />
     <fieldset disabled={locked}><legend>时间线参数</legend>
       <p>{extended ? '扩展编辑版本 2：可使用静态画面、速度、淡入淡出和片段音量。' : '原时间线版本：保存与渲染保持原有字段和行为。'}</p>

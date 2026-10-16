@@ -140,3 +140,34 @@ describe('independent studio original owner integration', () => {
     expect(URL.createObjectURL).not.toHaveBeenCalled();
   });
 });
+
+describe('mounted original asset browser to timeline handoff', () => {
+  async function sendFixture() {
+    saved = [{ ...asset(2), kind: 'video', filename: 'handoff.mp4', media_type: 'video/mp4', created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z' }];
+    server({ override: (url, init) => {
+      if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
+      if (url.endsWith('/timelines')) return response({ items: [] });
+      return undefined;
+    } });
+    mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '选择素材 handoff.mp4' }));
+    await screen.findByRole('button', { name: '时间线模块' }); fireEvent.click(screen.getByRole('button', { name: '时间线模块' }));
+  }
+  it('routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance', async () => {
+    await sendFixture(); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
+    await screen.findByRole('region', { name: '素材引用交接到时间线' });
+    await waitFor(() => expect((screen.getByRole('button', { name: '添加视频轨道' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(screen.getByRole('button', { name: '添加视频轨道' })); fireEvent.click(screen.getByRole('button', { name: '核对交接素材版本' }));
+    const select = await screen.findByLabelText('交接目标轨道'); fireEvent.change(select, { target: { value: (select as HTMLSelectElement).options[1].value } });
+    expect(screen.getByText(/未保存 · 1 条轨道 · 0 个片段/)).toBeTruthy(); fireEvent.click(screen.getByRole('button', { name: '明确加入原时间线草稿' }));
+    await screen.findByText(/已把核对的原素材版本加入/); expect(screen.getByText(/未保存 · 1 条轨道 · 1 个片段/)).toBeTruthy();
+    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
+  });
+  it('keeps the original dirty-navigation decision and cancels without creating a handoff', async () => {
+    await sendFixture(); fireEvent.change(screen.getByLabelText('自定义意图'), { target: { value: 'keep my draft' } });
+    fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
+    expect(screen.queryByRole('region', { name: '素材引用交接到时间线' })).toBeNull(); fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
+    expect((screen.getByLabelText('自定义意图') as HTMLInputElement).value).toBe('keep my draft');
+    fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' })); fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); fireEvent.click(screen.getByRole('button', { name: '确认离开' }));
+    await screen.findByRole('region', { name: '素材引用交接到时间线' }); expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
+  });
+});
