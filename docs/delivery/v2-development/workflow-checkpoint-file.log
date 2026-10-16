@@ -1,0 +1,222 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_exact_helper_definition_saves_restarts_and_removes_without_execution[file-linear] _
+
+env = namespace(reader=<app.experimental.reader_preflight.ReaderPreflightService object at 0x7f2746a46690>, sessions=<app.ex...ect at 0x7f2746927c20>, agents=<app.experimental.declarative_agents.DeclarativeAgentsService object at 0x7f2746927e90>)
+topology = 'linear'
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-14/test_exact_helper_definition_s0')
+
+    @pytest.mark.parametrize('topology', ['linear', 'branch'])
+    def test_exact_helper_definition_saves_restarts_and_removes_without_execution(env, topology, tmp_path):
+        e = env
+        value = default_definition()
+        value['agent'].update(title='检查点依赖编辑', purpose='保留原用途', role_prompt='保留作者角色声明。')
+        if topology == 'branch':
+            value['nodes'].insert(1, {'id': 'side', 'type': 'checkpoint', 'name': '保留的旁路检查点'})
+            value['edges'][0:0] = [{'source': 'prepare', 'target': 'side'}, {'source': 'side', 'target': 'review'}]
+        original = e.agents.save(e.ctx, None, {'definition': value})
+        before = e.store.read(e.ctx.novel_id, e.ctx.scope)
+        manuscript_before = e.chapters.get(e.cid)
+>       inserted = helper(original['definition'], {'kind': 'insert', 'source': 'prepare', 'target': 'review'})
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_declarative_checkpoint_edit.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_declarative_checkpoint_edit.py:30: in helper
+    result = subprocess.run(['node', '--input-type=module', '-e', NODE], cwd=ROOT,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = '{"definition": {"agent": {"title": "检查点依赖编辑", "purpose": "保留原用途", "role_prompt": "保留作者角色声明。", "input_schema": {"field..."}, {"source": "review", "target": "artifact"}]}, "edit": {"kind": "insert", "source": "prepare", "target": "review"}}'
+capture_output = True, timeout = 20, check = True
+popenargs = (['node', '--input-type=module', '-e', "\nimport { readFileSync } from 'node:fs';\nimport { transform } from './fronte... = previewCheckpointEdit(input.definition, input.edit);\nprocess.stdout.write(JSON.stringify({ input, result }));\n"],)
+kwargs = {'cwd': PosixPath('/workspace/scratch/20a0022d2b33/studio-director-integration'), 'stderr': -1, 'stdin': -1, 'stdout': -1, ...}
+process = <Popen: returncode: 1 args: ['node', '--input-type=module', '-e', "\nimport ...>
+stdout = ''
+stderr = "node:internal/modules/esm/resolve:271\n    throw new ERR_MODULE_NOT_FOUND(\n          ^\n\nError [ERR_MODULE_NOT_FOUN...e/scratch/20a0022d2b33/studio-director-integration/frontend/node_modules/esbuild/lib/main.js'\n}\n\nNode.js v24.19.0\n"
+retcode = 1
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['node', '--input-type=module', '-e', "\nimport { readFileSync } from 'node:fs';\nimport { transform } from './frontend/node_modules/esbuild/lib/main.js';\nconst input = JSON.parse(readFileSync(0, 'utf8'));\nconst source = readFileSync('frontend/src/experimental/workflowGraphEditing.ts', 'utf8');\nconst { code } = await transform(source, { loader: 'ts', format: 'esm', target: 'es2022' });\nconst { previewCheckpointEdit } = await import('data:text/javascript;base64,' + Buffer.from(code).toString('base64'));\nconst result = previewCheckpointEdit(input.definition, input.edit);\nprocess.stdout.write(JSON.stringify({ input, result }));\n"]' returned non-zero exit status 1.
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py:571: CalledProcessError
+_ test_exact_helper_definition_saves_restarts_and_removes_without_execution[file-branch] _
+
+env = namespace(reader=<app.experimental.reader_preflight.ReaderPreflightService object at 0x7f274692f860>, sessions=<app.ex...ect at 0x7f274692f2f0>, agents=<app.experimental.declarative_agents.DeclarativeAgentsService object at 0x7f274692f770>)
+topology = 'branch'
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-14/test_exact_helper_definition_s1')
+
+    @pytest.mark.parametrize('topology', ['linear', 'branch'])
+    def test_exact_helper_definition_saves_restarts_and_removes_without_execution(env, topology, tmp_path):
+        e = env
+        value = default_definition()
+        value['agent'].update(title='检查点依赖编辑', purpose='保留原用途', role_prompt='保留作者角色声明。')
+        if topology == 'branch':
+            value['nodes'].insert(1, {'id': 'side', 'type': 'checkpoint', 'name': '保留的旁路检查点'})
+            value['edges'][0:0] = [{'source': 'prepare', 'target': 'side'}, {'source': 'side', 'target': 'review'}]
+        original = e.agents.save(e.ctx, None, {'definition': value})
+        before = e.store.read(e.ctx.novel_id, e.ctx.scope)
+        manuscript_before = e.chapters.get(e.cid)
+>       inserted = helper(original['definition'], {'kind': 'insert', 'source': 'prepare', 'target': 'review'})
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_declarative_checkpoint_edit.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_declarative_checkpoint_edit.py:30: in helper
+    result = subprocess.run(['node', '--input-type=module', '-e', NODE], cwd=ROOT,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = '{"definition": {"agent": {"title": "检查点依赖编辑", "purpose": "保留原用途", "role_prompt": "保留作者角色声明。", "input_schema": {"field..."}, {"source": "review", "target": "artifact"}]}, "edit": {"kind": "insert", "source": "prepare", "target": "review"}}'
+capture_output = True, timeout = 20, check = True
+popenargs = (['node', '--input-type=module', '-e', "\nimport { readFileSync } from 'node:fs';\nimport { transform } from './fronte... = previewCheckpointEdit(input.definition, input.edit);\nprocess.stdout.write(JSON.stringify({ input, result }));\n"],)
+kwargs = {'cwd': PosixPath('/workspace/scratch/20a0022d2b33/studio-director-integration'), 'stderr': -1, 'stdin': -1, 'stdout': -1, ...}
+process = <Popen: returncode: 1 args: ['node', '--input-type=module', '-e', "\nimport ...>
+stdout = ''
+stderr = "node:internal/modules/esm/resolve:271\n    throw new ERR_MODULE_NOT_FOUND(\n          ^\n\nError [ERR_MODULE_NOT_FOUN...e/scratch/20a0022d2b33/studio-director-integration/frontend/node_modules/esbuild/lib/main.js'\n}\n\nNode.js v24.19.0\n"
+retcode = 1
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['node', '--input-type=module', '-e', "\nimport { readFileSync } from 'node:fs';\nimport { transform } from './frontend/node_modules/esbuild/lib/main.js';\nconst input = JSON.parse(readFileSync(0, 'utf8'));\nconst source = readFileSync('frontend/src/experimental/workflowGraphEditing.ts', 'utf8');\nconst { code } = await transform(source, { loader: 'ts', format: 'esm', target: 'es2022' });\nconst { previewCheckpointEdit } = await import('data:text/javascript;base64,' + Buffer.from(code).toString('base64'));\nconst result = previewCheckpointEdit(input.definition, input.edit);\nprocess.stdout.write(JSON.stringify({ input, result }));\n"]' returned non-zero exit status 1.
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py:571: CalledProcessError
+=============================== warnings summary ===============================
+../studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_declarative_checkpoint_edit.py::test_exact_helper_definition_saves_restarts_and_removes_without_execution[file-linear]
+FAILED tests/test_declarative_checkpoint_edit.py::test_exact_helper_definition_saves_restarts_and_removes_without_execution[file-branch]
+2 failed, 2 deselected, 1 warning in 4.27s

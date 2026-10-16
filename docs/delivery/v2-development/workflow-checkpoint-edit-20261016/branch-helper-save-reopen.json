@@ -1,0 +1,487 @@
+{
+  "topology": "branch",
+  "helper_executed": true,
+  "workflow_executed": false,
+  "insert": {
+    "input": {
+      "definition": {
+        "agent": {
+          "title": "检查点依赖编辑",
+          "purpose": "保留原用途",
+          "role_prompt": "保留作者角色声明。",
+          "input_schema": {
+            "fields": [
+              {
+                "name": "source_text",
+                "type": "string",
+                "required": true,
+                "max_length": 8000
+              }
+            ]
+          },
+          "output_schema": {
+            "fields": [
+              {
+                "name": "draft",
+                "type": "string",
+                "required": true,
+                "max_length": 8000
+              }
+            ]
+          },
+          "allowed_tools": [
+            "draft_prepare"
+          ],
+          "model_route": null,
+          "capability_requirements": [],
+          "runtime_requirement": null,
+          "review_required": true,
+          "max_steps": 8,
+          "timeout_seconds": 30,
+          "max_output_bytes": 64000,
+          "max_cost_microusd": 0
+        },
+        "nodes": [
+          {
+            "id": "prepare",
+            "type": "draft_prepare",
+            "name": "整理输入材料"
+          },
+          {
+            "id": "side",
+            "type": "checkpoint",
+            "name": "保留的旁路检查点"
+          },
+          {
+            "id": "review",
+            "type": "manual_approval",
+            "name": "审核候选结果"
+          },
+          {
+            "id": "artifact",
+            "type": "review_artifact",
+            "name": "保存已审核材料"
+          }
+        ],
+        "edges": [
+          {
+            "source": "prepare",
+            "target": "side"
+          },
+          {
+            "source": "side",
+            "target": "review"
+          },
+          {
+            "source": "prepare",
+            "target": "review"
+          },
+          {
+            "source": "review",
+            "target": "artifact"
+          }
+        ]
+      },
+      "edit": {
+        "kind": "insert",
+        "source": "prepare",
+        "target": "review"
+      }
+    },
+    "result": {
+      "definition": {
+        "agent": {
+          "title": "检查点依赖编辑",
+          "purpose": "保留原用途",
+          "role_prompt": "保留作者角色声明。",
+          "input_schema": {
+            "fields": [
+              {
+                "name": "source_text",
+                "type": "string",
+                "required": true,
+                "max_length": 8000
+              }
+            ]
+          },
+          "output_schema": {
+            "fields": [
+              {
+                "name": "draft",
+                "type": "string",
+                "required": true,
+                "max_length": 8000
+              }
+            ]
+          },
+          "allowed_tools": [
+            "draft_prepare"
+          ],
+          "model_route": null,
+          "capability_requirements": [],
+          "runtime_requirement": null,
+          "review_required": true,
+          "max_steps": 8,
+          "timeout_seconds": 30,
+          "max_output_bytes": 64000,
+          "max_cost_microusd": 0
+        },
+        "nodes": [
+          {
+            "id": "prepare",
+            "type": "draft_prepare",
+            "name": "整理输入材料"
+          },
+          {
+            "id": "side",
+            "type": "checkpoint",
+            "name": "保留的旁路检查点"
+          },
+          {
+            "id": "checkpoint1",
+            "type": "checkpoint",
+            "name": "本地检查点"
+          },
+          {
+            "id": "review",
+            "type": "manual_approval",
+            "name": "审核候选结果"
+          },
+          {
+            "id": "artifact",
+            "type": "review_artifact",
+            "name": "保存已审核材料"
+          }
+        ],
+        "edges": [
+          {
+            "source": "prepare",
+            "target": "side"
+          },
+          {
+            "source": "side",
+            "target": "review"
+          },
+          {
+            "source": "prepare",
+            "target": "checkpoint1"
+          },
+          {
+            "source": "checkpoint1",
+            "target": "review"
+          },
+          {
+            "source": "review",
+            "target": "artifact"
+          }
+        ]
+      },
+      "removed": [
+        {
+          "source": "prepare",
+          "target": "review"
+        }
+      ],
+      "added": [
+        {
+          "source": "prepare",
+          "target": "checkpoint1"
+        },
+        {
+          "source": "checkpoint1",
+          "target": "review"
+        }
+      ],
+      "nodeId": "checkpoint1",
+      "kind": "insert"
+    }
+  },
+  "remove": {
+    "input": {
+      "definition": {
+        "agent": {
+          "allowed_tools": [
+            "draft_prepare"
+          ],
+          "capability_requirements": [],
+          "input_schema": {
+            "fields": [
+              {
+                "max_length": 8000,
+                "name": "source_text",
+                "required": true,
+                "type": "string"
+              }
+            ]
+          },
+          "max_cost_microusd": 0,
+          "max_output_bytes": 64000,
+          "max_steps": 8,
+          "model_route": null,
+          "output_schema": {
+            "fields": [
+              {
+                "max_length": 8000,
+                "name": "draft",
+                "required": true,
+                "type": "string"
+              }
+            ]
+          },
+          "purpose": "保留原用途",
+          "review_required": true,
+          "role_prompt": "保留作者角色声明。",
+          "runtime_requirement": null,
+          "timeout_seconds": 30,
+          "title": "检查点依赖编辑"
+        },
+        "edges": [
+          {
+            "source": "prepare",
+            "target": "side"
+          },
+          {
+            "source": "side",
+            "target": "review"
+          },
+          {
+            "source": "prepare",
+            "target": "checkpoint1"
+          },
+          {
+            "source": "checkpoint1",
+            "target": "review"
+          },
+          {
+            "source": "review",
+            "target": "artifact"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "prepare",
+            "name": "整理输入材料",
+            "type": "draft_prepare"
+          },
+          {
+            "id": "side",
+            "name": "保留的旁路检查点",
+            "type": "checkpoint"
+          },
+          {
+            "id": "checkpoint1",
+            "name": "本地检查点",
+            "type": "checkpoint"
+          },
+          {
+            "id": "review",
+            "name": "审核候选结果",
+            "type": "manual_approval"
+          },
+          {
+            "id": "artifact",
+            "name": "保存已审核材料",
+            "type": "review_artifact"
+          }
+        ]
+      },
+      "edit": {
+        "kind": "remove",
+        "id": "checkpoint1"
+      }
+    },
+    "result": {
+      "definition": {
+        "agent": {
+          "allowed_tools": [
+            "draft_prepare"
+          ],
+          "capability_requirements": [],
+          "input_schema": {
+            "fields": [
+              {
+                "max_length": 8000,
+                "name": "source_text",
+                "required": true,
+                "type": "string"
+              }
+            ]
+          },
+          "max_cost_microusd": 0,
+          "max_output_bytes": 64000,
+          "max_steps": 8,
+          "model_route": null,
+          "output_schema": {
+            "fields": [
+              {
+                "max_length": 8000,
+                "name": "draft",
+                "required": true,
+                "type": "string"
+              }
+            ]
+          },
+          "purpose": "保留原用途",
+          "review_required": true,
+          "role_prompt": "保留作者角色声明。",
+          "runtime_requirement": null,
+          "timeout_seconds": 30,
+          "title": "检查点依赖编辑"
+        },
+        "edges": [
+          {
+            "source": "prepare",
+            "target": "side"
+          },
+          {
+            "source": "side",
+            "target": "review"
+          },
+          {
+            "source": "prepare",
+            "target": "review"
+          },
+          {
+            "source": "review",
+            "target": "artifact"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "prepare",
+            "name": "整理输入材料",
+            "type": "draft_prepare"
+          },
+          {
+            "id": "side",
+            "name": "保留的旁路检查点",
+            "type": "checkpoint"
+          },
+          {
+            "id": "review",
+            "name": "审核候选结果",
+            "type": "manual_approval"
+          },
+          {
+            "id": "artifact",
+            "name": "保存已审核材料",
+            "type": "review_artifact"
+          }
+        ]
+      },
+      "removed": [
+        {
+          "source": "prepare",
+          "target": "checkpoint1"
+        },
+        {
+          "source": "checkpoint1",
+          "target": "review"
+        }
+      ],
+      "added": [
+        {
+          "source": "prepare",
+          "target": "review"
+        }
+      ],
+      "nodeId": "checkpoint1",
+      "kind": "remove"
+    }
+  },
+  "versions": [
+    1,
+    2,
+    3
+  ],
+  "original_digest": "e76ea008d67371b490e22625f2b351544da8c8657b82b0c354ef0b19658d1aa7",
+  "inserted_digest": "b38fe9f40d5219a9b162a34c93134dfc6ced4cbc64d6adbd8c260e957e288822",
+  "final_digest": "e76ea008d67371b490e22625f2b351544da8c8657b82b0c354ef0b19658d1aa7",
+  "reopened_definition": {
+    "agent": {
+      "allowed_tools": [
+        "draft_prepare"
+      ],
+      "capability_requirements": [],
+      "input_schema": {
+        "fields": [
+          {
+            "max_length": 8000,
+            "name": "source_text",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      },
+      "max_cost_microusd": 0,
+      "max_output_bytes": 64000,
+      "max_steps": 8,
+      "model_route": null,
+      "output_schema": {
+        "fields": [
+          {
+            "max_length": 8000,
+            "name": "draft",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      },
+      "purpose": "保留原用途",
+      "review_required": true,
+      "role_prompt": "保留作者角色声明。",
+      "runtime_requirement": null,
+      "timeout_seconds": 30,
+      "title": "检查点依赖编辑"
+    },
+    "edges": [
+      {
+        "source": "prepare",
+        "target": "side"
+      },
+      {
+        "source": "side",
+        "target": "review"
+      },
+      {
+        "source": "prepare",
+        "target": "checkpoint1"
+      },
+      {
+        "source": "checkpoint1",
+        "target": "review"
+      },
+      {
+        "source": "review",
+        "target": "artifact"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "prepare",
+        "name": "整理输入材料",
+        "type": "draft_prepare"
+      },
+      {
+        "id": "side",
+        "name": "保留的旁路检查点",
+        "type": "checkpoint"
+      },
+      {
+        "id": "checkpoint1",
+        "name": "本地检查点",
+        "type": "checkpoint"
+      },
+      {
+        "id": "review",
+        "name": "审核候选结果",
+        "type": "manual_approval"
+      },
+      {
+        "id": "artifact",
+        "name": "保存已审核材料",
+        "type": "review_artifact"
+      }
+    ]
+  }
+}

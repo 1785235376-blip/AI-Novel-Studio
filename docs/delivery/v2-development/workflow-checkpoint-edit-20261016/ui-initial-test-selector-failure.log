@@ -1,0 +1,454 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ❯ src/experimental/WorkflowGraphEditPreview.test.tsx (14 tests | 1 failed) 1507ms
+   ✓ mounted editor previews, applies, explicitly saves through the existing owner, then reopens the full definition 338ms
+   × applying retires history candidates and original graph review acknowledgement 212ms
+     → Unable to find a label with the text of: /已核对已保存定义/
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"Agent 与 Workflow"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0mAgent 与 Workflow[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m声明式 · 原执行器[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新授权目录与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原 Workflow DAG 与人工审核节点。支持单根分支 DAG，全部分支须汇入人工审核，最多 16 步；沿用原执行顺序。Python、JavaScript、shell、动态 import 与任意第三方插件均为 DENY_ALL。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mAgent 表单与已保存定义[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8b:"[39m
+          [36m>[39m
+            [0m已保存的 Agent 定义[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r8b:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m新建独立定义[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"definition"[39m
+            [36m>[39m
+              [0mOriginal definition[0m
+              [0m · v[0m
+              [0m1[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8d:"[39m
+          [36m>[39m
+            [0mAgent 名称[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":r8d:"[39m
+            [33mmaxlength[39m=[32m"160"[39m
+            [33mvalue[39m=[32m"Original definition"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8e:"[39m
+          [36m>[39m
+            [0mAgent 用途[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33mid[39m=[32m":r8e:"[39m
+            [33mmaxlength[39m=[32m"2000"[39m
+          [36m>[39m
+            [0mPreserve purpose[0m
+          [36m</textarea>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8f:"[39m
+          [36m>[39m
+            [0m角色提示词[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33mid[39m=[32m":r8f:"[39m
+            [33mmaxlength[39m=[32m"8000"[39m
+            [33mrows[39m=[32m"4"[39m
+          [36m>[39m
+            [0mPreserve prompt[0m
+          [36m</textarea>[39m
+        [36m</div>[39m
+        [36m<p>[39m
+          [0m提示词仅保存为声明，不能授予权限。本地规则节点不解释提示词，也不冒充模型写作。模型节点把用途、角色与输入作为可见的作者指令，复用原作者请求、费用预检与任务执行器；不授予任何工具权限。[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8g:"[39m
+          [36m>[39m
+            [0m已注册模型路线[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r8g:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m无模型：确定性本地规则[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8h:"[39m
+          [36m>[39m
+            [0mAdapter 运行时要求[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r8h:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m沿用当前已注册节点的运行时[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"TRUSTED_IN_PROCESS_LOCAL"[39m
+            [36m>[39m
+              [0m受信任的进程内本地规则[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"ORIGINAL_BOUND_LOCAL_MODEL"[39m
+            [36m>[39m
+              [0m原已绑定本地模型执行器[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [0m能力要求（声明，不授予权限）[0m
+          [36m</legend>[39m
+          [36m<label>[39m
+            [36m<input[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0mLOCAL_RULES[0m
+          [36m</label>[39m
+          [36m<label>[39m
+            [36m<input[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0mTEXT[0m
+          [36m</label>[39m
+        [36m</fieldset>[39m
+        [36m<p>[39m
+          [0m运行时、模型能力与输入输出 Schema 一起保存并预检。缺少原注册模型或执行器时拒绝启动；声明不会安装 Adapter、开启模型或授权云端回退。[0m
+        [36m</p>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [0m服务端注册的允许工具[0m
+          [36m</legend>[39m
+          [36m<label>[39m
+            [36m<input[39m
+              [33mchecked[39m=[32m""[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0mdraft_prepare[0m
+          [36m</label>[39m
+        [36m</fieldset>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [0m输入[0m
+            [0m（有限标量对象）[0m
+          [36m</legend>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-record"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-grid"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"experimental-field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m":r8i:"[39m
+                [36m>[39m
+                  [0m输入字段 1 名称[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m":r8i:"[39m
+                  [33mmaxlength[39m=[32m"40"[39m
+                  [33mvalue[39m=[32m"source_text"[39m
+                [...
+ ✓ src/experimental/workflowGraphEditing.test.ts (25 tests) 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/WorkflowGraphEditPreview.test.tsx > applying retires history candidates and original graph review acknowledgement
+TestingLibraryElementError: Unable to find a label with the text of: /已核对已保存定义/
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"Agent 与 Workflow"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0mAgent 与 Workflow[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m声明式 · 原执行器[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新授权目录与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原 Workflow DAG 与人工审核节点。支持单根分支 DAG，全部分支须汇入人工审核，最多 16 步；沿用原执行顺序。Python、JavaScript、shell、动态 import 与任意第三方插件均为 DENY_ALL。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mAgent 表单与已保存定义[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8b:"[39m
+          [36m>[39m
+            [0m已保存的 Agent 定义[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r8b:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m新建独立定义[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"definition"[39m
+            [36m>[39m
+              [0mOriginal definition[0m
+              [0m · v[0m
+              [0m1[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8d:"[39m
+          [36m>[39m
+            [0mAgent 名称[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":r8d:"[39m
+            [33mmaxlength[39m=[32m"160"[39m
+            [33mvalue[39m=[32m"Original definition"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8e:"[39m
+          [36m>[39m
+            [0mAgent 用途[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33mid[39m=[32m":r8e:"[39m
+            [33mmaxlength[39m=[32m"2000"[39m
+          [36m>[39m
+            [0mPreserve purpose[0m
+          [36m</textarea>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8f:"[39m
+          [36m>[39m
+            [0m角色提示词[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33mid[39m=[32m":r8f:"[39m
+            [33mmaxlength[39m=[32m"8000"[39m
+            [33mrows[39m=[32m"4"[39m
+          [36m>[39m
+            [0mPreserve prompt[0m
+          [36m</textarea>[39m
+        [36m</div>[39m
+        [36m<p>[39m
+          [0m提示词仅保存为声明，不能授予权限。本地规则节点不解释提示词，也不冒充模型写作。模型节点把用途、角色与输入作为可见的作者指令，复用原作者请求、费用预检与任务执行器；不授予任何工具权限。[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8g:"[39m
+          [36m>[39m
+            [0m已注册模型路线[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r8g:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m无模型：确定性本地规则[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r8h:"[39m
+          [36m>[39m
+            [0mAdapter 运行时要求[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r8h:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m沿用当前已注册节点的运行时[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"TRUSTED_IN_PROCESS_LOCAL"[39m
+            [36m>[39m
+              [0m受信任的进程内本地规则[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"ORIGINAL_BOUND_LOCAL_MODEL"[39m
+            [36m>[39m
+              [0m原已绑定本地模型执行器[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [0m能力要求（声明，不授予权限）[0m
+          [36m</legend>[39m
+          [36m<label>[39m
+            [36m<input[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0mLOCAL_RULES[0m
+          [36m</label>[39m
+          [36m<label>[39m
+            [36m<input[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0mTEXT[0m
+          [36m</label>[39m
+        [36m</fieldset>[39m
+        [36m<p>[39m
+          [0m运行时、模型能力与输入输出 Schema 一起保存并预检。缺少原注册模型或执行器时拒绝启动；声明不会安装 Adapter、开启模型或授权云端回退。[0m
+        [36m</p>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [0m服务端注册的允许工具[0m
+          [36m</legend>[39m
+          [36m<label>[39m
+            [36m<input[39m
+              [33mchecked[39m=[32m""[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0mdraft_prepare[0m
+          [36m</label>[39m
+        [36m</fieldset>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [0m输入[0m
+            [0m（有限标量对象）[0m
+          [36m</legend>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-record"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-grid"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"experimental-field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m":r8i:"[39m
+                [36m>[39m
+                  [0m输入字段 1 名称[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m":r8i:"[39m
+                  [33mmaxlength[39m=[32m"40"[39m
+                  [33mvalue[39m=[32m"source_text"[39m
+                [...
+ ❯ Object.getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getAllByLabelText ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/queries/label-text.js:111:38
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/experimental/WorkflowGraphEditPreview.test.tsx:74:26
+     72|   await mountSaved(); fireEvent.click(screen.getByRole('button', { nam…
+     73|   fireEvent.change(screen.getByLabelText('查看 Agent 历史版本'), { tar…
+     74|   const checked = screen.getByLabelText(/已核对已保存定义/); fireEvent…
+       |                          ^
+     75|   preview(); fireEvent.click(apply()); expect(screen.queryByRole('butt…
+     76| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 38 passed (39)
+   Start at  06:59:12
+   Duration  2.49s (transform 191ms, setup 26ms, collect 276ms, tests 1.52s, environment 289ms, prepare 105ms)
+

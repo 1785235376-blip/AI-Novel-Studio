@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/experimental/AgentDefinitionHistory.test.tsx (16 tests) 1996ms
+   ✓ integrates draft-fill then explicit current-CAS save, resetting review without reviving the old run 523ms
+   ✓ preserves a dirty draft on drift and cancel, then explicitly reloads the current CAS base on confirmation 500ms
+ ✓ src/experimental/Wave5TemplatesSdkComics.test.tsx (4 tests) 633ms
+ ✓ src/experimental/WorkflowGraphEditPreview.test.tsx (15 tests) 1697ms
+   ✓ mounted editor previews, applies, explicitly saves through the existing owner, then reopens the full definition 346ms
+   ✓ applying retires history candidates and original graph review acknowledgement 312ms
+ ✓ src/experimental/workflowGraphEditing.test.ts (25 tests) 11ms
+
+ Test Files  4 passed (4)
+      Tests  60 passed (60)
+   Start at  07:00:24
+   Duration  6.63s (transform 304ms, setup 33ms, collect 610ms, tests 4.34s, environment 941ms, prepare 195ms)
+

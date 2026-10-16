@@ -4,6 +4,7 @@ import type { ExperimentalClient } from './api';
 import { Details, Field, ResourceState, useAction, useResource } from './shared';
 import { declarativeAgentsClient, type AgentDefinition, type AgentPreflight, type AgentRun, type AuthoredWorkflow, type SchemaField } from './declarativeAgentsClient';
 import { AgentDefinitionHistory } from './AgentDefinitionHistory';
+import { WorkflowGraphEditPreview } from './WorkflowGraphEditPreview';
 let sequence = 0;
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value));
 export function DeclarativeAgentsPanel(props: { client: ExperimentalClient; requestedJobId?: string }) {
@@ -41,7 +42,7 @@ function AgentsBody({ client, requestedJobId }: { client: ExperimentalClient; re
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; formEpoch.current++; runEpoch.current++; }; }, []);
   useEffect(() => { if (catalog.data && !initialized.current) { initialized.current = true; setDefinition(clone(catalog.data.default_definition)); } }, [catalog.data]);
   const action = useAction();
-  const edit = (next: AuthoredWorkflow) => { formEpoch.current++; setPendingSelection(undefined); setDefinition(next); setPreflight(undefined); setReviewGraph(false); };
+  const edit = (next: AuthoredWorkflow) => { formEpoch.current++; setPendingSelection(undefined); setDefinition(next); setPreflight(undefined); setReviewGraph(false); setReviewModel(false); setReviewOutput(false); };
   const agentEdit = (value: Partial<AuthoredWorkflow['agent']>) => definition && edit({ ...definition, agent: { ...definition.agent, ...value } });
   const choose = (row?: AgentDefinition) => { formEpoch.current++; setPendingSelection(undefined); setSaved(row); setDefinition(clone(row?.definition || catalog.data!.default_definition)); setPreflight(undefined); setReviewGraph(false); setReviewModel(false); setReviewOutput(false); };
   const dirty = !!definition && JSON.stringify(definition) !== JSON.stringify(saved?.definition);
@@ -61,7 +62,7 @@ function AgentsBody({ client, requestedJobId }: { client: ExperimentalClient; re
   const modelNodeWaiting = run?.definition_snapshot?.nodes.some(n => n.id === run.current_node_id && n.type === 'agent_task') ?? false;
   const usable = !!run && !run.stale;
   return <section className="experimental-section" aria-label="Agent 与 Workflow">
-    <div className="experimental-actions"><h3>Agent 与 Workflow</h3><Badge>声明式 · 原执行器</Badge><Button disabled={action.busy} onClick={() => { setPendingSelection(undefined); catalog.reload(); definitions.reload(); runs.reload(); setPreflight(undefined); }}>刷新授权目录与记录</Button></div>
+    <div className="experimental-actions"><h3>Agent 与 Workflow</h3><Badge>声明式 · 原执行器</Badge><Button disabled={action.busy} onClick={() => { formEpoch.current++; setPendingSelection(undefined); catalog.reload(); definitions.reload(); runs.reload(); setPreflight(undefined); setReviewGraph(false); setReviewModel(false); setReviewOutput(false); }}>刷新授权目录与记录</Button></div>
     <p>复用原 Workflow DAG 与人工审核节点。支持单根分支 DAG，全部分支须汇入人工审核，最多 16 步；沿用原执行顺序。Python、JavaScript、shell、动态 import 与任意第三方插件均为 DENY_ALL。</p>
     {targetJob && <section aria-label="任务中心原声明式模型任务"><p>正在定位原模型任务 {targetJob}，仅重新读取原运行。</p>
       {!runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId && !run && <StatusMessage tone="warning">原模型任务在当前授权运行中不可用或身份不唯一；不会选择其他运行。</StatusMessage>}
@@ -100,6 +101,7 @@ function AgentsBody({ client, requestedJobId }: { client: ExperimentalClient; re
         <ul aria-label="Workflow 连接">{definition.edges.map((edge, index) => <li key={index}>{edge.source} → {edge.target} <Button onClick={() => edit({ ...definition, edges: definition.edges.filter((_, i) => i !== index) })}>移除连接 {index + 1}</Button></li>)}</ul>
         <div className="experimental-grid"><Field label="连接起点"><select value={edgeSource} onChange={e => setEdgeSource(e.target.value)}><option value="">选择起点</option>{definition.nodes.map(n => <option key={n.id} value={n.id}>{n.id} · {n.name}</option>)}</select></Field><Field label="连接终点"><select value={edgeTarget} onChange={e => setEdgeTarget(e.target.value)}><option value="">选择终点</option>{definition.nodes.map(n => <option key={n.id} value={n.id}>{n.id} · {n.name}</option>)}</select></Field></div>
         <Button disabled={!edgeSource || !edgeTarget || definition.edges.length >= 40} onClick={() => edit({ ...definition, edges: [...definition.edges, { source: edgeSource, target: edgeTarget }] })}>添加连接</Button>
+        <WorkflowGraphEditPreview definition={definition} editorRevision={formEpoch.current} contextKey={`${saved?.id || 'new'}:${saved?.version || 0}:${saved?.definition_digest || ''}`} disabled={action.busy || catalog.loading || definitions.loading || !!definitions.error || !catalog.data.node_types.includes('checkpoint') || !!pendingSelection || !!saved && !historyCurrent} onApply={(next, revision) => { if (revision === formEpoch.current && !action.busy && !pendingSelection) edit(next); }} />
         <div className="experimental-actions"><Button disabled={action.busy} onClick={() => action.run(async () => { const ticket = formEpoch.current; const result = await api.preflight(definition); if (alive.current && ticket === formEpoch.current) setPreflight(result); }, '服务端已验证 DAG、工具注册表、Schema 与边界。未执行节点。')}>验证 Workflow 图与权限</Button><Button disabled={action.busy || !definition.agent.title.trim()} onClick={() => action.run(async () => { const ticket = formEpoch.current; const row = await api.save(definition, saved); if (alive.current && ticket === formEpoch.current) { setSaved(row); setDefinition(clone(row.definition)); setPreflight(undefined); setReviewGraph(false); runEpoch.current++; setRun(undefined); setReviewModel(false); setReviewOutput(false); definitions.reload(); runs.reload(); } }, '定义已保存。修改旧定义会使此前运行的来源检查失效。')}>{saved ? '保存 Agent 新版本' : '保存 Agent 定义'}</Button></div>
         {saved && <p>已保存定义 {saved.id} · v{saved.version}{dirty ? ' · 当前表单有未保存修改' : ''}</p>}
         {saved && historyCurrent && <AgentDefinitionHistory api={api} saved={saved} editorRevision={formEpoch.current} dirty={dirty} disabled={action.busy} onFill={fillHistoricalDraft} onDiscard={() => fillHistoricalDraft(saved.definition)} />}

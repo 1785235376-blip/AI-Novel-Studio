@@ -1,0 +1,26 @@
+{
+  "frontend/src/experimental/DeclarativeAgentsPanel.tsx": {
+    "sha256": "4822689c860a315250d792889ba94ae62f0fbdd5c07d15d2ab827e02f35c6048",
+    "git_blob": "c845ac6088e5a7882dbc7aa6dea4cb2f61acebed"
+  },
+  "frontend/src/experimental/workflowGraphEditing.ts": {
+    "sha256": "4c5b020ce196ae3af7f6a4046178a43c9cfcffa70ab97fa936a70b21068cd34f",
+    "git_blob": "6bb8591e2407cdb88a1479e1fe3f1c782e5846a6"
+  },
+  "frontend/src/experimental/WorkflowGraphEditPreview.tsx": {
+    "sha256": "f434132e809f74ea80a9fb67010faa29aef197e916d1a4c7debf0f14d866c80d",
+    "git_blob": "867c38e2c11639abfe17b8447cc9d97990f3d4d2"
+  },
+  "frontend/src/experimental/workflowGraphEditing.test.ts": {
+    "sha256": "28189d6cd44ef081b465a4fd570c0a84e8e6028737cbcc33bce9258532790433",
+    "git_blob": "b30352905afe1e52df9b92ed344fddd20e755077"
+  },
+  "frontend/src/experimental/WorkflowGraphEditPreview.test.tsx": {
+    "sha256": "308cbdfa3ebc9c486791d19fa10a1d8d1cf98b2a26181d52a2576727229beb5f",
+    "git_blob": "ec1fe760b5f9391fc235b8e2f1e29261369bcc34"
+  },
+  "tests/test_declarative_checkpoint_edit.py": {
+    "sha256": "6d86584f0d88efe63716296ba4fdd680bfaa645a498553250ef9a8dfe6dd973a",
+    "git_blob": "34352f470755c411f5e01e7a740c4dcbc1e28cdb"
+  }
+}
