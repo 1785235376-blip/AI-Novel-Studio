@@ -199,10 +199,10 @@ it('retained apply cannot cross record, source or owner ABA', async () => {
     const key = Object.keys(button).find(k => k.startsWith('__reactProps'))!;
     return (button as unknown as Record<string, { onClick: () => void }>)[key].onClick;
   };
-  await open(); const oldRecord = capture(); fireEvent.click(screen.getByRole('button', { name: '打开布局 Second layout' })); await open(); oldRecord();
-  expect((screen.getByLabelText('格框 1 横坐标') as HTMLInputElement).value).toBe('24');
-  const oldSource = capture(); fireEvent.change(screen.getByLabelText('漫画来源剧本'), { target: { value: '' } }); fireEvent.change(screen.getByLabelText('漫画来源剧本'), { target: { value: 'screenplay' } }); oldSource();
-  expect((screen.getByLabelText('格框 1 横坐标') as HTMLInputElement).value).toBe('24');
-  const oldOwner = capture(); view.rerender(<ComicLayoutsPanel client={client('other')} />); await screen.findByRole('button', { name: '打开布局 Second layout' }); view.rerender(<ComicLayoutsPanel client={owner} />); await open(); oldOwner();
-  expect((screen.getByLabelText('格框 1 横坐标') as HTMLInputElement).value).toBe('24');
+  await open(); const oldRecord = capture(); fireEvent.click(screen.getByRole('button', { name: '打开布局 Second layout' })); await open(); fireEvent.change(screen.getByLabelText('格框 1 横坐标'), { target: { value: '72' } }); oldRecord();
+  expect((screen.getByLabelText('格框 1 横坐标') as HTMLInputElement).value).toBe('72');
+  const oldSource = capture(); fireEvent.change(screen.getByLabelText('漫画来源剧本'), { target: { value: '' } }); fireEvent.change(screen.getByLabelText('漫画来源剧本'), { target: { value: 'screenplay' } }); fireEvent.change(screen.getByLabelText('格框 1 横坐标'), { target: { value: '72' } }); oldSource();
+  expect((screen.getByLabelText('格框 1 横坐标') as HTMLInputElement).value).toBe('72');
+  const oldOwner = capture(); view.rerender(<ComicLayoutsPanel client={client('other')} />); await screen.findByRole('button', { name: '打开布局 Second layout' }); view.rerender(<ComicLayoutsPanel client={owner} />); await open(); fireEvent.change(screen.getByLabelText('格框 1 横坐标'), { target: { value: '72' } }); oldOwner();
+  expect((screen.getByLabelText('格框 1 横坐标') as HTMLInputElement).value).toBe('72');
 });
