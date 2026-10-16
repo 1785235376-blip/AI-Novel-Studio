@@ -10,7 +10,7 @@ import type { GraphImageOperation, GraphMediaOperation } from './studioGraphType
 import type { MediaCommand, RecordedMediaCommand, MediaOperation, ProductionJob, ProductionPreview, ProductionProvider, ProductionSource, StudioProductionClient } from './studioProductionClient';
 
 export type StudioMediaExecutionProps = {
-  assetHandoff?: TimelineAssetHandoff;
+  assetHandoff?: TimelineAssetHandoff & { target?: 'IMAGE' | 'VIDEO' };
   client: StudioProductionClient; assets: StudioAsset[]; canMutate: boolean; canReview: boolean; busy: boolean; isBusy?: () => boolean;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onDirtyChange: (dirty: boolean) => void; onJob?: (job: ProductionJob) => void; onUnavailable: () => void; onApproved?: () => void | Promise<void>;
@@ -176,6 +176,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const [denied, setDenied] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const latest = useRef(props); latest.current = props;
   const alive = useRef(true), revoked = useRef(false), owner = useRef(props.client), epoch = useRef(0), slot = useRef<Operation>();
+  const providerHandoffLoading = useRef(false);
   const providerEpoch = useRef(0), providerRead = useRef<AbortController>(), candidateRef = useRef<Candidate>();
   const draftRef = useRef(draft), selectedRef = useRef(selected), previewRef = useRef(preview), uncertainRef = useRef(uncertain);
   const previewConsentRef = useRef(previewConsent), reviewConsentRef = useRef(reviewConsent), providersRef = useRef(providers);
@@ -219,7 +220,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   function unavailable() {
     if (!alive.current) return;
     revoked.current = true; epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); slot.current = undefined; providerRead.current?.abort();
-    clearCandidate(); clearPreview(); selectedRef.current = undefined; setSelected(undefined); setJobs([]); setProviders([]); setPending(undefined); setProviderLoading(false);
+    clearCandidate(); clearPreview(); selectedRef.current = undefined; setSelected(undefined); setJobs([]); setProviders([]); setPending(undefined); providerHandoffLoading.current = false; setProviderLoading(false);
     const empty = initialDraft(); draftRef.current = empty; setDraft(empty); creation.current = undefined; baseline.current = inputKey(empty);
     setDenied(true); setError('身份、权限或项目入口已经变化，请重新打开当前项目。'); latest.current.onDirtyChange(false); latest.current.onUnavailable();
   }
@@ -269,20 +270,23 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     for (const name of parametersByOperation[old.operation]) if (!selectedProvider.supported_parameters.includes(name)) next[name] = '';
     edit({ ...old, parameters: next });
   }
+  const handoffOperation = (operation: MediaOperation) => latest.current.assetHandoff?.target === 'VIDEO'
+    ? operation === 'm7.video.i2v' || operation === 'm7.video.v2v' : operation === 'm5.image.i2i';
   // Metadata-only handoff. The existing controller remains the sole draft owner.
   async function readHandoff(apply: boolean) {
     const request = latest.current.assetHandoff;
     const editable = () => current() && !busy() && latest.current.canMutate && !latest.current.preparedCommand
-      && !uncertainRef.current && !creation.current?.uncertain
+      && !providerHandoffLoading.current && !uncertainRef.current && !creation.current?.uncertain
       && !['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selectedRef.current?.status || '');
-    if (!request || handoffFlight.current || handoffConsumed.current === request || !editable() || draftRef.current.operation !== 'm5.image.i2i') return;
-    const revision = handoffRevision.current, sourceClient = latest.current.client;
+    if (!request || handoffFlight.current || handoffConsumed.current === request || !editable() || !handoffOperation(draftRef.current.operation)) return;
+    const revision = handoffRevision.current, sourceClient = latest.current.client, kind = sourceKind(draftRef.current.operation);
+    const video = request.target === 'VIDEO';
     if (apply && (handoffAsset?.request !== request || handoffAsset.revision !== revision)) return;
     handoffFlight.current = true; setHandoffPending(true); setHandoffNotice('');
     try {
       const asset = await request.readAsset();
       if (!current() || sourceClient !== latest.current.client || request !== latest.current.assetHandoff) return;
-      if (!exactHandoffAsset(asset, request.reference) || asset.kind !== 'image' || asset.manual_mask) {
+      if (!exactHandoffAsset(asset, request.reference) || asset.kind !== kind || asset.manual_mask) {
         setHandoffAsset(undefined); setHandoffNotice('来源类型、版本或摘要已变化，或已删除；不会替换为最新版本。'); return;
       }
       if (!editable() || handoffRevision.current !== revision) {
@@ -291,12 +295,17 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (!apply) { setHandoffAsset({ asset, request, revision }); return; }
       const old = draftRef.current;
       const listed = latest.current.assets.find(row => row.id === asset.id);
-      if (!listed || !exactHandoffAsset(listed, request.reference) || listed.kind !== 'image' || listed.manual_mask) {
+      if (!listed || !exactHandoffAsset(listed, request.reference) || listed.kind !== kind || listed.manual_mask) {
         setHandoffAsset(undefined); setHandoffNotice('当前素材列表尚未核对同一版本；请明确读取当前素材版本后重试。'); return;
       }
       const chosen = providersRef.current.find(row => mediaProviderKey(row) === old.providerKey && row.operation_id === old.operation);
       if (old.sources.some(row => row.id === asset.id)) { setHandoffNotice('此素材已绑定；请使用原输入控件明确移除或调整，不会覆盖已有绑定。'); return; }
-      if (chosen?.image_capabilities) {
+      if (video) {
+        if (old.sources.length || old.imageSource || old.imageReferences.length || old.maskSource) {
+          setHandoffNotice('已有来源绑定；请先用原输入控件移除，不会覆盖已有来源。'); return;
+        }
+        edit({ ...old, sources: [{ id: asset.id, kind: 'ASSET', asset_kind: kind as 'image' | 'video', version: asset.version, digest: asset.sha256 }], allowCloud: false });
+      } else if (chosen?.image_capabilities) {
         if (old.imageSource || old.sources.length !== old.imageReferences.length || old.imageReferences.length + 1 > chosen.image_capabilities.reference_limit) {
           setHandoffNotice('已有基础图或超过当前路线输入上限；请先用原输入控件调整。'); return;
         }
@@ -307,7 +316,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
         edit({ ...old, sources: [...old.sources, imageSnapshot(asset)], allowCloud: false });
       }
       handoffConsumed.current = request; setHandoffAsset(undefined);
-      setHandoffNotice('已加入原图片制作草稿；旧制作预览与云端确认已清除。尚未预检、入队或执行。');
+      setHandoffNotice(`已加入原${video ? '视频' : '图片'}制作草稿；旧制作预览与云端确认已清除。尚未预检、入队或执行。`);
     } catch (reason) {
       if (current() && request === latest.current.assetHandoff) { setHandoffAsset(undefined); setHandoffNotice(apiErrorView(reason, '交接素材读取失败；草稿未改变。').message); }
     } finally { handoffFlight.current = false; if (alive.current) setHandoffPending(false); }
@@ -399,13 +408,13 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (!current() || busy()) return;
     handoffRevision.current++;
     const client = latest.current.client, id = ++providerEpoch.current, controller = new AbortController(); providerRead.current?.abort(); providerRead.current = controller;
-    setProviderLoading(true); clearPreview();
+    providerHandoffLoading.current = true; setProviderLoading(true); clearPreview();
     try {
       const rows = await latest.current.read(() => client.providers(controller.signal));
       if (!current() || controller.signal.aborted || providerEpoch.current !== id || client !== latest.current.client) return;
       providersRef.current = rows; setProviders(rows);
     } catch (reason) { if (current() && !controller.signal.aborted && providerEpoch.current === id) failure(reason, '服务商配置读取失败。'); }
-    finally { if (alive.current && providerEpoch.current === id) setProviderLoading(false); }
+    finally { if (alive.current && providerEpoch.current === id) { providerHandoffLoading.current = false; setProviderLoading(false); } }
   }
   async function inspect() {
     if (!latest.current.canMutate || uncertainRef.current || creation.current?.uncertain || providerLoading) return;
@@ -600,9 +609,9 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const cutoutSource = ['m5.image.cutout', 'm5.image.inpaint'].includes(draft.operation) ? props.assets.find(row => row.id === draft.sources[0]?.id && row.version === draft.sources[0]?.version && row.sha256 === draft.sources[0]?.digest) : undefined;
   const eligibleMasks = owns && cutoutSource ? props.assets.filter(row => eligibleCutoutMask(row, cutoutSource)) : [];
   function cancelHandoff() {
-    handoffRevision.current++; handoffConsumed.current = latest.current.assetHandoff; setHandoffAsset(undefined); setHandoffNotice('已取消图片交接；草稿未改变。');
+    handoffRevision.current++; handoffConsumed.current = latest.current.assetHandoff; setHandoffAsset(undefined); setHandoffNotice('已取消素材交接；草稿未改变。');
   }
-  return { cancelHandoff, canHandoff: canClosePrepared && !props.preparedCommand && draft.operation === 'm5.image.i2i', handoffAsset: handoffAsset && handoffAsset.request === props.assetHandoff && handoffAsset.revision === handoffRevision.current ? handoffAsset.asset : undefined, handoffPending, handoffNotice, readHandoff, handoffDone: handoffConsumed.current === props.assetHandoff,
+  return { cancelHandoff, canHandoff: canClosePrepared && !providerLoading && !props.preparedCommand && handoffOperation(draft.operation), handoffAsset: handoffAsset && handoffAsset.request === props.assetHandoff && handoffAsset.revision === handoffRevision.current ? handoffAsset.asset : undefined, handoffPending, handoffNotice, readHandoff, handoffDone: handoffConsumed.current === props.assetHandoff,
     runningControl, controlRunningCutout, canCancelRunning: !uncertain && !!selected && !sentActions.current.has(actionIdentity(selected, 'cancel')), canControlRunning: owns && props.canMutate && !!props.cutoutExecution && !!executingCutout.current && pending === 'execute' && !runningControl, eligibleMasks, draft: owns ? draft : initialDraft(), providers: owns ? providers : [], provider: owns ? provider : undefined, providerLoading, jobs: owns ? jobs : [], selected: owns ? selected : undefined,
     preview: owns && previewBinding ? preview?.value : undefined, previewReviewed: !!previewBinding && previewConsent === previewBinding,
     candidate: candidateVisible, outputReviewed: !!candidateVisible && reviewConsent === reviewBinding,

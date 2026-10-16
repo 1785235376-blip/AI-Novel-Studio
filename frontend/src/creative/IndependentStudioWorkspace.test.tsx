@@ -162,7 +162,7 @@ describe('mounted original asset browser to timeline handoff', () => {
     await screen.findByText(/已把核对的原素材版本加入/); expect(screen.getByText(/未保存 · 1 条轨道 · 1 个片段/)).toBeTruthy();
     expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
   });
-  it.each([['时间线模块', '素材引用交接到时间线'], ['图片模块', '素材引用交接到图片制作']])('keeps dirty-navigation cancel for %s', async (target, region) => {
+  it.each([['时间线模块', '素材引用交接到时间线'], ['图片模块', '素材引用交接到图片制作'], ['视频模块', '素材引用交接到视频制作']])('keeps dirty-navigation cancel for %s', async (target, region) => {
     await sendFixture(target); fireEvent.change(screen.getByLabelText('自定义意图'), { target: { value: 'keep my draft' } });
     fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
     expect(screen.queryByRole('region', { name: region })).toBeNull(); fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
@@ -174,7 +174,7 @@ describe('mounted original asset browser to timeline handoff', () => {
 
 
 describe('mounted asset browser to original image draft', () => {
-  it('requires an explicit I2I choice and two metadata reads without dispatch', async () => {
+  it.each([['图片', 'm5.image.i2i'], ['视频', 'm7.video.i2v']])('requires an explicit %s operation choice and two metadata reads without dispatch', async (kind, operation) => {
     saved = [{ ...asset(2), created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z' }];
     server({ override: (url, init) => {
       if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
@@ -182,13 +182,13 @@ describe('mounted asset browser to original image draft', () => {
       return undefined;
     } });
     mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '选择素材 reference.png' }));
-    fireEvent.click(await screen.findByRole('button', { name: '图片模块' })); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
-    await screen.findByRole('region', { name: '素材引用交接到图片制作' });
-    expect((screen.getByRole('button', { name: '核对图片交接版本' }) as HTMLButtonElement).disabled).toBe(true);
-    fireEvent.change(screen.getByLabelText('操作'), { target: { value: 'm5.image.i2i' } });
-    await waitFor(() => expect((screen.getByRole('button', { name: '核对图片交接版本' }) as HTMLButtonElement).disabled).toBe(false));
-    fireEvent.click(screen.getByRole('button', { name: '核对图片交接版本' })); fireEvent.click(await screen.findByRole('button', { name: '明确加入图片制作草稿' }));
-    await screen.findByText(/已加入原图片制作草稿/); expect(screen.getByText(/已绑定来源 reference.png/)).toBeTruthy();
+    fireEvent.click(await screen.findByRole('button', { name: `${kind}模块` })); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
+    await screen.findByRole('region', { name: `素材引用交接到${kind}制作` });
+    expect((screen.getByRole('button', { name: `核对${kind}交接版本` }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText('操作'), { target: { value: operation } });
+    await waitFor(() => expect((screen.getByRole('button', { name: `核对${kind}交接版本` }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(screen.getByRole('button', { name: `核对${kind}交接版本` })); fireEvent.click(await screen.findByRole('button', { name: `明确加入${kind}制作草稿` }));
+    await screen.findByText(new RegExp(`已加入原${kind}制作草稿`)); expect(screen.getByText(/已绑定来源 reference.png/)).toBeTruthy();
     expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
   });
 });

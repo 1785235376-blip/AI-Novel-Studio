@@ -90,8 +90,8 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [graphLocation, setGraphLocation] = useState<Pick<StudioWorkspaceLocation, 'graphId' | 'runId'>>(resume.state === 'SAVED'
     ? { graphId: resume.location.graphId, runId: resume.location.runId } : {});
   const [assetHandoff, setAssetHandoff] = useState<TimelineAssetHandoff>();
-  const [imageHandoff, setImageHandoff] = useState<TimelineAssetHandoff>();
-  useEffect(() => { if (workspaceView !== 'PRODUCTION') setImageHandoff(undefined); }, [workspaceView]);
+  const [mediaHandoff, setMediaHandoff] = useState<TimelineAssetHandoff & { target?: 'IMAGE' | 'VIDEO' }>();
+  useEffect(() => { if (workspaceView !== 'PRODUCTION') setMediaHandoff(undefined); }, [workspaceView]);
   useEffect(() => { if (workspaceView !== 'PRODUCTION') setAssetHandoff(undefined); }, [workspaceView]);
   const [modelOpen, setModelOpen] = useState(false), [guideOpen, setGuideOpen] = useState(false), [deliveryOpen, setDeliveryOpen] = useState(false);
 const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 'PRODUCTION';
@@ -145,9 +145,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (!sameStudioIdentity() || !sameHostIdentity()) authorityLost.current = true;
     return alive.current && !revoked.current && !authorityLost.current;
   }, [sameStudioIdentity, sameHostIdentity]);
-  const deny = useCallback(() => { revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setAssetHandoff(undefined); setImageHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
+  const deny = useCallback(() => { revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setAssetHandoff(undefined); setMediaHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
   const retireIdentity = useCallback(() => {
-    authorityLost.current = true; setIdentityRetired(true); setAssetHandoff(undefined); setImageHandoff(undefined);
+    authorityLost.current = true; setIdentityRetired(true); setAssetHandoff(undefined); setMediaHandoff(undefined);
     selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++;
     overviewReading.current?.abort(); storageRequest.current?.abort();
     setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined);
@@ -440,7 +440,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     </Panel>}
     {productionView && overview && !denied && <>
       <Button disabled={busy} onClick={() => void loadProductionAssets()}>读取当前素材版本</Button>
-      <StudioMediaExecutionPanel key={`media:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows} assetHandoff={imageHandoff}
+      <StudioMediaExecutionPanel key={`media:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows} assetHandoff={mediaHandoff}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} canReview={overview.capabilities.can_review === true}
         busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} mutate={graphMutation} cutoutExecution={cutoutExecution}
         onDirtyChange={mediaDraftChanged} onUnavailable={deny} externalJob={productionJob?.client === productionClient ? productionJob.job : undefined} onApproved={productionApproved} onOpenApprovedAsset={openApprovedAsset} />
@@ -456,14 +456,14 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       denied={denied || identityRetired} busy={busy} isCurrent={current} read={guarded} mutate={graphMutation}
       selectedId={selected?.id} onSelect={assetId => navigate(() => { void refreshSelectedAsset(assetId); })}
       onSendTo={(target, reference) => {
-        if (target !== 'TIMELINE' && target !== 'IMAGE') { setNotice(`已准备把素材 ${reference.asset_id} · v${reference.version} · 摘要 ${reference.digest.slice(0, 12)}… 送往 ${target}。目标模块不会被自动执行，请在对应工作区明确使用该版本；这里只传递原资产 ID、版本与摘要。`); return; }
+        if (target !== 'TIMELINE' && target !== 'IMAGE' && target !== 'VIDEO') { setNotice(`已准备把素材 ${reference.asset_id} · v${reference.version} · 摘要 ${reference.digest.slice(0, 12)}… 送往 ${target}。目标模块不会被自动执行，请在对应工作区明确使用该版本；这里只传递原资产 ID、版本与摘要。`); return; }
         const epoch = selectionEpoch.current;
         navigate(() => {
           if (!current() || epoch !== selectionEpoch.current) return;
           const exact = { ...reference };
           const handoff = { id: crypto.randomUUID(), reference: exact, readAsset: () => guarded(() => client.asset(exact.asset_id)) };
-          if (target === 'IMAGE') { setImageHandoff(handoff); setAssetHandoff(undefined); }
-          else { setAssetHandoff(handoff); setImageHandoff(undefined); }
+          if (target === 'IMAGE' || target === 'VIDEO') { setMediaHandoff({ ...handoff, target }); setAssetHandoff(undefined); }
+          else { setAssetHandoff(handoff); setMediaHandoff(undefined); }
           setWorkspaceView('PRODUCTION');
         });
       }}

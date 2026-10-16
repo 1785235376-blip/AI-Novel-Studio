@@ -1,0 +1,81 @@
+{
+  "baseline_commit": "fa713761ff9a108c1e38ca2c0f8b1644fa6e6f33",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/StudioVideoAssetHandoff.test.tsx src/creative/StudioImageAssetHandoff.test.tsx src/creative/StudioTimelineAssetHandoff.test.tsx src/creative/IndependentStudioWorkspace.test.tsx src/creative/IndependentStudioIdentity.regression.test.tsx src/creative/IndependentStudioReadFences.test.tsx src/creative/StudioMediaRouteChoice.test.tsx src/creative/StudioImageRuntimeProduction.test.tsx src/creative/StudioImageUpscaleProduction.test.tsx src/creative/*Video*test* src/assetbrowser/AssetBrowserPanel.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T10:40:44.452211+00:00",
+      "finished_utc": "2026-10-16T10:40:56.485982+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/video-handoff-final-ui.log",
+      "log_sha256": "28d23774ebc81cc6d9b8abe82e76acd1efb4d6085a499bc567cec5ba83d7313a",
+      "receipt": "docs/delivery/v2-development/video-handoff-final-ui.json",
+      "receipt_sha256": "e74f4842d1a8f3e9885f063bbfe911e219d07cd8e8eb6987371df1c6d5bb5ba4"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/video-handoff-final-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T10:40:42.966588+00:00",
+      "finished_utc": "2026-10-16T10:40:54.660783+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/video-handoff-final-public.log",
+      "log_sha256": "1562c760bf7344a7bc33307a30f6c80822fa9fb7af5069018eedb4be0a628653",
+      "receipt": "docs/delivery/v2-development/video-handoff-final-public.json",
+      "receipt_sha256": "94a3a04e6cbcb13163a44087e390e42bc21315213672b70cc53e8da7613be0a1"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T10:40:30.184307+00:00",
+      "finished_utc": "2026-10-16T10:41:10.664203+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/video-handoff-final-build.log",
+      "log_sha256": "8fa0cf17134d108e2449a76761efad81ec3853b2e5cc1738e2593c2c0fdde822",
+      "receipt": "docs/delivery/v2-development/video-handoff-final-build.json",
+      "receipt_sha256": "a99a7e2610a5d85de02e630db37f18e2920642a1666415e439c9397f34a7cf26"
+    }
+  ],
+  "changed_source_sha256": {
+    "frontend/src/creative/IndependentStudioWorkspace.test.tsx": "8a3b61880fdb301810f11a9572cc2a429339767369d4ba2db15b3f362b0d60c2",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "d077e67423a1179b4f66727401e871822a50b71286aae03ef3be875a9c15212b",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx": "d79085173f9fb726d0c18fcc671f34935676b052beb7eea3fa119902fe242400",
+    "frontend/src/creative/useStudioMediaExecution.ts": "25f31846349a951ec7e335cefb732bf8d8d0fc0e08a9cff8626958c5dfbcdc41",
+    "frontend/src/creative/StudioVideoAssetHandoff.test.tsx": "d6d10a035639763f1723e0231a1d75342f0bce3f4e24b3298304222b5bd071f9"
+  },
+  "results": {
+    "mocked_ui_contract_tests": 242,
+    "public_contracts": 30,
+    "public_source_files": 487
+  },
+  "original_nonsecurity_file": "NOT_REQUIRED: no backend owner or persisted contract changed",
+  "not_run": [
+    "browser/visual/native input/performance",
+    "PostgreSQL/P0/security lifecycle",
+    "Windows/GPU/provider/user computer",
+    "paid calls/hosted CI/push/full RC"
+  ],
+  "boundaries": {
+    "P0": "BLOCKED",
+    "R3_GATE": "HOLD",
+    "prompt_adoption_write_enabled": false,
+    "delivery_entitlement_producer": "BLOCKED"
+  }
+}
