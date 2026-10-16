@@ -130,6 +130,12 @@ class PostgresScopeRepository:
 
 class PostgresAuthorizationRepository:
  def __init__(self,connection_factory):self.connection_factory=connection_factory
+ @contextmanager
+ def authority_lease(self,workspace_id):
+  """Fence participating original role and membership mutations until commit."""
+  with self.connection_factory() as connection:
+   self._lock_workspace(connection,workspace_id)
+   yield
  @staticmethod
  def _lock_workspace(c,workspace_id):
   c.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))",(f"authorization:{workspace_id}",)).fetchone()

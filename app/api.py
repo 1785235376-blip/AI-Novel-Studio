@@ -9,6 +9,7 @@ import hashlib
 import uuid
 import os
 import hmac
+from contextlib import contextmanager, ExitStack
 from urllib.parse import quote
 from .idempotency import IdempotencyStore
 from fastapi import APIRouter,HTTPException,Query,Header,Depends,Request
@@ -3679,6 +3680,35 @@ def _workbench_authorize(nid, token, branch, permission):
             "storyline_id": scope.storyline_id, "branch_id": scope.branch_id}
     guard(novel_service.get,nid)
     return "local-author", CreationWorkbenchService.local_scope(nid)
+
+
+@contextmanager
+def _workbench_authority_lease(nid, token, actor_id, scope):
+    """Original authority owners held through bounded, non-executing writes.
+
+    File retirement uses authorization -> project; PostgreSQL uses project ->
+    authorization. Respect each owner's established order rather than adding a
+    lock namespace or holding a storage lease across model/provider execution.
+    """
+    if not settings.enable_collaboration_runtime:
+        yield
+        return
+    with ExitStack() as leases:
+        try:
+            actor = leases.enter_context(trusted_session_resolver.binding_lease(token))
+        except (KeyError, ValueError):
+            raise HTTPException(401, {"code": "INVALID_SESSION"}) from None
+        if actor.actor_id != actor_id or actor.workspace_id != scope.get("workspace_id"):
+            raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_CHANGED"})
+        repository = authorization_service.repository
+        if callable(getattr(repository, "mutation", None)):
+            leases.enter_context(repository.mutation())
+            from .repositories.file.mutation_coordinator import workspace_mutation
+            leases.enter_context(workspace_mutation(repository.path.parent, actor.workspace_id))
+        else:
+            leases.enter_context(collaboration_scope_service.repository.project_authority_lease(nid))
+            leases.enter_context(repository.authority_lease(actor.workspace_id))
+        yield
 
 router.include_router(create_workbench_router(creation_workbench_service, _workbench_authorize))
 

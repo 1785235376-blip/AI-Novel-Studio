@@ -85,7 +85,7 @@ class FileScopeRepository:
   membership={"id":f"membership:{workspace_id}:{actor_id}","user_id":actor_id,"workspace_id":workspace_id,"status":"ACTIVE","created_at":now,"updated_at":now,"metadata":None}
   role={"id":f"admin:{workspace_id}:{actor_id}","principal_id":actor_id,"role":"ADMIN","domain":"NOVEL","scope":scope,"created_by":actor_id,"created_at":now}
   audit={"id":str(uuid4()),"actor_id":actor_id,"action":"WORKSPACE_CREATED","target_type":"Workspace","target_id":workspace_id,"scope":scope,"timestamp":now,"metadata":{"name":name}}
-  with workspace_mutation(root,workspace_id), FileAuthorizationRepository(root).mutation(), workspace_mutation(root,"collaboration-scope"):
+  with FileAuthorizationRepository(root).mutation(), workspace_mutation(root,workspace_id), workspace_mutation(root,"collaboration-scope"):
    before={path:(path.read_bytes() if path.exists() else None) for path in paths}
    try:
     if any(x["id"]==workspace_id for x in self._read()["workspaces"]):raise FileExistsError(workspace_id)
@@ -102,7 +102,7 @@ class FileScopeRepository:
   from .identity import FileIdentityRepository
   root=self.path.parent;identity=FileIdentityRepository(root);authorization=FileAuthorizationRepository(root)
   paths=(self.path,identity.path,authorization.path)
-  with workspace_mutation(root,f"initial-workspace:{actor_id}"), workspace_mutation(root,workspace_id), authorization.mutation(), workspace_mutation(root,"collaboration-scope"):
+  with authorization.mutation(), workspace_mutation(root,f"initial-workspace:{actor_id}"), workspace_mutation(root,workspace_id), workspace_mutation(root,"collaboration-scope"):
    before={path:(path.read_bytes() if path.exists() else None) for path in paths}
    try:
     memberships=identity.list_memberships(user_id=actor_id)
@@ -132,7 +132,7 @@ class FileScopeRepository:
   now=datetime.now(timezone.utc).isoformat();root=self.path.parent;auth_path=root/"authorization.json"
   scope={"kind":"WORKSPACE","workspace_id":workspace_id,"project_id":None,"storyline_id":None,"branch_id":None}
   audit={"id":str(uuid4()),"actor_id":actor_id,"action":"WORKSPACE_RENAMED","target_type":"Workspace","target_id":workspace_id,"scope":scope,"timestamp":now,"metadata":{"name":name}}
-  with workspace_mutation(root,workspace_id), FileAuthorizationRepository(root).mutation(), workspace_mutation(root,"collaboration-scope"):
+  with FileAuthorizationRepository(root).mutation(), workspace_mutation(root,workspace_id), workspace_mutation(root,"collaboration-scope"):
    before={path:(path.read_bytes() if path.exists() else None) for path in (self.path,auth_path)}
    try:
     data=self._read();workspace=next((x for x in data["workspaces"] if x["id"]==workspace_id),None)
@@ -197,8 +197,8 @@ class FileAuthorizationRepository:
   with self.mutation():return self._revoke_unlocked(self._read(),key,assignment_id,audit,protect_last_admin)
 
  def _revoke_with_workspace_lock(self,key,assignment_id,audit,workspace_id):
-  with workspace_mutation(self.path.parent, workspace_id):
-   with self.mutation():return self._revoke_unlocked(self._read(),key,assignment_id,audit,True)
+  with self.mutation(),workspace_mutation(self.path.parent, workspace_id):
+   return self._revoke_unlocked(self._read(),key,assignment_id,audit,True)
 
  @authorization_file_mutation
  def _revoke_unlocked(self,data,key,assignment_id,audit,protect_last_admin):

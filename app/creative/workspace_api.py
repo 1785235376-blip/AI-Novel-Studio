@@ -2,6 +2,7 @@
 from urllib.parse import quote
 import re
 from typing import Literal
+from contextlib import nullcontext
 
 from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
@@ -73,7 +74,7 @@ class ManualMaskRoute(PrivateProductionRoute):
 def create_independent_workspace_router(service, authorize, require_flag, *, create_project, workspace_writer,
                                     graph_service=None, require_host_session=None, model_host_authority=None, production_service=None,
                                     bible_service=None, prompt_service=None, prompt_authoring_service=None,
-                                    prompt_adoption_service=None):
+                                    prompt_adoption_service=None, authority_lease=None):
     router = APIRouter(tags=["Independent Studios V2"], route_class=PrivateProductionRoute)
 
     def access(nid, token, branch, permission):
@@ -84,7 +85,7 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_INVALID"})
         return actor, scope
 
-    def invoke(nid, token, branch, permission, callback):
+    def invoke(nid, token, branch, permission, callback, *, commit=False):
         def operation():
             actor, scope = access(nid, token, branch, permission)
             incarnation = service.store.incarnation(nid)
@@ -92,17 +93,25 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                 if (access(nid, token, branch, permission) != (actor, scope)
                         or service.store.incarnation(nid) != incarnation):
                     raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_CHANGED"})
-            try:
-                result = callback(actor, scope, guard)
-            except StudioStorageCapacityError as exc:
+            lease = authority_lease(nid, token, actor, scope) if commit and authority_lease else nullcontext()
+            with lease:
                 guard()
-                raise HTTPException(507, {"code": str(exc)}) from None
-            except Exception:
+                try:
+                    result = callback(actor, scope, guard)
+                except StudioStorageCapacityError as exc:
+                    guard()
+                    raise HTTPException(507, {"code": str(exc)}) from None
+                except Exception:
+                    guard()
+                    raise
                 guard()
-                raise
-            guard()
-            return result
+                return result
         return api_call(operation)
+
+    def commit_invoke(nid, token, branch, permission, callback):
+        # Only bounded Prompt and metadata lifecycle operations use this lease.
+        # Production/model routes retain their original non-blocking invoker.
+        return invoke(nid, token, branch, permission, callback, commit=True)
 
     from .production_execution_api import create_production_invoker
     mask_call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
@@ -211,13 +220,13 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
     @router.delete("/projects/{nid}/studio/assets/{aid}")
     def remove(nid: str, aid: str, expected_version: int = Query(ge=1),
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return invoke(nid, x_session_token, x_branch_id, "domain.write",
+        return commit_invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.lifecycle(nid, scope, aid, expected_version, guard=guard, actor_id=actor))
 
     @router.post("/projects/{nid}/studio/assets/{aid}/restore")
     def restore(nid: str, aid: str, body: AssetVersion,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return invoke(nid, x_session_token, x_branch_id, "domain.write",
+        return commit_invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.lifecycle(nid, scope, aid, body.expected_version, restore=True, guard=guard, actor_id=actor))
 
     @router.get("/projects/{nid}/studio/storage")
@@ -272,13 +281,13 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
 
     if prompt_authoring_service is not None:
         from .prompt_authoring_api import create_prompt_authoring_router
-        router.include_router(create_prompt_authoring_router(prompt_authoring_service, invoke))
+        router.include_router(create_prompt_authoring_router(prompt_authoring_service, commit_invoke))
 
     if prompt_adoption_service is not None:
         # R3-I: two closed routes only — adopt into a STORYBOARD shot, and read the pinned
         # adoptions. No generic owner write surface is opened.
         from .prompt_adoption_api import create_prompt_adoption_router
-        router.include_router(create_prompt_adoption_router(prompt_adoption_service, invoke))
+        router.include_router(create_prompt_adoption_router(prompt_adoption_service, commit_invoke))
 
     if production_service is not None:
         from .production_execution_api import create_production_execution_router
