@@ -6,7 +6,7 @@
   "capability_status": "PARTIAL",
   "owner": "existing TemplateLibraryPanel and TemplateLibraryService",
   "verification": {
-    "focused_frontend": {"passed": 45, "exit_code": 0},
+    "focused_frontend": {"passed": 46, "exit_code": 0},
     "file_save_reopen_history_revert": {"passed": 1, "deselected_postgres": 1, "exit_code": 0},
     "typescript": {"exit_code": 0},
     "vite_build": {"exit_code": 0, "warning": "existing large chunks"},

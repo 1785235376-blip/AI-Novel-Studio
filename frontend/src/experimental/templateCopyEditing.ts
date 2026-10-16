@@ -9,7 +9,7 @@ export function editableSections(raw: string): SectionContent | undefined {
         if (!section || typeof section !== 'object' || Array.isArray(section)) return true;
         const s = section as Record<string, unknown>;
         return typeof s.key !== 'string' || !/^[a-z][a-z0-9_-]{0,39}$/.test(s.key) ||
-          typeof s.title !== 'string' || !s.title.length || s.title.length > 160 || typeof s.text !== 'string' || Array.from(s.text).length > 8000;
+          typeof s.title !== 'string' || !s.title.length || Array.from(s.title).length > 160 || typeof s.text !== 'string' || Array.from(s.text).length > 8000;
       }) || new Set(value.sections.map((s: TemplateSection) => s.key)).size !== value.sections.length) return undefined;
     return value;
   } catch { return undefined; }

@@ -14,7 +14,7 @@ Unsaved edits disable copy switching, new catalog copy creation, update and rest
 
 ## Verification
 
-- Frontend, `vitest run --no-cache src/experimental/templateCopyEditing.test.ts src/experimental/TemplateCopyEditing.test.tsx src/experimental/DeclarativeTemplatePanels.test.tsx src/experimental/PersonalSkillBriefComposer.test.tsx src/experimental/personalSkillBrief.test.ts`: 45 passed, exit 0. Final focused 3-test rerun includes catalog-copy dirty guard.
+- Frontend, `vitest run --no-cache src/experimental/templateCopyEditing.test.ts src/experimental/TemplateCopyEditing.test.tsx src/experimental/DeclarativeTemplatePanels.test.tsx src/experimental/PersonalSkillBriefComposer.test.tsx src/experimental/personalSkillBrief.test.ts`: 46 passed, exit 0. Final focused 3-test rerun includes catalog-copy dirty guard.
 - `tsc --noEmit`: exit 0.
 - `vite build`: exit 0, existing large-chunk warnings. Outputs stay in this worktree.
 - `node scripts/check_ui_design_tokens.mjs`: PASS, exit 0.

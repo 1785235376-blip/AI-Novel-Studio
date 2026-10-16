@@ -22,3 +22,9 @@ it('counts astral text using the original owner Unicode code-point boundary', ()
   expect(editSection(raw, 'x', '🙂'.repeat(8000))).toBeTruthy();
   expect(() => editSection(raw, 'x', '🙂'.repeat(8001))).toThrow();
 });
+
+it('accepts the owner title limit in Unicode code points', () => {
+  const content = (length: number) => JSON.stringify({ sections: [{ key: 'x', title: '🙂'.repeat(length), text: '' }] });
+  expect(editableSections(content(160))).toBeTruthy();
+  expect(editableSections(content(161))).toBeUndefined();
+});
