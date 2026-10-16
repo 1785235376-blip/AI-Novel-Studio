@@ -16,7 +16,7 @@ const kindLabels = { image: '图片', video: '视频', audio: '音频' };
 /** A replaceable presentation over the original receipt-aware media controller. */
 export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const state = useStudioMediaExecution(props), draft = state.draft, job = state.selected;
-  const providers = state.providers.filter(row => row.operation_id === draft.operation);
+  const providers = state.providers.filter(row => row.operation_id === draft.operation && (!state.routeSelectable || row.local === (draft.route === 'local')));
   const upscale = draft.operation === 'm5.image.upscale';
   const cutout = draft.operation === 'm5.image.cutout';
   const inpaint = draft.operation === 'm5.image.inpaint', reference = draft.operation === 'm5.image.reference';
@@ -50,10 +50,11 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       </select></label>
       {cutout && <p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。输出同尺寸 PNG；不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>}
       {!trim && !cutout && <>
+        {state.routeSelectable && <><label>制作路线<select disabled={!state.canEdit || state.providerLoading} value={draft.route} onChange={event => state.changeRoute(event.target.value as 'local' | 'cloud')}><option value="local">本地</option><option value="cloud">云端</option></select></label><p>默认先查看本地配置；可自行切换云端或返回本地。切换不发送输入、不执行模型，也不自动选择服务商。</p></>}
         <label>服务商与模型<select disabled={!state.canEdit || state.providerLoading} value={draft.providerKey} onChange={event => state.changeField('providerKey', event.target.value)}>
           <option value="">明确选择当前配置</option>{providers.map(row => <option key={mediaProviderKey(row)} value={mediaProviderKey(row)}>{row.provider_id} · {row.model_id} · {row.local ? '本地' : '云端'}</option>)}
         </select></label>
-        <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && '暂无对应配置，请先完成服务商与模型配置。'}</p>
+        <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && (state.routeSelectable ? `当前操作暂无${draft.route === 'local' ? '本地' : '云端'}配置；可以切换路线或先完成对应配置，不会自动回退。` : '暂无对应配置，请先完成服务商与模型配置。')}</p>
         {state.provider?.image_capabilities && <p>当前图片配方：{state.provider.image_capabilities.recipe_id}。输入结构已核对，真实推理尚未验证。参考图最多 {state.provider.image_capabilities.reference_limit} 张；{state.provider.image_capabilities.reference_semantics === 'WEIGHTED_PIXEL_INITIALIZATION' ? '权重用于归一化混合参考像素后初始化生成，不代表角色或风格识别质量。' : '当前路线采用单图初始化。'}</p>}
         <Button disabled={!state.canRead || state.providerLoading} loading={state.providerLoading} onClick={() => void state.loadProviders()}>重新读取配置</Button>
         {!upscale && <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>}
