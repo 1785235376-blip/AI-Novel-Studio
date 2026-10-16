@@ -207,8 +207,10 @@ it('preserves an uncertain submission and explicitly retries the identical owner
   const retry = await screen.findByRole('button', { name: '用同一请求重新确认提交' });
   expect(screen.getByText(/网络错误不代表任务未启动/)).toBeTruthy();
   expect((screen.getByLabelText('本次创作要求') as HTMLTextAreaElement).value).toBe('Preserve my draft request');
-  expect(screen.getByLabelText('本次创作要求').closest('fieldset')?.disabled).toBe(true);
-  expect(screen.getByLabelText('偏好模型路线').closest('fieldset')?.disabled).toBe(true);
+  expect(screen.getByLabelText('本次创作要求').closest('fieldset')?.disabled).toBe(false);
+  fireEvent.change(screen.getByLabelText('本次创作要求'), { target: { value: 'Next draft, not the pending request' } });
+  expect((screen.getByRole('button', { name: '按预览路线预占并生成' }) as HTMLButtonElement).disabled).toBe(true);
+  expect(screen.getByLabelText('偏好模型路线').closest('fieldset')?.disabled).toBe(false);
   fireEvent.click(retry);
   await screen.findByDisplayValue('Actual existing job draft');
   const sends = fetch.mock.calls.filter(([url]) => url.endsWith('/model-broker/generate'));
@@ -224,4 +226,33 @@ it('requires saved chapter edits before exact preview or generation', async () =
   expect((screen.getByRole('button', { name: '检查真实生成请求' }) as HTMLButtonElement).disabled).toBe(true);
   expect((screen.getByRole('button', { name: '按预览路线预占并生成' }) as HTMLButtonElement).disabled).toBe(true);
   expect(fetch.mock.calls.some(([url]) => url.endsWith('/author-context/preview') || url.endsWith('/generate'))).toBe(false);
+});
+
+it.each([false, true])('only unlocks an explicit pre-dispatch rejection on the first attempt (prior ambiguous send: %s)', async priorUnknown => {
+  const base = transport(); let attempt = 0;
+  const fetch = vi.fn((url: string, init?: RequestInit) => {
+    if (url.endsWith('/model-broker/generate')) {
+      if (priorUnknown && ++attempt === 1) return Promise.reject(new TypeError('lost reply'));
+      return Promise.resolve(reply({ detail: { code: 'AUTHOR_PREVIEW_STALE' } }, 409));
+    }
+    return base(url, init);
+  });
+  vi.stubGlobal('fetch', fetch); render(panel()); await selectQuote();
+  fireEvent.change(screen.getByLabelText('本次创作要求'), { target: { value: 'Keep this instruction' } });
+  fireEvent.click(screen.getByRole('button', { name: '检查真实生成请求' }));
+  await screen.findByLabelText('准确生成 Prompt');
+  fireEvent.click(screen.getByLabelText('已核对准确请求、来源与模型，并授权生成这一次草稿'));
+  fireEvent.click(screen.getByRole('button', { name: '按预览路线预占并生成' }));
+  if (priorUnknown) fireEvent.click(await screen.findByRole('button', { name: '用同一请求重新确认提交' }));
+  await screen.findByText(/AUTHOR_PREVIEW_STALE/);
+  if (priorUnknown) {
+    expect(screen.getByRole('button', { name: '用同一请求重新确认提交' })).toBeTruthy();
+    expect((screen.getByRole('button', { name: '按预览路线预占并生成' }) as HTMLButtonElement).disabled).toBe(true);
+  } else {
+    expect(screen.queryByRole('button', { name: '用同一请求重新确认提交' })).toBeNull();
+    expect(screen.queryByRole('region', { name: '模型路线预览' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '预览合法模型路线' }));
+    await screen.findByRole('region', { name: '模型路线预览' });
+    expect((screen.getByLabelText('本次创作要求') as HTMLTextAreaElement).value).toBe('Keep this instruction');
+  }
 });

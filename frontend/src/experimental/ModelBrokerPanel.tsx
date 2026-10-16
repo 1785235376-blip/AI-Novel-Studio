@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Chapter, CollaborationContext } from '../api';
+import { ApiError, type Chapter, type CollaborationContext } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { AuthorRequestPreviewPanel } from '../novel/AuthorRequestPreviewPanel';
 import { defaultAuthorRequestScope, type AuthorRequestScope, type AuthorPreviewReceipt, type AuthorRequestBody } from '../novel/authorContextClient';
@@ -11,6 +11,8 @@ import { brokerCost as cost, brokerReason, brokerVerification } from './modelBro
 import { ModelBenchmarkPanel } from './ModelBenchmarkPanel';
 
 let scopeSequence = 0;
+// Explicit owner rejections before reservation/start only. Never apply after a prior send with this ID.
+const preDispatchRejections = new Set(['BROKER_AUTHOR_COORDINATOR_UNAVAILABLE', 'BROKER_USE_ORIGINAL_MEDIA_OR_AUDIO_BATCH_EXECUTOR', 'BROKER_AUTHOR_ROUTE_OR_SOURCE_MISMATCH', 'AUTHOR_PREVIEW_REQUIRED', 'AUTHOR_PREVIEW_STALE']);
 const freshId = () => globalThis.crypto?.randomUUID?.() || `broker-${Date.now()}-${Math.random()}`;
 export function ModelBrokerPanel(props: { client: ExperimentalClient; novelId: string; context: CollaborationContext; chapter?: Chapter; saved?: boolean; benchmarkEnabled?: boolean; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void> }) {
   const identity = useMemo(() => ++scopeSequence, [props.client, props.chapter?.id, props.chapter?.version]);
@@ -21,6 +23,7 @@ function BrokerBody({ client, novelId, context, chapter, saved = true, benchmark
   const status = useResource(signal => api.status(signal), [api]);
   const history = useResource(signal => api.history(signal), [api]);
   const [uncertain, setUncertain] = useState(false);
+  const attemptedRequests = useRef(new Set<string>());
   const pending = useRef<{ quote: BrokerPreview; author: AuthorRequestBody; requestId: string }>();
   const [capability, setCapability] = useState('TEXT');
   const [policy, setPolicy] = useState('LOCAL_FIRST'), [profile, setProfile] = useState('LOCAL_ONLY'), [route, setRoute] = useState('');
@@ -41,11 +44,18 @@ function BrokerBody({ client, novelId, context, chapter, saved = true, benchmark
   const submit = async () => {
     const request = pending.current;
     if (!request) return;
+    const firstAttempt = !attemptedRequests.current.has(request.requestId);
+    attemptedRequests.current.add(request.requestId);
     try {
       const result = await api.generate(request.quote, request.author, request.requestId);
       if (alive.current) { setReservation(result.reservation_id); setReviewed(false); setUncertain(false); pending.current = undefined; }
     } catch (failure) {
-      if (alive.current) { setUncertain(true); setReviewed(false); history.reload(); }
+      if (alive.current) {
+        if (firstAttempt && failure instanceof ApiError && failure.status === 409 && preDispatchRejections.has(failure.problem.code)) {
+          pending.current = undefined; setUncertain(false); invalidate();
+        } else { setUncertain(true); setReviewed(false); }
+        history.reload();
+      }
       throw failure;
     }
   };
@@ -58,7 +68,7 @@ function BrokerBody({ client, novelId, context, chapter, saved = true, benchmark
       <p>候选来自当前已注册模型与 Adapter。发现不代表启用，路由预览不代表执行授权；不自动改走云端。</p>
       <ResourceState loading={status.loading} error={status.error} />
       {!status.loading && !status.error && !currentRoutes.length && <EmptyState title="没有此类型的注册路线" detail="本地路线请在 Model Center 核对配置与启用状态；云端路线请在 AI 主控中心核对。此处不自动配置、探测或启用模型。" />}
-      <fieldset disabled={action.busy || uncertain} className="broker-request-controls"><legend>本次路线选择</legend>
+      <fieldset disabled={action.busy} className="broker-request-controls"><legend>本次路线选择</legend>
       <Field label="模型能力类型"><select value={capability} onChange={e => { invalidate(); setCapability(e.target.value); setRoute(''); setContextTokens('0'); }}><option value="TEXT">TEXT · 作者草稿</option><option value="IMAGE">IMAGE · 批次媒体预检</option><option value="AUDIO">AUDIO · 已审核语音段预检</option></select></Field>
       {!status.loading && !status.error && capability === 'TEXT' && <section aria-label="文本路线配置状态">
         <h3>当前文本路线：配置证据</h3>
@@ -90,7 +100,8 @@ function BrokerBody({ client, novelId, context, chapter, saved = true, benchmark
         if (alive.current && ticket === epoch.current) setQuote(result);
       }, '路线检查已完成；尚未调用模型。')}>预览合法模型路线</Button><Button disabled={action.busy} onClick={() => { invalidate(); status.reload(); history.reload(); }}>重新读取当前注册状态</Button></div>
       </fieldset>
-      {uncertain && <StatusMessage tone="warning">生成提交结果尚未确认，原输入已保留。请先刷新下方决策与费用历史，查看原任务；网络错误不代表任务未启动。当前请求的路线与内容暂时锁定，只能用同一请求标识重新确认；确认后可为下一次任务切换本地或云端，不会迁移正在执行的任务。</StatusMessage>}
+      {uncertain && <StatusMessage tone="warning">生成提交结果尚未确认，原输入已保留。请先刷新下方决策与费用历史，查看原任务；网络错误不代表任务未启动。已提交请求的路线、内容和标识固定不变。你仍可调整下一次任务的本地 / 云端选择和输入，但原提交确认前不能再次生成。下方重新确认只使用原请求，不发送新编辑。若原路线、来源或价格依据变化，重新确认也可能被拒绝；请通过原任务与账本继续核对，不要把拒绝当作未执行。</StatusMessage>}
+      {uncertain && pending.current && <Details label="查看待确认的原请求（不随新编辑改变）" value={{ provider_id: pending.current.author.provider_id, model_id: pending.current.author.model_id, chapter_version: pending.current.author.chapter_version, operation: pending.current.author.operation, instruction: pending.current.author.instruction, request_id: pending.current.requestId, preview_id: pending.current.quote.id }} />}
       {uncertain && <Button disabled={action.busy || !saved} onClick={() => void action.run(submit, '已确认原请求；请查看原任务。')}>用同一请求重新确认提交</Button>}
       {action.feedback}
       {quote && <section className="experimental-section" aria-label="模型路线预览">
@@ -103,7 +114,7 @@ function BrokerBody({ client, novelId, context, chapter, saved = true, benchmark
     </Panel>
     {quote?.chosen && author && <Panel title="按已核对路线生成单份草稿">
       {!saved && <StatusMessage tone="warning">当前编辑尚未保存；请先回到编辑器保存，再核对准确请求。</StatusMessage>}
-      <fieldset disabled={action.busy || uncertain} className="broker-request-controls"><legend>本次草稿请求</legend>
+      <fieldset disabled={action.busy} className="broker-request-controls"><legend>本次草稿请求</legend>
       <Field label="创作任务"><select value={operation} disabled={action.busy} onChange={e => { authorChanged(); setOperation(e.target.value); }}><option value="continue">续写</option><option value="polish">润色</option><option value="brainstorm">构思</option><option value="review">审稿</option></select></Field>
       <Field label="本次创作要求"><textarea maxLength={20000} value={instruction} onChange={e => { authorChanged(); setInstruction(e.target.value); }} /></Field>
       <AuthorRequestControls value={requestScope} onChange={value => { setRequestScope(value); authorChanged(); }} source={author.source} operation={operation} disabled={action.busy} />
