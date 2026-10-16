@@ -18,6 +18,7 @@ import {
   Novel,
   Scope,
   setCollaborationContext,
+  getCollaborationContext,
 } from "./api";
 import { useStudio } from "./store";
 import { readLocalWorkspaceSelection, rememberLocalWorkspaceSelection, readLocalStudioSelection } from "./workspaceSelection";
@@ -481,6 +482,14 @@ export default function App() {
     return () => { observer.active = false; observer.sources.forEach(source => source.close()); observer.sources.clear(); };
   }, [chapter.data?.id, namespace, editorIdentity, scopeEpoch]);
   useEffect(() => {
+    // Entry installs a candidate connection before a project is selected in the store.
+    // A late local inventory/retry must not replace that in-progress explicit connection.
+    const current = getCollaborationContext();
+    if (current.sessionToken !== s.sessionToken
+        || current.scope?.workspaceId !== s.scope?.workspaceId
+        || current.scope?.projectId !== s.scope?.projectId
+        || current.scope?.storylineId !== s.scope?.storylineId
+        || current.scope?.branchId !== s.scope?.branchId) return;
     // Wait for current server flags and the original project inventory. A hint
     // cannot select a foreign/missing project or redirect an authenticated scope.
     if (packagedHost || !shouldLoadLocalNovels(s.sessionToken, s.scope) || experimentalFlags.isPending) return;
