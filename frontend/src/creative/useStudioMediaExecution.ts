@@ -32,7 +32,9 @@ export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
   REVIEWING: '审核提交待核对', APPROVED: '已审核入库', UNKNOWN: '分派结果不确定', FAILED: '执行失败', CANCELLED: '已丢弃本地结果',
 };
 export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels' | 'output_format';
-type Draft = { operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
+type MediaRoute = 'local' | 'cloud';
+const routeSelectable = (operation: MediaOperation) => (operation.startsWith('m5.image.') || operation.startsWith('m7.video.')) && !['m5.image.cutout', 'm5.image.upscale'].includes(operation);
+type Draft = { route: MediaRoute; operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
   imageSource?: ProductionSource; imageReferences: { source: ProductionSource; weight: string; purpose?: ImageReferencePurpose; source_note?: string }[]; maskSource?: ProductionSource; videoReferencePurpose?: VideoReference['purpose'] };
 type Preview = { value: ProductionPreview; command: MediaCommand; input: string };
 type Candidate = { url: string; kind: 'image' | 'video' | 'audio'; binding: string };
@@ -52,7 +54,7 @@ const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm8.audio.speech': ['voice_id', 'speech_rate'], 'm8.audio.music': ['duration_seconds', 'seed'],
   'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format'],
 };
-const initialDraft = (): Draft => ({ operation: 'm5.image.t2i', providerKey: '', prompt: '',
+const initialDraft = (): Draft => ({ route: 'local', operation: 'm5.image.t2i', providerKey: '', prompt: '',
   parameters: Object.fromEntries(parameterNames.map(name => [name, ''])) as Record<MediaParameter, string>, sources: [], imageReferences: [], allowCloud: false, licenseNote: '' });
 const inputKey = (draft: Draft) => JSON.stringify(draft);
 export const mediaProviderKey = (row: ProductionProvider) => JSON.stringify([row.operation_id, row.provider_id, row.model_id, row.route_digest]);
@@ -122,6 +124,7 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
 function commandFor(draft: Draft, providers: ProductionProvider[], assets: StudioAsset[], requestId: string): MediaCommand {
   const cutout = draft.operation === 'm5.image.cutout', localTrim = draft.operation === 'm8.audio.trim' || cutout;
   const provider = providers.find(row => mediaProviderKey(row) === draft.providerKey && row.operation_id === draft.operation);
+  if (provider && routeSelectable(draft.operation) && provider.local !== (draft.route === 'local')) throw new Error('请在所选本地或云端路线中明确选择配置。');
   if (!localTrim && !provider) throw new Error('请选择当前配置中的服务商和模型。');
   if (provider && parametersByOperation[draft.operation].some(name => draft.parameters[name] !== '' && !provider.supported_parameters.includes(name))) throw new Error('所选配置不支持部分已填写参数，请明确清空这些参数或恢复原选择。');
   const upscale = draft.operation === 'm5.image.upscale';
@@ -230,6 +233,12 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     draftRef.current = next; setDraft(next); clearPreview(); if (!creation.current?.uncertain) creation.current = undefined; setError(''); setNotice('');
   }
   function changeOperation(operation: MediaOperation) { if (Object.hasOwn(MEDIA_OPERATION_LABELS, operation)) edit({ ...initialDraft(), operation, licenseNote: draftRef.current.licenseNote }); }
+  function changeRoute(route: MediaRoute) {
+    const old = draftRef.current;
+    if (!routeSelectable(old.operation) || !['local', 'cloud'].includes(route) || route === old.route) return;
+    const chosen = providersRef.current.find(row => mediaProviderKey(row) === old.providerKey && row.operation_id === old.operation);
+    edit({ ...old, route, providerKey: chosen?.local === (route === 'local') ? old.providerKey : '', allowCloud: false });
+  }
   function changeField(field: 'prompt' | 'licenseNote' | 'allowCloud' | 'providerKey' | 'videoReferencePurpose', value: string | boolean) {
     const next = { ...draftRef.current };
     if (field === 'videoReferencePurpose') { if (typeof value !== 'string' || value !== '' && !['style', 'action', 'camera'].includes(value)) return; if (value === '') delete next.videoReferencePurpose; else next.videoReferencePurpose = value as VideoReference['purpose']; next.allowCloud = false; edit(next); return; }
@@ -541,7 +550,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     canInspect: canEdit && !providerLoading && !inputError, canCreate: canEdit && !creation.current && !!previewBinding && previewConsent === previewBinding,
     canRead: !locked, canLoadCandidate: !locked && !uncertain && !creation.current?.uncertain && jobSourcesFresh && !!selected?.output_candidate,
     imageInputs: !!provider?.image_capabilities && ['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale'].includes(draft.operation),
-    changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, changeReferenceMetadata, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
+    routeSelectable: routeSelectable(draft.operation), changeRoute, changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, changeReferenceMetadata, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
     create, listJobs, openJob, canAction, action, loadCandidate, confirmReview, mediaFailed, downloadReceipt };
 }
 export type StudioMediaExecutionController = ReturnType<typeof useStudioMediaExecution>;
