@@ -25,12 +25,10 @@ What this service adds on top:
   request id with different content is refused;
 * a deterministic **conflict rule** for two racers that both allocate the same revision.
 
-Honest limitation, stated rather than hidden: revision allocation is
-**conflict-detecting, not lock-serialized**. The write path re-reads the family and the
-later of two racers marks itself `CONFLICTED`; if both finish before either re-reads, two
-active revisions exist and the read-side `DUPLICATE_REVISION` anomaly reports it. No
-user's content is ever discarded in either case — the loser keeps its asset, which is
-excluded from the chain and reported.
+The original asset project_scope now serializes allocation across processes through
+its existing asset-library mutation lease. The historical conflict detector remains
+for legacy conflicting rows. Deleted revisions stay in CAS and request accounting;
+deleting a head never frees its revision or request identity for reuse.
 """
 from __future__ import annotations
 
@@ -94,7 +92,7 @@ class PromptAuthoringService:
     # ------------------------------------------------------------- reads --
     def _prompt_rows(self, nid, scope, actor, branch_id):
         """Every prompt asset visible to this actor, under the owner's own lease."""
-        return [row for row in self.workspace.assets.list(nid, branch_id=branch_id, actor_id=actor)
+        return [row for row in self.workspace.assets.list(nid, branch_id=branch_id, actor_id=actor, include_deleted=True)
                 if prompt._text(row.get("kind")) == prompt.PROMPT_KIND]
 
     @staticmethod
@@ -140,10 +138,10 @@ class PromptAuthoringService:
         rather than with our reading of the payload.
         """
         for row in rows:
-            if prompt._clean(row.get("idempotency_key")) == request_id:
+            if row.get("idempotency_key") == request_id:
                 return row
         for row in rows:
-            if prompt.request_id_of(row) == request_id:
+            if row.get("idempotency_key") is None and prompt.request_id_of(row) == request_id:
                 return row
         return None
 
@@ -165,6 +163,13 @@ class PromptAuthoringService:
         self.workspace.novels.get(nid)
         branch_id = scope.get("branch_id")
         wanted = self._request_digest(body)
+        operation = "CREATE" if family_id is None else "REVISE"
+        request_identity = prompt.digest(json.dumps({"actor": actor, "project": nid, "scope": scope,
+            "operation": operation, "family_id": family_id,
+            "expected_previous_asset_id": getattr(body, "expected_previous_asset_id", None),
+            "expected_revision": getattr(body, "expected_revision", None),
+            "content_digest": wanted, "text_digest": prompt.digest(body.text.encode("utf-8")),
+            "request_id": body.request_id}, sort_keys=True, ensure_ascii=False))
 
         with self.workspace._asset_scope(nid, scope):
             rows = self._prompt_rows(nid, scope, actor, branch_id)
@@ -173,9 +178,27 @@ class PromptAuthoringService:
             #     so a lost HTTP response is safely retryable. Reusing the id for
             #     different content is a conflict, never a silent overwrite.
             resume_asset = None
+            resume_origin = None
             replay = self._find_request(rows, body.request_id)
             if replay is not None:
+                if replay.get("deleted_at"):
+                    raise PromptAuthoringConflict("PROMPT_REQUEST_DELETED", retryable=False)
+                origin = replay.get("_prompt_write_origin")
+                if origin is not None and (not isinstance(origin, dict)
+                        or origin.get("contract") != "studio-prompt-write-origin/1"
+                        or origin.get("operation") != operation
+                        or origin.get("request_digest") != request_identity):
+                    raise PromptAuthoringConflict("PROMPT_REQUEST_ID_REUSED", retryable=False)
                 if prompt.payload_is_readable(prompt.prompt_payload(replay)):
+                    saved = prompt.prompt_payload(replay)
+                    if family_id is None:
+                        changed_target = prompt.revision_of(replay) != 1 or bool(saved.get("previous_asset_id"))
+                    else:
+                        changed_target = (prompt.family_of(replay) != family_id
+                            or saved.get("previous_asset_id") != body.expected_previous_asset_id
+                            or prompt.revision_of(replay) != body.expected_revision + 1)
+                    if changed_target:
+                        raise PromptAuthoringConflict("PROMPT_REQUEST_ID_REUSED", retryable=False)
                     # Compare against the **stored** body, not against the incoming text:
                     # folding the request's own text into both sides would make any
                     # content compare equal and silently accept a reused request id.
@@ -197,6 +220,10 @@ class PromptAuthoringService:
                 # resumed on the same asset — but only if its stored bytes are still this
                 # request's bytes. Resuming onto different text would bind the OLD body to
                 # NEW metadata, so that case is refused instead of completed.
+                if (not isinstance(origin, dict) or not isinstance(origin.get("allocated_family_id"), str)
+                        or not origin["allocated_family_id"]
+                        or (family_id is not None and origin["allocated_family_id"] != family_id)):
+                    raise PromptAuthoringConflict("PROMPT_REQUEST_ORIGIN_UNVERIFIED", retryable=False)
                 try:
                     pending_bytes = self.workspace.assets.content(
                         prompt.asset_id_of(replay), branch_id=branch_id, actor_id=actor)
@@ -206,14 +233,15 @@ class PromptAuthoringService:
                         body.text.encode("utf-8")):
                     raise PromptAuthoringConflict("PROMPT_REQUEST_ID_REUSED", retryable=False)
                 resume_asset = replay
+                resume_origin = origin
 
-            groups = prompt.families(rows)
+            groups = prompt.families(rows, include_deleted=True)
             if family_id is None:
-                family_id = str(uuid4())
+                family_id = resume_origin["allocated_family_id"] if resume_origin else str(uuid4())
                 revision, previous = 1, None
             else:
                 versions = groups.get(family_id)
-                if not versions:
+                if not versions or not any(not row.get("deleted_at") for row in versions):
                     raise FileNotFoundError(family_id)
                 head = versions[-1]
                 head_revision = prompt.revision_of(head)
@@ -224,6 +252,9 @@ class PromptAuthoringService:
                         "PROMPT_REVISION_STALE", family_id=family_id,
                         expected_revision=body.expected_revision, current_revision=head_revision,
                         retryable=True)
+                if head.get("deleted_at"):
+                    raise PromptAuthoringConflict("PROMPT_REVISION_DELETED", family_id=family_id,
+                                                  current_revision=head_revision, retryable=False)
                 revision, previous = head_revision + 1, head_id
 
             payload = prompt.build_payload(
@@ -252,7 +283,12 @@ class PromptAuthoringService:
                         base64.b64encode(body.text.encode("utf-8")).decode(),
                         media_type="text/plain", kind=prompt.PROMPT_KIND,
                         idempotency_key=body.request_id, branch_id=branch_id,
-                        required_features=REQUIRED_FEATURES, owner_actor_id=actor, guard=guard)
+                        required_features=REQUIRED_FEATURES, owner_actor_id=actor, guard=guard,
+                        _initial_prompt_write={"contract": "studio-prompt-write-origin/1", "operation": operation,
+                            "allocated_family_id": family_id,
+                            "expected_previous_asset_id": getattr(body, "expected_previous_asset_id", None),
+                            "expected_revision": getattr(body, "expected_revision", None),
+                            "request_digest": request_identity})
 
                     # (3) Then the payload. A replay of the same payload is a no-op at the
                     #     owner, so an interrupted run leaves no half-version behind.
@@ -302,7 +338,7 @@ class PromptAuthoringService:
         with self.workspace._asset_scope(nid, scope):
             rows = self._prompt_rows(nid, scope, actor, branch_id)
             target = next((row for row in rows if prompt.asset_id_of(row) == asset_id), None)
-            if target is None or prompt.family_of(target) != family_id:
+            if target is None or target.get("deleted_at") or prompt.family_of(target) != family_id:
                 raise FileNotFoundError(asset_id)
             if prompt.authoring_state(target) != prompt.STATE_ACTIVE:
                 raise ValueError("PROMPT_REVISION_NOT_REVIEWABLE")

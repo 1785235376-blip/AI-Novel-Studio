@@ -56,7 +56,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_prompt_write_origin"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -185,7 +185,8 @@ class AssetLibraryService:
                idempotency_key: str | None = None, *, branch_id: str | None = None,
                required_features: tuple[str, ...] = (), owner_actor_id: str | None = None, guard=None,
                _initial_text_result: dict | None = None, _initial_studio_result: dict | None = None,
-               _initial_manual_mask: dict | None = None, _manual_expected_retry_id: str | None = None):
+               _initial_manual_mask: dict | None = None, _manual_expected_retry_id: str | None = None,
+               _initial_prompt_write: dict | None = None):
         from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
         if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
@@ -227,6 +228,27 @@ class AssetLibraryService:
             identity["_project_binding"] = copy.deepcopy(binding)
         if required_features or owner_actor_id:
             identity.update(_required_features=sorted(set(required_features)), _owner_actor_id=owner_actor_id)
+        if _initial_prompt_write is not None:
+            # Server-only request provenance joins the original first metadata
+            # commit and idempotency identity. No HTTP DTO exposes this field.
+            origin = copy.deepcopy(_initial_prompt_write)
+            fields = {"contract", "operation", "allocated_family_id", "expected_previous_asset_id",
+                      "expected_revision", "request_digest"}
+            if (not isinstance(origin, dict) or set(origin) != fields or binding is None
+                    or not owner_actor_id or not callable(guard) or kind != "prompt" or media_type != "text/plain"
+                    or "narrative_production_v2" not in required_features
+                    or any(value is not None for value in (_initial_text_result, _initial_studio_result, _initial_manual_mask))
+                    or origin["contract"] != "studio-prompt-write-origin/1"
+                    or origin["operation"] not in {"CREATE", "REVISE"}
+                    or not isinstance(origin["allocated_family_id"], str) or not 1 <= len(origin["allocated_family_id"]) <= 240
+                    or not re.fullmatch(r"[a-f0-9]{64}", str(origin["request_digest"]))):
+                raise ValueError("PROMPT_WRITE_ORIGIN_INVALID")
+            previous, revision = origin["expected_previous_asset_id"], origin["expected_revision"]
+            if ((origin["operation"] == "CREATE" and (previous is not None or revision is not None))
+                    or (origin["operation"] == "REVISE" and (not isinstance(previous, str)
+                        or not 1 <= len(previous) <= 240 or type(revision) is not int or not 1 <= revision <= 100000))):
+                raise ValueError("PROMPT_WRITE_ORIGIN_INVALID")
+            identity["_prompt_write_origin"] = origin
         initial_review = None
         manual_lineage = None
         if _initial_manual_mask is not None:
@@ -917,9 +939,9 @@ class AssetLibraryService:
             return self.update_metadata(asset_id, {"parameters": parameters, "source_asset_ids": list(parents)},
                                         branch_id=branch_id, expected_version=expected_version, _lineage_write=True, guard=guard)
 
-    def delete(self, asset_id: str, *, branch_id: str | None = None, guard=None):
+    def delete(self, asset_id: str, *, branch_id: str | None = None, guard=None, actor_id: str | None = None):
         with self._lock, workspace_mutation(self.root, "asset-library"):
-            meta = self.get(asset_id, branch_id=branch_id, include_deleted=True)
+            meta = self.get(asset_id, branch_id=branch_id, include_deleted=True, actor_id=actor_id)
             if guard:
                 guard()
             if not meta.get("deleted_at"):

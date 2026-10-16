@@ -141,8 +141,8 @@ class IndependentWorkspaceService:
         with self.assets.project_scope(nid, scope.get("branch_id"), lambda: self.store.owner_lease(nid), scope_key=key):
             yield
 
-    def _row(self, nid, scope, aid, *, deleted=False):
-        row = self.assets.get(aid, branch_id=scope.get("branch_id"), include_deleted=deleted)
+    def _row(self, nid, scope, aid, *, deleted=False, actor_id=None):
+        row = self.assets.get(aid, branch_id=scope.get("branch_id"), include_deleted=deleted, actor_id=actor_id)
         if row["novel_id"] != nid or row.get("branch_id") != scope.get("branch_id"):
             raise FileNotFoundError(aid)
         # Legacy metadata is permissive; the new CAS surface must never adopt
@@ -460,15 +460,20 @@ class IndependentWorkspaceService:
     def lifecycle(self, nid, scope, aid, expected_version, *, restore=False, guard=lambda: None, actor_id=None):
         if type(expected_version) is not int or expected_version < 1:
             raise ValueError("CREATIVE_EXPECTED_VERSION_INVALID")
+        if actor_id is not None and (not isinstance(actor_id, str) or not actor_id):
+            raise ValueError("CREATIVE_AUTHORITY_INVALID")
+        # This adapter adds private prompt deletion only. The existing restore
+        # surface still cannot reopen private revisions or revive their body.
+        visibility_actor = actor_id if not restore else None
         with self._asset_scope(nid, scope):
-            row = self._row(nid, scope, aid, deleted=True)
+            row = self._row(nid, scope, aid, deleted=True, actor_id=visibility_actor)
+            if row.get("_owner_actor_id") and row.get("kind") != "prompt":
+                raise FileNotFoundError(aid)
             if row["version"] != expected_version:
                 raise CapabilityVersionConflict({"version": row["version"]})
             if not restore:
                 rows = {other["id"]: other for other in self.assets.list(nid, branch_id=scope.get("branch_id"))}
                 if actor_id is not None:
-                    if not isinstance(actor_id, str) or not actor_id:
-                        raise ValueError("CREATIVE_AUTHORITY_INVALID")
                     # Private candidates are deliberately absent from ordinary
                     # library discovery. Count the current server actor's active
                     # candidates without exposing them or adopting another actor.
@@ -485,9 +490,19 @@ class IndependentWorkspaceService:
             if restore:
                 self.assets.restore(aid, branch_id=scope.get("branch_id"), guard=guard)
             else:
-                self.assets.delete(aid, branch_id=scope.get("branch_id"), guard=guard)
+                self.assets.delete(aid, branch_id=scope.get("branch_id"), guard=guard, actor_id=visibility_actor)
             guard()
-            return self._view(nid, scope, self._row(nid, scope, aid, deleted=True))
+            current = self._row(nid, scope, aid, deleted=True, actor_id=visibility_actor)
+            if current.get("_owner_actor_id") and current.get("kind") == "prompt":
+                # The row has just passed the original owner's actor and
+                # incarnation checks. Reuse its lineage projection without an
+                # anonymous re-read that would fail after deletion committed.
+                public = self.assets.public(current)
+                if isinstance(public.get("parameters"), dict):
+                    public["parameters"].pop("asset_lineage_v2", None)
+                return {**public, "provenance": self.lineage._project_asset(nid, scope, current),
+                        "relationships": self.relationships.project(nid, scope, current)}
+            return self._view(nid, scope, current)
 
     def storage(self, nid, scope):
         with self._asset_scope(nid, scope):
