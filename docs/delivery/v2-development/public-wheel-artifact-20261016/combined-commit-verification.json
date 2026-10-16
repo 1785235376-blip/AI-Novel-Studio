@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "combined_commit": "8a66e4b42a25935b13c93cf075af684dfa256d48",
+  "public_inputs_checked": 528,
+  "public_input_mismatches": [],
+  "owned_verification_blobs_match": true,
+  "graph_source_blob": "0cf6a482588d234129ab71e9429fb98afa959060",
+  "wheel_sha256": "41470b1795d04fb79cf0f4b8f3a38c27d52fec249e3d68d38b0704ff9c161f44",
+  "worktree_clean": true
+}

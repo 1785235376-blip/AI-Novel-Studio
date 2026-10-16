@@ -12,7 +12,7 @@ The wheel SHA256 is `41470b1795d04fb79cf0f4b8f3a38c27d52fec249e3d68d38b0704ff9c1
 
 The final run began at commit `b1f161663974a9b0d489ef119a7c35bfcb55c9d5` with approved packaging and graph-capacity work uncommitted. No sources changed during that check. All **528** PUBLIC-stage input hashes matched the frozen current source when verified.
 
-The wheel includes graph-capacity `app/creative/graph.py` blob `0cf6a482588d234129ab71e9429fb98afa959060`. Therefore it is **not** a wheel for the packaging-only commit tree. The eventual combined commit must retain all hashes in `stage-receipt.json`. `verification.json` records the exact owned blobs and dirty-source boundary.
+The wheel includes graph-capacity `app/creative/graph.py` blob `0cf6a482588d234129ab71e9429fb98afa959060`. Therefore it is **not** a wheel for the packaging-only commit tree. A subsequent read-only Git-blob check confirmed all 528 staged inputs and all three owned verifier/manifest/test blobs at combined commit `8a66e4b42a25935b13c93cf075af684dfa256d48`, with zero mismatches and a clean worktree. See `combined-commit-verification.json`. `verification.json` retains the exact original dirty-source boundary; no rebuild was needed.
 
 The original guard correctly stopped the first attempt because the incoming Codex standard lifecycle file `app/project_retirement.py` was missing from the allowlist. After independent provenance corroboration and explicit approval, exactly that one sorted entry was added. Its bytes are preserved in the wheel; the module is never imported or executed. The original failure is retained in `stage-blocked.json` and `stage-blocked.log`.
 
