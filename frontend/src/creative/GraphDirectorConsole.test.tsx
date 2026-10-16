@@ -10,6 +10,7 @@ const document = (version = 1): CreativeDocument => ({ ...newDocument('DIRECTOR'
 function setup() {
   let stored = document();
   const client: GraphDirectorSource = {
+    derive: vi.fn(),
     list: vi.fn(async () => ({ items: [stored] })),
     capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR'] }),
     create: vi.fn(async (input: CreativeInput) => stored = { ...stored, ...input }),
@@ -74,6 +75,24 @@ describe('optional mounted graph director source authoring', () => {
     view.unmount(); render(<GraphDirectorConsole {...props} pin={pin} />); await open(); click('读取选中导演节点原文档');
     await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe(' 清晨 🎬 ')); expect(screen.getByDisplayValue('先停顿，再转身')).toBeTruthy();
     expect(client.export).toHaveBeenCalledWith(pin.id); expect(client.update).not.toHaveBeenCalled();
+  });
+  it('hands a saved human director to the existing storyboard owner and reopens its status', async () => {
+    const { client, props } = setup();
+    vi.mocked(client.capabilities).mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR', 'STORYBOARD'] });
+    let board: CreativeDocument | undefined;
+    vi.mocked(client.derive).mockImplementation(async (source) => board = { ...source, id: 'board', mode: 'STORYBOARD', version: 1, source_documents: { [source.id]: { version: source.version, digest: pin.digest } } });
+    const originalExport = client.export;
+    client.export = vi.fn(async id => id === 'board' ? { document: board!, document_digest: 'c'.repeat(64), format: '', boundary: '' } : originalExport(id));
+    const view = render(<GraphDirectorConsole {...props} />); await open();
+    change('文档标题', '人工导演'); click('添加场景'); click('添加导演调度'); change('导演意图', '停顿'); click('保存草稿');
+    await screen.findByText(/导演原文档已保存/); expect((screen.getByRole('button', { name: '交接到原分镜草稿' }) as HTMLButtonElement).disabled).toBe(true);
+    click('核对导演原文档版本'); await screen.findByText(/交接来源/);
+    fireEvent.click(screen.getByLabelText('已核对来源，明确建立新的分镜草稿，仍需人工复审')); click('交接到原分镜草稿');
+    await screen.findByRole('complementary', { name: '分镜原文档状态回传' }); expect(client.derive).toHaveBeenCalledTimes(1);
+    vi.mocked(client.list).mockResolvedValue({ items: [board!] });
+    view.unmount(); render(<GraphDirectorConsole {...props} pin={pin} />); await open(); click('读取选中导演节点原文档'); await screen.findByDisplayValue('人工导演');
+    click('读取关联分镜与状态'); await screen.findByRole('button', { name: '读取分镜 人工导演 · v1' }); click('读取分镜 人工导演 · v1');
+    await screen.findByText(new RegExp('c'.repeat(64))); expect(client.derive).toHaveBeenCalledTimes(1); expect(client.update).not.toHaveBeenCalled();
   });
   it('source edits keep the immutable graph pin and expose changed version impact', async () => {
     const { client, props } = setup(); render(<GraphDirectorConsole {...props} pin={pin} />); await open(); click('读取选中导演节点原文档');

@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
+import { GraphDirectorStoryboardHandoff } from './GraphDirectorStoryboardHandoff';
 import { CreativeCanvas } from './CreativeCanvas';
 import type { creativeClient } from './client';
 import { creativeAuthoringProblems, documentInput, newDocument, type CreativeDocument, type CreativeInput } from './types';
 import type { PlanningSnapshot } from './studioProductionGraphContract';
 import './creative.css';
 
-export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list'>;
+export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive'>;
 type Props = {
   client: GraphDirectorSource;
   pin?: PlanningSnapshot;
@@ -26,6 +27,7 @@ const samePin = (a: PlanningSnapshot, b: PlanningSnapshot) => a.id === b.id && a
 /** A mounted view of the original Creative owner. Only author drafts live here;
  * Graph retains its exact pin and all execution/review remains with its owners. */
 export function GraphDirectorConsole({ client, pin, selectionKey, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange }: Props) {
+  const [handoffPending, setHandoffPending] = useState(false), [storyboardAllowed, setStoryboardAllowed] = useState(false);
   const [open, setOpen] = useState(false), [authorized, setAuthorized] = useState(false);
   const [draft, setDraft] = useState<CreativeInput>(empty), [base, setBase] = useState<CreativeDocument>();
   const [dirty, setDirty] = useState(false), [blocked, setBlocked] = useState(false), [working, setWorking] = useState(false);
@@ -47,8 +49,10 @@ export function GraphDirectorConsole({ client, pin, selectionKey, active, canMut
   const owns = (generation: number) => current() && scope.current.generation === generation;
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   useEffect(() => { if (!active) epoch.current++; }, [active]);
-  const pending = dirty || blocked;
-  const editing = authorized && canMutate && active && !busy && !working && !blocked && isCurrent();
+  const pending = dirty || blocked || handoffPending;
+  const reportedPending = useRef(false);
+  useEffect(() => { if (reportedPending.current !== pending) { reportedPending.current = pending; onDirtyChange(pending); } }, [pending, onDirtyChange]);
+  const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && isCurrent();
   const mark = (value: boolean) => { setDirty(value); onDirtyChange(value); };
   const fail = (reason: unknown) => {
     setError(apiErrorView(reason, '导演文档操作未完成，请核对连接与原文档。').message);
@@ -62,7 +66,7 @@ export function GraphDirectorConsole({ client, pin, selectionKey, active, canMut
     lock.current = true; setWorking(true); setOpen(true); setError('');
     try {
       const caps = await read(() => client.capabilities());
-      if (owns(generation) && ticket === epoch.current) setAuthorized(caps.enabled && caps.can_mutate && caps.modes.includes('DIRECTOR'));
+      if (owns(generation) && ticket === epoch.current) { setAuthorized(caps.enabled && caps.can_mutate && caps.modes.includes('DIRECTOR')); setStoryboardAllowed(caps.enabled && caps.can_mutate && caps.modes.includes('STORYBOARD')); }
     } catch (reason) { if (owns(generation) && ticket === epoch.current) fail(reason); }
     finally { lock.current = false; if (alive.current) setWorking(false); }
   }
@@ -153,7 +157,8 @@ export function GraphDirectorConsole({ client, pin, selectionKey, active, canMut
       <CreativeCanvas draft={draft} version={base?.version} dirty={dirty} canEdit={editing} busy={busy || working}
         selectedSceneId={scene} selectedShotId={shot} onScene={setScene} onShot={setShot} onChange={change}
         onSave={() => void save()} onNew={fresh} />
-      {pending && <section aria-label="导演草稿处理"><p>导演草稿尚未保存或待核对，图编辑与运行暂时锁定。内容仅保留在本次页面中，关闭页面可能丢失。</p>
+      {base && <GraphDirectorStoryboardHandoff client={client} source={base} snapshot={snapshot} active={active && authorized} canCreate={editing && !dirty && storyboardAllowed} busy={busy || working} isCurrent={isCurrent} read={read} mutate={mutate} onPending={setHandoffPending} />}
+      {(dirty || blocked) && <section aria-label="导演草稿处理"><p>导演草稿尚未保存或待核对，图编辑与运行暂时锁定。内容仅保留在本次页面中，关闭页面可能丢失。</p>
         {candidate && <p>已核对服务端：{candidate.document.title} · v{candidate.document.version} · {candidate.pin.digest}</p>}
         <label><input type="checkbox" checked={discardConfirmed} disabled={busy || working} onChange={event => setDiscardConfirmed(event.target.checked)} />{blocked && !candidate ? '确认仅放弃导演本地草稿，远端结果仍未知；再次创建前先核对目录' : '确认放弃导演本地草稿'}{candidate ? '并采用已核对原版本' : ''}</label>
         <Button disabled={!discardConfirmed || busy || working} onClick={discard}>处理导演本地草稿</Button>

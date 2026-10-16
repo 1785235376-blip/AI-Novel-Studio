@@ -140,3 +140,28 @@ it('requires an explicit original workspace navigation confirmation to abandon a
   fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开');
   await screen.findByRole('button', { name: '打开导演总控台' }); expect(source.create).toHaveBeenCalledTimes(1);
 });
+
+it('keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation', async () => {
+  let authored: CreativeDocument = { ...newDocument('DIRECTOR'), source_independent: true, title: '人工调度', id: document.id,
+    version: 3, status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
+  const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR', 'STORYBOARD'] }),
+    create: vi.fn(async input => authored = { ...authored, ...input }), update: vi.fn(), list: vi.fn().mockResolvedValue({ items: [] }),
+    derive: vi.fn().mockRejectedValue(new Error('handoff offline')),
+    export: vi.fn(async () => ({ document: authored, document_digest: document.digest, format: '', boundary: '' })) };
+  vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
+  mount(); await enter(); click('打开导演总控台');
+  await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
+  change('文档标题', '人工调度'); click('添加场景'); click('添加导演调度'); click('保存草稿');
+  await screen.findByText(/导演原文档已保存/); click('核对导演原文档版本'); await screen.findByText(/交接来源/);
+  fireEvent.click(screen.getByLabelText('已核对来源，明确建立新的分镜草稿，仍需人工复审')); click('交接到原分镜草稿');
+  await screen.findByText('handoff offline'); expect((screen.getByRole('button', { name: '保存创作图' }) as HTMLButtonElement).disabled).toBe(true);
+  click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/); click('继续编辑');
+  expect(screen.getByText(/分镜建立结果未知或待核对/)).toBeTruthy();
+  expect((screen.getByRole('button', { name: '交接到原分镜草稿' }) as HTMLButtonElement).disabled).toBe(true);
+  click('读取关联分镜与状态'); await waitFor(() => expect(source.list).toHaveBeenCalledTimes(1));
+  click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/);
+  expect((screen.getByRole('button', { name: '确认离开' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开');
+  await screen.findByRole('button', { name: '打开导演总控台' }); expect(source.derive).toHaveBeenCalledTimes(1);
+  expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
+});
