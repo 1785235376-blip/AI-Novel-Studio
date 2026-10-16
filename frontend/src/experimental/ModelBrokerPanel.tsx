@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Chapter, CollaborationContext } from '../api';
+import { ApiError, type Chapter, type CollaborationContext } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { AuthorRequestPreviewPanel } from '../novel/AuthorRequestPreviewPanel';
 import { defaultAuthorRequestScope, type AuthorRequestScope, type AuthorPreviewReceipt, type AuthorRequestBody } from '../novel/authorContextClient';
@@ -7,19 +7,24 @@ import { AuthorRequestControls } from '../novel/AuthorRequestControls';
 import type { ExperimentalClient, Row } from './api';
 import { Details, Field, ResourceState, useAction, useResource } from './shared';
 import { modelBrokerClient, type BrokerApi, type BrokerJob, type BrokerPreview, type BrokerStatus } from './modelBrokerClient';
+import { brokerCost as cost, brokerReason, brokerVerification } from './modelBrokerPresentation';
 import { ModelBenchmarkPanel } from './ModelBenchmarkPanel';
 
 let scopeSequence = 0;
+// Explicit owner rejections before reservation/start only. Never apply after a prior send with this ID.
+const preDispatchRejections = new Set(['BROKER_AUTHOR_COORDINATOR_UNAVAILABLE', 'BROKER_USE_ORIGINAL_MEDIA_OR_AUDIO_BATCH_EXECUTOR', 'BROKER_AUTHOR_ROUTE_OR_SOURCE_MISMATCH', 'AUTHOR_PREVIEW_REQUIRED', 'AUTHOR_PREVIEW_STALE']);
 const freshId = () => globalThis.crypto?.randomUUID?.() || `broker-${Date.now()}-${Math.random()}`;
-const cost = (value: number | null | undefined) => value == null ? '未知' : `${value} µUSD`;
-export function ModelBrokerPanel(props: { client: ExperimentalClient; novelId: string; context: CollaborationContext; chapter?: Chapter; benchmarkEnabled?: boolean; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void> }) {
+export function ModelBrokerPanel(props: { client: ExperimentalClient; novelId: string; context: CollaborationContext; chapter?: Chapter; saved?: boolean; benchmarkEnabled?: boolean; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void> }) {
   const identity = useMemo(() => ++scopeSequence, [props.client, props.chapter?.id, props.chapter?.version]);
   return <BrokerBody key={identity} {...props} />;
 }
-function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = false, onOpenGeneration }: { client: ExperimentalClient; novelId: string; context: CollaborationContext; chapter?: Chapter; benchmarkEnabled?: boolean; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void> }) {
+function BrokerBody({ client, novelId, context, chapter, saved = true, benchmarkEnabled = false, onOpenGeneration }: { client: ExperimentalClient; novelId: string; context: CollaborationContext; chapter?: Chapter; saved?: boolean; benchmarkEnabled?: boolean; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void> }) {
   const api = useMemo(() => modelBrokerClient(client), [client]);
   const status = useResource(signal => api.status(signal), [api]);
   const history = useResource(signal => api.history(signal), [api]);
+  const [uncertain, setUncertain] = useState(false);
+  const attemptedRequests = useRef(new Set<string>());
+  const pending = useRef<{ quote: BrokerPreview; author: AuthorRequestBody; requestId: string }>();
   const [capability, setCapability] = useState('TEXT');
   const [policy, setPolicy] = useState('LOCAL_FIRST'), [profile, setProfile] = useState('LOCAL_ONLY'), [route, setRoute] = useState('');
   const [contextTokens, setContextTokens] = useState('0'), [limit, setLimit] = useState(''), [latency, setLatency] = useState('');
@@ -36,14 +41,41 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
   const authorChanged = () => { setReceipt(undefined); setReviewed(false); requestId.current = freshId(); };
   const author: AuthorRequestBody | null = quote?.chosen?.capability === 'TEXT' && chapter ? { novel_id: novelId, chapter_id: chapter.id, chapter_version: chapter.version,
     operation, instruction, style: '', profile, request_scope: requestScope, provider_id: quote.chosen.provider_id, model_id: quote.chosen.model_id, source: '', selected_text: '' } : null;
+  const submit = async () => {
+    const request = pending.current;
+    if (!request) return;
+    const firstAttempt = !attemptedRequests.current.has(request.requestId);
+    attemptedRequests.current.add(request.requestId);
+    try {
+      const result = await api.generate(request.quote, request.author, request.requestId);
+      if (alive.current) { setReservation(result.reservation_id); setReviewed(false); setUncertain(false); pending.current = undefined; }
+    } catch (failure) {
+      if (alive.current) {
+        if (firstAttempt && failure instanceof ApiError && failure.status === 409 && preDispatchRejections.has(failure.problem.code)) {
+          pending.current = undefined; setUncertain(false); invalidate();
+        } else { setUncertain(true); setReviewed(false); }
+        history.reload();
+      }
+      throw failure;
+    }
+  };
   const currentRoutes = status.data?.candidates.filter(r => r.capability === capability) || [];
   const providers = [...new Set(currentRoutes.map(r => r.provider_id))];
   return <div className="experimental-section">
     <Panel title="可解释模型调度">
+      <p>使用顺序：核对当前章节与模型 → 预览路线和费用 → 检查准确请求 → 单次授权生成 → 打开原草稿审核。</p>
+      <p>默认优先本地，且仅本地。可以随时为下一次任务改选本地或云端，已提交的任务不会被迁移。文本、图片、视频的适配能力分别判断；文本可用不代表图片或视频可用。本地不满足要求时可自行选择云端，失败不会自动外发或付费。</p>
       <p>候选来自当前已注册模型与 Adapter。发现不代表启用，路由预览不代表执行授权；不自动改走云端。</p>
       <ResourceState loading={status.loading} error={status.error} />
-      {!status.loading && !status.error && !currentRoutes.length && <EmptyState title="没有此类型的注册路线" detail="先在已有 Model Center 配置、验证并明确启用本地模型；没有真实模型时可明确选择合成协议测试。" />}
+      {!status.loading && !status.error && !currentRoutes.length && <EmptyState title="没有此类型的注册路线" detail="本地路线请在 Model Center 核对配置与启用状态；云端路线请在 AI 主控中心核对。此处不自动配置、探测或启用模型。" />}
+      <fieldset disabled={action.busy} className="broker-request-controls"><legend>本次路线选择</legend>
       <Field label="模型能力类型"><select value={capability} onChange={e => { invalidate(); setCapability(e.target.value); setRoute(''); setContextTokens('0'); }}><option value="TEXT">TEXT · 作者草稿</option><option value="IMAGE">IMAGE · 批次媒体预检</option><option value="AUDIO">AUDIO · 已审核语音段预检</option></select></Field>
+      {!status.loading && !status.error && capability === 'TEXT' && <section aria-label="文本路线配置状态">
+        <h3>当前文本路线：配置证据</h3>
+        {!currentRoutes.some(r => !r.cloud && !r.synthetic && r.available) && <StatusMessage tone="warning">尚无通过当前注册检查的真实本地文本路线。请核对以下原因；这不等于已经实测机器性能不足。</StatusMessage>}
+        {currentRoutes.map(r => <article key={r.route_id} className="experimental-record"><strong>{r.display_name} · {r.cloud ? '云端' : '本地'} · {r.provider_id} / {r.model_id}</strong><p>{r.available ? '注册检查通过；仍需本次路线与来源预检' : r.reasons.map(brokerReason).join(' · ') || '当前不可用，原因未提供'}</p><p>{brokerVerification(r.verification)}</p><Button onClick={() => { invalidate(); setRoute(r.route_id); setPolicy('CUSTOM'); }}>明确指定{r.cloud ? '云端' : '本地'}路线 {r.display_name}</Button></article>)}
+        <p>指定云端只选择路线，不更改隐私模式、来源授权或单次生成确认。凭据状态与连接测试请在原 AI 主控中心核对；此处不会读取密钥或测试连接。</p>
+      </section>}
       {capability !== 'TEXT' && <p>这里只创建原路线预检；请在安全批处理中选择同一来源、明确本地与 0 USD 上限，再单独确认和执行。费用未知不能当作免费。</p>}
       <div className="experimental-grid">
         <Field label="调度策略"><select value={policy} onChange={e => { invalidate(); setPolicy(e.target.value); }}><option value="LOCAL_FIRST">本地优先</option><option value="COST">成本优先</option><option value="QUALITY">质量优先（无证据不排名）</option><option value="SPEED">速度优先（仅当前执行证据）</option><option value="PRIVACY_FIRST">隐私优先（只允许本地）</option><option value="BALANCED">平衡（当前成本 / 延迟）</option><option value="CUSTOM">自定义指定路线</option></select></Field>
@@ -62,37 +94,44 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
       <details><summary>排除 Provider</summary>{providers.map(id => <label className="experimental-check" key={id}><input type="checkbox" checked={excluded.includes(id)} onChange={e => { invalidate(); setExcluded(old => e.target.checked ? [...old, id] : old.filter(v => v !== id)); }} />排除 {id}</label>)}</details>
       <p>当前来源：{chapter ? `「${chapter.title}」已保存版本 v${chapter.version}` : '尚未选择章节'}。只使用已保存章节；未保存的编辑请先返回编辑器保存。</p>
       <div className="experimental-actions"><Button disabled={!chapter || action.busy || status.loading || !!status.error || (policy === 'CUSTOM' && !route)} onClick={() => void action.run(async () => {
-        const ticket = ++epoch.current; setQuote(undefined); setReceipt(undefined); setReviewed(false);
+        const ticket = ++epoch.current; requestId.current = freshId(); setQuote(undefined); setReceipt(undefined); setReviewed(false);
         const result = await api.preview({ capability, chapter_ids: [chapter!.id], policy, profile, preferred_route: route || null, excluded_providers: excluded,
           context_tokens: Number(contextTokens || 0), max_latency_ms: latency ? Number(latency) : null, max_cost_microusd: limit ? Number(limit) : null, allow_synthetic: synthetic, allow_cloud_fallback: fallback, require_confirmed_license: license, min_host_ram_mib: ram ? Number(ram) : null, min_host_vram_mib: vram ? Number(vram) : null });
         if (alive.current && ticket === epoch.current) setQuote(result);
       }, '路线检查已完成；尚未调用模型。')}>预览合法模型路线</Button><Button disabled={action.busy} onClick={() => { invalidate(); status.reload(); history.reload(); }}>重新读取当前注册状态</Button></div>
+      </fieldset>
+      {uncertain && <StatusMessage tone="warning">生成提交结果尚未确认，原输入已保留。请先刷新下方决策与费用历史，查看原任务；网络错误不代表任务未启动。已提交请求的路线、内容和标识固定不变。你仍可调整下一次任务的本地 / 云端选择和输入，但原提交确认前不能再次生成。下方重新确认只使用原请求，不发送新编辑。若原路线、来源或价格依据变化，重新确认也可能被拒绝；请通过原任务与账本继续核对，不要把拒绝当作未执行。</StatusMessage>}
+      {uncertain && pending.current && <Details label="查看待确认的原请求（不随新编辑改变）" value={{ provider_id: pending.current.author.provider_id, model_id: pending.current.author.model_id, chapter_version: pending.current.author.chapter_version, operation: pending.current.author.operation, instruction: pending.current.author.instruction, request_id: pending.current.requestId, preview_id: pending.current.quote.id }} />}
+      {uncertain && <Button disabled={action.busy || !saved} onClick={() => void action.run(submit, '已确认原请求；请查看原任务。')}>用同一请求重新确认提交</Button>}
       {action.feedback}
       {quote && <section className="experimental-section" aria-label="模型路线预览">
         {quote.chosen ? <StatusMessage tone="success">建议：{quote.chosen.display_name} · {quote.chosen.cloud ? '云端' : '本地'} · 预占 {cost(quote.chosen.price?.reserve_microusd)} · {quote.chosen.cost_state}</StatusMessage> : <StatusMessage tone="warning">没有合法候选。请核对下方排除原因，不会自动选择替代云模型。</StatusMessage>}
         {!!quote.warnings.length && <StatusMessage tone="warning">文学质量证据不足，未进行质量排名。</StatusMessage>}
-        {quote.candidates.map(r => <article className="experimental-record" key={r.route_id}><div className="experimental-actions"><strong>{r.display_name}</strong><Badge tone={r.eligible ? 'success' : 'warning'}>{r.eligible ? '合法候选' : '已排除'}</Badge><span>{r.provider_id} / {r.model_id}</span></div><p>{r.reasons.length ? r.reasons.join(' · ') : '通过当前能力、模型状态、来源隐私与预算检查'}</p><p>费用：{r.cost_state === 'UNKNOWN' ? '未知，不能当作免费' : cost(r.price?.reserve_microusd)} · {r.verification}</p></article>)}
+        {quote.candidates.map(r => <article className="experimental-record" key={r.route_id}><div className="experimental-actions"><strong>{r.display_name}</strong><Badge tone={r.eligible ? 'success' : 'warning'}>{r.eligible ? '合法候选' : '已排除'}</Badge><span>{r.provider_id} / {r.model_id}</span></div><p>{r.reasons.length ? r.reasons.map(brokerReason).join(' · ') : '通过当前能力、模型状态、来源隐私与预算检查'}</p><p>费用：{r.cost_state === 'UNKNOWN' ? '未知，不能当作免费' : cost(r.price?.reserve_microusd)} · {brokerVerification(r.verification)}</p></article>)}
+        {quote.chosen && <p>价格依据：{quote.chosen.price?.source || '未提供'}。预占是估计，不是供应商最终账单；合成协议测试的零费用不代表真实模型免费。</p>}
         <Details value={quote.policy_explanation} label="策略排序与未知证据" /><Details value={quote.will_send} label="核对来源、版本与外发范围" />
       </section>}
     </Panel>
     {quote?.chosen && author && <Panel title="按已核对路线生成单份草稿">
+      {!saved && <StatusMessage tone="warning">当前编辑尚未保存；请先回到编辑器保存，再核对准确请求。</StatusMessage>}
+      <fieldset disabled={action.busy} className="broker-request-controls"><legend>本次草稿请求</legend>
       <Field label="创作任务"><select value={operation} disabled={action.busy} onChange={e => { authorChanged(); setOperation(e.target.value); }}><option value="continue">续写</option><option value="polish">润色</option><option value="brainstorm">构思</option><option value="review">审稿</option></select></Field>
       <Field label="本次创作要求"><textarea maxLength={20000} value={instruction} onChange={e => { authorChanged(); setInstruction(e.target.value); }} /></Field>
       <AuthorRequestControls value={requestScope} onChange={value => { setRequestScope(value); authorChanged(); }} source={author.source} operation={operation} disabled={action.busy} />
-      <AuthorRequestPreviewPanel body={author} context={context} saved={true} disabled={action.busy} onScopeChange={value => { setRequestScope(value); authorChanged(); }} onReceipt={value => { setReceipt(value); setReviewed(false); }} />
+      <AuthorRequestPreviewPanel body={author} context={context} saved={saved} disabled={action.busy} onScopeChange={value => { setRequestScope(value); authorChanged(); }} onReceipt={value => { setReceipt(value); setReviewed(false); }} />
       <label className="experimental-check"><input type="checkbox" disabled={!receipt} checked={reviewed} onChange={e => setReviewed(e.target.checked)} />已核对准确请求、来源与模型，并授权生成这一次草稿</label>
       <StatusMessage>预算限制预占金额；上游实际费用可能超出估计。取消后已发出的内容不能收回，费用不确定时仍保留预占。</StatusMessage>
       {!status.data?.author_execution_available && <StatusMessage tone="warning">当前服务器尚未接入原有作者任务协调器，不能执行。</StatusMessage>}
-      <Button disabled={!receipt || !reviewed || action.busy || !status.data?.author_execution_available} onClick={() => void action.run(async () => {
-        const ticket = epoch.current;
-        const result = await api.generate(quote, { ...receipt!.requestBody, preview_digest: receipt!.previewDigest }, requestId.current);
-        if (alive.current && ticket === epoch.current) { setReservation(result.reservation_id); setReviewed(false); }
+      <Button disabled={!saved || !receipt || !reviewed || action.busy || uncertain || status.loading || !!status.error || !status.data?.author_execution_available} onClick={() => void action.run(async () => {
+        pending.current = { quote, author: { ...receipt!.requestBody, preview_digest: receipt!.previewDigest }, requestId: requestId.current };
+        await submit();
       }, '已交给原有作者任务执行器。结果仍是草稿，不自动写入正文。')}>按预览路线预占并生成</Button>
+      </fieldset>
     </Panel>}
     {reservation && <BrokerJobStatus api={api} reservation={reservation} onOpenGeneration={onOpenGeneration} onSettled={() => { history.reload(); status.reload(); }} />}
-    {status.data && <BudgetSettings api={api} status={status.data} stale={status.loading || !!status.error} onSaved={() => { invalidate(); status.reload(); }} />}
+    {status.data && <BudgetSettings api={api} status={status.data} stale={status.loading || !!status.error || uncertain || action.busy} onSaved={() => { invalidate(); status.reload(); }} />}
     <Panel title="决策与费用历史"><Button disabled={history.loading} onClick={history.reload}>刷新决策与账本</Button><ResourceState loading={history.loading} error={history.error} empty={!history.data?.ledger.length && !history.data?.decisions.length} />
-      {!history.loading && !history.error && history.data?.ledger.map(row => <article key={row.id} className="experimental-record"><strong>{row.provider_id} / {row.model_id}</strong><p>{row.status} · 预占 {cost(row.reserve_microusd)} · 实际 {cost(row.actual_microusd)} · {row.cost_state}</p><Button onClick={() => setReservation(row.id)}>查看原任务 {row.job_id}</Button>{(row.status === 'UNKNOWN_UPSTREAM' || (row.status === 'SETTLED' && row.overrun)) && <ReconcileLedger api={api} row={row} onSaved={() => { invalidate(); history.reload(); status.reload(); }} />}</article>)}
+      {!history.loading && !history.error && history.data?.ledger.map(row => <article key={row.id} className="experimental-record"><strong>{row.provider_id} / {row.model_id}</strong><p>{row.status} · 预占 {cost(row.reserve_microusd)} · 已记录费用 {cost(row.actual_microusd)} · {row.cost_state}</p><Button onClick={() => setReservation(row.id)}>查看原任务 {row.job_id}</Button>{(row.status === 'UNKNOWN_UPSTREAM' || (row.status === 'SETTLED' && row.overrun)) && <ReconcileLedger api={api} row={row} onSaved={() => { invalidate(); history.reload(); status.reload(); }} />}</article>)}
       {!history.loading && !history.error && history.data?.decisions.map(row => <details key={row.id}><summary>{row.created_at} · {row.chosen?.display_name || '无合法候选'} · {row.status}</summary><p>历史预览不用于直接重试；请重新核对当前来源和模型。</p><Details value={row.candidates.map(r => ({ provider: r.provider_id, model: r.model_id, reasons: r.reasons }))} /></details>)}
     </Panel>
     {benchmarkEnabled && <ModelBenchmarkPanel api={api} routes={status.data?.candidates || []} />}
@@ -111,7 +150,7 @@ function BrokerJobStatus({ api, reservation, onSettled, onOpenGeneration }: { ap
     void read(); return () => { controller.abort(); clearTimeout(timer); };
   }, [api, reservation, revision]);
   const action = useAction(() => setRevision(v => v + 1));
-  return <Panel title="原有作者任务进度"><ResourceState loading={!data && !error} error={error} />{data && <><p>{data.job?.status || '执行器会话不可恢复'} · 账本 {data.ledger.status}</p>{data.recovery && <StatusMessage tone="warning">执行器重启后不会自动重发。保留账本记录；请先核对上游状态，费用未知的预占不会自动释放。</StatusMessage>}{data.orphan_reconciliation_available && <ReconcileLedger api={api} row={data.ledger} orphan onSaved={() => setRevision(v => v + 1)} />}{data.job?.output && <Field label="生成草稿（只读）"><textarea readOnly value={data.job.output} /></Field>}{data.job?.error && <StatusMessage tone="error">{data.job.error}</StatusMessage>}<p>实际费用：{cost(data.ledger.actual_microusd)}。审核与采用仍使用原有作者草稿流程。</p>{data.job && <Button disabled={action.busy || !onOpenGeneration || !data.job.chapter_id} onClick={() => void action.run(() => onOpenGeneration!(data.job!.id, data.job!.chapter_id), '已核对当前权限并打开原有草稿审核；尚未采用。')}>在原有草稿审核中打开</Button>}{data.job && !['COMPLETED', 'FAILED', 'CANCELLED', 'ACCEPTED', 'REJECTED'].includes(data.job.status) && <Button disabled={action.busy} onClick={() => void action.run(() => api.cancel(reservation, data.ledger.version), '已请求取消；上游消耗仍可能产生。')}>取消本次生成</Button>}</>}<Button onClick={() => setRevision(v => v + 1)}>重新核对任务状态</Button>{action.feedback}</Panel>;
+  return <Panel title="原有作者任务进度"><ResourceState loading={!data && !error} error={error} />{data && <><p>{data.job?.status || '执行器会话不可恢复'} · 账本 {data.ledger.status}</p>{data.recovery && <StatusMessage tone="warning">执行器重启后不会自动重发。保留账本记录；请先核对上游状态，费用未知的预占不会自动释放。</StatusMessage>}{data.orphan_reconciliation_available && <ReconcileLedger api={api} row={data.ledger} orphan onSaved={() => setRevision(v => v + 1)} />}{data.job?.output && <Field label="生成草稿（只读）"><textarea readOnly value={data.job.output} /></Field>}{data.job?.error && <StatusMessage tone="error">{data.job.error}</StatusMessage>}<p>原任务 ID：{data.job?.id || data.ledger.job_id || '未知'} · 账本 ID：{reservation}</p><p>已记录费用：{cost(data.ledger.actual_microusd)}。按用量计算或人工记录的费用不等于供应商账单；合成测试零费用不代表真实模型免费。审核与采用仍使用原有作者草稿流程。</p>{data.job && <Button disabled={action.busy || !onOpenGeneration || !data.job.chapter_id} onClick={() => void action.run(() => onOpenGeneration!(data.job!.id, data.job!.chapter_id), '已核对当前权限并打开原有草稿审核；尚未采用。')}>在原有草稿审核中打开</Button>}{data.job && !['COMPLETED', 'FAILED', 'CANCELLED', 'ACCEPTED', 'REJECTED'].includes(data.job.status) && <Button disabled={action.busy} onClick={() => void action.run(() => api.cancel(reservation, data.ledger.version), '已请求取消；上游消耗仍可能产生。')}>取消本次生成</Button>}</>}<Button onClick={() => setRevision(v => v + 1)}>重新核对任务状态</Button>{action.feedback}</Panel>;
 }
 function BudgetSettings({ api, status, stale, onSaved }: { api: BrokerApi; status: BrokerStatus; stale: boolean; onSaved: () => void }) {
   const [expectedVersion, setExpectedVersion] = useState(status.budget.version);
