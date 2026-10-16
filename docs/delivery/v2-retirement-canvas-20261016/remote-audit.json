@@ -1,0 +1,214 @@
+{
+  "checked_utc": "2026-10-16T15:04:38.411166+00:00",
+  "original_checkout": "D:/PoemSeed/AI-Novel-Studio",
+  "original_head": "5af9bfc40abc305154a1a35e50f5e8e47c1c1322",
+  "original_untracked_before_tools": [
+    "build/"
+  ],
+  "original_head_ahead_behind_v2": [
+    0,
+    146
+  ],
+  "main": "fed2404c8e30b44061b7139dced45b7f3301601c",
+  "origin_HEAD": "refs/remotes/origin/main",
+  "v2": "045b865e5a003cac3333462d055f22099f6368d6",
+  "pr47": "045b865e5a003cac3333462d055f22099f6368d6",
+  "main_ahead_behind_v2": "0\t348",
+  "unshallowed": true,
+  "branches": [
+    "refs/remotes/origin/HEAD fed2404c8e30b44061b7139dced45b7f3301601c",
+    "refs/remotes/origin/cloud/continuation-20261003 f8c141c39a543cc9dbea57647ac91185bc9aecd6",
+    "refs/remotes/origin/feature/model-center-phase1 334c681a26432dafdcb290327d7ae4270fb38039",
+    "refs/remotes/origin/feature/model-center-phase2a-runtime-control 02c4bc4cde737eae0d95453d9868a8d374375a83",
+    "refs/remotes/origin/feature/official-declarative-plugin-packs-v1 4b2cd1e5e89cdf4fc4af113c2a5a5faba798ab46",
+    "refs/remotes/origin/feature/plugin-runtime-foundation-phase1 7db2aa1cc057c88e1dd9748c214e733252ce71a8",
+    "refs/remotes/origin/feature/plugin-runtime-phase2b-windows-sandbox 5cae6e00356e2c7a2f05f83352d99611a33dd948",
+    "refs/remotes/origin/feature/plugin-trust-signing-foundation 45d8849076725a89d3725f43943800fba05c5979",
+    "refs/remotes/origin/feature/provider-runtime-stable-identity-foundation ea394756614bde225d20a2058b417213a98ba5f7",
+    "refs/remotes/origin/feature/provider-runtime-v2-authoritative-snapshot-bridge e994e7e5c11a9ad05daa3e36c035479445ee6b1e",
+    "refs/remotes/origin/feature/provider-runtime-v2-contract-foundation 1c2d0520fc90ba3a72d18b09f8c6eaf38b2d586c",
+    "refs/remotes/origin/feature/provider-runtime-v2-host-hardware-inventory ad38ac70d238dde8411e1c636a0f97f2cf07426d",
+    "refs/remotes/origin/feature/provider-runtime-v2-model-center-snapshot-bridge 797d183e5954857337672d8f34897140a1491fa3",
+    "refs/remotes/origin/feature/provider-runtime-v2-runtime-requirements-authority 7e24be1765085b99352a39c8b5887e62221560f9",
+    "refs/remotes/origin/feature/v2-narrative-platform 045b865e5a003cac3333462d055f22099f6368d6",
+    "refs/remotes/origin/fix/a43-document-chapter-identity 6dc09ffc71ba47b6730df491186bfce429f0721a",
+    "refs/remotes/origin/fix/p0-clean-regression-foundation db5cabcc5c40e570bb92e8a7ff2428cce011c8b7",
+    "refs/remotes/origin/fix/p0-generation-idempotency-root-cause 0ba1f1f23c744151ff4e859c8ac624eb880828ab",
+    "refs/remotes/origin/fix/p1-visual-continuity-time-jump-cut cb7ec7fdee234c505cfed9dbafe18816f440443c",
+    "refs/remotes/origin/fix/shared-authority-stream-terminal-r123 2c5b4e2f43c50318d9c1eeea487f68c2d66f7b42",
+    "refs/remotes/origin/grok-phase1-acceptance ff1511a3a394173171ed84dcea644a56a67f16e7",
+    "refs/remotes/origin/grok-phase1-feature-closure 48b0b46a89331d51dd56edf50028d2c1c2debbdb",
+    "refs/remotes/origin/main fed2404c8e30b44061b7139dced45b7f3301601c",
+    "refs/remotes/origin/work/dot-astra-v1-rc-r2 1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
+    "refs/remotes/origin/work/dot-usability-20261015 58bbaad11360330d51f49fc2bb78a955a26469f0",
+    "refs/remotes/origin/work/feature-completion-surface-freeze 665817243cad59eef0d4140f17c2ea644f46971e",
+    "refs/remotes/origin/work/full-recovery-product-candidate edb3e8577c32c2bb8e0ca3825f223aa75149f9a8",
+    "refs/remotes/origin/work/local-interop-desktop-prep e58c72b04182cd374af092314386b90f8250a173",
+    "refs/remotes/origin/work/local-interop-v1 bcd60afb96cc69bdfd81db619cb0121d8712f074",
+    "refs/remotes/origin/work/post-interop-r4-r5-ux-continuation ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+    "refs/remotes/origin/work/post-v1-feature-forward-r3 d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b",
+    "refs/remotes/origin/work/post-v1-r4-r5-ux c6f2126115b52e17839d48efea091dc21ec08c61",
+    "refs/remotes/recovery-pr/1 48b0b46a89331d51dd56edf50028d2c1c2debbdb",
+    "refs/remotes/recovery-pr/10 4f18eb675d08130065cda91d9695293f3681bef9",
+    "refs/remotes/recovery-pr/11 29d21bc8e4d2e7b875b6bb230e69806e4f1a7e6a",
+    "refs/remotes/recovery-pr/12 8557b2e593addef494bf33f3b8c181b665d371a9",
+    "refs/remotes/recovery-pr/13 cb571383f2dd1c33b10bea07dc46bb41cbb44c4e",
+    "refs/remotes/recovery-pr/19 db5cabcc5c40e570bb92e8a7ff2428cce011c8b7",
+    "refs/remotes/recovery-pr/2 a73deec547ad6cfd575aec301ace9ac09fc0713b",
+    "refs/remotes/recovery-pr/21 4b2cd1e5e89cdf4fc4af113c2a5a5faba798ab46",
+    "refs/remotes/recovery-pr/22 0ba1f1f23c744151ff4e859c8ac624eb880828ab",
+    "refs/remotes/recovery-pr/23 7db2aa1cc057c88e1dd9748c214e733252ce71a8",
+    "refs/remotes/recovery-pr/24 4a13d865dcee7a1d74aa0d2802f23fa038a6ce05",
+    "refs/remotes/recovery-pr/25 cb7ec7fdee234c505cfed9dbafe18816f440443c",
+    "refs/remotes/recovery-pr/26 5cae6e00356e2c7a2f05f83352d99611a33dd948",
+    "refs/remotes/recovery-pr/27 334c681a26432dafdcb290327d7ae4270fb38039",
+    "refs/remotes/recovery-pr/28 02c4bc4cde737eae0d95453d9868a8d374375a83",
+    "refs/remotes/recovery-pr/29 45d8849076725a89d3725f43943800fba05c5979",
+    "refs/remotes/recovery-pr/3 7199d9b01404a66f7bd24a6faa5a94c66a20503b",
+    "refs/remotes/recovery-pr/30 1c2d0520fc90ba3a72d18b09f8c6eaf38b2d586c",
+    "refs/remotes/recovery-pr/31 797d183e5954857337672d8f34897140a1491fa3",
+    "refs/remotes/recovery-pr/32 ea394756614bde225d20a2058b417213a98ba5f7",
+    "refs/remotes/recovery-pr/33 e994e7e5c11a9ad05daa3e36c035479445ee6b1e",
+    "refs/remotes/recovery-pr/34 7e24be1765085b99352a39c8b5887e62221560f9",
+    "refs/remotes/recovery-pr/35 ad38ac70d238dde8411e1c636a0f97f2cf07426d",
+    "refs/remotes/recovery-pr/36 f8c141c39a543cc9dbea57647ac91185bc9aecd6",
+    "refs/remotes/recovery-pr/37 1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
+    "refs/remotes/recovery-pr/38 d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b",
+    "refs/remotes/recovery-pr/39 c6f2126115b52e17839d48efea091dc21ec08c61",
+    "refs/remotes/recovery-pr/4 8c90ed0276a9660f3b7a3754f72d50b55adb2f9a",
+    "refs/remotes/recovery-pr/40 2c5b4e2f43c50318d9c1eeea487f68c2d66f7b42",
+    "refs/remotes/recovery-pr/41 bcd60afb96cc69bdfd81db619cb0121d8712f074",
+    "refs/remotes/recovery-pr/42 e58c72b04182cd374af092314386b90f8250a173",
+    "refs/remotes/recovery-pr/43 ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+    "refs/remotes/recovery-pr/44 6dc09ffc71ba47b6730df491186bfce429f0721a",
+    "refs/remotes/recovery-pr/45 665817243cad59eef0d4140f17c2ea644f46971e",
+    "refs/remotes/recovery-pr/46 edb3e8577c32c2bb8e0ca3825f223aa75149f9a8",
+    "refs/remotes/recovery-pr/47 045b865e5a003cac3333462d055f22099f6368d6",
+    "refs/remotes/recovery-pr/48 58bbaad11360330d51f49fc2bb78a955a26469f0",
+    "refs/remotes/recovery-pr/5 11dd0d00afb8d725597d2c388ab8f183ebbb1b4b",
+    "refs/remotes/recovery-pr/6 456c4448e0e063df3b5ccfbcc13d51955de6d41d",
+    "refs/remotes/recovery-pr/7 66d722201347ce9a49e74bac96a1bcaae815bc9c",
+    "refs/remotes/recovery-pr/8 d002731a500e78e8282db67394bfa03ca0047f59",
+    "refs/remotes/recovery-pr/9 27c7721d0b93dcfbb03bef230be6054ed2aac3a3"
+  ],
+  "tags": [],
+  "sha_checks": [
+    {
+      "requested": "94443c0",
+      "resolved": "94443c0e201d0c8aa764e7d3f6dfa5f522578a2c",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "350ad5f",
+      "resolved": "350ad5f3ff30592e10fa24417fb0aaa0878e952b",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "7221896",
+      "resolved": "7221896b3d617829f8dfd50395a2fc07484941e9",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "e3f0c3d",
+      "resolved": "e3f0c3dbd83b697083b0534efb0cb6498dab4d58",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "36d1ac2",
+      "resolved": "36d1ac210f42c78aef9693b19f5e390081a67db7",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "045b865",
+      "resolved": "045b865e5a003cac3333462d055f22099f6368d6",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "82f07bd",
+      "resolved": "82f07bdb37aba800531a434ea167ea5701da8026",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "b5fd15d",
+      "resolved": "b5fd15d8a2c0a223643e8b6da19c524136339a86",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "a462e3d",
+      "resolved": "a462e3ddfb48939e6101eaed0e38b3c75b4c98ef",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "77673f9",
+      "resolved": "77673f95cf109ea3aafbec9604cd7a94c5d64246",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    },
+    {
+      "requested": "0556977",
+      "resolved": "055697749d224735991610a6e7ec06fcb2afa997",
+      "remote_refs": [
+        "refs/remotes/origin/feature/v2-narrative-platform",
+        "refs/remotes/origin/work/dot-usability-20261015",
+        "refs/remotes/recovery-pr/47",
+        "refs/remotes/recovery-pr/48"
+      ]
+    }
+  ],
+  "discrepancies": [],
+  "commands": [
+    "git fetch --all --prune",
+    "git fetch origin --tags +refs/heads/*:refs/remotes/origin/* +refs/pull/*/head:refs/remotes/recovery-pr/*",
+    "git fetch --unshallow origin",
+    "gh pr view 47 --repo 1785235376-blip/AI-Novel-Studio --json number,url,state,isDraft,headRefName,headRefOid,baseRefName,title"
+  ]
+}

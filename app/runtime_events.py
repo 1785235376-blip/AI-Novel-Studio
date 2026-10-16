@@ -10,6 +10,7 @@ import threading
 import weakref
 from dataclasses import dataclass
 from functools import wraps
+from contextlib import contextmanager
 
 _ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
 
@@ -26,6 +27,24 @@ class RuntimeEventSource:
     def __init__(self):
         self._observers = set()
         self._lock = threading.Lock()
+        self._local = threading.local()
+
+    @contextmanager
+    def transaction(self):
+        """Publish original owner notifications only after a composite commit."""
+        parent = getattr(self._local,"pending",None)
+        pending = []
+        self._local.pending = pending
+        try:
+            yield
+        except BaseException:
+            raise
+        else:
+            self._local.pending = parent
+            for change in dict.fromkeys(pending):
+                self.publish(change)
+        finally:
+            self._local.pending = parent
 
     def subscribe(self, callback):
         reference = weakref.WeakMethod(callback) if getattr(callback, "__self__", None) else weakref.ref(callback)
@@ -40,6 +59,10 @@ class RuntimeEventSource:
         return unsubscribe
 
     def publish(self, change: RuntimeChange):
+        pending = getattr(self._local,"pending",None)
+        if pending is not None:
+            pending.append(change)
+            return
         with self._lock:
             observers = tuple(self._observers)
         for reference in observers:
@@ -54,6 +77,14 @@ class RuntimeEventSource:
 
 
 runtime_events = RuntimeEventSource()
+
+
+def atomic_runtime_changes(method):
+    @wraps(method)
+    def call(*args,**kwargs):
+        with runtime_events.transaction():
+            return method(*args,**kwargs)
+    return call
 
 
 def committed_change(module: str):

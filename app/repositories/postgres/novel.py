@@ -5,7 +5,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, text
 
 from ...repository import slug
 from ...privacy import privacy_for_update
@@ -70,17 +70,21 @@ class PostgresNovelRepository:
 
     @committed_change("PROJECT")
     def create(self, payload):
-        novel_slug = slug(payload.get("id") or payload["title"])
         with self.database.session() as session:
-            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
-                raise FileExistsError(novel_slug)
-            now = datetime.now(timezone.utc)
-            model = NovelModel(slug=novel_slug, title=payload["title"], metadata_json={
-                "genre": payload.get("genre", ""), "status": "Writing", "style_profile": {}
-            }, created_at=now, updated_at=now)
-            session.add(model); session.flush()
-            session.add(StoryStateModel(novel_id=model.id, chapter_number=0, state={"volume": 1, "chapter": 0, "active_characters": []}))
-            return self._meta(model)
+            return self._create_in_session(session, payload)
+
+    def _create_in_session(self, session, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        session.execute(text("SELECT pg_advisory_xact_lock(hashtextextended(:key,0))"), {"key": f"project-lifecycle:{novel_slug}"})
+        if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+            raise FileExistsError(novel_slug)
+        now = datetime.now(timezone.utc)
+        model = NovelModel(slug=novel_slug, title=payload["title"], metadata_json={
+            "genre": payload.get("genre", ""), "status": "Writing", "style_profile": {}
+        }, created_at=now, updated_at=now)
+        session.add(model); session.flush()
+        session.add(StoryStateModel(novel_id=model.id, chapter_number=0, state={"volume": 1, "chapter": 0, "active_characters": []}))
+        return self._meta(model)
 
     def get(self, novel_id):
         with self.database.session() as session:
@@ -102,10 +106,11 @@ class PostgresNovelRepository:
             return self._meta(model)
 
     @committed_change("PROJECT")
-    def delete(self, novel_id):
+    def delete(self, novel_id, *, scopes=None, authorization=None, audit_event=None, reauthorize=lambda: None):
         with self.database.session() as session:
-            model = novel_or_raise(session, novel_id)
-            session.delete(model)
+            from ...project_retirement import retire_postgres_project
+            model = self._locked_metadata_model(session, novel_id)
+            retire_postgres_project(self,session,model,scopes=scopes,authorization=authorization,audit_event=audit_event,reauthorize=reauthorize)
 
     def get_data_set(self, novel_id, name):
         with self.database.session() as session:

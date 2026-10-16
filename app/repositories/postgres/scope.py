@@ -1,4 +1,5 @@
 import json
+from contextlib import contextmanager
 from datetime import datetime,timezone
 from uuid import uuid4
 
@@ -23,15 +24,36 @@ class PostgresScopeRepository:
   select="payload,revision" if kind=="branches" else "payload"
   with self.connection_factory() as c:rows=c.execute(f"SELECT {select} FROM {TABLES[kind]} ORDER BY id").fetchall()
   values=[{**x[0],"revision":x[1]} if kind=="branches" else x[0] for x in rows];return [x for x in values if all(x.get(k)==v for k,v in filters.items())]
- def link_project(self,project_id,workspace_id):
+ def link_project(self,project_id,workspace_id,*,session=None):
+  if session is not None:
+   from sqlalchemy import text
+   row=session.execute(text("SELECT workspace_id FROM project_workspaces WHERE project_id=:p FOR UPDATE"),{"p":project_id}).first()
+   if row and row[0]!=workspace_id:raise ValueError("project already belongs to another workspace")
+   linked=session.execute(text("INSERT INTO project_workspaces(project_id,workspace_id) VALUES (:p,:w) ON CONFLICT(project_id) DO UPDATE SET project_id=EXCLUDED.project_id WHERE project_workspaces.workspace_id=EXCLUDED.workspace_id RETURNING workspace_id"),{"p":project_id,"w":workspace_id}).first()
+   if not linked:raise ValueError("project already belongs to another workspace")
+   session.execute(text("UPDATE novels SET workspace_id=:w WHERE slug=:p"),{"p":project_id,"w":workspace_id})
+   return {"id":project_id,"workspace_id":workspace_id}
   with self.connection_factory() as c:
    row=c.execute("SELECT workspace_id FROM project_workspaces WHERE project_id=%s",(project_id,)).fetchone()
    if row and row[0]!=workspace_id:raise ValueError("project already belongs to another workspace")
-   c.execute("INSERT INTO project_workspaces(project_id,workspace_id) VALUES (%s,%s) ON CONFLICT(project_id) DO NOTHING",(project_id,workspace_id));c.execute("UPDATE novels SET workspace_id=%s WHERE slug=%s",(workspace_id,project_id));c.commit()
+   linked=c.execute("INSERT INTO project_workspaces(project_id,workspace_id) VALUES (%s,%s) ON CONFLICT(project_id) DO UPDATE SET project_id=EXCLUDED.project_id WHERE project_workspaces.workspace_id=EXCLUDED.workspace_id RETURNING workspace_id",(project_id,workspace_id)).fetchone()
+   if not linked:raise ValueError("project already belongs to another workspace")
+   c.execute("UPDATE novels SET workspace_id=%s WHERE slug=%s",(workspace_id,project_id));c.commit()
   return {"id":project_id,"workspace_id":workspace_id}
  def project_workspace(self,project_id):
   with self.connection_factory() as c:row=c.execute("SELECT workspace_id FROM project_workspaces WHERE project_id=%s",(project_id,)).fetchone()
   return row[0] if row else None
+ @contextmanager
+ def project_authority_lease(self,project_id):
+  with self.connection_factory() as connection:
+   owner=connection.execute("SELECT id FROM novels WHERE slug=%s FOR KEY SHARE",(project_id,)).fetchone()
+   if owner is None:raise ValueError("project does not exist")
+   yield
+ def retire_project(self,project_id,workspace_id=None,*,session):
+  from sqlalchemy import text
+  for table in ("storyline_branches","storylines"):
+   session.execute(text(f"DELETE FROM {table} WHERE payload->>'project_id'=:p"),{"p":project_id})
+  session.execute(text("DELETE FROM project_workspaces WHERE project_id=:p"),{"p":project_id})
  def compare_and_increment(self,scope,expected_revision,enforce=True):
   from ...collaboration import RevisionConflict
   with self.connection_factory() as c:
@@ -139,6 +161,12 @@ class PostgresAuthorizationRepository:
   with self.connection_factory() as c:return [x[0] for x in c.execute(query,params).fetchall()]
  def list_role_assignments(self,principal_id=None):return self._list("domain_role_assignments",principal_id)
  def list_permission_assignments(self,principal_id=None):return self._list("permission_assignments",principal_id)
+ def retire_project(self,project_id,workspace_id=None,*,session):
+  from sqlalchemy import text
+  if workspace_id:
+   session.execute(text("SELECT pg_advisory_xact_lock(hashtextextended(:key,0))"),{"key":f"authorization:{workspace_id}"})
+  for table in ("domain_role_assignments","permission_assignments"):
+   session.execute(text(f"DELETE FROM {table} WHERE payload->'scope'->>'project_id'=:p"),{"p":project_id})
  def _revoke_with_audit(self,table,assignment_id,audit,protect_last_admin=False):
   with self.connection_factory() as c:
    workspace_id=audit["scope"]["workspace_id"]

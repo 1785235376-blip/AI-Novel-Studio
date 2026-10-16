@@ -1207,10 +1207,16 @@ def novels(x_session_token:str|None=Header(None,alias="X-Session-Token")):
 @router.post("/novels",status_code=201)
 def create_novel(body:NovelIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     actor = _shared_workspace_writer(x_session_token)
-    result = guard(novel_service.create,body.model_dump(exclude_none=True))
     if actor:
-        collaboration_scope_service.link_project(actor.workspace_id, result["id"])
-    return result
+        from .application.persistence import AtomicPathMutationPort
+        lifecycle = AtomicPathMutationPort(novel_service.novels, collaboration_scope_service.repository, authorization_service.repository)
+        def reauthorize_creation():
+            if _shared_workspace_writer(x_session_token) != actor:
+                raise HTTPException(403,{"code":"PROJECT_SCOPE_FORBIDDEN"})
+        return guard(lambda: lifecycle.create_linked_novel(body.model_dump(exclude_none=True), actor.workspace_id,
+                     link_project=collaboration_scope_service.link_project,
+                     reauthorize=reauthorize_creation))
+    return guard(novel_service.create,body.model_dump(exclude_none=True))
 @router.get("/novels/{nid}",dependencies=[Depends(_shared_project_read)])
 def get_novel(nid:str): return guard(novel_service.get,nid)
 @router.put("/novels/{nid}",dependencies=[Depends(_shared_project_write)])
@@ -1218,7 +1224,14 @@ def update_novel(nid:str,body:NovelUpdate): return guard(novel_service.update,ni
 @router.delete("/novels/{nid}",status_code=204)
 def delete_novel(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     if settings.enable_collaboration_runtime:
-        _authorize_novel_project(nid,x_session_token,"domain.write")
+        actor, scope = _authorize_novel_project(nid,x_session_token,"domain.write")
+        from .application.persistence import AtomicPathMutationPort
+        lifecycle = AtomicPathMutationPort(novel_service.novels, collaboration_scope_service.repository, authorization_service.repository)
+        def reauthorize_deletion():
+            if _authorize_novel_project(nid,x_session_token,"domain.write") != (actor,scope):
+                raise HTTPException(403,{"code":"PROJECT_SCOPE_FORBIDDEN"})
+        return guard(lambda: lifecycle.delete_project(scope.workspace_id, nid, actor,
+                     reauthorize=reauthorize_deletion))
     guard(novel_service.delete,nid)
 @router.get("/novels/{nid}/chapters",dependencies=[Depends(_shared_project_read)])
 def chapters(nid:str): return guard(chapter_service.list,nid)

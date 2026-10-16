@@ -49,8 +49,9 @@ class FileRepository:
     def update_novel(self,nid,payload):
         meta=self.get_novel(nid); meta.update({k:v for k,v in payload.items() if k in {"title","genre","status","long_term_summary","writing_goal","world_summary","world_summary_privacy_level"}}); meta["updated_at"]=now(); atomic_write(self.novels/nid/"novel.json",json.dumps(meta,ensure_ascii=False,indent=2)); return meta
     @committed_change("PROJECT")
-    @guard_project("nid")
-    def delete_novel(self,nid): shutil.rmtree(self.novels/nid)
+    def delete_novel(self,nid,*,scopes=None,authorization=None,audit_event=None,audit_append=None,reauthorize=lambda: None):
+        from .project_retirement import retire_file_project
+        return retire_file_project(self,nid,scopes=scopes,authorization=authorization,audit_event=audit_event,audit_append=audit_append,reauthorize=reauthorize)
     @guard_project("nid")
     def list_chapters(self,nid):
         root=self.novels/nid/"chapters"; out=[]

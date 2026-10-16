@@ -18,7 +18,12 @@ class CollaborationScopeService:
      paths.append({"workspace_id":workspace_id,"project_id":project_id,"storyline_id":storyline["id"],"branch_id":branch["id"],"project_name":project_name,"storyline_name":storyline["name"],"branch_name":branch["name"]})
   return sorted(paths,key=lambda x:(x["project_id"],x["storyline_id"],x["branch_id"]))
  def ensure_default_workspace(self):return self.create_workspace(Workspace(DEFAULT_WORKSPACE_ID,"Default Workspace"))
- def link_project(self,workspace_id,project_id):self.get_workspace(workspace_id);self.novels.get(project_id);return self.repository.link_project(project_id,workspace_id)
+ def link_project(self,workspace_id,project_id,*,session=None):
+  self.get_workspace(workspace_id)
+  if session is None:
+   self.novels.get(project_id)
+   return self.repository.link_project(project_id,workspace_id)
+  return self.repository.link_project(project_id,workspace_id,session=session)
  def create_storyline(self,item):
   if self.repository.project_workspace(item.project_id)!=item.workspace_id:raise ValueError("project does not belong to workspace")
   return self.repository.create("storylines",asdict(item))

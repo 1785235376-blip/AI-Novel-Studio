@@ -21,7 +21,7 @@ class FileNovelRepository:
     def create(self,payload):return self.backend.create_novel(payload)
     def get(self,novel_id):return self.backend.get_novel(novel_id)
     def update(self,novel_id,payload):return self.backend.update_novel(novel_id,payload)
-    def delete(self,novel_id):return self.backend.delete_novel(novel_id)
+    def delete(self,novel_id,**lifecycle):return self.backend.delete_novel(novel_id,**lifecycle)
     @guard_project("novel_id")
     def get_data_set(self,novel_id,name):
         rows=self.backend.data_set(novel_id,name)

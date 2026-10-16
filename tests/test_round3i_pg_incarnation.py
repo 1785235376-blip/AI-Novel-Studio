@@ -26,8 +26,7 @@ STUDIO = "/api/projects/{nid}/studio"
 
 @pytest.fixture(scope="module")
 def env():
-    if os.environ.get("PROJECT_ROOT") is None:
-        pytest.skip("requires the isolated runner")
+    assert os.environ.get("PROJECT_ROOT"), "requires the isolated runner"
     return make_env("postgres")()
 
 
@@ -62,6 +61,11 @@ def _reason(response) -> str:
     return str(body.get("code") or "")
 
 
+def _forbidden(response):
+    assert response.status_code == 403, (response.status_code, response.text[:300])
+    assert _reason(response) == "PROJECT_SCOPE_FORBIDDEN", response.text[:300]
+
+
 def test_PG_INCARNATION_same_id_recreation_and_old_authority(env, authorized):
     import app.creative.prompt_adoption_api as adopt_api
 
@@ -86,11 +90,18 @@ def test_PG_INCARNATION_same_id_recreation_and_old_authority(env, authorized):
 
     # ---- delete through the official route, then PROVE the row is gone
     deleted = e.client.delete(f"/api/novels/{slug}", headers=e.init_headers)
-    assert deleted.status_code in {200, 204}, (deleted.status_code, deleted.text[:200])
+    assert deleted.status_code == 204, (deleted.status_code, deleted.text[:200])
     gone = _novel_row(slug)
     print(f"[PG-INC] novels row after delete: {gone!r}")
     assert gone is None, "the deleted project's novels row must not survive"
     print(f"[PG-INC] project_workspaces after delete: {_binding(slug)!r}")
+    assert _binding(slug) is None, "retirement must remove the old workspace binding"
+    assert not [row for row in e.authorization.repository.list_role_assignments()
+                if row["scope"].get("project_id") == slug]
+    assert not [row for row in e.authorization.repository.list_permission_assignments()
+                if row["scope"].get("project_id") == slug]
+    assert e.scopes.repository.list("storylines", project_id=slug) == []
+    assert e.scopes.repository.list("branches", project_id=slug) == []
 
     # ---- recreate under the SAME public id: must really succeed
     title = "R3-I auth " + slug.rsplit("-", 1)[-1]
@@ -109,6 +120,29 @@ def test_PG_INCARNATION_same_id_recreation_and_old_authority(env, authorized):
     print(f"[PG-INC] new_uuid={new_uuid} binding={_binding(new_nid)!r}")
     assert new_uuid != old_uuid, "SAME_ID_RECREATION must produce a new incarnation"
 
+    # Positive control: explicitly authorize a new actor on the new incarnation,
+    # while deliberately reusing the exact public storyline and branch IDs.
+    from uuid import uuid4
+    from app.actor_context import SessionContext
+    from app.authorization import AuthorizationScope, DomainRole, DomainRoleAssignment, ModalityDomain, ScopeKind
+    from app.collaboration import Branch, Storyline
+    from app.identity import User, WorkspaceMembership
+    actor = "new-incarnation-" + uuid4().hex
+    e.scopes.create_storyline(Storyline(e.storyline, e.workspace, new_nid, "Fresh storyline"))
+    e.scopes.create_branch(Branch(e.branch, e.workspace, new_nid, e.storyline, "Fresh branch"))
+    e.identity.create_user(User(actor, actor))
+    e.identity.add_membership(WorkspaceMembership("m-" + actor, actor, e.workspace))
+    e.authorization.assign_role(DomainRoleAssignment(uuid4().hex, actor, DomainRole.DOMAIN_LEAD,
+        ModalityDomain.NOVEL, AuthorizationScope(ScopeKind.PROJECT, e.workspace, new_nid), e.init_user))
+    e.sessions.register(actor, SessionContext("session-" + actor, "client-" + actor, actor, e.workspace))
+    fresh_headers = {"X-Session-Token": actor, "X-Branch-ID": e.branch}
+    positive = e.client.post(CREATIVE.format(nid=new_nid) + "/documents", headers=fresh_headers,
+        json={"mode": "SCREENPLAY", "title": "Legitimate new incarnation", "source_independent": True,
+              "scenes": [{"id": "fresh-scene", "sequence": 1, "heading": "INT. ROOM - DAY", "action": "A visitor arrives."}]})
+    assert positive.status_code == 201, (positive.status_code, positive.text[:300])
+    positive_read = e.client.get(CREATIVE.format(nid=new_nid) + "/documents/" + positive.json()["id"], headers=fresh_headers)
+    assert positive_read.status_code == 200 and positive_read.json() == positive.json()
+
     # ================= AUTHORIZATION_ISOLATION: the DISCRIMINATING test ====================
     old_headers = {"X-Session-Token": e.writer, "X-Branch-ID": e.branch}
     created = e.client.post(CREATIVE.format(nid=new_nid) + "/documents", headers=old_headers,
@@ -117,36 +151,36 @@ def test_PG_INCARNATION_same_id_recreation_and_old_authority(env, authorized):
                                   "scenes": [{"id": "s1", "sequence": 1, "heading": "H"}]})
     print(f"[PG-INC] AUTHORIZATION old writer creates in NEW project -> "
           f"{created.status_code} {_reason(created)}")
-    assert _reason(created) != "BRANCH_SCOPE_REQUIRED", "a scope-less refusal proves nothing"
-    assert created.status_code != 201, (
-        "AUTHORIZATION_ISOLATION FAILED: the old role created a document in the recreated "
-        "project, so the same public id carried the old authority forward")
+    _forbidden(created)
 
     # ================= DATA_ISOLATION (same headers, so scope is not the reason) ============
     old_doc = e.client.get(CREATIVE.format(nid=new_nid) + f"/documents/{old_document}",
                            headers=old_headers)
     print(f"[PG-INC] DATA old document via NEW project -> {old_doc.status_code} {_reason(old_doc)}")
-    assert _reason(old_doc) != "BRANCH_SCOPE_REQUIRED"
-    assert old_doc.status_code != 200, "the old document must not be readable under the new id"
+    _forbidden(old_doc)
 
     # ================= IDEMPOTENCY_ISOLATION (request identity, not just a failing GET) =====
     projection = e.client.get(STUDIO.format(nid=new_nid) +
                               f"/documents/{old_document}/prompt-adoption", headers=old_headers)
     print(f"[PG-INC] IDEMPOTENCY projection -> {projection.status_code} {_reason(projection)}")
-    assert _reason(projection) != "BRANCH_SCOPE_REQUIRED"
-    if projection.status_code == 200:
-        rows = projection.json().get("adoptions") or []
-        assert not [r for r in rows if r.get("request_id") == old_request], \
-            "the old request_id must not be settled as an existing proof under the new project"
-    else:
-        assert projection.status_code in {401, 403, 404}, projection.status_code
+    _forbidden(projection)
 
     # ================= ASSET_ISOLATION =====================================================
     body = e.client.get(STUDIO.format(nid=new_nid) +
                         f"/prompts/{old_family}/revisions/{old_asset}/body", headers=old_headers)
     print(f"[PG-INC] ASSET old prompt via NEW project -> {body.status_code} {_reason(body)}")
-    assert _reason(body) != "BRANCH_SCOPE_REQUIRED"
-    assert body.status_code != 200, "the old Prompt asset must not be readable under the new id"
+    _forbidden(body)
+
+    # Data/asset/request isolation also holds for the freshly authorized actor.
+    assert e.client.get(CREATIVE.format(nid=new_nid) + f"/documents/{old_document}", headers=fresh_headers).status_code == 404
+    assert e.client.get(STUDIO.format(nid=new_nid) + f"/prompts/{old_family}/revisions/{old_asset}/body", headers=fresh_headers).status_code == 404
+    fresh_board = e.client.post(CREATIVE.format(nid=new_nid) + f"/documents/{positive.json()['id']}/derive",
+        headers=fresh_headers, json={"expected_version": positive.json()["version"], "mode": "STORYBOARD",
+                                    "title": "Fresh incarnation storyboard", "shot_policy": "SCENE"})
+    assert fresh_board.status_code == 201, fresh_board.text[:300]
+    new_projection = e.client.get(STUDIO.format(nid=new_nid) + f"/documents/{fresh_board.json()['id']}/prompt-adoption", headers=fresh_headers)
+    assert new_projection.status_code == 200, new_projection.text[:300]
+    assert not [row for row in new_projection.json().get("adoptions", []) if row.get("request_id") == old_request]
 
     print("[PG-INC] RESULT same_id_recreation=PASS data=PASS asset=PASS idempotency=PASS "
           "authorization=PASS")
