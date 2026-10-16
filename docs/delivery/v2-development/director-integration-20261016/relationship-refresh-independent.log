@@ -1,0 +1,40 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (23 tests) 8685ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 334ms
+   ✓ mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance 538ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块 831ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块 762ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块 726ms
+   ✓ mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch 355ms
+   ✓ mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch 340ms
+   ✓ relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes 859ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"version":3} 483ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"} 450ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"} 451ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"} 452ms
+   ✓ relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch 572ms
+ ✓ src/creative/IndependentStudioIdentity.regression.test.tsx (19 tests) 3896ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous project ABA and rejects a late list 653ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous session ABA and rejects a late list 568ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor ABA and rejects a late list 547ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous branch ABA and rejects a late list 543ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor workspace ABA and rejects a late list 531ms
+ ✓ src/creative/IndependentStudioReadFences.test.tsx (11 tests) 3534ms
+   ✓ independent asset read fences and truthful capability labels > locks mutation inputs during explicit refresh and preserves the next draft after the read finishes 872ms
+   ✓ independent asset read fences and truthful capability labels > keeps refresh inputs visible until same-version read settles, then retires the old relationship view 483ms
+   ✓ independent asset read fences and truthful capability labels > keeps refresh inputs visible until failed read settles, then retires the old relationship view 450ms
+   ✓ independent asset read fences and truthful capability labels > ignores delayed recovery after the author explicitly selects a different asset and starts a draft 381ms
+ ✓ src/creative/IndependentStudioRelationships.test.tsx (5 tests) 3238ms
+   ✓ studio relationship ownership and draft integration > keeps a relationship draft across navigation attempts and prevents other asset mutations 1161ms
+   ✓ studio relationship ownership and draft integration > saves through the original asset owner and refreshes the source version without copying a target 648ms
+   ✓ studio relationship ownership and draft integration > preserves CAS-conflicted input and source version until an explicit reload 610ms
+   ✓ studio relationship ownership and draft integration > clears selected private content when saving the relationship is revoked 386ms
+   ✓ studio relationship ownership and draft integration > prevents relation writes while a provenance draft is being edited 432ms
+
+ Test Files  4 passed (4)
+      Tests  58 passed (58)
+   Start at  05:31:46
+   Duration  25.09s (transform 1.75s, setup 29ms, collect 3.79s, tests 19.35s, environment 1.20s, prepare 195ms)
+
