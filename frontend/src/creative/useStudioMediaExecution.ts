@@ -12,6 +12,8 @@ export type StudioMediaExecutionProps = {
   client: StudioProductionClient; assets: StudioAsset[]; canMutate: boolean; canReview: boolean; busy: boolean; isBusy?: () => boolean;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onDirtyChange: (dirty: boolean) => void; onJob?: (job: ProductionJob) => void; onUnavailable: () => void; onApproved?: () => void | Promise<void>;
+  /** Explicit read-only navigation; never grants review or execution authority. */
+  onOpenApprovedAsset?: (job: ProductionJob) => void;
   externalJob?: ProductionJob;
   preparedCommand?: RecordedMediaCommand; preparedIsCurrent?: () => boolean; onPreparedClose?: () => void;
   cutoutExecution?: { execute: (job: ProductionJob) => Promise<ProductionJob>; control: (kind: 'read' | 'cancel', job: ProductionJob) => Promise<ProductionJob> };
