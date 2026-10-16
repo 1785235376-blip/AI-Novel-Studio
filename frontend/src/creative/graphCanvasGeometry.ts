@@ -1,3 +1,4 @@
+import { promoteOrphanGroups } from './graphVisualHierarchy';
 import type { StudioGraphDefinition, StudioGraphNode, StudioGraphPosition, StudioGraphViewport } from './studioGraphTypes';
 
 /** Domain geometry only; canvas chrome uses the shared design-system tokens. */
@@ -69,7 +70,31 @@ export function moveGraphNodes(definition: StudioGraphDefinition, ids: readonly 
     : node) };
 }
 
-export function graphPortPosition(node: StudioGraphNode, descriptor: GraphCanvasNodeDefinition | undefined, direction: 'input' | 'output', portId: string): StudioGraphPosition | null {
+/** Snap the grabbed anchor in world units; one bounded translation preserves every selected offset.
+ * At the coordinate boundary, preserving the group takes precedence over exact grid alignment. */
+export function snapGraphNodes(definition: StudioGraphDefinition, ids: readonly string[], anchorId: string,
+  screenDelta: StudioGraphPosition, step: number): StudioGraphDefinition {
+  const selected = new Set(ids), nodes = definition.nodes.filter(node => selected.has(node.id));
+  const anchor = nodes.find(node => node.id === anchorId);
+  if (!anchor || nodes.length !== selected.size || ![8, 16, 24, 32].includes(step)
+    || !Number.isFinite(screenDelta.x) || !Number.isFinite(screenDelta.y)
+    || nodes.some(node => !Number.isFinite(node.position.x) || !Number.isFinite(node.position.y)
+      || Math.abs(node.position.x) > GRAPH_POSITION_LIMIT || Math.abs(node.position.y) > GRAPH_POSITION_LIMIT)
+    || (!screenDelta.x && !screenDelta.y)) return definition;
+  const zoom = clampGraphZoom(definition.viewport.zoom);
+  const delta = { x: 0, y: 0 };
+  for (const axis of ['x', 'y'] as const) {
+    const desired = Math.round((anchor.position[axis] + screenDelta[axis] / zoom) / step) * step - anchor.position[axis];
+    const minimum = Math.max(...nodes.map(node => -GRAPH_POSITION_LIMIT - node.position[axis]));
+    const maximum = Math.min(...nodes.map(node => GRAPH_POSITION_LIMIT - node.position[axis]));
+    delta[axis] = Math.max(minimum, Math.min(maximum, desired));
+  }
+  if (!delta.x && !delta.y) return definition;
+  return { ...definition, nodes: definition.nodes.map(node => selected.has(node.id)
+    ? { ...node, position: { x: node.position.x + delta.x, y: node.position.y + delta.y } } : node) };
+}
+
+export function graphPortPosition(node: Pick<StudioGraphNode, 'position'>, descriptor: GraphCanvasNodeDefinition | undefined, direction: 'input' | 'output', portId: string): StudioGraphPosition | null {
   const ports = direction === 'input' ? descriptor?.inputs : descriptor?.outputs;
   const index = ports?.findIndex(port => port.id === portId) ?? -1;
   if (index < 0) return null;
@@ -83,9 +108,42 @@ export function graphEdgePath(source: StudioGraphPosition, target: StudioGraphPo
 
 export function removeGraphNodes(definition: StudioGraphDefinition, ids: readonly string[], protectedIds: readonly string[] = []): StudioGraphDefinition {
   const protectedSet = new Set(protectedIds), removed = new Set(ids.filter(id => !protectedSet.has(id)));
-  return { ...definition, nodes: definition.nodes.filter(node => !removed.has(node.id)), edges: definition.edges.filter(edge => !removed.has(edge.source_node_id) && !removed.has(edge.target_node_id)) };
+  const next = { ...definition, nodes: definition.nodes.filter(node => !removed.has(node.id)), edges: definition.edges.filter(edge => !removed.has(edge.source_node_id) && !removed.has(edge.target_node_id)) };
+  if (definition.presentation?.groups) {
+    next.presentation = { ...definition.presentation };
+    const groups = promoteOrphanGroups(definition.presentation.groups.map(group => ({ ...group, node_ids: group.node_ids.filter(id => !removed.has(id)) })).filter(group => group.node_ids.length));
+    if (groups.length) next.presentation.groups = groups;
+    else delete next.presentation.groups;
+    if (!Object.keys(next.presentation).length) delete next.presentation;
+  }
+  return next;
 }
 
 export function isGraphEditableTarget(target: EventTarget | null): boolean {
   return target instanceof Element && Boolean(target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'));
+}
+
+export type GraphAlignment = 'left' | 'center' | 'top' | 'distribute';
+
+/** Selected presentation only. Reject invalid inputs rather than silently repairing stored geometry. */
+export function alignGraphNodes(definition: StudioGraphDefinition, ids: readonly string[], mode: GraphAlignment): StudioGraphDefinition {
+  const selected = new Set(ids), nodes = definition.nodes.filter(node => selected.has(node.id));
+  if (nodes.length !== selected.size || nodes.length < (mode === 'distribute' ? 3 : 2)
+    || nodes.some(node => !Number.isFinite(node.position.x) || !Number.isFinite(node.position.y)
+      || Math.abs(node.position.x) > GRAPH_POSITION_LIMIT || Math.abs(node.position.y) > GRAPH_POSITION_LIMIT)) return definition;
+  const xs = nodes.map(node => node.position.x), ys = nodes.map(node => node.position.y);
+  const left = Math.min(...xs), right = Math.max(...xs), top = Math.min(...ys);
+  // All rendered cards have the same width, so equal left-coordinate spacing also gives equal gaps.
+  const ordered = [...nodes].sort((a, b) => a.position.x - b.position.x || a.id.localeCompare(b.id));
+  const distributed = new Map(ordered.map((node, index) => [node.id, left + (right - left) * index / (nodes.length - 1)]));
+  let changed = false;
+  const next = definition.nodes.map(node => {
+    if (!selected.has(node.id)) return node;
+    const position = mode === 'top' ? { ...node.position, y: top } : { ...node.position,
+      x: mode === 'left' ? left : mode === 'center' ? (left + right) / 2 : distributed.get(node.id)! };
+    if (position.x === node.position.x && position.y === node.position.y) return node;
+    changed = true;
+    return { ...node, position };
+  });
+  return changed ? { ...definition, nodes: next } : definition;
 }

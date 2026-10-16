@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { Chapter } from '../api';
+import { judgeRevisionFinding, type JudgeRevisionIntent } from './judgeRevisionHandoff';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { NarrativeJudgeRevisionTaskPanel } from './NarrativeJudgeRevisionTaskPanel';
@@ -8,7 +9,7 @@ import { ErrorMessage, Field, ResourceState, useResource } from './shared';
 import type { WorkspaceNavigation } from './uxClient';
 import { styleReviewClient, useReviewAction, type JudgeFinding, type JudgeRun, type StyleReviewClient } from './styleReviewClient';
 
-type Props = { client: ExperimentalClient; requestedJobId?: string; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void };
+type Props = { client: ExperimentalClient; requestedJobId?: string; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void; onPrepareRevision?: (intent: JudgeRevisionIntent) => void };
 const decisions = { PENDING: '待核对', REVIEWED: '已核对', ACCEPTED: '已接受建议', IGNORED: '已忽略', INTENTIONAL: '有意安排' };
 const categoryLabels: Record<string, string> = { REPETITION: '重复', PARAGRAPH: '段落', PUNCTUATION: '标点', STRUCTURE: '结构', NARRATIVE: '叙事', STYLE: '文风', CONTINUITY: '连续性', READABILITY: '可读性', CHARACTER: '人物', WORLD_CONSISTENCY: '世界一致性', PACING: '节奏', DIALOGUE: '对白', FORESHADOWING: '伏笔', SCENE_PURPOSE: '场景目的', SUBPLOT: '支线' };
 const checkLabels: Record<string, string> = { EXACT_REPEATED_PARAGRAPH: '完全重复的段落', REVIEWED_WORLD_CONFLICT: '已审核世界资料的冲突' };
@@ -17,7 +18,7 @@ export function NarrativeJudgePanel(props: Props) {
   const identity = useMemo(() => ++scopeSequence, [props.client]);
   return <NarrativeJudgeBody key={identity} {...props} />;
 }
-function NarrativeJudgeBody({ client, chapter, onNavigate, requestedJobId }: Props) {
+function NarrativeJudgeBody({ client, chapter, onNavigate, requestedJobId, onPrepareRevision }: Props) {
   const api = useMemo(() => styleReviewClient(client), [client]);
   const catalog = useResource(signal => api.judgeCatalog(signal), [api]);
   const runs = useResource(async signal => ({ ...(await api.runs(signal)), requestedJobId }), [api, requestedJobId]);
@@ -81,12 +82,12 @@ function NarrativeJudgeBody({ client, chapter, onNavigate, requestedJobId }: Pro
         {!run.stale && run.findings.some(row => row.decision === 'INTENTIONAL') && !decision && <StatusMessage>有意安排的重复线索已收起。选择“有意安排”可查看或重新打开。</StatusMessage>}
         {!run.stale && !run.findings.length && <EmptyState title="规则未发现匹配线索" detail="这不代表情节、人物动机或文学质量已经通过审查；请结合上方判断边界继续阅读。" />}
         {!!run.findings.length && !filtered.length && <EmptyState title="当前筛选没有结果" detail="更改决定或类别筛选，可查看其他检查线索。" />}
-        <div className="experimental-list">{run.findings.map(finding => <div key={`${run.id}:${finding.id}`} hidden={!filtered.some(row => row.id === finding.id)}><FindingReview api={api} action={action} finding={finding} run={run} chapter={chapter} onNavigate={onNavigate} draft={reviewDrafts[finding.id] || { reason: '', linkRevision: false }} onDraftChange={value => setReviewDrafts(drafts => ({ ...drafts, [finding.id]: value }))} onChanged={() => { detail.reload(); runs.reload(); }} /></div>)}</div>
+        <div className="experimental-list">{run.findings.map(finding => <div key={`${run.id}:${finding.id}`} hidden={!filtered.some(row => row.id === finding.id)}><FindingReview api={api} action={action} finding={finding} run={run} chapter={chapter} onNavigate={onNavigate} onPrepareRevision={onPrepareRevision} draft={reviewDrafts[finding.id] || { reason: '', linkRevision: false }} onDraftChange={value => setReviewDrafts(drafts => ({ ...drafts, [finding.id]: value }))} onChanged={() => { detail.reload(); runs.reload(); }} /></div>)}</div>
       </>}
     </Panel>
   </section>;
 }
-function FindingReview({ api, action, finding, run, chapter, onNavigate, onChanged, draft, onDraftChange }: { api: StyleReviewClient; action: ReturnType<typeof useReviewAction>; finding: JudgeFinding; run: JudgeRun; chapter?: Chapter; onNavigate?: Props['onNavigate']; onChanged: () => void; draft: { reason: string; linkRevision: boolean }; onDraftChange: (draft: { reason: string; linkRevision: boolean }) => void }) {
+function FindingReview({ api, action, finding, run, chapter, onNavigate, onChanged, draft, onDraftChange, onPrepareRevision }: { api: StyleReviewClient; action: ReturnType<typeof useReviewAction>; finding: JudgeFinding; run: JudgeRun; chapter?: Chapter; onNavigate?: Props['onNavigate']; onPrepareRevision?: Props['onPrepareRevision']; onChanged: () => void; draft: { reason: string; linkRevision: boolean }; onDraftChange: (draft: { reason: string; linkRevision: boolean }) => void }) {
   const { reason, linkRevision } = draft;
   const stale = run.stale || finding.stale;
   const canLinkRevision = !!chapter && run.findings.some(row => row.evidence.some(proof => proof.chapter_id === chapter.id));
@@ -101,7 +102,10 @@ function FindingReview({ api, action, finding, run, chapter, onNavigate, onChang
     <p>{finding.explanation}</p><p>建议：{finding.suggestion}</p><StatusMessage>判断边界：{finding.boundary}</StatusMessage>
     {stale && <StatusMessage tone="warning">来源已变化，此线索保留供历史核对。请重新检查最新来源，不能继续据此修改审核决定。</StatusMessage>}
     {!finding.evidence.length && <StatusMessage tone="warning">此线索没有可定位的原文证据，不能据此推断全章结论。</StatusMessage>}
-    {finding.evidence.map((evidence, index) => <section key={`${evidence.chapter_id}:${index}`} aria-label={`原文证据 ${index + 1}`}><p>来源章节 {evidence.chapter_id} · v{evidence.chapter_version} · 段落 {evidence.paragraph} · 原始 Markdown 字符范围 {evidence.start}–{evidence.end}（结束位置不含）</p><Field label={`证据 ${finding.id}-${index + 1} 原文`}><textarea readOnly value={evidence.quote} /></Field><Button disabled={!onNavigate || stale || action.busy} onClick={() => onNavigate?.({ kind: 'chapter', id: evidence.chapter_id, version: evidence.chapter_version })}>打开此证据来源章节 {index + 1}</Button></section>)}
+    {finding.evidence.map((evidence, index) => <section key={`${evidence.chapter_id}:${index}`} aria-label={`原文证据 ${index + 1}`}><p>来源章节 {evidence.chapter_id} · v{evidence.chapter_version} · 段落 {evidence.paragraph} · 原始 Markdown 字符范围 {evidence.start}–{evidence.end}（结束位置不含）</p><Field label={`证据 ${finding.id}-${index + 1} 原文`}><textarea readOnly value={evidence.quote} /></Field><Button disabled={!onNavigate || stale || action.busy} onClick={() => onNavigate?.({ kind: 'chapter', id: evidence.chapter_id, version: evidence.chapter_version })}>打开此证据来源章节 {index + 1}</Button>{onPrepareRevision && <Button disabled={action.busy || !judgeRevisionFinding({ runId: run.id, runVersion: run.version, findingId: finding.id, findingVersion: finding.version, evidenceIndex: index, evidence }, run, chapter)} onClick={() => {
+      const intent = { runId: run.id, runVersion: run.version, findingId: finding.id, findingVersion: finding.version, evidenceIndex: index, evidence: { ...evidence } };
+      if (!action.busy && judgeRevisionFinding(intent, run, chapter)) onPrepareRevision(intent);
+    }}>针对证据 {index + 1} 准备原文修订</Button>}</section>)}
     {finding.decision === 'INTENTIONAL' && <StatusMessage>有意安排：相同原文段落、重复位置和检查依据的后续线索将继续收起。改变证据会重新提示。可在此明确重新打开；不会静默改稿。</StatusMessage>}
     {finding.intentional_reused && <p>已复用此前对此相同证据的有意安排决定。旧检查的私人理由未复制到本次来源。</p>}
     {finding.revision && <p>已关联修订：{finding.revision.chapter_id} · v{finding.revision.version}。此关联不代表已自动修正。</p>}

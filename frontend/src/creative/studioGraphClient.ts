@@ -332,6 +332,62 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
   const viewport = record(row.viewport, input);
   const result: StudioGraphDefinition = { schema_version: row.schema_version, title: text(row.title, 160, input), nodes, edges,
     viewport: { ...position(viewport, input), zoom: number(viewport.zoom, 0.35, 2.5, input) } };
+  if (row.presentation !== undefined) {
+    const presentation = record(row.presentation, input);
+    if (!Object.keys(presentation).length || Object.keys(presentation).some(key => !['comment', 'groups', 'view', 'notes'].includes(key))) invalid(input);
+    result.presentation = {};
+    if (presentation.notes !== undefined) {
+      if (!Array.isArray(presentation.notes) || !presentation.notes.length || presentation.notes.length > 128) invalid(input);
+      const ids = new Set<string>();
+      result.presentation.notes = presentation.notes.map(value => {
+        const note = record(value, input), point = record(note.position, input);
+        if (Object.keys(note).length !== 3 || Object.keys(note).some(key => !['id', 'text', 'position'].includes(key))
+          || Object.keys(point).length !== 2 || Object.keys(point).some(key => !['x', 'y'].includes(key))) invalid(input);
+        const id = text(note.id, 64, input), content = text(note.text, 512, input, true);
+        if (!/^[A-Za-z][A-Za-z0-9_-]{0,63}(?![\s\S])/.test(id) || ids.has(id) || Array.from(content).length > 256) invalid(input);
+        ids.add(id); return { id, text: content, position: position(point, input) };
+      });
+      if (result.presentation.notes.reduce((sum, note) => sum + Array.from(note.text).length, 0) > 12000) invalid(input);
+    }
+    if (presentation.comment !== undefined) {
+      const comment = text(presentation.comment, 4000, input, true);
+      if (Array.from(comment).length > 2000) invalid(input);
+      result.presentation.comment = comment;
+    }
+    if (presentation.view !== undefined) {
+      const view = record(presentation.view, input);
+      if (Object.keys(view).length !== 4 || Object.keys(view).some(key => !['show_grid', 'snap', 'grid_step', 'show_minimap'].includes(key))
+        || typeof view.show_grid !== 'boolean' || typeof view.snap !== 'boolean' || typeof view.show_minimap !== 'boolean'
+        || typeof view.grid_step !== 'number' || ![8, 16, 24, 32].includes(view.grid_step)) invalid(input);
+      result.presentation.view = { show_grid: view.show_grid as boolean, snap: view.snap as boolean,
+        grid_step: view.grid_step as 8 | 16 | 24 | 32, show_minimap: view.show_minimap as boolean };
+    }
+    if (presentation.groups !== undefined) {
+      if (!Array.isArray(presentation.groups) || !presentation.groups.length || presentation.groups.length > 24) invalid(input);
+      const ids = new Set<string>(), members = new Set<string>();
+      result.presentation.groups = presentation.groups.map(value => {
+        const group = record(value, input);
+        if (Object.keys(group).some(key => !['id', 'name', 'node_ids', 'parent_id'].includes(key))) invalid(input);
+        const groupId = text(group.id, 64, input), name = text(group.name, 160, input);
+        if (!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(groupId) || ids.has(groupId) || Array.from(name).length > 80) invalid(input);
+        ids.add(groupId);
+        if (!Array.isArray(group.node_ids) || !group.node_ids.length || group.node_ids.length > 24) invalid(input);
+        const node_ids = group.node_ids.map(value => {
+          const member = text(value, 64, input);
+          if (!nodeMap.has(member) || members.has(member)) invalid(input);
+          members.add(member); return member;
+        });
+        const parent_id = group.parent_id === undefined ? undefined : text(group.parent_id, 64, input);
+        return { id: groupId, name, node_ids, ...(parent_id === undefined ? {} : { parent_id }) };
+      });
+      for (const group of result.presentation.groups) {
+        if (group.parent_id !== undefined) {
+          const parent = result.presentation.groups.find(item => item.id === group.parent_id);
+          if (!parent || parent.id === group.id || parent.parent_id !== undefined) invalid(input);
+        }
+      }
+    }
+  }
   if (new TextEncoder().encode(JSON.stringify(result)).length > 96_000) invalid(input);
   return result;
 }

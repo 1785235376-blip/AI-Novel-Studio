@@ -404,6 +404,21 @@ describe('canvas ops rail · frozen composition', () => {
     expect(preview.textContent).toContain('change()');
   });
 
+  it('applies only by explicit original-owner callback and disables readonly, no-op and preview-only consumers', () => {
+    const onApplyLayout = vi.fn(), props = railProps({ onApplyLayout });
+    const view = render(<CanvasOpsRail {...props}/>);
+    expect(onApplyLayout).not.toHaveBeenCalled();
+    fireEvent.click(button('应用自动布局到草稿'));
+    expect(onApplyLayout).toHaveBeenCalledTimes(1);
+    for (const patch of [{ editable: false }, { onApplyLayout: undefined },
+      { definition: autoLayout(props.definition, { definitions: catalog.definitions }) }, { definition: graph({ nodes: [] }) }]) {
+      view.rerender(<CanvasOpsRail {...props} {...patch}/>);
+      expect(button('应用自动布局到草稿').disabled).toBe(true);
+      fireEvent.click(button('应用自动布局到草稿'));
+    }
+    expect(onApplyLayout).toHaveBeenCalledTimes(1);
+  });
+
   it('reports whether the current draft really differs from the saved definition', () => {
     const { container } = render(<CanvasOpsRail {...railProps()}/>);
     expect(container.querySelector('[data-canvas-ops-dirty]')!.getAttribute('data-canvas-ops-dirty')).toBe('false');

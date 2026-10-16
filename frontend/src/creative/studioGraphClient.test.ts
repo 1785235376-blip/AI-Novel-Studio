@@ -57,6 +57,96 @@ beforeEach(() => { fetchMock = vi.fn().mockResolvedValue(reply(graph())); vi.stu
 afterEach(() => { vi.unstubAllGlobals(); useLocalHostSession.setState({ token: '', actorId: '' }); });
 
 describe('scoped graph transport', () => {
+  it.each([1, 2, 3, 4, 5] as const)('roundtrips optional presentation through original transport schema %s', async schema_version => {
+    const original = graph(); original.definition = { ...definition(), schema_version, nodes: [], edges: [] };
+    fetchMock.mockResolvedValue(reply(original));
+    const client = studioClient(projectId, context()).graphs;
+    expect((await client.get(graphId)).definition).toEqual(original.definition);
+    expect((await client.get(graphId)).definition).not.toHaveProperty('presentation');
+    original.definition.presentation = { comment: '🎬'.repeat(2000), view: { show_grid: false, snap: true, grid_step: 32, show_minimap: false } };
+    fetchMock.mockResolvedValue(reply(original));
+    expect((await client.get(graphId)).definition).toEqual(original.definition);
+    expect((await client.save(graphId, { expected_version: 3, definition: original.definition })).definition).toEqual(original.definition);
+    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
+  });
+  it.each([1, 2, 3, 4, 5] as const)('roundtrips 128 display notes in schema %s independently of DAG', async schema_version => {
+    const original = graph(); original.definition = { ...definition(), schema_version, nodes: [], edges: [],
+      presentation: { notes: Array.from({ length: 128 }, (_, i) => ({ id: `n${i}`, text: `Scene ${i} 🎬 <b>plain</b>`, position: { x: i * 300, y: 0 } })) } };
+    fetchMock.mockResolvedValue(reply(original));
+    const client = studioClient(projectId, context()).graphs;
+    expect((await client.get(graphId)).definition).toEqual(original.definition);
+    await client.save(graphId, { expected_version: 3, definition: original.definition });
+    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
+  });
+  it.each([null, [], [{}], ...['n\n', 'n\r'].map(id => ({ id, text: '', position: { x: 0, y: 0 } })).map(note => [note]), [{ id: 'n', text: '🎬'.repeat(257), position: { x: 0, y: 0 } }],
+    [{ id: 'n', text: '', position: { x: 100001, y: 0 } }],
+    [{ id: 'n', text: '', position: { x: 0, y: 0 }, ports: [] }],
+    Array.from({ length: 129 }, (_, i) => ({ id: `n${i}`, text: '', position: { x: 0, y: 0 } })),
+    Array.from({ length: 47 }, (_, i) => ({ id: `n${i}`, text: 'a'.repeat(256), position: { x: 0, y: 0 } })),
+    [{ id: 'n', text: '', position: { x: 0, y: 0 } }, { id: 'n', text: '', position: { x: 0, y: 0 } }]])('rejects malformed display notes %j', async notes => {
+    const original = graph();
+    fetchMock.mockResolvedValue(reply({ ...original, definition: { ...original.definition, presentation: { notes } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toThrow();
+  });
+  it.each([null, {}, { show_grid: 1, snap: false, grid_step: 24, show_minimap: true },
+    { show_grid: true, snap: false, grid_step: 48, show_minimap: true },
+    { show_grid: true, snap: false, grid_step: NaN, show_minimap: true },
+    { show_grid: true, snap: false, grid_step: Infinity, show_minimap: true },
+    { show_grid: true, snap: false, grid_step: '２４', show_minimap: true },
+    { show_grid: true, snap: false, grid_step: 24, show_minimap: true, execute: true }])('rejects invalid view preferences %j', async view => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition, presentation: { view } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
+  });
+  it.each([null, {}, { comment: 1 }, { comment: 'x'.repeat(2001) }, { comment: '🎬'.repeat(2001) }, { comment: 'x', groups: [] }])('rejects malformed annotation from transport: %j', async presentation => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition, presentation } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
+  });
+
+  it.each([1, 2, 3, 4, 5] as const)('roundtrips groups and exact annotations in schema %s', async schema_version => {
+    const value = graph(); value.definition = { ...definition(), schema_version, nodes: [definition().nodes[0]], edges: [],
+      presentation: { comment: '  🎬\n', groups: [{ id: 'g', name: '🎬'.repeat(80), node_ids: ['source'] }] } };
+    fetchMock.mockResolvedValue(reply(value));
+    const client = studioClient(projectId, context()).graphs;
+    expect((await client.get(graphId)).definition).toEqual(value.definition);
+    expect((await client.save(graphId, { expected_version: 3, definition: value.definition })).definition).toEqual(value.definition);
+    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(value.definition);
+  });
+  it.each([1, 2, 3, 4, 5] as const)('roundtrips two-level presentation only in schema %s', async schema_version => {
+    const value = graph(); value.definition = { ...definition(), schema_version, nodes: [definition().nodes[0], { ...definition().nodes[0], id: 'draft' }], edges: [],
+      presentation: { groups: [{ id: 'root', name: 'Root', node_ids: ['source'] }, { id: 'child', name: 'Child', node_ids: ['draft'], parent_id: 'root' }] } };
+    fetchMock.mockResolvedValue(reply(value));
+    expect((await studioClient(projectId, context()).graphs.get(graphId)).definition).toEqual(value.definition);
+  });
+  it.each(['missing', 'g', null, 1])('rejects invalid parent %j', async parent_id => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition,
+      presentation: { groups: [{ id: 'g', name: 'Group', node_ids: ['source'], parent_id }] } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
+  });
+  it('rejects cyclic parent links from transport', async () => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition,
+      presentation: { groups: [{ id: 'g', name: 'Group', node_ids: ['source'], parent_id: 'h' },
+        { id: 'h', name: 'Other', node_ids: ['draft'], parent_id: 'g' }] } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
+  });
+  it.each([null, [], {}, [null],
+    [{ id: 'g', name: '', node_ids: ['source'] }], [{ id: 'g', name: ' ', node_ids: ['source'] }],
+    [{ id: 'g', name: '🎬'.repeat(81), node_ids: ['source'] }], [{ id: '1g', name: 'Name', node_ids: ['source'] }],
+    [{ id: 'g', name: 'Name', node_ids: [] }], [{ id: 'g', name: 'Name', node_ids: ['missing'] }],
+    [{ id: 'g', name: 'Name', node_ids: ['source', 'source'] }],
+    [{ id: 'g', name: 'Name', node_ids: ['source'], collapsed: true }],
+    [{ id: 'g', name: 'Name', node_ids: ['source'] }, { id: 'other', name: 'Other', node_ids: ['source'] }],
+    [{ id: 'g', name: 'Name', node_ids: ['source'] }, { id: 'g', name: 'Other', node_ids: ['draft'] }],
+    Array.from({ length: 25 }, () => ({ id: 'g', name: 'Name', node_ids: ['source'] })),
+  ])('rejects invalid groups in original transport: %j', async groups => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition, presentation: { groups } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
+  });
+
   it('reuses captured Studio credentials and branch for all graph endpoints', async () => {
     const origin = context(), client = studioClient(projectId, origin).graphs, signal = new AbortController().signal;
     origin.sessionToken = 'later-session'; origin.scope!.branchId = 'later-branch'; origin.scope!.workspaceId = 'later-workspace';

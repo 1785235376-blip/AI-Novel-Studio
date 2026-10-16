@@ -133,7 +133,7 @@ export const MODEL_CENTER_READINESS_LABELS: Readonly<Record<ModelCenterReadiness
 });
 
 /** 界面状态机的显式取值。读取失败永不渲染成"没有可用模型"。 */
-export const MODEL_CENTER_SURFACE_STATES = ['IDLE', 'LOADING', 'READY', 'EMPTY', 'DENIED', 'FAILED'] as const;
+export const MODEL_CENTER_SURFACE_STATES = ['IDLE', 'LOADING', 'READY', 'EMPTY', 'PARTIAL', 'DENIED', 'FAILED'] as const;
 export type ModelCenterSurfaceState = typeof MODEL_CENTER_SURFACE_STATES[number];
 
 /** 凭据的三态；`expired` 只能来自 owner 自己声明的过期事实。 */

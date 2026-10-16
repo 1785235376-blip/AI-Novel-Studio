@@ -214,7 +214,7 @@ export function usePromptWorkspace(options: Options) {
         // The previous family's comparison belongs to that family. Leaving it in place would
         // show family A's plaintext diff under family B — reproduced in
         // PromptWorkspace.scoping.test.tsx before this fix.
-        return { ...prev, detail, draft, loading: false, conflictCode: null,
+        return { ...prev, detail, draft, loading: false, conflictCode: null, fieldError: null,
           compare: { from: null, to: null, loading: false, error: null } };
       });
     } catch (reason) {

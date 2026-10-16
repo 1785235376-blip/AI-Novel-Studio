@@ -1,0 +1,98 @@
+{
+  "baseline_commit": "9958852998530ffb392ca435100c48fbc0165820",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/GraphDirectorStoryboardHandoff.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/CreativeWorkspace.test.tsx src/creative/AIDirectorPanel.test.tsx src/creative/studioGraphClient.test.ts src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T09:33:39.129651+00:00",
+      "finished_utc": "2026-10-16T09:34:01.070920+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/director-handoff-ui-final-r2.log",
+      "log_sha256": "09043d4301c7112f6172a9663e4b42768fb78fc80a85a0d816c0ac0d940eb656",
+      "receipt": "docs/delivery/v2-development/director-handoff-ui-final-r2.json",
+      "receipt_sha256": "e6b6843835f4c224d82c6f845e461fc9c0b710f36ab8b8c7765743baf1642197"
+    },
+    {
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-usability/../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_director_handoff_reopen.py::test_original_director_derive_reopen_and_edit[file]",
+        "tests/test_v2_director_storyboard_production.py::test_explicit_director_note_derivation_keeps_each_shot_and_source_immutable[file]",
+        "tests/test_v2_director_storyboard_production.py::test_independent_director_and_storyboard_persist_without_novel_source[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/director-handoff-file-public-final-r2/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T09:33:42.383537+00:00",
+      "finished_utc": "2026-10-16T09:33:53.082482+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/director-handoff-file-public-final-r2.log",
+      "log_sha256": "84d54f37da5bbb5e3601ce5de9b2180401565a0968cf0086286f3e6fcbcd824a",
+      "receipt": "docs/delivery/v2-development/director-handoff-file-public-final-r2.json",
+      "receipt_sha256": "f4f35f64807a77b6ed50f512721a3b75cd1ed6f071cf59b36309bcf5e74699b6"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T09:33:40.893478+00:00",
+      "finished_utc": "2026-10-16T09:34:16.891768+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/director-handoff-build-final-r2.log",
+      "log_sha256": "6f0ebe112ca7f608a9d3529fdb21a8ec582da78ff2cad44d5b2725711076e78f",
+      "receipt": "docs/delivery/v2-development/director-handoff-build-final-r2.json",
+      "receipt_sha256": "214afd826c3da120f1c513bc8281a316b547a200016bbc35dbb443ccbb26d326"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for (const p of [\"frontend/src/creative/GraphDirectorConsole.tsx\", \"frontend/src/creative/GraphDirectorStoryboardHandoff.tsx\"]) if (/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Scoped color/token guard PASS; native visual acceptance NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T09:34:57.280658+00:00",
+      "finished_utc": "2026-10-16T09:34:57.373991+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/director-handoff-token-scope.log",
+      "log_sha256": "c0a3f3c8f7566ca12170e4e76ed924e42a0b6560342f53da2ef38284ee026c94",
+      "receipt": "docs/delivery/v2-development/director-handoff-token-scope.json",
+      "receipt_sha256": "2a355add71de278884fee39047c0970414b08542d815578d6218fc22dc21263b"
+    }
+  ],
+  "changed_source_sha256": {
+    "frontend/src/creative/GraphDirectorConsole.tsx": "62d9570d91a6c3528b464c1896816f1e284290582c198bda319e96dac4e0a7e4",
+    "frontend/src/creative/GraphDirectorConsole.test.tsx": "75b467feef0fc967caa2218241c4529cd6b225672765cb3d48e88afcbb991229",
+    "frontend/src/creative/GraphDirectorStoryboardHandoff.tsx": "6955f60a7117c4e74f4f33d5c70e699dc7afca0b32946434e8dc2084fb1945f6",
+    "frontend/src/creative/GraphDirectorStoryboardHandoff.test.tsx": "3f485bfec0763e0b4f6ba39bd348bfd65faa172b520bf8f23c866c6b789e6a14",
+    "frontend/src/creative/StudioProductionGraphEditor.test.tsx": "af8354a1dfbbda8454490cc1c3cd248e096ada0454fb5a0d3ce3ced3320ed088",
+    "tests/test_v2_director_handoff_reopen.py": "81ad8bea7fd08f1abadfc991d577f610d88338bc07d1aa42f22a6b6230316d4a"
+  },
+  "not_run": [
+    "browser/visual/native input",
+    "PostgreSQL/P0/security",
+    "Windows/GPU/real provider",
+    "hosted CI",
+    "full RC"
+  ],
+  "boundaries": {
+    "P0": "BLOCKED",
+    "R3_GATE": "HOLD",
+    "prompt_adoption_write": false,
+    "push": false,
+    "public_source_file_count": 487
+  }
+}

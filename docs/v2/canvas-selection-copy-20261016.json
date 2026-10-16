@@ -1,0 +1,114 @@
+{
+  "baseline_commit": "f27d6ebf028879badf444c81d789d759c2943433",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/graphSelectionCopy.test.ts src/creative/graphSelectionCopyController.test.tsx src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/canvasops/canvasOps.test.ts src/canvasops/canvasOpsPanels.test.tsx"
+      ],
+      "started_utc": "2026-10-16T09:52:17.702408+00:00",
+      "finished_utc": "2026-10-16T09:52:38.143729+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-copy-final-ui-r2.json",
+      "receipt_sha256": "f69f4248c147375e1185f140b64049c1541cc7e3d20536d42389f064f4f54876",
+      "log": "docs/delivery/v2-development/canvas-copy-final-ui-r2.log",
+      "log_sha256": "f225f7a8baefdf312f4ed3cc03a4865041e54b6c71c9703658b7e2f59b2956c1"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_graph_persistence.py::test_selected_subgraph_copy_original_owner_reopen_and_restore[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-copy-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T09:51:08.233051+00:00",
+      "finished_utc": "2026-10-16T09:51:16.443168+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-copy-file.json",
+      "receipt_sha256": "26d1cb58c22369fded8da1ece2d3b41f4c1e4268769630d3ec5ec661fa583c83",
+      "log": "docs/delivery/v2-development/canvas-copy-file.log",
+      "log_sha256": "0c1078e48168017cc2f62e61f0c83ceeb52df7366d42e4b185a34c4ed36463b2"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T09:52:19.260471+00:00",
+      "finished_utc": "2026-10-16T09:52:52.558916+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-copy-final-build-r2.json",
+      "receipt_sha256": "f8f9025105d170267c9cb6b65831f12eee4fb804d0311550c9de9707620010fa",
+      "log": "docs/delivery/v2-development/canvas-copy-final-build-r2.log",
+      "log_sha256": "c71e2d8b76d09fd559199b01fcbda2781510f91a073da7494ca7be297c9b1543"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for (const p of [\"frontend/src/creative/studioGraphEditorView.tsx\", \"frontend/src/creative/graphSelectionCopy.ts\"]) if (/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Scoped token/color check PASS; visual browser acceptance NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T09:52:37.935756+00:00",
+      "finished_utc": "2026-10-16T09:52:38.007799+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-copy-token.json",
+      "receipt_sha256": "a76f1d3fd6fdf2f6c1874fcae250e30d0c6b674e6769c12147756fa15f29fe81",
+      "log": "docs/delivery/v2-development/canvas-copy-token.log",
+      "log_sha256": "282be1324ac8b80cf8e180bac535f8de61166aa290813f08f289988e4f424d82"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/graphSelectionCopy.test.ts src/creative/graphSelectionCopyController.test.tsx && ./node_modules/.bin/tsc -b"
+      ],
+      "started_utc": "2026-10-16T09:54:28.030664+00:00",
+      "finished_utc": "2026-10-16T09:54:54.186312+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-copy-review-tests.json",
+      "receipt_sha256": "38f1391a5ec851ad0a6ce9251b92b81969bf0d91fec7c2b2226b3557285f3876",
+      "log": "docs/delivery/v2-development/canvas-copy-review-tests.log",
+      "log_sha256": "2b81bef4236e5c9d0deef529a7266a2eeb22f75bf75ae72631fec1ce21aa2bae"
+    }
+  ],
+  "changed_source_sha256": {
+    "frontend/src/creative/graphSelectionCopy.ts": "c4341ef9113fc9b5a216581ab34cf3b0d4933dbdcd0623903e087b04257cb075",
+    "frontend/src/creative/graphSelectionCopy.test.ts": "cfd2cc07b7743724742f08841c11a2d9ccaaed32011bb60ea459820270518910",
+    "frontend/src/creative/graphSelectionCopyController.test.tsx": "f2f6570144b83cdce7e9ba8a03884795ff2103342a6fccb0c4b4b28282c3f581",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "6ee4a4c8679e1075c93dbb9c59169a9bfeb435f02f219b6edd8d2b06c5733db3",
+    "frontend/src/creative/studioGraphEditorView.tsx": "1be54d09d65c18aa80caa3384423158871e323d3de58d001c76f9b5cdccb3819",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "7bb15692c810118f426ba19639dabfbe94f3fd7fa8920f4145ceb22df11f531b",
+    "tests/test_v2_creative_graph_persistence.py": "db6328cec5ee08a5c9b0225f6a249cfe49d41e1cc7f89af19378d5f19cffca30"
+  },
+  "failed_receipts_retained": [
+    "docs/delivery/v2-development/canvas-copy-ui.json",
+    "docs/delivery/v2-development/canvas-copy-build.json"
+  ],
+  "scope": "same-graph exact-draft preview/paste only; cross-canvas remains open",
+  "not_run": [
+    "browser/visual/native input",
+    "PG/P0/security",
+    "GPU/provider/Windows/user computer",
+    "full RC",
+    "hosted CI"
+  ],
+  "push": "NOT_ATTEMPTED_COST_UNKNOWN",
+  "review_additions": "18 focused tests plus tsc passed after strengthening tests only; production code unchanged from c9df4e9"
+}

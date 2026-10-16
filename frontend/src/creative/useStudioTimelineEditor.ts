@@ -1,3 +1,4 @@
+import type { TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import type { StudioAsset } from './studioClient';
@@ -16,6 +17,7 @@ export type StudioTimelineEditorProps = {
   onDirtyChange: (dirty: boolean) => void; onJob: (job: StudioTimelineJob) => void; onUnavailable: () => void;
   /** UX-PRODUCT batch 3 (UX-06): display-only project identity for the editing rail. */
   projectId?: string;
+  assetHandoff?: TimelineAssetHandoff;
 };
 type Operation = 'LIST' | 'GET' | 'SAVE' | 'RENDER' | 'JOB' | 'EXPORT_PREVIEW' | 'EXPORT' | 'TRACK_LOCK';
 type Attempt = { binding: string; requestId: string; state: 'UNKNOWN' | 'RETURNED'; requestDigest?: string;
@@ -40,6 +42,15 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   const playbackGate = useRef(false);
   const sourceEditGate = useRef(false);
   const latest = useRef(props); latest.current = props;
+  // A handoff approval is bound to the original draft/target generation, not
+  // merely equal JSON. Editing then undoing, or switching identical targets,
+  // must still invalidate a metadata read that was already in flight.
+  const handoffGeneration = useRef(0);
+  const handoffEnvironment = useRef([props.client, props.busy, props.canMutate]);
+  const environment = [props.client, props.busy, props.canMutate];
+  if (environment.some((value, index) => value !== handoffEnvironment.current[index])) {
+    handoffGeneration.current++; handoffEnvironment.current = environment;
+  }
   const alive = useRef(true), epoch = useRef(0), owner = useRef(props.client), reading = useRef<AbortController>();
   const slot = useRef<{ epoch: number; operation: Operation }>(), started = useRef(false), deniedRef = useRef(false);
   const consent = useRef({ render: '', adopt: '', discard: '' });
@@ -56,16 +67,16 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     canOperate: owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !playbackGate.current && !sourceEditGate.current && !!base && !inputDirty && sourcesCurrent,
     isReady: () => !blocked() && latest.current.canMutate && !!baseRef.current && !failureRef.current && attemptRef.current?.state !== 'UNKNOWN'
       && timelineInputKey(draftRef.current) === baseline.current && timelineSourcesCurrent(baseRef.current.timeline, latest.current.assets),
-    onAdopt: row => adopt(row), onAuthorityLost: loseAuthority, onGateChange: value => { transferGate.current = value; } });
+    onAdopt: row => adopt(row), onAuthorityLost: loseAuthority, onGateChange: value => { handoffGeneration.current++; transferGate.current = value; } });
   const playback = useStudioTimelinePlayback({ props: { ...props, isCurrent: current }, source: owns ? base : undefined,
     isReady: () => !blocked() && latest.current.canMutate && !!baseRef.current && !failureRef.current && attemptRef.current?.state !== 'UNKNOWN'
       && timelineInputKey(draftRef.current) === baseline.current && timelineSourcesCurrent(baseRef.current.timeline, latest.current.assets),
-    onAuthorityLost: loseAuthority, onGateChange: value => { playbackGate.current = value; } });
+    onAuthorityLost: loseAuthority, onGateChange: value => { handoffGeneration.current++; playbackGate.current = value; } });
   const sourceEdit = useStudioTimelineSourceEdit({ props: { ...props, isCurrent: current }, source: owns ? base : undefined,
     canOperate: owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !transfer.locked && !playback.locked && !!base && !inputDirty && sourcesCurrent,
     isReady: () => !blocked() && latest.current.canMutate && !!baseRef.current && !failureRef.current && attemptRef.current?.state !== 'UNKNOWN'
       && timelineInputKey(draftRef.current) === baseline.current && timelineSourcesCurrent(baseRef.current.timeline, latest.current.assets),
-    onAdopt: row => adopt(row), onAuthorityLost: loseAuthority, onGateChange: value => { sourceEditGate.current = value; } });
+    onAdopt: row => adopt(row), onAuthorityLost: loseAuthority, onGateChange: value => { handoffGeneration.current++; sourceEditGate.current = value; } });
   const dirty = owns && (inputDirty || !!failure || uncertainRender || !!transfer.dirty || !!playback.dirty || !!sourceEdit.dirty || !!exportConfirmed || pending === 'SAVE' || pending === 'RENDER' || pending === 'EXPORT' || pending === 'EXPORT_PREVIEW' || pending === 'TRACK_LOCK');
   const canEdit = owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !transfer.locked && !playback.locked && !sourceEdit.locked;
   const savedBinding = base ? timelineBinding(base) : '';
@@ -85,7 +96,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   }; }, []);
   useEffect(() => {
     owner.current = props.client; deniedRef.current = false; epoch.current++; reading.current?.abort(); reading.current = undefined; slot.current = undefined; started.current = false;
-    const input = newTimelineDraft(); draftRef.current = input; baseRef.current = undefined; candidateRef.current = undefined; failureRef.current = undefined; attemptRef.current = undefined;
+    const input = newTimelineDraft(); handoffGeneration.current++; draftRef.current = input; baseRef.current = undefined; candidateRef.current = undefined; failureRef.current = undefined; attemptRef.current = undefined;
     baseline.current = timelineInputKey(input); setDraft(input); setBase(undefined); setRows([]); setCandidate(undefined); setFailure(undefined); setAttempt(undefined); setPending(undefined);
     consent.current = { render: '', adopt: '', discard: '' };
     clearHistory();
@@ -132,7 +143,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   }
   function adopt(row: StudioTimelineRow, keepDraft = false) {
     const input = keepDraft ? cloneTimeline(draftRef.current) : { title: row.title, timeline: cloneTimeline(row.timeline) };
-    baseRef.current = row; draftRef.current = input; baseline.current = timelineInputKey({ title: row.title, timeline: row.timeline });
+    handoffGeneration.current++; baseRef.current = row; draftRef.current = input; baseline.current = timelineInputKey({ title: row.title, timeline: row.timeline });
     candidateRef.current = undefined; failureRef.current = undefined;
     consent.current = { render: '', adopt: '', discard: '' };
     clearHistory();
@@ -168,17 +179,17 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     adopt(row, keepDraft);
     setNotice(keepDraft ? '输入保留，基于读取的版本继续编辑；需要你明确再次保存。' : '已采用读取的服务端时间线；没有再次保存或渲染。');
   }
-  function change(work: (input: StudioTimelineDraft) => void) {
-    if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN') return;
+  function change(work: (input: StudioTimelineDraft) => void): boolean {
+    if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN') return false;
     const input = cloneTimeline(draftRef.current); work(input);
     const source = baseRef.current, lockedTracks = source?.timeline.tracks.filter(track => track.locked) ?? [];
     if (source && lockedTracks.length && (['duration_ms', 'width', 'height', 'fps'].some(key => input.timeline[key as 'duration_ms'] !== source.timeline[key as 'duration_ms'])
       || lockedTracks.some(track => JSON.stringify(input.timeline.tracks.find(row => row.id === track.id)) !== JSON.stringify(track)))) {
-      setError('锁定轨道的片段、顺序和画布受保护。请先保存其他草稿，并通过原服务明确解锁。'); return;
+      setError('锁定轨道的片段、顺序和画布受保护。请先保存其他草稿，并通过原服务明确解锁。'); return false;
     }
-    if (timelineInputKey(input) === timelineInputKey(draftRef.current)) return;
+    if (timelineInputKey(input) === timelineInputKey(draftRef.current)) return false;
     history.current.undo = [...history.current.undo.slice(-49), cloneTimeline(draftRef.current)]; history.current.redo = [];
-    setHistorySize({ undo: history.current.undo.length, redo: 0 }); applyLocalInput(input);
+    setHistorySize({ undo: history.current.undo.length, redo: 0 }); applyLocalInput(input); return true;
   }
   function clearHistory() {
     history.current = { undo: [], redo: [] }; setHistorySize({ undo: 0, redo: 0 });
@@ -191,7 +202,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     exportRef.current.profile = { ...profile }; setExportProfile(exportRef.current.profile); clearExportPreview(); setError(''); setNotice('');
   }
   function applyLocalInput(input: StudioTimelineDraft) {
-    draftRef.current = input; setDraft(input);
+    handoffGeneration.current++; draftRef.current = input; setDraft(input);
     consent.current = { render: '', adopt: '', discard: '' };
     clearExportPreview();
     candidateRef.current = undefined; setCandidate(undefined); setConfirmed(''); setAdoptConfirmed(false); setDiscardConfirmed(false); setError(''); setNotice('');
@@ -234,7 +245,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   function createNew() {
     const unsaved = timelineInputKey(draftRef.current) !== baseline.current;
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN' || unsaved && consent.current.discard !== timelineInputKey(draftRef.current)) return;
-    const input = newTimelineDraft(); draftRef.current = input; baseRef.current = undefined; baseline.current = timelineInputKey(input); candidateRef.current = undefined;
+    const input = newTimelineDraft(); handoffGeneration.current++; draftRef.current = input; baseRef.current = undefined; baseline.current = timelineInputKey(input); candidateRef.current = undefined;
     consent.current = { render: '', adopt: '', discard: '' };
     clearHistory();
     clearExportPreview();
@@ -244,7 +255,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     if (blocked() || consent.current.discard !== timelineInputKey(draftRef.current) || timelineInputKey(draftRef.current) === baseline.current || failureRef.current || attemptRef.current?.state === 'UNKNOWN') return;
     const source = baseRef.current;
     const input = source ? { title: source.title, timeline: cloneTimeline(source.timeline) } : newTimelineDraft();
-    draftRef.current = input; setDraft(input); baseline.current = timelineInputKey(input); setConfirmed(''); setAdoptConfirmed(false); setDiscardConfirmed(false); candidateRef.current = undefined; setCandidate(undefined);
+    handoffGeneration.current++; draftRef.current = input; setDraft(input); baseline.current = timelineInputKey(input); setConfirmed(''); setAdoptConfirmed(false); setDiscardConfirmed(false); candidateRef.current = undefined; setCandidate(undefined);
     consent.current = { render: '', adopt: '', discard: '' };
     clearHistory();
     clearExportPreview();
@@ -393,6 +404,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   return { draft: owns ? draft : undefined, base: owns ? base : undefined, rows: owns ? rows : [], candidate: owns ? candidate : undefined,
     failure: owns ? failure : undefined, attempt: owns ? attempt : undefined, error: owns ? error : '', notice: owns ? notice : '',
     denied: denied || !owns, pending, inputDirty, dirty, sourcesCurrent, canEdit, canRender, confirmed: confirmed === savedBinding,
+    getHandoffRevision: () => `${epoch.current}:${handoffGeneration.current}`,
     adoptConfirmed, discardConfirmed, change, reload, checkServer, adoptCandidate, createNew, discardDraft, save, render, checkRenderJob,
     canUndo: canEdit && historySize.undo > 0, canRedo: canEdit && historySize.redo > 0,
     undo: () => travelHistory('undo'), redo: () => travelHistory('redo'),

@@ -11,13 +11,22 @@ import { blankGraph } from './graphDraft';
 import { imageGraphCatalog, imageGraphProject, imageGraphRecord } from './studioImageGraph.testFixtures';
 import rawProductionCatalog from './fixtures/productionGraph.catalog.json';
 import type { StudioGraphCatalog } from './studioGraphTypes';
+import { creativeClient } from './client';
+import { newDocument, type CreativeDocument } from './types';
+vi.mock('./client', async original => ({ ...await original<typeof import('./client')>(), creativeClient: vi.fn() }));
 import type { PlanningDocument } from './studioProductionGraphContract';
 import { fixtureProjection } from '../director/directorWorkspaceFixtures.testFixture';
+import { studioProductionClient } from './studioProductionClient';
+import { mediaProviderKey } from './useStudioMediaExecution';
+vi.mock('./studioProductionClient', async original => ({ ...await original<typeof import('./studioProductionClient')>(), studioProductionClient: vi.fn() }));
+const pickerRow = { operation_id: 'm5.image.upscale' as const, provider_id: 'enabled-comfy', model_id: 'installed-upscaler', local: true, route_digest: 'a'.repeat(64), capability: 'MEDIA', supported_parameters: [], readiness: 'CONFIGURED_NOT_VERIFIED' as const };
 vi.mock('./studioClient', async importOriginal => ({ ...await importOriginal<typeof import('./studioClient')>(), studioClient: vi.fn() }));
 let client: StudioClient;
 const document: PlanningDocument = { id: 'synthetic-director', mode: 'DIRECTOR', title: 'Synthetic Director', version: 3, digest: 'a'.repeat(64) };
 const deferred = <T,>() => { let resolve!: (value: T) => void; const promise = new Promise<T>(yes => { resolve = yes; }); return { promise, resolve }; };
 beforeEach(() => {
+  vi.mocked(creativeClient).mockReturnValue({} as ReturnType<typeof creativeClient>);
+  vi.mocked(studioProductionClient).mockReturnValue({ providers: vi.fn().mockResolvedValue([pickerRow]) } as unknown as ReturnType<typeof studioProductionClient>);
   localStorage.clear(); useStudio.setState({ novelId: imageGraphProject, sessionToken: '', actor: undefined, scope: undefined });
   useLocalHostSession.setState({ token: 'production-graph-host', actorId: '' });
   const original = imageGraphCatalog(); original.definitions = original.definitions.filter(row => !row.id.startsWith('image_'));
@@ -60,13 +69,30 @@ describe('Production Graph UI keeps original controller and execution authority'
     change('节点类型', 'image_style'); click('添加节点'); change('图片风格', 'quiet cinematic');
     change('节点类型', 'director_plan'); expect((screen.getByRole('button', { name: '添加节点' }) as HTMLButtonElement).disabled).toBe(true);
     click('明确读取已保存导演与分镜文档'); await screen.findByRole('option', { name: 'Synthetic Director · v3' }); change('原创作文档', document.id); click('添加节点');
-    change('节点类型', 'image_upscale'); click('添加节点'); change('超分服务商 ID', 'enabled-comfy'); change('超分模型 ID', 'installed-upscaler'); change('超分倍率（2 或 4）', '4');
+    change('节点类型', 'image_upscale'); click('添加节点'); click('读取节点服务配置'); await screen.findByRole('option', { name: 'enabled-comfy · installed-upscaler · 本地' }); change('节点服务商与模型', mediaProviderKey(pickerRow)); change('超分倍率（2 或 4）', '4');
     click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
     const input = vi.mocked(client.graphs.create).mock.calls[0][0]; expect(input.definition.schema_version).toBe(4);
     expect(input.definition.nodes[0].parameters.style).toBe('quiet cinematic');
     expect(input.definition.nodes[1].parameters.document_snapshot).toEqual({ id: document.id, version: 3, digest: document.digest });
     expect(input.definition.nodes[2].parameters.parameters).toEqual({ scale: 4 });
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.previewMedia).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled(); expect(client.graphs.executeMedia).not.toHaveBeenCalled();
+  });
+  it('lays out already-saved Director pins without rewriting their source or executing', async () => {
+    mount(); await enter(); await production(); change('节点类型', 'director_plan');
+    click('明确读取已保存导演与分镜文档'); await screen.findByRole('option', { name: 'Synthetic Director · v3' });
+    change('原创作文档', document.id); click('添加节点');
+    click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
+    const original = structuredClone(vi.mocked(client.graphs.create).mock.calls[0][0].definition);
+    vi.mocked(client.graphs.save).mockImplementation(async (_id, input) => ({ ...imageGraphRecord(), version: 2, definition: input.definition,
+      reference_states: [{ node_id: original.nodes[0].id, state: 'CURRENT' }] }));
+    click('应用自动布局到草稿'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    const updated = vi.mocked(client.graphs.save).mock.calls[0][1];
+    expect(updated.expected_version).toBe(1);
+    expect(updated.definition.viewport).toEqual(original.viewport);
+    expect(updated.definition.edges).toEqual(original.edges);
+    expect(updated.definition.nodes[0].position).toEqual({ x: 0, y: 0 });
+    expect({ ...updated.definition.nodes[0], position: original.nodes[0].position }).toEqual(original.nodes[0]);
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
   });
   it('ignores late document references after a same-token Host replacement', async () => {
     const late = deferred<{ documents: PlanningDocument[] }>(); vi.mocked(client.graphs.planningDocuments!).mockReturnValue(late.promise);
@@ -85,4 +111,76 @@ describe('Production Graph UI keeps original controller and execution authority'
     }
     expect(client.graphs.create).not.toHaveBeenCalled(); expect(client.graphs.createRun).not.toHaveBeenCalled();
   });
+});
+
+// The actual IndependentStudioWorkspace mounts both authoring and Graph owners.
+it('authors a director in the canvas, saves its exact node pin and reopens the bound source', async () => {
+  let authored: CreativeDocument = { ...newDocument('DIRECTOR'), source_independent: true, title: '画布导演', id: document.id,
+    version: 3, status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
+  const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR'] }),
+    history: vi.fn(async () => ({ document_id: document.id, current_version: authored.version, items: [authored], snapshot_digests: [{ version: authored.version, digest: document.digest }] })),
+    list: vi.fn(async () => ({ items: [authored] })),
+    create: vi.fn(async input => authored = { ...authored, ...input }), update: vi.fn(),
+    export: vi.fn(async () => ({ document: authored, document_digest: document.digest, format: '', boundary: '' })) };
+  vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
+  const first = mount(); await enter(); click('打开导演总控台');
+  await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
+  change('文档标题', '画布导演'); click('添加场景'); click('添加导演调度'); change('导演意图', '停顿后看向窗外');
+  expect((screen.getByRole('button', { name: '保存创作图' }) as HTMLButtonElement).disabled).toBe(true);
+  click('保存草稿'); await screen.findByText(/导演原文档已保存/);
+  await production(); change('节点类型', 'director_plan'); click('明确读取已保存导演与分镜文档');
+  await screen.findByRole('option', { name: 'Synthetic Director · v3' }); change('原创作文档', document.id); click('添加节点');
+  change('创作图标题', '导演工作台回环'); click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
+  const saved = await vi.mocked(client.graphs.create).mock.results[0].value as StudioGraphRecord;
+  expect(saved.definition.nodes[0].parameters.document_snapshot).toEqual({ id: document.id, version: 3, digest: document.digest });
+  expect(authored.director_notes[0].note).toBe('停顿后看向窗外');
+  first.unmount(); localStorage.clear();
+  vi.mocked(client.graphs.list).mockResolvedValue({ items: [saved] }); vi.mocked(client.graphs.get).mockResolvedValue(saved);
+  mount(); await enter(); change('已保存创作图', saved.id);
+  const select = await screen.findByRole('button', { name: new RegExp(`选择节点 .*${saved.definition.nodes[0].id}`) }); fireEvent.click(select);
+  click('打开导演总控台'); await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
+  click('读取选中导演节点原文档'); await screen.findByDisplayValue('停顿后看向窗外');
+  click('读取／刷新导演来源影响'); await screen.findByText(/历史快照版本与原 Owner 摘要匹配/);
+  expect(screen.getByText(/选中 director_plan 节点：/).textContent).toContain(saved.definition.nodes[0].id);
+  expect(saved.definition.nodes[0].parameters.document_snapshot).toEqual({ id: document.id, version: 3, digest: document.digest });
+  expect(source.export).toHaveBeenCalledWith(document.id); expect(source.update).not.toHaveBeenCalled();
+  expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
+});
+
+it('requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create', async () => {
+  const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR'] }),
+    create: vi.fn().mockRejectedValue(new Error('offline')), update: vi.fn(), export: vi.fn(), list: vi.fn() };
+  vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
+  mount(); await enter(); click('打开导演总控台');
+  await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
+  change('文档标题', '未知回执'); click('保存草稿'); await screen.findByText(/保存冲突或回执不确定/);
+  click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/);
+  expect((screen.getByRole('button', { name: '确认离开' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开');
+  await screen.findByRole('button', { name: '打开导演总控台' }); expect(source.create).toHaveBeenCalledTimes(1);
+});
+
+it('keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation', async () => {
+  let authored: CreativeDocument = { ...newDocument('DIRECTOR'), source_independent: true, title: '人工调度', id: document.id,
+    version: 3, status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
+  const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR', 'STORYBOARD'] }),
+    create: vi.fn(async input => authored = { ...authored, ...input }), update: vi.fn(), list: vi.fn().mockResolvedValue({ items: [] }),
+    derive: vi.fn().mockRejectedValue(new Error('handoff offline')),
+    export: vi.fn(async () => ({ document: authored, document_digest: document.digest, format: '', boundary: '' })) };
+  vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
+  mount(); await enter(); click('打开导演总控台');
+  await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
+  change('文档标题', '人工调度'); click('添加场景'); click('添加导演调度'); click('保存草稿');
+  await screen.findByText(/导演原文档已保存/); click('核对导演原文档版本'); await screen.findByText(/交接来源/);
+  fireEvent.click(screen.getByLabelText('已核对来源，明确建立新的分镜草稿，仍需人工复审')); click('交接到原分镜草稿');
+  await screen.findByText('handoff offline'); expect((screen.getByRole('button', { name: '保存创作图' }) as HTMLButtonElement).disabled).toBe(true);
+  click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/); click('继续编辑');
+  expect(screen.getByText(/分镜建立结果未知或待核对/)).toBeTruthy();
+  expect((screen.getByRole('button', { name: '交接到原分镜草稿' }) as HTMLButtonElement).disabled).toBe(true);
+  click('读取关联分镜与状态'); await waitFor(() => expect(source.list).toHaveBeenCalledTimes(1));
+  click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/);
+  expect((screen.getByRole('button', { name: '确认离开' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开');
+  await screen.findByRole('button', { name: '打开导演总控台' }); expect(source.derive).toHaveBeenCalledTimes(1);
+  expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
 });

@@ -122,8 +122,10 @@ export function DeliveryCenterPanel(props: DeliveryCenterPanelProps) {
     setNotice(DELIVERY_NOTICES.opOnly);
   }, [controller, projectId]);
 
+  const receiptPage = receipts ?? controller.page;
+  const emptyPageHasMore = receiptPage?.items.length === 0 && receiptPage.next_offset !== null;
   const stateLabel: Record<DeliverySurfaceState, string> = {
-    IDLE: '未读取', LOADING: '正在读取', READY: '已读取', EMPTY: '没有记录', DENIED: '无权限', FAILED: '读取失败',
+    IDLE: '未读取', LOADING: '正在读取', READY: '已读取', EMPTY: emptyPageHasMore ? '当前页为空' : '没有记录', DENIED: '无权限', FAILED: '读取失败',
   };
   const tone = controller.state === 'DENIED' ? 'error' : controller.state === 'FAILED' ? 'warning'
     : controller.state === 'EMPTY' ? 'neutral' : 'info';
@@ -150,7 +152,9 @@ export function DeliveryCenterPanel(props: DeliveryCenterPanelProps) {
       <p>{DELIVERY_NOTICES.emptyIsNotDenied}（被拒绝的读取不会显示成“没有记录”。）</p>
     </div>}
     {controller.state === 'FAILED' && <StatusMessage tone="warning">导出回执读取失败；这里不会用空列表代替真实状态。</StatusMessage>}
-    {controller.state === 'EMPTY' && <EmptyState title="还没有导出回执" detail="原导出服务在该项目下还没有记录；这不等于项目没有可导出内容。" />}
+    {controller.state === 'EMPTY' && <EmptyState title={emptyPageHasMore ? '当前页没有导出回执' : '还没有导出回执'}
+      detail={emptyPageHasMore ? '当前页没有返回回执，但原服务仍提供后续页标记。请到原导出中心继续翻页。'
+        : '原导出服务在该项目下还没有记录；这不等于项目没有可导出内容。'} />}
 
     <ItemExportPanel
       items={items}
@@ -166,7 +170,7 @@ export function DeliveryCenterPanel(props: DeliveryCenterPanelProps) {
 
     <ReceiptRecoveryPanel
       state={controller.state}
-      page={receipts ?? controller.page}
+      page={receiptPage}
       attempts={controller.attempts}
       lastRequest={lastRequest}
       lastRecovery={lastRecovery}

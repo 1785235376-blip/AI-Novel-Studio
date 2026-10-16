@@ -1,0 +1,38 @@
+{
+  "slice": "B08 Writer Room task context and decision drafts",
+  "date": "2026-10-16",
+  "base": "8ef05ffe07f388c92e45d775a9be9d1b9ffa2b75",
+  "slice_status": "IMPLEMENTED",
+  "capability_status": "PARTIAL",
+  "files": [
+    "frontend/src/experimental/WriterRoomPanel.tsx",
+    "frontend/src/experimental/WriterRoomPanel.test.tsx"
+  ],
+  "verification": {
+    "focused_mock_ui": {
+      "exit_code": 0,
+      "passed": 14
+    },
+    "typescript": {
+      "exit_code": 0
+    },
+    "vite_build": {
+      "exit_code": 0,
+      "warning": "oversized chunks"
+    },
+    "ui_token_guard": {
+      "exit_code": 0,
+      "files_checked": 52
+    },
+    "browser_visual_geometry": "NOT_RUN",
+    "live_backend_team": "NOT_RUN",
+    "windows_gpu": "NOT_RUN"
+  },
+  "boundaries": [
+    "Original task APIs, CAS, review owner and source revisions preserved",
+    "No eager source reading, current-revision fallback or automatic transition retry",
+    "Session-only draft notes; no offline persistence",
+    "No backend or shared navigation changes",
+    "No external communication, team writes, push or CI"
+  ]
+}

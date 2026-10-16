@@ -1,0 +1,104 @@
+{
+  "baseline_commit": "3d089295947e6878c1b9eb0957fac6ac4bf1c3aa",
+  "scope": "Mounted bounded MiniMap through original camera/history/save owner; display projection only",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T08:27:55.729721+00:00",
+      "finished_utc": "2026-10-16T08:28:06.564064+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-minimap-final-ui.json",
+      "receipt_sha256": "24be0e883143489d750f8c05390a87e2a06d871d55417d02c46924c3a85464fd",
+      "log": "docs/delivery/v2-development/canvas-minimap-final-ui.log",
+      "log_sha256": "f5c0b333a0e1a1934e4630958d0599e70d2eda6b14b55e59e7c15c7076dbe6ba"
+    },
+    {
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-usability/../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_empty_disconnected_graphs_reopen_without_chapter_or_model[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_create_idempotency_and_cas_conflicts_preserve_input[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_concurrent_save_has_one_real_cas_winner[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_failed_scope_write_preserves_previous_complete_definition[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-minimap-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T08:28:20.446715+00:00",
+      "finished_utc": "2026-10-16T08:28:29.525640+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-minimap-file-public.json",
+      "receipt_sha256": "d44613542fb99b81508ad6c4c8d1ff896552fff2383d6d75d72b027fea0e8a33",
+      "log": "docs/delivery/v2-development/canvas-minimap-file-public.log",
+      "log_sha256": "9e6d792b31e4ed01dbf9eebb7f05402bc8574af148e24e8cd16a002b8e2ae0b8"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T08:27:57.247181+00:00",
+      "finished_utc": "2026-10-16T08:28:30.531588+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-minimap-build.json",
+      "receipt_sha256": "5e6e462e23072d30df3fc8321c8e6d4ccab42feb8cd4720876fea635f1e805c7",
+      "log": "docs/delivery/v2-development/canvas-minimap-build.log",
+      "log_sha256": "15d5e5f2d4052b387d98191aae85f59d30324b398b6c00968f8e12ae3cb439d1"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; const files=[\"frontend/src/creative/GraphCanvas.tsx\",\"frontend/src/creative/graphCanvas.css\"]; if(files.some(p=>/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\")))) throw new Error(\"Raw color\"); console.log(\"Changed UI surfaces use existing primitives and tokens; no raw colors (2 files).\");"
+      ],
+      "started_utc": "2026-10-16T08:29:24.999375+00:00",
+      "finished_utc": "2026-10-16T08:29:25.056021+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-minimap-token-scope.json",
+      "receipt_sha256": "8350a57079d5b05e1ee53df82d70eb06f51325168913bf9082838f3562cecb5b",
+      "log": "docs/delivery/v2-development/canvas-minimap-token-scope.log",
+      "log_sha256": "ea756106893f3fd20b9ccd48bf4195374a017188cb5b8da9936e4885dd1c7e85"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 181,
+    "files": 9,
+    "skipped": 0,
+    "environment": "jsdom/mock transport"
+  },
+  "file_owner_tests": 5,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "discovery": "410 unit files; Playwright inventory only, no browser",
+  "source_sha256": {
+    "frontend/src/creative/GraphCanvas.tsx": "cdca7e2a67b9e7dc96c140028d1f3f45f195bf1b082ac0650d842293a2f5e4a7",
+    "frontend/src/creative/graphCanvas.css": "7639cbf084da65936c29eb3e436a461479372827c9b3add243f4d2eb061d45f2",
+    "frontend/src/creative/graphCanvasPresentation.ts": "85688be548a50d21d9c10f707b7f9189315c2082590e1fd9e11c3c804bdf96c7",
+    "frontend/src/creative/GraphCanvas.test.tsx": "b66d95fe51d556583f2af7445fc5c19ab94a9d7a0aa3754e8ceaf5ec54f99123",
+    "frontend/src/creative/graphCanvasPresentation.test.ts": "13ced01b54983c169182992a1d70f2fa1498355a008e2e0f434888677e0c9f1e",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "208f9c844ae1ef64ce21a90b1ff71c317578a218c8bcc3043957c8f5d737469b"
+  },
+  "not_run": [
+    "P0 lifecycle/security (BLOCKED and excluded)",
+    "PG",
+    "browser screenshots/FPS/memory/native IME",
+    "Windows/GPU/provider/complete RC",
+    "push/hosted CI"
+  ]
+}

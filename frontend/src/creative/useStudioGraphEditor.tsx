@@ -1,3 +1,4 @@
+import { GraphDirectorConsole } from './GraphDirectorConsole';
 import { useEffect, useRef, useState } from 'react';
 import { useStudioGraphEditorController, type StudioGraphEditorProps } from './useStudioGraphEditorController';
 import { studioGraphEditorView } from './studioGraphEditorView';
@@ -14,13 +15,22 @@ export type { StudioGraphEditorProps, StudioGraphEditorSelection } from './useSt
  * draft state.
  */
 export function useStudioGraphEditor(props: StudioGraphEditorProps) {
-  const controller = useStudioGraphEditorController(props);
+  const [directorDirty, setDirectorDirty] = useState(false);
+  const [directorSession, setDirectorSession] = useState(0);
+  const controller = useStudioGraphEditorController({ ...props, externalDirty: props.externalDirty || directorDirty });
   const [canvasLocal, setCanvasLocal] = useState<LocalCanvasState>(() => blankLocalCanvasState());
   const identity = props.identity, identityRef = useRef(identity);
   useEffect(() => {
-    if (identityRef.current !== identity) { identityRef.current = identity; setCanvasLocal(blankLocalCanvasState()); }
+    if (identityRef.current !== identity) { identityRef.current = identity; setCanvasLocal(blankLocalCanvasState()); setDirectorDirty(false); }
   }, [identity]);
-  const view = studioGraphEditorView(controller, props, { local: canvasLocal, onLocal: setCanvasLocal });
-  return { ...view, content: <>{props.active && !controller.retired && controller.catalog && <StudioGraphDraftRecovery controller={controller} />}{view.content}</>,
-    dirty: controller.dirty || controller.blocked || controller.executionDirty, discard: controller.discard };
+  const view = studioGraphEditorView(controller, { ...props, externalDirty: props.externalDirty || directorDirty }, { local: canvasLocal, onLocal: setCanvasLocal });
+  return { ...view, content: <>{props.active && !controller.retired && controller.catalog && <StudioGraphDraftRecovery controller={controller} />}{props.directorSource && !controller.retired && <GraphDirectorConsole key={`${props.identity}:${directorSession}`}
+    client={props.directorSource} selectionKey={JSON.stringify([controller.base?.id, controller.selected])} pin={controller.node?.definition_id === 'director_plan' ? controller.node.parameters.document_snapshot : undefined}
+    graph={controller.draft} selectedNodeId={controller.node?.id}
+    active={props.active && !props.denied} canMutate={props.canMutate && !props.externalDirty && !controller.executionDirty}
+    busy={props.busy} isCurrent={props.isCurrent} read={props.read} mutate={props.mutate} onDirtyChange={setDirectorDirty} />}{view.content}</>,
+    directorPending: directorDirty,
+    dirty: directorDirty || controller.dirty || controller.blocked || controller.executionDirty,
+    discard: () => { setDirectorSession(value => value + 1); setDirectorDirty(false); controller.discard(); } };
+
 }

@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
-import { multilingualEditionsClient, type AlignmentPreview, type EditionCreate, type EditionExportPreview, type EditionSegment, type LanguageEdition, type SegmentPreview, type TermInput, type TermIssue, type TranslationRun } from './multilingualEditionsClient';
+import { multilingualEditionsClient, type AlignmentPreview, type EditionCreate, type EditionExportPreview, type EditionSegment, type LanguageEdition, type SegmentPreview, type TermInput, type TermIssue, type TermRule, type TranslationRun } from './multilingualEditionsClient';
 import './multilingualEditions.css';
+import { TerminologyIssueNavigator } from './TerminologyIssueNavigator';
 import { TranslationMemoryPanel } from './TranslationMemoryPanel';
 import { LanguageTranslationPanel } from './LanguageTranslationPanel';
 let sequence = 0;
@@ -40,12 +41,13 @@ function EditionsBody({ client, requestedJobId }: EditionProps) {
   const [title, setTitle] = useState(''), [sourceLanguage, setSourceLanguage] = useState('zh-Hant'), [targetLanguage, setTargetLanguage] = useState('en');
   const [direction, setDirection] = useState<EditionCreate['direction']>('auto'), [font, setFont] = useState<EditionCreate['font']>('serif'), [style, setStyle] = useState('');
   const [chapters, setChapters] = useState<string[]>([]), [selected, setSelected] = useState<LanguageEdition>();
+  const [focusRequest, setFocusRequest] = useState(0);
   const [dirty, setDirty] = useState(false), [index, setIndex] = useState(0), [refresh, setRefresh] = useState<AlignmentPreview>();
   const alive = useRef(true), epoch = useRef(0); const action = useAction();
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   const updated = (value: LanguageEdition) => { if (alive.current) { epoch.current++; if (selected?.id !== value.id) setIndex(0); setSelected(value); setRefresh(undefined); editions.reload(); } };
   const perform = (operation: () => Promise<LanguageEdition>, message: string) => void action.run(async () => { const ticket = epoch.current; const value = await operation(); if (alive.current && ticket === epoch.current) updated(value); }, message);
-  const choose = (value: LanguageEdition) => { epoch.current++; setSelected(value); setIndex(0); setRefresh(undefined); setDirty(false); };
+  const choose = (value: LanguageEdition) => { setFocusRequest(0); epoch.current++; setSelected(value); setIndex(0); setRefresh(undefined); setDirty(false); };
   const segment = selected?.segments?.[index];
   return <section className="experimental-section" aria-label="多语言版本与术语">
     <Panel title="独立语言版本"><p>手工双语编辑、术语检查与逐段审核。译文保存在独立语言版本中，原稿和原稿历史不会改变。</p>
@@ -80,28 +82,43 @@ function EditionsBody({ client, requestedJobId }: EditionProps) {
     </Panel>
     {selected && <>
       <Panel title={selected.title || '待更新语言版本'}><div className="experimental-actions"><Badge>{selected.target_language} · {selected.direction.toUpperCase()} · v{selected.version}</Badge><Button disabled={action.busy || dirty} onClick={() => perform(() => api.get(selected), '已读取当前版本；冲突时先核对后再保存。')}>刷新当前语言版本</Button></div>
-        {selected.stale ? <><StatusMessage tone="warning">原稿版本、段落或隐私已改变。旧译文保留在受保护的版本历史中，当前停止展示和采用。重新对齐后可查看归档译文，再人工复制为新草稿。不会偷偷重译。</StatusMessage>
+        {selected.stale || selected.content_withheld ? <><StatusMessage tone="warning">原稿版本、段落或隐私已改变。旧译文保留在受保护的版本历史中，当前停止展示和采用。重新对齐后可查看归档译文，再人工复制为新草稿。不会偷偷重译。</StatusMessage>
           <Button disabled={action.busy} onClick={() => void action.run(async () => { const ticket = epoch.current; const value = await api.refreshPreview(selected); if (alive.current && ticket === epoch.current) setRefresh(value); }, '已检查当前来源，仅预览，尚未更新。')}>预览重新对齐</Button>
           {refresh && <section aria-label="重新对齐预览"><p>保留原位置且内容完全一致的 {refresh.retained_exact} 段；新增或改变 {refresh.new_or_changed} 段；旧记录归档 {refresh.archived_old} 段。全部重新审核。不会猜测移动段落的位置。</p><Button disabled={action.busy} onClick={() => perform(() => api.refresh(selected, refresh), '已重新绑定当前来源；改变的段落留空，所有译文需要再次审核。')}>确认重新对齐并重新审核</Button></section>}</> : <>
           <p>风格说明：{selected.style_note || '未指定'}</p>
           {selected.checks && <StatusMessage>段落对齐 {selected.checks.aligned ? '通过' : '待修复'}；缺失译文 {selected.checks.missing.length} 段；待批准 {selected.checks.pending.length} 段；术语问题 {selected.checks.terminology.length} 项。</StatusMessage>}
-          <Field label="编辑译文段落"><select disabled={dirty || action.busy} value={index} onChange={e => setIndex(Number(e.target.value))}>{selected.segments?.map((s, i) => <option key={s.id} value={i}>第 {i + 1} 段 · 原稿 v{s.source_version} · {s.status}</option>)}</select></Field>
+          <TerminologyIssueNavigator key={`${selected.id}:${selected.version}`} edition={selected} blocked={dirty || action.busy} onOpen={segmentId => {
+            if (dirty || action.busy) return;
+            const matches = selected.segments?.map((row, i) => ({ row, i })).filter(({ row }) => row.id === segmentId);
+            if (matches?.length !== 1) return;
+            setIndex(matches[0].i); setFocusRequest(value => value + 1);
+          }} />
+          <Field label="编辑译文段落"><select disabled={dirty || action.busy} value={index} onChange={e => { setFocusRequest(0); setIndex(Number(e.target.value)); }}>{selected.segments?.map((s, i) => <option key={s.id} value={i}>第 {i + 1} 段 · 原稿 v{s.source_version} · {s.status}</option>)}</select></Field>
           {!!selected.archived_segments?.length && <details><summary>查看归档译文，仅供人工恢复（{selected.archived_segments.length} 段）</summary><p>这些译文绑定旧来源，只能人工复制到当前段落后重新保存、检查和审核。它们不参与导出。</p>{selected.archived_segments.map((old, i) => <article className="experimental-record" key={i}><p>旧源 v{old.source_version} · 段落路径 {old.path.join('.')}</p><Field label={`归档译文 ${i + 1}`}><textarea readOnly value={old.target_text} lang={selected.target_language} dir={selected.direction} /></Field>{old.note && <p>{old.note}</p>}</article>)}</details>}
-          {segment && <SegmentEditor key={`${selected.id}:${segment.id}`} api={api} edition={selected} segment={segment} number={index + 1} busy={action.busy} perform={perform} onDirty={setDirty} />}
+          {segment && <SegmentEditor key={`${selected.id}:${segment.id}`} api={api} edition={selected} segment={segment} number={index + 1} focusRequest={focusRequest} busy={action.busy} perform={perform} onDirty={setDirty} />}
         </>}
       </Panel>
-      {!selected.stale && <><Terminology api={api} edition={selected} busy={action.busy || dirty} perform={perform} /><EditionExportPanel key={selected.id} api={api} edition={selected} blocked={action.busy || dirty} /></>}
+      {!selected.stale && !selected.content_withheld && <><Terminology api={api} edition={selected} busy={action.busy || dirty} perform={perform} /><EditionExportPanel key={selected.id} api={api} edition={selected} blocked={action.busy || dirty} /></>}
     </>}
   </section>;
 }
 type Performer = (operation: () => Promise<LanguageEdition>, message: string) => void;
-function Issues({ issues }: { issues: TermIssue[] }) {
-  const names: Record<string, string> = { TERM_REQUIRED: '缺少批准译法', TERM_FORBIDDEN: '含有禁用译法', RULE_CONFLICT: '批准规则相互冲突', TRANSLATION_MISSING: '译文缺失' };
-  return <ul>{issues.map((issue, i) => <li key={i}>{names[issue.code] || issue.code}{issue.term ? `：${issue.term}` : ''}{issue.expected ? ` → ${issue.expected}` : ''}{issue.found ? `：${issue.found}` : ''}</li>)}</ul>;
+function Issues({ issues, rules = [] }: { issues: TermIssue[]; rules?: TermRule[] }) {
+  const names: Record<string, string> = { TERM_REQUIRED: '缺少批准译法', TERM_FORBIDDEN: '含有禁用译法', RULE_CONFLICT: '批准规则相互冲突', LOCKED_TERM_VARIANT: '锁定术语出现其他译名', TRANSLATION_MISSING: '译文缺失' };
+  return <ul>{issues.map((issue, i) => <li key={i}>{names[issue.code] || issue.code}{issue.term ? `：${issue.term}` : ''}{issue.expected ? ` → ${issue.expected}` : ''}{issue.found ? `：${issue.found}` : ''}{issue.rule_id && <details><summary>查看本问题的已保存规则依据</summary>{[issue.rule_id, issue.other_rule_id].filter((id): id is string => !!id).map(id => {
+    const matches = rules.filter(rule => rule.id === id);
+    const candidate = matches.length === 1 ? matches[0] : undefined;
+    const sameEditionConflict = issue.code === 'RULE_CONFLICT';
+    const rule = candidate && (sameEditionConflict || (Number.isSafeInteger(issue.rule_version) && issue.rule_version === candidate.version)) ? candidate : undefined;
+    return <div key={id}>{rule ? <>{sameEditionConflict && <p>冲突依据来自同一已保存语言版本的规则快照，服务未提供单独规则版本回执。</p>}<p>规则 {rule.id} · v{rule.version} · {rule.status}{rule.locked ? ' · 已锁定' : ''} · {rule.match}</p><p><bdi>{rule.source_term}</bdi> → <bdi>{rule.preferred}</bdi>；源别名：{rule.source_aliases.join('、') || '无'}；允许译名：{rule.target_aliases.join('、') || '无'}；禁用：{rule.forbidden.join('、') || '无'}</p></> : <p>规则 {id} 的精确版本不可用；请刷新当前语言版本再核对，不会以其他规则替代。</p>}</div>;
+  })}<p>规则调整仍在下方原术语审核面板逐项确认，锁定不会自动解除。</p></details>}</li>)}</ul>;
 }
-function SegmentEditor({ api, edition, segment, number, busy, perform, onDirty }: { api: EditionApi; edition: LanguageEdition; segment: EditionSegment; number: number; busy: boolean; perform: Performer; onDirty: (dirty: boolean) => void }) {
+function SegmentEditor({ api, edition, segment, number, focusRequest, busy, perform, onDirty }: { api: EditionApi; edition: LanguageEdition; segment: EditionSegment; number: number; focusRequest: number; busy: boolean; perform: Performer; onDirty: (dirty: boolean) => void }) {
   const [text, setText] = useState(segment.target_text), [note, setNote] = useState(segment.note), [preview, setPreview] = useState<SegmentPreview>(), [approved, setApproved] = useState(false);
+  const [composing, setComposing] = useState(false);
   const action = useAction(); const alive = useRef(true), epoch = useRef(0);
+  const targetInput = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => { if (focusRequest) targetInput.current?.focus(); }, [focusRequest]);
   const saved = useRef({ text: segment.target_text, note: segment.note });
   useEffect(() => {
     if (text === saved.current.text && note === saved.current.note) { setText(segment.target_text); setNote(segment.note); }
@@ -109,7 +126,7 @@ function SegmentEditor({ api, edition, segment, number, busy, perform, onDirty }
   }, [edition.version, segment.target_text, segment.note]);
   const dirty = text !== segment.target_text || note !== segment.note;
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
-  useEffect(() => { onDirty(dirty); }, [dirty, onDirty]);
+  useEffect(() => { onDirty(dirty || composing); }, [dirty, composing, onDirty]);
   useEffect(() => {
     if (!dirty) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
@@ -119,17 +136,17 @@ function SegmentEditor({ api, edition, segment, number, busy, perform, onDirty }
   const disabled = busy || action.busy;
   return <article className="experimental-section" aria-label={`第 ${number} 段双语编辑`}>
     <Badge>{segment.status}</Badge><p>原稿 v{segment.source_version} · 段落路径 {segment.path.join('.')} · UTF-16 位置 {segment.from_pos}–{segment.to_pos}</p>
-    <div className="experimental-grid multilingual-columns"><section><h4>原文</h4><p className="multilingual-prose" lang={edition.source_language} dir="auto">{segment.source_text}</p></section><section><Field label={`第 ${number} 段译文`}><textarea className={`multilingual-prose multilingual-font-${edition.font}`} lang={edition.target_language} dir={edition.direction} value={text} maxLength={20000} disabled={disabled} onChange={e => setText(e.target.value)} /></Field></section></div>
-    <Field label="本段审核说明"><textarea value={note} maxLength={1000} disabled={disabled} onChange={e => setNote(e.target.value)} /></Field>
-    <div className="experimental-actions"><Button disabled={disabled || !dirty} onClick={() => perform(() => api.save(edition, segment, text, note), '译文草稿已保存，原稿未修改。')}>保存本段草稿</Button><Button disabled={disabled || !dirty} onClick={() => { setText(segment.target_text); setNote(segment.note); }}>还原未保存输入</Button>
-      <Button disabled={disabled || dirty || !text.trim() || !['DRAFT', 'REJECTED'].includes(segment.status)} onClick={() => perform(() => api.review(edition, segment, 'submit'), '本段已进入待审。')}>提交本段审核</Button>
-      <Button disabled={disabled || dirty || segment.status !== 'REVIEW'} onClick={() => void action.run(async () => { const ticket = ++epoch.current; const value = await api.preview(edition, segment); if (alive.current && ticket === epoch.current) { setPreview(value); setApproved(false); } }, '术语预检已完成；语言质量仍需人工审核。')}>预检本段术语与版本</Button>
-      <Button disabled={disabled || dirty || segment.status !== 'REVIEW'} onClick={() => perform(() => api.review(edition, segment, 'reject'), '本段已退回，译文保留。')}>退回本段</Button>
-      <Button disabled={disabled || dirty || !['ACCEPTED', 'REJECTED'].includes(segment.status)} onClick={() => perform(() => api.review(edition, segment, 'reopen'), '本段已重新打开为草稿。')}>重新打开本段</Button></div>
-    {!!segment.issues.length && <Issues issues={segment.issues} />}
-    {preview && <section aria-label="本段接受预览"><Issues issues={preview.issues} /><label className="experimental-check"><input type="checkbox" disabled={!preview.can_accept || disabled || dirty} checked={approved} onChange={e => setApproved(e.target.checked)} />已人工核对本段译文、术语与源版本</label><Button disabled={disabled || dirty || !approved || !preview.can_accept} onClick={() => perform(() => api.review(edition, segment, 'accept', preview), '仅本段译文已接受。原稿仍保持原样。')}>确认仅接受本段译文</Button></section>}
-    <TranslationMemoryPanel key={`memory:${edition.id}:${segment.id}:${edition.version}`} api={api} edition={edition} segment={segment} blocked={disabled || dirty} perform={perform} />
-    <LanguageTranslationPanel key={`${edition.id}:${segment.id}:${edition.version}`} api={api} edition={edition} segment={segment} blocked={disabled || dirty} perform={perform} />
+    <div className="experimental-grid multilingual-columns"><section><h4>原文</h4><p className="multilingual-prose" lang={edition.source_language} dir="auto">{segment.source_text}</p></section><section><Field label={`第 ${number} 段译文`}><textarea onCompositionStart={() => setComposing(true)} onCompositionEnd={() => setComposing(false)} ref={targetInput} className={`multilingual-prose multilingual-font-${edition.font}`} lang={edition.target_language} dir={edition.direction} value={text} maxLength={20000} disabled={disabled} onChange={e => setText(e.target.value)} /></Field></section></div>
+    <Field label="本段审核说明"><textarea onCompositionStart={() => setComposing(true)} onCompositionEnd={() => setComposing(false)} value={note} maxLength={1000} disabled={disabled} onChange={e => setNote(e.target.value)} /></Field>
+    <div className="experimental-actions"><Button disabled={composing || disabled || !dirty} onClick={() => perform(() => api.save(edition, segment, text, note), '译文草稿已保存，原稿未修改。')}>保存本段草稿</Button><Button disabled={composing || disabled || !dirty} onClick={() => { setText(segment.target_text); setNote(segment.note); }}>还原未保存输入</Button>
+      <Button disabled={composing || disabled || dirty || !text.trim() || !['DRAFT', 'REJECTED'].includes(segment.status)} onClick={() => perform(() => api.review(edition, segment, 'submit'), '本段已进入待审。')}>提交本段审核</Button>
+      <Button disabled={composing || disabled || dirty || segment.status !== 'REVIEW'} onClick={() => void action.run(async () => { const ticket = ++epoch.current; const value = await api.preview(edition, segment); if (alive.current && ticket === epoch.current) { setPreview(value); setApproved(false); } }, '术语预检已完成；语言质量仍需人工审核。')}>预检本段术语与版本</Button>
+      <Button disabled={composing || disabled || dirty || segment.status !== 'REVIEW'} onClick={() => perform(() => api.review(edition, segment, 'reject'), '本段已退回，译文保留。')}>退回本段</Button>
+      <Button disabled={composing || disabled || dirty || !['ACCEPTED', 'REJECTED'].includes(segment.status)} onClick={() => perform(() => api.review(edition, segment, 'reopen'), '本段已重新打开为草稿。')}>重新打开本段</Button></div>
+    {!!segment.issues.length && <Issues issues={segment.issues} rules={edition.rules} />}
+    {preview && <section aria-label="本段接受预览"><Issues issues={preview.issues} rules={edition.rules} /><label className="experimental-check"><input type="checkbox" disabled={composing || !preview.can_accept || disabled || dirty} checked={approved} onChange={e => setApproved(e.target.checked)} />已人工核对本段译文、术语与源版本</label><Button disabled={composing || disabled || dirty || !approved || !preview.can_accept} onClick={() => perform(() => api.review(edition, segment, 'accept', preview), '仅本段译文已接受。原稿仍保持原样。')}>确认仅接受本段译文</Button></section>}
+    <TranslationMemoryPanel key={`memory:${edition.id}:${segment.id}:${edition.version}`} api={api} edition={edition} segment={segment} blocked={composing || disabled || dirty} perform={perform} />
+    <LanguageTranslationPanel key={`${edition.id}:${segment.id}:${edition.version}`} api={api} edition={edition} segment={segment} blocked={composing || disabled || dirty} perform={perform} />
     {action.feedback}
   </article>;
 }

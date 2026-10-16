@@ -37,3 +37,41 @@
 .graph-canvas__empty{position:absolute;inset:var(--space-8);display:grid;place-items:center;margin:0;text-align:center;color:var(--color-text-secondary);font-size:13px;pointer-events:none}
 .graph-canvas__help{padding:var(--space-2) var(--space-3);margin:0;border-top:var(--border-default);font-size:11px;line-height:1.5;color:var(--color-text-muted)}
 .graph-canvas .ui-button:disabled{cursor:not-allowed}
+
+.graph-canvas__navigator{display:flex;align-items:center;gap:var(--space-1);font-size:12px;color:var(--color-text-secondary)}
+.graph-canvas__navigator select{max-width:calc(var(--space-12) * 4);min-height:var(--control-height-sm);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit}
+
+.graph-canvas__minimap-row{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2);border-top:var(--border-default)}
+.graph-canvas__minimap.ui-button{display:block;flex:none;width:calc(var(--space-12) * 4);height:calc(var(--space-12) * 2.5);padding:0;overflow:hidden;border:var(--border-default);background:var(--color-bg-subtle)}
+.graph-canvas__minimap svg{display:block;width:100%;height:100%}
+.graph-canvas__minimap-nodes{fill:var(--color-text-muted)}
+.graph-canvas__minimap-selected{fill:var(--color-accent-primary)}
+.graph-canvas__minimap-camera{fill:none;stroke:var(--color-accent-primary);stroke-width:2;vector-effect:non-scaling-stroke}
+.graph-canvas__minimap-row .graph-canvas__help{border:0}
+
+.graph-canvas__annotation{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);padding:var(--space-2);border-bottom:var(--border-default);font-size:12px}
+.graph-canvas__annotation textarea{flex:1;min-width:0;box-sizing:border-box;resize:vertical;padding:var(--space-2);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit}
+.graph-canvas__annotation textarea:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:-2px}
+.graph-canvas__annotation .graph-canvas__help{flex-basis:100%;padding:0;border:0}
+
+.graph-canvas__groups{border-bottom:var(--border-default)}
+.graph-canvas__groups input,.graph-canvas__groups select{min-width:0;max-width:100%;min-height:var(--control-height-sm);padding:var(--space-1);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit}
+.graph-canvas__groups input:focus-visible,.graph-canvas__groups select:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:-2px}
+.graph-canvas__groups .graph-canvas__help{overflow-wrap:anywhere}
+
+/* Frames are behind cards/ports. Only the explicit label is hit-testable. */
+.graph-canvas__group-frame{position:absolute;box-sizing:border-box;border:var(--border-default);border-radius:var(--radius-lg);pointer-events:none}
+.graph-canvas__group-frame.is-selected{border-color:var(--color-selection-border)}
+.graph-canvas__group-label.ui-button{display:block;max-width:100%;height:var(--space-8);min-height:0;box-sizing:border-box;padding:var(--space-1) var(--space-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-secondary);pointer-events:auto}
+.graph-canvas__group-label.ui-button[aria-pressed=true]{background:var(--color-selection-bg);border-color:var(--color-selection-border)}
+
+.graph-canvas__group-collapsed{background:var(--color-bg-surface)}
+.graph-canvas__group-collapsed .graph-canvas__help{border:0;overflow-wrap:anywhere}
+.graph-canvas__navigation-results{display:grid;gap:var(--space-1);max-height:320px;overflow:auto}
+.graph-canvas__navigation-results [aria-selected=true]{background:var(--color-selection-bg);border-color:var(--color-selection-border)}
+
+/* Independent display notes: no ports; text scrolls within fixed world bounds. */
+.graph-canvas__note{position:absolute;box-sizing:border-box;pointer-events:auto;border:var(--border-default);border-radius:var(--radius-lg);background:var(--color-bg-surface);display:flex;flex-direction:column;overflow:hidden}
+.graph-canvas__note.is-selected{border-color:var(--color-selection-border)}
+.graph-canvas__note>.ui-button{flex:none;justify-content:flex-start;border-bottom:var(--border-default);cursor:grab}
+.graph-canvas__note>p{margin:0;padding:var(--space-2);font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;overflow:auto;user-select:text}

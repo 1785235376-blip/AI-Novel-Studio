@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-16",
+  "status": "PARTIAL",
+  "integration_verdict": "PASS_FOR_BOUNDED_SLICES",
+  "tested_source_sha": "6689935b223bc03a158b8966fd63e11d66767d29",
+  "tested_tree": "be6a94ac3a91dd848d5d1bd7e6f618395695d999",
+  "checks": [
+    {
+      "name": "combined_mock_ui_pure_geometry",
+      "command": "cd frontend && node node_modules/vitest/vitest.mjs run --no-cache --maxWorkers=1 --minWorkers=1 src/experimental/WorkspaceDiagnostics.test.tsx src/experimental/WorkspaceToolsPanel.test.tsx src/experimental/WriterRoomPanel.test.tsx src/experimental/BranchComparisonReview.test.tsx src/experimental/BranchManuscriptPanel.test.tsx src/experimental/templateCopyEditing.test.ts src/experimental/TemplateCopyEditing.test.tsx src/experimental/DeclarativeTemplatePanels.test.tsx src/experimental/PersonalSkillBriefComposer.test.tsx src/experimental/personalSkillBrief.test.ts src/experimental/CharacterMindEvidenceReview.test.tsx src/experimental/StoryGraphPanel.test.tsx src/experimental/StoryGraphEvidenceReview.test.tsx src/novel/CharacterAuthorPanel.test.tsx src/ui/AppShell.test.tsx",
+      "exit_code": 0,
+      "test_files": 15,
+      "tests_passed": 169
+    },
+    {
+      "name": "forced_typescript",
+      "command": "cd frontend && node node_modules/typescript/bin/tsc -b --force --pretty false",
+      "exit_code": 0
+    },
+    {
+      "name": "vite_build",
+      "command": "cd frontend && node node_modules/vite/bin/vite.js build",
+      "exit_code": 0,
+      "warning": "Existing chunks exceed 500 kB; not a browser performance acceptance."
+    },
+    {
+      "name": "public_source_closure",
+      "command": "python scripts/public_build.py --source .",
+      "exit_code": 0,
+      "file_count": 487
+    },
+    {
+      "name": "token_guard",
+      "command": "node scripts/check_ui_design_tokens.mjs",
+      "exit_code": 0,
+      "files": 52
+    },
+    {
+      "name": "test_discovery_only",
+      "command": "cd frontend && node scripts/check-test-discovery.mjs",
+      "exit_code": 0
+    },
+    {
+      "name": "diff_check",
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "independent_slice_reviews": [
+    {
+      "slice": "Diagnostics",
+      "original_sha": "9c4fbfa68784a324bb2c48448baa38e6c72c93ea",
+      "integrated_sha": "08903634ff6484b1051fada26ad9cf0ca209d6a4",
+      "tests_passed": 36,
+      "verdict": "PASS_FOR_BOUNDED_SLICE"
+    },
+    {
+      "slice": "Writer Room",
+      "original_sha": "50d6fa301b7db8d7e432fd689fba79070087dad0",
+      "integrated_sha": "db83eb03ddcf74f220101db425883a7e5984b1f6",
+      "tests_passed": 14,
+      "verdict": "PASS_FOR_BOUNDED_SLICE"
+    },
+    {
+      "slice": "Branch comparison",
+      "original_sha": "771296530f4a0da8fa6f5f787ba55530f185ece3",
+      "integrated_sha": "d3fe4f986716e242c9e44c22a8b76e54214ca458",
+      "tests_passed": 13,
+      "verdict": "PASS_FOR_BOUNDED_SLICE"
+    },
+    {
+      "slice": "Template authoring",
+      "original_sha": "e0f44c76220b10e02125bbd63cbe40220605d5f2",
+      "integrated_sha": "3a6be5f76a0e4aa4d2b2444c01e92be12615fd4d",
+      "tests_passed": 46,
+      "verdict": "PASS_FOR_BOUNDED_SLICE"
+    },
+    {
+      "slice": "Character Mind",
+      "original_sha": "264eb4eeb014c487c6acb8f1f32fda82e3586b88",
+      "integrated_sha": "6689935b223bc03a158b8966fd63e11d66767d29",
+      "tests_passed": 41,
+      "verdict": "PASS_FOR_BOUNDED_SLICE"
+    }
+  ],
+  "template_prerequisite_original": "47b065948951277fda163447cf71924956abf5c8",
+  "template_prerequisite_integrated": "a0be401297b1ffed74a63bee3fac069e1b2d0717",
+  "source_sha256": {
+    "frontend/src/experimental/BranchComparisonReview.test.tsx": "349af9e4755ec730b62639130bc92d2118e1881edaec5354bf768b81d2ebc76e",
+    "frontend/src/experimental/BranchComparisonReview.tsx": "39ab58a595d509bb50931502b0727bbf09baac39a16f79b21acbe92b55767e5c",
+    "frontend/src/experimental/BranchManuscriptPanel.test.tsx": "14bd53f5ee41a19b1a9e7388147dc63e6e23a7d061c211d9c9eddbb32fb04eaf",
+    "frontend/src/experimental/BranchManuscriptPanel.tsx": "2a3cabf7dd03437deaf573253082ad1f0b6a2542c0757a314c8e559dcd2fd2d0",
+    "frontend/src/experimental/CharacterMindEvidenceReview.test.tsx": "b5091d0f69142a45b5d3eb9f995d126fbc160bc2bdcb4bc79f20c37f90ac2ae5",
+    "frontend/src/experimental/CharacterMindEvidenceReview.tsx": "b1e29b979cf79ca50451ad2f22b68c54080a4c9c3abcf3e65883da8ce405afb8",
+    "frontend/src/experimental/StoryGraphPanel.tsx": "c1c63bc29a11a0e761953dde83df3e63de4b125430844829c89824483508bd61",
+    "frontend/src/experimental/TemplateCopyEditing.test.tsx": "4ad06f25c45fe634d9536c142e63de366a86d31653555dee9b8b7dc5e8a45723",
+    "frontend/src/experimental/TemplateLibraryPanel.tsx": "6fe668753f7403e1ec98d60664140e65f93bc4d7024555e0235b613df9d2dd0b",
+    "frontend/src/experimental/WorkspaceDiagnostics.test.tsx": "7c294748a290f708506437cfe57ff6ccb3808857be139fdad66dc99abf2a6b54",
+    "frontend/src/experimental/WorkspaceDiagnostics.tsx": "cf8ccf7ecc7e4ae4ef4b90a40dc3ff8a89deaae6194b95d641d38e53f4f9cbf5",
+    "frontend/src/experimental/WorkspaceToolsPanel.tsx": "7877e86aac802d9dc9bc6775df34cb8834746634b32d8b28c9b0b5cfa38b8385",
+    "frontend/src/experimental/WriterRoomPanel.test.tsx": "7050e594f92ca971f41752ef85b1ddbcacf7427877a3c2f625779a6998141e35",
+    "frontend/src/experimental/WriterRoomPanel.tsx": "3886fc8f145c0736e9b20e2f1a9b8e55e0abe6b7579f36a50de0f034cffd97b5",
+    "frontend/src/experimental/branchComparisonReview.ts": "90d487c28c58e985bfedce0c156bb62b1e7f53aff16eb95dc933bcc7c5a53f7a",
+    "frontend/src/experimental/characterMindEvidence.ts": "6e45ca99cbfc615571801b76121a17e8b5461a7f852a7666dcb525305a22cae9",
+    "frontend/src/experimental/diagnosticGuidance.ts": "97216787dc3a7d2286664d3097feefe214978504543643b8aac8a4e30b730fec",
+    "frontend/src/experimental/templateCopyEditing.test.ts": "5e78858925676e86906c0fda5fd1a6467430834c597d021903730c8846fdfb0c",
+    "frontend/src/experimental/templateCopyEditing.ts": "46bff39a4ca04c6db2d37bf9bf238149976e2e8143cc22328fa83f08bf6dd0fc",
+    "tests/test_template_copy_editing_workflow.py": "ba854e8248ee0fc755061a1cda5626ac15df742506281e60482555bd0b6c6eed"
+  },
+  "limits": [
+    "No live HTTP/backend/File/PG tests rerun in integration. Template owner File persistence evidence is separate, not independently rerun.",
+    "No browser, screenshot, native visual/accessibility/performance, Windows/GPU, real model/provider or external NLE acceptance.",
+    "PUBLIC source closure is packaging hygiene, not real installer/container/release acceptance.",
+    "Original typed response assumptions remain for diagnostics, Writer Room and complete branch comparison envelopes; newly introduced evidence/section helpers have focused malformed-input tests.",
+    "P0 lifecycle remains platform-BLOCKED and untested; R3-GATE HOLD; production Prompt Adoption disabled; DeliveryCenter entitlement producer remains BLOCKED.",
+    "No push, hosted CI, release, tag, deployment, paid service, user computer access, or new permissions."
+  ],
+  "verification_log_excerpts": {
+    "build.log": "vite v6.4.3 building for production...\ntransforming...\n✓ 2268 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                                     0.33 kB │ gzip:   0.19 kB\ndist/assets/LocalTutorIntegration-Bg9pZcT3.css      2.93 kB │ gzip:   0.82 kB\ndist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB\ndist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB\ndist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB\ndist/assets/App-CFZRJkM8.css                      214.54 kB │ gzip:  27.13 kB\ndist/assets/Health-BjbPb5Br.js                      0.99 kB │ gzip:   0.57 kB\ndist/assets/index-74tzx-1r.js                      30.15 kB │ gzip:  10.01 kB\ndist/assets/LocalTutorIntegration-Bgn3ThYa.js      42.44 kB │ gzip:  13.79 kB\ndist/assets/style-DFP4YRB7.js                      45.12 kB │ gzip:   8.40 kB\ndist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB\ndist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB\ndist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB\ndist/assets/ExperimentalWorkbench-B-RqpNv5.js     712.97 kB │ gzip: 213.09 kB\ndist/assets/App-CZTzPBu-.js                     2,189.74 kB │ gzip: 650.18 kB\n\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n✓ built in 6.64s\n",
+    "tsc.log": "",
+    "tokens.log": "UI token guard PASS (52 files)\n",
+    "public.log": "{\"file_count\": 487, \"profile\": \"PUBLIC\", \"schema\": \"studio-public-build/1\"}\n",
+    "tests.log": "\n RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-usability/frontend\n\n ✓ src/experimental/WorkspaceToolsPanel.test.tsx (30 tests) 2726ms\n   ✓ deduplicates repeated resolves and only honors the reopened search request 413ms\n ✓ src/experimental/DeclarativeTemplatePanels.test.tsx (8 tests) 1576ms\n   ✓ uses real form contracts, explicit graph check and version-bound creation before separate execute and review 415ms\n   ✓ previews installs favorites copies edits compares and reverts without running a workflow or overwriting instantiated work 349ms\n ✓ src/experimental/WriterRoomPanel.test.tsx (14 tests) 1132ms\n   ✓ renders actual task progress and responsible change-request round trip without domain approval 339ms\n ✓ src/ui/AppShell.test.tsx (19 tests) 233ms\n ✓ src/experimental/PersonalSkillBriefComposer.test.tsx (17 tests) 840ms\n ✓ src/experimental/StoryGraphPanel.test.tsx (8 tests) 698ms\n ✓ src/experimental/BranchManuscriptPanel.test.tsx (8 tests) 415ms\n ✓ src/experimental/StoryGraphEvidenceReview.test.tsx (16 tests) 1320ms\n   ✓ reads the exact original evidence and copies approved content into the existing pending form without writing 301ms\n ✓ src/experimental/CharacterMindEvidenceReview.test.tsx (14 tests) 858ms\n ✓ src/experimental/TemplateCopyEditing.test.tsx (3 tests) 454ms\n   ✓ saves structured edits through original CAS owner and reopens content and provenance 318ms\n ✓ src/experimental/WorkspaceDiagnostics.test.tsx (6 tests) 197ms\n ✓ src/novel/CharacterAuthorPanel.test.tsx (3 tests) 267ms\n ✓ src/experimental/BranchComparisonReview.test.tsx (5 tests) 172ms\n ✓ src/experimental/personalSkillBrief.test.ts (13 tests) 8ms\n ✓ src/experimental/templateCopyEditing.test.ts (5 tests) 6ms\n\n Test Files  15 passed (15)\n      Tests  169 passed (169)\n   Start at  23:14:08\n   Duration  20.54s (transform 1.40s, setup 79ms, collect 3.09s, tests 10.90s, environment 3.99s, prepare 701ms)\n\n"
+  },
+  "isolation": "Independent reviews and combined rerun used --no-cache. Some initial owner runs used default shared dependency cache before warning; disclosed in owner receipts. Integration changed only its four authorized documentation paths; historical untracked receipts retained."
+}

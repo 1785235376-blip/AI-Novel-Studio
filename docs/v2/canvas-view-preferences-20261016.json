@@ -1,0 +1,103 @@
+{
+  "baseline_commit": "fd9bfabe5d6b2b9a053b2b30adbc7e0474a5d5e7",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/GraphCanvas.test.tsx src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/studioGraphClient.test.ts src/creative/graphCanvasGeometry.test.ts src/creative/StudioProductionGraphEditor.test.tsx"
+      ],
+      "started_utc": "2026-10-16T10:11:32.487801+00:00",
+      "finished_utc": "2026-10-16T10:11:58.792028+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-view-final-ui.log",
+      "log_sha256": "876a72cc9cf5f88b109bc1147ab0c1afe0c79cacf6c65c02512009691155b172",
+      "receipt": "docs/delivery/v2-development/canvas-view-final-ui.json",
+      "receipt_sha256": "9c0e791b353c32e17b5e771429e57af0571072825c0215fa0745d2a4fa62d8b2"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_graph_presentation_contract.py",
+        "tests/test_v2_creative_graph_persistence.py::test_view_preferences_original_owner_reopen_cas_and_remove[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-view-final-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T10:11:33.997408+00:00",
+      "finished_utc": "2026-10-16T10:11:43.802674+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-view-final-file.log",
+      "log_sha256": "2881685adee39ddf304258d50a3e3ee66f402819284280dd39594d4915b0441b",
+      "receipt": "docs/delivery/v2-development/canvas-view-final-file.json",
+      "receipt_sha256": "cb0458ccfe5699c9cba2459e04d929e63c8b7902af5fa248fe0b85323f328e2c"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T10:11:35.445739+00:00",
+      "finished_utc": "2026-10-16T10:12:13.299540+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-view-final-build.log",
+      "log_sha256": "76af402a977e327dc94a2c26cc5454b0b69cdf86bc3a7def97de28a68d39f759",
+      "receipt": "docs/delivery/v2-development/canvas-view-final-build.json",
+      "receipt_sha256": "861cca83c61c623fa0daa72e861c111746f27d5eeaa3f31d8367565db9ae4ab6"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for (const p of [\"frontend/src/creative/GraphCanvas.tsx\", \"frontend/src/creative/studioGraphEditorView.tsx\"]) if (/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Scoped token/color PASS; browser visual acceptance NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T10:12:07.465886+00:00",
+      "finished_utc": "2026-10-16T10:12:07.535762+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-view-token.log",
+      "log_sha256": "51f099cf4a335da0833d1a2af9a81816bacae48c0c59e5608c83dec65d205513",
+      "receipt": "docs/delivery/v2-development/canvas-view-token.json",
+      "receipt_sha256": "0104674305b99e880137ed5839fbd10dfff6023f8317da89cddfa0c3876d477d"
+    }
+  ],
+  "changed_source_sha256": {
+    "app/creative/graph_models.py": "6908be1a19e597d4e1534003bc4614700d9e95e2474221570a72599c96eb6f50",
+    "frontend/src/creative/GraphCanvas.test.tsx": "81785a15d71e2ed40a78274eaaa941432c0b17bbd0417c748e757ca1d2b675f6",
+    "frontend/src/creative/GraphCanvas.tsx": "66cdc1c40018c5d96b150fd8299055525faf081167196aaa8dcdc5fa478ba456",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "92806dbc0c5c474e3f1174f2e6f142d446c559b7ab51d5db3f46ad7be5d4846a",
+    "frontend/src/creative/studioGraphClient.test.ts": "149bf8fb40a5905140875d28300113cc14d5edfc240b1613b22cc7d8b2b398df",
+    "frontend/src/creative/studioGraphClient.ts": "ba0eb9e7238b8d4c8a192388cb1ce34cbe2feb62aa72ce17151778bc8047af47",
+    "frontend/src/creative/studioGraphEditorView.tsx": "554b8b09622fe200163d4f346734e7774e66aa25e79da01af977b00e46ffbd8b",
+    "frontend/src/creative/studioGraphTypes.ts": "a7b3622c84e812704ba640dd79f5818bf716dd0f629819ad99d3c450dbf3fe0f",
+    "tests/test_v2_creative_graph_persistence.py": "d13b134f67810cffc30de41e3220b687344b41c9fb0b5258857acf99a884d3c4",
+    "tests/test_v2_graph_presentation_contract.py": "fa6fd7f53e3b5c0407e2bfc7b4e96123c33250e249ff319b9ee3528d513927ee"
+  },
+  "scope": "Optional graph-owned grid/snap/step/MiniMap preferences, explicit draft action and original save; collapse remains session-only",
+  "failed_receipts_retained": [
+    "docs/delivery/v2-development/canvas-view-file.json"
+  ],
+  "superseded_receipts_retained": [
+    "canvas-view-ui",
+    "canvas-view-build"
+  ],
+  "not_run": [
+    "browser/visual/native input/performance",
+    "PG/P0/security",
+    "GPU/provider/Windows/user computer",
+    "full RC",
+    "hosted CI"
+  ],
+  "push": "NOT_ATTEMPTED_COST_UNKNOWN"
+}

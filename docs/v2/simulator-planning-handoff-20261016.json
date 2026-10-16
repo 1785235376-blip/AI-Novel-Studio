@@ -1,0 +1,101 @@
+{
+  "baseline_commit": "92cc5184f900631c8fae71373f0373e8ebf76efe",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/StorySimulatorPanel.test.tsx src/experimental/PlanningPanel.handoff.test.tsx src/experimental/PlanningPanel.recovery.test.tsx src/experimental/ExperimentalWorkbench.test.tsx src/experimental/ExperimentalWorkbench.continuation.test.tsx src/AppAuthorTaskNavigation.test.tsx src/experimental/StoryGraphPanel.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T11:20:51.892976+00:00",
+      "finished_utc": "2026-10-16T11:21:01.579283+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/simulator-planning-final-ui-r3.log",
+      "log_sha256": "e82a0b54fb5c747e1c7ecf8d50bb50f4c7ee3fed71f7cb703d0fd8208976bd83",
+      "receipt": "docs/delivery/v2-development/simulator-planning-final-ui-r3.json",
+      "receipt_sha256": "89e503760f7a5574a2797e8192adcc3774dd92e912cf85de493f2481527150c9"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r4_story_simulator.py::test_manual_candidate_comparison_reproducibility_and_real_restart[file]",
+        "tests/test_r4_story_simulator.py::test_pending_review_reuses_original_planning_authority_and_never_auto_accepts[file]",
+        "tests/test_r4_story_simulator.py::test_saved_route_reopens_exact_original_proposal_constraints_and_review_after_restart[file]",
+        "tests/test_r3_planning.py::test_planning_hierarchy_real_refs_and_restart[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/simulator-planning-final-file-public-r3/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T11:20:55.025301+00:00",
+      "finished_utc": "2026-10-16T11:21:04.927310+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/simulator-planning-final-file-public-r3.log",
+      "log_sha256": "6bd18667e02afe61ec7aaaff16101e250cb5f74304b60d7b2afe724db0eb3928",
+      "receipt": "docs/delivery/v2-development/simulator-planning-final-file-public-r3.json",
+      "receipt_sha256": "efac6b1086ac24bf9e121b56aab84c4ab8f4861f57a8a28c7b6940659e45d048"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T11:20:53.486976+00:00",
+      "finished_utc": "2026-10-16T11:21:35.454565+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/simulator-planning-final-build-r3.log",
+      "log_sha256": "3ab395ece89c48a3f251fc08a16672e5431ffded4e780be6cc8ae52c9845ae1f",
+      "receipt": "docs/delivery/v2-development/simulator-planning-final-build-r3.json",
+      "receipt_sha256": "2c79b69001572e7b5ef5e3d6cd5639ceb6cf9237109272ec357b99e16290b59e"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-c",
+        "import pathlib,re; files=[pathlib.Path(\"frontend/src/experimental\")/name for name in [\"ExperimentalWorkbench.tsx\",\"PlanningPanel.tsx\",\"StorySimulatorPanel.tsx\"]]; violations=[str(p) for p in files if re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",p.read_text(),re.I)]; assert not violations, violations; print(\"Scoped raw-color guard PASS (3 files)\")"
+      ],
+      "started_utc": "2026-10-16T11:20:56.298522+00:00",
+      "finished_utc": "2026-10-16T11:20:56.339581+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/simulator-planning-final-token-r3.log",
+      "log_sha256": "64848b51c300d04314c9266ec946f93e1943fa867278fa33417b110b7c9a732c",
+      "receipt": "docs/delivery/v2-development/simulator-planning-final-token-r3.json",
+      "receipt_sha256": "1996767e33bcecd230910fed453c8dc1a27920fd780cb92fe1e73e385b25db23"
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/App.tsx": "11ac3a7a9af39ff686da3204f6ff12941285b3bbd022c1503f51d51f6545ebb4",
+    "frontend/src/AppAuthorTaskNavigation.test.tsx": "c71612b2e904c0efd00c416ad9a9c467a5430cdf401ba6465c3dee10ee408d09",
+    "frontend/src/experimental/ExperimentalWorkbench.continuation.test.tsx": "33aa2fa77288d6af9e24365885825951378c2d5a1346b473ad9ecbd5ca9d85ba",
+    "frontend/src/experimental/ExperimentalWorkbench.tsx": "a6a5613c93a9d8a1e457ad66c28ee2e9795fd87655e9d4cd5f37a5dcfd631fbf",
+    "frontend/src/experimental/PlanningPanel.tsx": "7f86fafe1db080c6a7eb0944535bf8e9345ce6ae4496f467dca9496a02cd38a6",
+    "frontend/src/experimental/StorySimulatorPanel.test.tsx": "62347f6c757041e6b83247960f7fdc98d954586439331039fcd315134832022f",
+    "frontend/src/experimental/StorySimulatorPanel.tsx": "b7026fe8b9cc37028310c9da9615033d3857db5c2c6db0f79fb66937572625b2",
+    "tests/test_r4_story_simulator.py": "63b5139cfed2670d5eafebdd32e408622e7fd4cccb1287bc1da0799fa4040e77",
+    "frontend/src/experimental/PlanningPanel.handoff.test.tsx": "931d671ab046dcae9333fac6362e6942217c5d597963f546cc01eaad8845f5cc"
+  },
+  "ui_checks": 69,
+  "nonsecurity_file_checks": 4,
+  "public_checks": 30,
+  "public_source_closure_files": 487,
+  "real_model_quality": "NOT_RUN",
+  "browser": "NOT_RUN",
+  "postgres_p0": "BLOCKED_NOT_RUN",
+  "windows_gpu": "NOT_RUN",
+  "hosted_ci_push": "NOT_RUN_COST_UNKNOWN",
+  "preserved_failed_receipts": [
+    "docs/delivery/v2-development/simulator-planning-ui.json",
+    "docs/delivery/v2-development/simulator-planning-final-file-public.json"
+  ],
+  "important_limit": "Approving the original proposal changes its target node and may make original run GET STALE; post-approval evidence replay is not implemented."
+}

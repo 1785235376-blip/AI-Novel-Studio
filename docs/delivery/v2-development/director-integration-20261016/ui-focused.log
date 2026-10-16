@@ -1,0 +1,35 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 5101ms
+   ✓ Creative current document save-state ownership > hydrates a fresh saved document without inventing dirty content or a write 497ms
+ ✓ src/AppModuleNavigationIntent.test.tsx (34 tests) 3229ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (11 tests) 1109ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2284ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 698ms
+   ✓ mounted text graph autosave and explicit recovery > rechecks a saved baseline exactly and keeps the original CAS version for explicit save 366ms
+ ✓ src/creative/GraphDirectorSourceImpact.test.tsx (19 tests) 279ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 261ms
+ ✓ src/AppLocalEntryAuthorityRace.test.tsx (4 tests) 666ms
+   ✓ local automatic entry keeps original authority > a late authenticated local-inventory retry cannot unmount the real connection UI (unavailable) 302ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 453ms
+ ✓ src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx (2 tests) 497ms
+   ✓ CreativeWorkspace adoption readback admission > accepts a verified adoption only against the still-current original target version 354ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (8 tests) 11377ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 1356ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 1767ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 1255ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 557ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 885ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 2902ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 804ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 1848ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 19ms
+ ✓ src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx (1 test) 297ms
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 8ms
+
+ Test Files  13 passed (13)
+      Tests  154 passed (154)
+   Start at  05:25:05
+   Duration  23.01s (transform 6.40s, setup 108ms, collect 12.36s, tests 25.58s, environment 4.48s, prepare 802ms)
+

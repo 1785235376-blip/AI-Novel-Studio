@@ -5,19 +5,40 @@ import { AuthorRequestPreviewPanel } from '../novel/AuthorRequestPreviewPanel';
 import { AuthorRequestControls } from '../novel/AuthorRequestControls';
 import { authorContextRequest, defaultAuthorRequestScope, type AuthorRequestScope, type AuthorPreviewReceipt, type AuthorRequestBody } from '../novel/authorContextClient';
 import { RevisionComparisonModelPanel } from './RevisionComparisonModelPanel';
+import { styleReviewClient } from './styleReviewClient';
+import { judgeRevisionFinding, judgeRevisionReference, type JudgeRevisionIntent } from './judgeRevisionHandoff';
 import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
 import { revisionIntelligenceClient, type RevisionPreview, type RevisionProposal, type RevisionSelection, type SelectionReceipt, type VersionComparePreview, type VersionComparison, type SemanticChange } from './revisionIntelligenceClient';
 
 export type RevisionGenerationOptions = { enabled: boolean; novelId: string; context: CollaborationContext; providerId?: string; modelId?: string; profile: 'LOCAL_ONLY' | 'HYBRID' | 'QUALITY' };
-export type RevisionIntelligenceProps = { client: ExperimentalClient; chapter?: Chapter; selection?: { from: number; to: number; text: string }; saved?: boolean; onChapterSaved?: (chapter: Chapter) => void; generation?: RevisionGenerationOptions; requestedJobId?: string; onHistory?: () => void };
+export type RevisionIntelligenceProps = { client: ExperimentalClient; chapter?: Chapter; selection?: { from: number; to: number; text: string }; saved?: boolean; onChapterSaved?: (chapter: Chapter) => void; generation?: RevisionGenerationOptions; requestedJobId?: string; onHistory?: () => void; judgeIntent?: JudgeRevisionIntent };
 let scopeSequence = 0;
 export function RevisionIntelligencePanel(props: RevisionIntelligenceProps) {
-  const identity = useMemo(() => ++scopeSequence, [props.client, props.chapter?.id, props.chapter?.version]);
+  const identity = useMemo(() => ++scopeSequence, [props.client, props.chapter?.id, props.chapter?.version, props.judgeIntent]);
   return <RevisionBody key={identity} {...props} />;
 }
-function RevisionBody({ client, chapter, selection, saved = false, onChapterSaved, generation, requestedJobId, onHistory }: RevisionIntelligenceProps) {
+function RevisionBody({ client, chapter, selection, saved = false, onChapterSaved, generation, requestedJobId, onHistory, judgeIntent }: RevisionIntelligenceProps) {
   const api = useMemo(() => revisionIntelligenceClient(client), [client]);
+  const judgeApi = useMemo(() => styleReviewClient(client), [client]);
+  const judgeSource = useResource(signal => judgeIntent ? judgeApi.run(judgeIntent.runId, signal) : Promise.resolve(undefined), [judgeApi, judgeIntent]);
+  const judgeFinding = judgeIntent && !judgeSource.loading && !judgeSource.error ? judgeRevisionFinding(judgeIntent, judgeSource.data, chapter) : undefined;
+  const [evidenceProblem, setEvidenceProblem] = useState(false);
+  const evidenceReady = !judgeIntent || !!judgeFinding && !evidenceProblem;
+  const contextKey = JSON.stringify([saved, chapter, judgeIntent]);
+  const live = useRef({ key: contextKey, epoch: 0 });
+  if (live.current.key !== contextKey) live.current = { key: contextKey, epoch: live.current.epoch + 1 };
+  const contextEpoch = live.current.epoch;
+  const recheckEvidence = async () => {
+    if (!judgeIntent) return;
+    try {
+      const value = await judgeApi.run(judgeIntent.runId);
+      if (live.current.epoch !== contextEpoch || !saved || !judgeRevisionFinding(judgeIntent, value, chapter)) throw new Error('JUDGE_REVISION_SOURCE_CHANGED');
+    } catch (error) {
+      if (alive.current && live.current.epoch === contextEpoch) setEvidenceProblem(true);
+      throw error;
+    }
+  };
   const catalog = useResource(signal => api.catalog(chapter?.id, signal), [api, chapter?.id]);
   const history = useResource(signal => api.proposals(signal), [api]);
   const milestones = useResource(signal => api.milestones(signal), [api]);
@@ -30,12 +51,28 @@ function RevisionBody({ client, chapter, selection, saved = false, onChapterSave
   useEffect(() => { if (!saved) { epoch.current++; setReceipt(undefined); setReviewing(undefined); setJobId(undefined); } }, [saved]);
   const action = useAction();
   const select = (value: RevisionSelection) => action.run(async () => {
+    if (!saved || !evidenceReady) return;
     const ticket = ++epoch.current; setReceipt(undefined); setJobId(undefined);
+    await recheckEvidence();
+    if (!alive.current || ticket !== epoch.current || live.current.epoch !== contextEpoch) return;
     const result = await api.selection(value);
-    if (alive.current && ticket === epoch.current) { setReceipt(result); setCandidates(Object.fromEntries(result.blocks.map(b => [b.anchor_id, b.before]))); }
+    if (alive.current && ticket === epoch.current && live.current.epoch === contextEpoch) {
+      setReceipt(result); setCandidates(Object.fromEntries(result.blocks.map(b => [b.anchor_id, b.before])));
+      if (judgeIntent) setGoal(judgeRevisionReference(judgeIntent));
+    }
   }, '已校验保存版本、精确选区与段落锚点，尚未调用模型。');
   const saveResult = (value: Chapter) => { if (alive.current) { setReceipt(undefined); setReviewing(undefined); setJobId(undefined); onChapterSaved?.(value); catalog.reload(); history.reload(); } };
   return <div className="experimental-section">
+    {judgeIntent && <Panel title="来自叙事审阅的修订依据">
+      <ResourceState loading={judgeSource.loading} error={judgeSource.error} />
+      {(!judgeSource.loading && !judgeFinding || evidenceProblem) && <StatusMessage tone="warning">原线索、章节版本或引文位置已改变或不可读。请返回叙事审阅重新核对；旧依据不能继续准备候选。</StatusMessage>}
+      {judgeFinding && !evidenceProblem && <><p>{judgeRevisionReference(judgeIntent)}</p><Badge>{judgeFinding.origin === 'MODEL_ASSESSMENT' ? '模型意见，质量未验证' : '确定性规则线索'}</Badge>
+        <p>{judgeFinding.explanation}</p><p>建议：{judgeFinding.suggestion}</p><StatusMessage>判断边界：{judgeFinding.boundary}。引文匹配只验证出处，不证明语义判断成立。</StatusMessage>
+        <Field label="本次修订的原始证据"><textarea readOnly value={judgeIntent.evidence.quote} /></Field>
+        <p>原始 Markdown Unicode 字符 {judgeIntent.evidence.start}–{judgeIntent.evidence.end}，第 {judgeIntent.evidence.paragraph} 个非空行。请在下方明确选择要修改的原段落或编辑器选区，包括重复文字的正确位置。</p>
+        <StatusMessage>没有把证据下标换算成编辑器位置，也没有将建议当作替换正文。所选段落会再次校验；候选、差异预览、接受或拒绝沿用原修订审核。</StatusMessage>
+      </>}
+    </Panel>}
     <Panel title="选区修订与段落保护">
       <p>复用原编辑器、章节版本和历史。只修改逐项批准的文字；其他文字、格式和未批准候选保留。这里的锁是应用 AI 编辑约束。</p>
       {!chapter && <EmptyState title="先选择章节" detail="从原章节树打开已保存章节，再选择编辑器文字或下方段落。" />}
@@ -43,11 +80,11 @@ function RevisionBody({ client, chapter, selection, saved = false, onChapterSave
       {!saved && chapter && <StatusMessage tone="warning">先保存正文并解决冲突，再校验选区、生成或采用修订。</StatusMessage>}
       <ResourceState loading={catalog.loading} error={catalog.error} />
       {catalog.data && !catalog.data.branch_sources_available && <StatusMessage tone="warning">当前章节仓库尚无分支隔离正文，不会借用主分支内容执行修订。</StatusMessage>}
-      <div className="experimental-actions"><Button disabled={!chapter || !saved || !selection?.text || action.busy} onClick={() => chapter && selection && void select({ chapter_id: chapter.id, chapter_version: chapter.version, from_pos: selection.from, to_pos: selection.to, text: selection.text })}>校验编辑器选区</Button><Button disabled={catalog.loading || action.busy} onClick={catalog.reload}>重读章节段落</Button>{onHistory && <Button onClick={onHistory}>打开原版本历史</Button>}</div>
+      <div className="experimental-actions"><Button disabled={!chapter || !saved || !selection?.text || !evidenceReady || action.busy} onClick={() => chapter && selection && void select({ chapter_id: chapter.id, chapter_version: chapter.version, from_pos: selection.from, to_pos: selection.to, text: selection.text })}>校验编辑器选区</Button><Button disabled={catalog.loading || action.busy} onClick={catalog.reload}>重读章节段落</Button>{onHistory && <Button onClick={onHistory}>打开原版本历史</Button>}</div>
       {!catalog.loading && !catalog.error && chapter && <details><summary>从当前已保存段落选择</summary><div className="experimental-list">{catalog.data?.blocks.map((block, index) => <article className="experimental-record" key={block.path.join('.')}>
         <div className="experimental-actions"><strong>第 {index + 1} 段</strong><Badge tone={block.lock_state === 'STALE' ? 'warning' : 'neutral'}>{block.lock_state === 'LOCKED' ? 'AI 已锁定' : block.lock_state === 'STALE' ? '锁已漂移，仍阻止 AI' : '未锁定'}</Badge></div>
         <p className="writing-reference-text">{block.text || '空段落'}</p>
-        <Button disabled={!saved || !block.supported || !block.text || action.busy} onClick={() => void select({ chapter_id: chapter.id, chapter_version: chapter.version, from_pos: block.from_pos, to_pos: block.to_pos, text: block.text })}>选择第 {index + 1} 段</Button>
+        <Button disabled={!saved || !block.supported || !block.text || !evidenceReady || action.busy} onClick={() => void select({ chapter_id: chapter.id, chapter_version: chapter.version, from_pos: block.from_pos, to_pos: block.to_pos, text: block.text })}>选择第 {index + 1} 段</Button>
         {block.lock_state !== 'UNLOCKED' && <Button disabled={!saved || !onChapterSaved || action.busy || !catalog.data?.document_digest} onClick={() => void action.run(async () => { saveResult(await api.unlockBlock(chapter, block.path, catalog.data!.document_digest!)); }, '已明确解除此段落 AI 锁。')}>明确解锁第 {index + 1} 段</Button>}
       </article>)}</div></details>}
       {receipt && <section aria-label="已校验修订选区"><StatusMessage>已绑定 v{receipt.selection.chapter_version} 的 {receipt.blocks.length} 个文字区块。</StatusMessage>
@@ -58,10 +95,13 @@ function RevisionBody({ client, chapter, selection, saved = false, onChapterSave
           <Field label={`区块 ${index + 1} 候选文字`}><textarea value={candidates[block.anchor_id] ?? ''} maxLength={100000} onChange={e => { setJobId(undefined); setCandidates(old => ({ ...old, [block.anchor_id]: e.target.value })); }} /></Field>
         </article>)}
         <StatusMessage>{jobId ? '候选来自已授权生成任务，采用时仍检查原任务授权。' : '手工输入 / 导入候选：可验证差异与局部写入，不代表真实 AI 质量。'}</StatusMessage>
-        <div className="experimental-actions"><Button disabled={action.busy || !saved || !receipt.blocks.some(b => candidates[b.anchor_id] !== b.before)} onClick={() => void action.run(async () => {
+        <div className="experimental-actions"><Button disabled={action.busy || !saved || !evidenceReady || !receipt.blocks.some(b => candidates[b.anchor_id] !== b.before)} onClick={() => void action.run(async () => {
+          if (!saved || !evidenceReady || live.current.epoch !== contextEpoch) return;
           const ticket = epoch.current;
+          await recheckEvidence();
+          if (!alive.current || ticket !== epoch.current || live.current.epoch !== contextEpoch) return;
           const result = await api.create(receipt, receipt.blocks.map(b => ({ anchor_id: b.anchor_id, text: candidates[b.anchor_id] ?? '' })), goal, jobId);
-          if (alive.current && ticket === epoch.current) { setReviewing(result); history.reload(); }
+          if (alive.current && ticket === epoch.current && live.current.epoch === contextEpoch) { setReviewing(result); history.reload(); }
         }, '候选已保存，正文未改变。')}>保存候选并逐项审核</Button>
         <Button disabled={action.busy || !saved || !onChapterSaved || receipt.blocks.some(b => b.lock_state !== 'UNLOCKED')} onClick={() => void action.run(async () => { saveResult(await api.locks(receipt, 'lock')); }, '已锁定所在完整段落，并创建原版本检查点。')}>锁定所在段落，禁止 AI 修改</Button>
         <Button disabled={action.busy || !saved || !onChapterSaved || receipt.blocks.some(b => b.lock_state === 'UNLOCKED')} onClick={() => void action.run(async () => { saveResult(await api.locks(receipt, 'unlock')); }, '已明确解除段落 AI 锁，请重新选择当前版本。')}>明确解锁所在段落</Button></div>

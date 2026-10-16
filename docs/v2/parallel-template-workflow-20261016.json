@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-16",
+  "base": "ece0ac7",
+  "slice": "B01 structured personal template copy editing and history comparison",
+  "slice_status": "IMPLEMENTED",
+  "capability_status": "PARTIAL",
+  "owner": "existing TemplateLibraryPanel and TemplateLibraryService",
+  "verification": {
+    "focused_frontend": {"passed": 46, "exit_code": 0},
+    "file_save_reopen_history_revert": {"passed": 1, "deselected_postgres": 1, "exit_code": 0},
+    "typescript": {"exit_code": 0},
+    "vite_build": {"exit_code": 0, "warning": "existing large chunks"},
+    "token_guard": {"exit_code": 0},
+    "browser_visual": "NOT_RUN",
+    "postgres": "NOT_RUN",
+    "windows_gpu_models": "NOT_RUN",
+    "remote_ci_push": "NOT_RUN"
+  },
+  "integration_seam": "Already mounted TemplateLibraryPanel; no shared integration edit required",
+  "preserved": ["original CAS save/revert owner", "preview digests", "author/license/provenance", "scope remount", "no execution or publishing"]
+}

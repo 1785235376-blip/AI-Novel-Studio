@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GraphCanvas } from './GraphCanvas';
@@ -48,6 +48,96 @@ beforeEach(() => { vi.stubGlobal('PointerEvent', TestPointerEvent); });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe('controlled typed graph canvas', () => {
+  it('creates, selects, drags, renames and removes persisted groups while retaining annotation', () => {
+    const definition = { ...initial(), presentation: { comment: 'Keep' } };
+    const { changes, selections } = setup({ definition, selectedNodeIds: ['source', 'prepare'] });
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '场景 🎬' } });
+    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' }));
+    const groups = [{ id: 'group_1', name: '场景 🎬', node_ids: ['source', 'prepare'] }];
+    expect(changes).toHaveBeenLastCalledWith({ ...definition, presentation: { comment: 'Keep', groups } }, true);
+    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } });
+    fireEvent.click(screen.getByRole('button', { name: '选择分组成员' }));
+    expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
+    down(source(), 40, 40); move(72, 56); up(72, 56);
+    const moved = changes.mock.calls.at(-1)![0];
+    expect(moved.nodes[0].position).toEqual({ x: 56, y: 40 });
+    expect(moved.nodes[1].position).toEqual({ x: 512, y: 160 });
+    expect(moved.presentation.groups).toEqual(groups);
+    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } });
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '新名称' } });
+    fireEvent.click(screen.getByRole('button', { name: '重命名分组' }));
+    expect(changes.mock.calls.at(-1)![0].presentation.groups[0].name).toBe('新名称');
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: 'Edited note' } });
+    expect(changes.mock.calls.at(-1)![0].presentation.groups[0].name).toBe('新名称');
+    fireEvent.click(screen.getByRole('button', { name: '移除画布说明' }));
+    expect(changes.mock.calls.at(-1)![0].presentation.groups).toHaveLength(1);
+    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } });
+    fireEvent.click(screen.getByRole('button', { name: '移除分组（保留节点）' }));
+    expect(changes.mock.calls.at(-1)![0]).toEqual({ ...definition, nodes: moved.nodes, presentation: undefined });
+  });
+
+  it('rejects overlap, resets pending names on owner changes and enforces Unicode name limits', () => {
+    const definition = { ...initial(), presentation: { groups: [{ id: 'g', name: 'Old', node_ids: ['source'] }] } };
+    const { changes, rerender } = setup({ definition, selectedNodeIds: ['source', 'prepare'] });
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: 'New' } });
+    expect((screen.getByRole('button', { name: '用所选节点创建分组' }) as HTMLButtonElement).disabled).toBe(true);
+    rerender({ selectedNodeIds: ['prepare'] });
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '🎬'.repeat(81) } });
+    expect(screen.getByRole('alert').textContent).toContain('80');
+    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' })); expect(changes).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '🎬'.repeat(80) } });
+    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' })); expect(changes).toHaveBeenCalledTimes(1);
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: 'Pending private name' } });
+    rerender({ interactionKey: 'other' }); expect((screen.getByLabelText('分组名称') as HTMLInputElement).value).toBe('');
+  });
+
+  it.each([{ readonly: true }, { busy: true }])('blocks all group actions: %j', props => {
+    const { changes, selections } = setup({ ...props, selectedNodeIds: ['source'] });
+    expect((screen.getByLabelText('分组名称') as HTMLInputElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' }));
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+  });
+
+  it('edits and removes plain graph annotations without changing node geometry, pins or selection', () => {
+    const definition = initial(), { changes, selections, rerender } = setup({ definition, selectedNodeIds: ['source'] });
+    const text = '场景说明\n<script>plain text</script>';
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: text } });
+    expect(changes).toHaveBeenLastCalledWith({ ...definition, presentation: { comment: text } }, true);
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).maxLength).toBe(4000);
+    fireEvent.keyDown(screen.getByLabelText('画布说明'), { key: 'Delete' });
+    fireEvent.keyDown(screen.getByLabelText('画布说明'), { key: 'ArrowRight' });
+    expect(changes).toHaveBeenCalledTimes(1); expect(selections).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '移除画布说明' }));
+    expect(changes).toHaveBeenLastCalledWith(definition, true);
+    rerender({ definition: { ...initial(), presentation: { comment: 'Other owner' } }, interactionKey: 'other' });
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe('Other owner');
+  });
+
+  it('preserves 2000 supplementary characters and rejects overflow without dropping existing text', () => {
+    const { changes } = setup();
+    const text = '🎬'.repeat(2000);
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: text } });
+    expect(changes.mock.calls.at(-1)![0].presentation.comment).toBe(text);
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: text + '尾' } });
+    expect(changes).toHaveBeenCalledTimes(1);
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe(text);
+    expect(screen.getByRole('alert').textContent).toContain('原有说明已保留');
+    const mixed = '字'.repeat(1999) + '🎬';
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: mixed } });
+    expect(changes.mock.calls.at(-1)![0].presentation.comment).toBe(mixed);
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: '新增' + mixed } });
+    expect(changes).toHaveBeenCalledTimes(2);
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe(mixed);
+  });
+
+  it.each([{ readonly: true }, { busy: true }])('blocks annotation mutations when owner is blocked: %j', props => {
+    const { changes } = setup({ ...props, definition: { ...initial(), presentation: { comment: 'Keep' } } });
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: 'No' } });
+    fireEvent.click(screen.getByRole('button', { name: '移除画布说明' }));
+    expect(changes).not.toHaveBeenCalled();
+  });
+
   it('uses accessible node buttons, explicit typed port labels and edge descriptions', () => {
     const onPortSelect = vi.fn(); setup({ onPortSelect });
     expect(source().getAttribute('aria-pressed')).toBe('false');
@@ -194,4 +284,606 @@ describe('controlled typed graph canvas', () => {
     fireEvent.click(screen.getByRole('button', { name: '放大节点图' })); expect(screen.getByLabelText('节点图缩放').textContent).toBe('120%');
     fireEvent.click(screen.getByRole('button', { name: '缩小节点图' })); expect(screen.getByLabelText('节点图缩放').textContent).toBe('100%');
   });
+});
+
+
+describe('measured viewport rendering', () => {
+  const measure = () => vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, toJSON: () => ({}) });
+  const distant = () => { const graph = initial(); graph.nodes[1].position = { x: 5000, y: 144 }; return graph; };
+  it('culls cards, retains crossing edges and recovers unchanged nodes after pan', () => {
+    measure(); const definition = distant(), original = JSON.stringify(definition);
+    const { changes } = setup({ definition });
+    expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+    expect(edgePath()).toBeTruthy();
+    down(viewport(), 0, 0, { altKey: true }); move(-4800, 0); up(-4800, 0);
+    expect(prepare()).toBeTruthy(); expect(screen.queryByRole('button', { name: '选择节点 文本输入 · source' })).toBeNull();
+    expect(changes.mock.calls[0][0].nodes).toBe(definition.nodes); expect(JSON.stringify(definition)).toBe(original);
+  });
+  it('retains selected nodes and controller-owned connection anchors without changing graph data', () => {
+    measure(); const { changes, rerender } = setup({ definition: distant(), selectedNodeIds: ['prepare'] });
+    expect(prepare()).toBeTruthy(); rerender({ selectedNodeIds: [], connectionNodeIds: ['prepare'] }); expect(prepare()).toBeTruthy();
+    rerender({ selectedNodeIds: [], connectionNodeIds: [] }); expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('preserves a focused port while zoom/pan moves its card offscreen and releases it after blur', () => {
+    measure(); const definition = initial(), onPortSelect = vi.fn(); const { rerender } = setup({ definition, onPortSelect });
+    const port = screen.getByRole('button', { name: '草稿整理 prepare 输入端口 text · TEXT · 必需' });
+    act(() => port.focus());
+    rerender({ definition: { ...definition, viewport: { x: -5000, y: 0, zoom: 1 } } });
+    expect(document.activeElement).toBe(port); fireEvent.click(port); expect(onPortSelect).toHaveBeenCalledTimes(1);
+    act(() => viewport().focus());
+    expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+  });
+  it('offers keyboard-native selection of every offscreen node and centers via existing controlled viewport', () => {
+    measure(); const { changes } = setup({ definition: distant() });
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    const navigator = screen.getByRole('combobox', { name: '查找图中节点' });
+    fireEvent.change(navigator, { target: { value: 'prepare' } });
+    fireEvent.keyDown(navigator, { key: 'Enter' });
+    expect(prepare().getAttribute('aria-pressed')).toBe('true');
+    expect(changes.mock.calls[0][0].viewport.x).toBe(-4760);
+    expect(changes.mock.calls[0][0].nodes[1].position.x).toBe(5000);
+    fireEvent.keyDown(navigator, { key: 'Delete' }); expect(changes).toHaveBeenCalledTimes(1);
+  });
+  it('keeps readonly navigation selection nonmutating and disables the directory while busy', () => {
+    measure(); const { changes, selections, rerender } = setup({ definition: distant(), readonly: true });
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    fireEvent.change(screen.getByRole('combobox', { name: '查找图中节点' }), { target: { value: 'prepare' } });
+    fireEvent.keyDown(screen.getByRole('combobox', { name: '查找图中节点' }), { key: 'Enter' });
+    expect(selections).toHaveBeenCalledWith(['prepare']); expect(changes).not.toHaveBeenCalled();
+    rerender({ busy: true }); expect(screen.getByRole('button', { name: '查找图中节点' }).getAttribute('aria-disabled')).toBe('true');
+  });
+  it('filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing', () => {
+    measure();
+    const definition = initial();
+    definition.nodes = Array.from({ length: 1200 }, (_, i) => ({ ...definition.nodes[0], id: `display_${i}`, position: { x: i * 400, y: 24 } }));
+    definition.edges = [];
+    const { changes, selections } = setup({ definition });
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    const input = screen.getByRole('combobox', { name: '查找图中节点' });
+    expect(document.activeElement).toBe(input);
+    expect(screen.getAllByRole('option', { selected: false }).length + screen.getAllByRole('option', { selected: true }).length).toBeGreaterThanOrEqual(20);
+    expect(document.querySelectorAll('.graph-canvas__navigation-results [role=option]')).toHaveLength(20);
+    expect(screen.getByRole('region', { name: '图中节点目录' }).textContent).toContain('匹配 1200');
+    fireEvent.keyDown(input, { key: 'PageDown' });
+    expect(document.querySelector('.graph-canvas__navigation-results [role=option]')!.textContent).toContain('display_20');
+    fireEvent.change(input, { target: { value: '文本输入 text_input display_1199' } });
+    expect(document.querySelectorAll('.graph-canvas__navigation-results [role=option]')).toHaveLength(1);
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
+    fireEvent.keyDown(input, { key: 'Escape', keyCode: 229 });
+    expect(screen.getByRole('combobox', { name: '查找图中节点' })).toBe(input);
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(selections).toHaveBeenLastCalledWith(['display_1199']);
+    expect(changes).toHaveBeenCalledTimes(1);
+    expect(changes.mock.calls[0][0].nodes).toBe(definition.nodes);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: '查找图中节点' }));
+  });
+  it('cancels search without selection or writes, resets owner query, and reveals a folded member on confirmation', () => {
+    measure();
+    const definition = { ...initial(), presentation: { groups: [{ id: 'g', name: '场景', node_ids: ['prepare'] }] } };
+    const { changes, selections, rerender } = setup({ definition });
+    fireEvent.click(screen.getByRole('button', { name: '折叠分组 场景' }));
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    let input = screen.getByRole('combobox', { name: '查找图中节点' });
+    fireEvent.change(input, { target: { value: 'missing' } });
+    expect(document.querySelectorAll('.graph-canvas__navigation-results [role=option]')).toHaveLength(0);
+    fireEvent.keyDown(input, { key: 'Escape' });
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    input = screen.getByRole('combobox', { name: '查找图中节点' });
+    fireEvent.change(input, { target: { value: 'prepare' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(prepare().getAttribute('aria-pressed')).toBe('true');
+    expect(document.querySelector('[data-graph-collapsed]')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    fireEvent.change(screen.getByRole('combobox', { name: '查找图中节点' }), { target: { value: 'private' } });
+    rerender({ interactionKey: 'other-graph' });
+    expect(screen.queryByRole('combobox', { name: '查找图中节点' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    expect((screen.getByRole('combobox', { name: '查找图中节点' }) as HTMLInputElement).value).toBe('');
+  });
+  it('selects all offscreen cards and preserves a dragged card until cancellation', () => {
+    measure(); const { changes } = setup({ definition: distant() });
+    fireEvent.keyDown(viewport(), { key: 'a', ctrlKey: true }); expect(prepare().getAttribute('aria-pressed')).toBe('true');
+    down(source(), 30, 30); move(-5000, -5000); expect(source()).toBeTruthy(); expect(prepare()).toBeTruthy();
+    fireEvent.keyDown(viewport(), { key: 'Escape' }); expect(position('source').left).toBe('24px'); expect(changes).not.toHaveBeenCalled();
+  });
+  it('drops focus retention when the interaction owner changes', () => {
+    measure(); const definition = initial(); const { rerender } = setup({ definition, interactionKey: 'one', onPortSelect: vi.fn() });
+    act(() => screen.getByRole('button', { name: '草稿整理 prepare 输入端口 text · TEXT · 必需' }).focus());
+    rerender({ definition: { ...definition, viewport: { x: -5000, y: 0, zoom: 1 } }, interactionKey: 'two' });
+    expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+  });
+  it('responds to ResizeObserver and disconnects it on unmount', () => {
+    const bounds = measure(); let notify = () => {}; const disconnect = vi.fn();
+    vi.stubGlobal('ResizeObserver', class { constructor(callback: () => void) { notify = callback; } observe() {} disconnect = disconnect; });
+    const { unmount } = setup({ definition: distant() }); expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+    bounds.mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 6000, bottom: 400, width: 6000, height: 400, toJSON: () => ({}) });
+    act(() => notify()); expect(prepare()).toBeTruthy(); unmount(); expect(disconnect).toHaveBeenCalledOnce();
+  });
+});
+
+describe('mounted MiniMap navigation', () => {
+  const map = () => screen.getByRole('button', { name: '小地图导航' }) as HTMLButtonElement;
+  function measure() {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+      return { x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: this.classList.contains('graph-canvas__minimap') ? 200 : 800, height: this.classList.contains('graph-canvas__minimap') ? 120 : 400, toJSON: () => ({}) };
+    });
+  }
+  it('uses one camera history update per click or arrow without moving selected nodes or changing zoom', () => {
+    measure(); const definition = initial(); definition.viewport.zoom = 2.5;
+    const { changes, selections } = setup({ definition, selectedNodeIds: ['source'] });
+    map().focus(); fireEvent.keyDown(map(), { key: 'ArrowRight' });
+    expect(changes).toHaveBeenCalledTimes(1);
+    const next = changes.mock.calls[0][0]; expect(next.viewport).toEqual({ x: -200, y: 0, zoom: 2.5 });
+    expect(next.nodes).toBe(definition.nodes); expect(next.edges).toBe(definition.edges); expect(changes.mock.calls[0][1]).toBe(true);
+    expect(document.activeElement).toBe(map()); expect(selections).not.toHaveBeenCalled();
+    fireEvent.click(map(), { detail: 1, clientX: 150, clientY: 80 });
+    expect(changes).toHaveBeenCalledTimes(2); expect(changes.mock.calls[1][0].viewport.zoom).toBe(2.5);
+    expect(document.querySelector('.graph-canvas__minimap-selected')?.getAttribute('d')).not.toBe('');
+    fireEvent.keyDown(map(), { key: 'Delete' }); expect(changes).toHaveBeenCalledTimes(2);
+  });
+  it('hides and restores overview without history changes and blocks read-only, busy and unmeasured navigation', () => {
+    const { changes, rerender } = setup(); expect(map().disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' })); expect(screen.queryByRole('button', { name: '小地图导航' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    measure(); fireEvent(window, new Event('resize')); expect(map().disabled).toBe(false);
+    rerender({ readonly: true }); expect(map().disabled).toBe(true); fireEvent.keyDown(map(), { key: 'ArrowRight' });
+    rerender({ busy: true }); expect(map().disabled).toBe(true); fireEvent.click(map());
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('tracks resize and replacement, clamps camera and ignores composition and active gestures', () => {
+    measure(); const definition = initial(); definition.viewport = { x: -100000, y: 100000, zoom: 0.35 };
+    const { changes, rerender } = setup({ definition });
+    fireEvent.keyDown(map(), { key: 'ArrowRight' }); expect(changes).not.toHaveBeenCalled();
+    fireEvent.keyDown(map(), { key: 'ArrowLeft', isComposing: true }); expect(changes).not.toHaveBeenCalled();
+    down(viewport(), 5, 5); fireEvent.click(map()); expect(changes).not.toHaveBeenCalled(); up();
+    fireEvent.keyDown(map(), { key: 'ArrowLeft', shiftKey: true }); expect(changes.mock.calls[0][0].viewport.x).toBe(-99200);
+    const replacement = initial(); replacement.nodes = []; replacement.edges = [];
+    rerender({ definition: replacement, interactionKey: 'other' }); expect(map().disabled).toBe(true);
+    expect(document.querySelector('.graph-canvas__minimap-nodes')?.getAttribute('d')).toBe('');
+  });
+});
+
+
+describe('selected-node alignment preview', () => {
+  it('previews live geometry and edges, cancels without writes, then applies once', () => {
+    const { changes } = setup({ selectedNodeIds: ['source', 'prepare'] });
+    const beforePath = edgePath();
+    fireEvent.click(screen.getByText('预览左对齐'));
+    expect(position('prepare').left).toBe('24px'); expect(edgePath()).not.toBe(beforePath);
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText('取消对齐预览'));
+    expect(position('prepare').left).toBe('480px'); expect(edgePath()).toBe(beforePath);
+    fireEvent.click(screen.getByText('预览顶对齐'));
+    fireEvent.click(screen.getByText('应用所选节点对齐'));
+    expect(changes).toHaveBeenCalledTimes(1); expect(changes.mock.calls[0][1]).toBe(true);
+    expect(changes.mock.calls[0][0].nodes[1].position).toEqual({ x: 480, y: 24 });
+    fireEvent.click(screen.getByText('预览顶对齐'));
+    expect((screen.getByText('应用所选节点对齐') as HTMLButtonElement).disabled).toBe(true);
+  });
+  it.each(['selection', 'definition', 'owner', 'readonly', 'busy'])('invalidates a preview on %s changes without resurrecting it', change => {
+    const options = { selectedNodeIds: ['source', 'prepare'], interactionKey: 'owner' };
+    const { changes, rerender } = setup(options);
+    fireEvent.click(screen.getByText('预览左对齐'));
+    rerender(change === 'selection' ? { selectedNodeIds: ['source'] } : change === 'definition' ? { definition: initial() }
+      : change === 'owner' ? { interactionKey: 'new' } : { [change]: true });
+    expect(screen.queryByText('应用所选节点对齐')).toBeNull();
+    rerender(options); expect(screen.queryByText('应用所选节点对齐')).toBeNull(); expect(changes).not.toHaveBeenCalled();
+  });
+  it('keeps control keys from nudging or deleting selected nodes; escape cancels preview', () => {
+    const { changes, selections } = setup({ selectedNodeIds: ['source', 'prepare'] });
+    const toggle = screen.getByRole('button', { name: '显示小地图' });
+    for (const key of ['ArrowRight', 'Delete', 'Backspace', 'Escape']) fireEvent.keyDown(toggle, { key });
+    fireEvent.click(screen.getByText('预览左对齐'));
+    const apply = screen.getByText('应用所选节点对齐');
+    for (const key of ['ArrowDown', 'Delete', 'Backspace']) fireEvent.keyDown(apply, { key });
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+    fireEvent.keyDown(apply, { key: 'Escape' });
+    expect(screen.queryByText('应用所选节点对齐')).toBeNull(); expect(position('prepare').left).toBe('480px');
+  });
+  it.each([{ readonly: true }, { busy: true }])('does not offer mutation when blocked %j', options => {
+    setup({ ...options, selectedNodeIds: ['source', 'prepare'] });
+    expect((screen.getByText('预览左对齐') as HTMLButtonElement).disabled).toBe(true);
+  });
+});
+
+
+describe('transient world-grid controls', () => {
+  it('toggles grid/snap without moving nodes or saving, and aligns grid to the camera', () => {
+    const definition = initial(); definition.viewport = { x: -13, y: 29, zoom: 2 };
+    const { changes, rerender } = setup({ definition, interactionKey: 'owner-a', selectedNodeIds: ['source'] });
+    expect(viewport().style.backgroundSize).toBe('48px 48px');
+    expect(viewport().style.backgroundPosition).toBe('-37px 5px');
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    fireEvent.change(screen.getByLabelText('网格间距'), { target: { value: '16' } });
+    expect(viewport().style.backgroundSize).toBe('32px 32px');
+    fireEvent.click(screen.getByRole('button', { name: '显示网格' }));
+    expect(viewport().style.backgroundImage).toBe('none');
+    for (const target of [screen.getByRole('button', { name: '拖拽吸附' }), screen.getByLabelText('网格间距')]) {
+      fireEvent.keyDown(target, { key: 'ArrowRight' }); fireEvent.keyDown(target, { key: 'Delete' });
+    }
+    fireEvent.keyDown(viewport(), { key: 'ArrowRight', isComposing: true });
+    expect(changes).not.toHaveBeenCalled();
+    rerender({ interactionKey: 'owner-b' });
+    expect(screen.getByRole('button', { name: '拖拽吸附' }).getAttribute('aria-pressed')).toBe('false');
+    expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('24');
+  });
+  it('snaps a multi-drag once using the grabbed node, supports cancellation and free placement', () => {
+    const definition = initial(); definition.viewport.zoom = 2;
+    definition.nodes[1].position = { x: 481, y: 147 };
+    const { changes } = setup({ definition, selectedNodeIds: ['source', 'prepare'] });
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    down(prepare(), 100, 100); move(140, 140);
+    expect(position('prepare').left).toBe('504px'); expect(position('source').left).toBe('47px');
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.pointerCancel(viewport(), { pointerId: 1 }); expect(position('prepare').left).toBe('481px');
+    down(prepare(), 100, 100); move(140, 140); up();
+    expect(changes).toHaveBeenCalledTimes(1); expect(changes.mock.calls[0][1]).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    down(prepare(), 100, 100); move(102, 102); up();
+    expect(position('prepare').left).toBe('505px'); expect(changes).toHaveBeenCalledTimes(2);
+  });
+  it('preserves keyboard screen-distance nudges when snap is enabled and avoids no-op undo', () => {
+    const definition = initial(); definition.viewport.zoom = 2;
+    const { changes } = setup({ definition, selectedNodeIds: ['source'] });
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    down(source(), 100, 100); move(101, 101); up(); expect(changes).not.toHaveBeenCalled();
+    fireEvent.keyDown(viewport(), { key: 'ArrowRight' }); expect(position('source').left).toBe('28px');
+    fireEvent.keyDown(viewport(), { key: 'ArrowRight', shiftKey: true }); expect(position('source').left).toBe('44px');
+  });
+});
+
+
+describe('world-space visual group outlines', () => {
+  const grouped = (): StudioGraphDefinition => ({ ...initial(), presentation: { groups: [{ id: 'scene', name: '场景 <b>🎬</b>', node_ids: ['source', 'prepare'] }] } });
+  const label = () => screen.getByRole('button', { name: '选择视觉分组 场景 <b>🎬</b> 的 2 个成员' });
+  const frame = () => document.querySelector('[data-graph-group-id="scene"]') as HTMLElement;
+  it('renders bounded plain labels, selects only on explicit activation and follows drag preview without writing presentation', () => {
+    const definition = grouped();
+    const { changes, selections } = setup({ definition });
+    expect(frame().style.left).toBe('8px'); expect(frame().style.top).toBe('-24px');
+    expect(frame().style.width).toBe('808px'); expect(frame().style.height).toBe('344px');
+    expect(label().querySelector('b')).toBeNull();
+    down(label(), 20, 0); move(70, 30); up(70, 30);
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+    fireEvent.click(label());
+    expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
+    expect(label().getAttribute('aria-pressed')).toBe('true');
+    fireEvent.keyDown(label(), { key: 'Delete' }); fireEvent.keyDown(label(), { key: 'ArrowRight' });
+    expect(changes).not.toHaveBeenCalled();
+    down(source(), 40, 40); move(72, 56);
+    expect(frame().style.left).toBe('40px'); expect(frame().style.top).toBe('-8px');
+    expect(changes).not.toHaveBeenCalled(); up(72, 56);
+    expect(changes).toHaveBeenCalledTimes(1);
+    expect(changes.mock.calls[0][0].presentation).toEqual(definition.presentation);
+  });
+  it('keeps readonly selection available, busy selection disabled, and replaces stale owner frames', () => {
+    const { changes, selections, rerender } = setup({ definition: grouped(), readonly: true });
+    fireEvent.click(label()); expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
+    expect(changes).not.toHaveBeenCalled();
+    rerender({ busy: true }); expect((label() as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(label()); expect(selections).toHaveBeenCalledTimes(1);
+    rerender({ definition: initial(), busy: false, interactionKey: 'other' });
+    expect(document.querySelector('[data-graph-group-id]')).toBeNull();
+  });
+  it('culls distant frames, retains focused labels, and keeps ports and background selection independent', () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, toJSON: () => ({}) });
+    const definition = grouped(), onPortSelect = vi.fn();
+    const { changes, selections, rerender } = setup({ definition, onPortSelect });
+    const port = screen.getByRole('button', { name: /文本输入 source 输出端口/ });
+    down(port, 344, 112); fireEvent.click(port); up();
+    expect(onPortSelect).toHaveBeenCalledTimes(1); expect(selections).not.toHaveBeenCalled();
+    act(() => label().focus());
+    rerender({ definition: { ...definition, viewport: { x: 0, y: -5000, zoom: 1 } } });
+    expect(frame()).not.toBeNull();
+    act(() => viewport().focus());
+    expect(frame()).toBeNull();
+    rerender({ definition }); expect(frame()).not.toBeNull();
+    down(viewport(), 0, 0); move(350, 140); up(350, 140);
+    expect(selections).toHaveBeenLastCalledWith(['source']);
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('preserves pan from a group label and uses the same zoom transform as cards', () => {
+    const definition = grouped(); definition.viewport = { x: 20, y: 30, zoom: 2 };
+    const { changes, selections } = setup({ definition });
+    expect(document.querySelector('.graph-canvas__world')!.getAttribute('style')).toContain('scale(2)');
+    down(label(), 40, 40, { altKey: true }); move(72, 56); up(72, 56);
+    expect(changes.mock.calls[0][0].viewport).toEqual({ x: 52, y: 46, zoom: 2 });
+    expect(selections).not.toHaveBeenCalled();
+  });
+});
+
+
+describe('session-only visual group collapse', () => {
+  const grouped = (): StudioGraphDefinition => ({ ...initial(), presentation: { groups: [{ id: 'scene', name: '场景', node_ids: ['source'] }] } });
+  const collapseButton = () => screen.getByRole('button', { name: '折叠分组 场景' }) as HTMLButtonElement;
+  it('hides members and incident curves, reports real connections, expands without any graph or port write', () => {
+    const definition = grouped(), before = JSON.stringify(definition), onPortSelect = vi.fn();
+    const { changes, selections } = setup({ definition, onPortSelect });
+    const path = edgePath();
+    fireEvent.click(collapseButton());
+    expect(screen.queryByRole('button', { name: '选择节点 文本输入 · source' })).toBeNull();
+    expect(prepare()).not.toBeNull(); expect(document.querySelector('[data-graph-edge-id]')).toBeNull();
+    expect(screen.getByText('场景：1 个成员 · 1 条对外连接 · 0 条内部连接（线条已隐藏）')).not.toBeNull();
+    expect(screen.getByText('source 输出 text → prepare 输入 text')).not.toBeNull();
+    const card = document.querySelector('[data-graph-collapsed]') as HTMLElement;
+    expect(card.style.width).toBe('320px'); expect(card.querySelector('[data-graph-port]')).toBeNull();
+    const expand = screen.getByRole('button', { name: '展开画布分组 场景' });
+    act(() => expand.focus()); fireEvent.keyDown(expand, { key: 'Delete' }); fireEvent.keyDown(expand, { key: 'ArrowRight' });
+    fireEvent.click(expand);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: '选择视觉分组 场景 的 1 个成员' }));
+    expect(source()).not.toBeNull(); expect(edgePath()).toBe(path);
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled(); expect(onPortSelect).not.toHaveBeenCalled();
+    expect(JSON.stringify(definition)).toBe(before);
+  });
+  it.each(['selected', 'connecting', 'focused'])('keeps %s members visible and explains disabled collapse', mode => {
+    const { changes } = setup({ definition: grouped(), selectedNodeIds: mode === 'selected' ? ['source'] : [], connectionNodeIds: mode === 'connecting' ? ['source'] : [] });
+    if (mode === 'focused') act(() => source().focus());
+    expect(collapseButton().disabled).toBe(true); expect(collapseButton().title).toContain('取消成员选择');
+    fireEvent.click(collapseButton()); expect(source()).not.toBeNull(); expect(changes).not.toHaveBeenCalled();
+  });
+  it.each(['selected', 'connecting'])('expands permanently when a hidden member becomes %s', mode => {
+    const { rerender, changes } = setup({ definition: grouped() });
+    fireEvent.click(collapseButton());
+    rerender(mode === 'selected' ? { selectedNodeIds: ['source'] } : { connectionNodeIds: ['source'] });
+    expect(source()).not.toBeNull();
+    rerender({ selectedNodeIds: [], connectionNodeIds: [] });
+    expect(source()).not.toBeNull(); expect(collapseButton().disabled).toBe(false); expect(changes).not.toHaveBeenCalled();
+  });
+  it('retains collapse on camera changes, but resets on owner/group replacement and unmount', () => {
+    const definition = grouped(); const { rerender, unmount, changes } = setup({ definition, interactionKey: 'a' });
+    fireEvent.click(collapseButton());
+    rerender({ definition: { ...definition, viewport: { x: 100, y: 100, zoom: 2 } } });
+    expect(document.querySelector('[data-graph-collapsed]')).not.toBeNull();
+    rerender({ interactionKey: 'b' }); expect(source()).not.toBeNull();
+    fireEvent.click(collapseButton()); rerender({ definition: grouped() }); expect(source()).not.toBeNull();
+    fireEvent.click(collapseButton()); expect(changes).not.toHaveBeenCalled(); unmount();
+    setup({ definition }); expect(source()).not.toBeNull();
+  });
+  it('allows readonly view folding, blocks busy folding, and isolates toolbar keyboard input', () => {
+    const { changes, selections, rerender } = setup({ definition: grouped(), readonly: true, selectedNodeIds: ['prepare'] });
+    fireEvent.keyDown(collapseButton(), { key: 'Delete' }); fireEvent.keyDown(collapseButton(), { key: 'ArrowRight' });
+    fireEvent.click(collapseButton()); expect(document.querySelector('[data-graph-collapsed]')).not.toBeNull();
+    rerender({ busy: true }); expect((screen.getByRole('button', { name: '展开分组 场景' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+  });
+});
+
+
+describe('explicit graph-owned view preferences', () => {
+  const preferences = { show_grid: false, snap: true, grid_step: 32 as const, show_minimap: false };
+  const persist = () => screen.getByRole('button', { name: '将视图偏好写入图草稿' });
+  it('keeps temporary defaults and toggles clean, then writes one display-only draft change', () => {
+    const definition = initial(); const { changes } = setup({ definition, interactionKey: 'a' });
+    fireEvent.click(screen.getByRole('button', { name: '显示网格' }));
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    fireEvent.change(screen.getByLabelText('网格间距'), { target: { value: '32' } });
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.click(persist());
+    expect(changes).toHaveBeenCalledTimes(1);
+    expect(changes).toHaveBeenLastCalledWith({ ...definition, presentation: { view: preferences } }, true);
+    expect((persist() as HTMLButtonElement).disabled).toBe(true);
+  });
+  it('restores saved values, discards temporary settings across owners, and follows undo/removal', () => {
+    const definition = { ...initial(), presentation: { view: preferences, comment: 'Keep' } };
+    const { rerender, changes } = setup({ definition, interactionKey: 'a', preferencesSource: {} });
+    expect(screen.getByRole('button', { name: '显示网格' }).getAttribute('aria-pressed')).toBe('false');
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    rerender({ interactionKey: 'a', definition, preferencesSource: {} });
+    expect(screen.getByRole('button', { name: '显示小地图' }).getAttribute('aria-pressed')).toBe('false');
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    rerender({ interactionKey: 'b', definition });
+    expect(screen.getByRole('button', { name: '显示小地图' }).getAttribute('aria-pressed')).toBe('false');
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '移除已存视图偏好' }));
+    expect(changes).toHaveBeenLastCalledWith({ ...initial(), presentation: { comment: 'Keep' } }, true);
+    expect(screen.getByRole('button', { name: '显示网格' }).getAttribute('aria-pressed')).toBe('true');
+    rerender({ definition: { ...definition }, interactionKey: 'b' });
+    expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('32');
+    rerender({ definition: initial(), interactionKey: 'c' });
+    expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('24');
+    expect(screen.getByRole('button', { name: '显示小地图' }).getAttribute('aria-pressed')).toBe('true');
+  });
+  it.each([{ readonly: true }, { busy: true }])('cannot dirty saved preferences when blocked %j', flags => {
+    const { changes } = setup({ ...flags, definition: { ...initial(), presentation: { view: preferences } } });
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    fireEvent.click(persist()); fireEvent.click(screen.getByRole('button', { name: '移除已存视图偏好' }));
+    expect(changes).not.toHaveBeenCalled();
+  });
+});
+
+it('assigns and clears two-level parents, selects descendants and promotes children without rewriting nodes', () => {
+  const definition = initial();
+  definition.presentation = { groups: [{ id: 'root', name: 'Root', node_ids: ['source'] }, { id: 'child', name: 'Child', node_ids: ['prepare'] }] };
+  const { changes, selections } = setup({ definition });
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
+  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: 'root' } });
+  fireEvent.click(screen.getByRole('button', { name: '应用父组' }));
+  const nested = changes.mock.calls.at(-1)![0];
+  expect(nested.presentation.groups[1].parent_id).toBe('root');
+  expect(nested.nodes).toBe(definition.nodes); expect(nested.edges).toBe(definition.edges);
+  expect(changes.mock.calls.at(-1)![1]).toBe(true);
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'root' } });
+  expect((screen.getByLabelText('父视觉分组') as HTMLSelectElement).options.length).toBe(1);
+  fireEvent.click(screen.getByRole('button', { name: '选择分组成员' }));
+  expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
+  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: '' } });
+  fireEvent.click(screen.getByRole('button', { name: '应用父组' }));
+  expect(changes.mock.calls.at(-1)![0].presentation.groups[1]).not.toHaveProperty('parent_id');
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
+  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: 'root' } });
+  fireEvent.click(screen.getByRole('button', { name: '应用父组' }));
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'root' } });
+  fireEvent.click(screen.getByRole('button', { name: '移除分组（保留节点）' }));
+  const removed = changes.mock.calls.at(-1)![0];
+  expect(removed.presentation.groups).toEqual([{ id: 'child', name: 'Child', node_ids: ['prepare'] }]);
+  expect(removed.nodes).toBe(definition.nodes);
+});
+
+it('hides child compact controls under collapsed parents and expands both for selected descendants', () => {
+  const definition = initial();
+  definition.presentation = { groups: [{ id: 'root', name: 'Root', node_ids: ['source'] }, { id: 'child', name: 'Child', node_ids: ['prepare'], parent_id: 'root' }] };
+  const { changes } = setup({ definition });
+  fireEvent.click(screen.getByRole('button', { name: '折叠分组 Child' }));
+  fireEvent.click(screen.getByRole('button', { name: '折叠分组 Root' }));
+  expect(document.querySelectorAll('[data-graph-collapsed="true"]').length).toBe(1);
+  expect(document.querySelector('[data-graph-group-id="child"]')).toBeNull();
+  expect(screen.queryByRole('button', { name: /分组 Child/ })).toBeNull();
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
+  fireEvent.click(screen.getByRole('button', { name: '选择分组成员' }));
+  expect(document.querySelectorAll('[data-graph-collapsed="true"]').length).toBe(0);
+  expect(document.querySelector('[data-graph-node-id="prepare"]')).toBeTruthy();
+  expect(changes).not.toHaveBeenCalled();
+});
+
+describe('independent persisted canvas notes', () => {
+  it('authors plain text, moves and removes notes without graph selection or execution nodes', () => {
+    const { changes, selections } = setup({ selectedNodeIds: ['source'] });
+    fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+    expect(changes.mock.calls.at(-1)![0].presentation.notes).toEqual([{ id: 'note_1', text: '', position: { x: 32, y: 32 } }]);
+    const text = '<img src=x> 🎬\nScene';
+    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: text } });
+    expect(document.querySelector('[data-graph-note-id] img')).toBeNull();
+    fireEvent.change(screen.getByLabelText('便笺 X'), { target: { value: -240 } });
+    const card = screen.getByRole('button', { name: '选择便笺 note_1' });
+    down(card, 100, 100);
+    fireEvent.pointerMove(card, { pointerId: 1, clientX: 132, clientY: 116 });
+    const before = changes.mock.calls.length;
+    fireEvent.pointerUp(card, { pointerId: 1, clientX: 132, clientY: 116 });
+    expect(changes).toHaveBeenCalledTimes(before + 1);
+    const updated = changes.mock.calls.at(-1)![0];
+    expect(updated.presentation.notes[0]).toEqual({ id: 'note_1', text, position: { x: -208, y: 48 } });
+    expect(updated.nodes).toEqual(initial().nodes); expect(updated.edges).toEqual(initial().edges);
+    expect(selections).not.toHaveBeenCalled();
+    fireEvent.keyDown(card, { key: 'Delete' }); expect(changes).toHaveBeenCalledTimes(before + 1);
+    fireEvent.click(screen.getByRole('button', { name: '移除所选便笺' }));
+    expect(changes.mock.calls.at(-1)![0]).toEqual(initial());
+  });
+  it('rejects Unicode and shared UTF-8 payload overflow before changing the original draft', () => {
+    const definition = initial(); definition.nodes[0].parameters = { text: 'a'.repeat(96000) };
+    const { changes, rerender } = setup({ definition });
+    fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+    expect(screen.getByRole('alert').textContent).toContain('容量超限'); expect(changes).not.toHaveBeenCalled();
+    rerender({ definition: initial() }); fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: '🎬'.repeat(256) } });
+    expect(changes.mock.calls.at(-1)![0].presentation.notes[0].text).toBe('🎬'.repeat(256));
+    const before = changes.mock.calls.length;
+    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: '🎬'.repeat(257) } });
+    expect(changes).toHaveBeenCalledTimes(before); expect(screen.getByRole('alert')).toBeTruthy();
+  });
+  it.each([{ readonly: true }, { busy: true }])('blocks note mutations for %j', flags => {
+    const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+    const { changes } = setup({ ...flags, definition });
+    fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+    const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
+    fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('culls offscreen notes while the explicit directory retains access without graph mutation', () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, width: 800, height: 600, right: 800, bottom: 600, toJSON: () => ({}) });
+    const notes = Array.from({ length: 128 }, (_, i) => ({ id: `n${i}`, text: `Scene ${i}`, position: { x: (i % 16) * 1000, y: Math.floor(i / 16) * 1000 } }));
+    const { changes } = setup({ definition: { ...initial(), presentation: { notes } } });
+    expect(document.querySelectorAll('[data-graph-note-id]').length).toBe(1);
+    fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'n100' } });
+    expect(document.querySelectorAll('[data-graph-note-id]').length).toBe(2);
+    expect((screen.getByLabelText('便笺文本') as HTMLTextAreaElement).value).toBe('Scene 100');
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('cancels a note drag on owner replacement and blur without touching graph gestures', () => {
+    const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+    const { changes, rerender } = setup({ definition, interactionKey: 'a' });
+    const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
+    rerender({ interactionKey: 'b' }); fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+    expect(changes).not.toHaveBeenCalled();
+    down(card, 0, 0); fireEvent.blur(window); fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+    expect(changes).not.toHaveBeenCalled();
+  });
+});
+
+it('note movement does not apply staged node alignment or consume pending connection selection', () => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+  const onPortSelect = vi.fn();
+  const { changes, selections } = setup({ definition, selectedNodeIds: ['source', 'prepare'], connectionNodeIds: ['source'], onPortSelect });
+  fireEvent.click(screen.getByRole('button', { name: '预览左对齐' }));
+  const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
+  fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+  const result = changes.mock.calls.at(-1)![0];
+  expect(result.nodes).toEqual(definition.nodes); expect(result.edges).toEqual(definition.edges);
+  expect(result.presentation.notes[0].position).toEqual({ x: 80, y: 80 });
+  expect(onPortSelect).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+});
+
+it('commits Unicode composition once, rejects whole oversized input and cancels stale composition', () => {
+  const { changes, rerender } = setup({ interactionKey: 'a' });
+  fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
+  const editor = screen.getByLabelText('便笺文本');
+  expect(editor.hasAttribute('maxlength')).toBe(false);
+  const before = changes.mock.calls.length;
+  fireEvent.compositionStart(editor);
+  fireEvent.change(editor, { target: { value: '中文🎬' } });
+  expect(changes).toHaveBeenCalledTimes(before);
+  fireEvent.compositionEnd(editor, { data: '中文🎬' });
+  expect(changes).toHaveBeenCalledTimes(before + 1);
+  expect(changes.mock.calls.at(-1)![0].presentation.notes[0].text).toBe('中文🎬');
+  fireEvent.change(editor, { target: { value: '🎬'.repeat(257) } });
+  expect(changes).toHaveBeenCalledTimes(before + 1);
+  expect((editor as HTMLTextAreaElement).value).toBe('中文🎬');
+  fireEvent.compositionStart(editor); fireEvent.change(editor, { target: { value: 'Cancelled' } });
+  rerender({ interactionKey: 'b' }); fireEvent.compositionEnd(editor, { data: 'Cancelled' }); fireEvent.change(editor, { target: { value: 'Cancelled' } });
+  expect(changes).toHaveBeenCalledTimes(before + 1);
+});
+
+it.each(['cancel', 'escape', 'capture', 'readonly', 'busy'] as const)('cancels note drag on %s', reason => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+  const { changes, rerender } = setup({ definition });
+  const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
+  fireEvent.pointerMove(card, { pointerId: 1, clientX: 80, clientY: 80 });
+  if (reason === 'cancel') fireEvent.pointerCancel(card, { pointerId: 1 });
+  if (reason === 'capture') fireEvent.lostPointerCapture(card, { pointerId: 1 });
+  if (reason === 'escape') fireEvent.keyDown(card, { key: 'Escape' });
+  if (reason === 'readonly') rerender({ readonly: true });
+  if (reason === 'busy') rerender({ busy: true });
+  fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
+  expect(changes).not.toHaveBeenCalled();
+});
+
+it.each(['selection', 'readonly', 'busy'] as const)('discards note composition on %s without writing another note', reason => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }, { id: 'other', text: 'Other', position: { x: 0, y: 0 } }] } };
+  const { changes, rerender } = setup({ definition });
+  fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'n' } });
+  const editor = screen.getByLabelText('便笺文本');
+  fireEvent.compositionStart(editor); fireEvent.change(editor, { target: { value: '候选' } });
+  if (reason === 'selection') fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'other' } });
+  if (reason === 'readonly') rerender({ readonly: true });
+  if (reason === 'busy') rerender({ busy: true });
+  fireEvent.compositionEnd(editor, { data: '候选' }); fireEvent.change(editor, { target: { value: '候选' } }); expect(changes).not.toHaveBeenCalled();
+});
+
+it('remounts a composing note input when the original definition is replaced', () => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+  const { changes, rerender } = setup({ definition });
+  fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'n' } });
+  const abandoned = screen.getByLabelText('便笺文本');
+  fireEvent.compositionStart(abandoned); fireEvent.change(abandoned, { target: { value: '候选' } });
+  rerender({ definition: { ...definition, title: 'Other revision' } });
+  const current = screen.getByLabelText('便笺文本'); expect(current).not.toBe(abandoned);
+  fireEvent.compositionEnd(abandoned); fireEvent.change(abandoned, { target: { value: '候选' } });
+  expect(changes).not.toHaveBeenCalled(); expect((current as HTMLTextAreaElement).value).toBe('Keep');
+});
+
+it.each(['tool', 'alt', 'middle'] as const)('pans from a note header with %s without editing the note', mode => {
+  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
+  const { changes, selections } = setup({ definition });
+  if (mode === 'tool') fireEvent.click(screen.getByRole('button', { name: '平移画布' }));
+  const card = screen.getByRole('button', { name: '选择便笺 n' });
+  down(card, 0, 0, { altKey: mode === 'alt', button: mode === 'middle' ? 1 : 0 });
+  move(80, 64); up(80, 64);
+  expect(changes).toHaveBeenCalledTimes(1);
+  expect(changes.mock.calls[0][0]).toEqual({ ...definition, viewport: { x: 80, y: 64, zoom: 1 } });
+  expect(selections).not.toHaveBeenCalled(); expect(screen.queryByLabelText('便笺文本')).toBeNull();
 });

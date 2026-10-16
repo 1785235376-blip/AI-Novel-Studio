@@ -9,6 +9,7 @@ export function StudioWorkspacePreferencesForm({ controller: c, locked = false }
   if (!draft || !c.base) return null;
   return <details><summary>创作意图与推荐布局</summary>
     <p>可跳过、可多选。布局选项仅保存偏好，当前不会调整界面。偏好不限制模块和权限，也不会执行任务。</p>
+    <p><Button type="button" disabled title="公开版本不提供此功能">NSFW 模式（本版本不可用）</Button></p>
     <fieldset disabled={!c.editable || locked}><legend>这次想做什么？</legend>
       {STUDIO_INTENTS.map(([id, label]) => <label key={id}><input type="checkbox" checked={draft.intents.includes(id)} onChange={event => c.change({ ...draft, intents: event.target.checked ? [...draft.intents, id] : draft.intents.filter(value => value !== id) })} />{label}</label>)}
       <label>自定义意图<input maxLength={240} value={draft.custom_intent} onChange={event => c.change({ ...draft, custom_intent: event.target.value })} /></label>

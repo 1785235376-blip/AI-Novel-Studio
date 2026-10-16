@@ -1,0 +1,54 @@
+{
+  "base": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+  "preserved": "479a9b18ed9dddc0651e1f211035b9327bc0c57a",
+  "common_ancestor": "045b865e5a003cac3333462d055f22099f6368d6",
+  "conflict_resolution_files": [
+    "AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md",
+    "frontend/src/creative/CreativeCanvas.tsx",
+    "frontend/src/creative/CreativeWorkspace.tsx",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx",
+    "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+    "frontend/src/creative/useStudioGraphEditor.tsx",
+    "frontend/src/creative/useStudioGraphEditorController.ts"
+  ],
+  "resolution_sha256": {
+    "AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md": "d0c78eb22d2e6935537d1e8f209ef2e136f579bcb0217dc4a1400d3173535912",
+    "frontend/src/creative/CreativeCanvas.tsx": "c5aca87b47a8cfacac85e80b8ed4aadd108b4e3794f5a2bfa5992c59fe7a4db9",
+    "frontend/src/creative/CreativeWorkspace.tsx": "f0bddf3ea1f6164515eb17e03d82f12b460b23618d270e404cf9985489167dbf",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "9d042128caf3772e79b8ada42a9027bc5d4e150130e3ef0e2f4de63ec8555133",
+    "frontend/src/creative/StudioProductionGraphEditor.test.tsx": "7f59289ad781f5b5d3cc492c45e4b5fd68b8dcc92a34b9464171a276737996c9",
+    "frontend/src/creative/useStudioGraphEditor.tsx": "f809a2c3c44c71ff7cff95617c482fca06f4fce672398d8bcc8bb638a6452e33",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "5228baa81a83fa0a6ff991c3110acbdf2504bc43cdfdb09a2054aade34675d0e"
+  },
+  "results": {
+    "focused_frontend": {
+      "passed": 154,
+      "files": 13,
+      "exit_code": 0
+    },
+    "related_frontend": {
+      "passed": 2209,
+      "failed": 1,
+      "files": 117,
+      "exit_code": 1,
+      "failure": "IndependentStudioReadFences.test.tsx:43, visible disabled association form missing during explicit asset refresh"
+    },
+    "file_owner": {
+      "passed": 91,
+      "deselected_postgres": 10,
+      "exit_code": 0,
+      "receipt": "../director-integration-file.json"
+    },
+    "typescript": 0,
+    "vite": 0,
+    "token_guard": 0
+  },
+  "not_run": [
+    "security/lifecycle task or tests",
+    "PostgreSQL in this environment",
+    "browser and geometry: prior cloud socket EPERM remains blocked; not retried",
+    "model execution",
+    "GPU/Windows",
+    "push/hosted CI/release"
+  ]
+}

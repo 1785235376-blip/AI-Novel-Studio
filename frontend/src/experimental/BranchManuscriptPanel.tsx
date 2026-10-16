@@ -3,11 +3,12 @@ import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitive
 import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
 import { useReviewAction } from './styleReviewClient';
+import { BranchComparisonReview } from './BranchComparisonReview';
+import type { BranchComparison as Compare } from './branchComparisonReview';
 import type { WorkspaceNavigation } from './uxClient';
 
 type Chapter = { id: string; title: string; version: number; novel_id: string; branch_id: string; origin?: { chapter_id: string; scope: { branch_id?: string } } };
 type RecordRow = { id: string; status: string; version: number; preview_digest: string; source_scope?: object; target_scope?: object; sources?: object; id_map?: Record<string, string>; recovery?: object; source?: { version: number }; target?: { version: number } };
-type Compare = { can_apply: boolean; preview_digest: string; source: { version: number }; target: { version: number }; conflicts: { id: string; reason?: string; base?: unknown; ORIGINAL?: unknown; FORK?: unknown }[]; segments: unknown[]; desired_document: unknown };
 const base = '/branch-manuscript';
 const enc = encodeURIComponent;
 let instance = 0;
@@ -72,6 +73,7 @@ function BranchBody({ client, onNavigate }: { client: ExperimentalClient; onNavi
       <p>比较分叉基线、当前来源和当前分支。来源写入权限及双方版本会在应用前再次检查。合并保留来源历史。</p>
       <Button disabled={!reviewable} onClick={() => void action.run(async current => { const result = await client.post<Compare>(base + '/compare', compareBody()); if (current()) { setComparison(result); setMergeConfirmed(undefined); } })}>更新三方比较</Button>
       {comparison && <><p>分支 v{comparison.source.version} / 来源 v{comparison.target.version} · 待解决冲突 {comparison.conflicts.length}</p>
+        <BranchComparisonReview key={comparison.preview_digest} comparison={comparison} choices={choices} />
         <Details label="查看完整富文本三方差异" value={comparison.segments} />
         {comparison.conflicts.map(conflict => <Field label={`冲突 ${conflict.id} 的人工选择`} key={conflict.id}><select value={choices[conflict.id] || ''} disabled={!reviewable} onChange={e => { setChoices(old => ({ ...old, [conflict.id]: e.target.value as 'ORIGINAL' | 'FORK' })); setComparison(undefined); }}><option value="">请选择</option><option value="ORIGINAL">保留当前来源</option><option value="FORK">采用当前分支</option></select></Field>)}
         {comparison.can_apply && <><Details label="查看将写入来源的完整正文" value={comparison.desired_document} /><Button disabled={!reviewable} onClick={() => void action.run(async current => { await client.post(base + '/merges', { ...compareBody(), preview_digest: comparison.preview_digest }); if (current()) { records.reload(); setComparison(undefined); } }, '已保存人工合并提案，尚未改写来源。')}>保存此合并提案供确认</Button></>}

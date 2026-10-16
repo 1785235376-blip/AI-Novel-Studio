@@ -31,11 +31,11 @@ export function ReceiptRecoveryPanel(props: ReceiptRecoveryPanelProps) {
   const receipts = props.page?.items ?? [];
   const unknown = props.attempts.filter(attempt => !attempt.receipt);
   const pending = receipts.filter(receipt => receipt.status === 'queued' || receipt.status === 'running');
-  return <section className="delivery-receipts" aria-label="导出回执与恢复">
+  return <section className="delivery-receipts" aria-label="导出回执与恢复" aria-busy={props.state === 'LOADING'}>
     <header className="delivery-receipts__head">
       <h3>导出回执与恢复</h3>
       <Badge tone={props.state === 'DENIED' ? 'error' : receipts.length ? 'info' : 'neutral'}>
-        {props.state === 'DENIED' ? '无权限' : `${receipts.length} 条回执`}
+        {props.state === 'DENIED' ? '无权限' : `${receipts.length} 条已加载回执`}
       </Badge>
     </header>
     <p className="delivery-center__help">{DELIVERY_NOTICES.receiptUnknown}{DELIVERY_NOTICES.readOnlyRecovery}</p>
@@ -44,6 +44,16 @@ export function ReceiptRecoveryPanel(props: ReceiptRecoveryPanelProps) {
       <strong>没有权限读取导出回执</strong>
       <p>被拒绝的读取不会显示成"没有记录"：这里不显示空列表，也不显示任何成功状态。</p>
     </div>}
+
+    {['IDLE', 'LOADING', 'FAILED'].includes(props.state) && <StatusMessage tone={props.state === 'FAILED' ? 'warning' : 'info'}>
+      {props.state === 'IDLE' ? '尚未开始读取回执；不能据此判断是否有导出记录。'
+        : props.state === 'LOADING' ? '正在读取回执；完成前不能确认当前记录。'
+          : '本次回执读取失败；请使用上方“重新读取导出回执”再次核对。'}
+      {!!receipts.length && '下方为先前已加载的回执，不代表本次已核对最新状态。'}
+    </StatusMessage>}
+    {props.state !== 'DENIED' && props.page?.next_offset != null && <StatusMessage tone="warning">
+      当前只显示已加载的 {receipts.length} 条回执，不能视为完整历史。请到原导出中心继续翻页；这里不会自动加载后续页。
+    </StatusMessage>}
 
     {!!props.lastRecovery && <div className="delivery-receipts__recovery">
       <h4>原请求的只读复原（{DELIVERY_RECEIPT_STATE_LABELS[props.lastRecovery.state]}）</h4>
@@ -78,8 +88,8 @@ export function ReceiptRecoveryPanel(props: ReceiptRecoveryPanelProps) {
       <p className="delivery-center__help">这些请求的结果未知，因此不会显示成功；恢复只重新读取同一幂等键下的原任务。</p>
     </div>}
 
-    {!receipts.length && props.state !== 'DENIED' && <EmptyState title="还没有读取到回执"
-      detail="原导出服务在该项目下没有返回任何回执；这不等于导出成功，也不等于项目没有内容。" />}
+    {!receipts.length && (props.state === 'READY' || props.state === 'EMPTY') && <EmptyState title="还没有读取到回执"
+      detail="当前读取页没有返回回执；这不等于导出成功，也不等于项目没有内容。" />}
 
     {!!receipts.length && <ul className="delivery-receipts__list">
       {receipts.map(receipt => <li key={receipt.id} data-status={receipt.status} className="delivery-receipts__row">
@@ -92,7 +102,7 @@ export function ReceiptRecoveryPanel(props: ReceiptRecoveryPanelProps) {
         <span>{receipt.progress_message || '无进度说明'} · {receipt.progress}%</span>
         <span>第 {receipt.attempt} 次</span>
         <span>原 owner 恢复 {receipt.recovery_count} 次</span>
-        <span>{receipt.result_filename ?? '没有文件名（未确认完成）'}</span>
+        <span>{receipt.result_filename ?? (receipt.status === 'succeeded' ? '已完成，但原服务未提供文件名；请到原导出中心核对下载。' : '没有文件名（未确认完成）')}</span>
         {receipt.raw_status && <span className="delivery-center__help">原服务返回了未定义状态 <code>{receipt.raw_status}</code>，这里不猜测成完成。</span>}
         {!!receipt.missing_resources.length && <span className="delivery-center__help">缺少 {receipt.missing_resources.length} 项资源，资源包不会生成不完整文件。</span>}
         {receipt.error && <span className="delivery-center__help">原 owner 错误码 <code>{receipt.error.code}</code>：{receipt.error.message}</span>}

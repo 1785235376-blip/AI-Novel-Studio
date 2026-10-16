@@ -1,0 +1,270 @@
+{
+  "baseline_commit": "7b241bebdf4385ab200e6e01f3de6268e87d2a73",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/StoryGraphEvidenceReview.test.tsx src/experimental/StoryGraphPanel.test.tsx src/experimental/StructuredSearchNavigation.test.tsx src/experimental/ExperimentalWorkbench.continuation.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:27:28.926625+00:00",
+      "finished_utc": "2026-10-16T13:27:32.918812+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-reviewed-final-ui-r2/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-reviewed-final-ui-r2/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-reviewed-final-ui-r2/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-reviewed-final-ui-r2/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-reviewed-final-ui-r2/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-reviewed-final-ui-r2/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-reviewed-final-ui-r2/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-reviewed-final-ui-r2/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "7b241bebdf4385ab200e6e01f3de6268e87d2a73",
+      "source_sha256": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/semantic-evidence-reviewed-final-ui-r2.log",
+      "log_sha256": "9c8cf64373957bd3437ae29e2cc8c29df2eeb6f05fac907eaad0ffdd92a81f3a",
+      "receipt": "docs/delivery/v2-development/semantic-evidence-reviewed-final-ui-r2.json",
+      "receipt_sha256": "ac46ce24ea9e49a609767a023546dca478fecb15f7a0d7a24cd35d06a9a9d64d"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:27:53.483271+00:00",
+      "finished_utc": "2026-10-16T13:28:30.594766+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-build/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-build/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-build/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-build/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-build/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-build/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-build/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-build/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "7b241bebdf4385ab200e6e01f3de6268e87d2a73",
+      "source_sha256": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/semantic-evidence-final-accepted-build.log",
+      "log_sha256": "e29e98093c5589635fa1a929d5a33ab9bfdf926a491bdf591fdca1189754c952",
+      "receipt": "docs/delivery/v2-development/semantic-evidence-final-accepted-build.json",
+      "receipt_sha256": "fc1d4548def1834f9110092172aa0bf5735d970ae933b6884bdcee84565187f8"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r4_story_graph.py::test_review_reuses_world_authority_persistence_and_no_manuscript_writes[file]",
+        "tests/test_r4_story_graph.py::test_world_time_unknown_flashback_and_validity_do_not_collapse[file]",
+        "tests/test_r4_story_graph.py::test_versioned_edit_history_archive_recompute_only_affected[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/semantic-evidence-final-accepted-file-public/tmp",
+        "-q"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:28:06.311339+00:00",
+      "finished_utc": "2026-10-16T13:28:14.020565+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-file-public/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-file-public/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-file-public/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-file-public/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-file-public/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-file-public/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-file-public/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-file-public/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "7b241bebdf4385ab200e6e01f3de6268e87d2a73",
+      "source_sha256": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/semantic-evidence-final-accepted-file-public.log",
+      "log_sha256": "16ffaf5b87b385ae300b3b8dd035d2bbd1bdc82c89f46eba1b422a3c9a73d902",
+      "receipt": "docs/delivery/v2-development/semantic-evidence-final-accepted-file-public.json",
+      "receipt_sha256": "488faec27fab01ba589620864e8a1d088c12be7c47261dae28d5f0bfe0b393fd"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:28:14.445300+00:00",
+      "finished_utc": "2026-10-16T13:28:14.675379+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-token/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-token/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-token/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-token/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-token/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-token/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-token/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-token/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "7b241bebdf4385ab200e6e01f3de6268e87d2a73",
+      "source_sha256": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/semantic-evidence-final-accepted-token.log",
+      "log_sha256": "8dd3e0adcae13039aef7e12ddbfff56c34063c38c7656944780e00d6e40c2707",
+      "receipt": "docs/delivery/v2-development/semantic-evidence-final-accepted-token.json",
+      "receipt_sha256": "8769b7b3577d21c8501032f8b7b19a4b22139d4149ef45b4d9daa2662738359d"
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import pathlib,re; files=[\"frontend/src/experimental/StoryGraphPanel.tsx\",\"frontend/src/experimental/StoryGraphEvidenceReview.tsx\"]; assert all(not re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",pathlib.Path(p).read_text(),re.I) for p in files); print(\"Scoped token guard PASS\")"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:28:15.111186+00:00",
+      "finished_utc": "2026-10-16T13:28:15.133862+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-scoped-token/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-scoped-token/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-scoped-token/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-scoped-token/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-scoped-token/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-scoped-token/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-scoped-token/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/semantic-evidence-final-accepted-scoped-token/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "7b241bebdf4385ab200e6e01f3de6268e87d2a73",
+      "source_sha256": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/StoryGraphPanel.tsx": "a4461042919b49b8293423f008d789a97e03b1883645347b1311c331366a1af9",
+        "frontend/src/experimental/StoryGraphEvidenceReview.tsx": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+        "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/semantic-evidence-final-accepted-scoped-token.log",
+      "log_sha256": "0f60413763c866e35019437c33d233ca2415617df3bce60da78ae15ab1607a63",
+      "receipt": "docs/delivery/v2-development/semantic-evidence-final-accepted-scoped-token.json",
+      "receipt_sha256": "8a2f80bcc8e4046b4ecd871020ecfc40a860f53fc5fc115a292824df7a24c0e9"
+    }
+  ],
+  "scope": "A04 bounded author-only original relation evidence inspection and existing form handoff; no backend changes",
+  "not_run": [
+    "browser",
+    "native input",
+    "HTTP integration",
+    "PG/P0",
+    "Windows/GPU/provider",
+    "full RC"
+  ]
+}

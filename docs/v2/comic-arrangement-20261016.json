@@ -1,0 +1,106 @@
+{
+  "baseline_commit": "570bbf7e3e422b4e30296ba92ac729b2604f759e",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/comicArrangement.test.ts src/experimental/ComicLayoutsPanel.test.tsx src/experimental/Wave5TemplatesSdkComics.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T11:49:47.090911+00:00",
+      "finished_utc": "2026-10-16T11:49:49.771405+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/comic-arrangement-accepted-ui.log",
+      "log_sha256": "1488c4fe1f61ee25b47e15f85aed5523a39baaa358b633c2a999ec1e94c0551e",
+      "receipt": "docs/delivery/v2-development/comic-arrangement-accepted-ui.json",
+      "receipt_sha256": "1493a79c1e1d41abe797230cd31b5d4b900396f9571687717d25e21a9e941b47"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r5_comic_layouts.py::test_manual_vertical_arrangement_keeps_original_bindings_and_history[file]",
+        "tests/test_r5_comic_layouts.py::test_real_png_segment_export_matches_preview_exactly_and_restarts[file]",
+        "tests/test_r5_comic_layouts.py::test_edit_revokes_approval_restore_creates_draft_and_keeps_history[file]",
+        "tests/test_post_interop_wave5_templates_sdk_comics.py::test_comic_brief_appearance_scene_chain_persists_restores_and_exports[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/comic-arrangement-accepted-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T11:50:05.442527+00:00",
+      "finished_utc": "2026-10-16T11:50:14.425759+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/comic-arrangement-accepted-file-public.log",
+      "log_sha256": "b5605eab7282b9c11bb15ecb6effaf3ae346bd00f5aecafee17024f49ef670ba",
+      "receipt": "docs/delivery/v2-development/comic-arrangement-accepted-file-public.json",
+      "receipt_sha256": "3e0f4109ff13f34fc9e0bdbf5da32117237eadeb628f8ec4b13a5fece8fdcd9b"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T11:49:48.623106+00:00",
+      "finished_utc": "2026-10-16T11:50:23.307584+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/comic-arrangement-accepted-build.log",
+      "log_sha256": "eb93399088185cbd085c1b65aaf1fc32bd194229e810016cb956853867e2e1f2",
+      "receipt": "docs/delivery/v2-development/comic-arrangement-accepted-build.json",
+      "receipt_sha256": "7f358b8fedc83165a0e54f45e744768afd6a6010b5401cd7811ce02a650e5cd0"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-c",
+        "import pathlib,re; files=[pathlib.Path(\"frontend/src/experimental\")/name for name in [\"ComicLayoutsPanel.tsx\",\"comicArrangement.ts\"]]; assert not [str(p) for p in files if re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",p.read_text(),re.I)]; print(\"Scoped token guard PASS\")"
+      ],
+      "started_utc": "2026-10-16T11:50:06.898571+00:00",
+      "finished_utc": "2026-10-16T11:50:06.921350+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/comic-arrangement-accepted-token.log",
+      "log_sha256": "0f60413763c866e35019437c33d233ca2415617df3bce60da78ae15ab1607a63",
+      "receipt": "docs/delivery/v2-development/comic-arrangement-accepted-token.json",
+      "receipt_sha256": "b692cf62601eda8eb612bc325afa6b3fedbbb223c13c513d1171f96a06d5b52d"
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/experimental/ComicLayoutsPanel.tsx": "0bc6729b143da49462aff83a6f60324852c8428e22daae61c7b6061bed036dd0",
+    "frontend/src/experimental/ComicLayoutsPanel.test.tsx": "60ff70aa0f8da2996f891a463a9a4d16689579bf6dca4192f96bf6e5d5abd5fe",
+    "frontend/src/experimental/comicArrangement.ts": "e8047c14c733e8975dd22a4003256ab3b01a8bf98299a326a859d719261e37bc",
+    "frontend/src/experimental/comicArrangement.test.ts": "7c04b6d6b374487b4234e3246c71fae7412bcbbdfe772d422e0154e754caf61d",
+    "tests/test_r5_comic_layouts.py": "c4d66c56bad34f23635af5373ee477ac38dc9b6b41c44b7a5d2f7ad8912965ff"
+  },
+  "mock_ui_pure_checks": 37,
+  "nonsecurity_file_checks": 4,
+  "public_checks": 30,
+  "public_source_closure_files": 487,
+  "browser_visual_http": "NOT_RUN",
+  "real_model_art_quality_windows_gpu": "NOT_RUN",
+  "postgres_p0": "BLOCKED_NOT_RUN",
+  "push_hosted_ci": "NOT_RUN_COST_UNKNOWN",
+  "independent_review": "Source review found no remaining blocker after malformed-structure/global bubble-ID and no-RTL corrections. ABA tests now set distinguishable current coordinates before retained callbacks. Final SHA review pending.",
+  "superseded_receipts": [
+    "docs/delivery/v2-development/comic-arrangement-build.json",
+    "docs/delivery/v2-development/comic-arrangement-file-public.json",
+    "docs/delivery/v2-development/comic-arrangement-final-build.json",
+    "docs/delivery/v2-development/comic-arrangement-final-file-public.json",
+    "docs/delivery/v2-development/comic-arrangement-final-ui.json",
+    "docs/delivery/v2-development/comic-arrangement-reviewed-build.json",
+    "docs/delivery/v2-development/comic-arrangement-reviewed-file-public.json",
+    "docs/delivery/v2-development/comic-arrangement-reviewed-token.json",
+    "docs/delivery/v2-development/comic-arrangement-reviewed-ui.json",
+    "docs/delivery/v2-development/comic-arrangement-token.json",
+    "docs/delivery/v2-development/comic-arrangement-ui.json"
+  ],
+  "limits": "B06 PARTIAL; manual geometry only, original save/raster preflight/approval/export remain authoritative. No backend, new export engine, permission, provider or security lifecycle change."
+}

@@ -9,6 +9,7 @@ export type StoragePanelProps = {
   orphans: OrphanReport;
   /** 是否真的读取到了项目存储投影；未读取到时不把用量显示成 0。 */
   loaded: boolean;
+  loading?: boolean;
   /** 存储来源自身的结论（READY / DENIED / FAILED / UNAVAILABLE）。 */
   sourceState?: ModelCenterSourceState;
   sourceCode?: string;
@@ -22,15 +23,16 @@ const bytes = (value: number | null): string => value === null ? '未知' : `${v
  * 存储面板：用量 / 配额 / 冷存储 / 孤儿报告。**只读**，并对"不可逆动作"说实话：
  * `physical_delete` 恒为 false，界面没有任何清理、迁移或删除按钮。
  */
-export function StoragePanel({ report, orphans, loaded, sourceState, sourceCode, onReRead, canReRead }: StoragePanelProps) {
+export function StoragePanel({ report, orphans, loaded, loading = false, sourceState, sourceCode, onReRead, canReRead }: StoragePanelProps) {
   return (
     <section className="ui-panel model-center__storage" aria-label="项目存储与冷存储" data-storage-state={sourceState}>
       <header>
         <h2>项目存储与冷存储</h2>
         <Button variant="ghost" disabled={!canReRead} onClick={onReRead}>重新读取存储事实</Button>
       </header>
-      <StorageSourceNotice state={sourceState} code={sourceCode} />
-      {!loaded
+      {!loading && <StorageSourceNotice state={sourceState} code={sourceCode} retained={loaded} />}
+      {!loading && loaded && (sourceState === 'FAILED' || sourceState === 'UNAVAILABLE') && <StatusMessage tone="warning">保留上一次成功读取的存储事实供对照；本次刷新未完成，当前用量可能已变化。</StatusMessage>}
+      {!loaded && !loading
         ? <StatusMessage tone="warning">没有读取到项目存储投影：用量与可用空间保持未知，不显示为 0。{MODEL_CENTER_CODES.readFailed.message}</StatusMessage>
         : null}
       <dl className="model-center__facts" aria-label="用量与配额">
@@ -65,7 +67,7 @@ export function StoragePanel({ report, orphans, loaded, sourceState, sourceCode,
           <li>automatic_cleanup = {String(report.automatic_cleanup)}；automatic_migration = {String(report.automatic_migration)}；external_model_scan = {String(report.external_model_scan)}。</li>
           <li>本界面可触发的磁盘动作：{report.disk_actions_available ? '有' : '没有'}。</li>
         </ul>
-        {report.notices.map(notice => <p className="model-center__hint" key={notice}>{notice}</p>)}
+        {!loading && report.notices.map(notice => <p className="model-center__hint" key={notice}>{notice}</p>)}
       </section>
       <section aria-label="冷存储与孤儿候选（只读报告）">
         <h3>冷存储与孤儿候选（只读报告）</h3>
@@ -95,10 +97,10 @@ export function StoragePanel({ report, orphans, loaded, sourceState, sourceCode,
   );
 }
 
-export function StorageSourceNotice({ state, code }: { state?: ModelCenterSourceState; code?: string }) {
+export function StorageSourceNotice({ state, code, retained = false }: { state?: ModelCenterSourceState; code?: string; retained?: boolean }) {
   if (!state) return null;
   if (state === 'DENIED') return <StatusMessage tone="error">存储读取被拒绝（DENIED）：不显示为"没有资产"。</StatusMessage>;
   if (state === 'FAILED') return <StatusMessage tone="error">存储读取失败（FAILED）。{code ? `（${code}）` : ''}</StatusMessage>;
-  if (state === 'UNAVAILABLE') return <StatusMessage tone="warning">当前服务未提供项目存储读取{code ? `（${code}）` : ''}：用量保持未知。</StatusMessage>;
+  if (state === 'UNAVAILABLE') return <StatusMessage tone="warning">当前服务未提供项目存储读取{code ? `（${code}）` : ''}：{retained ? '当前用量未知，所列旧值仅供对照。' : '用量保持未知。'}</StatusMessage>;
   return null;
 }

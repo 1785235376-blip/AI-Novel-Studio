@@ -1,0 +1,107 @@
+{
+  "baseline_commit": "b01c54106fcfc91e35553434654418a533d3bde0",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/taskcenter/ src/creative/IndependentStudioWorkspace.test.tsx src/creative/IndependentStudioIdentity.regression.test.tsx src/creative/IndependentStudioReadFences.test.tsx src/storyboard/StoryboardWorkspacePanel.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T10:53:12.818275+00:00",
+      "finished_utc": "2026-10-16T10:53:23.890870+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/task-owner-reviewed-ui.log",
+      "log_sha256": "42c4c1134cc659546363561be8ec9c91f78896a781aef0bd8e58a9dc92efc64e",
+      "receipt": "docs/delivery/v2-development/task-owner-reviewed-ui.json",
+      "receipt_sha256": "f1e2864690b50e927a5d1b459ab5968c6c9c8fe78f93b2cd4be33e46880c15f0"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/task-owner-reviewed-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T10:53:15.928913+00:00",
+      "finished_utc": "2026-10-16T10:53:24.833971+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/task-owner-reviewed-public.log",
+      "log_sha256": "d23775a3ea8a5c50e54fbc11f22ab5d1530016ddd5855e3d831061e31bc02667",
+      "receipt": "docs/delivery/v2-development/task-owner-reviewed-public.json",
+      "receipt_sha256": "0d1d8e51b516e4cb39d3497c8a97f33ad1236952c0040f4b775813796f43e274"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T10:53:14.351050+00:00",
+      "finished_utc": "2026-10-16T10:53:49.592184+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/task-owner-reviewed-build.log",
+      "log_sha256": "651fef2c37f5208a510081ecb7e5b705f95840d688b2286c4cdb4ae80e4e9724",
+      "receipt": "docs/delivery/v2-development/task-owner-reviewed-build.json",
+      "receipt_sha256": "06be97f9f5f94ab3c43b3590bc14f5f97a103290ee0173330aa7dcb3b19a1b73"
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import pathlib,re; files=[pathlib.Path(\"frontend/src/taskcenter/TaskOwnerResult.tsx\"),pathlib.Path(\"frontend/src/creative/IndependentStudioWorkspace.tsx\")]; violations=[str(p) for p in files if re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",p.read_text(),re.I)]; assert not violations, violations; print(\"Scoped raw-color guard PASS (2 files)\")"
+      ],
+      "started_utc": "2026-10-16T10:54:19.990951+00:00",
+      "finished_utc": "2026-10-16T10:54:20.017236+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/task-owner-token-scope.log",
+      "log_sha256": "b1bc18f82c08f4d4b5c532a0309f97a43486a32f98321b65d100c17705c32c16",
+      "receipt": "docs/delivery/v2-development/task-owner-token-scope.json",
+      "receipt_sha256": "000e28d93aba744672b8d53bea08b5622f365acad06136b39526404bb1d8d5ad"
+    }
+  ],
+  "changed_source_sha256": {
+    "frontend/src/taskcenter/TaskOwnerResult.tsx": "c35c52e962258243021c9dce66b0920d6bb04452af614707ed49aa5afc94e70d",
+    "frontend/src/taskcenter/TaskOwnerResult.test.tsx": "f24ae8e91bcb0b0437b517c649fa01a736638e2ac5a09d853b075fa5df1bcb72",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "18d0755836bb489f8530c5630520e6cf05850bcde29cfa7a740a4826f02a9898",
+    "frontend/src/creative/IndependentStudioWorkspace.test.tsx": "e0142e9a806c49d1ab33faefda6dc85f22b24ed9b03afde9d39c4052208d9bd5"
+  },
+  "results": {
+    "mocked_ui_contract_tests": 190,
+    "public_contracts": 30,
+    "public_source_files": 487
+  },
+  "original_nonsecurity_file": "NOT_REQUIRED: no backend owner or persisted contract changed",
+  "not_run": [
+    "browser/visual/native input/performance",
+    "PostgreSQL/P0/security lifecycle",
+    "Windows/GPU/provider/user computer",
+    "paid calls/hosted CI/push/full RC"
+  ],
+  "boundaries": {
+    "P0": "BLOCKED",
+    "R3_GATE": "HOLD",
+    "prompt_adoption_write_enabled": false,
+    "storyboard_reference_draft_handoff": "BLOCKED: no original draft field; immediate binding owner unchanged",
+    "delivery_entitlement_producer": "BLOCKED",
+    "task_owner_navigation": "PARTIAL: experimental media tasks and candidates only"
+  },
+  "review_fixes": [
+    "StrictMode deferred initial read without replay",
+    "exact returned project and native scope validation",
+    "visible original stale-source warning"
+  ],
+  "retained_failures": [
+    "task-owner-build",
+    "task-owner-final-ui-r2"
+  ]
+}

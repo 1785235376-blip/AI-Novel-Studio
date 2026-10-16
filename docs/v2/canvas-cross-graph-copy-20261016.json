@@ -1,0 +1,107 @@
+{
+  "baseline_commit": "98318fbe18f3927dd1a4fe8771371bf5086eb44c",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/graphSelectionCopy.test.ts src/creative/graphSelectionCopyController.test.tsx src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/canvasops/canvasOps.test.ts src/canvasops/canvasOpsPanels.test.tsx"
+      ],
+      "started_utc": "2026-10-16T10:04:00.513043+00:00",
+      "finished_utc": "2026-10-16T10:04:23.936715+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-crosscopy-reviewed-ui.log",
+      "log_sha256": "dcbd1415a2d387f80194d028d5bb299288717c2c5bdf43eaa73ed8a5ac3793ba",
+      "receipt": "docs/delivery/v2-development/canvas-crosscopy-reviewed-ui.json",
+      "receipt_sha256": "d05c99def84eea1669189778c9a3caf8a82c531b3e7b455ff64498ec68757bac"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_graph_persistence.py::test_cross_graph_copy_original_owner_reopen_cas_and_source_unchanged[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_cross_graph_copy_added_source_pin_revalidated_by_original_save[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_selected_subgraph_copy_original_owner_reopen_and_restore[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-crosscopy-reviewed-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T10:04:03.599112+00:00",
+      "finished_utc": "2026-10-16T10:04:13.695770+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-crosscopy-reviewed-file.log",
+      "log_sha256": "7f8c80c250f8f469f30c6e5840c88887dc2ee2ae03a845fd07211a792d65e1de",
+      "receipt": "docs/delivery/v2-development/canvas-crosscopy-reviewed-file.json",
+      "receipt_sha256": "714b1936ce399b1c4ff0cf913d809994953a2673e27b344b8d817a01a669f554"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T10:04:01.937224+00:00",
+      "finished_utc": "2026-10-16T10:04:39.048742+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-crosscopy-reviewed-build.log",
+      "log_sha256": "42a6f7ad1296587e8fd5dc92e66d2ef6958716edfbcda9c40f472b4d50c83ea8",
+      "receipt": "docs/delivery/v2-development/canvas-crosscopy-reviewed-build.json",
+      "receipt_sha256": "fa6a07858dee3923557afb642dcc227b4079edad1f205dc67e404dc50322ac44"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for (const p of [\"frontend/src/creative/studioGraphEditorView.tsx\", \"frontend/src/creative/graphSelectionCopy.ts\", \"frontend/src/creative/useStudioGraphEditorController.ts\"]) if (/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Scoped token/color check PASS; browser visual acceptance NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T10:04:59.129187+00:00",
+      "finished_utc": "2026-10-16T10:04:59.184913+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-crosscopy-reviewed-token.log",
+      "log_sha256": "3cfbeeaa1c1243674be734d22a17e36a814df8d8ab1d7aaf111f446a1336193a",
+      "receipt": "docs/delivery/v2-development/canvas-crosscopy-reviewed-token.json",
+      "receipt_sha256": "88a74ef0b57e9b247761641c680d239f90688c3f8ce6c7fd5322a09a8d0f0446"
+    }
+  ],
+  "changed_source_sha256": {
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "2991b99161e1c0459b4276094a847772c239bf251a189565167690785c41655d",
+    "frontend/src/creative/graphSelectionCopy.test.ts": "dcfc868f2f0be739a66eeaa0a07ed4affdb4251054d855d9fb7f9e64e0476937",
+    "frontend/src/creative/graphSelectionCopy.ts": "6542656c072ac5e25796553c2c2316260808b034695688b0b3caaaaa9125e903",
+    "frontend/src/creative/graphSelectionCopyController.test.tsx": "1105f979d9a110e3b9249069e38f9ec76a61d907ccd22fc4f048224c24879bf1",
+    "frontend/src/creative/studioGraphEditorView.tsx": "70a3afee82cebee990169fbb0cd910125795e86ed22010a5cfcfc01a4c13ab61",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "8e322e3fa6431afca954c992e6c309bdf4958ca47e43520477feb285f7beb061",
+    "tests/test_v2_creative_graph_persistence.py": "a90361eef4f062802c5307200ac08cc691e9f2f4e6b4707082eb5fb97784f073"
+  },
+  "scope": "same-project/same-identity/same-scope saved graphs with equal schema versions; no clipboard or cross-project transfer",
+  "failed_receipts_retained": [
+    "docs/delivery/v2-development/canvas-crosscopy-build.json"
+  ],
+  "superseded_receipts_retained": [
+    "canvas-crosscopy-unit",
+    "canvas-crosscopy-ui",
+    "canvas-crosscopy-final-ui",
+    "canvas-crosscopy-final-ui-r2",
+    "canvas-crosscopy-file",
+    "canvas-crosscopy-final-file",
+    "canvas-crosscopy-final-build",
+    "canvas-crosscopy-token"
+  ],
+  "not_run": [
+    "browser/visual/native input/performance",
+    "PG/P0/security",
+    "GPU/provider/Windows/user computer",
+    "full RC",
+    "hosted CI"
+  ],
+  "push": "NOT_ATTEMPTED_COST_UNKNOWN"
+}

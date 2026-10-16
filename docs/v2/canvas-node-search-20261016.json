@@ -1,0 +1,107 @@
+{
+  "baseline_commit": "9400d21cca89d53ab64b02ed457c20aa105540c6",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphNodeNavigator.test.tsx src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/studioGraphClient.test.ts src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T09:22:54.585269+00:00",
+      "finished_utc": "2026-10-16T09:23:15.959051+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-search-review-ui.json",
+      "receipt_sha256": "dd5a3058ffa0507bfd266846a883d8ed2cdf8d3af8172a30edc8d78f34610023",
+      "log": "docs/delivery/v2-development/canvas-search-review-ui.log",
+      "log_sha256": "d0946084b185905a177917aa1ac2731d96c46a472dbfd224fc0ec45b5f02cda9"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-search-review-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T09:23:06.254215+00:00",
+      "finished_utc": "2026-10-16T09:23:15.588412+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-search-review-file-public.json",
+      "receipt_sha256": "2baff49ee1d8cdbafb606e5097416135f076723f782a8a79efcd8808957d7b8a",
+      "log": "docs/delivery/v2-development/canvas-search-review-file-public.log",
+      "log_sha256": "c23ebc94a97567d6f1ad9278c99f1f0e62449f6327118f8cb0cdf676abab8fd4"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T09:23:04.703436+00:00",
+      "finished_utc": "2026-10-16T09:23:39.362497+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-search-review-build.json",
+      "receipt_sha256": "a9f85e6f3c5f02bf886a6a8f0d7556277d0a837a1e8f1b4e1a2a42b1491f8dcb",
+      "log": "docs/delivery/v2-development/canvas-search-review-build.log",
+      "log_sha256": "1d98b1724aa60b65773c82017666f3469ab670ddbf899e54cfff0aeeb6bf5fc2"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for (const p of [\"frontend/src/creative/GraphNodeNavigator.tsx\", \"frontend/src/creative/GraphCanvas.tsx\", \"frontend/src/creative/graphCanvas.css\"]) if (/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Scoped color/token guard PASS; native visual acceptance NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T09:23:23.290684+00:00",
+      "finished_utc": "2026-10-16T09:23:23.359774+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-search-review-token.json",
+      "receipt_sha256": "24f05b290351103e7f3e3414e301b77ef550d8dcc246e236f6953b81678b6401",
+      "log": "docs/delivery/v2-development/canvas-search-review-token.log",
+      "log_sha256": "c0a3f3c8f7566ca12170e4e76ed924e42a0b6560342f53da2ef38284ee026c94"
+    }
+  ],
+  "frontend_tests": 316,
+  "file_owner_tests": 1,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "display_fixture": {
+    "nodes": 1200,
+    "maximum_search_options": 20,
+    "whole_jsdom_test_ms": 707,
+    "browser_fps_or_memory_claim": false
+  },
+  "source_sha256": {
+    "frontend/src/creative/GraphCanvas.tsx": "a56d7a698063186b80304a124d50b5d5968710881d09c7823b25c61ae5c6abf4",
+    "frontend/src/creative/GraphNodeNavigator.tsx": "d5489ced421a9f5a865a42716bc48e3ceacbd82b27a3410c9ce910621179c560",
+    "frontend/src/creative/GraphCanvas.test.tsx": "5e568653cd982548fe70194120a4de15fd9bb85958d97a3bd001eddcb9647187",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "06d8245944bfb5787b408a5495b2879af2ec0e7d6fc72865cc1c3c864bc29791",
+    "frontend/src/creative/graphCanvas.css": "77b6705d5e74e1a1cb60c80615d0198f06579c31cd60af81b7111ae8dc100ef1",
+    "frontend/src/creative/GraphNodeNavigator.test.tsx": "a6ff20fd43fa6b2df713cb2b237a0d1d3ce048aecf6839a2391cf5df0e7fdf75"
+  },
+  "initial_failures": [
+    "Wrong existing card-width expectation in integrated test",
+    "Pin fixture literal type widened"
+  ],
+  "not_run": [
+    "Browser/visual/native IME/assistive technology/performance",
+    "PG/P0/security",
+    "Windows/GPU/provider/full RC",
+    "push/hosted CI"
+  ],
+  "review_fixes": [
+    "Reset active candidate/page on entries replacement",
+    "Busy cancellation returns focus to enabled aria-disabled trigger with guarded opening",
+    "Added removal/reorder/empty-regrow/page bounds/modifier Enter/busy cancellation tests"
+  ]
+}

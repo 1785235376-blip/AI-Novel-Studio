@@ -1,10 +1,12 @@
+import { TimelineTransferReview } from './TimelineTransferReview';
+import type { TimelineTransferPreview } from './studioTimelineTransferTypes';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import type { StudioAsset } from './studioClient';
 import type { StudioTimelineTransferController } from './useStudioTimelineTransfer';
 import type { TimelineTransferDirection, TimelineTransferFormat } from './studioTimelineTransferTypes';
 
 /** Replaceable presentation; transfer ownership and private drafts stay in the controller. */
-export function StudioTimelineTransferPanel({ controller: c, assets }: { controller: StudioTimelineTransferController; assets: StudioAsset[] }) {
+export function StudioTimelineTransferPanel({ controller: c, assets, onLocate }: { controller: StudioTimelineTransferController; assets: StudioAsset[]; onLocate?: (preview: TimelineTransferPreview, path: string) => void }) {
   if (!c.available || !c.owns) return null;
   return <section aria-label="时间线和字幕交换"><h3>时间线与字幕交换</h3>
     <p>操作绑定当前保存版本。OTIO 导入需要逐项绑定正式素材；SRT/VTT 导入替换字幕。先保存草稿，再预览和确认转换。</p>
@@ -45,7 +47,7 @@ export function StudioTimelineTransferPanel({ controller: c, assets }: { control
       <details><summary>版本和转换摘要</summary><p>原 v{c.preview.timeline_snapshot.version} · <code>{c.preview.timeline_snapshot.digest}</code></p>
         <p>转换 <code>{c.preview.timeline_digest}</code> · 预览 <code>{c.preview.preview_digest}</code></p></details>
       {c.preview.loss_report.length > 0 && <><Badge tone="warning">{c.preview.loss_report.length} 个损失或互通限制</Badge>
-        <details open><summary>逐项核对</summary><ul>{c.preview.loss_report.map((loss, index) => <li key={index}><code>{loss.path}</code> · {loss.severity} · {loss.code}</li>)}</ul></details>
+        <TimelineTransferReview key={c.preview.preview_digest} preview={c.preview} disabled={!c.canOperate || !!c.pending || !!c.unknown} onLocate={onLocate} />
         <label><input type="checkbox" disabled={!c.canOperate} checked={c.acknowledged} onChange={event => c.setAcknowledged(event.currentTarget.checked)} />已读取全部损失和互通限制，接受本次转换</label></>}
       <label><input type="checkbox" disabled={!c.canOperate} checked={c.confirmed} onChange={event => c.setConfirmed(event.currentTarget.checked)} />已核对原版本、素材、片段与字幕，确认本次{c.direction === 'IMPORT' ? '导入并保存新版本' : '读取交换附件'}</label>
       <Button variant="primary" loading={c.pending === 'IMPORT' || c.pending === 'ATTACHMENT'} disabled={!c.canOperate || !c.confirmed || c.preview.requires_loss_acknowledgment && !c.acknowledged}

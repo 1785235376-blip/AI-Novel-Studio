@@ -231,3 +231,21 @@ it('requires a declared character before previewing a character-scoped style', a
   expect((screen.getByRole('button', { name: '预览风格注入内容' }) as HTMLButtonElement).disabled).toBe(true);
   expect(fetch.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
 });
+
+it('mounts saved target comparison beside original sample evidence and preserves manual profile input when target navigation is cancelled', async () => {
+  const base = transport(), navigate = vi.fn(), useStyle = vi.fn();
+  const measured = { sentence_length_mean: { numerator: 9, denominator: 3 }, sample_sufficiency: 'SHORT_SAMPLE' };
+  const report = { ...analysis, metrics: measured, comparison: { chapter_id: 'target-two', expected_version: 8, language: 'zh', comparable: true, metrics: measured, paragraphs: [{ paragraph: 1, start: 0, end: 3, quote: '风😀。', metrics: measured }], paragraphs_truncated: false, interpretation: 'RAW_COUNT_DIFFERENCES_NOT_QUALITY_OR_NORMALIZED_DRIFT' } };
+  const fetch = vi.fn((url: string, init?: RequestInit) => url.endsWith('/style-analysis/analyses') ? Promise.resolve(reply({ items: [report] })) : base(url, init));
+  vi.stubGlobal('fetch', fetch);
+  render(<StyleAnalysisPanel client={client()} chapter={chapter} onNavigate={navigate} onUseStyle={useStyle} />);
+  await screen.findByRole('region', { name: '样本与目标比较 analysis-one' });
+  fireEvent.click(screen.getByRole('button', { name: '编辑风格 克制文风' }));
+  fireEvent.change(screen.getByLabelText('可复用风格指令（最多 120 字）'), { target: { value: '我的未保存人工判断' } });
+  fireEvent.click(screen.getByRole('button', { name: '打开比较目标原章节 v8' }));
+  expect(navigate).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '取消离开，保留文风输入' }));
+  expect((screen.getByLabelText('可复用风格指令（最多 120 字）') as HTMLTextAreaElement).value).toBe('我的未保存人工判断');
+  expect(fetch.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
+  expect(useStyle).not.toHaveBeenCalled();
+});

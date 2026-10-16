@@ -1,19 +1,45 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { Chapter } from '../api';
 import { type ExperimentalClient, type Row, type Rows, segment } from './api';
 import { Details, Field, Form, ObjectInput, RecordStatus, Refresh, ResourceState, ids, objectValue, useAction, useResource } from './shared';
 
+import type { WorkspaceNavigation } from './uxClient';
+
+type PlanningProps = { client: ExperimentalClient; chapter?: Chapter; requestedProposalId?: string; onNavigate?: (target: WorkspaceNavigation) => void };
+let planningScopeSequence = 0;
 const emptyFields = { goal: '', conflict: '', turning_point: '', climax: '', ending_intent: '' };
 const fieldLabels: Record<keyof typeof emptyFields, string> = { goal: '目标', conflict: '冲突', turning_point: '转折点', climax: '高潮', ending_intent: '结局意图' };
-export function PlanningPanel({ client, chapter }: { client: ExperimentalClient; chapter?: Chapter }) {
+export function PlanningPanel(props: PlanningProps) {
+  const identity = useMemo(() => ++planningScopeSequence, [props.client]);
+  return <PlanningBody key={identity} {...props} />;
+}
+function PlanningBody({ client, chapter, requestedProposalId, onNavigate }: PlanningProps) {
+  const [dismissedProposal, setDismissedProposal] = useState<string>();
+  const [reviewRevision, setReviewRevision] = useState(0);
+  useLayoutEffect(() => { setDismissedProposal(undefined); }, [requestedProposalId]);
+  const targetProposalId = requestedProposalId && requestedProposalId !== dismissedProposal ? requestedProposalId : undefined;
+  const targetKey = JSON.stringify([targetProposalId, chapter?.id, chapter?.version, reviewRevision]);
+  const targetLive = useRef({ key: targetKey, epoch: 0, alive: true });
+  if (targetLive.current.key !== targetKey) targetLive.current = { key: targetKey, epoch: targetLive.current.epoch + 1, alive: true };
+  const targetEpoch = targetLive.current.epoch;
+  useLayoutEffect(() => { targetLive.current.alive = true; return () => { targetLive.current.alive = false; }; }, []);
+  const exact = useResource(async signal => {
+    if (!targetProposalId) return undefined;
+    const row = await client.get<Row>(`/planning/proposals/${segment(targetProposalId)}`, signal);
+    if (row.id !== targetProposalId) throw new Error('PLANNING_PROPOSAL_ID_MISMATCH');
+    return { row, epoch: targetEpoch };
+  }, [client, targetKey]);
+  const exactRow = !exact.loading && !exact.error && exact.data?.epoch === targetEpoch ? exact.data.row : undefined;
+  const targetCurrent = () => targetLive.current.alive && targetLive.current.epoch === targetEpoch;
+
   const [graphId, setGraphId] = useState(''), [nodeId, setNodeId] = useState('');
   const overview = useResource(async signal => {
     const [graphs, proposals, templates] = await Promise.all([client.get<Rows>('/planning/graphs', signal), client.get<Rows>('/planning/proposals', signal), client.get<Rows>('/planning/templates', signal)]);
     return { graphs: graphs.items, proposals: proposals.items, templates: templates.items };
   }, [client]);
   const graph = useResource(signal => graphId ? client.get<Row>(`/planning/graphs/${segment(graphId)}`, signal) : Promise.resolve(undefined), [client, graphId]);
-  const reload = () => { overview.reload(); graph.reload(); };
+  const reload = () => { targetLive.current.epoch++; setReviewRevision(value => value + 1); overview.reload(); graph.reload(); };
   const action = useAction(reload);
   const [editingNodeId, setEditingNodeId] = useState('');
   const [graphTitle, setGraphTitle] = useState(''), [title, setTitle] = useState(''), [editingVersion, setEditingVersion] = useState(1);
@@ -37,14 +63,14 @@ export function PlanningPanel({ client, chapter }: { client: ExperimentalClient;
   }, [node?.id]);
   const payload = () => ({ title, fields: { ...fields, character_objectives: objectValue(objectives), beats: objectValue(beats) }, links: Object.fromEntries(Object.entries(links).map(([key, value]) => [key, ids(value)])) });
   const nextLevel = node && ({ PROJECT: 'VOLUME', VOLUME: 'CHAPTER', CHAPTER: 'SCENE' } as Record<string, string>)[node.level];
-  const proposals = (overview.data?.proposals || []).filter(row => !nodeId || row.node_id === nodeId);
-  const review = (row: Row, operation: string) => action.run(() => client.post(`/planning/proposals/${segment(row.id)}/${operation}`, { expected_version: row.version }), '审核状态已更新');
-  const busy = action.busy || overview.loading || graph.loading;
+  const proposals = targetProposalId ? (exactRow ? [exactRow] : []) : (overview.data?.proposals || []).filter(row => !nodeId || row.node_id === nodeId);
+  const review = (row: Row, operation: string) => { if (!targetCurrent() || targetProposalId && row !== exactRow) return; return action.run(() => client.post(`/planning/proposals/${segment(row.id)}/${operation}`, { expected_version: row.version }), '审核状态已更新'); };
+  const busy = action.busy || overview.loading || graph.loading || !!targetProposalId && (exact.loading || !exactRow);
   const requiresRebase = !!node && node.version > editingVersion;
   return <Panel title="分层创作规划 V2" actions={<Refresh reload={reload} busy={busy} />}>
     <StatusMessage>Project → Volume → Chapter → Scene。生成使用 MOCK_ONLY；批准只更新规划，正文与 Canon 保持人工审核流程。</StatusMessage>
     {action.feedback}<ResourceState loading={overview.loading || graph.loading} error={overview.error || graph.error} />
-    <Form onSubmit={() => action.run(async () => { const value = await client.post<Row>('/planning/graphs', { title: graphTitle }); setGraphId(value.id); setNodeId(value.root_node_id); setGraphTitle(''); }, '已创建项目规划')}>
+    <div hidden={!!targetProposalId}><Form onSubmit={() => action.run(async () => { const value = await client.post<Row>('/planning/graphs', { title: graphTitle }); setGraphId(value.id); setNodeId(value.root_node_id); setGraphTitle(''); }, '已创建项目规划')}>
       <Field label="规划名称"><input required value={graphTitle} onChange={event => setGraphTitle(event.target.value)} /></Field>
       <Button type="submit" disabled={busy || !graphTitle.trim()}>创建项目规划</Button>
     </Form>
@@ -76,14 +102,29 @@ export function PlanningPanel({ client, chapter }: { client: ExperimentalClient;
       <Field label="方案指令"><textarea value={instruction} onChange={event => setInstruction(event.target.value)} /></Field>
       <Button disabled={busy} onClick={() => action.run(() => client.post('/planning/generate', { node_id: node.id, expected_node_version: node.version, adapter_id: 'mock-structured-planner', template_id: template, instruction, candidate_count: 2 }), '已生成 2 个 MOCK_ONLY 待审方案')}>生成 Mock 双方案</Button>
     </section>}
+    </div>
+    {targetProposalId && <section aria-label="指定原规划方案">
+      <StatusMessage>正在读取原规划方案：{targetProposalId}。原节点编辑草稿已保留；这里只审核此方案，不自动写入正文或 Canon。</StatusMessage>
+      <ResourceState loading={exact.loading} error={exact.error} />
+      <Button disabled={action.busy} onClick={() => { targetLive.current.epoch++; setDismissedProposal(targetProposalId); }}>返回规划节点与方案列表</Button>
+      <Button disabled={action.busy || exact.loading} onClick={reload}>重新读取指定方案</Button>
+    </section>}
     <h3>方案审核与比较</h3>
-    <Button disabled={busy || selected.length < 2} onClick={() => action.run(async () => setComparison(await client.post('/planning/proposals/compare', { proposal_ids: selected })), '比较已更新')}>比较已选方案</Button>
-    {comparison && <section aria-label="规划方案比较" className="experimental-record"><h3>方案差异</h3>{Object.entries(comparison.differences || {}).map(([key, value]) => <Details key={key} label={fieldLabels[key as keyof typeof fieldLabels] || key} value={value} />)}{!Object.keys(comparison.differences || {}).length && <p>结构字段一致；方案仍需人工选择。</p>}</section>}
+    <Button disabled={!!targetProposalId || busy || selected.length < 2} onClick={() => action.run(async () => setComparison(await client.post('/planning/proposals/compare', { proposal_ids: selected })), '比较已更新')}>比较已选方案</Button>
+    {!targetProposalId && comparison && <section aria-label="规划方案比较" className="experimental-record"><h3>方案差异</h3>{Object.entries(comparison.differences || {}).map(([key, value]) => <Details key={key} label={fieldLabels[key as keyof typeof fieldLabels] || key} value={value} />)}{!Object.keys(comparison.differences || {}).length && <p>结构字段一致；方案仍需人工选择。</p>}</section>}
     <div className="experimental-list">{proposals.map(row => <article key={row.id} className="experimental-record" aria-label={`方案 ${row.title}`}>
-      <label className="experimental-check"><input type="checkbox" checked={selected.includes(row.id)} onChange={event => setSelected(current => event.target.checked ? [...current, row.id] : current.filter(id => id !== row.id))} />{row.title}</label>
-      <RecordStatus row={row} /><p>{row.fields?.goal}</p><Details value={{ fields: row.fields, links: row.links, sources: row.sources, rationale: row.rationale, created_by: row.created_by }} />
-      <div className="experimental-actions">{row.status === 'REVIEW' && <><Button disabled={busy || row.stale} onClick={() => review(row, 'approve')}>批准规划</Button><Button disabled={busy} onClick={() => review(row, 'reject')}>驳回规划</Button></>}{['REVIEW', 'REJECTED', 'APPROVED'].includes(row.status || '') && <Button disabled={busy} onClick={() => review(row, 'archive')}>归档方案</Button>}{['REJECTED', 'ARCHIVED'].includes(row.status || '') && <Button disabled={busy} onClick={() => review(row, 'reopen')}>重新审核</Button>}<Button disabled={busy} onClick={() => action.run(async () => { const value = await client.get<Rows>(`/planning/proposals/${segment(row.id)}/history`); setHistory({ proposal: row, items: value.items }); }, '历史已读取')}>方案历史</Button></div>
+      <label className="experimental-check"><input type="checkbox" disabled={!!targetProposalId} checked={selected.includes(row.id)} onChange={event => setSelected(current => event.target.checked ? [...current, row.id] : current.filter(id => id !== row.id))} />{row.title}</label>
+      <RecordStatus row={row} /><p>{row.fields?.goal}</p><Details value={{ fields: row.fields, links: row.links, sources: row.sources, rationale: row.rationale, created_by: row.created_by, simulation_provenance: row.simulation_provenance }} />
+      {row.simulation_provenance && <section aria-label="原推演来源">
+        <p>方案：{row.id} · 原规划图：{row.graph_id || '未提供'} · 原节点：{row.node_id || '未提供'} · 目标基线版本：{row.target_version ?? '未提供'}</p>
+        <p>原推演：{row.simulation_provenance.run_id} · 路线：{row.simulation_provenance.route_id}</p>
+        <p>输入摘要：{row.simulation_provenance.input_digest} · 结果摘要：{row.simulation_provenance.result_digest}</p>
+        <p>这是作者假设的有界规则检查，不能证明人物信念为事实或文学质量已通过。批准只更新原规划节点。</p>
+        {!onNavigate && <p>原推演导航当前不可用，请确认剧情推演功能已启用。</p>}
+        <Button disabled={busy || !onNavigate || typeof row.simulation_provenance.run_id !== 'string' || !row.simulation_provenance.run_id} onClick={() => { if (targetCurrent()) onNavigate?.({ kind: 'feature', id: row.simulation_provenance.run_id, feature: 'story_simulator_v2', task_authority: 'simulator_run' }); }}>核对原推演约束与证据</Button>
+      </section>}
+      <div className="experimental-actions">{row.status === 'REVIEW' && <><Button disabled={busy || row.stale} onClick={() => review(row, 'approve')}>批准规划</Button><Button disabled={busy} onClick={() => review(row, 'reject')}>驳回规划</Button></>}{['REVIEW', 'REJECTED', 'APPROVED'].includes(row.status || '') && <Button disabled={busy} onClick={() => review(row, 'archive')}>归档方案</Button>}{['REJECTED', 'ARCHIVED'].includes(row.status || '') && <Button disabled={busy} onClick={() => review(row, 'reopen')}>重新审核</Button>}<Button disabled={busy} onClick={() => { if (!targetCurrent()) return; void action.run(async () => { const value = await client.get<Rows>(`/planning/proposals/${segment(row.id)}/history`); if (targetCurrent()) setHistory({ proposal: row, items: value.items }); }, '历史已读取'); }}>方案历史</Button></div>
     </article>)}</div>
-    {history && <section className="experimental-section" aria-label="规划方案历史"><h3>{history.proposal.title} · 历史</h3><p>恢复会创建新的待审版本；原始来源与目标版本仍需通过校验。</p>{history.items.length === 0 && <p>暂无历史版本。</p>}{history.items.map((row, index) => <div className="experimental-record" key={row.version || index}><Badge>历史 v{row.version} · {row.status}</Badge><Details value={row.fields} /><Button disabled={busy} onClick={() => action.run(async () => { const latest = overview.data?.proposals.find(item => item.id === history.proposal.id) || history.proposal; await client.post(`/planning/proposals/${segment(latest.id)}/restore`, { expected_version: latest.version, historical_version: row.version }); setHistory(undefined); }, '历史已恢复为待审版本')}>恢复历史 v{row.version}</Button></div>)}</section>}
+    {history && (!targetProposalId || exactRow && history.proposal.id === exactRow.id && history.proposal.version === exactRow.version) && <section className="experimental-section" aria-label="规划方案历史"><h3>{history.proposal.title} · 历史</h3><p>恢复会创建新的待审版本；原始来源与目标版本仍需通过校验。</p>{history.items.length === 0 && <p>暂无历史版本。</p>}{history.items.map((row, index) => <div className="experimental-record" key={row.version || index}><Badge>历史 v{row.version} · {row.status}</Badge><Details value={row.fields} /><Button disabled={busy} onClick={() => action.run(async () => { if (!targetCurrent()) return; const latest = targetProposalId ? exactRow! : overview.data?.proposals.find(item => item.id === history.proposal.id) || history.proposal; await client.post(`/planning/proposals/${segment(latest.id)}/restore`, { expected_version: latest.version, historical_version: row.version }); setHistory(undefined); }, '历史已恢复为待审版本')}>恢复历史 v{row.version}</Button></div>)}</section>}
   </Panel>;
 }

@@ -1,0 +1,111 @@
+{
+  "baseline_commit": "6620f008da3309a16ae500ff07903bc2dde01a9e",
+  "scope": "Bounded persisted visual group panel using original Graph owner; no spatial outline/collapse/nesting",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/studioGraphClient.test.ts src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T08:58:32.790575+00:00",
+      "finished_utc": "2026-10-16T08:58:51.821252+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-groups-final-ui.json",
+      "receipt_sha256": "be9425bbc2a4499333335cf0063d057b990def92cf466103d43e405ce54c3306",
+      "log": "docs/delivery/v2-development/canvas-groups-final-ui.log",
+      "log_sha256": "b26c7d68d463fc60b91425dcc9f20ec6cf79bf49a8ae61015752857632d4f5ad"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_graph_presentation_contract.py",
+        "tests/test_v2_creative_graph_persistence.py::test_visual_groups_original_owner_reopen_rename_remove_and_cas[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_canvas_annotation_original_owner_reopen_remove_and_cas[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-groups-final-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T08:58:58.042512+00:00",
+      "finished_utc": "2026-10-16T08:59:06.346256+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-groups-final-file.json",
+      "receipt_sha256": "680f737017b27acb962620785adec396c6cba56f1529264ee14d7e81882c9075",
+      "log": "docs/delivery/v2-development/canvas-groups-final-file.log",
+      "log_sha256": "c382119346f239c51d0c4fd3bb5e749397bf742796aee93a8783b0045e902497"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T08:58:59.514942+00:00",
+      "finished_utc": "2026-10-16T08:59:34.180420+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-groups-final-build.json",
+      "receipt_sha256": "6d5d2eee516be30924f24aa4dc7f52bff6f716f4ad443baab3069276a225bfcb",
+      "log": "docs/delivery/v2-development/canvas-groups-final-build.log",
+      "log_sha256": "8a408c1406bd0aa260d173350a5df77b073528a70a9b35e36d27e91b83911522"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for(const p of [\"frontend/src/creative/GraphCanvas.tsx\", \"frontend/src/creative/GraphVisualGroups.tsx\", \"frontend/src/creative/graphCanvas.css\"]) if(/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Groups reuse shared Button and existing design tokens; no protected shell or primitive edits.\");"
+      ],
+      "started_utc": "2026-10-16T08:59:01.023266+00:00",
+      "finished_utc": "2026-10-16T08:59:01.097375+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-groups-token-scope.json",
+      "receipt_sha256": "5a3800f1f97f859d01199c0740001c133a239e5bbdb78db3842d709e1ac25c10",
+      "log": "docs/delivery/v2-development/canvas-groups-token-scope.log",
+      "log_sha256": "9641ec7918a2921f25b813f6964bcc88cf5edaa8b95ea6d43ddb0f6b98925704"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 294,
+    "files": 10,
+    "skipped": 0,
+    "environment": "jsdom/mock transport and pure geometry"
+  },
+  "backend_contract_tests": 32,
+  "file_owner_tests": 3,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "source_sha256": {
+    "app/creative/graph_models.py": "bec85cdae05dbd3f78756a27c17a967138268cd7eb20820edec4ebd84ef1611b",
+    "frontend/src/creative/GraphCanvas.test.tsx": "a6828b689e65751c81b92c1b1183f5444c2c568484cdfa9a751bd330364e641f",
+    "frontend/src/creative/GraphCanvas.tsx": "c723fb0ee8c2f7409ab614dbe5fd99c8f0f2dadf1edc1b31901df752319f0055",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "473180d5f92a4a9c23c5c124e89e635ad6248792be8db2cfa12aa4e142a71c7d",
+    "frontend/src/creative/graphCanvas.css": "fdc2e3cac2077aea15fa89ec5be8efa72c9335452fb604092f6255184b34e649",
+    "frontend/src/creative/graphCanvasGeometry.test.ts": "7c37d461af7fcff3594a453068302636caa4845b8b96fca2abaf388b01aa3c30",
+    "frontend/src/creative/graphCanvasGeometry.ts": "5a8b11cfd636ea6c0666b4d5e2d0bfd220e82a33f8ebc439c4a43dc7b301d188",
+    "frontend/src/creative/studioGraphClient.test.ts": "55f9db07bded1078ddb7fb7ab380d062d5d51219d38b4dff62f5ee369805a9eb",
+    "frontend/src/creative/studioGraphClient.ts": "b6a95c4094cc18b7490866978f3f0f648763f112287fb9991c95d7caf1557347",
+    "frontend/src/creative/studioGraphEditorView.tsx": "e1241b89f6261e154d361d3489bcdbcbf389ab88e033840710c385994172dfb0",
+    "frontend/src/creative/studioGraphTypes.ts": "3320be1e9fcac56157fb7fab5e6bac9f5f33b30707c4330cbfaa9c13c84d9c9c",
+    "tests/test_v2_creative_graph_persistence.py": "0727419d1b256f15918df1866de556afaf0cf03b56f01425e98a01389dc9ed8b",
+    "tests/test_v2_graph_presentation_contract.py": "ae0b46ca7b17000ce2ba98b16abb806d0b060292ca28ed81bc43e3e990c19a40",
+    "frontend/src/creative/GraphVisualGroups.tsx": "dab969ae4a95d0507f236db6f2f071e0c8c184a1bc88c1dec68cb4a9cea1daa1"
+  },
+  "not_run": [
+    "PG/P0/security (BLOCKED and excluded)",
+    "Browser/native IME/visuals/accessibility/performance",
+    "Retained DOM callbacks from a prior graph render (no asynchronous handler path added)",
+    "Windows/GPU/provider/full RC",
+    "push/hosted CI"
+  ]
+}

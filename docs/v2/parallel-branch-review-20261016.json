@@ -1,0 +1,58 @@
+{
+  "status": "PARTIAL",
+  "baseline": "8ef05ffe07f388c92e45d775a9be9d1b9ffa2b75",
+  "scope": "B09 read-only original comparison review",
+  "source_sha256": {
+    "frontend/src/experimental/BranchManuscriptPanel.tsx": "2a3cabf7dd03437deaf573253082ad1f0b6a2542c0757a314c8e559dcd2fd2d0",
+    "frontend/src/experimental/BranchManuscriptPanel.test.tsx": "14bd53f5ee41a19b1a9e7388147dc63e6e23a7d061c211d9c9eddbb32fb04eaf",
+    "frontend/src/experimental/BranchComparisonReview.tsx": "39ab58a595d509bb50931502b0727bbf09baac39a16f79b21acbe92b55767e5c",
+    "frontend/src/experimental/BranchComparisonReview.test.tsx": "349af9e4755ec730b62639130bc92d2118e1881edaec5354bf768b81d2ebc76e",
+    "frontend/src/experimental/branchComparisonReview.ts": "90d487c28c58e985bfedce0c156bb62b1e7f53aff16eb95dc933bcc7c5a53f7a"
+  },
+  "checks": [
+    {
+      "command": "cd frontend && node node_modules/vitest/vitest.mjs run src/experimental/BranchComparisonReview.test.tsx src/experimental/BranchManuscriptPanel.test.tsx src/ui/AppShell.test.tsx --maxWorkers=1 --minWorkers=1 --no-cache",
+      "exit_code": 0,
+      "tests": 32,
+      "kind": "mock UI / pure / shell geometry"
+    },
+    {
+      "command": "cd frontend && node node_modules/typescript/bin/tsc -b --force --pretty false",
+      "exit_code": 0
+    },
+    {
+      "command": "cd frontend && node node_modules/vite/bin/vite.js build",
+      "exit_code": 0,
+      "warning": "existing large bundle chunks"
+    },
+    {
+      "command": "cd frontend && node scripts/check-test-discovery.mjs",
+      "exit_code": 0,
+      "kind": "discovery only"
+    },
+    {
+      "command": "node scripts/check_ui_design_tokens.mjs",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "not_run": [
+    "browser/visual/native",
+    "HTTP",
+    "File/PG",
+    "PUBLIC package tests",
+    "Windows/GPU/model",
+    "full RC"
+  ],
+  "unchanged": [
+    "backend/lifecycle/permissions",
+    "original compare/proposal/manual apply/CAS/recovery",
+    "P0 BLOCKED",
+    "R3-GATE HOLD",
+    "Prompt Adoption disabled"
+  ],
+  "no_push_or_ci": true
+}

@@ -1,3 +1,5 @@
+import { exactHandoffAsset, type TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
+import { AUDIO_MP3_SAMPLE_RATES } from './studioProductionClient';
 import { checkedVideoReference, type VideoReference } from './studioVideoRuntimeContract';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
@@ -8,9 +10,12 @@ import type { GraphImageOperation, GraphMediaOperation } from './studioGraphType
 import type { MediaCommand, RecordedMediaCommand, MediaOperation, ProductionJob, ProductionPreview, ProductionProvider, ProductionSource, StudioProductionClient } from './studioProductionClient';
 
 export type StudioMediaExecutionProps = {
+  assetHandoff?: TimelineAssetHandoff & { target?: 'IMAGE' | 'VIDEO' };
   client: StudioProductionClient; assets: StudioAsset[]; canMutate: boolean; canReview: boolean; busy: boolean; isBusy?: () => boolean;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onDirtyChange: (dirty: boolean) => void; onJob?: (job: ProductionJob) => void; onUnavailable: () => void; onApproved?: () => void | Promise<void>;
+  /** Explicit read-only navigation; never grants review or execution authority. */
+  onOpenApprovedAsset?: (job: ProductionJob) => void;
   externalJob?: ProductionJob;
   preparedCommand?: RecordedMediaCommand; preparedIsCurrent?: () => boolean; onPreparedClose?: () => void;
   cutoutExecution?: { execute: (job: ProductionJob) => Promise<ProductionJob>; control: (kind: 'read' | 'cancel', job: ProductionJob) => Promise<ProductionJob> };
@@ -31,7 +36,9 @@ export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
   REVIEWING: '审核提交待核对', APPROVED: '已审核入库', UNKNOWN: '分派结果不确定', FAILED: '执行失败', CANCELLED: '已丢弃本地结果',
 };
 export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels' | 'output_format';
-type Draft = { operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
+type MediaRoute = 'local' | 'cloud';
+const routeSelectable = (operation: MediaOperation) => (operation.startsWith('m5.image.') || operation.startsWith('m7.video.')) && !['m5.image.cutout', 'm5.image.upscale'].includes(operation);
+type Draft = { route: MediaRoute; operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
   imageSource?: ProductionSource; imageReferences: { source: ProductionSource; weight: string; purpose?: ImageReferencePurpose; source_note?: string }[]; maskSource?: ProductionSource; videoReferencePurpose?: VideoReference['purpose'] };
 type Preview = { value: ProductionPreview; command: MediaCommand; input: string };
 type Candidate = { url: string; kind: 'image' | 'video' | 'audio'; binding: string };
@@ -51,7 +58,7 @@ const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm8.audio.speech': ['voice_id', 'speech_rate'], 'm8.audio.music': ['duration_seconds', 'seed'],
   'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format'],
 };
-const initialDraft = (): Draft => ({ operation: 'm5.image.t2i', providerKey: '', prompt: '',
+const initialDraft = (): Draft => ({ route: 'local', operation: 'm5.image.t2i', providerKey: '', prompt: '',
   parameters: Object.fromEntries(parameterNames.map(name => [name, ''])) as Record<MediaParameter, string>, sources: [], imageReferences: [], allowCloud: false, licenseNote: '' });
 const inputKey = (draft: Draft) => JSON.stringify(draft);
 export const mediaProviderKey = (row: ProductionProvider) => JSON.stringify([row.operation_id, row.provider_id, row.model_id, row.route_digest]);
@@ -89,7 +96,7 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
   const ranges: Partial<Record<MediaParameter, [number, number]>> = { width: [64, 2048], height: [64, 2048], steps: [1, 150], seed: [0, 2147483647], duration_seconds: [1, 600], frame_rate: [1, 60], in_ms: [0, 600000], out_ms: [1, 600000], sample_rate: [8000, 96000], channels: [1, 2] };
   for (const name of parametersByOperation[draft.operation]) {
     const value = draft.parameters[name]; if (value === '') continue;
-    if (name === 'output_format') { if (value !== 'FLAC') throw new Error('独立音频格式请选择 FLAC，或留空保留默认 WAV。'); result[name] = value; }
+    if (name === 'output_format') { if (value !== 'FLAC' && value !== 'MP3') throw new Error('独立音频格式请选择 FLAC 或 MP3，或留空保留默认 WAV。'); result[name] = value; }
     else if (name === 'negative_prompt') { if (value.length > 8000) throw new Error('负向提示超过长度限制。'); result[name] = value; }
     else if (name === 'voice_id') { if (value.length > 240 || !value.trim() || /[\x00-\x1f\x7f]/.test(value)) throw new Error('请填写有效的语音标识。'); result[name] = value; }
     else if (name === 'size') { if (!['auto', '1024x1024', '1536x1024', '1024x1536'].includes(value)) throw new Error('图片规格不受支持。'); result[name] = value; }
@@ -114,11 +121,14 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
   if (draft.operation === 'm5.image.upscale' && result.scale !== 2 && result.scale !== 4) throw new Error('先明确选择 2 倍或 4 倍超分。');
   if (draft.operation === 'm8.audio.trim' && (typeof result.in_ms !== 'number' || typeof result.out_ms !== 'number' || result.out_ms <= result.in_ms || result.out_ms - result.in_ms > 120000)) throw new Error('截取需填写起止毫秒，终点须大于起点，片段最长 120 秒。');
   if (draft.operation === 'm8.audio.trim' && Math.ceil(((result.out_ms as number) - (result.in_ms as number)) * Number(result.sample_rate ?? 48000) / 1000) * Number(result.channels ?? 2) * 2 + 4096 > 25 * 1024 * 1024) throw new Error('所选时长、采样率和声道预计超过 25 MiB 输出上限，请调整后重新预览。');
+  if (result.output_format === 'MP3' && Number(result.out_ms) - Number(result.in_ms) < 10) throw new Error('MP3 片段至少 10 毫秒，以保留准确的解码时长。');
+  if (result.output_format === 'MP3' && !AUDIO_MP3_SAMPLE_RATES.includes(Number(result.sample_rate ?? 48000))) throw new Error('MP3 采样率仅支持 8000、11025、12000、16000、22050、24000、32000、44100、48000 Hz；请明确修改，不会自动重采样。');
   return result;
 }
 function commandFor(draft: Draft, providers: ProductionProvider[], assets: StudioAsset[], requestId: string): MediaCommand {
   const cutout = draft.operation === 'm5.image.cutout', localTrim = draft.operation === 'm8.audio.trim' || cutout;
   const provider = providers.find(row => mediaProviderKey(row) === draft.providerKey && row.operation_id === draft.operation);
+  if (provider && routeSelectable(draft.operation) && provider.local !== (draft.route === 'local')) throw new Error('请在所选本地或云端路线中明确选择配置。');
   if (!localTrim && !provider) throw new Error('请选择当前配置中的服务商和模型。');
   if (provider && parametersByOperation[draft.operation].some(name => draft.parameters[name] !== '' && !provider.supported_parameters.includes(name))) throw new Error('所选配置不支持部分已填写参数，请明确清空这些参数或恢复原选择。');
   const upscale = draft.operation === 'm5.image.upscale';
@@ -153,6 +163,10 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
 
 /** Draft, exact receipts and private media lifetime remain independent of rendering. */
 export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
+  const [handoffAsset, setHandoffAsset] = useState<{ asset: StudioAsset; request: TimelineAssetHandoff; revision: number }>();
+  const [handoffPending, setHandoffPending] = useState(false), [handoffNotice, setHandoffNotice] = useState('');
+  const handoffFlight = useRef(false), handoffConsumed = useRef<TimelineAssetHandoff>();
+  const handoffRevision = useRef(0), handoffStamp = useRef(''), handoffRequest = useRef(props.assetHandoff);
   const [draft, setDraft] = useState<Draft>(initialDraft), [providers, setProviders] = useState<ProductionProvider[]>([]);
   const [providerLoading, setProviderLoading] = useState(false), [jobs, setJobs] = useState<ProductionJob[]>([]), [selected, setSelected] = useState<ProductionJob>();
   const [preview, setPreview] = useState<Preview>(), [previewConsent, setPreviewConsent] = useState(''), [reviewConsent, setReviewConsent] = useState('');
@@ -162,6 +176,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const [denied, setDenied] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const latest = useRef(props); latest.current = props;
   const alive = useRef(true), revoked = useRef(false), owner = useRef(props.client), epoch = useRef(0), slot = useRef<Operation>();
+  const providerHandoffLoading = useRef(false);
   const providerEpoch = useRef(0), providerRead = useRef<AbortController>(), candidateRef = useRef<Candidate>();
   const draftRef = useRef(draft), selectedRef = useRef(selected), previewRef = useRef(preview), uncertainRef = useRef(uncertain);
   const previewConsentRef = useRef(previewConsent), reviewConsentRef = useRef(reviewConsent), providersRef = useRef(providers);
@@ -188,6 +203,12 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const dirty = owns && (input !== baseline.current || uncertain || repeatBlocked || !!pending && ['CREATE', 'review', 'execute', 'refresh', 'reconcile', 'cancel'].includes(pending));
   const locked = !owns || props.busy || !!runningControl || !!pending || !!props.isBusy?.();
   const canEdit = !locked && props.canMutate && !uncertain && !creation.current?.uncertain;
+  const incomingAsset = props.assets.find(row => row.id === props.assetHandoff?.reference.asset_id);
+  const incomingAssetState = incomingAsset && [incomingAsset.id, incomingAsset.version, incomingAsset.sha256, incomingAsset.kind, incomingAsset.deleted_at, incomingAsset.manual_mask, incomingAsset.provenance];
+  const nextHandoffStamp = JSON.stringify([incomingAssetState, input, canEdit, props.canMutate, props.canReview, owns, providerLoading, providers, sourceState, jobIdentity(selected), pending, props.preparedCommand]);
+  if (handoffStamp.current !== nextHandoffStamp || handoffRequest.current !== props.assetHandoff) {
+    handoffStamp.current = nextHandoffStamp; handoffRequest.current = props.assetHandoff; handoffRevision.current++;
+  }
   const canClosePrepared = canEdit && (!selected || !['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selected.status));
   let inputError = ''; try { if (!props.preparedCommand) commandFor(draft, providers, props.assets, 'shape_check'); } catch (reason) { inputError = reason instanceof Error ? reason.message : '请核对输入。'; }
 
@@ -195,11 +216,11 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (receiptDownload.current) URL.revokeObjectURL(receiptDownload.current); receiptDownload.current = undefined; }
   function clearCandidate() { clearReceiptDownload(); if (candidateRef.current) URL.revokeObjectURL(candidateRef.current.url); candidateRef.current = undefined; setCandidate(undefined); reviewConsentRef.current = ''; setReviewConsent(''); }
   function clearPreview() { previewRef.current = undefined; previewConsentRef.current = ''; setPreview(undefined); setPreviewConsent(''); }
-  function markUncertain(value: boolean) { uncertainRef.current = value; setUncertain(value); }
+  function markUncertain(value: boolean) { handoffRevision.current++; uncertainRef.current = value; setUncertain(value); }
   function unavailable() {
     if (!alive.current) return;
     revoked.current = true; epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); slot.current = undefined; providerRead.current?.abort();
-    clearCandidate(); clearPreview(); selectedRef.current = undefined; setSelected(undefined); setJobs([]); setProviders([]); setPending(undefined); setProviderLoading(false);
+    clearCandidate(); clearPreview(); selectedRef.current = undefined; setSelected(undefined); setJobs([]); setProviders([]); setPending(undefined); providerHandoffLoading.current = false; setProviderLoading(false);
     const empty = initialDraft(); draftRef.current = empty; setDraft(empty); creation.current = undefined; baseline.current = inputKey(empty);
     setDenied(true); setError('身份、权限或项目入口已经变化，请重新打开当前项目。'); latest.current.onDirtyChange(false); latest.current.onUnavailable();
   }
@@ -210,6 +231,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   function begin(kind: Kind): Operation | undefined {
     if (busy()) return;
+    handoffRevision.current++;
     const value = { id: ++epoch.current, kind, client: latest.current.client, controller: new AbortController(), canMutate: latest.current.canMutate, canReview: latest.current.canReview };
     slot.current = value; setPending(kind); setError(''); setNotice(''); return value;
   }
@@ -224,9 +246,15 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   function edit(next: Draft) {
     if (latest.current.preparedCommand || !current() || busy() || !latest.current.canMutate || uncertainRef.current || creation.current?.uncertain) return;
-    draftRef.current = next; setDraft(next); clearPreview(); if (!creation.current?.uncertain) creation.current = undefined; setError(''); setNotice('');
+    handoffRevision.current++; draftRef.current = next; setDraft(next); clearPreview(); if (!creation.current?.uncertain) creation.current = undefined; setError(''); setNotice('');
   }
   function changeOperation(operation: MediaOperation) { if (Object.hasOwn(MEDIA_OPERATION_LABELS, operation)) edit({ ...initialDraft(), operation, licenseNote: draftRef.current.licenseNote }); }
+  function changeRoute(route: MediaRoute) {
+    const old = draftRef.current;
+    if (!routeSelectable(old.operation) || !['local', 'cloud'].includes(route) || route === old.route) return;
+    const chosen = providersRef.current.find(row => mediaProviderKey(row) === old.providerKey && row.operation_id === old.operation);
+    edit({ ...old, route, providerKey: chosen?.local === (route === 'local') ? old.providerKey : '', allowCloud: false });
+  }
   function changeField(field: 'prompt' | 'licenseNote' | 'allowCloud' | 'providerKey' | 'videoReferencePurpose', value: string | boolean) {
     const next = { ...draftRef.current };
     if (field === 'videoReferencePurpose') { if (typeof value !== 'string' || value !== '' && !['style', 'action', 'camera'].includes(value)) return; if (value === '') delete next.videoReferencePurpose; else next.videoReferencePurpose = value as VideoReference['purpose']; next.allowCloud = false; edit(next); return; }
@@ -241,6 +269,57 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     const next = { ...old.parameters };
     for (const name of parametersByOperation[old.operation]) if (!selectedProvider.supported_parameters.includes(name)) next[name] = '';
     edit({ ...old, parameters: next });
+  }
+  const handoffOperation = (operation: MediaOperation) => latest.current.assetHandoff?.target === 'VIDEO'
+    ? operation === 'm7.video.i2v' || operation === 'm7.video.v2v' : operation === 'm5.image.i2i';
+  // Metadata-only handoff. The existing controller remains the sole draft owner.
+  async function readHandoff(apply: boolean) {
+    const request = latest.current.assetHandoff;
+    const editable = () => current() && !busy() && latest.current.canMutate && !latest.current.preparedCommand
+      && !providerHandoffLoading.current && !uncertainRef.current && !creation.current?.uncertain
+      && !['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selectedRef.current?.status || '');
+    if (!request || handoffFlight.current || handoffConsumed.current === request || !editable() || !handoffOperation(draftRef.current.operation)) return;
+    const revision = handoffRevision.current, sourceClient = latest.current.client, kind = sourceKind(draftRef.current.operation);
+    const video = request.target === 'VIDEO';
+    if (apply && (handoffAsset?.request !== request || handoffAsset.revision !== revision)) return;
+    handoffFlight.current = true; setHandoffPending(true); setHandoffNotice('');
+    try {
+      const asset = await request.readAsset();
+      if (!current() || sourceClient !== latest.current.client || request !== latest.current.assetHandoff) return;
+      if (!exactHandoffAsset(asset, request.reference) || asset.kind !== kind || asset.manual_mask) {
+        setHandoffAsset(undefined); setHandoffNotice('来源类型、版本或摘要已变化，或已删除；不会替换为最新版本。'); return;
+      }
+      if (!editable() || handoffRevision.current !== revision) {
+        setHandoffAsset(undefined); setHandoffNotice('草稿、服务配置或编辑状态已变化；请重新核对。'); return;
+      }
+      if (!apply) { setHandoffAsset({ asset, request, revision }); return; }
+      const old = draftRef.current;
+      const listed = latest.current.assets.find(row => row.id === asset.id);
+      if (!listed || !exactHandoffAsset(listed, request.reference) || listed.kind !== kind || listed.manual_mask) {
+        setHandoffAsset(undefined); setHandoffNotice('当前素材列表尚未核对同一版本；请明确读取当前素材版本后重试。'); return;
+      }
+      const chosen = providersRef.current.find(row => mediaProviderKey(row) === old.providerKey && row.operation_id === old.operation);
+      if (old.sources.some(row => row.id === asset.id)) { setHandoffNotice('此素材已绑定；请使用原输入控件明确移除或调整，不会覆盖已有绑定。'); return; }
+      if (video) {
+        if (old.sources.length || old.imageSource || old.imageReferences.length || old.maskSource) {
+          setHandoffNotice('已有来源绑定；请先用原输入控件移除，不会覆盖已有来源。'); return;
+        }
+        edit({ ...old, sources: [{ id: asset.id, kind: 'ASSET', asset_kind: kind as 'image' | 'video', version: asset.version, digest: asset.sha256 }], allowCloud: false });
+      } else if (chosen?.image_capabilities) {
+        if (old.imageSource || old.sources.length !== old.imageReferences.length || old.imageReferences.length + 1 > chosen.image_capabilities.reference_limit) {
+          setHandoffNotice('已有基础图或超过当前路线输入上限；请先用原输入控件调整。'); return;
+        }
+        const next = { ...old, imageSource: imageSnapshot(asset), allowCloud: false };
+        edit({ ...next, sources: imageSources(next) });
+      } else {
+        if (old.sources.length >= 5 || old.imageSource || old.imageReferences.length || old.maskSource) { setHandoffNotice('当前输入无法安全追加；请先用原输入控件调整。'); return; }
+        edit({ ...old, sources: [...old.sources, imageSnapshot(asset)], allowCloud: false });
+      }
+      handoffConsumed.current = request; setHandoffAsset(undefined);
+      setHandoffNotice(`已加入原${video ? '视频' : '图片'}制作草稿；旧制作预览与云端确认已清除。尚未预检、入队或执行。`);
+    } catch (reason) {
+      if (current() && request === latest.current.assetHandoff) { setHandoffAsset(undefined); setHandoffNotice(apiErrorView(reason, '交接素材读取失败；草稿未改变。').message); }
+    } finally { handoffFlight.current = false; if (alive.current) setHandoffPending(false); }
   }
   function selectSource(id: string, checked: boolean) {
     const old = draftRef.current, kind = sourceKind(old.operation); if (!kind) return;
@@ -327,14 +406,15 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
 
   async function loadProviders() {
     if (!current() || busy()) return;
+    handoffRevision.current++;
     const client = latest.current.client, id = ++providerEpoch.current, controller = new AbortController(); providerRead.current?.abort(); providerRead.current = controller;
-    setProviderLoading(true); clearPreview();
+    providerHandoffLoading.current = true; setProviderLoading(true); clearPreview();
     try {
       const rows = await latest.current.read(() => client.providers(controller.signal));
       if (!current() || controller.signal.aborted || providerEpoch.current !== id || client !== latest.current.client) return;
       providersRef.current = rows; setProviders(rows);
     } catch (reason) { if (current() && !controller.signal.aborted && providerEpoch.current === id) failure(reason, '服务商配置读取失败。'); }
-    finally { if (alive.current && providerEpoch.current === id) setProviderLoading(false); }
+    finally { if (alive.current && providerEpoch.current === id) { providerHandoffLoading.current = false; setProviderLoading(false); } }
   }
   async function inspect() {
     if (!latest.current.canMutate || uncertainRef.current || creation.current?.uncertain || providerLoading) return;
@@ -472,6 +552,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
         && (blob.size !== job.media_measurement.byte_count || !['audio/wav', 'audio/x-wav', 'audio/wave'].includes(blob.type))) throw invalid('本地 WAV 候选与实际输出测量不一致，不可审核。');
       if (job.operation_id === 'm8.audio.trim' && job.media_measurement?.profile_validation === 'FLAC_STREAMINFO_PCM_VERIFIED'
         && (blob.size !== job.media_measurement.byte_count || !['audio/flac', 'audio/x-flac'].includes(blob.type))) throw invalid('本地 FLAC 候选与实际输出测量不一致，不可审核。');
+      if (job.operation_id === 'm8.audio.trim' && job.media_measurement?.profile_validation === 'MP3_GAPLESS_PCM_VERIFIED'
+        && (blob.size !== job.media_measurement.byte_count || blob.type !== 'audio/mpeg')) throw invalid('本地 MP3 候选与实际输出测量不一致，不可审核。');
       if (digest !== job.output_candidate.digest) throw invalid('候选字节摘要与任务回执不符，不可审核。');
       const next = { url: URL.createObjectURL(blob), kind: job.output_candidate.kind, binding }; candidateRef.current = next; setCandidate(next);
     } catch (reason) { if (live(value)) failure(reason, '候选媒体读取失败。', true); } finally { finish(value); }
@@ -526,7 +608,11 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
 
   const cutoutSource = ['m5.image.cutout', 'm5.image.inpaint'].includes(draft.operation) ? props.assets.find(row => row.id === draft.sources[0]?.id && row.version === draft.sources[0]?.version && row.sha256 === draft.sources[0]?.digest) : undefined;
   const eligibleMasks = owns && cutoutSource ? props.assets.filter(row => eligibleCutoutMask(row, cutoutSource)) : [];
-  return { runningControl, controlRunningCutout, canCancelRunning: !uncertain && !!selected && !sentActions.current.has(actionIdentity(selected, 'cancel')), canControlRunning: owns && props.canMutate && !!props.cutoutExecution && !!executingCutout.current && pending === 'execute' && !runningControl, eligibleMasks, draft: owns ? draft : initialDraft(), providers: owns ? providers : [], provider: owns ? provider : undefined, providerLoading, jobs: owns ? jobs : [], selected: owns ? selected : undefined,
+  function cancelHandoff() {
+    handoffRevision.current++; handoffConsumed.current = latest.current.assetHandoff; setHandoffAsset(undefined); setHandoffNotice('已取消素材交接；草稿未改变。');
+  }
+  return { cancelHandoff, canHandoff: canClosePrepared && !providerLoading && !props.preparedCommand && handoffOperation(draft.operation), handoffAsset: handoffAsset && handoffAsset.request === props.assetHandoff && handoffAsset.revision === handoffRevision.current ? handoffAsset.asset : undefined, handoffPending, handoffNotice, readHandoff, handoffDone: handoffConsumed.current === props.assetHandoff,
+    runningControl, controlRunningCutout, canCancelRunning: !uncertain && !!selected && !sentActions.current.has(actionIdentity(selected, 'cancel')), canControlRunning: owns && props.canMutate && !!props.cutoutExecution && !!executingCutout.current && pending === 'execute' && !runningControl, eligibleMasks, draft: owns ? draft : initialDraft(), providers: owns ? providers : [], provider: owns ? provider : undefined, providerLoading, jobs: owns ? jobs : [], selected: owns ? selected : undefined,
     preview: owns && previewBinding ? preview?.value : undefined, previewReviewed: !!previewBinding && previewConsent === previewBinding,
     candidate: candidateVisible, outputReviewed: !!candidateVisible && reviewConsent === reviewBinding,
     pending, uncertain, repeatBlocked, error: owns ? error : '当前身份或项目范围待核对。', notice: owns ? notice : '', denied, dirty, locked, canEdit, canClosePrepared, inputError, freshSources, jobSourcesFresh, requiredSourceKind: owns ? sourceKind(draft.operation) : undefined,
@@ -536,7 +622,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     canInspect: canEdit && !providerLoading && !inputError, canCreate: canEdit && !creation.current && !!previewBinding && previewConsent === previewBinding,
     canRead: !locked, canLoadCandidate: !locked && !uncertain && !creation.current?.uncertain && jobSourcesFresh && !!selected?.output_candidate,
     imageInputs: !!provider?.image_capabilities && ['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale'].includes(draft.operation),
-    changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, changeReferenceMetadata, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
+    routeSelectable: routeSelectable(draft.operation), changeRoute, changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, changeReferenceMetadata, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
     create, listJobs, openJob, canAction, action, loadCandidate, confirmReview, mediaFailed, downloadReceipt };
 }
 export type StudioMediaExecutionController = ReturnType<typeof useStudioMediaExecution>;

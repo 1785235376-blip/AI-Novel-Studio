@@ -16,7 +16,7 @@ const kindLabels = { image: '图片', video: '视频', audio: '音频' };
 /** A replaceable presentation over the original receipt-aware media controller. */
 export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const state = useStudioMediaExecution(props), draft = state.draft, job = state.selected;
-  const providers = state.providers.filter(row => row.operation_id === draft.operation);
+  const providers = state.providers.filter(row => row.operation_id === draft.operation && (!state.routeSelectable || row.local === (draft.route === 'local')));
   const upscale = draft.operation === 'm5.image.upscale';
   const cutout = draft.operation === 'm5.image.cutout';
   const inpaint = draft.operation === 'm5.image.inpaint', reference = draft.operation === 'm5.image.reference';
@@ -24,7 +24,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const selectedIds = draft.sources.map(source => source.id), trim = draft.operation === 'm8.audio.trim';
   function parameter(name: MediaParameter) {
     const value = draft.parameters[name];
-    if (name === 'output_format') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">默认 WAV，保持原请求</option><option value="FLAC">FLAC · 处理后 S16 无损压缩</option></select></label>;
+    if (name === 'output_format') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">默认 WAV，保持原请求</option><option value="FLAC">FLAC · 处理后 S16 无损压缩</option><option value="MP3">MP3 · 有损压缩（固定码率）</option></select></label>;
     if (name === 'negative_prompt') return <label key={name}>{labels[name]}<textarea maxLength={8000} disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)} /></label>;
     if (name === 'scale') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">明确选择倍率</option><option value="2">2 倍</option><option value="4">4 倍</option></select></label>;
     if (name === 'channels') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">默认双声道（2）</option><option value="1">单声道（1）</option><option value="2">双声道（2）</option></select></label>;
@@ -36,6 +36,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     return <label key={name}>{labels[name]}<input type={range ? 'number' : 'text'} min={range?.[0]} max={range?.[1]} step={name === 'gain_db' ? 'any' : range?.[2]} maxLength={name === 'voice_id' ? 240 : undefined}
       disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)} /></label>;
   }
+  const handoffLabel = props.assetHandoff?.target === 'VIDEO' ? '视频' : '图片';
   return <Panel title="媒体制作与审核" className="studio-graph-run">
     <p>预览、入队、执行和审核分别确认。候选先保持私有，人工审核后再入素材库。完整本机验收仍待完成（LOCAL_REQUIRED）。</p>
     {state.error && <StatusMessage tone="error">{state.error}</StatusMessage>}
@@ -43,6 +44,15 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     {state.uncertain && <StatusMessage tone="warning">操作结果尚未确认，已阻止继续发送。请读取原任务核对；不会自动重试。</StatusMessage>}
     {state.repeatBlocked && <StatusMessage tone="warning">当前版本已有发送记录。相同动作不会再次发送，请继续读取原记录核对。</StatusMessage>}
     {state.uncertainRequestId && <p>待核对的原请求：<code>{state.uncertainRequestId}</code>。使用“读取任务列表”寻找已保存回执。</p>}
+    {props.assetHandoff && <section aria-label={`素材引用交接到${handoffLabel}制作`}>
+      <h3>素材引用交接到{handoffLabel}制作</h3>
+      <p>{props.assetHandoff.reference.asset_id} · v{props.assetHandoff.reference.version} · {props.assetHandoff.reference.digest}</p>
+      <p>{handoffLabel === '视频' ? '须明确选择“图片生成视频”或“视频生成视频”，且来源类型必须匹配、来源槽为空。视频转视频是否可执行仍以原服务能力为准；当前本地路线不执行参考视频。' : '仅支持下方明确选择的“参考图片生成图片”操作。'}核对只读取元数据；加入前再次核对版本，不更改提示词、服务商或参数，也不覆盖已有基础图。</p>
+      <Button disabled={!state.canHandoff || state.providerLoading || state.handoffPending || state.handoffDone} onClick={() => void state.readHandoff(false)}>核对{handoffLabel}交接版本</Button>
+      {state.handoffAsset && <><p>{state.handoffAsset.filename} · {state.handoffAsset.kind} · {state.handoffAsset.size} 字节</p><Button disabled={!state.canHandoff || state.handoffPending} onClick={() => void state.readHandoff(true)}>明确加入{handoffLabel}制作草稿</Button></>}
+      <Button disabled={state.handoffDone} onClick={state.cancelHandoff}>取消{handoffLabel}交接</Button>
+      {state.handoffNotice && <StatusMessage>{state.handoffNotice}</StatusMessage>}
+    </section>}
     <section aria-label="媒体制作输入">{props.preparedCommand ? <><h3>{props.preparedCommand.operation_id.startsWith("m7.") ? "原分镜视频请求" : "原分镜图片请求"}</h3><p>输入来自已核对的分镜与镜头版本；更换参数须返回原分镜明确准备新请求。预览、入队、执行与审核仍分别确认。</p><details><summary>核对完整来源与输入</summary><pre>{JSON.stringify(props.preparedCommand, null, 2)}</pre></details><Button disabled={!state.canRead || state.providerLoading} onClick={() => void state.loadProviders()}>明确读取当前请求服务配置</Button><Button disabled={!state.canInspect} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canClosePrepared} onClick={state.clearInputs}>关闭当前请求视图，保留原任务</Button></> : <>
       <h3>制作输入</h3>
       <label>操作<select disabled={!state.canEdit} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
@@ -50,10 +60,11 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       </select></label>
       {cutout && <p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。输出同尺寸 PNG；不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>}
       {!trim && !cutout && <>
+        {state.routeSelectable && <><label>制作路线<select disabled={!state.canEdit || state.providerLoading} value={draft.route} onChange={event => state.changeRoute(event.target.value as 'local' | 'cloud')}><option value="local">本地</option><option value="cloud">云端</option></select></label><p>默认先查看本地配置；可自行切换云端或返回本地。切换不发送输入、不执行模型，也不自动选择服务商。</p></>}
         <label>服务商与模型<select disabled={!state.canEdit || state.providerLoading} value={draft.providerKey} onChange={event => state.changeField('providerKey', event.target.value)}>
           <option value="">明确选择当前配置</option>{providers.map(row => <option key={mediaProviderKey(row)} value={mediaProviderKey(row)}>{row.provider_id} · {row.model_id} · {row.local ? '本地' : '云端'}</option>)}
         </select></label>
-        <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && '暂无对应配置，请先完成服务商与模型配置。'}</p>
+        <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && (state.routeSelectable ? `当前操作暂无${draft.route === 'local' ? '本地' : '云端'}配置；可以切换路线或先完成对应配置，不会自动回退。` : '暂无对应配置，请先完成服务商与模型配置。')}</p>
         {state.provider?.image_capabilities && <p>当前图片配方：{state.provider.image_capabilities.recipe_id}。输入结构已核对，真实推理尚未验证。参考图最多 {state.provider.image_capabilities.reference_limit} 张；{state.provider.image_capabilities.reference_semantics === 'WEIGHTED_PIXEL_INITIALIZATION' ? '权重用于归一化混合参考像素后初始化生成，不代表角色或风格识别质量。' : '当前路线采用单图初始化。'}</p>}
         <Button disabled={!state.canRead || state.providerLoading} loading={state.providerLoading} onClick={() => void state.loadProviders()}>重新读取配置</Button>
         {!upscale && <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>}
@@ -85,7 +96,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       {state.provider?.video_capabilities && <p>本地视频配方 {state.provider.video_capabilities.recipe_id}：已核对节点结构，真实推理尚未验证。64–1024、宽高为 32 的倍数，1–10 秒、1–30 fps；输出按模型帧步长取整后的 VP9 WebM。当前本地路线不执行参考视频。</p>}
       {upscale && <p>原图片版本进入已启用的本地超分模型，再统一到所选倍率的 PNG 尺寸。输出最大 4096×4096、25 MiB，仍需人工审核。不会下载或启动模型；模型质量与本机推理尚未验收。</p>}
       {draft.operation.startsWith('m5.image.') && <p>Depth / Pose / Edge / Mask / Layout 控制 Adapter 已保留边界，尚未提供执行能力。</p>}
-      {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? draft.parameters.output_format === 'FLAC' ? '本地截取输出处理后的 S16 FLAC。片段最长 120 秒，起止点须在真实来源时长内；先按所选增益、采样率与声道处理，再无损压缩。' : '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{state.parameterNames.map(parameter)}
+      {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? draft.parameters.output_format === 'MP3' ? '本地截取输出有损 MP3，片段为 10 毫秒至 120 秒。需已安装的 libmp3lame；32000–48000 Hz 固定 128 kb/s，更低支持采样率固定 64 kb/s。支持 8000、11025、12000、16000、22050、24000、32000、44100、48000 Hz；留空为 48000 Hz、双声道。解码 S16 不代表无损。' : draft.parameters.output_format === 'FLAC' ? '本地截取输出处理后的 S16 FLAC。片段最长 120 秒，起止点须在真实来源时长内；先按所选增益、采样率与声道处理，再无损压缩。' : '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{state.parameterNames.map(parameter)}
         {!!state.unsupportedParameters.length && <><StatusMessage tone="warning">所选配置不支持已填写的参数：{state.unsupportedParameters.map(name => labels[name]).join('、')}。这些输入不会自动丢弃。</StatusMessage><Button disabled={!state.canEdit} onClick={state.clearUnsupportedParameters}>明确清空不支持的参数</Button></>}
       </fieldset>}
       <label>来源与授权说明<input maxLength={2000} disabled={!state.canEdit} value={draft.licenseNote} onChange={event => state.changeField('licenseNote', event.target.value)} /></label>
@@ -129,13 +140,14 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         </details>
         {job.timeline_snapshot && <details><summary>来源时间线 {job.timeline_snapshot.id} · v{job.timeline_snapshot.version}</summary><p>原执行入口会再次核对摘要：<code>{job.timeline_snapshot.digest}</code></p></details>}
         {job.owner === 'timeline' && <StudioTimelineMeasurement measurement={job.media_measurement} />}
-        {job.operation_id === 'm8.audio.trim' && (job.media_measurement && ['PCM_DECODED', 'FLAC_STREAMINFO_PCM_VERIFIED'].includes(job.media_measurement.profile_validation ?? '') ? <section aria-label="音频实际输出测量"><h4>实际输出测量</h4><Badge>{job.media_measurement.container === 'flac' ? '原服务 FLAC 流信息与 PCM 解码核对' : '原服务 PCM 解码测量回执'}</Badge>
+        {job.operation_id === 'm8.audio.trim' && (job.media_measurement && ['PCM_DECODED', 'FLAC_STREAMINFO_PCM_VERIFIED', 'MP3_GAPLESS_PCM_VERIFIED'].includes(job.media_measurement.profile_validation ?? '') ? <section aria-label="音频实际输出测量"><h4>实际输出测量</h4><Badge>{job.media_measurement.container === 'mp3' ? '原服务 MP3 流信息与无间隙解码核对' : job.media_measurement.container === 'flac' ? '原服务 FLAC 流信息与 PCM 解码核对' : '原服务 PCM 解码测量回执'}</Badge>
           <dl><dt>媒体时长</dt><dd>{job.media_measurement.duration_ms} 毫秒</dd><dt>实际大小</dt><dd>{job.media_measurement.byte_count} 字节</dd>
-            <dt>实际声音</dt><dd>{job.media_measurement.sample_rate} Hz · {job.media_measurement.channels} 声道 · {job.media_measurement.container === 'flac' ? '16 位 S16 FLAC' : '16 位 PCM WAV'}</dd>
+            <dt>实际声音</dt><dd>{job.media_measurement.sample_rate} Hz · {job.media_measurement.channels} 声道 · {job.media_measurement.container === 'mp3' ? `MP3 · ${Number(job.media_measurement.bit_rate) / 1000} kb/s` : job.media_measurement.container === 'flac' ? '16 位 S16 FLAC' : '16 位 PCM WAV'}</dd>
             <dt>输出摘要</dt><dd><code>{job.media_measurement.output_sha256}</code></dd></dl>
           {job.media_measurement.container === 'flac' && <details><summary>FLAC 样本与解码证明</summary><p>{job.media_measurement.total_samples} 个样本 · 解码 {job.media_measurement.decoded_pcm_bytes} 字节 S16</p><p>PCM SHA256：<code>{job.media_measurement.decoded_pcm_sha256}</code></p><p>流信息 MD5：<code>{job.media_measurement.streaminfo_md5}</code></p></details>}
-          <p>{job.media_measurement.container === 'flac' ? '以上为服务端解码实际 FLAC 的测量；S16 处理后的无损压缩不代表原作未经变更。候选仍须读取实际字节、核对摘要并人工审核。' : '以上为服务端解码实际 WAV 的测量，不代表增益已测量。候选仍须读取实际字节、核对摘要并人工审核。'}</p>
-        </section> : <p>尚未读取到已核对的 WAV 输出测量；原请求参数与执行配方不代表实际输出。</p>)}
+          {job.media_measurement.container === 'mp3' && <details><summary>MP3 样本与有损解码证明</summary><p>{job.media_measurement.total_samples} 个样本 · 解码 {job.media_measurement.decoded_pcm_bytes} 字节 S16 · 容器时长 {job.media_measurement.container_duration_ms} 毫秒（含编码延迟与帧填充）</p><p>解码 PCM SHA256：<code>{job.media_measurement.decoded_pcm_sha256}</code></p></details>}
+          <p>{job.media_measurement.container === 'mp3' ? '以上为实际 MP3 的解码测量；MP3 为有损格式，解码摘要用于识别本次输出，不证明与原音频相同或音质合格。候选仍须核对并人工审核。' : job.media_measurement.container === 'flac' ? '以上为服务端解码实际 FLAC 的测量；S16 处理后的无损压缩不代表原作未经变更。候选仍须读取实际字节、核对摘要并人工审核。' : '以上为服务端解码实际 WAV 的测量，不代表增益已测量。候选仍须读取实际字节、核对摘要并人工审核。'}</p>
+        </section> : <p>尚未读取到已核对的音频输出测量；原请求参数与执行配方不代表实际输出。</p>)}
         {job.processing_proof?.contract === 'studio-image-upscale-proof/1' && <details><summary>图片超分尺寸与摘要证明</summary><p>{job.processing_proof.source_width} × {job.processing_proof.source_height} → {job.processing_proof.output_width} × {job.processing_proof.output_height} · {job.processing_proof.scale} 倍 · PNG {job.processing_proof.output_bytes} 字节</p><code>{job.processing_proof.output_sha256}</code></details>}
         {job.processing_proof?.contract === 'cpu-binary-mask-cutout/1' && <details><summary>本地 CPU 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · PNG {job.processing_proof.output_bytes} 字节</p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
         {!!job.sources.length && <details><summary>本任务绑定的来源版本</summary><ul>{job.sources.map(source => <li key={`${source.kind}:${source.id}`}>{source.kind === 'ASSET' ? props.assets.find(row => row.id === source.id)?.filename || source.id : source.id} · v{source.version}<p>来源摘要：<code>{source.digest}</code></p></li>)}</ul></details>}
@@ -163,6 +175,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
           {state.candidate?.kind === 'audio' && <audio src={state.candidate.url} style={{ maxWidth: '100%' }} controls preload="metadata" aria-label="本任务的音频候选" onError={() => state.mediaFailed(state.candidate?.binding || '')} />}
           {['AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING'].includes(job.status) && <><label><input type="checkbox" disabled={state.locked || !props.canReview || state.uncertain || !state.candidate} checked={state.outputReviewed} onChange={event => state.confirmReview(event.target.checked)} />已查看本次候选，确认采用当前任务版本与输出摘要</label>
             <Button disabled={!state.canAction('review')} loading={state.pending === 'review'} onClick={() => void state.action('review')}>明确审核并入素材库</Button></>}
+          {job.status === 'APPROVED' && props.onOpenApprovedAsset && job.approved_asset_version !== null && <Button disabled={!state.canRead || state.uncertain} onClick={() => props.onOpenApprovedAsset?.(job)}>打开本任务已审核素材</Button>}
           {job.status === 'APPROVED' && <StatusMessage tone="success">原任务已审核入库。产品里程碑验收状态仍为 LOCAL_REQUIRED。</StatusMessage>}
         </section>}
       </section>}

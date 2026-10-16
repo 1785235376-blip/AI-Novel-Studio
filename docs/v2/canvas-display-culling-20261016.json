@@ -1,0 +1,95 @@
+{
+  "baseline_commit": "3698c3dbb6b6be18252f58e2bb525fba933436f3",
+  "scope": "DISPLAY-only culling; no execution budget/schema/backend changes",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/GraphDirectorConsole.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/studioProductionGraphClient.test.ts src/creative/studioGraphClient.test.ts src/creative/CreativeAuthoringFields.test.tsx src/creative/CreativeWorkspace.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx src/canvasops"
+      ],
+      "started_utc": "2026-10-16T08:12:28.519616+00:00",
+      "finished_utc": "2026-10-16T08:12:37.359189+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-culling-ui-final.log",
+      "log_sha256": "69006473f61a6425e5f1cb116fa5305069cbe70ffe180d32d09b85edfada246b"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc --noEmit && ./node_modules/.bin/vite build && cd .. && node scripts/check_ui_design_tokens.mjs && python scripts/public_build.py --source ."
+      ],
+      "started_utc": "2026-10-16T08:12:54.543856+00:00",
+      "finished_utc": "2026-10-16T08:13:26.095701+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-culling-build-final.log",
+      "log_sha256": "d885c2378891ba0eb7ebcb9e6192d8bf8aca0c0802012644a3c612e8131ae4f4"
+    },
+    {
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-usability/../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-culling-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T08:11:36.238791+00:00",
+      "finished_utc": "2026-10-16T08:11:44.537444+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-culling-public.log",
+      "log_sha256": "ec1cf0846bf04628921e273ec181fa7addc2ed7ffbba70872f8ad99d4a23d2d5"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; const files=[\"frontend/src/creative/GraphCanvas.tsx\",\"frontend/src/creative/graphCanvas.css\",\"frontend/src/creative/studioGraphEditorView.tsx\"]; const bad=files.filter(p=>/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))); if(bad.length) throw new Error(bad.join(\",\")); console.log(\"Changed canvas surfaces: no raw colors; existing token-based chrome retained (3 files)\");"
+      ],
+      "started_utc": "2026-10-16T08:13:42.059110+00:00",
+      "finished_utc": "2026-10-16T08:13:42.112174+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-culling-token-scope.log",
+      "log_sha256": "254b78aea22fae49323cf6698707fc820d153bd8b0d260ca3f7d921d90c0cfc3"
+    }
+  ],
+  "benchmark_command": "cd frontend && node --expose-gc scripts/benchmark-graph-display.mjs",
+  "benchmark_exit_code": 0,
+  "benchmark": "docs/v2/canvas-display-benchmark-20261016.json",
+  "frontend_tests": {
+    "files": 13,
+    "passed": 272,
+    "failed": 0,
+    "skipped": 0,
+    "environment": "jsdom/mock transport, not browser"
+  },
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "not_run": [
+    "browser FPS/paint/memory/screenshots",
+    "backend DAG execution",
+    "P0 security/lifecycle (BLOCKED and excluded)",
+    "Windows/GPU/live providers",
+    "hosted CI/push"
+  ],
+  "source_sha256": {
+    "frontend/src/creative/GraphCanvas.tsx": "c510f787ba4f1724992e5b7dd5d5b78582d7db0842c1a8313b89a80ba2178aa5",
+    "frontend/src/creative/GraphCanvas.test.tsx": "505af80fad9871348a7ffa72bc0f5acec6a69bd69a97000127e7543c50c5680f",
+    "frontend/src/creative/graphCanvasGeometry.ts": "25e1683ce725aa6ea829ee369e5219660be4e9330544accfbb3a5851774fdc4d",
+    "frontend/src/creative/graphCanvasPresentation.ts": "1c476b8715571fca87326b68e41f2773e525f1c027ed386f369f90037e8a3d7b",
+    "frontend/src/creative/graphCanvasPresentation.test.ts": "6fe0ccc0bfc83fb0f0966fb1f019d525050db42d64a097d7196436418834283a",
+    "frontend/src/creative/graphCanvas.css": "07c9a90c854be79a7169014a7431d81c75fc264bf4d8ffbdeb194419d919900d",
+    "frontend/src/creative/studioGraphEditorView.tsx": "cc1b6e48f51b1cab561819f0e9011aa894086fe38aa422fce68db6c958a3300a",
+    "frontend/scripts/benchmark-graph-display.mjs": "e5c481f0ad0cb535105b24697cd4e2c1eb0741d8edddb1199c028521d173e9a3"
+  }
+}

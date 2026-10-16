@@ -1,0 +1,142 @@
+{
+  "baseline_commit": "ef98a47348ae75d7f5f935ac1ac409ed73f680cc",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/JudgeRevisionHandoff.test.tsx src/experimental/judgeRevisionHandoff.test.ts src/experimental/RevisionIntelligencePanel.test.tsx src/experimental/revisionLocks.test.ts src/experimental/RevisionComparisonModelPanel.test.tsx src/experimental/NarrativeJudgeContinuationPanels.test.tsx src/experimental/NarrativeJudgeModelPanel.test.tsx src/experimental/ExperimentalWorkbench.test.tsx src/experimental/ExperimentalWorkbench.continuation.test.tsx src/AppRevisionHistory.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T11:05:37.386599+00:00",
+      "finished_utc": "2026-10-16T11:05:46.326663+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/judge-revision-reviewed-ui.log",
+      "log_sha256": "134d05f0abda4971d26834e20f7a6972da64f99f7c109025def3de719ad27fd2",
+      "receipt": "docs/delivery/v2-development/judge-revision-reviewed-ui.json",
+      "receipt_sha256": "93653925e8cddd4134eaebd7326733a7109acdf3966b32a3037288b1ae5769ce"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r4_revision_intelligence.py::test_partial_accept_changes_only_two_reviewed_blocks_and_keeps_original_history[file]",
+        "tests/test_r4_revision_intelligence.py::test_reject_does_not_write_chapter_and_pending_still_reviewable[file]",
+        "tests/test_r4_revision_intelligence.py::test_exact_selection_disambiguates_duplicate_text_and_utf16[file]",
+        "tests/test_r4_revision_intelligence.py::test_interrupted_acceptance_claim_is_durable_and_never_replayed[file]",
+        "tests/test_r4_revision_intelligence.py::test_reject_split_unicode_boundaries",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/judge-revision-reviewed-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T11:05:40.420650+00:00",
+      "finished_utc": "2026-10-16T11:05:49.968433+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/judge-revision-reviewed-file-public.log",
+      "log_sha256": "65d5beefa919a0969e3f0ca59c6b2e4ef94e67ec8080eb6388b318797d20ec90",
+      "receipt": "docs/delivery/v2-development/judge-revision-reviewed-file-public.json",
+      "receipt_sha256": "52a1d52349396eaba9f54588d3df097ac5b776a46924c0ab8de955e92ff2bb9a"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r4_revision_intelligence.py",
+        "-k",
+        "stale_source_cannot_apply and file and (version or document)",
+        "--basetemp=.runtime/v2-checks/judge-revision-reviewed-file-conflict/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T11:05:50.388610+00:00",
+      "finished_utc": "2026-10-16T11:05:58.639509+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/judge-revision-reviewed-file-conflict.log",
+      "log_sha256": "69187dc197662b7bc7509e7326d9ec9fd9c5b04a476059aa9d26c95345c2d71c",
+      "receipt": "docs/delivery/v2-development/judge-revision-reviewed-file-conflict.json",
+      "receipt_sha256": "3fba4b21a3434b227c441160a09f88ba05eadc72afb2a0bdd0e68ad21f110c7b"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T11:05:38.892952+00:00",
+      "finished_utc": "2026-10-16T11:06:16.007995+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/judge-revision-reviewed-build.log",
+      "log_sha256": "5493576b601287f0f4513ed6199adb445c2c1d1847ad51bd88740d95ff25442f",
+      "receipt": "docs/delivery/v2-development/judge-revision-reviewed-build.json",
+      "receipt_sha256": "4b8c2634d224ea18fc9347aa410d8d9a698be2d6e1eeb408ff62d394636c5f3e"
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import pathlib,re; files=[pathlib.Path(\"frontend/src/experimental\")/name for name in [\"ExperimentalWorkbench.tsx\",\"NarrativeJudgePanel.tsx\",\"RevisionIntelligencePanel.tsx\",\"judgeRevisionHandoff.ts\"]]; violations=[str(p) for p in files if re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",p.read_text(),re.I)]; assert not violations, violations; print(\"Scoped raw-color guard PASS (4 files)\")"
+      ],
+      "started_utc": "2026-10-16T11:07:22.576436+00:00",
+      "finished_utc": "2026-10-16T11:07:22.600730+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/judge-revision-token-scope.log",
+      "log_sha256": "a68cd938fe1e4b6a95331263b6dfadc7a98f47104f7465657b166530accdbefb",
+      "receipt": "docs/delivery/v2-development/judge-revision-token-scope.json",
+      "receipt_sha256": "cd9137cba25e69841243ea21b4a9af5b72db1a369565e0d344190850fe707243"
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/experimental/ExperimentalWorkbench.tsx": "04793f7b126577d7967902ba5788437c75a07d87b9bc7e42a23d39abe5f70335",
+    "frontend/src/experimental/NarrativeJudgePanel.tsx": "6a17ff629f972d10112612e06d74446815f5877a20a0bdb708bca76156ec9bc1",
+    "frontend/src/experimental/RevisionIntelligencePanel.tsx": "3665aec61b3b9742a0a87a0ecb8f5abe384785b7f883dcc09e5a55b9086ee081",
+    "frontend/src/experimental/judgeRevisionHandoff.ts": "4af3d3ec40058e0024ec3d7bb78b80b9253a73e8ca9f6366a344d9a7106689e1",
+    "frontend/src/experimental/judgeRevisionHandoff.test.ts": "c8bf58f247b331e89f6e9b3ee87f9af1155ac6f37bedbc6b34485f9aceee3474",
+    "frontend/src/experimental/JudgeRevisionHandoff.test.tsx": "181b495bb11b2594213e32d1227aa65e56fd21740401f1097224505608a442a8"
+  },
+  "counts": {
+    "frontend_mock_and_pure_pass": 105,
+    "original_nonsecurity_file_pass": 6,
+    "python_unicode_pass": 5,
+    "public_pass": 30,
+    "public_closure_files": 487
+  },
+  "superseded_or_failed_receipts_retained": [
+    "docs/delivery/v2-development/judge-revision-build.json",
+    "docs/delivery/v2-development/judge-revision-file-public-r2.json",
+    "docs/delivery/v2-development/judge-revision-file-public.json",
+    "docs/delivery/v2-development/judge-revision-final-build-r2.json",
+    "docs/delivery/v2-development/judge-revision-final-build.json",
+    "docs/delivery/v2-development/judge-revision-final-ui-r2.json",
+    "docs/delivery/v2-development/judge-revision-final-ui.json",
+    "docs/delivery/v2-development/judge-revision-ui.json"
+  ],
+  "not_run": [
+    "optional HTTP integration harness (6 skipped in exploratory selection; excluded from final mock-only run)",
+    "browser visual/native input/accessibility/performance",
+    "PostgreSQL/P0/security lifecycle",
+    "Windows/GPU/user computer",
+    "actual model/literary quality/providers",
+    "hosted CI/full RC"
+  ],
+  "boundaries": {
+    "A03": "PARTIAL",
+    "A11": "PARTIAL",
+    "P0": "BLOCKED",
+    "R3_GATE": "HOLD",
+    "PROMPT_ADOPTION_WRITE_ENABLED": false,
+    "push": "NOT_RUN_COST_UNKNOWN",
+    "new_backend_schema_or_authority": false,
+    "coordinate_conversion": false,
+    "persistent_structured_judge_proposal_link": false
+  }
+}

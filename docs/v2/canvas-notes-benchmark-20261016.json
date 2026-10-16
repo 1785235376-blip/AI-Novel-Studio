@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-10-16T13:58:49.419Z",
+  "kind": "bounded-note-Node-only-microbenchmark",
+  "runtime": "v24.19.0",
+  "persisted_shape_notes": 128,
+  "execution_nodes": 0,
+  "execution_edges": 0,
+  "samples": 1000,
+  "utf8_json_bytes": 16687,
+  "conservative_authoring_bytes": 25007,
+  "unicode_text_total": 8850,
+  "projection_ms_median": 0.013300000000015189,
+  "projection_ms_p95": 0.02364599999998518,
+  "projection_ms_max": 1.0688760000000457,
+  "mounted_projection_max": 72,
+  "heap_delta_bytes_samples": [
+    -22368,
+    32,
+    -26960,
+    480,
+    288
+  ],
+  "browser_fps": "NOT_RUN",
+  "browser_memory": "NOT_RUN",
+  "thousand_persisted_objects": "PARTIAL: capped at 128 notes under original 96000-byte owner limit",
+  "caveat": "Includes creating a disposable index and projection; excludes React/DOM/paint. Node heap deltas are noisy, not browser acceptance. Directory has at most 128 options.",
+  "source_sha256": {
+    "graphCanvasNotes.ts": "64ccbc8f6b86cc71a515949148defec9de46228756873f5be3735bd15a7e13af",
+    "graphCanvasPresentation.ts": "64da40d2c6ef1208612b471c08f47d967cafa09fca84e8c03827d5b024801542",
+    "graphVisualHierarchy.ts": "823d440aee9594ae1e8082d5f9bbd8626e14c36164d8e2ddb7c10bdf2a186c78",
+    "graphCanvasGeometry.ts": "01d5c1692ef36749583232dcb6bdbb49953b1978b4a3f2702325cda7511e1b0e"
+  }
+}

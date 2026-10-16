@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-16",
+  "base": "ece0ac7c5206904e4ba97aaa73d7e10403a3ac3e",
+  "capability": "A05",
+  "overall_status": "PARTIAL",
+  "slice": "Character projection evidence to exact original author event and pending candidate editor",
+  "slice_status": "IMPLEMENTED",
+  "owner": "existing StoryGraphPanel + story_graph original owner",
+  "backend_changed": false,
+  "authorization_changed": false,
+  "automatic_approval": false,
+  "model_calls": false,
+  "verification": {
+    "focused_jsdom": "PASS: 41 tests across 4 files",
+    "typescript": "PASS: full frontend tsc --noEmit",
+    "design_token_guard": "PASS: 52 existing guarded files",
+    "diff_check": "PASS",
+    "real_browser_visual_geometry": "NOT_RUN",
+    "file_postgres_integration": "NOT_RUN",
+    "gpu_model_quality": "NOT_RUN",
+    "ci_push": "NOT_RUN"
+  },
+  "limits": [
+    "Current original event and query snapshot reconciliation only; no historical chapter replay",
+    "Fact/secret text is not independently re-derived from linked relation",
+    "Original save/review owner remains authoritative after subsequent changes",
+    "A05 broad timeline comparison, recovery and literary quality remain open"
+  ]
+}

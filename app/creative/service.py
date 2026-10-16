@@ -436,7 +436,8 @@ class CreativeService(DomainService):
         items = [*row.get("history", []), {key: value for key, value in row.items() if key != "history"}]
         for item in items:
             self.assert_current(nid, scope, item)
-        return {"document_id": rid, "current_version": row["version"], "items": copy.deepcopy(items)}
+        return {"document_id": rid, "current_version": row["version"], "items": copy.deepcopy(items),
+                "snapshot_digests": [{"version": item["version"], "digest": document_digest(item)} for item in items]}
 
     def export(self, nid, scope, rid):
         row = self.get(nid, scope, rid)

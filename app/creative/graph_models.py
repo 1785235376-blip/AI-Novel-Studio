@@ -580,12 +580,98 @@ class TypedEdge(Strict):
     target_port: Id
 
 
+class GraphVisualGroup(Strict):
+    # Display-only hierarchy: root plus one child level. Absence is canonical.
+    parent_id: Id | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def explicit_parent(cls, value):
+        if isinstance(value, dict) and "parent_id" in value and value["parent_id"] is None:
+            raise ValueError("CREATIVE_GRAPH_GROUP_PARENT_INVALID")
+        return value
+
+    @model_serializer(mode="wrap")
+    def preserve_absent_parent(self, handler):
+        value = handler(self)
+        if self.parent_id is None:
+            value.pop("parent_id", None)
+        return value
+
+    id: Id
+    name: str = Field(strict=True, min_length=1, max_length=80)
+    node_ids: list[Id] = Field(min_length=1, max_length=24, strict=True)
+
+    @model_validator(mode="after")
+    def validate_group(self):
+        if not self.name.strip() or len(set(self.node_ids)) != len(self.node_ids):
+            raise ValueError("CREATIVE_GRAPH_GROUP_INVALID")
+        return self
+
+
+class GraphViewPreferences(Strict):
+    """Explicit display preferences; no camera, node movement or execution policy."""
+    show_grid: bool = Field(strict=True)
+    snap: bool = Field(strict=True)
+    grid_step: int = Field(strict=True)
+    show_minimap: bool = Field(strict=True)
+
+    @field_validator("grid_step")
+    @classmethod
+    def bounded_step(cls, value):
+        if value not in (8, 16, 24, 32):
+            raise ValueError("CREATIVE_GRAPH_VIEW_INVALID")
+        return value
+
+
+class GraphCanvasNote(Strict):
+    id: Id
+    text: str = Field(strict=True, max_length=256)
+    position: Position
+
+
+class GraphPresentation(Strict):
+    """Bounded display-only metadata, never execution input or authority."""
+    notes: list[GraphCanvasNote] | None = Field(default=None, min_length=1, max_length=128, strict=True)
+    comment: str | None = Field(default=None, strict=True, max_length=2000)
+
+    @model_validator(mode="after")
+    def bounded_notes(self):
+        if self.notes and (len({note.id for note in self.notes}) != len(self.notes)
+                           or sum(len(note.text) for note in self.notes) > 12000):
+            raise ValueError("CREATIVE_GRAPH_NOTES_CAPACITY_OR_ID")
+        return self
+    view: GraphViewPreferences | None = None
+    groups: list[GraphVisualGroup] | None = Field(default=None, min_length=1, max_length=24, strict=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def nonempty_present_fields(cls, value):
+        if isinstance(value, dict) and (not value or any(item is None for item in value.values())):
+            raise ValueError("CREATIVE_GRAPH_PRESENTATION_INVALID")
+        return value
+
+    @model_serializer(mode="wrap")
+    def preserve_absent_fields(self, handler):
+        return {key: value for key, value in handler(self).items() if value is not None}
+
+
 class GraphInput(Strict):
     schema_version: Literal[1] = 1
     title: str = Field(min_length=1, max_length=160)
     nodes: list[NodeInstance] = Field(default_factory=list, max_length=MAX_NODES)
     edges: list[TypedEdge] = Field(default_factory=list, max_length=MAX_EDGES)
     viewport: Viewport = Field(default_factory=Viewport)
+    presentation: GraphPresentation | None = None
+
+    @model_serializer(mode="wrap")
+    def preserve_legacy_presentation(self, handler):
+        # Old stored definitions are checked by exact canonical digest. Do not
+        # inject a new default key into them (including nested create payloads).
+        value = handler(self)
+        if self.presentation is None:
+            value.pop("presentation", None)
+        return value
 
     @field_validator("schema_version", mode="before")
     @classmethod
@@ -601,6 +687,19 @@ class GraphInput(Strict):
         nodes = {node.id: node for node in self.nodes}
         if len(nodes) != len(self.nodes) or len({edge.id for edge in self.edges}) != len(self.edges):
             raise ValueError("CREATIVE_GRAPH_DUPLICATE_ID")
+        if self.presentation and self.presentation.groups:
+            group_ids, members = set(), set()
+            for group in self.presentation.groups:
+                if group.id in group_ids or any(member not in nodes or member in members for member in group.node_ids):
+                    raise ValueError("CREATIVE_GRAPH_GROUP_MEMBERSHIP_INVALID")
+                group_ids.add(group.id)
+                members.update(group.node_ids)
+            groups_by_id = {group.id: group for group in self.presentation.groups}
+            for group in self.presentation.groups:
+                if group.parent_id is not None:
+                    parent = groups_by_id.get(group.parent_id)
+                    if parent is None or parent.id == group.id or parent.parent_id is not None:
+                        raise ValueError("CREATIVE_GRAPH_GROUP_PARENT_INVALID")
         seen, targets = set(), set()
         for edge in self.edges:
             if edge.source_node_id not in nodes or edge.target_node_id not in nodes:

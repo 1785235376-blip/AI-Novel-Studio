@@ -1,5 +1,5 @@
 import type { ExperimentalClient } from './api';
-export type TermIssue = { code: string; rule_id?: string; term?: string; expected?: string; found?: string };
+export type TermIssue = { code: string; rule_id?: string; rule_version?: number; other_rule_id?: string; term?: string; expected?: string; found?: string };
 export type EditionSegment = { id: string; chapter_id: string; source_version: number; path: number[]; from_pos: number; to_pos: number; source_text: string; target_text: string; note: string; status: 'DRAFT' | 'REVIEW' | 'ACCEPTED' | 'REJECTED'; issues: TermIssue[] };
 export type TermRule = { id: string; version: number; source_term: string; source_aliases: string[]; preferred: string; target_aliases: string[]; forbidden: string[]; strategy: 'meaning' | 'transliteration' | 'preserve'; category: 'term' | 'character' | 'title' | 'place' | 'world'; locked?: boolean; match: 'substring' | 'word'; status: 'DRAFT' | 'APPROVED' | 'REVOKED'; note: string; reviewed_by?: string; reviewed_at?: string };
 export type EditionChecks = { missing: string[]; pending: string[]; terminology: TermIssue[]; aligned: boolean; can_export: boolean };

@@ -2,12 +2,13 @@ import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './stud
 import { AssetInspector } from '../novel/AssetInspector';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { GraphCanvas } from './GraphCanvas';
+import { removeGraphNodes } from './graphCanvasGeometry';
 import { GraphRunPanel } from './GraphRunPanel';
 import { GRAPH_NODE_LABELS } from './studioGraphLabels';
 import type { StudioGraphCatalog, StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphDefinitionId } from './studioGraphTypes';
 import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS } from './studioGraphTypes';
 import { connectionIssue } from './graphDraft';
-import { GRAPH_IMAGE_OPERATION_LABELS, GRAPH_MEDIA_OPERATION_LABELS } from './useStudioMediaExecution';
+import { GRAPH_IMAGE_OPERATION_LABELS, GRAPH_MEDIA_OPERATION_LABELS, mediaProviderKey } from './useStudioMediaExecution';
 import type { GraphMediaOperation } from './studioGraphTypes';
 import { GRAPH_MEDIA_PARAMETER_LABELS, graphMediaParameterNames } from './useStudioGraphEditorController';
 import type { StudioGraphEditorController, StudioGraphEditorProps } from './useStudioGraphEditorController';
@@ -40,6 +41,12 @@ function pendingConnectionIssue(definition: StudioGraphDefinition, catalog: read
       source_port: source[1], target_node_id: target[0], target_port: target[1] });
   } catch { return undefined; }
 }
+function connectionNodeIds(...keys: string[]): string[] {
+  return keys.flatMap(key => {
+    try { const value: unknown = JSON.parse(key); return Array.isArray(value) && value.length === 2 && typeof value[0] === 'string' && typeof value[1] === 'string' ? [value[0]] : []; }
+    catch { return []; }
+  });
+}
 /** Render only. UI refactors consume the same controller without replacing operation contracts. */
 export function studioGraphEditorView(controller: StudioGraphEditorController, props: StudioGraphEditorProps,
   canvas?: { local: LocalCanvasState; onLocal: (next: LocalCanvasState) => void }) {
@@ -53,7 +60,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
   };
   const { client, busy, externalDirty, canMutate, canReview, read, mutate, identity, requestedRunId } = props;
   const {
-    catalog, records, base, draft, selected, past, future, loading, error, notice, blocked,
+    providerPicker, catalog, records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
     load, loadImageCatalog, loadProductionCatalog, loadVideoCatalog, videoSchemaConfirmed, confirmVideoSchema, upgradeVideoSchema, shotParent, chooseShotParent, shotReceipt, shotChoice, chooseShot, shotLoading, loadShotReceipt, planningDocuments, planningChoice, planningLoading, choosePlanningDocument, loadPlanningDocuments, updateProductionField, updateShotBinding, updateReferenceMetadata, change, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
@@ -83,6 +90,17 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     return <label key={name}>{label}<input type={range ? 'number' : 'text'} min={range?.[0]} max={range?.[1]} step={range?.[2]} maxLength={name === 'voice_id' ? 240 : undefined}
       value={String(value)} disabled={!editable} onChange={event => updateMediaParameter(name, event.target.value)} /></label>;
   }
+  const providerControl = node && <fieldset><legend>节点服务配置</legend>
+    {node.definition_id !== 'image_upscale' && <label>节点制作路线<select value={providerPicker.route} disabled={!providerPicker.canEdit} onChange={event => providerPicker.chooseRoute(event.target.value)}><option value="local">本地</option><option value="cloud">云端</option></select></label>}
+    <p>{node.definition_id === 'image_upscale' ? '超分仅列出本地配置，不使用云端回退。' : '默认查看本地配置；可自行切换云端或返回本地。切换只改变列表，不改写节点或授权发送。'}</p>
+    <Button disabled={!providerPicker.canRead || providerPicker.loading} loading={providerPicker.loading} onClick={() => void providerPicker.load()}>读取节点服务配置</Button>
+    <label>节点服务商与模型<select value={providerPicker.choice} disabled={!providerPicker.canEdit} onChange={event => providerPicker.choose(event.target.value)}><option value="">明确选择配置</option>{providerPicker.rows.map(row => <option key={mediaProviderKey(row)} value={mediaProviderKey(row)}>{row.provider_id} · {row.model_id} · {row.local ? '本地' : '云端'}</option>)}</select></label>
+    <p>节点当前标识：{node.parameters.provider_id || '未选择服务商'} / {node.parameters.model_id || '未选择模型'}。</p>
+    {providerPicker.loaded && !providerPicker.matched && (node.parameters.provider_id || node.parameters.model_id) && <StatusMessage tone="warning">当前配置目录没有匹配的节点标识；原标识保持，只有明确选择才会替换。</StatusMessage>}
+    {providerPicker.loaded && !providerPicker.rows.length && <p>当前操作暂无{providerPicker.route === 'local' ? '本地' : '云端'}配置，不会自动回退或替换。</p>}
+    {providerPicker.error && <StatusMessage tone="warning">{providerPicker.error}</StatusMessage>}
+    <p>配置未验证实际推理；选择同时更新服务商与模型并清除云端许可。路线摘要仅用于当前列表识别，执行仍须按原流程重新预览、确认与审核。</p>
+  </fieldset>;
   const content = <section className="studio-graph-editor" aria-label="独立创作图编辑器">
     <Panel title="创作图 · 手工编排"><p>空图和不相连的组件都可以保存。导演备注可选，可随时移除；连接类型由服务端定义。</p>{catalog?.capabilities.model_execution && <p>可选本地文字模型节点需单独预览输入并明确确认一次调用。每次运行最多一个文字模型节点，输出必须人工审核；不自动调用、重试或转云端。</p>}
       {videoGraph ? <p>视频图 v5：原导演与已批准分镜 → 版本绑定镜头 → 视频生成 → 原媒体审核 → 正式视频，可再连接原时间线。各次模型调用、入队、执行与审核单独确认。</p> : imageGraph ? <p>图片图 v4：资产引用 → 图片参考与权重 → 图片提示词 → 图片生成 → 媒体审核 → 正式素材。各节点可独立编排；最多四个图片生成节点。保存、预览、入队、执行和审核分别操作，真实推理与完整流程验收仍待完成。</p>
@@ -98,7 +116,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <div className="studio-graph-actions"><Button variant="primary" disabled={!editable || !draft.title.trim() || !!base && !dirty} onClick={() => void save()}>保存创作图</Button><Button disabled={!editable || !past.length} onClick={() => travel(false)}>撤销图编辑</Button><Button disabled={!editable || !future.length} onClick={() => travel(true)}>重做图编辑</Button><Button disabled={busy || !base} onClick={() => navigate(() => void open(base!.id))}>重新读取创作图</Button></div>
     </Panel>
     {loading && <StatusMessage>正在读取当前范围的节点目录…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
-    {externalDirty && <StatusMessage tone="warning">请先保存或放弃资产/偏好输入，再修改创作图。</StatusMessage>}
+    {externalDirty && <StatusMessage tone="warning">请先保存或处理导演／资产／偏好输入，再修改创作图。</StatusMessage>}
     {executionDirty && <StatusMessage tone="warning">当前图媒体有待确认输入或不确定回执。先在原运行中取消确认或读取核对，再切换或修改图。</StatusMessage>}
     {timelineEditor.formDirty && <StatusMessage tone="warning">尚有未加入图草稿的剪辑输入，请明确加入或放弃后保存。<Button disabled={busy || timelineEditor.loading} onClick={timelineEditor.clearForm}>放弃尚未加入的剪辑输入</Button></StatusMessage>}
     {base?.can_edit === false && <StatusMessage tone="warning">图中包含不可见的资产引用，当前仅可查看。原绑定不会被省略、删除或重新保存；需恢复访问后重新读取。</StatusMessage>}
@@ -127,8 +145,34 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
         sourcePort={sourcePort} targetPort={targetPort} connectionExplanation={pendingConnectionIssue(draft, catalog.definitions, sourcePort, targetPort)}
         local={canvas.local} onLocal={canvas.onLocal}
         onKind={value => setKind(value as StudioGraphDefinitionId)} onSourcePort={setSourcePort} onTargetPort={setTargetPort}
-        onAddNode={addNode} onConnect={connect} onSelect={setSelected} onTravel={direction => travel(direction === 'REDO')} />}
-      <GraphCanvas definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => { if (port.direction === 'output') setSourcePort(portKey(port.nodeId, port.portId)); else setTargetPort(portKey(port.nodeId, port.portId)); }} />
+        onApplyLayout={controller.applyAutoLayout} onAddNode={addNode} onConnect={connect} onSelect={setSelected} onTravel={direction => travel(direction === 'REDO')} />}
+      <section aria-label="节点复制预览">
+        <h3>复制所选节点</h3>
+        <Button disabled={!editable || dirty || !base || !selected.length} onClick={controller.captureSelectionForGraph}>捕获所选节点供同项目跨图复制</Button>
+        <p>跨图复制先保存来源，再捕获所选节点；用上方已保存创作图选择目标。仅本次工作区、同一项目与身份、相同图格式，不使用系统剪贴板。</p>
+        {controller.sourceCopy && <section aria-label="跨图复制来源">
+          <p>来源：{controller.sourceCopy.record.definition.title} · {controller.sourceCopy.record.id} · v{controller.sourceCopy.record.version} · {controller.sourceCopy.record.definition_digest}</p>
+          <p>已捕获 {controller.sourceCopy.selected.length} 个节点的确切保存快照；来源后来修改不会改写此快照。引用在原保存流程重新核对。</p>
+          <Button disabled={!editable || !base || base.id === controller.sourceCopy.record.id || timelineEditor.formDirty} onClick={controller.previewCrossGraphCopy}>预览跨图粘贴到当前图</Button>
+          <Button onClick={controller.clearGraphCopy}>清除跨图复制内容</Button>
+          {controller.currentCrossCopy && <div role="status">
+            <p>目标：{draft.title} · {base?.id} · v{base?.version}；格式 v{draft.schema_version}。新增 {controller.currentCrossCopy.nodeCount} 个节点、{controller.currentCrossCopy.edgeCount} 条内部连接；排除 {controller.currentCrossCopy.excludedEdges} 条外部连接。</p>
+            <p>粘贴后 {controller.currentCrossCopy.definition.nodes.length} / {nodeLimit} 个节点、{controller.currentCrossCopy.definition.edges.length} / {catalog.limits.edges} 条连接；统一偏移 {controller.currentCrossCopy.delta.x}, {controller.currentCrossCopy.delta.y}。缺少输入需重新连接，不复制分组或运行结果。</p>
+            <ul>{controller.sourceCopy.record.definition.nodes.filter(row => controller.sourceCopy!.selected.includes(row.id)).map(row => <li key={row.id}>{row.id} · {row.definition_id} · 原绑定：{JSON.stringify(Object.fromEntries(Object.entries(row.parameters).filter(([key]) => ['asset_id', 'version', 'digest', 'kind', 'document_snapshot', 'shot_id', 'shot_version', 'shot_digest', 'timeline_snapshot', 'source_bindings'].includes(key))))}</li>)}</ul>
+            <p>只修改当前草稿，可一次撤销；未保存、未执行。预览不是来源权限、模型调用或云端发送许可。</p>
+            <Button disabled={!editable || timelineEditor.formDirty} onClick={controller.pasteCrossGraphCopy}>明确粘贴跨图节点</Button>
+          </div>}
+        </section>}
+        <p>同图复制可直接预览当前草稿中的所选节点；来源版本与摘要保持，保存仍由原来源权限校验。</p>
+        <Button disabled={!editable || !selected.length || timelineEditor.formDirty} onClick={controller.previewSelectionCopy}>预览复制所选节点</Button>
+        {controller.currentCopy && <div role="status">
+          <p>新增 {controller.currentCopy.nodeCount} 个节点、{controller.currentCopy.edgeCount} 条内部连接；排除 {controller.currentCopy.excludedEdges} 条外部连接。缺少输入时需重新连接；不复制分组或运行结果。</p>
+          <p>统一偏移：{controller.currentCopy.delta.x}, {controller.currentCopy.delta.y}。粘贴仅修改本地草稿，可一次撤销；未保存、未执行。</p>
+          <Button disabled={!editable || timelineEditor.formDirty} onClick={controller.pasteSelectionCopy}>粘贴到当前图</Button>
+          <Button onClick={controller.cancelSelectionCopy}>取消复制预览</Button>
+        </div>}
+      </section>
+      <GraphCanvas preferencesSource={base} connectionNodeIds={connectionNodeIds(sourcePort, targetPort)} definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => { if (port.direction === 'output') setSourcePort(portKey(port.nodeId, port.portId)); else setTargetPort(portKey(port.nodeId, port.portId)); }} />
       <section aria-label="图连接列表"><h3>已保存到草稿的连接</h3>{!draft.edges.length && <p>暂无连接；不相连节点可以独立保存。</p>}<ul>{draft.edges.map(edge => <li key={edge.id}>{edge.source_node_id}.{edge.source_port} → {edge.target_node_id}.{edge.target_port}<Button disabled={!editable} onClick={() => change({ ...draft, edges: draft.edges.filter(row => row.id !== edge.id) })}>移除连接 {edge.id}</Button></li>)}</ul></section>
       <GraphRunPanel client={client.graphs} graph={base} targetNodeIds={selected} dirty={dirty || blocked} busy={busy} canMutate={canMutate && !externalDirty} canReview={canReview && !externalDirty} modelExecutionEnabled={!videoGraph && catalog.capabilities.model_execution && catalog.capabilities.model_execution_contract === 'creative-graph-model/1'} mediaExecutionEnabled={mediaEnabled} onDirtyChange={setExecutionDirty} isCurrent={current} read={read} mutate={mutate} requestedRunId={requestedRunId} onRunSelectionChange={reportRunSelection} />
     </>}
@@ -144,18 +188,18 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       })}<p>连接和权重必须对应；未接入来源的绑定需明确移除。保存不读取真实字节或调用模型。</p></>}
     {node.definition_id === 'image_prompt' && <><label>图片提示词<textarea maxLength={8000} disabled={!editable} value={node.parameters.prompt || ''} onChange={event => updateImagePrompt(event.target.value)} /></label><p>可以使用本节点提示词，或连接文本输入／引用的 TEXT 端口。两者均有内容时会拒绝含糊输入；不会自动拼接或改写。图片参考经 references 端口沿原版本绑定传递。</p></>}
     {node.definition_id === 'storyboard_shot' && <><p>镜头 {node.parameters.shot_id} · 原镜头 v{node.parameters.shot_version}</p><code>{node.parameters.shot_digest}</code><p>绑定来自读取的原分镜回执；不自动重新选取已修改镜头或批准内容。</p></>}
-    {node.definition_id === 'video_generate' && <><label><input type="checkbox" disabled={!editable || node.parameters.bind_shot !== true && !draft.edges.some(edge => edge.target_node_id === node.id && edge.target_port === 'shot')} checked={node.parameters.bind_shot === true} onChange={event => updateShotBinding(event.target.checked)} />绑定镜头来源</label><p>绑定保留当前镜头与文档版本，审核后可明确采用为该镜头的视频；须连接 shot 端口。取消绑定仍可独立生产，不自动补写旧节点。</p><label>视频操作<select value={mediaOperation || 'm7.video.t2v'} disabled={!editable} onChange={event => updateMediaField('operation_id', event.target.value)}>{GRAPH_VIDEO_OPERATIONS.map(operation => <option key={operation} value={operation}>{GRAPH_MEDIA_OPERATION_LABELS[operation]}</option>)}</select></label><label>视频服务商 ID<input maxLength={240} disabled={!editable} value={node.parameters.provider_id || ''} onChange={event => updateMediaField('provider_id', event.target.value)} /></label><label>视频模型 ID<input maxLength={240} disabled={!editable} value={node.parameters.model_id || ''} onChange={event => updateMediaField('model_id', event.target.value)} /></label><label>视频提示词<textarea maxLength={16000} disabled={!editable} value={node.parameters.prompt || ''} onChange={event => updateMediaField('prompt', event.target.value)} /></label>{parameterNames.map(mediaParameter)}{mediaOperation === 'm7.video.v2v' && <label>参考视频用途<select disabled={!editable} value={node.parameters.reference_purpose || ''} onChange={event => updateProductionField('reference_purpose', event.target.value)}><option value="">普通来源，不指定参考用途</option><option value="style">风格</option><option value="action">动作</option><option value="camera">摄影机</option></select></label>}<label><input type="checkbox" disabled={!editable} checked={node.parameters.allow_cloud === true} onChange={event => updateMediaField('allow_cloud', event.target.checked)} />允许本次向已配置云端视频服务发送输入，可能产生费用</label><label>视频授权说明<input maxLength={2000} disabled={!editable} value={node.parameters.license_note || ''} onChange={event => updateMediaField('license_note', event.target.value)} /></label><p>shot 仅接已批准当前分镜的确切镜头；I2V 使用该镜头绑定的正式图片，V2V 来源与 reference 互斥。VIDEO_CANDIDATE 只能进入原媒体审核。模型结构已适配，真实模型和 GPU 验收仍待完成。</p></>}
+    {node.definition_id === 'video_generate' && <><label><input type="checkbox" disabled={!editable || node.parameters.bind_shot !== true && !draft.edges.some(edge => edge.target_node_id === node.id && edge.target_port === 'shot')} checked={node.parameters.bind_shot === true} onChange={event => updateShotBinding(event.target.checked)} />绑定镜头来源</label><p>绑定保留当前镜头与文档版本，审核后可明确采用为该镜头的视频；须连接 shot 端口。取消绑定仍可独立生产，不自动补写旧节点。</p><label>视频操作<select value={mediaOperation || 'm7.video.t2v'} disabled={!editable} onChange={event => updateMediaField('operation_id', event.target.value)}>{GRAPH_VIDEO_OPERATIONS.map(operation => <option key={operation} value={operation}>{GRAPH_MEDIA_OPERATION_LABELS[operation]}</option>)}</select></label>{providerControl}<label>视频提示词<textarea maxLength={16000} disabled={!editable} value={node.parameters.prompt || ''} onChange={event => updateMediaField('prompt', event.target.value)} /></label>{parameterNames.map(mediaParameter)}{mediaOperation === 'm7.video.v2v' && <label>参考视频用途<select disabled={!editable} value={node.parameters.reference_purpose || ''} onChange={event => updateProductionField('reference_purpose', event.target.value)}><option value="">普通来源，不指定参考用途</option><option value="style">风格</option><option value="action">动作</option><option value="camera">摄影机</option></select></label>}<label><input type="checkbox" disabled={!editable} checked={node.parameters.allow_cloud === true} onChange={event => updateMediaField('allow_cloud', event.target.checked)} />允许本次向已配置云端视频服务发送输入，可能产生费用</label><label>视频授权说明<input maxLength={2000} disabled={!editable} value={node.parameters.license_note || ''} onChange={event => updateMediaField('license_note', event.target.value)} /></label><p>shot 仅接已批准当前分镜的确切镜头；I2V 使用该镜头绑定的正式图片，V2V 来源与 reference 互斥。VIDEO_CANDIDATE 只能进入原媒体审核。模型结构已适配，真实模型和 GPU 验收仍待完成。</p></>}
     {node.definition_id === 'image_style' && <><p>Style 节点明确将作者风格、氛围与色彩要求加入原图片提示词，保留参考来源与权重；不代表模型有独立风格控制能力。</p>{([['style', '图片风格'], ['atmosphere', '图片氛围'], ['color_palette', '图片色彩']] as const).map(([key, label]) => <label key={key}>{label}<textarea maxLength={key === 'style' ? 2000 : 1000} disabled={!editable} value={node.parameters[key] || ''} onChange={event => updateProductionField(key, event.target.value)} /></label>)}</>}
     {['director_plan', 'storyboard_plan'].includes(node.definition_id) && <><p>原文档引用状态：{referenceState || '待保存核对'}</p>{node.parameters.document_snapshot ? <><p>绑定 {node.parameters.document_snapshot.id} · v{node.parameters.document_snapshot.version}</p><code>{node.parameters.document_snapshot.digest}</code></> : <StatusMessage tone="warning">当前文档来源不可查看，原绑定信息已隐藏。</StatusMessage>}<p>节点读取已保存作者内容。导演输出供分镜节点核对；不会覆盖分镜，也不会修改来源。保存后的文档绑定不能自动移除或重绑，可禁用节点。</p></>}
     {node.definition_id === 'director_plan' && <StudioGraphDirectorConsole client={client.graphs} nodeId={node.id}
       snapshot={node.parameters.document_snapshot} identity={identity} active={props.active && !props.denied}
       referenceState={referenceState} isCurrent={current} read={read} />}
     {node.definition_id === 'storyboard_prompt' && <><label>镜头 ID<input maxLength={240} disabled={!editable} value={node.parameters.shot_id || ''} onChange={event => updateProductionField('shot_id', event.target.value)} /></label><p>连接 Storyboard Data，选择原分镜里的镜头 ID。输出闭合图片提示词，并保留原文档版本；图片生成仍需预览与明确执行。</p></>}
-    {node.definition_id === 'image_upscale' && <><p>source 连接当前正式图片，candidate 只能进入原媒体审核节点。沿原 ImageJob 使用已启用本地超分模型，输出 PNG；真实推理尚待验收。</p><label>超分服务商 ID<input maxLength={240} disabled={!editable} value={node.parameters.provider_id || ''} onChange={event => updateMediaField('provider_id', event.target.value)} /></label><label>超分模型 ID<input maxLength={240} disabled={!editable} value={node.parameters.model_id || ''} onChange={event => updateMediaField('model_id', event.target.value)} /></label>{parameterNames.map(mediaParameter)}<label>超分来源与授权说明<input maxLength={2000} disabled={!editable} value={node.parameters.license_note || ''} onChange={event => updateMediaField('license_note', event.target.value)} /></label><p>最大尺寸 4096×4096、25 MiB；不使用提示词、云端回退或自动下载。</p></>}
+    {node.definition_id === 'image_upscale' && <><p>source 连接当前正式图片，candidate 只能进入原媒体审核节点。沿原 ImageJob 使用已启用本地超分模型，输出 PNG；真实推理尚待验收。</p>{providerControl}{parameterNames.map(mediaParameter)}<label>超分来源与授权说明<input maxLength={2000} disabled={!editable} value={node.parameters.license_note || ''} onChange={event => updateMediaField('license_note', event.target.value)} /></label><p>最大尺寸 4096×4096、25 MiB；不使用提示词、云端回退或自动下载。</p></>}
     {node.definition_id === 'image_generate' && <>
       <label>图片操作<select disabled={!editable} value={mediaOperation || 'm5.image.t2i'} onChange={event => updateMediaField('operation_id', event.target.value)}>{GRAPH_IMAGE_OPERATIONS.map(operation => <option value={operation} key={operation}>{GRAPH_IMAGE_OPERATION_LABELS[operation]}</option>)}</select></label>
-      <label>图片服务商 ID<input maxLength={240} disabled={!editable} value={node.parameters.provider_id || ''} onChange={event => updateMediaField('provider_id', event.target.value)} /></label><label>图片模型 ID<input maxLength={240} disabled={!editable} value={node.parameters.model_id || ''} onChange={event => updateMediaField('model_id', event.target.value)} /></label>
-      <p>填写 Model Center 或原服务配置中已有的准确标识。结构验证不等于实际推理成功；预览核对原路线，不安装或启动模型。</p>
+      {providerControl}
+      <p>读取原服务配置后明确选择；预览核对原路线，不安装或启动模型。</p>
       <p>控件列出闭合的通用输入；具体服务不支持的参数会在预览时拒绝，不会忽略后继续生成。非文字生成的尺寸来自输入图片，不自动改变尺寸。</p>
       <p>prompt 接图片提示词。文字生成不接素材；参考生成只用参考图；I2I 另接 source 基础图；局部重绘须接 source 和该版本的手绘 mask，不接辅助参考。</p>
       <p>局部重绘沿原二值遮罩：白色保留原图，黑色重绘。候选经原任务保持私有，独立人工审核后才输出素材。</p>
@@ -176,7 +220,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     {node.definition_id === 'media_review' && <p>连接一个媒体制作候选。运行时先读取候选、核对摘要并明确批准或拒绝；批准入库后才输出素材引用，不自动执行下游。</p>}
     <div className="studio-graph-position">{(['x', 'y'] as const).map(axis => <label key={axis}>节点 {axis.toUpperCase()}<input type="number" min={-100000} max={100000} value={node.position[axis]} disabled={!editable} onChange={event => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= -100000 && value <= 100000) change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, position: { ...row.position, [axis]: value } } : row) }); }} /></label>)}</div>
     {node.definition_id === 'asset_reference' && <><p>图读取时引用状态：{referenceState || '待保存核对'} · {draft.schema_version >= 3 ? '执行时核对当前来源版本和真实内容' : '旧图只读引用，不执行媒体处理'}</p>{node.parameters.asset_id ? <p>原资产 {node.parameters.asset_id} · 绑定 v{node.parameters.version}</p> : <p>引用不可用或无权访问，原详情已隐藏。</p>}{previewState === 'READING' && <StatusMessage>正在核对引用资产版本与摘要…</StatusMessage>}{previewState === 'STALE' && <StatusMessage tone="warning">当前资产与图中绑定不同，未显示为原绑定版本。请核对图服务端版本与来源状态。</StatusMessage>}{previewState === 'UNAVAILABLE' && <StatusMessage tone="warning">引用资产当前不可读取，原绑定保持。</StatusMessage>}{node.parameters.asset_id && <Button disabled={busy || previewState === 'READING'} onClick={refreshPreview}>核对引用资产</Button>}{preview && <AssetInspector asset={preview} downloadAsset={downloadPreviewAsset} isCurrent={current} showReferences={false} />}</>}
-    <Button variant="danger" disabled={!editable || protectedNodes.includes(node.id)} onClick={() => { change({ ...draft, nodes: draft.nodes.filter(row => row.id !== node.id), edges: draft.edges.filter(edge => edge.source_node_id !== node.id && edge.target_node_id !== node.id) }); setSelected([]); }}>移除当前节点</Button><p>移除节点只修改本图，不删除任何原资产、章节或运行记录。</p>
+    <Button variant="danger" disabled={!editable || protectedNodes.includes(node.id)} onClick={() => { change(removeGraphNodes(draft, [node.id], protectedNodes)); setSelected([]); }}>移除当前节点</Button><p>移除节点只修改本图，不删除任何原资产、章节或运行记录。</p>
     </> : <EmptyState title="未选择图节点" detail="在画布或键盘节点列表中选择一个节点，编辑其参数和位置。" />}</section>;
   return { content, inspector };
 }

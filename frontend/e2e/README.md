@@ -83,6 +83,29 @@ To confirm the suite is discovered without launching anything:
 pnpm exec playwright test --config playwright.studio-release.config.ts --list
 ```
 
+## Test runner discovery
+
+`pnpm test` owns the Vitest unit/component suites, including the suites under
+`src` and the unit tests directly under `tests`. It excludes the Playwright
+directories `e2e`, `tests/e2e`, and `tests/visual`. The two Prompt specs in this
+directory belong to `playwright.prompt-acceptance.config.ts`; the eight Studio
+release cases remain in `playwright.studio-release.config.ts`.
+
+Run `pnpm test:discovery` for a browser-free regression check. It compares Vitest's
+actual file list with an independent source inventory and lists every spec in
+this directory through its existing Playwright config. The explicit owner and
+per-project case counts are in `../test-runner-manifest.json`. All three Prompt
+viewports must remain discoverable. This check never executes browser cases,
+and a successful list is not browser acceptance. The pre-existing `tests/e2e`
+and `tests/visual` configs and suites are unchanged and are not loaded by this
+check (some legacy configs prepare service fixtures at import time).
+
+To list the Prompt suite directly, without executing it:
+
+```powershell
+pnpm exec playwright test --config playwright.prompt-acceptance.config.ts --list --reporter=list
+```
+
 ## What the suite does to your server
 
 Each of the eight cases **creates one real `NEUTRAL_STUDIO` project** through the app's

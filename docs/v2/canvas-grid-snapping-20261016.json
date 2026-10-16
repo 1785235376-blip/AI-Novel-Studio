@@ -1,0 +1,98 @@
+{
+  "baseline_commit": "65b607de422eecfc2e5121c3145ff28885c9d048",
+  "scope": "Transient world grid and explicit group drag snapping; original Graph history/save position persistence",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T08:40:05.395989+00:00",
+      "finished_utc": "2026-10-16T08:40:16.631343+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-grid-final-ui.json",
+      "receipt_sha256": "c311fda0cf3b4293fd2c4143488e8f2f207741c214f30c5f6df083e9f4d1650e",
+      "log": "docs/delivery/v2-development/canvas-grid-final-ui.log",
+      "log_sha256": "fcc9f30741b07b5fb57303d33d4316fc3a5bb2ac1c1c115f56f6b293b2f98c9c"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T08:40:22.112258+00:00",
+      "finished_utc": "2026-10-16T08:40:57.240201+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-grid-build.json",
+      "receipt_sha256": "a1e6d54c5e14f8ab9094f7c2c1a698a875746396659a8358ddf4271f2d7a639b",
+      "log": "docs/delivery/v2-development/canvas-grid-build.log",
+      "log_sha256": "958dddf3d76b3266b9c55005e91b33c4cf19edf45a8fd0b2c7df852dec650b46"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-grid-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T08:40:23.612477+00:00",
+      "finished_utc": "2026-10-16T08:40:32.168437+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-grid-file-public.json",
+      "receipt_sha256": "cf26b1c13de6b514ea20db1b02871109ad340b6b09414e9c42e981bd077a074d",
+      "log": "docs/delivery/v2-development/canvas-grid-file-public.log",
+      "log_sha256": "0744809421d49dfcc58c50ed5cbc4683ed22f150acfc8e7e3b5e2ff3fff666b4"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; const p=\"frontend/src/creative/GraphCanvas.tsx\"; if(/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color\"); console.log(\"Grid reuses existing token-based CSS, shared Button primitives and navigator select; dynamic values are world geometry.\");"
+      ],
+      "started_utc": "2026-10-16T08:41:08.134808+00:00",
+      "finished_utc": "2026-10-16T08:41:08.192414+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-grid-token-scope.json",
+      "receipt_sha256": "1988260e6b3041e95da0276691bd18a42d7f52b9a18cd5333b502d368d4ac59f",
+      "log": "docs/delivery/v2-development/canvas-grid-token-scope.log",
+      "log_sha256": "65efa8076858c52826e3c53a3fd718f9cad067167f8813eb2b12fc6e491a1836"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 203,
+    "files": 9,
+    "skipped": 0,
+    "environment": "jsdom/mock transport"
+  },
+  "file_owner_tests": 1,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "source_sha256": {
+    "frontend/src/creative/GraphCanvas.tsx": "f4401e0ce5ffb15326d79f7136c918512dc1829e883efcdcae5d50b3a2c77347",
+    "frontend/src/creative/graphCanvasGeometry.ts": "0cd1247f52556a525c453994a7fa3457422b47d3feca83a2b4ba6746e10090ef",
+    "frontend/src/creative/GraphCanvas.test.tsx": "caa09d73527c71a334111cbe0e1a8c3b6bb532b4b0c3cafaad82ce4f5d51fe70",
+    "frontend/src/creative/graphCanvasGeometry.test.ts": "8fc309e5791069f70d542fadfd2e212f55256ed3a9b06a930121f50c99295815",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "6a2d478acfed6b92b428cc91c9391d03eaf5b9f71a4995df9155ab7644b4516a"
+  },
+  "not_run": [
+    "P0/security (BLOCKED and excluded)",
+    "PG",
+    "browser screenshots/native IME/screen reader/performance",
+    "Windows/GPU/provider/full RC",
+    "push/hosted CI"
+  ]
+}

@@ -133,3 +133,68 @@ it('warns on browser navigation only while unsaved text is present and cleans up
   const dirty = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(dirty); expect(dirty.defaultPrevented).toBe(true);
   view.unmount(); const clean = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(clean); expect(clean.defaultPrevented).toBe(false);
 });
+
+it('locates the exact duplicate Unicode segment, shows rule versions, then saves through the original owner', async () => {
+  const row = makeEdition('REVIEW');
+  row.rules = [{ id: 'locked', version: 4, source_term: '甲', preferred: 'Jia', source_aliases: [], target_aliases: ['Chia'], forbidden: [], strategy: 'transliteration', category: 'character', match: 'word', note: '', status: 'APPROVED', locked: true }];
+  row.term_revision = 7;
+  row.segments!.push({ ...row.segments![0], id: 'duplicate-second', path: [1], target_text: 'Chia🙂é مرحبا Chia', issues: [{ code: 'LOCKED_TERM_VARIANT', rule_id: 'locked', rule_version: 4, term: '甲', expected: 'Jia', found: 'Chia' }] });
+  const fetch = backend(row, (url, init) => init.method === 'PUT' && url.endsWith('/duplicate-second') ? reply({ ...row, version: 2, segments: row.segments!.map(s => s.id === 'duplicate-second' ? { ...s, target_text: JSON.parse(String(init.body)).text, issues: [], status: 'DRAFT' } : s) }) : undefined);
+  vi.stubGlobal('fetch', fetch); render(<MultilingualEditionsPanel client={client()} />); await select();
+  const calls = fetch.mock.calls.length;
+  fireEvent.click(screen.getByRole('button', { name: '定位第 2 段术语问题' }));
+  const input = screen.getByLabelText('第 2 段译文') as HTMLTextAreaElement;
+  expect(document.activeElement).toBe(input); expect(input.value).toBe('Chia🙂é مرحبا Chia');
+  expect(fetch.mock.calls.length).toBe(calls);
+  expect(screen.getByText(/规则 locked · v4 · APPROVED · 已锁定/)).toBeTruthy();
+  fireEvent.change(input, { target: { value: 'Jia🙂é مرحبا Jia' } });
+  expect((screen.getByRole('button', { name: '定位第 2 段术语问题' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '保存本段草稿' }));
+  await screen.findByText('译文草稿已保存，原稿未修改。');
+  expect(screen.queryByRole('button', { name: '定位第 2 段术语问题' })).toBeNull();
+  expect(JSON.parse(String(fetch.mock.calls.find(([url, init]) => url.endsWith('/duplicate-second') && init.method === 'PUT')![1].body))).toEqual({ expected_version: 1, text: 'Jia🙂é مرحبا Jia', note: '' });
+  expect(fetch.mock.calls.some(([url]) => /translations|translation-preview|\/rules\//.test(url))).toBe(false);
+});
+
+it('never substitutes a changed rule version for issue evidence', async () => {
+  const row = makeEdition('REVIEW');
+  row.segments![0].issues = [{ code: 'TERM_REQUIRED', rule_id: 'rule', rule_version: 99, expected: 'old' }];
+  row.rules = [{ id: 'rule', version: 1, source_term: '甲', preferred: 'new', source_aliases: [], target_aliases: [], forbidden: [], strategy: 'meaning', category: 'term', match: 'word', note: '', status: 'APPROVED' }];
+  vi.stubGlobal('fetch', backend(row)); render(<MultilingualEditionsPanel client={client()} />); await select();
+  expect(screen.getByText(/规则 rule 的精确版本不可用/)).toBeTruthy();
+});
+
+it('withholds issue navigation and text when content is withheld independently of stale', async () => {
+  const row = makeEdition('REVIEW'); row.content_withheld = true;
+  row.segments![0].issues = [{ code: 'TERM_REQUIRED', expected: 'private' }];
+  vi.stubGlobal('fetch', backend(row)); render(<MultilingualEditionsPanel client={client()} />); await select();
+  expect(screen.queryByLabelText('已保存术语问题导航')).toBeNull();
+  expect(screen.queryByLabelText('第 1 段译文')).toBeNull();
+});
+it('does not select a matching rule version from duplicate IDs', async () => {
+  const row = makeEdition('REVIEW');
+  row.segments![0].issues = [{ code: 'TERM_REQUIRED', rule_id: 'duplicate', rule_version: 1 }];
+  const rule = { id: 'duplicate', version: 1, source_term: '甲', preferred: 'Jia', source_aliases: [], target_aliases: [], forbidden: [], strategy: 'meaning' as const, category: 'term' as const, match: 'word' as const, note: '', status: 'APPROVED' as const };
+  row.rules = [rule, { ...rule, version: 2 }];
+  vi.stubGlobal('fetch', backend(row)); render(<MultilingualEditionsPanel client={client()} />); await select();
+  expect(screen.getByText(/规则 duplicate 的精确版本不可用/)).toBeTruthy();
+});
+it('labels legitimate unversioned conflict rules as same-edition snapshot evidence', async () => {
+  const row = makeEdition('REVIEW');
+  row.segments![0].issues = [{ code: 'RULE_CONFLICT', rule_id: 'first', other_rule_id: 'second' }];
+  row.rules = ['first', 'second'].map((id, index) => ({ id, version: index + 1, source_term: '甲', preferred: id, source_aliases: [], target_aliases: [], forbidden: [], strategy: 'meaning', category: 'term', match: 'word', note: '', status: 'APPROVED' }));
+  vi.stubGlobal('fetch', backend(row)); render(<MultilingualEditionsPanel client={client()} />); await select();
+  expect(screen.getAllByText(/冲突依据来自同一已保存语言版本/)).toHaveLength(2);
+  expect(screen.getByText(/规则 first · v1/)).toBeTruthy(); expect(screen.getByText(/规则 second · v2/)).toBeTruthy();
+});
+it('keeps the composing original textarea mounted before its first change event', async () => {
+  const row = makeEdition('REVIEW'); row.segments!.push({ ...row.segments![0], id: 'other', path: [1], issues: [{ code: 'TERM_REQUIRED' }] });
+  vi.stubGlobal('fetch', backend(row)); render(<MultilingualEditionsPanel client={client()} />); await select();
+  const input = screen.getByLabelText('第 1 段译文'); fireEvent.compositionStart(input);
+  const navigate = screen.getByRole('button', { name: '定位第 2 段术语问题' });
+  expect((navigate as HTMLButtonElement).disabled).toBe(true); fireEvent.click(navigate);
+  expect(screen.getByLabelText('第 1 段译文')).toBe(input);
+  expect((input as HTMLTextAreaElement).disabled).toBe(false);
+  fireEvent.compositionEnd(input); fireEvent.click(navigate);
+  expect(screen.getByLabelText('第 2 段译文')).toBeTruthy();
+});

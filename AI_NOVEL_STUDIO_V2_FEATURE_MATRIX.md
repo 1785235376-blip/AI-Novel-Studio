@@ -1811,3 +1811,249 @@ PR仍Draft/open，main/V1 frozen refs未动，完整V2仍PARTIAL、非freeze/RC�
 | Hosted/总体 | 原GitHub账单锁使job steps为空，独立BLOCKED；完整V2 PARTIAL。生产adoption、installer/clean-machine、真实模型/GPU与原全链路边界继续保留。 |
 
 自有验收服务已停；所有失败/通过证据、profile与数据库保留，未递归删除或宣称空间回收。待账单锁解除后重跑最终HEAD hosted CI；生产adoption闸门继续关闭。
+
+### 2026-10-15 — independent Model Center usability checkpoint
+
+Append-only observation on clean `045b865`; historical rows stay unchanged. Model Center now
+separates partial/failed/unavailable source reads from a genuinely empty registry, labels the
+catalog/runtime source correctly, preserves explicit retry, warns about retained facts and exposes
+loading via `aria-busy`. Existing original read endpoints and all backend gates are unchanged.
+
+Selected modelcenter jsdom suite: **104 passed**, exit 0. Adjacent frontend selection: **128 passed /
+1 failed**, exit 1; the same unchanged preference-CAS alert test fails on clean `045b865` (**7 passed /
+1 failed**). TypeScript, Vite build and token guard pass; AppShell jsdom contracts **31 passed**.
+Counts overlap. Browser launch is **BLOCKED** by cloud socket EPERM before page execution; no real
+geometry, model, Windows/GPU, backend or whole-product acceptance is claimed. The separately
+blocked lifecycle work is not part of this independent branch. Details and commands:
+`docs/delivery/v2-development/dot-usability-20261015.md`.
+
+Review follow-through on that checkpoint: two additional synthetic display regressions were
+reproduced and corrected (retained storage after 404, and initial-denied catalog advice).
+Final modelcenter **106 passed**; combined related frontend **161 passed / the same 1 baseline
+failure**, exits 0 and 1 respectively. No original assertion, snapshot or backend gate changed.
+
+### 2026-10-15 — independent Prompt text comparison usability checkpoint
+
+Append-only observation after Model Center checkpoint `3b740033`. Existing verified revision-body
+reads now feed exact absent-versus-blank line comparison, 100-row display pages and an explicit
+changed-lines filter. Original line numbers and full totals remain; a 64-KiB newline-heavy test
+covers 65,537 positions without rendering every row. The comparison is labelled positional,
+not semantically aligned. No historical metadata is invented and no API, save, model or gate
+behavior changed.
+
+New focused tests **9 passed**; final combined Prompt/Model Center/AppShell selection **242 passed**
+(19 files), exit 0. Type/build/token checks pass. The separately recorded preference-CAS baseline
+failure is still open. Browser/real geometry remains **BLOCKED / NOT_RUN**; no backend,
+Windows/GPU/model or complete product acceptance is claimed. Commands and exact-stage handoff:
+`docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent Prompt history finder checkpoint
+
+Append-only observation after comparison checkpoint `253964fe`. Existing loaded version records
+now expose their already-returned change reason, record search with honest loaded-scope counts,
+and direct selection of the existing old/new comparison pickers. Search clearing returns focus;
+selected comparison sides have visible text. Comparison still requires the original explicit
+button, with existing incomplete/masked/unavailable behavior unchanged. No new endpoint or write.
+
+Final bounded-worker Model Center/Prompt/AppShell selection **252 passed** (20 files), exit 0;
+type/build/token checks pass. An earlier concurrent unbounded run had two existing scoping-case
+failures; both passed unchanged in isolation and the bounded rerun, without timeout/assertion
+changes. Counts overlap. Browser/geometry remains **BLOCKED / NOT_RUN**; the earlier baseline
+preference-CAS failure and hosted workflow failures remain open. Detailed commands/limits:
+`docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent export download feedback checkpoint
+
+Append-only observation after history-finder checkpoint `8128b6c7`. The existing novel export
+center now gives task-specific download errors and browser-handoff receipts, with download-list
+instructions that do not claim a verified disk save. Selecting a different task during a pending
+file request explains the existing wait. Browser handoff errors remain recoverable and release
+temporary resources. Original routes, returned artifacts, context and gates are unchanged.
+
+Export scope **35 passed** (4 files); combined prior-stage regression **287 passed** (24 files),
+exit 0; counts overlap. Type/build/token checks pass. Read-only code/test review found no
+new defect. Real browser downloads/geometry remain **BLOCKED / NOT_RUN**, and original baseline
+and hosted failures stay open. Details: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent Prompt editor correction checkpoint
+
+Append-only observation after export-feedback checkpoint `497abbd9`. The editor now reports
+UTF-8 body usage/overage against the existing 64-KiB bound, links validation errors to their fields,
+and focuses editable invalid controls. Invalid advanced JSON is exposed for correction in novice
+mode and stays visible while typing. Successful family selection clears the prior draft's field
+error, preventing stale correction/focus on another draft. No clipping, new save gate, validation,
+persistence or backend change is introduced.
+
+Focused editor **7 passed**; final prior-stage combined regression **296 passed** (25 files),
+exit 0, including mode-switch → correction → explicit-save integration. Counts overlap.
+Type/build/token checks pass. Browser/assistive-technology/geometry checks remain
+**BLOCKED / NOT_RUN**; baseline and hosted failures stay open. Exact commands and limits:
+`docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent export receipt display checkpoint
+
+Append-only observation after editor-guidance checkpoint `04147ab4`. The receipt view now keeps
+unread/loading/failed states distinct from a successful empty page, marks retained loaded rows,
+and warns when a next-page marker means history is incomplete. Completed jobs without a filename
+have explicit metadata guidance. This is display-only; no recovery action, controller, endpoint,
+gate, dispatch/cancel behavior or style change.
+
+Initial delivery scope **64 passed**; final prior-stage combined scope including two further
+read/recovery integrations and reviewed empty-page/cursor cases **364 passed** (30 files), exit 0. Counts overlap. Type/build/token
+checks pass. Browser/geometry remains **BLOCKED / NOT_RUN**, and baseline/hosted failures remain
+open. Commands and limitations: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent object-format inspection checkpoint
+
+Append-only observation after receipt-display checkpoint `b863f99b`. Explicit format/kind
+changes clear the previous check feedback; a new verdict requires the existing check button.
+An empty loaded-kind filter is explained separately from an empty catalog, with an all-kinds
+recovery action that restores focus and preserves the handover selection. No operation,
+capability, endpoint, controller, CSS or shared primitive changes.
+
+Focused display tests **5 passed**; prior-stage combined scope **369 passed** (31 files), exit 0.
+Counts overlap. Type/build/token checks pass. Browser/geometry remains **BLOCKED / NOT_RUN**; baseline and hosted failures
+remain open. Commands and limits: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent Task Center keyboard checkpoint
+
+Append-only observation after object-format checkpoint `4f9f1e1f`. Queue tabs now support manual
+Left/Right/Home/End focus navigation, one active tab stop, and instance-unique tab/panel links.
+Focus does not read or activate a queue; native buttons retain the existing activation callback.
+Inactive queue contents remain unmounted. No task/review/controller/client/endpoint/style changes.
+
+Focused navigation **5 passed**; prior combined scope plus task-center suites **418 passed**
+(36 files), exit 0. Counts overlap. Type/build/token checks pass. Browser/assistive-technology/
+geometry remains **BLOCKED / NOT_RUN**; baseline and hosted failures remain open. These usability
+slices do not constitute advanced production-chain acceptance. Commands and limitations:
+`docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — independent visible Prompt body copy checkpoint
+
+Append-only observation after keyboard checkpoint `f411decb`. The editor now offers explicit
+copy of the current body, exact whitespace/Unicode preserved, without parameters or metadata.
+Clipboard success requires a resolved receipt; failures offer explicit manual selection.
+Late receipt feedback is invalidated on UI scope/draft/body changes and unmount; requests stay
+single-flight only within the mounted editor. Reopening can issue another explicit request while
+an old browser request remains unresolved; clipboard cancellation/order is not guaranteed. No automatic copy/retry, persistence, save, adoption, model or backend changes.
+
+Focused copy **12 passed**; final combined scope plus copy/integration/remount coverage **432 passed**
+(37 files), exit 0. Counts overlap. Type/build/token checks pass. Clipboard outcomes are mocked; real browser/device/geometry
+acceptance remains **BLOCKED / NOT_RUN**. Original advanced-chain, baseline and hosted limitations
+remain open. Audit boundaries and exact commands: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — guided character and scene visual authoring checkpoint
+
+Append-only observation after Prompt body-copy checkpoint `9e5eb187`. The existing WorldPanel
+now exposes its owner's already typed CHARACTER_VISUAL and SCENE_VISUAL kinds with guided
+fields, schema-aligned Unicode counts, up to 50 declared reference IDs, and existing versioned
+save/review/reopen/history actions. All eight original JSON kinds remain. Approved visual edits
+are locked, including an active draft approved during editing, without dropping unsaved input.
+No backend schema/service, route/gate, authorization, protected shell, shared primitive or CSS changes.
+
+Focused WorldPanel **15 passed**; prior-stage combined frontend scope **447 passed** (39 files);
+original isolated File-owner/Bible functional selection **34 passed / 3 existing route authority
+or method checks deselected**. Counts overlap. Type/build/token checks and independent scoped
+review pass. One synthetic profile per subject was created, edited, reloaded, rejected/reopened
+and projected as non-authoritative REVIEW with exact history and explicit unknown/unresolved data.
+Stub route authority is functional evidence only, not live authorization or security isolation.
+References do not prove asset bytes. New profiles do not replace Canon automatically; Bible still
+uses first approved or first matching profile. Distinguishing remains owner/history data outside
+Bible dimensions. Browser/geometry remains **BLOCKED / NOT_RUN**; earlier baseline/hosted and
+advanced-runtime limitations remain open. This is not V2 completion, merge, release or deployment.
+Details: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — existing Director genre and shot-time authoring checkpoint
+
+Append-only observation after visual-authoring checkpoint `61b1f039`. Original document and
+shot editors now expose existing `visual_target.genre` and `continuity.time` fields, with the
+same full-document owner, expected version, explicit history restore and conflict recovery.
+The shared Director proposal editor also preserves and bounds genre. Optional fields stay
+omitted until edited; explicit empty values retain sibling data and links. Code-point limits
+match the original schema. Ordinary shot lighting and stored continuity overrides remain intact.
+No backend production model/service, endpoint/gate, protected shell, CSS or dependency changed.
+
+Synthetic focused frontend **60 passed / 7 files**, combined prior-stage and relevant regression
+**561 passed / 50 files**, and isolated original File-owner/projection selection **39 passed /
+2 existing authority/method tests deselected**. Counts overlap. The v1→v2→fresh-store reread→v3
+clear→v4 restore sequence verifies exact saved content/history, authored genre, changed-time
+warning and unknown one-sided time. Read-only Director projection remains read-only. Browser,
+real geometry, model/GPU and broader runtime acceptance remain unavailable/unverified. Baseline
+and hosted failures remain open. See `docs/delivery/v2-development/dot-usability-20261015.md`
+for commands, final review/publication evidence and limits.
+
+Clarification: Prompt adoption implementation already exists with a mounted read-only panel;
+its closed write path and unfinished acceptance are unchanged. Earlier “absent” wording is not
+an assertion of absent source code. No adoption or separately blocked lifecycle work was done.
+
+Stage 11 publication status: **LOCAL_REVIEWED / PUBLICATION_BLOCKED**. The initial upload of the
+updated existing matrix and one evidence-backed identical retry were rejected by an external
+approval requirement. No Stage 11 remote mutation or PR update succeeded; Draft PR #48 remains
+at `61b1f0390077b403b62cc57cbd50048d2324ae40`. Exact-published rerun/new hosted CI are NOT_RUN.
+No alternate upload route was attempted. See the appended publication status in the rolling report.
+
+### 2026-10-15 — original standalone MP3 export checkpoint (local only)
+
+Current-source `AUDIO-12` gap advanced: the original standalone trim/export DTO, recipe, Audio
+Inspector and actual receipt path now accept explicit MP3 while preserving omitted/default WAV
+and explicit FLAC. No parallel job, provider, Asset or Review owner. Local libmp3lame CBR profiles
+are 128 kb/s at 32/44.1/48 kHz and 64 kb/s at the six supported lower rates; mono/stereo, reviewed
+gain, 10 ms–120 s interval and 25 MiB encoded/decoded bound are explicit. Unsupported rates and
+sub-10-ms clips are rejected; missing encoder/ffprobe yields an honest unavailable receipt.
+Actual MP3 stream probe, bounded gapless PCM decode, exact output/decoded digests and duration
+proof are persisted. Decoded timing allows one sample; container padding is separately bounded
+and disclosed. S16 decode is not a lossless claim. Candidates remain private until explicit
+review; failure/cancellation cleanup and original unknown-result recovery/no-replay remain.
+
+Synthetic original File owner and mounted functional regression **116 passed / 76 deselected**;
+new/existing audio frontend **155 passed / 4 files**. Counts overlap. Independent review passed
+45 real minimum-duration codec combinations, re-probed captured bytes and exact legacy hashes.
+An expanded 131-file frontend run exposed two old ambiguous global-alert waits; both reproduced
+in unchanged `e4cb8f5`. Their correction asserts exact conflict text plus alert role and retains
+all draft/version/no-dispatch checks. Historical failures stay recorded. Current final rerun and
+local commit details follow in the rolling report `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+This is local synthetic CPU codec/functional evidence only. Browser/native-player/Windows/GPU,
+real-model, live authorization/isolation and broader Audio Studio/V2 acceptance are unproven.
+The blocked lifecycle/security candidate and all gates remain untouched. Stage 11/later publication
+remains **BLOCKED**; no upload/ref/PR mutation was retried. PR #48 remains last verified Stage 10.
+Final expanded frontend rerun: **2074 passed / 131 files**, exit 0; final typecheck passes.
+The two corrected conflict-selector failures are closed at test level only; no production or
+security acceptance is inferred. Earlier failed receipts are retained rather than rewritten.
+Local implementation commit: `a8c2f2df4c1ecce5fb4c0e6293a1b4fac1375cb9`, tree
+`9e517487aef6519875fd4b182cbf88856d3f08d0`; independent review also cleared both selector-only
+corrections. The following documentation-only checkpoint does not alter production/test bytes.
+Publication remains blocked and was not attempted.
+
+### 2026-10-15 — frontend runner discovery correction (local only)
+
+The original Vitest config accidentally collected all three `frontend/e2e` Playwright
+specs, producing framework-level collection errors. Adding the missing `e2e/**`
+exclusion now preserves the exact **399 unit/component files** and leaves every existing
+test/assertion/timeout unchanged. The new `pnpm test:discovery` regression and explicit
+runner manifest prove all three specs remain with their existing Playwright owners:
+**8 Studio release cases**, plus **7 Prompt cases × 3 viewports = 21 project-cases**.
+Both Playwright commands use `--list` only. The 80 pre-existing `tests/e2e`/`tests/visual`
+specs and their separate configs/exclusions are unchanged; those configs were not loaded.
+
+Baseline inventory was 402 files (399 units + 3 mistaken Playwright specs); regression
+is red against that config and green after the single exclusion. Representative unchanged
+unit/component verification: **62 passed / 5 files**. Typecheck/build/token guard pass
+with the existing bundle warning. This proves runner discovery, not browser acceptance.
+
+Stage 12's later exact-commit broad frontend retries remain **TIMING-FLAKY / INCONCLUSIVE**:
+four workers 2071 passed/3 timeout failures; serial 2072 passed/2 different timeout failures,
+with unchanged affected files passing in isolation. The earlier 2074-pass result is separate
+historical evidence. No timeout was relaxed, failure suite hidden, or whole-suite green claimed.
+Browser/AT, Windows/device, GPU/model and blocked security/lifecycle limits remain open.
+Stage 11+ publication is still blocked and was not retried. Details and commands are appended
+in `docs/delivery/v2-development/dot-usability-20261015.md`; this is not V2/release acceptance.

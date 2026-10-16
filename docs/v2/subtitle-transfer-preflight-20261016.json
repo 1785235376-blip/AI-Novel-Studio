@@ -1,0 +1,94 @@
+{
+  "baseline_commit": "f48b0dd14d18a728b50720bb85d0d1f53379c7a9",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/captionTransferReview.test.ts src/experimental/VoiceSubtitlePanels.test.tsx src/creative/TimelineSourceEditing.phase6.test.tsx src/creative/StudioTimelineAssetHandoff.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T11:30:20.910011+00:00",
+      "finished_utc": "2026-10-16T11:30:23.743600+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/subtitle-transfer-reviewed-ui.log",
+      "log_sha256": "614ac9323b8f84955d48d4a151ca1d994bf724d2818fbb14aa0cd59b2c5672d5",
+      "receipt": "docs/delivery/v2-development/subtitle-transfer-reviewed-ui.json",
+      "receipt_sha256": "1bc8c8906b479c68d84658e4d7ad58187ccaf64ab14a6ff4cfa0315ae7c65850"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_caption_transfer_preflight.py",
+        "tests/test_r5_voice_subtitles.py::test_measured_waveform_exact_ticks_split_merge_and_export_readback[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/subtitle-transfer-reviewed-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T11:30:22.404341+00:00",
+      "finished_utc": "2026-10-16T11:30:31.189287+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/subtitle-transfer-reviewed-file-public.log",
+      "log_sha256": "f4e5ba371944f6011c491cb30c69849b9fc30a66f9990444f4e575b3a5b65bbd",
+      "receipt": "docs/delivery/v2-development/subtitle-transfer-reviewed-file-public.json",
+      "receipt_sha256": "4511b1e8875268226dcda4be9205fd097a408f36194ca3bf9395d5d2394d0c9c"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T11:30:23.893102+00:00",
+      "finished_utc": "2026-10-16T11:31:00.537763+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/subtitle-transfer-reviewed-build.log",
+      "log_sha256": "b1c60d65ace909671dae2312b58c76c4109b40640c2be794c540f8958682e8c9",
+      "receipt": "docs/delivery/v2-development/subtitle-transfer-reviewed-build.json",
+      "receipt_sha256": "d33e991440d52d55e6f0319d4bd47a6e744c73ae2523b32090ba42800e408a39"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-c",
+        "import pathlib,re; files=[pathlib.Path(\"frontend/src/experimental\")/name for name in [\"SubtitleTimelinePanel.tsx\",\"captionTransferReview.ts\"]]; assert not [str(p) for p in files if re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",p.read_text(),re.I)]; print(\"Scoped token guard PASS\")"
+      ],
+      "started_utc": "2026-10-16T11:30:41.335900+00:00",
+      "finished_utc": "2026-10-16T11:30:41.361385+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/subtitle-transfer-reviewed-token.log",
+      "log_sha256": "0f60413763c866e35019437c33d233ca2415617df3bce60da78ae15ab1607a63",
+      "receipt": "docs/delivery/v2-development/subtitle-transfer-reviewed-token.json",
+      "receipt_sha256": "bdcfbe3c248aabba790fdbfdba17bd7d0b696c79f0e52c81d95f337915271548"
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/experimental/SubtitleTimelinePanel.tsx": "2325cef73fcda3016e43cea37203f42cbac53cf2c89b06800bdb28b31ce08e1e",
+    "frontend/src/experimental/VoiceSubtitlePanels.test.tsx": "86d702c3fef1822a35c43daf5cc8c682afed70eea634a9693e6233ad979040bc",
+    "frontend/src/experimental/captionTransferReview.ts": "160e2e33f5c3f4c9a4e4e2f7f8442080482bd380a61107dac1044e38b526b5c4",
+    "frontend/src/experimental/captionTransferReview.test.ts": "278ed4b917aa15ed1c011d03486a735d0781e72d8a7de38d1fca75f727c7a827",
+    "tests/test_v2_caption_transfer_preflight.py": "e83b7d4f9952e204bb378eabb0ea4176066663676521cca42698bc8f4cefed7e"
+  },
+  "ui_checks": 75,
+  "pure_original_renderer_parser_checks": 12,
+  "nonsecurity_file_checks": 1,
+  "public_checks": 30,
+  "public_source_closure_files": 487,
+  "browser_visual": "NOT_RUN",
+  "postgres_p0": "BLOCKED_NOT_RUN",
+  "windows_gpu_provider_real_alignment": "NOT_RUN",
+  "push_hosted_ci": "NOT_RUN_COST_UNKNOWN",
+  "preserved_failed_receipts": [
+    "docs/delivery/v2-development/subtitle-transfer-file-public.json"
+  ],
+  "limits": "Advisory local preflight only. Direct track/version provenance adoption, target placement mapping, caption durable unsaved recovery/history/UNKNOWN UI and cross-owner rollback remain open."
+}

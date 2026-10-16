@@ -60,12 +60,14 @@ function BatchPanel({ controller }: { controller: TaskCenterController }) {
 }
 
 /** 审核收件箱：不可读领域原样保留，批量是逐项 checkpoint，决定绑定候选版本。 */
-export function ReviewInbox({ controller }: { controller: TaskCenterController }) {
+export function ReviewInbox({ controller, panelId, labelledBy }: {
+  controller: TaskCenterController; panelId?: string; labelledBy?: string;
+}) {
   const { filters, setFilters } = controller;
   const items = controller.inbox?.items ?? [];
   const open = items.find(item => controller.itemKey(item) === controller.openItem);
   const inboxRead = controller.inbox !== undefined;
-  return <section className="task-center-review" role="tabpanel" aria-label="审核收件箱">
+  return <section className="task-center-review" role="tabpanel" id={panelId} aria-labelledby={labelledBy} aria-label="审核收件箱">
     <form className="task-center__filters" onSubmit={event => { event.preventDefault(); controller.applyFilters(); }}>
       <label className="task-center__field"><span>审核领域（原服务参数）</span>
         <select value={filters.module} onChange={event => setFilters({ module: event.target.value })}>

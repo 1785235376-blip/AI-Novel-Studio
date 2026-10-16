@@ -1,0 +1,130 @@
+{
+  "contract": "studio-canvas-director-slice/1",
+  "date": "2026-10-16",
+  "baseline_local": "69162fdc75328291f5b944de172bd8b69be29a4f",
+  "published_pr48": "58bbaad11360330d51f49fc2bb78a955a26469f0",
+  "pr47": "045b865e5a003cac3333462d055f22099f6368d6",
+  "delivery_commit": "containing Git commit; local only",
+  "push": "NOT_RUN_UNKNOWN_CI_COST",
+  "source_sha256": {
+    "frontend/src/creative/GraphDirectorConsole.tsx": "f9b67dde6c117fc3193c2ae41bba71e824f483b32353e6fbce487a2e975cc479",
+    "frontend/src/creative/GraphDirectorConsole.test.tsx": "452bfa05f9eaa2c63ae97eff2fe927a9511caf373d1e863dc9d8ea8546e359d7",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "8a9319be16610e2798fad576039cdffdfb93833ab3b293aa92c428cc40fa8ca2",
+    "frontend/src/creative/StudioProductionGraphEditor.test.tsx": "11ea5e5c49a1849223e3d72f0502a088943b155bd1462f1ba6d589d1e05792d6",
+    "frontend/src/creative/studioGraphEditorView.tsx": "97a6982d8ce3bbedfd6b1706120d64753f332bc81ed9f3c90617467b3b6d3ed6",
+    "frontend/src/creative/useStudioGraphEditor.tsx": "6c0fb8574ae8334b99c3b86278bb037f9c1a12e7961555875028540ccb0d468d",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "f3698278186ae31a6504590a30b15bb1f9e942d55916143f4eb27d8ecf4310e4"
+  },
+  "anchor_sha256": "ebabfe5314d9ed4535814baaca295ec6db0f17e5541d4dc35a6ed16805c129f4",
+  "ledger_coverage": {
+    "A": 13,
+    "B": 10,
+    "U": 16,
+    "Graph": 22,
+    "Console": 6,
+    "additional_FS_CORE": 33,
+    "original_904_line_roadmap": "NOT_FOUND_NOT_READ"
+  },
+  "checks": [
+    {
+      "label": "canvas-director-ui-final-r2",
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/GraphDirectorConsole.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/studioProductionGraphClient.test.ts src/creative/studioGraphClient.test.ts src/creative/CreativeAuthoringFields.test.tsx src/creative/CreativeWorkspace.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx src/canvasops"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "counts": {
+        "files": 12,
+        "passed": 258,
+        "failed": 0,
+        "skipped": 0
+      },
+      "source_drift": false,
+      "log_sha256": "56c6871b7e8d8bec21239ee9479cffc5e936474c15d30d3284db92bc8a6e4af8"
+    },
+    {
+      "label": "canvas-director-file-final",
+      "command": [
+        "python",
+        "-m",
+        "pytest",
+        "tests/test_v2_graph_production_planning.py",
+        "-k",
+        "original_director_storyboard_graph_executes_and_reopens_without_mutating_sources or planning_edit_stales_graph_and_redacts_prior_outputs or production_nodes_do_not_widen_old_schemas or original_catalog_is_exact",
+        "--basetemp=.runtime/v2-checks/canvas-director-file-final/tmp",
+        "-q"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "counts": {
+        "passed": 18,
+        "skipped": 2,
+        "deselected": 15
+      },
+      "source_drift": false,
+      "log_sha256": "7ea7613bc0df2e7bed0e7f11e1e443235acf6e902efecfd87b9760d716023553"
+    },
+    {
+      "label": "canvas-director-public",
+      "command": [
+        "python",
+        "-m",
+        "pytest",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-director-public/tmp",
+        "-q"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "counts": {
+        "passed": 30
+      },
+      "source_drift": false,
+      "log_sha256": "225bfc6461e0a87f914ee49575692c9bd4841083d565d1f7531ff0d13664d973"
+    },
+    {
+      "label": "canvas-director-build-final-r2",
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc --noEmit && ./node_modules/.bin/vite build && cd .. && node scripts/check_ui_design_tokens.mjs && python scripts/public_build.py --source ."
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "counts": {
+        "token_guard_files": 52,
+        "public_source_files": 487
+      },
+      "source_drift": false,
+      "log_sha256": "95f25d59c87c6bcff5e3d95d2a0499a5c1870b309f3b82a57c3cb1e43c8ab9e5"
+    }
+  ],
+  "independent_review": {
+    "passed": 23,
+    "files": 3,
+    "overlaps_primary_suite": true,
+    "final_commit_confirmation": "pending"
+  },
+  "initial_failures_retained": [
+    "new jsdom annotation absent: 5 failures before DOM assertions",
+    "new whitespace-normalizing matcher: 1 failure",
+    "default Python missing pytest: no product assertions",
+    "original graph-only navigation message regression: restored original message and retained assertion"
+  ],
+  "not_run": [
+    "P0 lifecycle repair/reproduction: platform BLOCKED, untouched",
+    "PostgreSQL in this slice",
+    "browser screenshots/runtime: previously BLOCKED",
+    "Windows/GPU/live model/whole-product acceptance",
+    "hosted CI/push/merge/tag/release"
+  ],
+  "product_state": "PARTIAL",
+  "limitations": [
+    "saved original documents/graphs reopen; unsaved author text is session-local",
+    "no new proposal approval or multi-target execution",
+    "no large-space view persistence/culling/1000-object benchmark",
+    "original DAG budgets and graph source binding remain unchanged"
+  ]
+}

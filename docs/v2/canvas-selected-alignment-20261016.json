@@ -1,0 +1,116 @@
+{
+  "baseline_commit": "e07b5b0799aab9a3cb252e2cbab0a9e7fcfd4590",
+  "scope": "Selected alignment preview/apply through original Graph history/save; MiniMap visibility key isolation",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T08:34:12.197113+00:00",
+      "finished_utc": "2026-10-16T08:34:24.832825+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-alignment-final-ui.json",
+      "receipt_sha256": "e1171573908a52db699bc8cf0356cf3a8896c64540243c301fada8190f0e059a",
+      "log": "docs/delivery/v2-development/canvas-alignment-final-ui.log",
+      "log_sha256": "2b9ad0facbfe28917a47accc50264c932cd68d16dae775fe5ad79cb5ca85ac95"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T08:33:57.928054+00:00",
+      "finished_utc": "2026-10-16T08:34:32.750393+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-alignment-build.json",
+      "receipt_sha256": "7c3063a2b2e03efb6b3c61eaad45efba993979e28be29011729706e3fac68102",
+      "log": "docs/delivery/v2-development/canvas-alignment-build.log",
+      "log_sha256": "63d83cd9b8ce856eeaac0cc8495c2f368803ace1d7c397e951fb8ecdadc72e66"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-alignment-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T08:34:13.821602+00:00",
+      "finished_utc": "2026-10-16T08:34:22.591759+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-alignment-public.json",
+      "receipt_sha256": "de22ef18e1de82717e25967a74629ff36bcd73a4f081ce55f4a60e7786462c29",
+      "log": "docs/delivery/v2-development/canvas-alignment-public.log",
+      "log_sha256": "466f204a90d4aaabc3e3f8f8ece0854323047e89bdeb68026e4c2cdfe2005183"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "--basetemp=.runtime/v2-checks/canvas-alignment-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T08:34:52.844646+00:00",
+      "finished_utc": "2026-10-16T08:35:00.818400+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-alignment-file.json",
+      "receipt_sha256": "2107a8111fad1f833cfc0e403e580284a77e6430c0cad955fe445d62a5ed83ba",
+      "log": "docs/delivery/v2-development/canvas-alignment-file.log",
+      "log_sha256": "e780397176e580828a23268269a14ca182e890220ca79ded1030bf20ff7704ab"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; const p=\"frontend/src/creative/GraphCanvas.tsx\"; if(/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color\"); console.log(\"Changed UI reuses existing toolbar classes and shared Button primitives; no new CSS or raw colors.\");"
+      ],
+      "started_utc": "2026-10-16T08:35:01.248725+00:00",
+      "finished_utc": "2026-10-16T08:35:01.307806+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-alignment-token-scope.json",
+      "receipt_sha256": "008652afcc2c0c6017d1016a0bb01a6e9328715dee9ac371fb82574f96d18817",
+      "log": "docs/delivery/v2-development/canvas-alignment-token-scope.log",
+      "log_sha256": "0fc2db978ffeccdbd48b96a35e8ebf9c3dfaf44906a2ee47bec8eb830fac9014"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 194,
+    "files": 9,
+    "skipped": 0,
+    "environment": "jsdom/mock transport"
+  },
+  "file_owner_tests": 1,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "source_sha256": {
+    "frontend/src/creative/GraphCanvas.tsx": "3fde2f8df7dee4cf48a1d48f04231d31bce2109efcb941869389b64e9323dadd",
+    "frontend/src/creative/graphCanvasGeometry.ts": "f701e14ad066404fbb40b6e61f0b1aa1c19c426a08d12bd858396e1916a27a5a",
+    "frontend/src/creative/GraphCanvas.test.tsx": "0a205d2a9cd92c07a0bea215e0664d846c0524a308ce127a381a5cabcfcec0cd",
+    "frontend/src/creative/graphCanvasGeometry.test.ts": "ef1e89e2e916ac42bd9028b8a2618cfb43dcae39acd873ebbb24ef4a22cf51c6",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "876c89e8310932bd4000114be3cc00d0f524707cde0f7c67eb8c0ad2128179b2"
+  },
+  "not_run": [
+    "P0/security (BLOCKED and excluded)",
+    "PG",
+    "browser screenshots/native IME/screen reader/performance",
+    "Windows/GPU/provider/full RC",
+    "push/hosted CI"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "kind": "offline-display-geometry-microbenchmark",
+  "browser_fps": "NOT_RUN",
+  "browser_memory": "NOT_RUN",
+  "backend_execution": "NOT_RUN",
+  "note": "Timing covers projection only, not React/DOM/native select/paint. Heap deltas are noisy Node GC observations; no browser-memory claim. Selected/focused/connection retention can intentionally render all cards.",
+  "runtime": "v24.19.0",
+  "platform": "linux",
+  "timestamp": "2026-10-16T08:11:06.645Z",
+  "source_sha256": {
+    "graphCanvasGeometry.ts": "25e1683ce725aa6ea829ee369e5219660be4e9330544accfbb3a5851774fdc4d",
+    "graphCanvasPresentation.ts": "1c476b8715571fca87326b68e41f2773e525f1c027ed386f369f90037e8a3d7b"
+  },
+  "results": [
+    {
+      "display_nodes": 1000,
+      "display_edges": 975,
+      "index_ms": 3.8049850000000447,
+      "viewport_samples": 1000,
+      "projection_ms_median": 0.012919000000010783,
+      "projection_ms_p95": 0.06102999999995973,
+      "projection_ms_max": 2.0823429999999803,
+      "home_rendered_cards": 9,
+      "home_rendered_edges": 9,
+      "max_rendered_cards": 100,
+      "max_rendered_edges": 90,
+      "retained_index_heap_delta_bytes_samples": [
+        432504,
+        452176,
+        451968,
+        452176,
+        436224
+      ],
+      "accessibility_directory_options": 1000
+    },
+    {
+      "display_nodes": 10000,
+      "display_edges": 9750,
+      "index_ms": 11.387841999999978,
+      "viewport_samples": 1000,
+      "projection_ms_median": 0.1197580000000471,
+      "projection_ms_p95": 0.23318700000004355,
+      "projection_ms_max": 3.6991840000000593,
+      "home_rendered_cards": 9,
+      "home_rendered_edges": 9,
+      "max_rendered_cards": 100,
+      "max_rendered_edges": 90,
+      "retained_index_heap_delta_bytes_samples": [
+        4484288,
+        4507064,
+        4496672,
+        4496488,
+        4496536
+      ],
+      "accessibility_directory_options": 10000
+    }
+  ]
+}

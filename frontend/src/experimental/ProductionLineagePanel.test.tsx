@@ -135,7 +135,9 @@ describe('ProductionLineagePanel real API actions', () => {
     render(<ProductionLineagePanel client={api} manifestsEnabled onNavigate={navigate} />);
     const history = await screen.findByRole('region', { name: '重放历史' });
     expect(await within(history).findByText('输出逐字节一致：是')).toBeTruthy();
-    fireEvent.click(within(history).getByRole('button', { name: '审核重放产物' }));
-    expect(navigate).toHaveBeenCalled(); expect(api.post).not.toHaveBeenCalled();
+    fireEvent.click(within(history).getByRole('button', { name: '核对确切重放任务' }));
+    expect(navigate).not.toHaveBeenCalled();
+    fireEvent.click(within(history).getByRole('button', { name: '确认离开并核对确切重放任务' }));
+    expect(navigate).toHaveBeenCalledWith({ kind: 'feature', id: 'new-task', feature: 'cover_storyboard_generation', task_authority: 'media' }); expect(api.post).not.toHaveBeenCalled();
   });
 });

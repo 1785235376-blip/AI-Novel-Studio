@@ -1,8 +1,13 @@
+import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';
+import { autoLayout } from '../canvasops/canvasOps';
+import type { GraphDirectorSource } from './GraphDirectorConsole';
 import type { StoryboardReceipt } from './studioStoryboardContract';
 import { productionGraphDefinitions, type PlanningDocument } from './studioProductionGraphContract';
 import { checkedImageReferenceMetadata } from './studioImageRuntimeContract';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView, type Asset } from '../api';
+import type { ProductionProvider, StudioProductionClient } from './studioProductionClient';
+import { mediaProviderKey } from './useStudioMediaExecution';
 import type { StudioAsset, StudioClient } from './studioClient';
 import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphRecord } from './studioGraphTypes';
 import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, type GraphImageOperation, type GraphMediaOperation } from './studioGraphTypes';
@@ -14,6 +19,8 @@ import { graphDraftBaselineMatches, graphDraftRecoverable, readStudioGraphLocalD
 export type StudioGraphEditorSelection = { graphId?: string; runId?: string };
 export type StudioGraphEditorProps = {
   active: boolean; denied: boolean; identity: string; client: StudioClient; canMutate: boolean; canReview: boolean;
+  directorSource?: GraphDirectorSource;
+  providerSource?: Pick<StudioProductionClient, 'providers'>;
   busy: boolean; externalDirty: boolean; isCurrent: () => boolean;
   read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
   requestedGraphId?: string; requestedRunId?: string;
@@ -27,9 +34,14 @@ const same = (left: unknown, right: unknown) => JSON.stringify(left) === JSON.st
 const candidateKey = (value?: StudioGraphRecord) => value && JSON.stringify([value.id, value.version, value.definition_digest, value.execution_digest]);
 
 /** Original graph editing authority and async guards, independent of its visual skin. */
-export function useStudioGraphEditorController({ active, denied, identity, client, canMutate, busy, externalDirty, isCurrent, read, mutate, requestedGraphId, onSelectionChange, isBusy, draftOwner }: StudioGraphEditorProps) {
+export function useStudioGraphEditorController({ active, denied, identity, client, providerSource, canMutate, busy, externalDirty, isCurrent, read, mutate, requestedGraphId, onSelectionChange, isBusy, draftOwner }: StudioGraphEditorProps) {
   const [catalog, setCatalog] = useState<StudioGraphCatalog>(), [records, setRecords] = useState<StudioGraphRecord[]>([]), [base, setBase] = useState<StudioGraphRecord>();
-  const [draft, setDraft] = useState<StudioGraphDefinition>(blankGraph), [selected, setSelected] = useState<string[]>([]);
+  const [draft, setDraft] = useState<StudioGraphDefinition>(blankGraph), [selected, setSelectedState] = useState<string[]>([]);
+  const [copyPreview, setCopyPreview] = useState<{ identity: string; client: StudioClient; graph: string | undefined; epoch: number; source: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
+  // Session-local source snapshot owned by this controller, never persisted or transported.
+  const [copySource, setCopySource] = useState<{ identity: string; client: StudioClient; record: StudioGraphRecord; selected: string[]; sourceEpoch: number }>();
+  const [crossPreview, setCrossPreview] = useState<{ source: NonNullable<typeof copySource>; target: StudioGraphRecord; epoch: number; previewEpoch: number; draft: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
+  const copySourceEpoch = useRef(0), crossCopyEpoch = useRef(0);
   const [past, setPast] = useState<StudioGraphDefinition[]>([]), [future, setFuture] = useState<StudioGraphDefinition[]>([]);
   const [loading, setLoading] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [blocked, setBlocked] = useState(false);
   const [candidate, setCandidate] = useState<StudioGraphRecord>(), [replaceConsent, setReplaceConsent] = useState<string>(), [checking, setChecking] = useState(false);
@@ -67,6 +79,15 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const recoveryFence = useRef({ ownerKey, busy, externalDirty, executionDirty, canMutate });
   recoveryFence.current = { ownerKey, busy, externalDirty, executionDirty, canMutate };
   const node = draft.nodes.find(row => row.id === selected[0]);
+  const providerPicker = useGraphProviderPicker({ source: providerSource, client, identity, active, denied,
+    scope: JSON.stringify([base?.id, selectedEpoch.current, selected, node?.definition_id, node?.parameters.operation_id]),
+    node, editable, current, locked, read,
+    bind: row => { const target = draftRef.current.nodes.find(value => value.id === selected[0]);
+      if (!target || target.parameters.operation_id !== row.operation_id) return;
+      change({ ...draftRef.current, nodes: draftRef.current.nodes.map(value => value.id === target.id
+        ? { ...value, parameters: { ...value.parameters, provider_id: row.provider_id, model_id: row.model_id, allow_cloud: false } } : value) }); },
+  });
+  const setSelected = (value: string[]) => { providerPicker.reset(); setSelectedState(value); };
   const timelineEditor = useStudioGraphTimelineEditor({ client: client.graphs, node, editable, identity, isCurrent: current, isBusy: locked, read,
     update: parameters => { const selectedNode = draftRef.current.nodes.find(row => row.id === selected[0]); if (selectedNode?.definition_id !== 'timeline_export') return;
       change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === selectedNode.id ? { ...row, parameters } : row) }); } });
@@ -93,7 +114,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     setRecords(rows => [...rows.filter(row => row.id !== record.id), record]); createRequest.current = graphId('graph');
     if (!restored) reportSelection.current?.({ graphId: record.id });
   }, [invalidateCandidate]);
-  const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty, timelineEditor.clearForm]);
+  const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; providerPicker.reset(); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty, timelineEditor.clearForm]);
   useEffect(() => { alive.current = true; return () => { alive.current = false; selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; candidateEpoch.current++; candidateRequest.current?.abort(); }; }, []);
   useEffect(() => { shotEpoch.current++; setShotReceipt(undefined); setShotChoice(''); setShotParent(''); setVideoSchemaConsent(''); planningEpoch.current++; setPlanningDocuments([]); setPlanningChoice(''); setPlanningLoading(false); setImageSchemaConsent(''); }, [identity, denied, canMutate, externalDirty, executionDirty]);
   useEffect(() => {
@@ -157,9 +178,58 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (!editable || !current() || saving.current || isBusy?.()) return;
     if (!retainsSavedAssetBindings(baseRef.current?.definition.nodes || [], next.nodes)) { setError('已保存资产引用暂不能移除或重新绑定；可移动或禁用节点。原资产不会被删除。'); return; }
     if (same(draftRef.current, next)) return;
-    if (record) { setPast(rows => [...rows.slice(-49), structuredClone(draftRef.current)]); setFuture([]); }
-    draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
+    if (record) { const previous = structuredClone(draftRef.current); setPast(rows => [...rows.slice(-49), previous]); setFuture([]); }
+    crossCopyEpoch.current++; draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
   }, [editable, current, isBusy, invalidateCandidate]);
+  const currentCopy = active && copyPreview && copyPreview.identity === identity && copyPreview.client === client && copyPreview.graph === base?.id
+    && copyPreview.epoch === selectedEpoch.current && copyPreview.catalog === catalog && copyPreview.source === JSON.stringify(draft) && editable ? copyPreview.result : undefined;
+  useEffect(() => { setCopyPreview(undefined); }, [identity, client, base?.id, denied, canMutate, externalDirty, executionDirty, active, draft, catalog]);
+  function previewSelectionCopy() {
+    if (!active || !editable || !current() || locked() || timelineEditor.formDirty || !catalog) return;
+    setCopyPreview(undefined);
+    try { const result = graphSelectionCopy(draftRef.current, selected, { ...catalog, definitions: graphCatalogForSchema(catalog.definitions, draftRef.current.schema_version) });
+      setCopyPreview({ identity, client, graph: baseRef.current?.id, epoch: selectedEpoch.current, source: JSON.stringify(draftRef.current), catalog, result }); setError('');
+    } catch (value) { setError(value instanceof Error ? value.message : '复制预览失败。'); }
+  }
+  function pasteSelectionCopy() {
+    if (!currentCopy || !editable || !current() || locked() || timelineEditor.formDirty || copyPreview?.source !== JSON.stringify(draftRef.current)) return;
+    change(currentCopy.definition); setSelected(currentCopy.selected); setCopyPreview(undefined);
+  }
+  const copyScopeMatches = !copySource || !base || base.project_id === copySource.record.project_id && same(base.scope, copySource.record.scope);
+  const sourceCopy = active && current() && !denied && canMutate && base?.can_edit !== false && copyScopeMatches && copySource?.identity === identity && copySource.client === client && copySource.sourceEpoch === copySourceEpoch.current ? copySource : undefined;
+  const currentCrossCopy = sourceCopy && crossPreview?.source === sourceCopy && crossPreview.target === base
+    && crossPreview.epoch === selectedEpoch.current && crossPreview.previewEpoch === crossCopyEpoch.current && crossPreview.catalog === catalog
+    && crossPreview.draft === JSON.stringify(draft) && editable ? crossPreview.result : undefined;
+  useLayoutEffect(() => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, [identity, client, denied, canMutate, active]);
+  useLayoutEffect(() => { if (base?.can_edit === false || !copyScopeMatches) { copySourceEpoch.current++; setCopySource(undefined); } }, [base?.can_edit, copyScopeMatches]);
+  useLayoutEffect(() => { crossCopyEpoch.current++; setCrossPreview(undefined); }, [draft, base, catalog, externalDirty, executionDirty, copySource]);
+  function captureSelectionForGraph() {
+    if (!active || !editable || !current() || locked() || dirty || !base || base !== baseRef.current || !same(draftRef.current, base.definition) || !selected.length || !catalog) return;
+    if (base.reference_states.some(row => selected.includes(row.node_id) && row.state !== 'CURRENT')) {
+      setError('所选节点来源已变化或不可用，请先核对原绑定。'); return;
+    }
+    if (selected.some(id => !draftRef.current.nodes.some(node => node.id === id))) return;
+    crossCopyEpoch.current++; setCopySource({ identity, client, record: structuredClone(base), selected: [...selected], sourceEpoch: ++copySourceEpoch.current }); setCrossPreview(undefined); setError('');
+  }
+  function previewCrossGraphCopy() {
+    if (!sourceCopy || sourceCopy.sourceEpoch !== copySourceEpoch.current || !base || base.id === sourceCopy.record.id || !editable || !current() || locked() || timelineEditor.formDirty || !catalog) return;
+    crossCopyEpoch.current++; setCrossPreview(undefined);
+    if (base.project_id !== sourceCopy.record.project_id || !same(base.scope, sourceCopy.record.scope)) { copySourceEpoch.current++; setCopySource(undefined); setError('复制来源与目标必须属于同一项目和身份范围。'); return; }
+    try {
+      const result = graphSelectionCopy(sourceCopy.record.definition, sourceCopy.selected, catalog, draftRef.current);
+      setCrossPreview({ source: sourceCopy, target: base, epoch: selectedEpoch.current, previewEpoch: crossCopyEpoch.current, draft: JSON.stringify(draftRef.current), catalog, result }); setError('');
+    } catch (value) { setError(value instanceof Error ? value.message : '跨图复制预览失败。'); }
+  }
+  function pasteCrossGraphCopy() {
+    if (!currentCrossCopy || !editable || !current() || locked() || timelineEditor.formDirty || crossPreview?.source.sourceEpoch !== copySourceEpoch.current || crossPreview?.previewEpoch !== crossCopyEpoch.current || crossPreview?.epoch !== selectedEpoch.current || crossPreview?.target !== baseRef.current || crossPreview?.draft !== JSON.stringify(draftRef.current)) return;
+    change(currentCrossCopy.definition); setSelected(currentCrossCopy.selected); setCrossPreview(undefined);
+  }
+  function applyAutoLayout() {
+    if (!editable || !current() || locked()) return;
+    // Derive from the live draft, never a retained preview or saved version.
+    // Original change() owns history, binding guards and the eventual CAS save.
+    change(autoLayout(draftRef.current, { definitions: catalog?.definitions }));
+  }
   function navigate(work: () => void) {
     if (!current() || locked() || externalDirty || executionDirty) return;
     if (dirty || blocked) { setDiscardConfirmed(false); setPendingNavigation(() => work); return; }
@@ -167,7 +237,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   async function open(id: string) {
     if (!current() || locked() || externalDirty || executionDirty) return;
-    const epoch = ++selectedEpoch.current; setError('');
+    providerPicker.reset(); const epoch = ++selectedEpoch.current; setError('');
     try { const result = await mutate(async () => {
       const value = await client.graphs.get(id);
       const imageCatalog = await graphCatalogForRecord(value);
@@ -263,7 +333,8 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (target.definition_id === 'image_upscale' && (key === 'operation_id' || key === 'allow_cloud')) return;
     if (key === 'operation_id' && !(target.definition_id === 'video_generate' ? GRAPH_VIDEO_OPERATIONS.some(operation => operation === value) : target.definition_id === 'image_generate' ? GRAPH_IMAGE_OPERATIONS.some(operation => operation === value) : GRAPH_MEDIA_OPERATIONS.some(operation => operation === value))
       || (key === 'allow_cloud' ? typeof value !== 'boolean' : typeof value !== 'string')) return;
-    change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value } } : row) });
+    if (key === 'operation_id') providerPicker.reset();
+    change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value, ...(key === 'operation_id' && ['image_generate', 'video_generate'].includes(target.definition_id) ? { allow_cloud: false } : {}) } } : row) });
   }
   function updateMediaParameter(key: string, value: string) {
     const target = draftRef.current.nodes.find(row => row.id === selected[0]), allowed = target?.parameters.operation_id && graphMediaParameterNames(target.parameters.operation_id, ['image_generate', 'image_upscale'].includes(target.definition_id));
@@ -319,11 +390,12 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   function travel(redo: boolean) {
     if (!editable || locked() || !current()) return;
+    providerPicker.reset();
     const from = redo ? future : past, value = redo ? from[0] : from.at(-1); if (!value) return;
     if (!retainsSavedAssetBindings(base?.definition.nodes || [], value.nodes)) { setError('撤销不能移除已经保存的资产绑定。'); return; }
     if (redo) { setPast(rows => [...rows.slice(-49), structuredClone(draft)]); setFuture(rows => rows.slice(1)); }
     else { setFuture(rows => [structuredClone(draft), ...rows].slice(0, 50)); setPast(rows => rows.slice(0, -1)); }
-    invalidateCandidate(); draftRef.current = structuredClone(value); setDraft(draftRef.current); setSourcePort(''); setTargetPort('');
+    crossCopyEpoch.current++; invalidateCandidate(); draftRef.current = structuredClone(value); setDraft(draftRef.current); setSourcePort(''); setTargetPort('');
   }
   const downloadPreviewAsset = useCallback((asset: Asset) => read(() => client.download(asset.id)), [read, client]);
   const refreshPreview = () => { if (current() && !locked()) setPreviewRequest(value => value + 1); };
@@ -467,13 +539,14 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     retired, retainedText, retainedTitle,
     localRecovery: current() && !denied ? localRecovery : undefined, recoveryBusy, recoveryError,
     draftStorageNotice, draftSavedAt, draftOwnerCurrent, draftRecoverable, canRecoverDraft, recoverLocalDraft, discardLocalRecovery,
+    providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true, automatic_video_dispatch: false } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
     loadVideoCatalog, videoSchemaConfirmed, confirmVideoSchema, upgradeVideoSchema, shotParent, chooseShotParent, shotReceipt, shotChoice, chooseShot, shotLoading, loadShotReceipt,
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
-    discard, load, loadImageCatalog, change, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
+    discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
     setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
@@ -492,4 +565,67 @@ export function graphMediaParameterNames(operation: GraphMediaOperation | GraphI
     'm7.video.t2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'], 'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
     'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'], 'm8.audio.speech': ['voice_id', 'speech_rate'],
     'm8.audio.music': ['duration_seconds', 'seed'], 'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms'] } as Record<GraphMediaOperation | GraphImageOperation, string[]>)[operation];
+}
+
+/** Read-only configuration picker. The graph persists IDs, never this UI's route digest. */
+function useGraphProviderPicker(props: {
+  source?: Pick<StudioProductionClient, 'providers'>; client: StudioClient; identity: string; scope: string;
+  active: boolean; denied: boolean; node?: StudioGraphDefinition['nodes'][number]; editable: boolean;
+  current: () => boolean; locked: () => boolean; read: StudioGraphEditorProps['read']; bind: (row: ProductionProvider) => void;
+}) {
+  const latest = useRef(props); latest.current = props;
+  const epoch = useRef(0), request = useRef<AbortController>(), alive = useRef(true);
+  const [, setPickerRevision] = useState(0);
+  const [catalog, setCatalog] = useState<{ source: typeof props.source; client: StudioClient; identity: string; scope: string; rows: ProductionProvider[] }>();
+  const catalogRef = useRef(catalog); catalogRef.current = catalog;
+  const [route, setRoute] = useState<'local' | 'cloud'>('local'), [choice, setChoice] = useState('');
+  const routeRef = useRef(route); routeRef.current = route;
+  const [loading, setLoading] = useState(false), [error, setError] = useState('');
+  const reset = useCallback(() => { epoch.current++; setPickerRevision(epoch.current); request.current?.abort(); request.current = undefined;
+    catalogRef.current = undefined; setCatalog(undefined); setChoice(''); setLoading(false); setError(''); routeRef.current = 'local'; setRoute('local'); }, []);
+  useLayoutEffect(() => { reset(); }, [props.source, props.client, props.identity, props.scope, props.active, props.denied, reset]);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; request.current?.abort(); }; }, []);
+  const supported = (value: typeof props) => !!value.node && ['image_generate', 'video_generate', 'image_upscale'].includes(value.node.definition_id);
+  const readable = () => { const value = latest.current; return alive.current && value.active && !value.denied && value.current() && !value.locked() && !!value.source && supported(value); };
+  const sameScope = (value: Pick<typeof props, 'source' | 'client' | 'identity' | 'scope'>) => { const now = latest.current; return value.source === now.source && value.client === now.client && value.identity === now.identity && value.scope === now.scope; };
+  const visible = catalog && sameScope(catalog) && props.active && !props.denied && props.current() ? catalog : undefined;
+  const rows = visible?.rows.filter(row => row.operation_id === props.node?.parameters.operation_id && row.local === (route === 'local') && (props.node?.definition_id !== 'image_upscale' || row.local)) || [];
+  async function load() {
+    if (!readable() || request.current || loading || !sameScope(props) || capturedEpoch !== epoch.current) return;
+    const captured = latest.current, id = ++epoch.current, controller = new AbortController();
+    request.current = controller; catalogRef.current = undefined; setCatalog(undefined); setChoice(''); setError(''); setLoading(true);
+    const valid = () => alive.current && !controller.signal.aborted && id === epoch.current && sameScope(captured) && latest.current.active && !latest.current.denied && latest.current.current();
+    try {
+      const values = await captured.read(() => captured.source!.providers(controller.signal));
+      if (!valid()) return;
+      // Even identical duplicates are ambiguous: this unchanged graph schema stores only the tuple.
+      const counts = new Map<string, number>(), tuple = (row: ProductionProvider) => JSON.stringify([row.operation_id, row.provider_id, row.model_id]);
+      values.forEach(row => counts.set(tuple(row), (counts.get(tuple(row)) || 0) + 1));
+      const unique = values.filter(row => counts.get(tuple(row)) === 1);
+      const next = { source: captured.source, client: captured.client, identity: captured.identity, scope: captured.scope, rows: unique };
+      catalogRef.current = next; setCatalog(next);
+      if (unique.length !== values.length) setError('重复或含糊的服务配置已隐藏；原节点标识保持，请核对原服务配置。');
+    } catch (reason) { if (valid()) setError(apiErrorView(reason, '服务配置读取失败，原节点标识保持。').message); }
+    finally { if (valid()) { request.current = undefined; setLoading(false); } }
+  }
+  const capturedEpoch = epoch.current;
+  function chooseRoute(value: string) {
+    if (!sameScope(props) || capturedEpoch !== epoch.current || !readable() || !latest.current.editable || request.current || loading || !['local', 'cloud'].includes(value)
+      || latest.current.node?.definition_id === 'image_upscale' && value !== 'local') return;
+    if (value === routeRef.current) return;
+    epoch.current++; routeRef.current = value as 'local' | 'cloud'; setRoute(value as 'local' | 'cloud'); setChoice('');
+  }
+  function choose(key: string) {
+    if (!sameScope(props) || capturedEpoch !== epoch.current || !readable() || !latest.current.editable || route !== routeRef.current || loading || request.current) return;
+    const accepted = catalogRef.current;
+    if (!accepted || !sameScope(accepted)) return;
+    const row = accepted.rows.find(value => mediaProviderKey(value) === key && value.operation_id === latest.current.node?.parameters.operation_id
+      && value.local === (route === 'local') && (latest.current.node?.definition_id !== 'image_upscale' || value.local));
+    if (!row) return;
+    latest.current.bind(row); setChoice(key);
+  }
+  const stored = props.node?.parameters;
+  const matched = visible?.rows.some(row => row.operation_id === stored?.operation_id && row.provider_id === stored.provider_id && row.model_id === stored.model_id);
+  return { rows, route, choice: rows.some(row => mediaProviderKey(row) === choice && row.provider_id === stored?.provider_id && row.model_id === stored?.model_id) ? choice : '',
+    loading, error, loaded: !!visible, matched, canRead: readable(), canEdit: readable() && props.editable && !loading, load, choose, chooseRoute, reset };
 }
