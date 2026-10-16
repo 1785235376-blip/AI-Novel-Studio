@@ -15,7 +15,7 @@ export type StudioCreatedProject = StudioProject & { studio_ready: boolean; requ
 export type StudioPreferencesInput = { intents: CreativeIntent[]; preset: WorkspacePreset; custom_intent: string };
 export type StudioPreferences = StudioPreferencesInput & { version: number };
 export type StudioOverview = {
-  project: StudioProject & { entry_kind: 'NEUTRAL_STUDIO' | 'LEGACY' };
+  project: StudioProject & { entry_kind: 'NEUTRAL_STUDIO' | 'LEGACY'; incarnation?: string };
   preferences: StudioPreferences;
   capabilities: {
     manual_import: boolean;

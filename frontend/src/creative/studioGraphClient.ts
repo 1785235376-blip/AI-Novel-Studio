@@ -734,6 +734,9 @@ function catalog(value: unknown): StudioGraphCatalog {
   return { definitions, limits: expectedLimits, capabilities: expectedCapabilities, ...(mediaLimits ? { media_limits: mediaLimits } : {}) };
 }
 
+/** Reuse the canonical input decoder for local draft recovery; grants no authority. */
+export function checkedStudioGraphDraft(value: unknown): StudioGraphDefinition { return definition(value, true); }
+
 export function createStudioGraphClient(projectId: string, context: Pick<CollaborationContext, 'scope'>, transport: StudioGraphTransport) {
   const capturedScope = context.scope ? { ...context.scope } : undefined;
   const originalTransport = transport;

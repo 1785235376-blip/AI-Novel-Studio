@@ -3,6 +3,7 @@ import { useStudioGraphEditorController, type StudioGraphEditorProps } from './u
 import { studioGraphEditorView } from './studioGraphEditorView';
 import { blankLocalCanvasState } from '../canvasops/canvasOps';
 import type { LocalCanvasState } from '../canvasops/canvasOpsTypes';
+import { StudioGraphDraftRecovery } from './StudioGraphDraftRecovery';
 
 export type { StudioGraphEditorProps, StudioGraphEditorSelection } from './useStudioGraphEditorController';
 /** Preserve the existing content/inspector consumer while separating state from rendering.
@@ -19,6 +20,7 @@ export function useStudioGraphEditor(props: StudioGraphEditorProps) {
   useEffect(() => {
     if (identityRef.current !== identity) { identityRef.current = identity; setCanvasLocal(blankLocalCanvasState()); }
   }, [identity]);
-  return { ...studioGraphEditorView(controller, props, { local: canvasLocal, onLocal: setCanvasLocal }),
+  const view = studioGraphEditorView(controller, props, { local: canvasLocal, onLocal: setCanvasLocal });
+  return { ...view, content: <>{props.active && !controller.retired && controller.catalog && <StudioGraphDraftRecovery controller={controller} />}{view.content}</>,
     dirty: controller.dirty || controller.blocked || controller.executionDirty, discard: controller.discard };
 }

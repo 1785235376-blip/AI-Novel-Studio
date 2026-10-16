@@ -6,10 +6,11 @@ import { useStudio } from '../store';
 import { useLocalHostSession } from '../localHostSession';
 import { IndependentStudioWorkspace } from './IndependentStudioWorkspace';
 import type { StudioAsset, StudioOverview, StudioReference } from './studioClient';
+import emptyPromptLibrary from '../prompt/__fixtures__/empty-library.json';
 
 const id = 'relations-project', base = `/api/projects/${id}/studio`, digest = 'a'.repeat(64);
 const reference: StudioReference = { kind: 'ASSET', id: 'target', label: 'target.png', version: 2, digest, deleted: false };
-const makeAsset = (): StudioAsset => ({ id: 'source', novel_id: id, branch_id: null, filename: 'source.png', kind: 'image', media_type: 'image/png', size: 3, sha256: digest, version: 2, created_at: '', updated_at: '', relationships: [], provenance: { origin: 'EXTERNAL_IMPORT', version: 2, digest, integrity: 'VERIFIED', license: { label: 'UNSPECIFIED', source: '', note: '' }, license_verification: 'AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION', parents: [], sources: [], stale: false, operation: '外部文件导入' } });
+const makeAsset = (): StudioAsset => ({ id: 'source', novel_id: id, branch_id: null, filename: 'source.png', kind: 'image', media_type: 'image/png', size: 3, sha256: digest, version: 2, created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z', relationships: [], provenance: { origin: 'EXTERNAL_IMPORT', version: 2, digest, integrity: 'VERIFIED', license: { label: 'UNSPECIFIED', source: '', note: '' }, license_verification: 'AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION', parents: [], sources: [], stale: false, operation: '外部文件导入' } });
 const overview: StudioOverview = { project: { id, title: '关联项目', entry_kind: 'NEUTRAL_STUDIO' }, preferences: { version: 1, intents: [], preset: 'BLANK', custom_intent: '' }, capabilities: { manual_import: true, manual_export: true, can_mutate: true, can_review: false, model_required: false, chapter_required: false, media_validator_configured: true, asset_kinds: ['image', 'video', 'audio'], intent_is_permission: false } };
 const reply = (value: unknown, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => value, blob: async () => new Blob(['png']) });
 let fetchMock: ReturnType<typeof vi.fn>, asset: StudioAsset, relationshipStatus: number;
@@ -19,6 +20,8 @@ beforeEach(() => {
   Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: vi.fn(() => 'blob:relations') }); Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: vi.fn() });
   fetchMock = vi.fn(async (url: string, init: RequestInit = {}) => {
     if (url === base) return reply(overview);
+    if (url === `${base}/prompts` && init.method === 'GET') return reply({ ...emptyPromptLibrary, project_id: id, scope: { mode: 'local', novel_id: id } });
+    if (url === `${base}/assets` && init.method === 'GET') return reply({ items: [asset] });
     if (url.includes('/assets?')) return reply({ items: [asset] });
     if (url === `${base}/assets/source`) return reply(asset);
     if (url.endsWith('/download')) return reply({});

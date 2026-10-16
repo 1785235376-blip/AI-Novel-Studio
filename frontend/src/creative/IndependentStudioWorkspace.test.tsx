@@ -7,11 +7,12 @@ import { useStudio } from '../store';
 import { useLocalHostSession } from '../localHostSession';
 import { IndependentStudioWorkspace, type IndependentStudioProps } from './IndependentStudioWorkspace';
 import type { StudioAsset, StudioOverview } from './studioClient';
+import emptyPromptLibrary from '../prompt/__fixtures__/empty-library.json';
 
 const id = 'neutral-project', base = `/api/projects/${id}/studio`;
 const sha = 'a'.repeat(64);
 const overview = (): StudioOverview => ({ project: { id, title: '独立项目', entry_kind: 'NEUTRAL_STUDIO' }, preferences: { version: 1, intents: [], preset: 'BLANK', custom_intent: '' }, capabilities: { can_mutate: true, manual_import: true, manual_export: true, model_required: false, chapter_required: false, intent_is_permission: false, media_validator_configured: true, asset_kinds: ['image', 'video', 'audio'] } });
-const asset = (version = 1): StudioAsset => ({ id: 'image-1', novel_id: id, branch_id: null, filename: 'reference.png', kind: 'image', media_type: 'image/png', size: 3, sha256: sha, version, created_at: '', updated_at: '', deleted_at: null,
+const asset = (version = 1): StudioAsset => ({ id: 'image-1', novel_id: id, branch_id: null, filename: 'reference.png', kind: 'image', media_type: 'image/png', size: 3, sha256: sha, version, created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z', deleted_at: null,
   provenance: { origin: version > 1 ? 'EXTERNAL_IMPORT' : 'UNDECLARED', version, digest: sha, integrity: 'VERIFIED', license: { label: 'UNSPECIFIED', source: '', note: '' }, license_verification: 'AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION', operation: '外部文件导入', parents: [], sources: [], stale: false } });
 const response = (body: unknown, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body, blob: async () => new Blob(['png'], { type: 'image/png' }) });
 let fetchMock: ReturnType<typeof vi.fn>, saved: StudioAsset[];
@@ -20,6 +21,10 @@ function server(options: { overview?: StudioOverview; override?: Override } = {}
   fetchMock = vi.fn(async (url: string, init: RequestInit = {}) => {
     const changed = options.override?.(url, init); if (changed !== undefined) return await changed;
     if (url === base) return response(options.overview || overview());
+    // Mounted Prompt/Asset browsers read the same original owners; these are
+    // successful empty/library DTOs, independent of the mutation under test.
+    if (url === `${base}/prompts` && init.method === 'GET') return response({ ...emptyPromptLibrary, project_id: id, scope: { mode: 'local', novel_id: id } });
+    if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
     if (url.startsWith(`${base}/assets?`)) return response({ items: saved });
     if (url === `${base}/assets` && init.method === 'POST') { saved = [asset()]; return response(saved[0], 201); }
     if (url.endsWith('/lineage')) { saved = [asset(2)]; return response(saved[0]); }

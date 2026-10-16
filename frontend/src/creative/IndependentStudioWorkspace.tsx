@@ -20,6 +20,7 @@ import { StudioAssetDeclarationForm } from './StudioAssetDeclarationForm';
 import { studioClient, studioTransport, type StudioAsset, type StudioOverview, type StudioPreferences, type StudioStorage } from './studioClient';
 import { rememberLocalStudioSelection, rememberLocalWorkspaceSelection, type LocalStudioModule } from '../workspaceSelection';
 import { useStudioGraphEditor } from './useStudioGraphEditor';
+import { studioGraphDraftOwner } from './studioGraphLocalDraft';
 import { AssetRelationshipsPanel } from './AssetRelationshipsPanel';
 import { StudioWorkspaceOperationPanel } from './StudioWorkspaceOperationPanel';
 import { readLocalStudioInterfaceMode, readLocalStudioResume, rememberLocalStudioInterfaceMode, rememberLocalStudioResume, type StudioInterfaceMode, type StudioWorkspaceLocation, type StudioWorkspaceStage, type StudioWorkspaceView } from './studioWorkspaceResume';
@@ -224,6 +225,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (current()) setGraphLocation(previous => previous.graphId === selection.graphId && previous.runId === selection.runId ? previous : selection);
   }, [current]);
   const graph = useStudioGraphEditor({ active: graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
+    draftOwner: studioGraphDraftOwner(projectId, overview?.project.incarnation, context, capturedHost.current),
     requestedGraphId: graphLocation.graphId, requestedRunId: graphLocation.runId, onSelectionChange: rememberGraphLocation, isBusy: operationPending });
   graphDirtyRef.current = graph.dirty;
   // One additive read-only workflow projection over the same captured Studio transport.

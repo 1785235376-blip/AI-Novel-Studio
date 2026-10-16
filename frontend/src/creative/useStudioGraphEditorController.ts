@@ -8,6 +8,8 @@ import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId
 import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, type GraphImageOperation, type GraphMediaOperation } from './studioGraphTypes';
 import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, imageGraphDefinitions, videoGraphDefinitions, retainsSavedAssetBindings } from './graphDraft';
 import { useStudioGraphTimelineEditor } from './useStudioGraphTimelineEditor';
+import { graphDraftBaselineMatches, graphDraftRecoverable, readStudioGraphLocalDraft, studioGraphDraftKey,
+  type StudioGraphDraftOwner, type StudioGraphLocalDraft } from './studioGraphLocalDraft';
 
 export type StudioGraphEditorSelection = { graphId?: string; runId?: string };
 export type StudioGraphEditorProps = {
@@ -15,6 +17,8 @@ export type StudioGraphEditorProps = {
   busy: boolean; externalDirty: boolean; isCurrent: () => boolean;
   read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
   requestedGraphId?: string; requestedRunId?: string;
+  /** Supplied only after the original overview and actor identity are verified. */
+  draftOwner?: StudioGraphDraftOwner;
   onSelectionChange?: (selection: StudioGraphEditorSelection) => void;
   /** Synchronous parent activity fence, before React has rendered busy=true. */
   isBusy?: () => boolean;
@@ -23,13 +27,23 @@ const same = (left: unknown, right: unknown) => JSON.stringify(left) === JSON.st
 const candidateKey = (value?: StudioGraphRecord) => value && JSON.stringify([value.id, value.version, value.definition_digest, value.execution_digest]);
 
 /** Original graph editing authority and async guards, independent of its visual skin. */
-export function useStudioGraphEditorController({ active, denied, identity, client, canMutate, busy, externalDirty, isCurrent, read, mutate, requestedGraphId, onSelectionChange, isBusy }: StudioGraphEditorProps) {
+export function useStudioGraphEditorController({ active, denied, identity, client, canMutate, busy, externalDirty, isCurrent, read, mutate, requestedGraphId, onSelectionChange, isBusy, draftOwner }: StudioGraphEditorProps) {
   const [catalog, setCatalog] = useState<StudioGraphCatalog>(), [records, setRecords] = useState<StudioGraphRecord[]>([]), [base, setBase] = useState<StudioGraphRecord>();
   const [draft, setDraft] = useState<StudioGraphDefinition>(blankGraph), [selected, setSelected] = useState<string[]>([]);
   const [past, setPast] = useState<StudioGraphDefinition[]>([]), [future, setFuture] = useState<StudioGraphDefinition[]>([]);
   const [loading, setLoading] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [blocked, setBlocked] = useState(false);
   const [candidate, setCandidate] = useState<StudioGraphRecord>(), [replaceConsent, setReplaceConsent] = useState<string>(), [checking, setChecking] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<() => void>(), [discardConfirmed, setDiscardConfirmed] = useState(false);
+  const [localRecovery, setLocalRecovery] = useState<StudioGraphLocalDraft>(), [recoveryBusy, setRecoveryBusy] = useState(false);
+  const [draftStorageKey, setDraftStorageKey] = useState<string>(), [draftStorageNotice, setDraftStorageNotice] = useState('');
+  const [draftSavedAt, setDraftSavedAt] = useState<string>();
+  const [recoveryError, setRecoveryError] = useState('');
+  const recoveryEpoch = useRef(0);
+  const persistedDraftRaw = useRef<string | null>(null);
+  const ownerKey = draftOwner ? studioGraphDraftKey(draftOwner) : undefined;
+  const firstDraftOwner = useRef<string>();
+  if (ownerKey && !firstDraftOwner.current) firstDraftOwner.current = ownerKey;
+  const draftOwnerCurrent = !!ownerKey && ownerKey === firstDraftOwner.current;
   const [kind, setKind] = useState<StudioGraphDefinitionId>('text_input'), [sourcePort, setSourcePort] = useState(''), [targetPort, setTargetPort] = useState('');
   const [mediaSchemaConsent, setMediaSchemaConsent] = useState(false);
   const [videoSchemaConsent, setVideoSchemaConsent] = useState('');
@@ -48,8 +62,10 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const baseRef = useRef(base); baseRef.current = base;
   const createRequest = useRef(graphId('graph'));
   const current = useCallback(() => alive.current && isCurrent(), [isCurrent]);
-  const locked = () => busy || saving.current || !!isBusy?.();
-  const editable = !!catalog && canMutate && !denied && !busy && !externalDirty && !executionDirty && !blocked && base?.can_edit !== false && current();
+  const locked = () => busy || recoveryBusy || saving.current || !!isBusy?.();
+  const editable = !!catalog && canMutate && !denied && !busy && !recoveryBusy && !externalDirty && !executionDirty && !blocked && base?.can_edit !== false && current();
+  const recoveryFence = useRef({ ownerKey, busy, externalDirty, executionDirty, canMutate });
+  recoveryFence.current = { ownerKey, busy, externalDirty, executionDirty, canMutate };
   const node = draft.nodes.find(row => row.id === selected[0]);
   const timelineEditor = useStudioGraphTimelineEditor({ client: client.graphs, node, editable, identity, isCurrent: current, isBusy: locked, read,
     update: parameters => { const selectedNode = draftRef.current.nodes.find(row => row.id === selected[0]); if (selectedNode?.definition_id !== 'timeline_export') return;
@@ -81,7 +97,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   useEffect(() => { alive.current = true; return () => { alive.current = false; selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; candidateEpoch.current++; candidateRequest.current?.abort(); }; }, []);
   useEffect(() => { shotEpoch.current++; setShotReceipt(undefined); setShotChoice(''); setShotParent(''); setVideoSchemaConsent(''); planningEpoch.current++; setPlanningDocuments([]); setPlanningChoice(''); setPlanningLoading(false); setImageSchemaConsent(''); }, [identity, denied, canMutate, externalDirty, executionDirty]);
   useEffect(() => {
-    if (denied) { timelineEditor.resetForm(); selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; invalidateCandidate(); setCatalog(undefined); setRecords([]); setBase(undefined); setDraft(blankGraph()); setPast([]); setFuture([]); setSelected([]); setAssets([]); setPreview(undefined); setPreviewState(undefined); setPendingNavigation(undefined); setMediaSchemaConsent(false); setExecutionDirty(false); setError(''); setNotice(''); }
+    if (denied) { recoveryEpoch.current++; setLocalRecovery(undefined); setRecoveryBusy(false); setRecoveryError(''); timelineEditor.resetForm(); selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; invalidateCandidate(); setCatalog(undefined); setRecords([]); setBase(undefined); setDraft(blankGraph()); setPast([]); setFuture([]); setSelected([]); setAssets([]); setPreview(undefined); setPreviewState(undefined); setPendingNavigation(undefined); setMediaSchemaConsent(false); setExecutionDirty(false); setError(''); setNotice(''); }
   }, [denied, invalidateCandidate]);
 
   const load = useCallback(async () => {
@@ -355,6 +371,87 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     };
   }, [active, denied, requestedGraphId, catalog, busy, externalDirty, executionDirty, dirty, blocked, current, identity, base?.id, read, client, accept]);
 
+  // Recover only after the existing authorized overview and graph catalog have loaded.
+  // The namespace carries actor, scope AND the original owner's incarnation; no token.
+  useEffect(() => {
+    if (!active || denied || !catalog || !current() || !draftOwnerCurrent || !ownerKey || !draftOwner || draftStorageKey === ownerKey) return;
+    try {
+      const raw = localStorage.getItem(ownerKey);
+      setLocalRecovery(raw ? readStudioGraphLocalDraft(raw, draftOwner) : undefined);
+      persistedDraftRaw.current = raw;
+      setDraftStorageNotice('');
+    } catch {
+      setDraftStorageNotice('本机图草稿无法读取或校验，原缓存保持；当前输入仍保留在本页。');
+    }
+    setDraftStorageKey(ownerKey);
+  }, [active, denied, catalog, current, draftOwnerCurrent, ownerKey, draftStorageKey]);
+
+  const draftRecoverable = graphDraftRecoverable(draft);
+  useEffect(() => {
+    if (!active || denied || !catalog || !current() || !draftOwnerCurrent || !ownerKey || !draftOwner
+      || draftStorageKey !== ownerKey || localRecovery || recoveryBusy || draftStorageNotice) return;
+    try {
+      if (localStorage.getItem(ownerKey) !== persistedDraftRaw.current) {
+        setDraftStorageNotice('其他页面已更新本机图草稿，原缓存保持；当前输入只保留在本页。'); return;
+      }
+      if (!dirty && !blocked) { localStorage.removeItem(ownerKey); persistedDraftRaw.current = null; setDraftSavedAt(undefined); return; }
+      if (!draftRecoverable || timelineEditor.formDirty || executionDirty) return;
+      const snapshot: StudioGraphLocalDraft = { schema_version: 1, owner: draftOwner, saved_at: new Date().toISOString(),
+        request_id: createRequest.current, base: base ? { id: base.id, version: base.version,
+          definition_digest: base.definition_digest, execution_digest: base.execution_digest } : null,
+        definition: draft, uncertain: blocked };
+      const raw = JSON.stringify(snapshot); localStorage.setItem(ownerKey, raw); persistedDraftRaw.current = raw;
+      setDraftSavedAt(snapshot.saved_at);
+    } catch {
+      setDraftStorageNotice('本机图草稿未能保存，请保留此页面；服务端保存仍需明确操作。');
+    }
+  }, [active, denied, catalog, current, draftOwnerCurrent, ownerKey, draftStorageKey, localRecovery, recoveryBusy,
+    draftStorageNotice, dirty, blocked, draftRecoverable, draft, base, timelineEditor.formDirty, executionDirty]);
+
+  const canRecoverDraft = !!localRecovery && draftOwnerCurrent && canMutate && current() && !denied && !locked()
+    && !externalDirty && !executionDirty && !dirty && !blocked && !timelineEditor.formDirty
+    && (!base || base.id === localRecovery.base?.id) && (!requestedGraphId || requestedGraphId === localRecovery.base?.id)
+    && draft.schema_version <= 2;
+  async function recoverLocalDraft() {
+    if (!canRecoverDraft || !localRecovery || !draftOwner || !ownerKey) return;
+    const snapshot = localRecovery, key = ownerKey, epoch = ++recoveryEpoch.current, selection = selectedEpoch.current;
+    const original = JSON.stringify(draftRef.current); setRecoveryBusy(true); setRecoveryError('');
+    try {
+      const record = await read(async () => {
+        // Recheck even an unsaved graph: the public project ID may have been recreated.
+        const overview = await client.overview();
+        if (overview.project.id !== draftOwner.projectId || overview.project.incarnation !== draftOwner.incarnation)
+          throw new Error('项目代次已经改变；旧草稿未恢复到当前项目。');
+        if (!overview.capabilities.can_mutate) throw new Error('当前身份没有图编辑权限；本机草稿保持。');
+        if (!snapshot.base) return undefined;
+        const value = await client.graphs.get(snapshot.base.id);
+        if (!graphDraftBaselineMatches(snapshot, value)) throw new Error('图服务端版本或摘要已改变；本机草稿保持，请先核对下方作者输入与当前服务端版本。');
+        return value;
+      });
+      const fence = recoveryFence.current;
+      if (!current() || epoch !== recoveryEpoch.current || selection !== selectedEpoch.current || fence.ownerKey !== key
+        || fence.busy || fence.externalDirty || fence.executionDirty || !fence.canMutate || isBusy?.()
+        || original !== JSON.stringify(draftRef.current)) return;
+      if (localStorage.getItem(key) !== persistedDraftRaw.current) throw new Error('其他页面已更新本机图草稿，未替换当前输入；请重新打开后核对。');
+      timelineEditor.resetForm(); invalidateCandidate(); selectedEpoch.current++; setBase(record);
+      draftRef.current = structuredClone(snapshot.definition); setDraft(draftRef.current); setSelected([]); setPast([]); setFuture([]);
+      createRequest.current = snapshot.request_id; setBlocked(snapshot.uncertain); setSourcePort(''); setTargetPort('');
+      setLocalRecovery(undefined); setRecoveryError(''); reportSelection.current?.({ graphId: record?.id });
+      setNotice('已恢复本机文本图草稿。尚未保存到服务端，也未创建或执行运行。');
+    } catch (value) {
+      if (current() && epoch === recoveryEpoch.current) setRecoveryError(value instanceof ApiError
+        ? apiErrorView(value, '当前图无法重新授权读取，本机草稿保持。').message : value instanceof Error ? value.message : '本机草稿未恢复。');
+    } finally { if (current() && epoch === recoveryEpoch.current) setRecoveryBusy(false); }
+  }
+  function discardLocalRecovery() {
+    if (!current() || locked() || !ownerKey || !draftOwnerCurrent) return;
+    try {
+      if (localStorage.getItem(ownerKey) !== persistedDraftRaw.current) { setDraftStorageNotice('其他页面已更新本机图草稿，未删除未经核对的新缓存。'); return; }
+      localStorage.removeItem(ownerKey); persistedDraftRaw.current = null; setLocalRecovery(undefined); setRecoveryError(''); setDraftStorageNotice('');
+    }
+    catch { setDraftStorageNotice('本机图草稿未能删除，原缓存保持。'); }
+  }
+
   // Retired owners expose only text changed locally, never saved identities, bindings or receipts.
   const retired = !current();
   const localTextFields = { text: '作者输入文本', result: '手工处理结果', note: '可选导演备注', instruction: '本地模型写作指令', prompt: '媒体提示词', license_note: '来源与授权说明' };
@@ -368,6 +465,8 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const retainedTitle = !base || draft.title !== base.definition.title ? draft.title : blankGraph().title;
   return {
     retired, retainedText, retainedTitle,
+    localRecovery: current() && !denied ? localRecovery : undefined, recoveryBusy, recoveryError,
+    draftStorageNotice, draftSavedAt, draftOwnerCurrent, draftRecoverable, canRecoverDraft, recoverLocalDraft, discardLocalRecovery,
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true, automatic_video_dispatch: false } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,

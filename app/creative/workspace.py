@@ -71,9 +71,17 @@ class IndependentWorkspaceService:
 
     def project(self, nid, scope):
         self.store.key(nid, scope)
-        project = self.novels.get(nid)
-        row = self._preferences(self.store.read(nid, scope))
+        # Scope -> owner is the established lease order. Capture the overview
+        # and opaque marker together so durable client drafts cannot rebind a
+        # reused public ID to a different project incarnation.
+        document = self.store.read(nid, scope)
+        with self.store.owner_lease(nid) as incarnation:
+            project = self.novels.get(nid)
+            row = self._preferences(document)
+            if row is not None and row.get(BINDING) != incarnation:
+                row = None
         return {"project": {"id": project["id"], "title": project["title"],
+                            "incarnation": incarnation,
                             "entry_kind": row.get("entry_kind", "LEGACY") if row else "LEGACY"},
                 "preferences": self._preference_view(row),
                 "capabilities": {"manual_import": True, "manual_export": True,

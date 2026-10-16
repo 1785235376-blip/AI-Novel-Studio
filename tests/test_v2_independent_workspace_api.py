@@ -40,7 +40,8 @@ def test_blank_project_real_import_annotation_reopen_export_without_chapter(clie
         assert created["studio_ready"] and not created["requires_scope_selection"]
         assert checked(e.client.get(e.prefix + f"/novels/{nid}/chapters")) == []
         project = checked(e.client.get(base))
-        assert project["project"] == {"id": nid, "title": created["title"], "entry_kind": "NEUTRAL_STUDIO"}
+        assert project["project"] == {"id": nid, "title": created["title"], "entry_kind": "NEUTRAL_STUDIO",
+                                     "incarnation": e.studio.store.incarnation(nid)}
         assert project["capabilities"]["model_required"] is False
         assert project["capabilities"]["chapter_required"] is False
         assert project["capabilities"]["can_mutate"] is True

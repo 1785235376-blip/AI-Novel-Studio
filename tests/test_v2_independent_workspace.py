@@ -200,7 +200,8 @@ def assert_public(value):
 def test_blank_original_owner_defaults_have_zero_chapters_and_no_hidden_jobs(rig):
     from app.creative.workspace import PREFERENCES
     view = rig.service.project(rig.nid, rig.scope)
-    assert view["project"] == {"id": rig.nid, "title": "Blank independent studio", "entry_kind": "LEGACY"}
+    assert view["project"] == {"id": rig.nid, "title": "Blank independent studio", "entry_kind": "LEGACY",
+                               "incarnation": rig.store.incarnation(rig.nid)}
     assert view["preferences"] == {"version": 0, "intents": [], "preset": "BLANK", "custom_intent": ""}
     assert view["capabilities"]["chapter_required"] is False
     assert view["capabilities"]["model_required"] is False
