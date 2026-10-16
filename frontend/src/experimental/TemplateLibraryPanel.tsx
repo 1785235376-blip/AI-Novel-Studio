@@ -1,4 +1,5 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { PersonalSkillBriefComposer } from './PersonalSkillBriefComposer';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import type { WorkspaceNavigation } from './uxClient';
@@ -28,6 +29,7 @@ function LibraryBody({ client, onNavigate }: { client: ExperimentalClient; onNav
   const api = useMemo(() => templateLibraryClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]);
   const copies = useResource(signal => api.instances(signal), [api]);
+  const [compose, setCompose] = useState(false);
   const [selected, setSelected] = useState(''), [type, setType] = useState(''), [favorites, setFavorites] = useState(false);
   const [raw, setRaw] = useState(''), [preview, setPreview] = useState<TemplatePreview>();
   const [copy, setCopy] = useState<TemplateInstance>(), [edit, setEdit] = useState('');
@@ -46,6 +48,8 @@ function LibraryBody({ client, onNavigate }: { client: ExperimentalClient; onNav
   return <section className="experimental-section" aria-label="本地模板库">
     <div className="experimental-actions"><h3>本地模板库</h3><Badge>离线 · 声明式数据</Badge><Button disabled={action.busy} onClick={() => { catalog.reload(); copies.reload(); setPreview(undefined); setCompare(undefined); }}>刷新模板目录</Button></div>
     <p>模板安装不运行脚本、不启用工具或模型。只接收不超过 128 KB 的 JSON 目录包；ZIP、外部图片、路径与远程下载均不支持。许可是提供方声明，尚未进行商业法律审核。</p>
+    <Button disabled={action.busy} onClick={() => { importEpoch.current++; setPreview(undefined); setCompose(value => !value); }}>{compose ? '收起个人简报' : '编写个人写作简报'}</Button>
+    <div hidden={!compose}><PersonalSkillBriefComposer active={compose} busy={action.busy} onInvalidate={() => { importEpoch.current++; setPreview(undefined); }} onClose={() => setCompose(false)} onPrepare={value => { importEpoch.current++; setRaw(value); setPreview(undefined); }} /></div>
     <Panel title="离线目录与预览">
       <ResourceState loading={catalog.loading} error={catalog.error} empty={!allEntries.length} />
       <div className="experimental-grid"><Field label="模板类型"><select value={type} onChange={e => { setType(e.target.value); setSelected(''); }}><option value="">全部类型</option>{allTypes.map(t => <option key={t} value={t}>{labels[t] || t}</option>)}</select></Field><label><input type="checkbox" checked={favorites} onChange={e => { setFavorites(e.target.checked); setSelected(''); }} />只看收藏</label></div>
