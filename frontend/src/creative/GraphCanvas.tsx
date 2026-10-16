@@ -6,10 +6,10 @@ import { GRAPH_NODE_LABELS } from './studioGraphLabels';
 import type { StudioGraphDefinition, StudioGraphPosition } from './studioGraphTypes';
 import {
   GRAPH_MAX_ZOOM, GRAPH_MIN_ZOOM, GRAPH_NODE_HEADER_HEIGHT, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT,
-  clampGraphPosition, graphEdgePath, graphNodeHeight, graphNodesInScreenRect,
+  alignGraphNodes, clampGraphPosition, graphEdgePath, graphNodeHeight, graphNodesInScreenRect,
   graphSelectionRect, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
-import type { GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
+import type { GraphAlignment, GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
 import { createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap } from './graphCanvasPresentation';
 import './graphCanvas.css';
 
@@ -61,7 +61,13 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const [tool, setTool] = useState<'select' | 'pan'>('select');
   const [activeGesture, setActiveGesture] = useState<Gesture['kind'] | null>(null);
   const descriptionId = useId(), markerId = useId().replace(/:/g, '');
-  const visible = preview?.source === definition ? preview.value : definition;
+  const [alignment, setAlignment] = useState<{ source: StudioGraphDefinition; value: StudioGraphDefinition;
+    owner: GraphCanvasProps['interactionKey']; ids: string; mode: GraphAlignment } | null>(null);
+  const selectionKey = JSON.stringify(selectedNodeIds);
+  const validAlignment = alignment && alignment.source === definition && alignment.owner === interactionKey
+    && alignment.ids === selectionKey && !blocked && !activeGesture ? alignment : null;
+  useEffect(() => { setAlignment(null); }, [definition, interactionKey, selectionKey, blocked]);
+  const visible = validAlignment?.value || (preview?.source === definition ? preview.value : definition);
   const displayIndex = useMemo(() => createGraphDisplayIndex(visible.nodes, visible.edges, nodeDefinitions), [visible.nodes, visible.edges, nodeDefinitions]);
   const allNodeIds = useMemo(() => new Set(definition.nodes.map(node => node.id)), [definition.nodes]);
   const selected = selectedNodeIds.filter(id => allNodeIds.has(id));
@@ -151,6 +157,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const startGesture = (event: PointerEvent, kind: Gesture['kind'], ids: string[] = selected) => {
     if (gesture.current || busy || (blocked && kind !== 'marquee')) return;
     event.preventDefault();
+    setAlignment(null);
     const rect = viewportRef.current!.getBoundingClientRect();
     gesture.current = { kind, pointerId: event.pointerId, source: definition, owner: interactionKey,
       start: kind === 'marquee' ? { x: event.clientX - rect.left, y: event.clientY - rect.top } : { x: event.clientX, y: event.clientY },
@@ -217,7 +224,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (isGraphEditableTarget(event.target)) return;
-    if (event.key === 'Escape') { event.preventDefault(); if (gesture.current) cancelGesture(); else onSelectionChange([]); return; }
+    if (event.key === 'Escape') { event.preventDefault(); if (validAlignment) { setAlignment(null); return; } if (gesture.current) cancelGesture(); else onSelectionChange([]); return; }
     if (busy) return;
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') { event.preventDefault(); onSelectionChange(definition.nodes.map(node => node.id)); return; }
     if (blocked || gesture.current) return;
@@ -248,10 +255,31 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
           x: clampGraphPosition(viewportSize.width / 2 - (node.position.x + GRAPH_NODE_WIDTH / 2) * definition.viewport.zoom),
           y: clampGraphPosition(viewportSize.height / 2 - (node.position.y + graphNodeHeight(displayIndex.descriptors.get(node.definition_id)) / 2) * definition.viewport.zoom) } }, true);
       }}><option value="">选择节点</option>{nodeOptions}</select></label>
-      <Button type="button" variant="ghost" aria-label="显示小地图" aria-pressed={showMiniMap} onClick={() => setShowMiniMap(value => !value)}>小地图</Button>
+      <Button type="button" variant="ghost" aria-label="显示小地图" aria-pressed={showMiniMap} onKeyDown={event => event.stopPropagation()} onClick={() => setShowMiniMap(value => !value)}>小地图</Button>
       {readonly && <Badge>只读</Badge>}
       <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || !removable.length} title={selected.length && !removable.length ? '已保存的资产引用只能移动或停用' : '删除所选节点及其连接'} onClick={deleteSelected}><Trash2 size={16} /></Button>
     </header>
+    <div className="graph-canvas__toolbar" role="group" aria-label="所选节点对齐" onKeyDown={event => {
+      event.stopPropagation();
+      if (event.key === 'Escape') { event.preventDefault(); setAlignment(null); }
+    }}>
+      {([['left', '左对齐'], ['center', '水平中心对齐'], ['top', '顶对齐'], ['distribute', '水平等距分布']] as const).map(([mode, label]) =>
+        <Button key={mode} type="button" variant="ghost" disabled={blocked || !!activeGesture || selected.length < (mode === 'distribute' ? 3 : 2)}
+          onClick={() => {
+            if (blocked || gesture.current) return;
+            const value = alignGraphNodes(definition, selected, mode);
+            setAlignment({ source: definition, value, owner: interactionKey, ids: selectionKey, mode });
+          }}>预览{label}</Button>)}
+      {validAlignment && <>
+        <span role="status">对齐预览：移动 {validAlignment.value.nodes.filter((node, index) => node !== definition.nodes[index]).length} 个节点；仅修改位置，应用后仍需保存。</span>
+        <Button type="button" disabled={validAlignment.value === definition} onClick={() => {
+          if (!validAlignment || blocked || gesture.current || validAlignment.value === definition) return;
+          setAlignment(null); wheelUntil.current = 0;
+          onDefinitionChange(validAlignment.value, true);
+        }}>应用所选节点对齐</Button>
+        <Button type="button" variant="ghost" onClick={() => setAlignment(null)}>取消对齐预览</Button>
+      </>}
+    </div>
     <div ref={viewportRef} className={`graph-canvas__viewport${tool === 'pan' ? ' is-pan-tool' : ''}${activeGesture === 'pan' ? ' is-panning' : ''}`}
       tabIndex={0} role="group" aria-label="节点图交互区域" aria-describedby={descriptionId}
       onFocusCapture={event => setFocusedNode((event.target as Element).closest('[data-graph-node-id]')?.getAttribute('data-graph-node-id') || null)}

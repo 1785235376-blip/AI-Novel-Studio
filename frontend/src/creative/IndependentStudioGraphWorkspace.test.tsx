@@ -120,6 +120,36 @@ describe('independent studio graph content integration', () => {
     expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('未保存文字保持');
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
   });
+  it('applies selected alignment with one undo, preserves dirty text, and saves/reopens original positions', async () => {
+    saved.definition = { ...blankGraph(), viewport: { x: 123, y: -45, zoom: 1.4 }, nodes: [
+      { id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: 500, y: 400 }, parameters: { text: '原文字' } },
+      { id: 'director', definition_id: 'director_note', definition_version: 1, enabled: false, position: { x: -200, y: 300 }, parameters: { note: '保留导演备注' } },
+    ] };
+    const before = structuredClone(saved.definition), mounted = mount(); await enter(); await open();
+    fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+    fireEvent.change(screen.getByLabelText('作者输入文本'), { target: { value: '未保存文字保持' } });
+    const edited = { ...before, nodes: before.nodes.map(row => row.id === 'text' ? { ...row, parameters: { text: '未保存文字保持' } } : row) };
+    const expected = { ...edited, nodes: edited.nodes.map(row => ({ ...row, position: { ...row.position, x: -200 } })) };
+    fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · director$/ }), { shiftKey: true });
+    click('预览左对齐');
+    expect(client.graphs.save).not.toHaveBeenCalled();
+    click('应用所选节点对齐');
+    fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+    expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('-200');
+    expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('未保存文字保持');
+    expect(client.graphs.save).not.toHaveBeenCalled();
+    click('撤销图编辑'); expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('500');
+    expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('未保存文字保持');
+    click('重做图编辑'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    expect(client.graphs.save).toHaveBeenCalledWith('saved-graph', { expected_version: 1, definition: expected });
+    expect(saved.definition).toEqual(expected);
+    mounted.unmount(); mount(); await enter(); await open();
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(123px, -45px) scale(1.4)');
+    fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+    expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('-200');
+    expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('未保存文字保持');
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
   it('saves MiniMap camera via original history while preserving dirty author text and reopens it', async () => {
     vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, toJSON: () => ({}) });
     saved.definition = { ...blankGraph(), nodes: [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: 0, y: 0 }, parameters: { text: '原文字' } }] };

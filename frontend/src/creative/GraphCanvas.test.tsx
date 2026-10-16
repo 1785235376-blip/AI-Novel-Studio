@@ -301,3 +301,46 @@ describe('mounted MiniMap navigation', () => {
     expect(document.querySelector('.graph-canvas__minimap-nodes')?.getAttribute('d')).toBe('');
   });
 });
+
+
+describe('selected-node alignment preview', () => {
+  it('previews live geometry and edges, cancels without writes, then applies once', () => {
+    const { changes } = setup({ selectedNodeIds: ['source', 'prepare'] });
+    const beforePath = edgePath();
+    fireEvent.click(screen.getByText('预览左对齐'));
+    expect(position('prepare').left).toBe('24px'); expect(edgePath()).not.toBe(beforePath);
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText('取消对齐预览'));
+    expect(position('prepare').left).toBe('480px'); expect(edgePath()).toBe(beforePath);
+    fireEvent.click(screen.getByText('预览顶对齐'));
+    fireEvent.click(screen.getByText('应用所选节点对齐'));
+    expect(changes).toHaveBeenCalledTimes(1); expect(changes.mock.calls[0][1]).toBe(true);
+    expect(changes.mock.calls[0][0].nodes[1].position).toEqual({ x: 480, y: 24 });
+    fireEvent.click(screen.getByText('预览顶对齐'));
+    expect((screen.getByText('应用所选节点对齐') as HTMLButtonElement).disabled).toBe(true);
+  });
+  it.each(['selection', 'definition', 'owner', 'readonly', 'busy'])('invalidates a preview on %s changes without resurrecting it', change => {
+    const options = { selectedNodeIds: ['source', 'prepare'], interactionKey: 'owner' };
+    const { changes, rerender } = setup(options);
+    fireEvent.click(screen.getByText('预览左对齐'));
+    rerender(change === 'selection' ? { selectedNodeIds: ['source'] } : change === 'definition' ? { definition: initial() }
+      : change === 'owner' ? { interactionKey: 'new' } : { [change]: true });
+    expect(screen.queryByText('应用所选节点对齐')).toBeNull();
+    rerender(options); expect(screen.queryByText('应用所选节点对齐')).toBeNull(); expect(changes).not.toHaveBeenCalled();
+  });
+  it('keeps control keys from nudging or deleting selected nodes; escape cancels preview', () => {
+    const { changes, selections } = setup({ selectedNodeIds: ['source', 'prepare'] });
+    const toggle = screen.getByRole('button', { name: '显示小地图' });
+    for (const key of ['ArrowRight', 'Delete', 'Backspace', 'Escape']) fireEvent.keyDown(toggle, { key });
+    fireEvent.click(screen.getByText('预览左对齐'));
+    const apply = screen.getByText('应用所选节点对齐');
+    for (const key of ['ArrowDown', 'Delete', 'Backspace']) fireEvent.keyDown(apply, { key });
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+    fireEvent.keyDown(apply, { key: 'Escape' });
+    expect(screen.queryByText('应用所选节点对齐')).toBeNull(); expect(position('prepare').left).toBe('480px');
+  });
+  it.each([{ readonly: true }, { busy: true }])('does not offer mutation when blocked %j', options => {
+    setup({ ...options, selectedNodeIds: ['source', 'prepare'] });
+    expect((screen.getByText('预览左对齐') as HTMLButtonElement).disabled).toBe(true);
+  });
+});

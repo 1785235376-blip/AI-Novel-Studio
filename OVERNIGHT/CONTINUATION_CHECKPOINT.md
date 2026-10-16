@@ -37,3 +37,12 @@ Baseline `3d089295947e6878c1b9eb0957fac6ac4bf1c3aa`; containing commit identifie
 181 targeted mocked UI/geometry tests pass, plus five original File camera/CAS tests and 30 PUBLIC contracts. tsc -b/Vite/token/discovery and 487-file PUBLIC closure pass. No browser/runtime workaround, FPS/memory, Windows/GPU/provider, PG/security or full RC was attempted. P0 remains BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled. No push/hosted CI because cost remains unknown.
 
 Handoff: parent independent review before further tracked edits. Next bounded candidate is original-owner grouping/collapse/annotation presentation; full LOD and unsaved recovery remain open. Do not duplicate saved camera/position persistence or increase execution budgets. Preserve all existing local receipts, user-machine restrictions and denial boundaries.
+
+
+## Selected alignment continuation — 2026-10-16
+
+Baseline `e07b5b0799aab9a3cb252e2cbab0a9e7fcfd4590`; containing commit identifies delivery. Audit found whole-graph auto-layout already mounted, while selected alignment/distribution and snap controls were missing. GraphCanvas now previews left/center/top alignment and horizontal distribution, then explicitly applies one original history update; Save/reopen remain original-owner operations. Selection/definition/owner replacement and blocked transitions discard previews. The MiniMap visibility toggle now isolates movement/deletion keys. Report/evidence: `docs/v2/canvas-selected-alignment-20261016.md` / `.json`.
+
+194 selected mock UI/geometry tests, one original nonsecurity File presentation reopen/CAS test, 30 PUBLIC contracts, tsc/Vite/token/discovery and 487-file source closure pass. No browser/visual/runtime workaround, PG/P0, GPU/provider/Windows/full RC was attempted. No push or hosted CI; cost remains unknown. P0 remains BLOCKED, R3-GATE HOLD; Prompt Adoption writes disabled.
+
+Handoff: parent independent review before further tracked edits. Next bounded candidate is grid/snap or original-owner grouping/collapse/annotations, after auditing existing contracts. No second store or DAG/coordinate-budget increase. Preserve historical receipts and all user-machine/cost/denial boundaries.

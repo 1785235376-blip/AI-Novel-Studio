@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   GRAPH_NODE_HEADER_HEIGHT, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT, GRAPH_POSITION_LIMIT,
-  clampGraphZoom, graphEdgePath, graphNodeHeight, graphNodesInScreenRect, graphPortPosition,
+  alignGraphNodes, clampGraphZoom, graphEdgePath, graphNodeHeight, graphNodesInScreenRect, graphPortPosition,
   graphScreenToWorld, graphSelectionRect, graphWorldToScreen, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
 import type { GraphCanvasNodeDefinition } from './graphCanvasGeometry';
@@ -88,5 +88,37 @@ describe('typed graph domain geometry', () => {
     editor.setAttribute('contenteditable', 'false'); expect(isGraphEditableTarget(child)).toBe(false);
     editor.setAttribute('role', 'textbox'); expect(isGraphEditableTarget(child)).toBe(true);
     expect(isGraphEditableTarget(null)).toBe(false);
+  });
+});
+
+
+describe('selected alignment geometry', () => {
+  it('aligns left, center and top in world coordinates without changing other data', () => {
+    const before = graph(); before.nodes.push(node('outside', -800, -900));
+    before.nodes[0].parameters = { text: 'dirty', document_snapshot: { id: 'pin', version: 7, digest: 'a'.repeat(64) } };
+    const snapshot = structuredClone(before);
+    for (const [mode, expected] of [['left', [{ x: 10, y: 20 }, { x: 10, y: 400 }]], ['center', [{ x: 355, y: 20 }, { x: 355, y: 400 }]], ['top', [{ x: 10, y: 20 }, { x: 700, y: 20 }]]] as const) {
+      const after = alignGraphNodes(before, ['two', 'one'], mode);
+      expect(after.nodes.slice(0, 2).map(n => n.position)).toEqual(expected);
+      expect(after.nodes[2]).toBe(before.nodes[2]); expect(after.edges).toBe(before.edges); expect(after.viewport).toBe(before.viewport);
+      expect(after.nodes[0].parameters).toBe(before.nodes[0].parameters);
+    }
+    expect(before).toEqual(snapshot);
+  });
+  it('distributes deterministically while preserving endpoints, y and source order', () => {
+    const before = graph(); before.nodes = [node('right', 100000, 5), node('middle', -90000, 6), node('left', -100000, 7)];
+    const after = alignGraphNodes(before, ['middle', 'left', 'right'], 'distribute');
+    expect(after.nodes.map(n => [n.id, n.position])).toEqual([['right', { x: 100000, y: 5 }], ['middle', { x: 0, y: 6 }], ['left', { x: -100000, y: 7 }]]);
+    expect(alignGraphNodes(after, ['left', 'middle', 'right'], 'distribute')).toBe(after);
+  });
+  it('rejects invalid geometry, missing selection and insufficient counts without repair', () => {
+    const before = graph();
+    expect(alignGraphNodes(before, ['one'], 'left')).toBe(before);
+    expect(alignGraphNodes(before, ['one', 'two'], 'distribute')).toBe(before);
+    expect(alignGraphNodes(before, ['one', 'two', 'stale'], 'left')).toBe(before);
+    for (const value of [NaN, Infinity, -Infinity, 100001, -100001]) {
+      const bad = graph(); bad.nodes[0].position.x = value;
+      expect(alignGraphNodes(bad, ['one', 'two'], 'center')).toBe(bad);
+    }
   });
 });

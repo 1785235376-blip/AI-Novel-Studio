@@ -89,3 +89,28 @@ export function removeGraphNodes(definition: StudioGraphDefinition, ids: readonl
 export function isGraphEditableTarget(target: EventTarget | null): boolean {
   return target instanceof Element && Boolean(target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'));
 }
+
+export type GraphAlignment = 'left' | 'center' | 'top' | 'distribute';
+
+/** Selected presentation only. Reject invalid inputs rather than silently repairing stored geometry. */
+export function alignGraphNodes(definition: StudioGraphDefinition, ids: readonly string[], mode: GraphAlignment): StudioGraphDefinition {
+  const selected = new Set(ids), nodes = definition.nodes.filter(node => selected.has(node.id));
+  if (nodes.length !== selected.size || nodes.length < (mode === 'distribute' ? 3 : 2)
+    || nodes.some(node => !Number.isFinite(node.position.x) || !Number.isFinite(node.position.y)
+      || Math.abs(node.position.x) > GRAPH_POSITION_LIMIT || Math.abs(node.position.y) > GRAPH_POSITION_LIMIT)) return definition;
+  const xs = nodes.map(node => node.position.x), ys = nodes.map(node => node.position.y);
+  const left = Math.min(...xs), right = Math.max(...xs), top = Math.min(...ys);
+  // All rendered cards have the same width, so equal left-coordinate spacing also gives equal gaps.
+  const ordered = [...nodes].sort((a, b) => a.position.x - b.position.x || a.id.localeCompare(b.id));
+  const distributed = new Map(ordered.map((node, index) => [node.id, left + (right - left) * index / (nodes.length - 1)]));
+  let changed = false;
+  const next = definition.nodes.map(node => {
+    if (!selected.has(node.id)) return node;
+    const position = mode === 'top' ? { ...node.position, y: top } : { ...node.position,
+      x: mode === 'left' ? left : mode === 'center' ? (left + right) / 2 : distributed.get(node.id)! };
+    if (position.x === node.position.x && position.y === node.position.y) return node;
+    changed = true;
+    return { ...node, position };
+  });
+  return changed ? { ...definition, nodes: next } : definition;
+}
