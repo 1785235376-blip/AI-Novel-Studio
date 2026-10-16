@@ -1,0 +1,101 @@
+{
+  "baseline_commit": "9400d21cca89d53ab64b02ed457c20aa105540c6",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/studioGraphClient.test.ts src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T09:20:36.742214+00:00",
+      "finished_utc": "2026-10-16T09:20:56.521423+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-search-final-ui-r3.json",
+      "receipt_sha256": "2346cd8f6ff7b1f5924deaae75d97470405761e8ac6aed36798591d66603c32a",
+      "log": "docs/delivery/v2-development/canvas-search-final-ui-r3.log",
+      "log_sha256": "dbf40b1afffb9e9499b5e314197fec1dc7a073b3eba6d7b71c2437c6973c0d66"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-search-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T09:19:38.947057+00:00",
+      "finished_utc": "2026-10-16T09:19:47.408137+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-search-file-public.json",
+      "receipt_sha256": "6dff988c4f319569ad550e3461fc2d18de494bff8c1b27c458fc48416c9c2ed4",
+      "log": "docs/delivery/v2-development/canvas-search-file-public.log",
+      "log_sha256": "0881b64f238eccbf0ab0890b8ac77294d23a1e0ee6e13fb0f2a49a8a2d69bc51"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T09:20:20.700650+00:00",
+      "finished_utc": "2026-10-16T09:20:55.745272+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-search-final-build-r2.json",
+      "receipt_sha256": "5eeaec5a2685f8c74e554b360d2284e673dd5eed7597599712e6ba4d9f37ccea",
+      "log": "docs/delivery/v2-development/canvas-search-final-build-r2.log",
+      "log_sha256": "7686d89dc2b57d03abf1c0088f6cef7e8b08729bd0278bc93fa105d020205be3"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for (const p of [\"frontend/src/creative/GraphNodeNavigator.tsx\", \"frontend/src/creative/GraphCanvas.tsx\", \"frontend/src/creative/graphCanvas.css\"]) if (/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Search controls reuse shared button and design tokens; scoped color guard PASS; browser visual acceptance NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T09:20:22.205334+00:00",
+      "finished_utc": "2026-10-16T09:20:22.275096+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-search-token-scope.json",
+      "receipt_sha256": "5e9ec05958a6ef2c2af660573b9a6b4d1e53bcc47006ec93613c0dfe18e4e7b3",
+      "log": "docs/delivery/v2-development/canvas-search-token-scope.log",
+      "log_sha256": "19f2746759a63199ad11a5a9c5654528b2898370be144a42898727eff7f3e205"
+    }
+  ],
+  "frontend_tests": 314,
+  "file_owner_tests": 1,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "display_fixture": {
+    "nodes": 1200,
+    "maximum_search_options": 20,
+    "whole_jsdom_test_ms": 704,
+    "browser_fps_or_memory_claim": false
+  },
+  "source_sha256": {
+    "frontend/src/creative/GraphCanvas.tsx": "a56d7a698063186b80304a124d50b5d5968710881d09c7823b25c61ae5c6abf4",
+    "frontend/src/creative/GraphNodeNavigator.tsx": "efd65a20409dfa4577f2daaebd8c9b3a4e73924e041644e3fc7ccf56f10a0324",
+    "frontend/src/creative/GraphCanvas.test.tsx": "d4419b559cc93db924553dc4b9df552c7c4955bfe6893064ca0256da3ef31af7",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "06d8245944bfb5787b408a5495b2879af2ec0e7d6fc72865cc1c3c864bc29791",
+    "frontend/src/creative/graphCanvas.css": "77b6705d5e74e1a1cb60c80615d0198f06579c31cd60af81b7111ae8dc100ef1"
+  },
+  "initial_failures": [
+    "Wrong existing card-width expectation in integrated test",
+    "Pin fixture literal type widened"
+  ],
+  "not_run": [
+    "Browser/visual/native IME/assistive technology/performance",
+    "PG/P0/security",
+    "Windows/GPU/provider/full RC",
+    "push/hosted CI"
+  ]
+}

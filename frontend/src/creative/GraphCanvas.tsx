@@ -11,6 +11,7 @@ import {
 } from './graphCanvasGeometry';
 import type { GraphAlignment, GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
 import { collapseGraphDisplay, createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap, GRAPH_VIEW_OVERSCAN } from './graphCanvasPresentation';
+import { GraphNodeNavigator } from './GraphNodeNavigator';
 import { GraphVisualGroups } from './GraphVisualGroups';
 import './graphCanvas.css';
 
@@ -103,8 +104,6 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   }
   const renderedNodes = visible.nodes.filter(node => display.nodeIds.has(node.id));
   const selectedSet = new Set(selected);
-  // Keep lightweight accessibility entries stable during camera-only updates.
-  const nodeOptions = useMemo(() => definition.nodes.map(node => <option key={node.id} value={node.id}>{displayIndex.descriptors.get(node.definition_id)?.label || GRAPH_NODE_LABELS[node.definition_id] || node.definition_id} · {node.id}</option>), [definition.nodes, displayIndex.descriptors]);
   const edgeDescriptions = useMemo(() => definition.edges.map(edge => <li key={edge.id}>{edge.source_node_id} 输出 {edge.source_port} 连接至 {edge.target_node_id} 输入 {edge.target_port}</li>), [definition.edges]);
   const miniMap = useMemo(() => projectGraphMiniMap(displayIndex, visible.viewport, viewportSize), [displayIndex, visible.viewport, viewportSize]);
   const miniMapPaths = ['', ''];
@@ -275,19 +274,21 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       <output aria-label="节点图缩放">{Math.round(visible.viewport.zoom * 100)}%</output>
       <Button type="button" variant="ghost" aria-label="放大节点图" disabled={blocked || visible.viewport.zoom >= GRAPH_MAX_ZOOM} onClick={() => zoomBy(1.2)}><ZoomIn size={16} /></Button>
       <span className="graph-canvas__count" role="status">{selected.length ? `已选 ${selected.length} 个节点` : `${definition.nodes.length} 个节点 · ${definition.edges.length} 条连接`}</span>
-      <label className="graph-canvas__navigator">节点目录<select aria-label="选择图节点" value="" disabled={busy} onChange={event => {
-        if (busy || gesture.current) return;
-        const node = visible.nodes.find(item => item.id === event.target.value);
-        if (!node) return;
-        onSelectionChange([node.id]);
-        if (!blocked && viewportSize) onDefinitionChange({ ...definition, viewport: { ...definition.viewport,
-          x: clampGraphPosition(viewportSize.width / 2 - (node.position.x + GRAPH_NODE_WIDTH / 2) * definition.viewport.zoom),
-          y: clampGraphPosition(viewportSize.height / 2 - (node.position.y + graphNodeHeight(displayIndex.descriptors.get(node.definition_id)) / 2) * definition.viewport.zoom) } }, true);
-      }}><option value="">选择节点</option>{nodeOptions}</select></label>
       <Button type="button" variant="ghost" aria-label="显示小地图" aria-pressed={showMiniMap} onKeyDown={event => event.stopPropagation()} onClick={() => setShowMiniMap(value => !value)}>小地图</Button>
       {readonly && <Badge>只读</Badge>}
       <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || !removable.length} title={selected.length && !removable.length ? '已保存的资产引用只能移动或停用' : '删除所选节点及其连接'} onClick={deleteSelected}><Trash2 size={16} /></Button>
     </header>
+    <GraphNodeNavigator nodes={definition.nodes} definitions={nodeDefinitions} owner={interactionKey}
+      busy={busy || !!activeGesture} readonly={readonly} onNavigate={id => {
+        if (busy || gesture.current) return;
+        const node = definition.nodes.find(item => item.id === id);
+        if (!node) return;
+        setAlignment(null);
+        onSelectionChange([node.id]);
+        if (!blocked && viewportSize) onDefinitionChange({ ...definition, viewport: { ...definition.viewport,
+          x: clampGraphPosition(viewportSize.width / 2 - (node.position.x + GRAPH_NODE_WIDTH / 2) * definition.viewport.zoom),
+          y: clampGraphPosition(viewportSize.height / 2 - (node.position.y + graphNodeHeight(displayIndex.descriptors.get(node.definition_id)) / 2) * definition.viewport.zoom) } }, true);
+      }} />
     <GraphVisualGroups definition={definition} selected={selected} blocked={blocked || !!activeGesture} interactionKey={interactionKey}
       onChange={onDefinitionChange} onSelect={onSelectionChange} />
     <div className="graph-canvas__annotation" onKeyDown={event => event.stopPropagation()}>

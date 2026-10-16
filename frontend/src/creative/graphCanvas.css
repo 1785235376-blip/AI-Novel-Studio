@@ -67,3 +67,5 @@
 
 .graph-canvas__group-collapsed{background:var(--color-bg-surface)}
 .graph-canvas__group-collapsed .graph-canvas__help{border:0;overflow-wrap:anywhere}
+.graph-canvas__navigation-results{display:grid;gap:var(--space-1);max-height:320px;overflow:auto}
+.graph-canvas__navigation-results [aria-selected=true]{background:var(--color-selection-bg);border-color:var(--color-selection-border)}

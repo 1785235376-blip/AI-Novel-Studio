@@ -246,6 +246,31 @@ describe('independent studio graph content integration', () => {
     expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-200px, 0px)');
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
   });
+  it('searches current nodes without dispatch, then saves/reopens explicit camera navigation with dirty text and exact pins', async () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, toJSON: () => ({}) });
+    const pin = { asset_id: 'pinned-image', version: 3, digest, kind: 'image' as const };
+    saved.definition = { ...blankGraph(), nodes: [
+      { id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: 0, y: 0 }, parameters: { text: '原文字' } },
+      { id: 'ref', definition_id: 'asset_reference', definition_version: 1, enabled: true, position: { x: 5000, y: 0 }, parameters: pin },
+    ] };
+    const mounted = mount(); await enter(); await open();
+    fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+    fireEvent.change(screen.getByLabelText('作者输入文本'), { target: { value: '查找保持未保存文字' } });
+    click('查找图中节点');
+    const search = screen.getByRole('combobox', { name: '查找图中节点' });
+    fireEvent.change(search, { target: { value: 'ref' } });
+    expect(client.graphs.save).not.toHaveBeenCalled(); expect(client.graphs.createRun).not.toHaveBeenCalled();
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(0px, 0px)');
+    fireEvent.keyDown(search, { key: 'Enter' });
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-4760px,');
+    click('撤销图编辑'); expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(0px, 0px)');
+    click('重做图编辑'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    expect(saved.definition.nodes[0].parameters.text).toBe('查找保持未保存文字');
+    expect(saved.definition.nodes[1].parameters).toEqual(pin);
+    mounted.unmount(); mount(); await enter(); await open();
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-4760px,');
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
   it('restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent', async () => {
     const first = { ...record(), definition: { ...blankGraph(), viewport: { x: 10, y: 20, zoom: 1.2 }, nodes: [
       { id: 'text', definition_id: 'text_input' as const, definition_version: 1 as const, enabled: true, position: { x: 500, y: 400 }, parameters: { text: '图 A' } },

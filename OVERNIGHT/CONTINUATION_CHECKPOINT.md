@@ -90,3 +90,12 @@ Baseline `0fb3548b96ebe7cad39f7d746c6f335b0d6b60fb`; containing commit identifie
 311 targeted mocked UI/geometry tests, 32 pure backend, three nonsecurity File and 30 PUBLIC checks pass; tsc/Vite/discovery/token/pointer policy/487-file closure pass. Initial null-guard regression was caught and fixed; failed receipts remain. No browser/runtime workaround, PG/P0/security, Windows/GPU/provider/user-computer/full RC was attempted. P0 stays BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled; no push/hosted CI because cost is unknown.
 
 Handoff: parent review before next tracked feature work. Collapse is not persisted; nested groups, boundary-connection routing, durable unsaved recovery and full large-display LOD remain open. Preserve all prior evidence and cost/environment/denial boundaries.
+
+
+## Bounded graph-instance search continuation — 2026-10-16
+
+Baseline `9400d21cca89d53ab64b02ed457c20aa105540c6`; containing commit identifies delivery. Audit found existing type-creation search and protected global module-command palette; neither was duplicated. Replaced GraphCanvas flat instance selector with inline label/type/ID search, 20-option pages, explicit select/center through original history, composition-safe keyboard controls, cancel/focus return, owner query reset and folded-member reveal. Existing read-only/busy restrictions, dirty text, exact pins, save/reopen, execution budgets/backend/schema remain unchanged.
+
+314 selected mocked UI/controller/geometry tests, one nonsecurity File camera/CAS and 30 PUBLIC contracts pass; tsc/Vite/discovery/token/scoped-color/487-file closure pass. A mounted 1200-display-instance test bounds search DOM to 20 options; its 704 ms whole-test timing is not browser/FPS/memory evidence. Corrected test-fixture failures and exact final unchanged-source receipts are preserved in `docs/v2/canvas-node-search-20261016.md` / `.json`.
+
+Parent independent review before next tracked edits. Browser/native IME/visual/assistive technology, PG/P0/security, Windows/GPU/provider/user-computer/full RC NOT_RUN. P0 BLOCKED, R3-GATE HOLD, Prompt Adoption writes disabled. No push/hosted CI because cost remains unknown. Full global canvas commands/context menus, nested subcanvases, durable unsaved recovery and large-display browser acceptance remain open; preserve prior receipts and all denial/environment/cost boundaries.

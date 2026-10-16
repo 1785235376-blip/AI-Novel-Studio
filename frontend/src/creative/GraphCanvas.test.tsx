@@ -316,8 +316,10 @@ describe('measured viewport rendering', () => {
   });
   it('offers keyboard-native selection of every offscreen node and centers via existing controlled viewport', () => {
     measure(); const { changes } = setup({ definition: distant() });
-    const navigator = screen.getByRole('combobox', { name: '选择图节点' });
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    const navigator = screen.getByRole('combobox', { name: '查找图中节点' });
     fireEvent.change(navigator, { target: { value: 'prepare' } });
+    fireEvent.keyDown(navigator, { key: 'Enter' });
     expect(prepare().getAttribute('aria-pressed')).toBe('true');
     expect(changes.mock.calls[0][0].viewport.x).toBe(-4760);
     expect(changes.mock.calls[0][0].nodes[1].position.x).toBe(5000);
@@ -325,9 +327,62 @@ describe('measured viewport rendering', () => {
   });
   it('keeps readonly navigation selection nonmutating and disables the directory while busy', () => {
     measure(); const { changes, selections, rerender } = setup({ definition: distant(), readonly: true });
-    fireEvent.change(screen.getByRole('combobox', { name: '选择图节点' }), { target: { value: 'prepare' } });
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    fireEvent.change(screen.getByRole('combobox', { name: '查找图中节点' }), { target: { value: 'prepare' } });
+    fireEvent.keyDown(screen.getByRole('combobox', { name: '查找图中节点' }), { key: 'Enter' });
     expect(selections).toHaveBeenCalledWith(['prepare']); expect(changes).not.toHaveBeenCalled();
-    rerender({ busy: true }); expect((screen.getByRole('combobox', { name: '选择图节点' }) as HTMLSelectElement).disabled).toBe(true);
+    rerender({ busy: true }); expect((screen.getByRole('button', { name: '查找图中节点' }) as HTMLButtonElement).disabled).toBe(true);
+  });
+  it('filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing', () => {
+    measure();
+    const definition = initial();
+    definition.nodes = Array.from({ length: 1200 }, (_, i) => ({ ...definition.nodes[0], id: `display_${i}`, position: { x: i * 400, y: 24 } }));
+    definition.edges = [];
+    const { changes, selections } = setup({ definition });
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    const input = screen.getByRole('combobox', { name: '查找图中节点' });
+    expect(document.activeElement).toBe(input);
+    expect(screen.getAllByRole('option', { selected: false }).length + screen.getAllByRole('option', { selected: true }).length).toBeGreaterThanOrEqual(20);
+    expect(document.querySelectorAll('.graph-canvas__navigation-results [role=option]')).toHaveLength(20);
+    expect(screen.getByRole('region', { name: '图中节点目录' }).textContent).toContain('匹配 1200');
+    fireEvent.keyDown(input, { key: 'PageDown' });
+    expect(document.querySelector('.graph-canvas__navigation-results [role=option]')!.textContent).toContain('display_20');
+    fireEvent.change(input, { target: { value: '文本输入 text_input display_1199' } });
+    expect(document.querySelectorAll('.graph-canvas__navigation-results [role=option]')).toHaveLength(1);
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
+    fireEvent.keyDown(input, { key: 'Escape', keyCode: 229 });
+    expect(screen.getByRole('combobox', { name: '查找图中节点' })).toBe(input);
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(selections).toHaveBeenLastCalledWith(['display_1199']);
+    expect(changes).toHaveBeenCalledTimes(1);
+    expect(changes.mock.calls[0][0].nodes).toBe(definition.nodes);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: '查找图中节点' }));
+  });
+  it('cancels search without selection or writes, resets owner query, and reveals a folded member on confirmation', () => {
+    measure();
+    const definition = { ...initial(), presentation: { groups: [{ id: 'g', name: '场景', node_ids: ['prepare'] }] } };
+    const { changes, selections, rerender } = setup({ definition });
+    fireEvent.click(screen.getByRole('button', { name: '折叠分组 场景' }));
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    let input = screen.getByRole('combobox', { name: '查找图中节点' });
+    fireEvent.change(input, { target: { value: 'missing' } });
+    expect(document.querySelectorAll('.graph-canvas__navigation-results [role=option]')).toHaveLength(0);
+    fireEvent.keyDown(input, { key: 'Escape' });
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    input = screen.getByRole('combobox', { name: '查找图中节点' });
+    fireEvent.change(input, { target: { value: 'prepare' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(prepare().getAttribute('aria-pressed')).toBe('true');
+    expect(document.querySelector('[data-graph-collapsed]')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    fireEvent.change(screen.getByRole('combobox', { name: '查找图中节点' }), { target: { value: 'private' } });
+    rerender({ interactionKey: 'other-graph' });
+    expect(screen.queryByRole('combobox', { name: '查找图中节点' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
+    expect((screen.getByRole('combobox', { name: '查找图中节点' }) as HTMLInputElement).value).toBe('');
   });
   it('selects all offscreen cards and preserves a dragged card until cancellation', () => {
     measure(); const { changes } = setup({ definition: distant() });
