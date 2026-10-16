@@ -259,3 +259,45 @@ describe('measured viewport rendering', () => {
     act(() => notify()); expect(prepare()).toBeTruthy(); unmount(); expect(disconnect).toHaveBeenCalledOnce();
   });
 });
+
+describe('mounted MiniMap navigation', () => {
+  const map = () => screen.getByRole('button', { name: '小地图导航' }) as HTMLButtonElement;
+  function measure() {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+      return { x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: this.classList.contains('graph-canvas__minimap') ? 200 : 800, height: this.classList.contains('graph-canvas__minimap') ? 120 : 400, toJSON: () => ({}) };
+    });
+  }
+  it('uses one camera history update per click or arrow without moving selected nodes or changing zoom', () => {
+    measure(); const definition = initial(); definition.viewport.zoom = 2.5;
+    const { changes, selections } = setup({ definition, selectedNodeIds: ['source'] });
+    map().focus(); fireEvent.keyDown(map(), { key: 'ArrowRight' });
+    expect(changes).toHaveBeenCalledTimes(1);
+    const next = changes.mock.calls[0][0]; expect(next.viewport).toEqual({ x: -200, y: 0, zoom: 2.5 });
+    expect(next.nodes).toBe(definition.nodes); expect(next.edges).toBe(definition.edges); expect(changes.mock.calls[0][1]).toBe(true);
+    expect(document.activeElement).toBe(map()); expect(selections).not.toHaveBeenCalled();
+    fireEvent.click(map(), { detail: 1, clientX: 150, clientY: 80 });
+    expect(changes).toHaveBeenCalledTimes(2); expect(changes.mock.calls[1][0].viewport.zoom).toBe(2.5);
+    expect(document.querySelector('.graph-canvas__minimap-selected')?.getAttribute('d')).not.toBe('');
+    fireEvent.keyDown(map(), { key: 'Delete' }); expect(changes).toHaveBeenCalledTimes(2);
+  });
+  it('hides and restores overview without history changes and blocks read-only, busy and unmeasured navigation', () => {
+    const { changes, rerender } = setup(); expect(map().disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' })); expect(screen.queryByRole('button', { name: '小地图导航' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    measure(); fireEvent(window, new Event('resize')); expect(map().disabled).toBe(false);
+    rerender({ readonly: true }); expect(map().disabled).toBe(true); fireEvent.keyDown(map(), { key: 'ArrowRight' });
+    rerender({ busy: true }); expect(map().disabled).toBe(true); fireEvent.click(map());
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('tracks resize and replacement, clamps camera and ignores composition and active gestures', () => {
+    measure(); const definition = initial(); definition.viewport = { x: -100000, y: 100000, zoom: 0.35 };
+    const { changes, rerender } = setup({ definition });
+    fireEvent.keyDown(map(), { key: 'ArrowRight' }); expect(changes).not.toHaveBeenCalled();
+    fireEvent.keyDown(map(), { key: 'ArrowLeft', isComposing: true }); expect(changes).not.toHaveBeenCalled();
+    down(viewport(), 5, 5); fireEvent.click(map()); expect(changes).not.toHaveBeenCalled(); up();
+    fireEvent.keyDown(map(), { key: 'ArrowLeft', shiftKey: true }); expect(changes.mock.calls[0][0].viewport.x).toBe(-99200);
+    const replacement = initial(); replacement.nodes = []; replacement.edges = [];
+    rerender({ definition: replacement, interactionKey: 'other' }); expect(map().disabled).toBe(true);
+    expect(document.querySelector('.graph-canvas__minimap-nodes')?.getAttribute('d')).toBe('');
+  });
+});

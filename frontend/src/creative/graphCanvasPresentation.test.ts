@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createGraphDisplayIndex, projectGraphDisplay } from './graphCanvasPresentation';
+import { createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap } from './graphCanvasPresentation';
 import type { GraphDisplayNode } from './graphCanvasPresentation';
 import type { GraphCanvasNodeDefinition } from './graphCanvasGeometry';
 const definitions: GraphCanvasNodeDefinition[] = [{ id: 'text_input', inputs: [{ id: 'in', type: 'TEXT' }], outputs: [{ id: 'out', type: 'TEXT' }] }];
@@ -40,5 +40,34 @@ describe('disposable canvas presentation projection', () => {
     expect(projectGraphDisplay(index, viewport, size).nodeIds.size).toBe(4);
     expect(projectGraphDisplay(index, { x: -19500, y: -7200, zoom: 1 }, size).nodeIds.has('999')).toBe(true);
     expect(nodes).toHaveLength(1000); expect(index.cards).toHaveLength(1000);
+  });
+});
+
+describe('MiniMap geometry', () => {
+  it('includes every card, edge extent and the current camera in bounded display coordinates', () => {
+    const index = createGraphDisplayIndex([node('left', -100000), node('right', 100000, 100000)], [edge('reverse', 'right', 'left')], definitions);
+    const map = projectGraphMiniMap(index, { x: -100000, y: 100000, zoom: 0.35 }, size);
+    expect(map.cards).toHaveLength(2);
+    for (const rect of [...map.cards.map(card => card.bounds), map.camera!]) {
+      expect(rect.x).toBeGreaterThanOrEqual(0); expect(rect.y).toBeGreaterThanOrEqual(0);
+      expect(rect.x + rect.width).toBeLessThanOrEqual(200); expect(rect.y + rect.height).toBeLessThanOrEqual(120);
+    }
+    const point = map.worldAt(map.cards[0].bounds.x, map.cards[0].bounds.y);
+    expect(point.x).toBeCloseTo(-100000); expect(point.y).toBeCloseTo(0);
+  });
+  it('handles empty, unmeasured, invalid, huge and resized display geometry without NaN', () => {
+    const index = createGraphDisplayIndex([node('huge', 1e12), node('invalid', Infinity)], [], definitions);
+    const map = projectGraphMiniMap(index, viewport, size);
+    expect(map.cards.map(card => card.id)).toEqual(['huge']);
+    expect(JSON.stringify(map)).not.toMatch(/null/);
+    expect(projectGraphMiniMap(index, viewport, null).camera).toBeNull();
+    expect(projectGraphMiniMap(index, viewport, { width: NaN, height: 0 }).camera).toBeNull();
+    expect(projectGraphMiniMap(index, viewport, { width: 1600, height: 800 }).camera!.width).toBeGreaterThan(map.camera!.width);
+    expect(projectGraphMiniMap(createGraphDisplayIndex([], [], []), viewport, null).cards).toEqual([]);
+  });
+  it('projects 1000 display objects without changing source objects or executable budgets', () => {
+    const index = createGraphDisplayIndex(Array.from({ length: 1000 }, (_, id) => node(String(id), id * 500)), [], definitions);
+    expect(projectGraphMiniMap(index, viewport, size).cards).toHaveLength(1000);
+    expect(index.cards[999].bounds.x).toBe(499500);
   });
 });

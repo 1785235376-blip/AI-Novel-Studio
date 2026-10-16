@@ -29,3 +29,11 @@ Baseline `a5b23eaeca7bc33f98f5d1426a6e37c1d5ecf204`; containing commit identifie
 280 selected mocked UI tests pass; five nonsecurity File persistence/CAS/atomic-write tests and 30 PUBLIC contracts pass; build/token/discovery/487-file closure pass. Exploratory test failures are retained and explained in the report. No full browser/native IME/performance/GPU/provider or security acceptance is claimed. P0 remains BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled; no push/hosted CI because cost remains unknown.
 
 Handoff: independent parent review before next tracked edits. Next bounded work is actual grouping/collapse/annotation presentation or MiniMap, without duplicating saved graph geometry or increasing execution limits. Unsaved crash recovery and large independent display workspace remain open. Existing user-machine/environment/cost/denial restrictions unchanged.
+
+## Bounded MiniMap continuation — 2026-10-16
+
+Baseline `3d089295947e6878c1b9eb0957fac6ac4bf1c3aa`; containing commit identifies this local delivery. Existing GraphCanvas now has a mounted optional MiniMap using its display index, all valid card bounds, selected-node projection and current viewport. Explicit click/keyboard navigation uses original camera/history/save; hide is transient and does not mutate graph data. Existing read-only/busy navigation policy, zoom/coordinate/DAG limits are unchanged. Report and exact evidence: `docs/v2/canvas-minimap-navigation-20261016.md` / `.json`.
+
+181 targeted mocked UI/geometry tests pass, plus five original File camera/CAS tests and 30 PUBLIC contracts. tsc -b/Vite/token/discovery and 487-file PUBLIC closure pass. No browser/runtime workaround, FPS/memory, Windows/GPU/provider, PG/security or full RC was attempted. P0 remains BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled. No push/hosted CI because cost remains unknown.
+
+Handoff: parent independent review before further tracked edits. Next bounded candidate is original-owner grouping/collapse/annotation presentation; full LOD and unsaved recovery remain open. Do not duplicate saved camera/position persistence or increase execution budgets. Preserve all existing local receipts, user-machine restrictions and denial boundaries.

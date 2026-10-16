@@ -42,3 +42,32 @@ export function projectGraphDisplay(index: GraphDisplayIndex, viewport: StudioGr
   for (const card of index.cards) if (!world || intersects(card.bounds, world)) nodeIds.add(card.id);
   return { nodeIds, edges: index.connections.filter(edge => !world || intersects(edge.bounds, world)) };
 }
+
+/** Fixed display coordinates keep SVG arithmetic independent of graph extent. */
+export function projectGraphMiniMap(index: GraphDisplayIndex, viewport: StudioGraphViewport,
+  size: { width: number; height: number } | null) {
+  const valid = (rect: GraphCanvasRect) => Object.values(rect).every(value => Number.isFinite(value) && Math.abs(value) < Number.MAX_SAFE_INTEGER / 4)
+    && rect.width >= 0 && rect.height >= 0;
+  const cards = index.cards.filter(card => valid(card.bounds));
+  const camera = size && size.width > 0 && size.height > 0 ? {
+    ...graphScreenToWorld({ x: 0, y: 0 }, viewport), width: size.width / clampGraphZoom(viewport.zoom), height: size.height / clampGraphZoom(viewport.zoom),
+  } : null;
+  const current = camera && valid(camera) ? camera : null;
+  const bounds = [...cards.map(card => card.bounds), ...index.connections.map(edge => edge.bounds).filter(valid), ...(current ? [current] : [])];
+  let left = 0, top = 0, right = 1, bottom = 1;
+  if (bounds.length) {
+    left = Infinity; top = Infinity; right = -Infinity; bottom = -Infinity;
+    for (const rect of bounds) { left = Math.min(left, rect.x); top = Math.min(top, rect.y); right = Math.max(right, rect.x + rect.width); bottom = Math.max(bottom, rect.y + rect.height); }
+  }
+  let graphLeft = left, graphTop = top, graphRight = right, graphBottom = bottom;
+  if (cards.length) {
+    graphLeft = Infinity; graphTop = Infinity; graphRight = -Infinity; graphBottom = -Infinity;
+    for (const { bounds: rect } of cards) { graphLeft = Math.min(graphLeft, rect.x); graphTop = Math.min(graphTop, rect.y); graphRight = Math.max(graphRight, rect.x + rect.width); graphBottom = Math.max(graphBottom, rect.y + rect.height); }
+  }
+  const scale = Math.min(184 / Math.max(1, right - left), 104 / Math.max(1, bottom - top));
+  const offset = { x: (200 - (right - left) * scale) / 2, y: (120 - (bottom - top) * scale) / 2 };
+  const project = (rect: GraphCanvasRect) => ({ x: offset.x + (rect.x - left) * scale, y: offset.y + (rect.y - top) * scale, width: rect.width * scale, height: rect.height * scale });
+  return { cards: cards.map(card => ({ id: card.id, bounds: project(card.bounds) })), camera: current ? project(current) : null,
+    center: { x: (graphLeft + graphRight) / 2, y: (graphTop + graphBottom) / 2 },
+    worldAt: (x: number, y: number) => ({ x: left + (x - offset.x) / scale, y: top + (y - offset.y) / scale }) };
+}

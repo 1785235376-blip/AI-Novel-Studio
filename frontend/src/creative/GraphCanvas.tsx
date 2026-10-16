@@ -10,7 +10,7 @@ import {
   graphSelectionRect, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
 import type { GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
-import { createGraphDisplayIndex, projectGraphDisplay } from './graphCanvasPresentation';
+import { createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap } from './graphCanvasPresentation';
 import './graphCanvas.css';
 
 export type { GraphCanvasNodeDefinition, GraphCanvasPort } from './graphCanvasGeometry';
@@ -57,6 +57,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const [marquee, setMarquee] = useState<GraphCanvasRect | null>(null);
   const [viewportSize, setViewportSize] = useState<{ width: number; height: number } | null>(null);
   const [focusedNode, setFocusedNode] = useState<string | null>(null);
+  const [showMiniMap, setShowMiniMap] = useState(true);
   const [tool, setTool] = useState<'select' | 'pan'>('select');
   const [activeGesture, setActiveGesture] = useState<Gesture['kind'] | null>(null);
   const descriptionId = useId(), markerId = useId().replace(/:/g, '');
@@ -70,6 +71,12 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   // Keep lightweight accessibility entries stable during camera-only updates.
   const nodeOptions = useMemo(() => definition.nodes.map(node => <option key={node.id} value={node.id}>{displayIndex.descriptors.get(node.definition_id)?.label || GRAPH_NODE_LABELS[node.definition_id] || node.definition_id} · {node.id}</option>), [definition.nodes, displayIndex.descriptors]);
   const edgeDescriptions = useMemo(() => definition.edges.map(edge => <li key={edge.id}>{edge.source_node_id} 输出 {edge.source_port} 连接至 {edge.target_node_id} 输入 {edge.target_port}</li>), [definition.edges]);
+  const miniMap = useMemo(() => projectGraphMiniMap(displayIndex, visible.viewport, viewportSize), [displayIndex, visible.viewport, viewportSize]);
+  const miniMapPaths = ['', ''];
+  for (const card of miniMap.cards) {
+    const { x, y, width, height } = card.bounds;
+    miniMapPaths[selectedSet.has(card.id) ? 1 : 0] += `M${x} ${y}h${Math.max(width, 1)}v${Math.max(height, 1)}h${-Math.max(width, 1)}Z`;
+  }
   const removable = selected.filter(id => !protectedNodeIds.includes(id));
 
   useEffect(() => {
@@ -199,6 +206,15 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     wheelUntil.current = 0;
   };
 
+  const navigateMiniMap = (point: StudioGraphPosition) => {
+    if (blocked || gesture.current || !miniMap.camera || !viewportSize || !miniMap.cards.length) return;
+    const viewport = { ...definition.viewport,
+      x: clampGraphPosition(viewportSize.width / 2 - point.x * definition.viewport.zoom),
+      y: clampGraphPosition(viewportSize.height / 2 - point.y * definition.viewport.zoom) };
+    if (viewport.x !== definition.viewport.x || viewport.y !== definition.viewport.y) onDefinitionChange({ ...definition, viewport }, true);
+    wheelUntil.current = 0;
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (isGraphEditableTarget(event.target)) return;
     if (event.key === 'Escape') { event.preventDefault(); if (gesture.current) cancelGesture(); else onSelectionChange([]); return; }
@@ -232,6 +248,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
           x: clampGraphPosition(viewportSize.width / 2 - (node.position.x + GRAPH_NODE_WIDTH / 2) * definition.viewport.zoom),
           y: clampGraphPosition(viewportSize.height / 2 - (node.position.y + graphNodeHeight(displayIndex.descriptors.get(node.definition_id)) / 2) * definition.viewport.zoom) } }, true);
       }}><option value="">选择节点</option>{nodeOptions}</select></label>
+      <Button type="button" variant="ghost" aria-label="显示小地图" aria-pressed={showMiniMap} onClick={() => setShowMiniMap(value => !value)}>小地图</Button>
       {readonly && <Badge>只读</Badge>}
       <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || !removable.length} title={selected.length && !removable.length ? '已保存的资产引用只能移动或停用' : '删除所选节点及其连接'} onClick={deleteSelected}><Trash2 size={16} /></Button>
     </header>
@@ -294,6 +311,31 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       {marquee && <div className="graph-canvas__marquee" data-testid="graph-selection-marquee" style={marquee} />}
       {!definition.nodes.length && <p className="graph-canvas__empty">从节点目录添加第一个节点，再选择输入和输出端口连接。</p>}
     </div>
+    {showMiniMap && <div className="graph-canvas__minimap-row">
+      <Button type="button" variant="ghost" className="graph-canvas__minimap" aria-label="小地图导航" aria-describedby={`${descriptionId}-minimap`}
+        disabled={blocked || !miniMap.camera || !miniMap.cards.length} onKeyDown={event => {
+          event.stopPropagation();
+          if (event.altKey || event.ctrlKey || event.metaKey || event.nativeEvent.isComposing || !viewportSize) return;
+          const steps: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+          const step = steps[event.key];
+          if (!step) return;
+          event.preventDefault();
+          const zoom = definition.viewport.zoom, fraction = event.shiftKey ? 1 : 0.25;
+          navigateMiniMap({ x: (viewportSize.width / 2 - definition.viewport.x + step[0] * viewportSize.width * fraction) / zoom,
+            y: (viewportSize.height / 2 - definition.viewport.y + step[1] * viewportSize.height * fraction) / zoom });
+        }} onClick={event => {
+          const rect = event.currentTarget.getBoundingClientRect();
+          if (event.detail === 0) navigateMiniMap(miniMap.center);
+          else if (rect.width > 0 && rect.height > 0) navigateMiniMap(miniMap.worldAt((event.clientX - rect.left) / rect.width * 200, (event.clientY - rect.top) / rect.height * 120));
+        }}>
+        <svg viewBox="0 0 200 120" preserveAspectRatio="none" aria-hidden="true">
+          <path className="graph-canvas__minimap-nodes" d={miniMapPaths[0]} />
+          <path className="graph-canvas__minimap-selected" d={miniMapPaths[1]} />
+          {miniMap.camera && <rect className="graph-canvas__minimap-camera" {...miniMap.camera} />}
+        </svg>
+      </Button>
+      <p id={`${descriptionId}-minimap`} className="graph-canvas__help">小地图：全图节点与当前视口。点击定位；方向键平移，Shift 加速；Enter / 空格居中。蓝色节点表示已选。{blocked ? '当前不可修改视图。' : ''}</p>
+    </div>}
     <p id={descriptionId} className="graph-canvas__help">拖动节点移动；空白处框选；Shift 多选；Alt 拖动或平移工具移动视图；Ctrl / ⌘ + 滚轮缩放。选中节点后可用方向键移动、Delete 删除，Esc 取消操作。</p>
     <ul className="sr-only" aria-label="节点图连接">{edgeDescriptions}</ul>
   </section>;

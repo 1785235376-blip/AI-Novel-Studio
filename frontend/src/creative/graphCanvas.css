@@ -40,3 +40,11 @@
 
 .graph-canvas__navigator{display:flex;align-items:center;gap:var(--space-1);font-size:12px;color:var(--color-text-secondary)}
 .graph-canvas__navigator select{max-width:calc(var(--space-12) * 4);min-height:var(--control-height-sm);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit}
+
+.graph-canvas__minimap-row{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2);border-top:var(--border-default)}
+.graph-canvas__minimap.ui-button{display:block;flex:none;width:calc(var(--space-12) * 4);height:calc(var(--space-12) * 2.5);padding:0;overflow:hidden;border:var(--border-default);background:var(--color-bg-subtle)}
+.graph-canvas__minimap svg{display:block;width:100%;height:100%}
+.graph-canvas__minimap-nodes{fill:var(--color-text-muted)}
+.graph-canvas__minimap-selected{fill:var(--color-accent-primary)}
+.graph-canvas__minimap-camera{fill:none;stroke:var(--color-accent-primary);stroke-width:2;vector-effect:non-scaling-stroke}
+.graph-canvas__minimap-row .graph-canvas__help{border:0}

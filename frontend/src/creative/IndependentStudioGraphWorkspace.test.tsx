@@ -120,6 +120,23 @@ describe('independent studio graph content integration', () => {
     expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('未保存文字保持');
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
   });
+  it('saves MiniMap camera via original history while preserving dirty author text and reopens it', async () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, toJSON: () => ({}) });
+    saved.definition = { ...blankGraph(), nodes: [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: 0, y: 0 }, parameters: { text: '原文字' } }] };
+    const mounted = mount(); await enter(); await open();
+    fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+    fireEvent.change(screen.getByLabelText('作者输入文本'), { target: { value: '小地图保持未保存文字' } });
+    fireEvent.keyDown(screen.getByRole('button', { name: '小地图导航' }), { key: 'ArrowRight' });
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-200px, 0px)');
+    click('撤销图编辑'); expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(0px, 0px)');
+    expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('小地图保持未保存文字');
+    click('重做图编辑'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    expect(saved.definition.viewport).toEqual({ x: -200, y: 0, zoom: 1 });
+    expect(saved.definition.nodes[0].parameters.text).toBe('小地图保持未保存文字');
+    mounted.unmount(); mount(); await enter(); await open();
+    expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-200px, 0px)');
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
   it('restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent', async () => {
     const first = { ...record(), definition: { ...blankGraph(), viewport: { x: 10, y: 20, zoom: 1.2 }, nodes: [
       { id: 'text', definition_id: 'text_input' as const, definition_version: 1 as const, enabled: true, position: { x: 500, y: 400 }, parameters: { text: '图 A' } },
