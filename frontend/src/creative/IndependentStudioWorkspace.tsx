@@ -19,6 +19,7 @@ import type { LineageAsset } from '../experimental/ProductionLineagePanel';
 import { StudioAssetDeclarationForm } from './StudioAssetDeclarationForm';
 import { studioClient, studioTransport, type StudioAsset, type StudioOverview, type StudioPreferences, type StudioStorage } from './studioClient';
 import { rememberLocalStudioSelection, rememberLocalWorkspaceSelection, type LocalStudioModule } from '../workspaceSelection';
+import { creativeClient } from './client';
 import { useStudioGraphEditor } from './useStudioGraphEditor';
 import { AssetRelationshipsPanel } from './AssetRelationshipsPanel';
 import { StudioWorkspaceOperationPanel } from './StudioWorkspaceOperationPanel';
@@ -73,6 +74,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const alive = useRef(true), revoked = useRef(false), authorityLost = useRef(false), busyRef = useRef(false);
   const [identityRetired, setIdentityRetired] = useState(false);
   const client = useMemo(() => studioClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
+  const directorSource = useMemo(() => creativeClient(projectId, context), [client]);
   const productionClient = useMemo(() => studioProductionClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
   const cutoutPermission = useRef(false);
   const cutoutLease = useRef<{ job: ProductionJob; control?: Promise<ProductionJob> }>();
@@ -223,7 +225,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const rememberGraphLocation = useCallback((selection: { graphId?: string; runId?: string }) => {
     if (current()) setGraphLocation(previous => previous.graphId === selection.graphId && previous.runId === selection.runId ? previous : selection);
   }, [current]);
-  const graph = useStudioGraphEditor({ active: graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, providerSource: productionClient, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
+  const graph = useStudioGraphEditor({ active: graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, directorSource, providerSource: productionClient, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
     requestedGraphId: graphLocation.graphId, requestedRunId: graphLocation.runId, onSelectionChange: rememberGraphLocation, isBusy: operationPending });
   graphDirtyRef.current = graph.dirty;
   // One additive read-only workflow projection over the same captured Studio transport.
@@ -418,7 +420,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     {workspaceView === 'ASSETS' && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
     {loading && <StatusMessage>正在核对项目与权限…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {denied ? <EmptyState title="当前会话无权访问此项目" detail="私人预览已关闭。重新核对身份与范围后再打开。" /> : !overview && !loading ? <Button onClick={() => void refresh()}>重新读取项目</Button> : null}
-    {pendingNavigation && !denied && <section className="creative-navigation-confirm" role="alert"><p>{mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p><label><input type="checkbox" disabled={busy || !!preferenceController.pending} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard || busy || !!preferenceController.pending} onClick={confirmNavigation}>确认离开</Button><Button onClick={() => { setPendingNavigation(undefined); setDiscard(false); }}>继续编辑</Button></section>}
+    {pendingNavigation && !denied && <section className="creative-navigation-confirm" role="alert"><p>{mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.directorPending ? '有未保存的创作图／导演输入。放弃只移除本地草稿，不代表远端写入失败；若保存回执未知，返回后先核对原文档目录，避免重复创建。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p><label><input type="checkbox" disabled={busy || !!preferenceController.pending} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard || busy || !!preferenceController.pending} onClick={confirmNavigation}>确认离开</Button><Button onClick={() => { setPendingNavigation(undefined); setDiscard(false); }}>继续编辑</Button></section>}
     {pendingDeclaration && !denied && workspaceView === 'ASSETS' && <Button disabled={!writable || busy || lineageDirty || relationshipDirty} onClick={() => { if (busyRef.current || lineageDirtyRef.current || relationshipDirtyRef.current) return; busyRef.current = true; setBusy(true); void guarded(() => declared(pendingDeclaration)).then(asset => { refreshedAsset(asset); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); }).catch(reason => { if (current()) setNotice(apiErrorView(reason, '来源声明仍未保存，文件已保留。').message); }).finally(() => { busyRef.current = false; if (alive.current) setBusy(false); }); }}>仅重试外部导入声明</Button>}
     {graphView && overview && !denied && graph.content}
     {productionView && overview && !denied && <ProductionDashboard controller={workflow} selectedModuleId={workflowModule}

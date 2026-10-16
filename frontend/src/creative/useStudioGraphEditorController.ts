@@ -1,3 +1,4 @@
+import type { GraphDirectorSource } from './GraphDirectorConsole';
 import type { StoryboardReceipt } from './studioStoryboardContract';
 import { productionGraphDefinitions, type PlanningDocument } from './studioProductionGraphContract';
 import { checkedImageReferenceMetadata } from './studioImageRuntimeContract';
@@ -14,6 +15,7 @@ import { useStudioGraphTimelineEditor } from './useStudioGraphTimelineEditor';
 export type StudioGraphEditorSelection = { graphId?: string; runId?: string };
 export type StudioGraphEditorProps = {
   active: boolean; denied: boolean; identity: string; client: StudioClient; canMutate: boolean; canReview: boolean;
+  directorSource?: GraphDirectorSource;
   providerSource?: Pick<StudioProductionClient, 'providers'>;
   busy: boolean; externalDirty: boolean; isCurrent: () => boolean;
   read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;

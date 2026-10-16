@@ -1,0 +1,13 @@
+# Continuation checkpoint — 2026-10-16
+
+The optional Graph × Director author/save/read/pin/reopen slice is locally implemented and verified; see `docs/v2/canvas-director-integration-20261016.md` and its measured JSON. The exact delivery commit is the containing Git commit, on `work/dot-usability-handoff11-20261015`. Baseline local `69162fdc75328291f5b944de172bd8b69be29a4f`; published PR48 remains `58bbaad11360330d51f49fc2bb78a955a26469f0`. No push or hosted CI was triggered because unknown-cost CI must not run. No main merge/tag/release.
+
+P0 lifecycle repair/reproduction is platform-BLOCKED, unchanged and untested here. Do not retry or bypass it; R3-GATE stays HOLD. Production Prompt Adoption write remains disabled. Browser runtime is previously BLOCKED, visuals NOT_RUN; no screenshot claim. Windows/GPU/real provider/complete RC remain LOCAL_REQUIRED. The original 904-line roadmap is not located/read; use the frozen anchor and evidence ledger without claiming full original-source reconciliation.
+
+Completed scope: existing CreativeCanvas/Creative owner authoring mounted inside Graph; optional console, exact source digest/current version read, source-change warning without Graph rebind; original version/CAS/Review/UNKNOWN semantics retained; explicit directory reconciliation or acknowledged local abandonment. No new queue/store/model dispatch/permissions; existing DAG budgets unchanged.
+
+Next authorized product slice after review coordination: persistent canvas-only presentation state through an existing owner, then actual grouping/collapse/layout wiring, then large-display-space viewport/MiniMap/culling benchmarks. Do not raise execution budgets for display scaling. Full A/B/U/Graph/Console/FS/CORE dependency ledger is in `docs/v2/frozen-capability-ledger-20261016.md`; all full-product completion claims remain qualified.
+
+Current stopping boundary: this bounded slice awaits parent review/next-slice coordination, not a claim of continuous background execution. Preserve untracked historical/local verification receipts; do not reset/clean. Keep only existing Dot cloud/Astra scope, no user computer or QingJian, no paid APIs, no unknown-cost push/CI.
+
+Future acceptance sequence noted by the user: later perform appropriately scoped local acceptance, then attach its results for a permitted cloud review/recheck. This is a future sequence only, not approval of a particular test scope or permission to access the user computer now. Local results do not automatically lift platform restrictions. P0 remains BLOCKED; no denial bypass or alternate local reproduction is authorized by this note. Independent feature work can continue.
