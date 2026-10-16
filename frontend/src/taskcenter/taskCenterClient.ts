@@ -1,3 +1,5 @@
+import { readModelBrokerHistory } from '../experimental/modelBrokerClient';
+import { taskCostReceipt, unknownCostReceipt } from './taskCostReceipt';
 import { ApiError, type CollaborationContext } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import {
@@ -89,6 +91,21 @@ export function createTaskCenterClient(
   };
 
   return {
+    async readCostReceipt(task, signal) {
+      if (foreign()) return unknownCostReceipt('UNREADABLE');
+      if (task.authority !== 'author_generation') return unknownCostReceipt('UNSUPPORTED');
+      if (!task.id.trim() || task.id.length > 160) return unknownCostReceipt('INVALID');
+      try {
+        const history = await readModelBrokerHistory({
+          get: (path, abortSignal) => transport.json(`/api/novels/${segment(projectId)}/experimental${path}`, 'GET', undefined, abortSignal),
+        }, signal);
+        return taskCostReceipt(history, task, projectId, expected);
+      } catch {
+        // This owner may be disabled/denied independently. Never fall back to
+        // another access path, show server text, or erase the original task.
+        return unknownCostReceipt('UNREADABLE');
+      }
+    },
     async readTasks(query: TaskCenterTaskQuery, signal?: AbortSignal): Promise<TaskCenterTasksProjection> {
       if (foreign()) throw rejected();
       // 查询参数在本地就有界（`ux_api.py::tasks` 的 `q` 上限 160）。
