@@ -306,3 +306,44 @@ def test_selected_subgraph_copy_original_owner_reopen_and_restore(rig):
     restored = save(rig, updated, original['definition'])
     assert restored['definition'] == original['definition']
     assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}
+
+
+def test_cross_graph_copy_original_owner_reopen_cas_and_source_unchanged(rig):
+    source = create(rig)
+    target = create(rig, {"title": "Target", "nodes": [], "edges": []})
+    draft = deepcopy(target['definition'])
+    for node in source['definition']['nodes'][:2]:
+        copied = deepcopy(node)
+        copied['id'] = 'copy_' + node['id']
+        draft['nodes'].append(copied)
+    edge = deepcopy(source['definition']['edges'][0])
+    edge.update(id='copy_e1', source_node_id='copy_text', target_node_id='copy_prepare')
+    draft['edges'].append(edge)
+    updated = save(rig, target, draft)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, target['id']) == updated
+    assert updated['definition'] == draft
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, source['id']) == source
+    with pytest.raises(CapabilityVersionConflict):
+        save(rig, target, draft)
+    restored = save(rig, updated, target['definition'])
+    assert restored['definition'] == target['definition']
+    assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}
+
+
+def test_cross_graph_copy_added_source_pin_revalidated_by_original_save(rig, decoders):
+    asset = import_asset(rig)
+    source = create(rig, {'title': 'Source', 'nodes': [asset_node(asset)], 'edges': []})
+    target = create(rig, {'title': 'Target', 'nodes': [], 'edges': []})
+    draft = deepcopy(target['definition'])
+    copied = deepcopy(source['definition']['nodes'][0]); copied['id'] = 'copy_asset'
+    draft['nodes'].append(copied)
+    # An invalid version is rejected atomically; no lifecycle/security mutation is involved.
+    copied['parameters']['version'] += 1
+    with pytest.raises(StaleSourceError, match='EXTERNAL_REFERENCE_CHANGED'):
+        save(rig, target, draft)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, target['id']) == target
+    copied['parameters']['version'] = asset['version']
+    updated = save(rig, target, draft)
+    assert updated['definition']['nodes'][0]['parameters'] == source['definition']['nodes'][0]['parameters']
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, target['id']) == updated
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, source['id']) == source

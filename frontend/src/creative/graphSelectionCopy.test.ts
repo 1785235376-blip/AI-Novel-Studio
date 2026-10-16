@@ -59,3 +59,39 @@ describe('same graph copy planning', () => {
   });
 
 });
+
+describe('same-project cross-graph planning', () => {
+  it('retains target presentation/camera and exact source pins without copying source groups or boundary edges', () => {
+    const source = graph(), target = { ...blankGraph(), title: 'Target', viewport: { x: 70, y: 80, zoom: 2 }, presentation: { comment: 'Keep target' } };
+    source.presentation = { groups: [{ id: 'group', name: 'Source', node_ids: ['a', 'b'] }] };
+    source.nodes[0].parameters = { asset_id: 'asset', version: 9, digest: 'b'.repeat(64), document_snapshot: { id: 'doc', version: 7, digest: 'c'.repeat(64) } };
+    const before = structuredClone(source), result = graphSelectionCopy(source, ['a', 'b'], modelCatalog(), target);
+    expect(result.definition).toMatchObject({ title: 'Target', viewport: target.viewport, presentation: target.presentation });
+    expect(result.nodeCount).toBe(2); expect(result.edgeCount).toBe(1); expect(result.excludedEdges).toBe(1);
+    expect(result.definition.nodes[0].parameters).toEqual(source.nodes[0].parameters); expect(source).toEqual(before); expect(target.nodes).toEqual([]);
+  });
+  it('rejects incompatible schema, unavailable catalog kind and incompatible typed edges without mutation', () => {
+    const source = graph(), target = blankGraph(), before = structuredClone(target);
+    expect(() => graphSelectionCopy(source, ['a'], modelCatalog(), { ...target, schema_version: 4 })).toThrow(/相同图格式/);
+    const catalog = modelCatalog(); catalog.definitions = catalog.definitions.filter(row => row.id !== 'text_input');
+    expect(() => graphSelectionCopy(source, ['a'], catalog, target)).toThrow(/目录/);
+    source.edges[0].target_port = 'missing';
+    expect(() => graphSelectionCopy(source, ['a', 'b'], modelCatalog(), target)).toThrow(/不兼容/); expect(target).toEqual(before);
+  });
+  it.each(['nodes', 'edges', 'definition_bytes'] as const)('counts target %s budget atomically', key => {
+    const source = graph(), target = graph(), catalog = modelCatalog(), before = structuredClone(target);
+    Object.assign(catalog.limits, { [key]: key === 'nodes' ? 4 : key === 'edges' ? 2 : 1 });
+    expect(() => graphSelectionCopy(source, ['a', 'b'], catalog, target)).toThrow(); expect(target).toEqual(before);
+  });
+  it('never reuses a source ID even when that ID is absent from the target', () => {
+    const source = graph(), target = blankGraph();
+    vi.spyOn(graphDraft, 'graphId').mockReturnValue('a');
+    expect(() => graphSelectionCopy(source, ['a'], modelCatalog(), target)).toThrow(/标识冲突/); expect(target.nodes).toEqual([]);
+  });
+  it('accepts an exact target node budget independent of the source size', () => {
+    const source = graph(), target = graph(), catalog = modelCatalog();
+    target.nodes = Array.from({ length: 15 }, (_, i) => ({ ...target.nodes[0], id: 't' + i })); target.edges = [];
+    expect(graphSelectionCopy(source, ['a'], catalog, target).definition.nodes).toHaveLength(16);
+    expect(() => graphSelectionCopy(source, ['a', 'b'], catalog, target)).toThrow(/数量限制/);
+  });
+});

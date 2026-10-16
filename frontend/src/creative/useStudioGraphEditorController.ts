@@ -34,6 +34,10 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const [catalog, setCatalog] = useState<StudioGraphCatalog>(), [records, setRecords] = useState<StudioGraphRecord[]>([]), [base, setBase] = useState<StudioGraphRecord>();
   const [draft, setDraft] = useState<StudioGraphDefinition>(blankGraph), [selected, setSelectedState] = useState<string[]>([]);
   const [copyPreview, setCopyPreview] = useState<{ identity: string; client: StudioClient; graph: string | undefined; epoch: number; source: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
+  // Session-local source snapshot owned by this controller, never persisted or transported.
+  const [copySource, setCopySource] = useState<{ identity: string; client: StudioClient; record: StudioGraphRecord; selected: string[]; sourceEpoch: number }>();
+  const [crossPreview, setCrossPreview] = useState<{ source: NonNullable<typeof copySource>; target: StudioGraphRecord; epoch: number; previewEpoch: number; draft: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
+  const copySourceEpoch = useRef(0), crossCopyEpoch = useRef(0);
   const [past, setPast] = useState<StudioGraphDefinition[]>([]), [future, setFuture] = useState<StudioGraphDefinition[]>([]);
   const [loading, setLoading] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [blocked, setBlocked] = useState(false);
   const [candidate, setCandidate] = useState<StudioGraphRecord>(), [replaceConsent, setReplaceConsent] = useState<string>(), [checking, setChecking] = useState(false);
@@ -159,7 +163,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (!retainsSavedAssetBindings(baseRef.current?.definition.nodes || [], next.nodes)) { setError('已保存资产引用暂不能移除或重新绑定；可移动或禁用节点。原资产不会被删除。'); return; }
     if (same(draftRef.current, next)) return;
     if (record) { const previous = structuredClone(draftRef.current); setPast(rows => [...rows.slice(-49), previous]); setFuture([]); }
-    draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
+    crossCopyEpoch.current++; draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
   }, [editable, current, isBusy, invalidateCandidate]);
   const currentCopy = active && copyPreview && copyPreview.identity === identity && copyPreview.client === client && copyPreview.graph === base?.id
     && copyPreview.epoch === selectedEpoch.current && copyPreview.catalog === catalog && copyPreview.source === JSON.stringify(draft) && editable ? copyPreview.result : undefined;
@@ -174,6 +178,35 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   function pasteSelectionCopy() {
     if (!currentCopy || !editable || !current() || locked() || timelineEditor.formDirty || copyPreview?.source !== JSON.stringify(draftRef.current)) return;
     change(currentCopy.definition); setSelected(currentCopy.selected); setCopyPreview(undefined);
+  }
+  const copyScopeMatches = !copySource || !base || base.project_id === copySource.record.project_id && same(base.scope, copySource.record.scope);
+  const sourceCopy = active && current() && !denied && canMutate && base?.can_edit !== false && copyScopeMatches && copySource?.identity === identity && copySource.client === client && copySource.sourceEpoch === copySourceEpoch.current ? copySource : undefined;
+  const currentCrossCopy = sourceCopy && crossPreview?.source === sourceCopy && crossPreview.target === base
+    && crossPreview.epoch === selectedEpoch.current && crossPreview.previewEpoch === crossCopyEpoch.current && crossPreview.catalog === catalog
+    && crossPreview.draft === JSON.stringify(draft) && editable ? crossPreview.result : undefined;
+  useLayoutEffect(() => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, [identity, client, denied, canMutate, active]);
+  useLayoutEffect(() => { if (base?.can_edit === false || !copyScopeMatches) { copySourceEpoch.current++; setCopySource(undefined); } }, [base?.can_edit, copyScopeMatches]);
+  useLayoutEffect(() => { crossCopyEpoch.current++; setCrossPreview(undefined); }, [draft, base, catalog, externalDirty, executionDirty, copySource]);
+  function captureSelectionForGraph() {
+    if (!active || !editable || !current() || locked() || dirty || !base || base !== baseRef.current || !same(draftRef.current, base.definition) || !selected.length || !catalog) return;
+    if (base.reference_states.some(row => selected.includes(row.node_id) && row.state !== 'CURRENT')) {
+      setError('所选节点来源已变化或不可用，请先核对原绑定。'); return;
+    }
+    if (selected.some(id => !draftRef.current.nodes.some(node => node.id === id))) return;
+    crossCopyEpoch.current++; setCopySource({ identity, client, record: structuredClone(base), selected: [...selected], sourceEpoch: ++copySourceEpoch.current }); setCrossPreview(undefined); setError('');
+  }
+  function previewCrossGraphCopy() {
+    if (!sourceCopy || sourceCopy.sourceEpoch !== copySourceEpoch.current || !base || base.id === sourceCopy.record.id || !editable || !current() || locked() || timelineEditor.formDirty || !catalog) return;
+    crossCopyEpoch.current++; setCrossPreview(undefined);
+    if (base.project_id !== sourceCopy.record.project_id || !same(base.scope, sourceCopy.record.scope)) { copySourceEpoch.current++; setCopySource(undefined); setError('复制来源与目标必须属于同一项目和身份范围。'); return; }
+    try {
+      const result = graphSelectionCopy(sourceCopy.record.definition, sourceCopy.selected, catalog, draftRef.current);
+      setCrossPreview({ source: sourceCopy, target: base, epoch: selectedEpoch.current, previewEpoch: crossCopyEpoch.current, draft: JSON.stringify(draftRef.current), catalog, result }); setError('');
+    } catch (value) { setError(value instanceof Error ? value.message : '跨图复制预览失败。'); }
+  }
+  function pasteCrossGraphCopy() {
+    if (!currentCrossCopy || !editable || !current() || locked() || timelineEditor.formDirty || crossPreview?.source.sourceEpoch !== copySourceEpoch.current || crossPreview?.previewEpoch !== crossCopyEpoch.current || crossPreview?.epoch !== selectedEpoch.current || crossPreview?.target !== baseRef.current || crossPreview?.draft !== JSON.stringify(draftRef.current)) return;
+    change(currentCrossCopy.definition); setSelected(currentCrossCopy.selected); setCrossPreview(undefined);
   }
   function applyAutoLayout() {
     if (!editable || !current() || locked()) return;
@@ -346,7 +379,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (!retainsSavedAssetBindings(base?.definition.nodes || [], value.nodes)) { setError('撤销不能移除已经保存的资产绑定。'); return; }
     if (redo) { setPast(rows => [...rows.slice(-49), structuredClone(draft)]); setFuture(rows => rows.slice(1)); }
     else { setFuture(rows => [structuredClone(draft), ...rows].slice(0, 50)); setPast(rows => rows.slice(0, -1)); }
-    invalidateCandidate(); draftRef.current = structuredClone(value); setDraft(draftRef.current); setSourcePort(''); setTargetPort('');
+    crossCopyEpoch.current++; invalidateCandidate(); draftRef.current = structuredClone(value); setDraft(draftRef.current); setSourcePort(''); setTargetPort('');
   }
   const downloadPreviewAsset = useCallback((asset: Asset) => read(() => client.download(asset.id)), [read, client]);
   const refreshPreview = () => { if (current() && !locked()) setPreviewRequest(value => value + 1); };
@@ -406,7 +439,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }) : [];
   const retainedTitle = !base || draft.title !== base.definition.title ? draft.title : blankGraph().title;
   return {
-    retired, retainedText, retainedTitle, providerPicker, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
+    retired, retainedText, retainedTitle, providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true, automatic_video_dispatch: false } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,

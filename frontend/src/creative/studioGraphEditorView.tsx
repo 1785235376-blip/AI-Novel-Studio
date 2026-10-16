@@ -145,9 +145,24 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
         local={canvas.local} onLocal={canvas.onLocal}
         onKind={value => setKind(value as StudioGraphDefinitionId)} onSourcePort={setSourcePort} onTargetPort={setTargetPort}
         onApplyLayout={controller.applyAutoLayout} onAddNode={addNode} onConnect={connect} onSelect={setSelected} onTravel={direction => travel(direction === 'REDO')} />}
-      <section aria-label="同图复制预览">
+      <section aria-label="节点复制预览">
         <h3>复制所选节点</h3>
-        <p>仅当前项目的当前图、当前草稿预览；不使用系统剪贴板，不支持跨画布。来源版本与摘要保持；保存时仍由原来源权限校验。</p>
+        <Button disabled={!editable || dirty || !base || !selected.length} onClick={controller.captureSelectionForGraph}>捕获所选节点供同项目跨图复制</Button>
+        <p>跨图复制先保存来源，再捕获所选节点；用上方已保存创作图选择目标。仅本次工作区、同一项目与身份、相同图格式，不使用系统剪贴板。</p>
+        {controller.sourceCopy && <section aria-label="跨图复制来源">
+          <p>来源：{controller.sourceCopy.record.definition.title} · {controller.sourceCopy.record.id} · v{controller.sourceCopy.record.version} · {controller.sourceCopy.record.definition_digest}</p>
+          <p>已捕获 {controller.sourceCopy.selected.length} 个节点的确切保存快照；来源后来修改不会改写此快照。引用在原保存流程重新核对。</p>
+          <Button disabled={!editable || !base || base.id === controller.sourceCopy.record.id || timelineEditor.formDirty} onClick={controller.previewCrossGraphCopy}>预览跨图粘贴到当前图</Button>
+          <Button onClick={controller.clearGraphCopy}>清除跨图复制内容</Button>
+          {controller.currentCrossCopy && <div role="status">
+            <p>目标：{draft.title} · {base?.id} · v{base?.version}；格式 v{draft.schema_version}。新增 {controller.currentCrossCopy.nodeCount} 个节点、{controller.currentCrossCopy.edgeCount} 条内部连接；排除 {controller.currentCrossCopy.excludedEdges} 条外部连接。</p>
+            <p>粘贴后 {controller.currentCrossCopy.definition.nodes.length} / {nodeLimit} 个节点、{controller.currentCrossCopy.definition.edges.length} / {catalog.limits.edges} 条连接；统一偏移 {controller.currentCrossCopy.delta.x}, {controller.currentCrossCopy.delta.y}。缺少输入需重新连接，不复制分组或运行结果。</p>
+            <ul>{controller.sourceCopy.record.definition.nodes.filter(row => controller.sourceCopy!.selected.includes(row.id)).map(row => <li key={row.id}>{row.id} · {row.definition_id} · 原绑定：{JSON.stringify(Object.fromEntries(Object.entries(row.parameters).filter(([key]) => ['asset_id', 'version', 'digest', 'kind', 'document_snapshot', 'shot_id', 'shot_version', 'shot_digest', 'timeline_snapshot', 'source_bindings'].includes(key))))}</li>)}</ul>
+            <p>只修改当前草稿，可一次撤销；未保存、未执行。预览不是来源权限、模型调用或云端发送许可。</p>
+            <Button disabled={!editable || timelineEditor.formDirty} onClick={controller.pasteCrossGraphCopy}>明确粘贴跨图节点</Button>
+          </div>}
+        </section>}
+        <p>同图复制可直接预览当前草稿中的所选节点；来源版本与摘要保持，保存仍由原来源权限校验。</p>
         <Button disabled={!editable || !selected.length || timelineEditor.formDirty} onClick={controller.previewSelectionCopy}>预览复制所选节点</Button>
         {controller.currentCopy && <div role="status">
           <p>新增 {controller.currentCopy.nodeCount} 个节点、{controller.currentCopy.edgeCount} 条内部连接；排除 {controller.currentCopy.excludedEdges} 条外部连接。缺少输入时需重新连接；不复制分组或运行结果。</p>

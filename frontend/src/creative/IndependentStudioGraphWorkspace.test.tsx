@@ -65,6 +65,31 @@ async function open() { fireEvent.change(screen.getByLabelText('已保存创作�
 function add(kind: StudioGraphDefinitionId) { fireEvent.change(screen.getByLabelText('节点类型'), { target: { value: kind } }); click('添加节点'); }
 
 describe('independent studio graph content integration', () => {
+  it('captures a saved source, chooses another graph, reviews and pastes once with original save/reopen', async () => {
+    saved.definition.nodes = [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: 48, y: 64 }, parameters: { text: 'Original' } }];
+    const source = structuredClone(saved), target = { ...record(), id: 'target-graph', definition: { ...blankGraph(), title: 'Target graph' } };
+    rows = [source, target];
+    vi.mocked(client.graphs.get).mockImplementation(async id => structuredClone(rows.find(row => row.id === id)!));
+    vi.mocked(client.graphs.save).mockImplementation(async (id, input) => {
+      const index = rows.findIndex(row => row.id === id); rows[index] = { ...rows[index], version: rows[index].version + 1, definition: structuredClone(input.definition) }; return structuredClone(rows[index]);
+    });
+    mount(); await enter(); await open();
+    fireEvent.click(screen.getByRole('button', { name: '选择节点 文本输入 · text' }));
+    click('捕获所选节点供同项目跨图复制');
+    expect(screen.getByRole('region', { name: '跨图复制来源' }).textContent).toContain(digest);
+    fireEvent.change(screen.getByLabelText('已保存创作图'), { target: { value: target.id } });
+    await waitFor(() => expect(title().value).toBe('Target graph'));
+    click('预览跨图粘贴到当前图'); expect(screen.getByText(/粘贴后 1 \/ 16 个节点/)).toBeTruthy();
+    expect(client.graphs.save).not.toHaveBeenCalled();
+    click('明确粘贴跨图节点'); expect(screen.queryByRole('button', { name: '明确粘贴跨图节点' })).toBeNull();
+    expect(screen.getAllByRole('button', { name: /选择节点 文本输入/ })).toHaveLength(1);
+    click('撤销图编辑'); expect(screen.queryByRole('button', { name: /选择节点 文本输入/ })).toBeNull();
+    click('重做图编辑'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    click('重新读取创作图'); await waitFor(() => expect(screen.getAllByRole('button', { name: /选择节点 文本输入/ })).toHaveLength(1));
+    expect(rows[0]).toEqual(source); expect(rows[1].definition.nodes[0].parameters).toEqual(source.definition.nodes[0].parameters);
+    expect(rows[1].definition.nodes[0].id).not.toBe('text'); expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
+
   it('previews same-graph copies, invalidates edits, pastes once and saves/reopens through original history', async () => {
     saved.definition.nodes = [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true,
       position: { x: 48, y: 64 }, parameters: { text: 'Original' } }];
