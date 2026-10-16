@@ -1,0 +1,69 @@
+{
+  "base_commit": "32478f37abd9aff9773856d909f02aec9f900fa2",
+  "scope": "Original Director proposal local-review preservation only. Evidence binds the two owned files, not a clean whole-tree commit: unrelated graph display-note changes were present in the shared worktree.",
+  "source_sha256": {
+    "frontend/src/creative/AIDirectorPanel.tsx": "a8ee0a832854e7a2e5fc7d16fafffd2eb2c7d0b3c1ebcae1d7b72f76227dbfc7",
+    "frontend/src/creative/AIDirectorReopen.test.tsx": "9b3423ca0d96eb861700a5986e123155cc7867d6b97411dee3443278d7629143"
+  },
+  "source_git_blobs": {
+    "frontend/src/creative/AIDirectorPanel.tsx": "4de8cac84694d39682162421a328735185388e10",
+    "frontend/src/creative/AIDirectorReopen.test.tsx": "48bdcc50db10dd1a1645fd1f2d84957b23959e0f"
+  },
+  "checks": [
+    {
+      "name": "focused-ui",
+      "cwd": "frontend",
+      "command": "node node_modules/vitest/vitest.mjs run src/creative/AIDirectorReopen.test.tsx src/creative/AIDirectorPanel.test.tsx src/creative/AIDirectorFastReceipt.test.tsx src/creative/DirectorModelControls.test.tsx --no-cache",
+      "status": "PASS",
+      "tests": 49,
+      "log": "focused-ui.log"
+    },
+    {
+      "name": "independent-ui",
+      "cwd": "frontend",
+      "status": "PASS",
+      "tests": 43,
+      "files": [
+        "src/creative/AIDirectorPanel.test.tsx",
+        "src/creative/AIDirectorReopen.test.tsx"
+      ],
+      "log": "independent-ui.log",
+      "review": "Both identified recovery issues corrected and independently rechecked."
+    },
+    {
+      "name": "mounted-related-ui",
+      "cwd": "frontend",
+      "command": "node node_modules/vitest/vitest.mjs run src/creative/StudioProductionGraphEditor.test.tsx src/creative/CreativeWorkspace.test.tsx src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/GraphDirectorProposalReview.test.tsx --no-cache --maxWorkers=1 --minWorkers=1",
+      "status": "PASS",
+      "tests": 61,
+      "log": "mounted-related-ui.log"
+    },
+    {
+      "name": "typecheck",
+      "cwd": "frontend",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "name": "build",
+      "cwd": "frontend",
+      "command": "node node_modules/vite/bin/vite.js build",
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "build.log",
+      "warning": "Existing large-chunk warning remains."
+    },
+    {
+      "name": "tokens",
+      "cwd": "frontend",
+      "command": "node ../scripts/check_ui_design_tokens.mjs",
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "tokens.log"
+    }
+  ],
+  "browser_visual_geometry": "NOT_RUN: existing unresolved browser socket EPERM; no retry authorized.",
+  "backend_tests": "NOT_RUN for this UI-only slice. Previous accepted-draft File restart tests are in base32478f3."
+}

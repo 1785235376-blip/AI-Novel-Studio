@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 188ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 384ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (12 tests) 981ms
+   ✓ AI director local proposal and explicit review > shows estimated totals and editable model reasoning separately from auxiliary rules 304ms
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 1939ms
+
+ Test Files  4 passed (4)
+      Tests  49 passed (49)
+   Start at  05:50:48
+   Duration  3.19s (transform 518ms, setup 118ms, collect 2.11s, tests 3.49s, environment 1.60s, prepare 312ms)

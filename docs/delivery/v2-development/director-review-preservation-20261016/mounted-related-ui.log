@@ -1,0 +1,23 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 3815ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 304ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (9 tests) 13523ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 1329ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 1529ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 987ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 533ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 627ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 2529ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 733ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 1662ms
+   ✓ reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution 3590ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 998ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 181ms
+ ✓ src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx (2 tests) 473ms
+
+ Test Files  5 passed (5)
+      Tests  61 passed (61)
+   Start at  05:52:11
+   Duration  25.00s (transform 2.20s, setup 28ms, collect 3.65s, tests 18.99s, environment 1.49s, prepare 242ms)

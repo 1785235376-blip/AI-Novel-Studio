@@ -148,6 +148,8 @@ describe('original director proposal linked-draft reopen', () => {
     const { props, fetchMock } = setup({ row }); await select();
     fireEvent.change(screen.getByLabelText('采用后的导演文档标题'), { target: { value: 'Unsaved human title' } });
     expect(props.onPendingChange).toHaveBeenLastCalledWith(true);
+    expect((screen.getByRole('button', { name: '放弃本地审核修改，恢复原建议' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByLabelText('确认放弃本地审核修改并恢复原建议'));
     fireEvent.click(screen.getByRole('button', { name: '放弃本地审核修改，恢复原建议' }));
     expect(screen.getByDisplayValue('Accepted direction')).toBeTruthy();
     expect(props.onPendingChange).toHaveBeenLastCalledWith(false);
@@ -164,5 +166,119 @@ describe('original director proposal linked-draft reopen', () => {
     await act(async () => pending.resolve(response({ proposal: accepted(), document: draft() })));
     expect(props.onDocument).not.toHaveBeenCalled();
     expect(screen.queryByText('原文档 director · v3 · DRAFT')).toBeNull();
+  });
+
+  it('preserves edits across queue, new-proposal and optional-model replacement until explicit discard', async () => {
+    const first = { ...accepted(), status: 'NEEDS_REVIEW', document_id: null };
+    const second = { ...first, id: 'another-proposal', title: 'Another direction' };
+    const { props, fetchMock } = setup({ row: first, override: url => {
+      if (url.endsWith('/director-proposals')) return response({ items: [first, second] });
+      if (url.endsWith('/model-routes')) return response({ items: [{ route_id: 'local-route', provider_id: 'local', model_id: 'human-fixture', synthetic: false, available: true, reasons: [] }] });
+    } });
+    await select(); await waitFor(() => expect((screen.getByRole('button', { name: '预览模型输入' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.change(screen.getByLabelText('采用后的导演文档标题'), { target: { value: 'Keep these human edits' } });
+    for (const name of [/Accepted direction/, /Another direction/, '准备待审导演建议', '预览模型输入']) {
+      const button = screen.getByRole('button', { name });
+      expect((button as HTMLButtonElement).disabled).toBe(true); fireEvent.click(button);
+    }
+    expect(screen.getByDisplayValue('Keep these human edits')).toBeTruthy();
+    expect(props.onPendingChange).toHaveBeenLastCalledWith(true);
+    fireEvent.click(screen.getByLabelText('确认放弃本地审核修改并恢复原建议'));
+    fireEvent.change(screen.getByLabelText('采用后的导演文档标题'), { target: { value: 'A newer edit needs confirmation again' } });
+    expect((screen.getByRole('button', { name: '放弃本地审核修改，恢复原建议' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByLabelText('确认放弃本地审核修改并恢复原建议'));
+    fireEvent.click(screen.getByRole('button', { name: '放弃本地审核修改，恢复原建议' }));
+    fireEvent.click(screen.getByRole('button', { name: /Another direction/ }));
+    expect(screen.getByDisplayValue('Another direction')).toBeTruthy();
+    expect(props.onPendingChange).toHaveBeenLastCalledWith(false);
+    expect(fetchMock.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
+  });
+
+  it('preserves local review on failed and successful uncertainty reads until explicitly adopting the checked status', async () => {
+    const first = { ...accepted(), status: 'NEEDS_REVIEW', document_id: null };
+    let reviews = 0, statusReads = 0;
+    const { props, fetchMock } = setup({ row: first, override: (url, init) => {
+      if (url.endsWith('/review')) { reviews++; return response({ code: 'WRITE_RECEIPT_UNKNOWN' }, 500); }
+      if (url.endsWith('/director-proposals') && init.method === 'GET' && reviews) {
+        statusReads++; return statusReads === 1 ? response({ code: 'READ_FAILED' }, 500) : response({ items: [accepted()] });
+      }
+    } });
+    await select(); fireEvent.change(screen.getByLabelText('采用后的导演文档标题'), { target: { value: 'Preserve uncertain human review' } });
+    fireEvent.click(screen.getByLabelText('已核对来源、场面调度与导演建议；创建独立导演文档'));
+    fireEvent.click(screen.getByRole('button', { name: '审核并采用' })); await screen.findByText(/操作结果需核对/);
+    fireEvent.click(screen.getByRole('button', { name: '重新读取建议状态' })); await screen.findByText(/READ_FAILED/);
+    expect(screen.getByDisplayValue('Preserve uncertain human review')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: '处理已核对的建议状态' })).toBeNull();
+    expect(props.onPendingChange).toHaveBeenLastCalledWith(true);
+    fireEvent.click(screen.getByRole('button', { name: '重新读取建议状态' })); await screen.findByText('原建议当前状态：APPROVED');
+    expect(screen.getByDisplayValue('Preserve uncertain human review')).toBeTruthy();
+    expect((screen.getByRole('button', { name: '处理已核对的建议状态' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(props.onDocument).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByLabelText('确认放弃本地审核修改并采用已读取建议状态'));
+    fireEvent.click(screen.getByRole('button', { name: '处理已核对的建议状态' }));
+    expect(screen.getByRole('button', { name: '核对并打开已采用的导演草稿' })).toBeTruthy();
+    expect(props.onPendingChange).toHaveBeenLastCalledWith(false); expect(props.onDocument).not.toHaveBeenCalled();
+    expect(fetchMock.mock.calls.filter(([, init]) => init?.method !== 'GET').map(([url]) => url.split('/').pop())).toEqual(['review']);
+  });
+
+  it('does not treat a missing recovery row as proof the prior write never happened', async () => {
+    const first = { ...accepted(), status: 'NEEDS_REVIEW', document_id: null };
+    let submitted = false;
+    const { props, fetchMock } = setup({ row: first, override: (url, init) => {
+      if (url.endsWith('/review')) { submitted = true; return response({ code: 'WRITE_RECEIPT_UNKNOWN' }, 500); }
+      if (url.endsWith('/director-proposals') && init.method === 'GET' && submitted) return response({ items: [] });
+    } });
+    await select(); fireEvent.change(screen.getByLabelText('采用后的导演文档标题'), { target: { value: 'Local review before source changed' } });
+    fireEvent.click(screen.getByLabelText('已核对来源、场面调度与导演建议；创建独立导演文档'));
+    fireEvent.click(screen.getByRole('button', { name: '审核并采用' })); await screen.findByText(/操作结果需核对/);
+    fireEvent.click(screen.getByRole('button', { name: '重新读取建议状态' })); await screen.findByText(/当前列表未匹配到原建议/);
+    expect(screen.getByDisplayValue('Local review before source changed')).toBeTruthy();
+    fireEvent.click(screen.getByLabelText('确认放弃本地审核修改并采用已读取建议状态'));
+    fireEvent.click(screen.getByRole('button', { name: '处理已核对的建议状态' }));
+    expect(screen.getByText(/读取列表不能证明请求未执行/)).toBeTruthy();
+    expect(props.onDocument).not.toHaveBeenCalled();
+    expect(fetchMock.mock.calls.filter(([, init]) => init?.method !== 'GET')).toHaveLength(1);
+  });
+
+  it('preserves the separate preparation target when explicitly discarding an uncertain review', async () => {
+    const first = { ...accepted(), status: 'NEEDS_REVIEW', document_id: null };
+    let submitted = false;
+    const { props, fetchMock } = setup({ row: first, override: (url, init) => {
+      if (url.endsWith('/review')) { submitted = true; return response({ code: 'WRITE_RECEIPT_UNKNOWN' }, 500); }
+      if (url.endsWith('/director-proposals') && init.method === 'GET' && submitted) return response({ items: [accepted()] });
+    } });
+    await select();
+    fireEvent.change(screen.getByLabelText('建议准备 视觉风格'), { target: { value: 'Separate unsubmitted preparation' } });
+    fireEvent.change(screen.getByLabelText('采用后的导演文档标题'), { target: { value: 'Uncertain review title' } });
+    fireEvent.click(screen.getByLabelText('已核对来源、场面调度与导演建议；创建独立导演文档'));
+    fireEvent.click(screen.getByRole('button', { name: '审核并采用' })); await screen.findByText(/操作结果需核对/);
+    fireEvent.click(screen.getByRole('button', { name: '重新读取建议状态' })); await screen.findByText('原建议当前状态：APPROVED');
+    fireEvent.click(screen.getByLabelText('确认放弃本地审核修改并采用已读取建议状态'));
+    fireEvent.click(screen.getByRole('button', { name: '处理已核对的建议状态' }));
+    expect(screen.getByDisplayValue('Separate unsubmitted preparation')).toBeTruthy();
+    expect(props.onPendingChange).toHaveBeenLastCalledWith(true);
+    expect(screen.getByRole('button', { name: '清空未提交的视觉目标' })).toBeTruthy();
+    expect(props.onDocument).not.toHaveBeenCalled();
+    expect(fetchMock.mock.calls.filter(([, init]) => init?.method !== 'GET')).toHaveLength(1);
+  });
+
+  it('never uses a previously selected proposal as the receipt for an unknown creation', async () => {
+    const first = { ...accepted(), status: 'NEEDS_REVIEW', document_id: null };
+    const { props, fetchMock } = setup({ row: first, override: (url, init) => {
+      if (url.endsWith('/director-proposals') && init.method === 'POST') return response({ code: 'CREATE_RECEIPT_UNKNOWN' }, 500);
+    } });
+    await select();
+    fireEvent.change(screen.getByLabelText('建议准备 视觉风格'), { target: { value: 'Preparation with unknown receipt' } });
+    fireEvent.click(screen.getByRole('button', { name: '准备待审导演建议' })); await screen.findByText(/操作结果需核对/);
+    fireEvent.click(screen.getByRole('button', { name: '重新读取建议状态' }));
+    await screen.findByText(/当前选中建议不能作为该请求回执/);
+    expect(screen.queryByText('原建议当前状态：NEEDS_REVIEW')).toBeNull();
+    fireEvent.click(screen.getByLabelText('确认放弃本地审核修改并采用已读取建议状态'));
+    fireEvent.click(screen.getByRole('button', { name: '处理已核对的建议状态' }));
+    expect(screen.getByText(/读取列表不能证明请求未执行/)).toBeTruthy();
+    expect(screen.getByDisplayValue('Preparation with unknown receipt')).toBeTruthy();
+    expect(props.onPendingChange).toHaveBeenLastCalledWith(true);
+    expect(props.onDocument).not.toHaveBeenCalled();
+    expect(fetchMock.mock.calls.filter(([, init]) => init?.method !== 'GET').map(([url]) => url.split('/').pop())).toEqual(['director-proposals']);
   });
 });
