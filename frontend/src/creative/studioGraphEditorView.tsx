@@ -2,6 +2,7 @@ import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './stud
 import { AssetInspector } from '../novel/AssetInspector';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { GraphCanvas } from './GraphCanvas';
+import { removeGraphNodes } from './graphCanvasGeometry';
 import { GraphRunPanel } from './GraphRunPanel';
 import { GRAPH_NODE_LABELS } from './studioGraphLabels';
 import type { StudioGraphCatalog, StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphDefinitionId } from './studioGraphTypes';
@@ -189,7 +190,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     {node.definition_id === 'media_review' && <p>连接一个媒体制作候选。运行时先读取候选、核对摘要并明确批准或拒绝；批准入库后才输出素材引用，不自动执行下游。</p>}
     <div className="studio-graph-position">{(['x', 'y'] as const).map(axis => <label key={axis}>节点 {axis.toUpperCase()}<input type="number" min={-100000} max={100000} value={node.position[axis]} disabled={!editable} onChange={event => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= -100000 && value <= 100000) change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, position: { ...row.position, [axis]: value } } : row) }); }} /></label>)}</div>
     {node.definition_id === 'asset_reference' && <><p>图读取时引用状态：{referenceState || '待保存核对'} · {draft.schema_version >= 3 ? '执行时核对当前来源版本和真实内容' : '旧图只读引用，不执行媒体处理'}</p>{node.parameters.asset_id ? <p>原资产 {node.parameters.asset_id} · 绑定 v{node.parameters.version}</p> : <p>引用不可用或无权访问，原详情已隐藏。</p>}{previewState === 'READING' && <StatusMessage>正在核对引用资产版本与摘要…</StatusMessage>}{previewState === 'STALE' && <StatusMessage tone="warning">当前资产与图中绑定不同，未显示为原绑定版本。请核对图服务端版本与来源状态。</StatusMessage>}{previewState === 'UNAVAILABLE' && <StatusMessage tone="warning">引用资产当前不可读取，原绑定保持。</StatusMessage>}{node.parameters.asset_id && <Button disabled={busy || previewState === 'READING'} onClick={refreshPreview}>核对引用资产</Button>}{preview && <AssetInspector asset={preview} downloadAsset={downloadPreviewAsset} isCurrent={current} showReferences={false} />}</>}
-    <Button variant="danger" disabled={!editable || protectedNodes.includes(node.id)} onClick={() => { change({ ...draft, nodes: draft.nodes.filter(row => row.id !== node.id), edges: draft.edges.filter(edge => edge.source_node_id !== node.id && edge.target_node_id !== node.id) }); setSelected([]); }}>移除当前节点</Button><p>移除节点只修改本图，不删除任何原资产、章节或运行记录。</p>
+    <Button variant="danger" disabled={!editable || protectedNodes.includes(node.id)} onClick={() => { change(removeGraphNodes(draft, [node.id], protectedNodes)); setSelected([]); }}>移除当前节点</Button><p>移除节点只修改本图，不删除任何原资产、章节或运行记录。</p>
     </> : <EmptyState title="未选择图节点" detail="在画布或键盘节点列表中选择一个节点，编辑其参数和位置。" />}</section>;
   return { content, inspector };
 }

@@ -43,3 +43,38 @@ def test_annotation_does_not_relax_graph_validation_or_budgets():
                   {'nodes': [{'id': 'visual', 'definition_id': 'visual_group'}]}):
         with pytest.raises(ValidationError):
             parse_graph({**graph, **patch})
+
+
+@pytest.mark.parametrize('schema', [1, 2, 3, 4, 5])
+def test_groups_roundtrip_without_changing_annotation_or_execution(schema):
+    old = parse_graph({'schema_version': schema, 'title': 'Graph', 'nodes': [
+        {'id': 'text', 'definition_id': 'text_input', 'parameters': {'text': 'original'}}],
+        'presentation': {'comment': '  🎬\n'}}).model_dump()
+    grouped = deepcopy(old)
+    grouped['presentation']['groups'] = [{'id': 'group_1', 'name': '🎬' * 80, 'node_ids': ['text']}]
+    assert parse_graph(grouped).model_dump() == grouped
+    assert GraphSave.model_validate({'expected_version': 1, 'definition': grouped}).model_dump()['definition'] == grouped
+    assert digest(execution_definition(grouped)) == digest(execution_definition(old))
+    del grouped['presentation']['groups']
+    assert digest(parse_graph(grouped).model_dump()) == digest(old)
+
+
+@pytest.mark.parametrize('groups', [None, [], {}, [None],
+    [{'id': 'g', 'name': '', 'node_ids': ['text']}],
+    [{'id': 'g', 'name': ' ', 'node_ids': ['text']}],
+    [{'id': 'g', 'name': '🎬' * 81, 'node_ids': ['text']}],
+    [{'id': 'g', 'name': 1, 'node_ids': ['text']}],
+    [{'id': '1g', 'name': 'Name', 'node_ids': ['text']}],
+    [{'id': 'g', 'name': 'Name', 'node_ids': []}],
+    [{'id': 'g', 'name': 'Name', 'node_ids': ['missing']}],
+    [{'id': 'g', 'name': 'Name', 'node_ids': ['text', 'text']}],
+    [{'id': 'g', 'name': 'Name', 'node_ids': ['text'], 'collapsed': True}],
+    [{'id': 'g', 'name': 'Name', 'node_ids': ['text']}, {'id': 'other', 'name': 'Other', 'node_ids': ['text']}],
+    [{'id': 'g', 'name': 'Name', 'node_ids': ['text']}, {'id': 'g', 'name': 'Other', 'node_ids': ['other']}],
+    [{'id': 'g', 'name': 'Name', 'node_ids': ['text']}] * 25,
+])
+def test_groups_reject_malformed_dangling_duplicate_or_overlapping_membership(groups):
+    with pytest.raises(ValidationError):
+        parse_graph({'title': 'Graph', 'nodes': [
+            {'id': 'text', 'definition_id': 'text_input'}, {'id': 'other', 'definition_id': 'text_input'}],
+            'presentation': {'groups': groups}})

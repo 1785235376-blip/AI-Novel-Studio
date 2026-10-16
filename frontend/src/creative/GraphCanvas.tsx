@@ -11,6 +11,7 @@ import {
 } from './graphCanvasGeometry';
 import type { GraphAlignment, GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
 import { createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap } from './graphCanvasPresentation';
+import { GraphVisualGroups } from './GraphVisualGroups';
 import './graphCanvas.css';
 
 export type { GraphCanvasNodeDefinition, GraphCanvasPort } from './graphCanvasGeometry';
@@ -267,6 +268,8 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       {readonly && <Badge>只读</Badge>}
       <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || !removable.length} title={selected.length && !removable.length ? '已保存的资产引用只能移动或停用' : '删除所选节点及其连接'} onClick={deleteSelected}><Trash2 size={16} /></Button>
     </header>
+    <GraphVisualGroups definition={definition} selected={selected} blocked={blocked || !!activeGesture} interactionKey={interactionKey}
+      onChange={onDefinitionChange} onSelect={onSelectionChange} />
     <div className="graph-canvas__annotation" onKeyDown={event => event.stopPropagation()}>
       <label htmlFor={`${descriptionId}-comment`}>画布说明</label>
       <textarea id={`${descriptionId}-comment`} rows={2} maxLength={4000} value={definition.presentation?.comment || ''}
@@ -276,12 +279,13 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
           const comment = event.target.value;
           if (Array.from(comment).length > 2000) { setAnnotationLimit(true); return; }
           setAnnotationLimit(false);
-          onDefinitionChange({ ...definition, presentation: { comment } }, true);
+          onDefinitionChange({ ...definition, presentation: { ...definition.presentation, comment } }, true);
         }} />
-      <Button type="button" variant="ghost" disabled={blocked || !!activeGesture || !definition.presentation}
+      <Button type="button" variant="ghost" disabled={blocked || !!activeGesture || definition.presentation?.comment === undefined}
         onClick={() => {
           if (blocked || gesture.current) return;
-          const next = { ...definition }; delete next.presentation;
+          const next: StudioGraphDefinition = { ...definition, presentation: { ...definition.presentation } }; delete next.presentation!.comment;
+          if (!Object.keys(next.presentation!).length) delete next.presentation;
           onDefinitionChange(next, true);
         }}>移除画布说明</Button>
       <p id={`${descriptionId}-comment-help`} className="graph-canvas__help">最多 2000 个 Unicode 字符。仅作整张图的创作备注；使用“保存创作图”保存，可撤销。不会作为模型输入或运行节点。</p>

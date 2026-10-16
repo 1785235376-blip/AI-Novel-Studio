@@ -16,6 +16,17 @@ const node = (id: string, x = 0, y = 0): StudioGraphNode => ({ id, definition_id
 const graph = (): StudioGraphDefinition => ({ schema_version: 1, title: '节点图', nodes: [node('one', 10, 20), node('two', 700, 400)], edges: [{ id: 'link', source_node_id: 'one', source_port: 'text', target_node_id: 'two', target_port: 'text' }], viewport: { x: 100, y: -80, zoom: 2 } });
 
 describe('typed graph domain geometry', () => {
+  it('cleans deleted group membership and drops empty groups without touching protected nodes or comments', () => {
+    const definition: StudioGraphDefinition = { ...graph(), presentation: { comment: '', groups: [
+      { id: 'g', name: 'Group', node_ids: ['one', 'two'] }] } };
+    const kept = removeGraphNodes(definition, ['one', 'two'], ['two']);
+    expect(kept.presentation).toEqual({ comment: '', groups: [{ id: 'g', name: 'Group', node_ids: ['two'] }] });
+    expect(removeGraphNodes(kept, ['two']).presentation).toEqual({ comment: '' });
+    const groupsOnly = { ...definition, presentation: { groups: definition.presentation!.groups } };
+    expect(removeGraphNodes(groupsOnly, ['one', 'two'])).not.toHaveProperty('presentation');
+    expect(definition.presentation!.groups![0].node_ids).toEqual(['one', 'two']);
+  });
+
   it('round-trips positions through panned and zoomed coordinate systems', () => {
     const viewport = { x: -57, y: 91, zoom: 0.35 }, point = { x: -240, y: 380 };
     const screen = graphWorldToScreen(point, viewport);

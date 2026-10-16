@@ -63,3 +63,12 @@ Baseline `a132035c79d1c9182299f7c4a71a06a7bfd2eef3`; containing commit identifie
 268 selected mocked UI/transport/geometry tests, 11 pure serialization/validation tests, 4 original nonsecurity File tests and 30 PUBLIC contracts pass; tsc/Vite/discovery/token/scoped-color/487-file PUBLIC closure pass. Report/evidence: `docs/v2/canvas-annotation-20261016.md` / `.json`. Browser/native IME/visuals/performance, PG/P0, Windows/GPU/provider/full RC NOT_RUN. P0 stays BLOCKED, R3-GATE HOLD, Prompt Adoption writes disabled. No push/hosted CI because cost unknown.
 
 Handoff: independent parent review before further tracked edits. Next candidate is strict original-owner named visual grouping with selection/movement and non-destructive group removal; grouping/collapse/nesting remain missing. Preserve earlier receipts, all environment/cost/denial boundaries, and existing exact graph pins.
+
+
+## Persisted visual group continuation — 2026-10-16
+
+Baseline `6620f008da3309a16ae500ff07903bc2dde01a9e`; containing commit identifies delivery. Mounted GraphCanvas group panel creates explicit named selections, selects/moves members using original gestures, renames and removes groups without deleting nodes. Optional strict presentation.groups uses original Graph history/save/CAS/reopen, preserves absent/comment-only canonical values, and rejects overlap/dangling membership. Both original deletion paths prune group membership and empty groups. No second store, synthetic node, execution/permission/budget changes. Spatial outlines, collapse/nesting remain open.
+
+294 targeted mocked UI/transport/geometry, 32 pure backend, 3 nonsecurity File and 30 PUBLIC tests pass; tsc/Vite/discovery/token/scoped-color/487-file PUBLIC closure pass. Evidence/report: `docs/v2/canvas-visual-groups-20261016.md` and `.json`. Browser/visual/native IME/performance, PG/P0, user computer/GPU/provider/Windows/full RC were not attempted. P0 stays BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled; no push/hosted CI because cost remains unknown.
+
+Handoff: parent independent review before further tracked feature edits. Preserve previous evidence and environment/cost/denial boundaries. No full grouping/collapse/infinite-workspace acceptance claim; next work needs review coordination.

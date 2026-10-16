@@ -333,10 +333,31 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
     viewport: { ...position(viewport, input), zoom: number(viewport.zoom, 0.35, 2.5, input) } };
   if (row.presentation !== undefined) {
     const presentation = record(row.presentation, input);
-    if (Object.keys(presentation).some(key => key !== 'comment')) invalid(input);
-    const comment = text(presentation.comment, 4000, input, true);
-    if (Array.from(comment).length > 2000) invalid(input);
-    result.presentation = { comment };
+    if (!Object.keys(presentation).length || Object.keys(presentation).some(key => !['comment', 'groups'].includes(key))) invalid(input);
+    result.presentation = {};
+    if (presentation.comment !== undefined) {
+      const comment = text(presentation.comment, 4000, input, true);
+      if (Array.from(comment).length > 2000) invalid(input);
+      result.presentation.comment = comment;
+    }
+    if (presentation.groups !== undefined) {
+      if (!Array.isArray(presentation.groups) || !presentation.groups.length || presentation.groups.length > 24) invalid(input);
+      const ids = new Set<string>(), members = new Set<string>();
+      result.presentation.groups = presentation.groups.map(value => {
+        const group = record(value, input);
+        if (Object.keys(group).some(key => !['id', 'name', 'node_ids'].includes(key))) invalid(input);
+        const groupId = text(group.id, 64, input), name = text(group.name, 160, input);
+        if (!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(groupId) || ids.has(groupId) || Array.from(name).length > 80) invalid(input);
+        ids.add(groupId);
+        if (!Array.isArray(group.node_ids) || !group.node_ids.length || group.node_ids.length > 24) invalid(input);
+        const node_ids = group.node_ids.map(value => {
+          const member = text(value, 64, input);
+          if (!nodeMap.has(member) || members.has(member)) invalid(input);
+          members.add(member); return member;
+        });
+        return { id: groupId, name, node_ids };
+      });
+    }
   }
   if (new TextEncoder().encode(JSON.stringify(result)).length > 96_000) invalid(input);
   return result;

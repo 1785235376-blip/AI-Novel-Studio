@@ -256,3 +256,29 @@ def test_canvas_annotation_original_owner_reopen_remove_and_cas(rig):
     assert restored['execution_digest'] == original['execution_digest']
     assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == restored
     assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}
+
+
+def test_visual_groups_original_owner_reopen_rename_remove_and_cas(rig):
+    original = create(rig)
+    grouped = deepcopy(original['definition'])
+    members = [node['id'] for node in grouped['nodes']]
+    assert members
+    grouped['presentation'] = {'comment': 'Keep annotation', 'groups': [
+        {'id': 'group_1', 'name': 'Scene 🎬', 'node_ids': members}]}
+    updated = save(rig, original, grouped)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
+    assert updated['execution_digest'] == original['execution_digest']
+    assert updated['definition'] == grouped
+    with pytest.raises(CapabilityVersionConflict):
+        save(rig, original, grouped)
+    renamed = deepcopy(grouped)
+    renamed['presentation']['groups'][0]['name'] = 'Renamed'
+    updated = save(rig, updated, renamed)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id'])['definition'] == renamed
+    del renamed['presentation']['groups']
+    updated = save(rig, updated, renamed)
+    assert updated['definition']['nodes'] == original['definition']['nodes']
+    assert updated['definition']['presentation'] == {'comment': 'Keep annotation'}
+    restored = save(rig, updated, original['definition'])
+    assert restored['definition_digest'] == original['definition_digest']
+    assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}

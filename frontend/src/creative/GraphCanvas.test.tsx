@@ -48,6 +48,56 @@ beforeEach(() => { vi.stubGlobal('PointerEvent', TestPointerEvent); });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe('controlled typed graph canvas', () => {
+  it('creates, selects, drags, renames and removes persisted groups while retaining annotation', () => {
+    const definition = { ...initial(), presentation: { comment: 'Keep' } };
+    const { changes, selections } = setup({ definition, selectedNodeIds: ['source', 'prepare'] });
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '场景 🎬' } });
+    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' }));
+    const groups = [{ id: 'group_1', name: '场景 🎬', node_ids: ['source', 'prepare'] }];
+    expect(changes).toHaveBeenLastCalledWith({ ...definition, presentation: { comment: 'Keep', groups } }, true);
+    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } });
+    fireEvent.click(screen.getByRole('button', { name: '选择分组成员' }));
+    expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
+    down(source(), 40, 40); move(72, 56); up(72, 56);
+    const moved = changes.mock.calls.at(-1)![0];
+    expect(moved.nodes[0].position).toEqual({ x: 56, y: 40 });
+    expect(moved.nodes[1].position).toEqual({ x: 512, y: 160 });
+    expect(moved.presentation.groups).toEqual(groups);
+    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } });
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '新名称' } });
+    fireEvent.click(screen.getByRole('button', { name: '重命名分组' }));
+    expect(changes.mock.calls.at(-1)![0].presentation.groups[0].name).toBe('新名称');
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: 'Edited note' } });
+    expect(changes.mock.calls.at(-1)![0].presentation.groups[0].name).toBe('新名称');
+    fireEvent.click(screen.getByRole('button', { name: '移除画布说明' }));
+    expect(changes.mock.calls.at(-1)![0].presentation.groups).toHaveLength(1);
+    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } });
+    fireEvent.click(screen.getByRole('button', { name: '移除分组（保留节点）' }));
+    expect(changes.mock.calls.at(-1)![0]).toEqual({ ...definition, nodes: moved.nodes, presentation: undefined });
+  });
+
+  it('rejects overlap, resets pending names on owner changes and enforces Unicode name limits', () => {
+    const definition = { ...initial(), presentation: { groups: [{ id: 'g', name: 'Old', node_ids: ['source'] }] } };
+    const { changes, rerender } = setup({ definition, selectedNodeIds: ['source', 'prepare'] });
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: 'New' } });
+    expect((screen.getByRole('button', { name: '用所选节点创建分组' }) as HTMLButtonElement).disabled).toBe(true);
+    rerender({ selectedNodeIds: ['prepare'] });
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '🎬'.repeat(81) } });
+    expect(screen.getByRole('alert').textContent).toContain('80');
+    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' })); expect(changes).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '🎬'.repeat(80) } });
+    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' })); expect(changes).toHaveBeenCalledTimes(1);
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: 'Pending private name' } });
+    rerender({ interactionKey: 'other' }); expect((screen.getByLabelText('分组名称') as HTMLInputElement).value).toBe('');
+  });
+
+  it.each([{ readonly: true }, { busy: true }])('blocks all group actions: %j', props => {
+    const { changes, selections } = setup({ ...props, selectedNodeIds: ['source'] });
+    expect((screen.getByLabelText('分组名称') as HTMLInputElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' }));
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+  });
+
   it('edits and removes plain graph annotations without changing node geometry, pins or selection', () => {
     const definition = initial(), { changes, selections, rerender } = setup({ definition, selectedNodeIds: ['source'] });
     const text = '场景说明\n<script>plain text</script>';

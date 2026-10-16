@@ -75,6 +75,30 @@ describe('scoped graph transport', () => {
     await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
   });
 
+  it.each([1, 2, 3, 4, 5] as const)('roundtrips groups and exact annotations in schema %s', async schema_version => {
+    const value = graph(); value.definition = { ...definition(), schema_version, nodes: [definition().nodes[0]], edges: [],
+      presentation: { comment: '  🎬\n', groups: [{ id: 'g', name: '🎬'.repeat(80), node_ids: ['source'] }] } };
+    fetchMock.mockResolvedValue(reply(value));
+    const client = studioClient(projectId, context()).graphs;
+    expect((await client.get(graphId)).definition).toEqual(value.definition);
+    expect((await client.save(graphId, { expected_version: 3, definition: value.definition })).definition).toEqual(value.definition);
+    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(value.definition);
+  });
+  it.each([null, [], {}, [null],
+    [{ id: 'g', name: '', node_ids: ['source'] }], [{ id: 'g', name: ' ', node_ids: ['source'] }],
+    [{ id: 'g', name: '🎬'.repeat(81), node_ids: ['source'] }], [{ id: '1g', name: 'Name', node_ids: ['source'] }],
+    [{ id: 'g', name: 'Name', node_ids: [] }], [{ id: 'g', name: 'Name', node_ids: ['missing'] }],
+    [{ id: 'g', name: 'Name', node_ids: ['source', 'source'] }],
+    [{ id: 'g', name: 'Name', node_ids: ['source'], collapsed: true }],
+    [{ id: 'g', name: 'Name', node_ids: ['source'] }, { id: 'other', name: 'Other', node_ids: ['source'] }],
+    [{ id: 'g', name: 'Name', node_ids: ['source'] }, { id: 'g', name: 'Other', node_ids: ['draft'] }],
+    Array.from({ length: 25 }, () => ({ id: 'g', name: 'Name', node_ids: ['source'] })),
+  ])('rejects invalid groups in original transport: %j', async groups => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition, presentation: { groups } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
+  });
+
   it('reuses captured Studio credentials and branch for all graph endpoints', async () => {
     const origin = context(), client = studioClient(projectId, origin).graphs, signal = new AbortController().signal;
     origin.sessionToken = 'later-session'; origin.scope!.branchId = 'later-branch'; origin.scope!.workspaceId = 'later-workspace';

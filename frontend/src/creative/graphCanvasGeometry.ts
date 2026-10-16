@@ -107,7 +107,15 @@ export function graphEdgePath(source: StudioGraphPosition, target: StudioGraphPo
 
 export function removeGraphNodes(definition: StudioGraphDefinition, ids: readonly string[], protectedIds: readonly string[] = []): StudioGraphDefinition {
   const protectedSet = new Set(protectedIds), removed = new Set(ids.filter(id => !protectedSet.has(id)));
-  return { ...definition, nodes: definition.nodes.filter(node => !removed.has(node.id)), edges: definition.edges.filter(edge => !removed.has(edge.source_node_id) && !removed.has(edge.target_node_id)) };
+  const next = { ...definition, nodes: definition.nodes.filter(node => !removed.has(node.id)), edges: definition.edges.filter(edge => !removed.has(edge.source_node_id) && !removed.has(edge.target_node_id)) };
+  if (definition.presentation?.groups) {
+    next.presentation = { ...definition.presentation };
+    const groups = definition.presentation.groups.map(group => ({ ...group, node_ids: group.node_ids.filter(id => !removed.has(id)) })).filter(group => group.node_ids.length);
+    if (groups.length) next.presentation.groups = groups;
+    else delete next.presentation.groups;
+    if (!Object.keys(next.presentation).length) delete next.presentation;
+  }
+  return next;
 }
 
 export function isGraphEditableTarget(target: EventTarget | null): boolean {

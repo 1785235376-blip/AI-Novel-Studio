@@ -65,6 +65,23 @@ async function open() { fireEvent.change(screen.getByLabelText('已保存创作�
 function add(kind: StudioGraphDefinitionId) { fireEvent.change(screen.getByLabelText('节点类型'), { target: { value: kind } }); click('添加节点'); }
 
 describe('independent studio graph content integration', () => {
+  it('persists groups through original undo/save/reopen and inspector node deletion', async () => {
+    saved.definition.nodes = [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true,
+      position: { x: 48, y: 64 }, parameters: { text: 'Original' } }];
+    const mounted = mount(); await enter(); await open();
+    fireEvent.click(screen.getByRole('button', { name: '选择节点 文本输入 · text' }));
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '场景' } }); click('用所选节点创建分组');
+    expect(screen.getByRole('option', { name: '场景 · 1 个节点' })).toBeTruthy();
+    click('撤销图编辑'); expect(screen.queryByRole('option', { name: '场景 · 1 个节点' })).toBeNull();
+    click('重做图编辑'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    expect(saved.definition.presentation).toEqual({ groups: [{ id: 'group_1', name: '场景', node_ids: ['text'] }] });
+    mounted.unmount(); mount(); await enter(); await open();
+    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } }); click('选择分组成员');
+    click('移除当前节点'); click('保存创作图'); await screen.findByText('创作图已保存 · v3。没有自动创建运行。');
+    expect(saved.definition.nodes).toEqual([]); expect(saved.definition).not.toHaveProperty('presentation');
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
+
   it('saves/reopens graph annotation with original undo, redo, removal and no model dispatch', async () => {
     saved.definition.nodes = [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true,
       position: { x: 48, y: 64 }, parameters: { text: 'Original author text' } }];
@@ -255,18 +272,23 @@ describe('independent studio graph content integration', () => {
     fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
     click('应用自动布局到草稿');
     fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: '保留未确认备注' } });
+    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '保留未确认分组' } }); click('用所选节点创建分组');
     vi.mocked(client.graphs.save).mockRejectedValueOnce(new ApiError({ status, code: status === 409 ? 'CREATIVE_GRAPH_VERSION_CONFLICT' : 'UNKNOWN', message: '保存未确认' }));
     click('保存创作图'); await screen.findByText('保存版本或回执不确定。草稿已保留，不会自动覆盖或重试。');
     expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('0');
     expect((screen.getByRole('button', { name: '应用自动布局到草稿' }) as HTMLButtonElement).disabled).toBe(true);
     expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe('保留未确认备注');
     expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).disabled).toBe(true);
+    expect(screen.getByRole('option', { name: '保留未确认分组 · 1 个节点' })).toBeTruthy();
+    expect((screen.getByLabelText('视觉分组') as HTMLSelectElement).disabled).toBe(true);
+    expect((screen.getByRole('button', { name: '移除分组（保留节点）' }) as HTMLButtonElement).disabled).toBe(true);
     saved = { ...saved, version: 2, definition: { ...saved.definition, viewport: { x: -77, y: 20, zoom: 0.8 } } }; rows = [saved];
     click('核对图服务端版本'); await screen.findByRole('region', { name: '图服务端版本' });
     expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(99px, 80px) scale(1.5)');
     expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('0');
     fireEvent.click(screen.getByLabelText('确认放弃当前图草稿，采用已核对服务端版本')); click('采用图服务端版本');
     expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-77px, 20px) scale(0.8)');
+    expect(screen.queryByRole('option', { name: '保留未确认分组 · 1 个节点' })).toBeNull();
     expect(client.graphs.save).toHaveBeenCalledTimes(1); expect(client.graphs.createRun).not.toHaveBeenCalled();
     mounted.unmount(); mount(); await enter(); await open();
     expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(-77px, 20px) scale(0.8)');

@@ -580,9 +580,33 @@ class TypedEdge(Strict):
     target_port: Id
 
 
+class GraphVisualGroup(Strict):
+    id: Id
+    name: str = Field(strict=True, min_length=1, max_length=80)
+    node_ids: list[Id] = Field(min_length=1, max_length=24, strict=True)
+
+    @model_validator(mode="after")
+    def validate_group(self):
+        if not self.name.strip() or len(set(self.node_ids)) != len(self.node_ids):
+            raise ValueError("CREATIVE_GRAPH_GROUP_INVALID")
+        return self
+
+
 class GraphPresentation(Strict):
-    """Bounded author annotation, never execution input or authority."""
-    comment: str = Field(strict=True, max_length=2000)
+    """Bounded display-only metadata, never execution input or authority."""
+    comment: str | None = Field(default=None, strict=True, max_length=2000)
+    groups: list[GraphVisualGroup] | None = Field(default=None, min_length=1, max_length=24, strict=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def nonempty_present_fields(cls, value):
+        if isinstance(value, dict) and (not value or any(item is None for item in value.values())):
+            raise ValueError("CREATIVE_GRAPH_PRESENTATION_INVALID")
+        return value
+
+    @model_serializer(mode="wrap")
+    def preserve_absent_fields(self, handler):
+        return {key: value for key, value in handler(self).items() if value is not None}
 
 
 class GraphInput(Strict):
@@ -616,6 +640,13 @@ class GraphInput(Strict):
         nodes = {node.id: node for node in self.nodes}
         if len(nodes) != len(self.nodes) or len({edge.id for edge in self.edges}) != len(self.edges):
             raise ValueError("CREATIVE_GRAPH_DUPLICATE_ID")
+        if self.presentation and self.presentation.groups:
+            group_ids, members = set(), set()
+            for group in self.presentation.groups:
+                if group.id in group_ids or any(member not in nodes or member in members for member in group.node_ids):
+                    raise ValueError("CREATIVE_GRAPH_GROUP_MEMBERSHIP_INVALID")
+                group_ids.add(group.id)
+                members.update(group.node_ids)
         seen, targets = set(), set()
         for edge in self.edges:
             if edge.source_node_id not in nodes or edge.target_node_id not in nodes:

@@ -53,3 +53,8 @@
 .graph-canvas__annotation textarea{flex:1;min-width:0;box-sizing:border-box;resize:vertical;padding:var(--space-2);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit}
 .graph-canvas__annotation textarea:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:-2px}
 .graph-canvas__annotation .graph-canvas__help{flex-basis:100%;padding:0;border:0}
+
+.graph-canvas__groups{border-bottom:var(--border-default)}
+.graph-canvas__groups input,.graph-canvas__groups select{min-width:0;max-width:100%;min-height:var(--control-height-sm);padding:var(--space-1);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit}
+.graph-canvas__groups input:focus-visible,.graph-canvas__groups select:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:-2px}
+.graph-canvas__groups .graph-canvas__help{overflow-wrap:anywhere}
