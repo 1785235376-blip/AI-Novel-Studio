@@ -540,3 +540,59 @@ describe('world-space visual group outlines', () => {
     expect(selections).not.toHaveBeenCalled();
   });
 });
+
+
+describe('session-only visual group collapse', () => {
+  const grouped = (): StudioGraphDefinition => ({ ...initial(), presentation: { groups: [{ id: 'scene', name: '场景', node_ids: ['source'] }] } });
+  const collapseButton = () => screen.getByRole('button', { name: '折叠分组 场景' }) as HTMLButtonElement;
+  it('hides members and incident curves, reports real connections, expands without any graph or port write', () => {
+    const definition = grouped(), before = JSON.stringify(definition), onPortSelect = vi.fn();
+    const { changes, selections } = setup({ definition, onPortSelect });
+    const path = edgePath();
+    fireEvent.click(collapseButton());
+    expect(screen.queryByRole('button', { name: '选择节点 文本输入 · source' })).toBeNull();
+    expect(prepare()).not.toBeNull(); expect(document.querySelector('[data-graph-edge-id]')).toBeNull();
+    expect(screen.getByText('场景：1 个成员 · 1 条对外连接 · 0 条内部连接（线条已隐藏）')).not.toBeNull();
+    expect(screen.getByText('source 输出 text → prepare 输入 text')).not.toBeNull();
+    const card = document.querySelector('[data-graph-collapsed]') as HTMLElement;
+    expect(card.style.width).toBe('320px'); expect(card.querySelector('[data-graph-port]')).toBeNull();
+    const expand = screen.getByRole('button', { name: '展开画布分组 场景' });
+    act(() => expand.focus()); fireEvent.keyDown(expand, { key: 'Delete' }); fireEvent.keyDown(expand, { key: 'ArrowRight' });
+    fireEvent.click(expand);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: '选择视觉分组 场景 的 1 个成员' }));
+    expect(source()).not.toBeNull(); expect(edgePath()).toBe(path);
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled(); expect(onPortSelect).not.toHaveBeenCalled();
+    expect(JSON.stringify(definition)).toBe(before);
+  });
+  it.each(['selected', 'connecting', 'focused'])('keeps %s members visible and explains disabled collapse', mode => {
+    const { changes } = setup({ definition: grouped(), selectedNodeIds: mode === 'selected' ? ['source'] : [], connectionNodeIds: mode === 'connecting' ? ['source'] : [] });
+    if (mode === 'focused') act(() => source().focus());
+    expect(collapseButton().disabled).toBe(true); expect(collapseButton().title).toContain('取消成员选择');
+    fireEvent.click(collapseButton()); expect(source()).not.toBeNull(); expect(changes).not.toHaveBeenCalled();
+  });
+  it.each(['selected', 'connecting'])('expands permanently when a hidden member becomes %s', mode => {
+    const { rerender, changes } = setup({ definition: grouped() });
+    fireEvent.click(collapseButton());
+    rerender(mode === 'selected' ? { selectedNodeIds: ['source'] } : { connectionNodeIds: ['source'] });
+    expect(source()).not.toBeNull();
+    rerender({ selectedNodeIds: [], connectionNodeIds: [] });
+    expect(source()).not.toBeNull(); expect(collapseButton().disabled).toBe(false); expect(changes).not.toHaveBeenCalled();
+  });
+  it('retains collapse on camera changes, but resets on owner/group replacement and unmount', () => {
+    const definition = grouped(); const { rerender, unmount, changes } = setup({ definition, interactionKey: 'a' });
+    fireEvent.click(collapseButton());
+    rerender({ definition: { ...definition, viewport: { x: 100, y: 100, zoom: 2 } } });
+    expect(document.querySelector('[data-graph-collapsed]')).not.toBeNull();
+    rerender({ interactionKey: 'b' }); expect(source()).not.toBeNull();
+    fireEvent.click(collapseButton()); rerender({ definition: grouped() }); expect(source()).not.toBeNull();
+    fireEvent.click(collapseButton()); expect(changes).not.toHaveBeenCalled(); unmount();
+    setup({ definition }); expect(source()).not.toBeNull();
+  });
+  it('allows readonly view folding, blocks busy folding, and isolates toolbar keyboard input', () => {
+    const { changes, selections, rerender } = setup({ definition: grouped(), readonly: true, selectedNodeIds: ['prepare'] });
+    fireEvent.keyDown(collapseButton(), { key: 'Delete' }); fireEvent.keyDown(collapseButton(), { key: 'ArrowRight' });
+    fireEvent.click(collapseButton()); expect(document.querySelector('[data-graph-collapsed]')).not.toBeNull();
+    rerender({ busy: true }); expect((screen.getByRole('button', { name: '展开分组 场景' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+  });
+});

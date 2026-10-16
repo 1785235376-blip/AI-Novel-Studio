@@ -1,0 +1,105 @@
+{
+  "baseline_commit": "0fb3548b96ebe7cad39f7d746c6f335b0d6b60fb",
+  "scope": "Session-only group collapse, honest hidden-edge summaries and expand-required typed ports; no schema or execution changes",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/studioGraphClient.test.ts src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T09:12:56.669953+00:00",
+      "finished_utc": "2026-10-16T09:13:14.483400+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-collapse-final-ui.json",
+      "receipt_sha256": "01a930b5b85c84a2d3101318e0ecb9a04d36ecca4cfb5c11ba997dcafa986b7e",
+      "log": "docs/delivery/v2-development/canvas-collapse-final-ui.log",
+      "log_sha256": "53f027a42c2ecd7a46690782a38c6e1491fa3da9b07166ab1883dc8742c78568"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_graph_presentation_contract.py",
+        "tests/test_v2_creative_graph_persistence.py::test_visual_groups_original_owner_reopen_rename_remove_and_cas[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_canvas_annotation_original_owner_reopen_remove_and_cas[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-collapse-final-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T09:12:58.194427+00:00",
+      "finished_utc": "2026-10-16T09:13:06.819110+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-collapse-final-file.json",
+      "receipt_sha256": "16c3bf5f0d7999637340fc7afce465e8f6073c272e7629b29ca8e806ef7d8c16",
+      "log": "docs/delivery/v2-development/canvas-collapse-final-file.log",
+      "log_sha256": "8b61b217658e6802e11c66e7beab52dc253ffd8de73ec18634e3546ec617aafb"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T09:13:10.968805+00:00",
+      "finished_utc": "2026-10-16T09:13:43.016352+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-collapse-final-build.json",
+      "receipt_sha256": "cd8f5c5adbdac90ad0be068737e9a331d4e8c6776b0d2379d4e4521a5531ddbb",
+      "log": "docs/delivery/v2-development/canvas-collapse-final-build.log",
+      "log_sha256": "54aa63d9f8964d810d09808f578a238e6ed73c601ab5db569bb5467992bd1bf0"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for(const p of [\"frontend/src/creative/GraphCanvas.tsx\", \"frontend/src/creative/GraphVisualGroups.tsx\", \"frontend/src/creative/graphCanvas.css\"]) if(/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); const css=fs.readFileSync(\"frontend/src/creative/graphCanvas.css\",\"utf8\"); if(!/\\.graph-canvas__group-frame\\{[^}]*pointer-events:none/.test(css)||!/\\.graph-canvas__group-label\\.ui-button\\{[^}]*pointer-events:auto/.test(css)) throw new Error(\"Group hit-test policy changed\"); console.log(\"Collapsed card pointer isolation and shared token/color scope PASS; browser hit-testing NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T09:13:12.480018+00:00",
+      "finished_utc": "2026-10-16T09:13:12.541811+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-collapse-token-scope.json",
+      "receipt_sha256": "3ef3d443c2bceeec73321188d9129977132f50b5e10fae001cff0d99dc05fed7",
+      "log": "docs/delivery/v2-development/canvas-collapse-token-scope.log",
+      "log_sha256": "7a3cd25f5c213be710c062649fe87b8b8aa8a5ba98a4c9130b52ec2c0944448d"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 311,
+    "files": 10,
+    "environment": "mocked jsdom/transport and pure geometry"
+  },
+  "backend_contract_tests": 32,
+  "file_owner_tests": 3,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "source_sha256": {
+    "frontend/src/creative/GraphCanvas.test.tsx": "d10c1e2f4c43c5ab2ef800b2c43ce165e3d606287d2f7820e3b6010870b3a94c",
+    "frontend/src/creative/GraphCanvas.tsx": "ab8158bce4eacd5a8a9feec9ebf472730560f77884e006821b26daa3989b63b9",
+    "frontend/src/creative/GraphVisualGroups.tsx": "141915d679359c9565ade926abc05a124d395f2843915775ced7b8bd99a216f6",
+    "frontend/src/creative/graphCanvas.css": "6d91ca5ce10e476720b80f78a2b4b8ddc0926e9f7aafa9b1d4b6d6fafc6e8682",
+    "frontend/src/creative/graphCanvasPresentation.test.ts": "72b1efaa0c6f098eeb11ae94f28bc221f02b8aa3300a2901a1c3305ea6817b5d",
+    "frontend/src/creative/graphCanvasPresentation.ts": "9b50b8b41703c3a2818a24a3fc4cb55ab7682c4f4487badfe914dd2f9a6a1a35"
+  },
+  "initial_failures": [
+    "canvas-collapse-ui: null fold guard regression (fixed)",
+    "canvas-collapse-build: TypeScript null fold diagnostic (fixed)"
+  ],
+  "not_run": [
+    "Browser/visual/hit-testing/native IME/accessibility/performance",
+    "PG/P0/security (BLOCKED and excluded)",
+    "Windows/GPU/provider/full RC",
+    "push/hosted CI"
+  ]
+}

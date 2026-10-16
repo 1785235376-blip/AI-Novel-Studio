@@ -81,3 +81,12 @@ Baseline `43457402dac5c0579d8332fb8d53e73a813fba04`; containing commit identifie
 301 targeted mocked UI/geometry tests, 32 pure backend contracts, 3 nonsecurity File owner tests and 30 PUBLIC tests pass; tsc/Vite/discovery/token/scoped-color/hit-test policy/487-file closure pass. Browser/native input/visual/hit-testing/FPS/memory, PG/P0, Windows/GPU/provider/full RC NOT_RUN. P0 stays BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled. No push/hosted CI because cost remains unknown.
 
 Handoff: independent parent review before further tracked feature edits. No new store/schema/execution nodes; no collapsed/nested-subgraph completion claim. Preserve all previous receipts and user-machine/cost/denial boundaries.
+
+
+## Session-only group collapse continuation — 2026-10-16
+
+Baseline `0fb3548b96ebe7cad39f7d746c6f335b0d6b60fb`; containing commit identifies local delivery. Explicit group fold/expand controls now render compact display cards and exact external/internal connection summaries. Incident curves are hidden with a clear expand-required instruction; no false edges or proxy ports. Selected/focused/dragged/pending-connection members remain expanded; owner/group replacement resets session-only fold state. Original persisted definition, source pins, history/CAS, typed ports and execution limits remain untouched. Evidence/report: `docs/v2/canvas-group-collapse-20261016.md` / `.json`.
+
+311 targeted mocked UI/geometry tests, 32 pure backend, three nonsecurity File and 30 PUBLIC checks pass; tsc/Vite/discovery/token/pointer policy/487-file closure pass. Initial null-guard regression was caught and fixed; failed receipts remain. No browser/runtime workaround, PG/P0/security, Windows/GPU/provider/user-computer/full RC was attempted. P0 stays BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled; no push/hosted CI because cost is unknown.
+
+Handoff: parent review before next tracked feature work. Collapse is not persisted; nested groups, boundary-connection routing, durable unsaved recovery and full large-display LOD remain open. Preserve all prior evidence and cost/environment/denial boundaries.

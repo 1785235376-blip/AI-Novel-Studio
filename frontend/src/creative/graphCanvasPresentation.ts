@@ -56,6 +56,27 @@ export function projectGraphDisplay(index: GraphDisplayIndex, viewport: StudioGr
     frames: index.frames.filter(frame => frame.id === retainedGroupId || !world || intersects(frame.bounds, world)) };
 }
 
+/** Collapse is a disposable view: never rewrite endpoints or expose proxy ports. */
+export function collapseGraphDisplay(index: GraphDisplayIndex, edges: readonly StudioGraphEdge[],
+  requested: readonly string[], retainedIds: readonly string[]) {
+  const retained = new Set(retainedIds), wanted = new Set(requested);
+  const collapsed = index.frames.filter(frame => wanted.has(frame.id) && !frame.nodeIds.some(id => retained.has(id)));
+  const collapsedIds = new Set(collapsed.map(frame => frame.id));
+  const hiddenNodeIds = new Set(collapsed.flatMap(frame => frame.nodeIds));
+  const hiddenEdgeIds = new Set(edges.filter(edge => hiddenNodeIds.has(edge.source_node_id) || hiddenNodeIds.has(edge.target_node_id)).map(edge => edge.id));
+  const summaries = collapsed.map(frame => {
+    const members = new Set(frame.nodeIds);
+    return { ...frame, externalEdges: edges.filter(edge => members.has(edge.source_node_id) !== members.has(edge.target_node_id)),
+      internalCount: edges.filter(edge => members.has(edge.source_node_id) && members.has(edge.target_node_id)).length };
+  });
+  return { collapsedIds, hiddenNodeIds, summaries, index: { ...index,
+    cards: index.cards.filter(card => !hiddenNodeIds.has(card.id)),
+    connections: index.connections.filter(edge => !hiddenEdgeIds.has(edge.id)),
+    frames: index.frames.map(frame => collapsedIds.has(frame.id)
+      ? { ...frame, bounds: { ...frame.bounds, width: GRAPH_NODE_WIDTH, height: 128 } } : frame),
+  } };
+}
+
 /** Fixed display coordinates keep SVG arithmetic independent of graph extent. */
 export function projectGraphMiniMap(index: GraphDisplayIndex, viewport: StudioGraphViewport,
   size: { width: number; height: number } | null) {

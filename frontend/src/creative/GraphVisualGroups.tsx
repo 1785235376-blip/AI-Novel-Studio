@@ -53,7 +53,7 @@ export function GraphVisualGroups({ definition, selected, blocked, interactionKe
       <Button variant="ghost" disabled={blocked || !chosen} onClick={() => { if (chosen) write(groups.filter(group => group.id !== chosen.id)); }}>移除分组（保留节点）</Button>
     </div>
     {chosen && <p className="graph-canvas__help">成员：{chosen.node_ids.join('、')}</p>}
-    <p className="graph-canvas__help">最多 24 组，名称 1–80 个 Unicode 字符。每个节点只能属于一组；先移除原组才能重新分组。选择成员后拖动任一所选节点可整体移动；删节点同步清理成员，空组自动移除。通过保存创作图持久化，可撤销。折叠与嵌套暂未实现。</p>
+    <p className="graph-canvas__help">最多 24 组，名称 1–80 个 Unicode 字符。每个节点只能属于一组；先移除原组才能重新分组。选择成员后拖动任一所选节点可整体移动；删节点同步清理成员，空组自动移除。通过保存创作图持久化，可撤销。折叠是下方独立的临时视图操作；嵌套暂未实现。</p>
     {name && !validName && <p role="alert" className="graph-canvas__help">请输入非空且不超过 80 个字符的名称。</p>}
   </section>;
 }

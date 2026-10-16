@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap } from './graphCanvasPresentation';
+import { collapseGraphDisplay, createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap } from './graphCanvasPresentation';
 import type { GraphDisplayNode } from './graphCanvasPresentation';
 import type { GraphCanvasNodeDefinition } from './graphCanvasGeometry';
 const definitions: GraphCanvasNodeDefinition[] = [{ id: 'text_input', inputs: [{ id: 'in', type: 'TEXT' }], outputs: [{ id: 'out', type: 'TEXT' }] }];
@@ -99,5 +99,30 @@ describe('derived visual group frames', () => {
     expect(index.frames).toHaveLength(1);
     expect(index.frames[0].label).toBe('<img>  标题');
     expect(createGraphDisplayIndex([node('a', 0)], [], definitions).frames).toEqual([]);
+  });
+});
+
+
+describe('non-executable collapse projection', () => {
+  it('counts internal, incoming, outgoing and group-to-group edges exactly without synthetic endpoints', () => {
+    const nodes = [node('a', 0), node('b', 500), node('c', 1000), node('d', 1500)];
+    const edges = [edge('internal', 'a', 'b'), edge('out', 'a', 'c'), edge('in', 'c', 'b'), edge('other', 'c', 'd')];
+    const index = createGraphDisplayIndex(nodes, edges, definitions, [{ id: 'g', name: 'G', node_ids: ['a', 'b'] }, { id: 'h', name: 'H', node_ids: ['c'] }]);
+    const before = JSON.stringify({ index, nodes, edges });
+    const result = collapseGraphDisplay(index, edges, ['g'], []);
+    expect(result.index.cards.map(card => card.id)).toEqual(['c', 'd']);
+    expect(result.index.connections).toEqual(index.connections.filter(item => item.id === 'other'));
+    expect(result.summaries[0].externalEdges.map(item => item.id)).toEqual(['out', 'in']);
+    expect(result.summaries[0].internalCount).toBe(1);
+    expect(collapseGraphDisplay(index, edges, ['g', 'h'], []).index.connections).toEqual([]);
+    expect(collapseGraphDisplay(index, edges, ['g'], ['b']).index).toEqual(index);
+    expect(JSON.stringify({ index, nodes, edges })).toBe(before);
+  });
+  it('culls by compact card extent and can retain focused collapsed groups', () => {
+    const index = createGraphDisplayIndex([node('a', -1000), node('b', 2000)], [], definitions, [{ id: 'g', name: 'G', node_ids: ['a', 'b'] }]);
+    const collapsed = collapseGraphDisplay(index, [], ['g'], []).index;
+    expect(projectGraphDisplay(collapsed, viewport, size, [], 0).frames).toEqual([]);
+    expect(projectGraphDisplay(collapsed, viewport, size, [], 0, 'g').frames).toHaveLength(1);
+    expect(projectGraphDisplay(collapsed, viewport, null).nodeIds.size).toBe(0);
   });
 });

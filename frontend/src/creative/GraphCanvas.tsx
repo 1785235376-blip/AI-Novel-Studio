@@ -10,7 +10,7 @@ import {
   graphSelectionRect, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
 import type { GraphAlignment, GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
-import { createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap, GRAPH_VIEW_OVERSCAN } from './graphCanvasPresentation';
+import { collapseGraphDisplay, createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap, GRAPH_VIEW_OVERSCAN } from './graphCanvasPresentation';
 import { GraphVisualGroups } from './GraphVisualGroups';
 import './graphCanvas.css';
 
@@ -60,6 +60,11 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const [marquee, setMarquee] = useState<GraphCanvasRect | null>(null);
   const [viewportSize, setViewportSize] = useState<{ width: number; height: number } | null>(null);
   const [focusedGroup, setFocusedGroup] = useState<string | null>(null);
+  const [fold, setFold] = useState<{ owner: GraphCanvasProps['interactionKey'];
+    groups: StudioGraphDefinition['presentation']; ids: string[] } | null>(null);
+  const foldCurrent = !!fold && fold.owner === interactionKey && fold.groups?.groups === definition.presentation?.groups;
+  const collapsedGroups = foldCurrent ? fold!.ids : [];
+  useEffect(() => { setFold(null); }, [interactionKey, definition.presentation?.groups]);
   const [focusedNode, setFocusedNode] = useState<string | null>(null);
   const [showMiniMap, setShowMiniMap] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
@@ -81,7 +86,21 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const displayIndex = useMemo(() => createGraphDisplayIndex(visible.nodes, visible.edges, nodeDefinitions, visible.presentation?.groups), [visible.nodes, visible.edges, nodeDefinitions, visible.presentation?.groups]);
   const allNodeIds = useMemo(() => new Set(definition.nodes.map(node => node.id)), [definition.nodes]);
   const selected = selectedNodeIds.filter(id => allNodeIds.has(id));
-  const display = projectGraphDisplay(displayIndex, visible.viewport, viewportSize, [...selected, ...(gesture.current?.ids || []), ...connectionNodeIds, ...(focusedNode ? [focusedNode] : [])], GRAPH_VIEW_OVERSCAN, focusedGroup);
+  const retained = [...selected, ...(gesture.current?.ids || []), ...connectionNodeIds, ...(focusedNode ? [focusedNode] : [])];
+  const collapse = collapseGraphDisplay(displayIndex, visible.edges, collapsedGroups, retained);
+  // Expansion for an interaction anchor is permanent until explicitly collapsed again.
+  const effectiveCollapseKey = JSON.stringify([...collapse.collapsedIds]);
+  useEffect(() => {
+    setFold(previous => previous ? { ...previous, ids: previous.ids.filter(id => collapse.collapsedIds.has(id)) } : null);
+  }, [effectiveCollapseKey]);
+  const display = projectGraphDisplay(collapse.index, visible.viewport, viewportSize, retained, GRAPH_VIEW_OVERSCAN, focusedGroup);
+  function toggleGroup(id: string) {
+    if (busy || gesture.current) return;
+    const frame = displayIndex.frames.find(item => item.id === id);
+    if (!frame || (!collapse.collapsedIds.has(id) && frame.nodeIds.some(member => retained.includes(member)))) return;
+    setFold({ owner: interactionKey, groups: definition.presentation, ids: collapse.collapsedIds.has(id)
+      ? collapsedGroups.filter(item => item !== id) : [...collapsedGroups, id] });
+  }
   const renderedNodes = visible.nodes.filter(node => display.nodeIds.has(node.id));
   const selectedSet = new Set(selected);
   // Keep lightweight accessibility entries stable during camera-only updates.
@@ -292,6 +311,21 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       <p id={`${descriptionId}-comment-help`} className="graph-canvas__help">最多 2000 个 Unicode 字符。仅作整张图的创作备注；使用“保存创作图”保存，可撤销。不会作为模型输入或运行节点。</p>
       {annotationLimit && <p role="alert" className="graph-canvas__help">说明超过 2000 个字符，本次输入未应用；原有说明已保留。</p>}
     </div>
+    {!!displayIndex.frames.length && <section className="graph-canvas__groups" aria-label="分组折叠视图" onKeyDown={event => event.stopPropagation()}>
+      <div className="graph-canvas__toolbar">{displayIndex.frames.map(frame => {
+        const collapsed = collapse.collapsedIds.has(frame.id);
+        const retainedMember = frame.nodeIds.some(id => retained.includes(id));
+        return <Button key={frame.id} type="button" variant="ghost" aria-expanded={!collapsed}
+          disabled={busy || !!activeGesture || (!collapsed && retainedMember)}
+          title={retainedMember ? '请先取消成员选择或结束端口连接；正在使用的成员保持展开。' : undefined}
+          onClick={() => toggleGroup(frame.id)}>{collapsed ? '展开' : '折叠'}分组 {frame.label}</Button>;
+      })}</div>
+      <p className="graph-canvas__help">折叠仅本次视图，不保存；切换图或重开恢复展开。已选、聚焦、拖动或正在连接的成员保持展开；请先取消选择、结束连接再折叠。折叠时隐藏成员及其连线，展开后查看或编辑真实端口。框选或目录选择成员会展开该组；小地图仍显示全部原节点。</p>
+      {collapse.summaries.map(group => <details key={group.id} className="graph-canvas__help">
+        <summary>{group.label}：{group.nodeIds.length} 个成员 · {group.externalEdges.length} 条对外连接 · {group.internalCount} 条内部连接（线条已隐藏）</summary>
+        <ul>{group.externalEdges.map(edge => <li key={edge.id}>{edge.source_node_id} 输出 {edge.source_port} → {edge.target_node_id} 输入 {edge.target_port}</li>)}</ul>
+      </details>)}
+    </section>}
     <div className="graph-canvas__toolbar" role="group" aria-label="网格与吸附设置" onKeyDown={event => event.stopPropagation()}>
       <Button type="button" variant="ghost" aria-pressed={showGrid} disabled={!!activeGesture} onClick={() => setShowGrid(value => !value)}>显示网格</Button>
       <Button type="button" variant="ghost" aria-pressed={snap} disabled={blocked || !!activeGesture} onClick={() => setSnap(value => !value)}>拖拽吸附</Button>
@@ -346,6 +380,16 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       <div className="graph-canvas__world" style={{ transform: `translate(${visible.viewport.x}px, ${visible.viewport.y}px) scale(${visible.viewport.zoom})` }}>
         {display.frames.map(frame => {
           const fullySelected = frame.nodeIds.every(id => selectedSet.has(id));
+          const summary = collapse.summaries.find(group => group.id === frame.id);
+          if (summary) return <div key={frame.id} data-graph-group-id={frame.id} data-graph-collapsed="true"
+            className="graph-canvas__group-frame graph-canvas__group-collapsed"
+            style={{ left: frame.bounds.x, top: frame.bounds.y, width: frame.bounds.width, height: frame.bounds.height }}>
+            <Button type="button" variant="ghost" className="graph-canvas__group-label" title={frame.label}
+              aria-label={`展开画布分组 ${frame.label}`} aria-expanded={false} disabled={busy || !!activeGesture}
+              onKeyDown={event => event.stopPropagation()} onPointerDown={event => event.stopPropagation()}
+              onClick={() => toggleGroup(frame.id)}>{frame.label} · {frame.nodeIds.length} 个节点 · 展开</Button>
+            <p className="graph-canvas__help">{summary.externalEdges.length} 条对外连接 · {summary.internalCount} 条内部连接<br />连线已隐藏；展开后查看或连接端口。</p>
+          </div>;
           return <div key={frame.id} data-graph-group-id={frame.id} className={`graph-canvas__group-frame${fullySelected ? ' is-selected' : ''}`}
             style={{ left: frame.bounds.x, top: frame.bounds.y, width: frame.bounds.width, height: frame.bounds.height }}>
             <Button type="button" variant="ghost" className="graph-canvas__group-label" title={frame.label}
