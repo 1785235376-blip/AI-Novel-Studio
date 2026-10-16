@@ -1,0 +1,9 @@
+{
+  "backend": "real File",
+  "identity_owner": "LocalSessionBootstrap",
+  "development_sessions": false,
+  "response_mocks": false,
+  "model_calls": 0,
+  "owned_backend_pid": 49212,
+  "owned_backend_stopped": true
+}

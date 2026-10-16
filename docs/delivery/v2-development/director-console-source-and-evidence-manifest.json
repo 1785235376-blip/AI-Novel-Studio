@@ -1,0 +1,568 @@
+{
+  "owned_vite_running": false,
+  "cleanup": "SERVICES_STOPPED_RUNTIME_PROFILES_RETAINED_AFTER_AUTO_REVIEW_REJECTION",
+  "owned_api_running": false,
+  "retained_runtime_profiles": [
+    {
+      "recorded_bytes": 1787.0,
+      "path": ".runtime\\director-console-20261016"
+    },
+    {
+      "recorded_bytes": 9165.0,
+      "path": ".runtime\\director-console-packaged-r10-scrolled"
+    },
+    {
+      "recorded_bytes": null,
+      "path": ".runtime\\director-console-packaged-r2"
+    },
+    {
+      "recorded_bytes": 1860.0,
+      "path": ".runtime\\director-console-packaged-r3"
+    },
+    {
+      "recorded_bytes": 5411.0,
+      "path": ".runtime\\director-console-packaged-r4"
+    },
+    {
+      "recorded_bytes": 5411.0,
+      "path": ".runtime\\director-console-packaged-r5"
+    },
+    {
+      "recorded_bytes": 5412.0,
+      "path": ".runtime\\director-console-packaged-r6"
+    },
+    {
+      "recorded_bytes": 7189.0,
+      "path": ".runtime\\director-console-packaged-r7"
+    },
+    {
+      "recorded_bytes": 9165.0,
+      "path": ".runtime\\director-console-packaged-r8"
+    },
+    {
+      "recorded_bytes": 23771.0,
+      "path": ".runtime\\director-console-packaged-r9-all-viewports"
+    }
+  ],
+  "measured_free_bytes": 175187513344,
+  "source_entries": [
+    {
+      "path": "frontend/src/creative/StudioGraphDirectorConsole.tsx",
+      "sha256": "6a6710e88b54c09289bd8950305355fe0d243794c216de799daa837d99b06a2f",
+      "bytes": 3626
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphDirectorConsole.test.tsx",
+      "sha256": "ecc72ffed545e0cc591a09f2429e881f78e7976f28d30942eedcf3cc1104e886",
+      "bytes": 6445
+    },
+    {
+      "path": "frontend/src/creative/studioGraphDirectorClient.test.ts",
+      "sha256": "51a4803a3044e03cd626ddf2f9c38915a65f8d12343474bfe8b49658db60fa95",
+      "bytes": 6129
+    },
+    {
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "sha256": "e3e014b72d62323caeb22a7957a55f08b756beadff9bb578dd3e1a7c70315c07",
+      "bytes": 103109
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "sha256": "5c1403a0908a3006fbd8c0e25591235570c5188553b15b3e3b5d06a23ed04819",
+      "bytes": 44256
+    },
+    {
+      "path": "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+      "sha256": "6663a2cb4fb2f63b1d0aabf7e41a6ca9e2b8bd47f20a969c5909c55fcaab26af",
+      "bytes": 9560
+    },
+    {
+      "path": "frontend/playwright.director-console.config.ts",
+      "sha256": "f3e8dbc9e684f4438573fc5a2f894b88443ba12c27f9523b6b23f581b45d7015",
+      "bytes": 1494
+    },
+    {
+      "path": "frontend/tests/e2e/v2-director-console-live.spec.ts",
+      "sha256": "76c3df6c6dc3d7da4194b96920cf2293b533ac6d16a40f0440f077a30100572b",
+      "bytes": 11616
+    },
+    {
+      "path": "scripts/run_v2_director_console_browser.py",
+      "sha256": "014fb44f523299ca0ac220420117de020dfc6a4e8a2c753d14bd018cdfd0437d",
+      "bytes": 5430
+    },
+    {
+      "path": "DIRECTOR_GRAPH_CONSOLE_FOUNDATION_REPORT.md",
+      "sha256": "e00cca1cad091343964e20bedd231a468432b16394e76a6455f1a6eecf710c7f",
+      "bytes": 7015
+    }
+  ],
+  "receipt_entries": [
+    {
+      "path": "docs/delivery/v2-development/director-console-20261016/junit.xml",
+      "sha256": "febf685457f6a6f19a575b63cfd210792dcaba034b43a4d3471c98173cd0211a",
+      "bytes": 4578
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-20261016/results.json",
+      "sha256": "a582e87f1e3b30a12b29f4f4e66f83c3697819e65bf6b2a7547b3e9eae664c9a",
+      "bytes": 13940
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-20261016/test-results/.last-run.json",
+      "sha256": "42d7e57b82eb14c4d91a2836e1a476ff8fcb8c35930c213368a72cf8f78acbc4",
+      "bytes": 96
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-20261016/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/error-context.md",
+      "sha256": "f22f7cba55c99525abf7fdd28ce92b3f86f26bad9085ff281b7310dc9fd77563",
+      "bytes": 11629
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-20261016/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/test-failed-1.png",
+      "sha256": "336dc592f4a21ad56528424296fd62c447d77faaa073bfa0758ef00494210b51",
+      "bytes": 85306
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-20261016/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/trace.zip",
+      "sha256": "b8af4fcbc8c565a79173fb389aaac499da0867fa8b7b1a6ed2a2d07a1f1cef28",
+      "bytes": 366824
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/backend.stderr.log",
+      "sha256": "152706b7fe949d45da0bacf30899864dc53f0bec3a83683de8da96105e956f1e",
+      "bytes": 202
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/backend.stdout.log",
+      "sha256": "96db853b2871ad665bc854386ff9185919b2310680a2b21462d9917291cd8645",
+      "bytes": 11858
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/junit.xml",
+      "sha256": "dbde40f2cc470bc42ae680195ba762c709b039f8f1f030f83c798908827f2cd2",
+      "bytes": 690
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/launcher.json",
+      "sha256": "e0ad9fb62a517b022df9f031af7353eb96a0875ec1ba1c2b425a4ce8bad1c4a3",
+      "bytes": 305
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/playwright.log",
+      "sha256": "0cbad06a9d002f61f1e6148f24fab5942f28d237fd172604c42b4c3502c3425e",
+      "bytes": 557
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/results.json",
+      "sha256": "ac472703e077959c3c794cd7ff237bb30a78220ab50a14827c4058f4a95144b0",
+      "bytes": 65615
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/test-results/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "bytes": 45
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/canvas-text-draft-restored.png",
+      "sha256": "05924718495917556318919d6b180c2f71dfe6f4f309c949d84f9a1b43b90985",
+      "bytes": 105997
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/director-console-expanded.png",
+      "sha256": "54336baac78f5c02db6fbfe93daa92786de0c2d8fed607fe40a99cab05d13740",
+      "bytes": 146654
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/director-console-intent-lower.png",
+      "sha256": "c898c014f915f58cb1717b28892defdfb805ebb588d70262209ef72a10730ff6",
+      "bytes": 161332
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/director-console-intent-scrolled.png",
+      "sha256": "6af69b1801ad534beb41865a6a4b4625a2544b82014c356f800c88d5ea78e331",
+      "bytes": 166300
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r10-scrolled/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/director-console-stale-refusal.png",
+      "sha256": "1fc51b1751cd3d80bd114cb2cf191b8efc139f4be063ca20c188c73f3e6aecfa",
+      "bytes": 148363
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r2/backend.stderr.log",
+      "sha256": "0ae922dac83391770e8abfe99a776d2f567729dde4852b7a7550098c4f2a31f2",
+      "bytes": 3208
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r2/backend.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r2/launcher.json",
+      "sha256": "fefab857f160f995af343174b70da51cc83f905e678d965e217e21dbd838e30c",
+      "bytes": 224
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r3/backend.stderr.log",
+      "sha256": "2354536dc131f6e5926f5d3b56a2966a5e132a87232d9a0efd56b0eb04c998a3",
+      "bytes": 202
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r3/backend.stdout.log",
+      "sha256": "9af820cddf1f62470a036968e45a155e5157be5198d4e8e0fe97a4c95d41e1eb",
+      "bytes": 1142
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r3/junit.xml",
+      "sha256": "3cda07e2fdbc6412ceb229da393a77a75fb422183fe368fb0a4d9ccc09361abf",
+      "bytes": 2995
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r3/launcher.json",
+      "sha256": "b373484695311e17beca3405138ceac558c863b5acddb3bb38a266547975f730",
+      "bytes": 305
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r3/playwright.log",
+      "sha256": "4bc50a3b0d80946ae265d86a150dd1935455e55aa33f9276f826db0c1e49dfdf",
+      "bytes": 2640
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r3/results.json",
+      "sha256": "4486fc64e62f7f63ff81999faf644bc885499befa0ad9ef680dbaae7d55c3454",
+      "bytes": 10278
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r3/test-results/.last-run.json",
+      "sha256": "42d7e57b82eb14c4d91a2836e1a476ff8fcb8c35930c213368a72cf8f78acbc4",
+      "bytes": 96
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r3/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/error-context.md",
+      "sha256": "eccc263b86cc0c6a8a3425373acbb978e7ae5105030eda100a63fa15ebd05167",
+      "bytes": 11579
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r3/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/test-failed-1.png",
+      "sha256": "dbb004e72f1be78293c1f41b9e60d5bc27b850521fbfbf6ff5a33f8aef0569ec",
+      "bytes": 49705
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r4/backend.stderr.log",
+      "sha256": "df50794aacfa75f47eb4ecfaea22c11a3a6e46680f13e79f82c9eafb5a422b47",
+      "bytes": 202
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r4/backend.stdout.log",
+      "sha256": "49b9adda1ec900dfa557e774619dcac40460121429e558fc6a0ce7113277d747",
+      "bytes": 3124
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r4/junit.xml",
+      "sha256": "3e8038721415131add0f49b8dd311759aeae47ada6c372c6b38638f6392ee1e5",
+      "bytes": 3854
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r4/launcher.json",
+      "sha256": "2fd273b6c49ef564571b9558bca32ad6724fbefc5aea3ec8297854c75c24a257",
+      "bytes": 305
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r4/playwright.log",
+      "sha256": "48fb7a122b86f3206d162705e8f6b5f1ccdb9a41b00d48085a811cdf6b64de87",
+      "bytes": 3072
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r4/results.json",
+      "sha256": "f90cc4e43c101d19914116b1818e3e96d3038279344a2c2110213d1229277d1e",
+      "bytes": 15859
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r4/test-results/.last-run.json",
+      "sha256": "42d7e57b82eb14c4d91a2836e1a476ff8fcb8c35930c213368a72cf8f78acbc4",
+      "bytes": 96
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r4/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/error-context.md",
+      "sha256": "a0b07f3a5c8a390b4b88d20b20f234a14500441469105ec97484a912eeaed572",
+      "bytes": 15170
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r4/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/test-failed-1.png",
+      "sha256": "9dd2a2c39009f22a51315d0741dbf487f8b8949a47dbf290ca7be3ccd844af04",
+      "bytes": 57267
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r5/backend.stderr.log",
+      "sha256": "9dc797e67c6ae7b8fe1a6d20426fa6e0da18197896120d5d32e8ad85932d2c95",
+      "bytes": 202
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r5/backend.stdout.log",
+      "sha256": "68b867c118e6f55225bac65cb9d3318a2e76205c86b1ff45528f72369a77ed56",
+      "bytes": 2962
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r5/junit.xml",
+      "sha256": "e6802e612405b09731dbdaabc45004f27ac22f73c708342ab6ae2b8654756106",
+      "bytes": 3854
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r5/launcher.json",
+      "sha256": "6ad2998183577f23fa67d0b2d871a425603fb797f673eef9db31c4865f55cd48",
+      "bytes": 305
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r5/playwright.log",
+      "sha256": "c45de7d541efc70599c9764a303a1efcce8ed99e52c6e22099fb4b10e8fab184",
+      "bytes": 3072
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r5/results.json",
+      "sha256": "8fde2b5261bb11557aec5bd569f77c667db7a3be91602949e69f63450d816092",
+      "bytes": 16049
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r5/test-results/.last-run.json",
+      "sha256": "42d7e57b82eb14c4d91a2836e1a476ff8fcb8c35930c213368a72cf8f78acbc4",
+      "bytes": 96
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r5/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/error-context.md",
+      "sha256": "f198cec84694feefa646c4cf2f1d309276fa18d2d5a175a38954b6c4472a94a0",
+      "bytes": 19331
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r5/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/test-failed-1.png",
+      "sha256": "600f2668c43778b5dcf6605290bb4da86990e3e13214b3af955e671682e0fb2c",
+      "bytes": 72104
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r6/backend.stderr.log",
+      "sha256": "22f63f6eb8f891277340e79a290a3a907696e99aadb7e0aa12e4d755a9a83f90",
+      "bytes": 202
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r6/backend.stdout.log",
+      "sha256": "4cb0c6c8d95ffbdc9154cfbd4eb6ea42828137b336c9019a95614d565c2b4e92",
+      "bytes": 7630
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r6/junit.xml",
+      "sha256": "39c6d6919474ff6d2e69f60945d12c689c82da824e8f23b2450154b81931be27",
+      "bytes": 3397
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r6/launcher.json",
+      "sha256": "33bf7ba661a7f8f1ba69e04d36800537263a86aca9996728a4455a1abc49616f",
+      "bytes": 305
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r6/playwright.log",
+      "sha256": "a0de5e127629e133e7a495ac17bcc4b02245125f0646f4ddd260e7874fa80f0f",
+      "bytes": 3006
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r6/results.json",
+      "sha256": "ac36bb44ab7e7bfeeb775afb99267a670855c5323baef9900de31cf090cf76a5",
+      "bytes": 28409
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r6/test-results/.last-run.json",
+      "sha256": "42d7e57b82eb14c4d91a2836e1a476ff8fcb8c35930c213368a72cf8f78acbc4",
+      "bytes": 96
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r6/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/error-context.md",
+      "sha256": "8213a60984a36ec3c72ecfdbe8a141234e5b4aff08fc61876e3df4d5d6458610",
+      "bytes": 31002
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r6/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/test-failed-1.png",
+      "sha256": "2ad21a64bb1beffa69a94286d68ab57ce57768e85efd011a9b52a98f6fc3cb95",
+      "bytes": 123722
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/backend.stderr.log",
+      "sha256": "84c7990a55aed20e5940444ff42ca05fd036a75490e41e0a93476d8a8fe703b8",
+      "bytes": 202
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/backend.stdout.log",
+      "sha256": "fc2c1d11b840ec0bee9f54b8caa9e26617f4ada6c3ea0472ee578e87569e90ba",
+      "bytes": 9466
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/junit.xml",
+      "sha256": "e41614b8b59ea4584d1ff604faf64bc4ad02aefa2cb7e83adc33d1a464ef31d2",
+      "bytes": 3003
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/launcher.json",
+      "sha256": "f4b5df6750dbe67f1b484c9202f283d8539807040204508b484616eceb759fcd",
+      "bytes": 305
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/playwright.log",
+      "sha256": "f2678ec7f804c565f179fc45cc7d2c0c8e462dea58439c4c7c893bf91bb03e6c",
+      "bytes": 2645
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/results.json",
+      "sha256": "3db851a91a7f7761e5931219079c296ac6ffbd2d5b3ff8419968bc1c2ac28ae1",
+      "bytes": 31322
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/test-results/.last-run.json",
+      "sha256": "42d7e57b82eb14c4d91a2836e1a476ff8fcb8c35930c213368a72cf8f78acbc4",
+      "bytes": 96
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/canvas-text-draft-restored.png",
+      "sha256": "05924718495917556318919d6b180c2f71dfe6f4f309c949d84f9a1b43b90985",
+      "bytes": 105997
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/error-context.md",
+      "sha256": "3f1cdb1467c95e9f36c02375e717514d5c7248875ae6c784e6a7f3a8cb265379",
+      "bytes": 43154
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r7/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/test-failed-1.png",
+      "sha256": "5f98439298c3a697040f591c72a6b7aef098a207347f82c4ad33318cbfa3fb8b",
+      "bytes": 111330
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/backend.stderr.log",
+      "sha256": "8d9cf287829bffc7254bacf029bc4b98dbbe74ac752c3be2634b4203f9e95da2",
+      "bytes": 202
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/backend.stdout.log",
+      "sha256": "05e336922229d14659260a9db086022a7ad60d06c299440e9c1cc23185dd9ed9",
+      "bytes": 11858
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/junit.xml",
+      "sha256": "29b9ec15cda7c2a48766a4e5586f5dd81df5928780c0fc686543665a577920af",
+      "bytes": 697
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/launcher.json",
+      "sha256": "319529fa98defa504c4d4c7fdb4b7d1ca3ad84417451cf7942cf651417b4b4ea",
+      "bytes": 305
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/playwright.log",
+      "sha256": "0e8fed83e62f3311863be3d1892e74e7838e927db856722cd91a672e3b57eec6",
+      "bytes": 557
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/results.json",
+      "sha256": "30b874ba1202c0bc8373f0ce31c0b70f574ca8b21e95ea8063d196e165dc3e6a",
+      "bytes": 65702
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/test-results/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "bytes": 45
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/canvas-text-draft-restored.png",
+      "sha256": "05924718495917556318919d6b180c2f71dfe6f4f309c949d84f9a1b43b90985",
+      "bytes": 105997
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/director-console-expanded.png",
+      "sha256": "7afd1b75a8388e331eede08bcc8febf418ebf67de0f658022070bcff5cb0a8d2",
+      "bytes": 147163
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r8/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/director-console-stale-refusal.png",
+      "sha256": "22ad5df7898a7728137e853e76d8c65f63f91f3462042c0d2f6054da3b926fb3",
+      "bytes": 149413
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/backend.stderr.log",
+      "sha256": "57e3a397d230ba51daf2a8f35b98ebd18a2a51535184732ee296c44f5727f6b2",
+      "bytes": 202
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/backend.stdout.log",
+      "sha256": "c23c85039fd28c81e146234897324215559c0a296ddc6561be77cea7c344af04",
+      "bytes": 35128
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/junit.xml",
+      "sha256": "fff817e8f78dab0b178099810a17992e2e80d7d554ec2710c07222ceac9a6eb8",
+      "bytes": 1868
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/launcher.json",
+      "sha256": "f2311f2f32359d76d86bbfc6dd499c08d5e30c1eaa0e0637e8ccaad8828eea78",
+      "bytes": 305
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/playwright.log",
+      "sha256": "4d0c4fd9856a5f7623c63b205c707fb409087ea80dc2dafd0f4ae976055a39aa",
+      "bytes": 1572
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/results.json",
+      "sha256": "e528fd0e8737e393042fca87ce9d7344f7271da9747020e22d8f8e82a9458199",
+      "bytes": 189725
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "bytes": 45
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1366x768/canvas-text-draft-restored.png",
+      "sha256": "6327225c2b3b9984e32b72dc73e4204c8679204a8b64b640b9a64e4eaeed0a9b",
+      "bytes": 93803
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1366x768/director-console-expanded.png",
+      "sha256": "47084dc29c4207434c466976bb119bd58feb9b9932c6177bcc93fd13799e5ea0",
+      "bytes": 115548
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1366x768/director-console-stale-refusal.png",
+      "sha256": "d78f33fbe9cc9a281be45ab912dc03be227655848a95a14fd0fd6a0ab7d411f4",
+      "bytes": 126583
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/canvas-text-draft-restored.png",
+      "sha256": "05924718495917556318919d6b180c2f71dfe6f4f309c949d84f9a1b43b90985",
+      "bytes": 105997
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/director-console-expanded.png",
+      "sha256": "993c746767ed0379fda97ad0c9d261947ce855d5f00570e7dcc1f5953ca078ec",
+      "bytes": 146519
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900/director-console-stale-refusal.png",
+      "sha256": "bbe1516a182f3ebd581826d51fdbeee155eb8003ca02b11a36ec8666fb9971d9",
+      "bytes": 148083
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1920x1080/canvas-text-draft-restored.png",
+      "sha256": "ca14d7c6e0b85184e0b638546fdd2414498bdad2a3bd4b454f6014cfc05e97d0",
+      "bytes": 127475
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1920x1080/director-console-expanded.png",
+      "sha256": "d77e8f247828d67924702f31baf63e22f76ae163ef0285b35e3aca10b7537533",
+      "bytes": 192046
+    },
+    {
+      "path": "docs/delivery/v2-development/director-console-packaged-r9-all-viewports/test-results/v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1920x1080/director-console-stale-refusal.png",
+      "sha256": "0088130be77bbefebd75bb738f433bca66a937e8630f2a800eb7183a6e5cd8e7",
+      "bytes": 181513
+    }
+  ],
+  "base_head": "045b865e5a003cac3333462d055f22099f6368d6"
+}

@@ -12,6 +12,7 @@ import { imageGraphCatalog, imageGraphProject, imageGraphRecord } from './studio
 import rawProductionCatalog from './fixtures/productionGraph.catalog.json';
 import type { StudioGraphCatalog } from './studioGraphTypes';
 import type { PlanningDocument } from './studioProductionGraphContract';
+import { fixtureProjection } from '../director/directorWorkspaceFixtures.testFixture';
 vi.mock('./studioClient', async importOriginal => ({ ...await importOriginal<typeof import('./studioClient')>(), studioClient: vi.fn() }));
 let client: StudioClient;
 const document: PlanningDocument = { id: 'synthetic-director', mode: 'DIRECTOR', title: 'Synthetic Director', version: 3, digest: 'a'.repeat(64) };
@@ -41,6 +42,19 @@ async function production() { click('明确读取导演、分镜与视觉制作�
   fireEvent.click(screen.getByLabelText('确认将当前兼容草稿采用为图片图 v4，保持原资产绑定与人工审核')); click('明确采用图片图 v4');
 }
 describe('Production Graph UI keeps original controller and execution authority', () => {
+  it('mounts the existing read-only Director Console in a selected Director graph node', async () => {
+    const projection = fixtureProjection(); projection.document = { ...projection.document, id: document.id, version: document.version, mode: 'DIRECTOR' };
+    client.graphs.readDirectorWorkspace = vi.fn().mockResolvedValue(projection);
+    mount(); await enter(); await production(); change('节点类型', 'director_plan');
+    click('明确读取已保存导演与分镜文档'); await screen.findByRole('option', { name: 'Synthetic Director · v3' });
+    change('原创作文档', document.id); click('添加节点');
+    const consoleRegion = await screen.findByRole('region', { name: '图节点导演控制台' }); expect(consoleRegion).toBeTruthy();
+    expect(client.graphs.readDirectorWorkspace).not.toHaveBeenCalled();
+    click('展开导演控制台并核对来源'); await screen.findByLabelText('导演意图');
+    expect(client.graphs.readDirectorWorkspace).toHaveBeenCalledWith({ id: document.id, version: document.version, digest: document.digest }, expect.any(AbortSignal));
+    expect(client.graphs.create).not.toHaveBeenCalled(); expect(client.graphs.createRun).not.toHaveBeenCalled();
+    expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
+  });
   it('explicitly binds authored documents, style and upscale parameters without dispatch', async () => {
     mount(); await enter(); expect(client.graphs.productionCatalog).not.toHaveBeenCalled(); await production();
     change('节点类型', 'image_style'); click('添加节点'); change('图片风格', 'quiet cinematic');

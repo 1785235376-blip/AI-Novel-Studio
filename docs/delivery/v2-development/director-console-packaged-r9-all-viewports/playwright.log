@@ -1,0 +1,20 @@
+
+Running 3 tests using 1 worker
+
+(node:74312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:74312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 1 [director-1366x768] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source (7.2s)
+(node:75840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:75840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 2 [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source (7.2s)
+(node:62720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:62720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 3 [director-1920x1080] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source (7.6s)
+
+  3 passed (25.3s)

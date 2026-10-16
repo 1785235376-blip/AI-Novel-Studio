@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:61908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:61908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 1 [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source (7.9s)
+
+  1 passed (9.4s)

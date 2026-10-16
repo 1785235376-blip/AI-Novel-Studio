@@ -1,7 +1,8 @@
 import { checkedStoryboardShot, checkedStoryboardReceipt } from './studioStoryboardContract';
 import { checkedVideoReference, checkedVideoRecipe, storyboardShotFields, sameVideoReference } from './studioVideoRuntimeContract';
 import { videoGraphDefinitions } from './graphDraft';
-import { checkedPlanningSnapshot, checkedPlanningDocument, checkedPlanningProjection, productionGraphDefinitions, type PlanningDocument } from './studioProductionGraphContract';
+import { checkedPlanningSnapshot, checkedPlanningDocument, checkedPlanningProjection, productionGraphDefinitions, type PlanningDocument, type PlanningSnapshot } from './studioProductionGraphContract';
+import { createDirectorWorkspaceClient } from '../director/directorWorkspaceClient';
 import { ApiError, type CollaborationContext } from '../api';
 import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS } from './studioGraphTypes';
 import { checkedImageUpscaleProof, checkedImageReferenceMetadata, checkedImageRecipeCommand, checkedImageRecipeFields, checkedImageRuntimeInputs, sameImageRuntimeInputs } from './studioImageRuntimeContract';
@@ -951,6 +952,9 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     return { id: snapshot.id, version: snapshot.version, timeline_digest: snapshot.digest, title: text(row.title, 240), timeline,
       created_at: text(row.created_at, 100), updated_at: text(row.updated_at, 100) };
   }
+  const planningDocuments = (signal?: AbortSignal): Promise<{ documents: PlanningDocument[] }> => transport.json(`${base}/graphs/planning-documents`, 'GET', undefined, signal).then(value => {
+    const recordValue = record(value); owner(recordValue); closed(recordValue, ['project_id', 'scope', 'documents']); const documents = list(recordValue.documents, 100).map(checkedPlanningDocument); if (new Set(documents.map(document => document.id)).size !== documents.length) invalid(); return { documents };
+  });
   return {
     ...createStudioProviderClient(base, transport, owner),
     graphTimelineList: (signal?: AbortSignal): Promise<{ items: StudioTimelineRow[] }> => transport.json(`${base}/production/timelines`, 'GET', undefined, signal).then(value => {
@@ -965,9 +969,34 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     videoCatalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog?include_video=true`, 'GET', undefined, signal).then(catalog),
     videoStoryboard: (documentId: string, signal?: AbortSignal) => transport.json(`/api/novels/${encodeURIComponent(projectId)}/experimental/creative/documents/${encodeURIComponent(resourceId(documentId, true))}/storyboard`, 'GET', undefined, signal).then(value => checkedStoryboardReceipt(value, documentId)),
     productionCatalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog?include_image=true&include_production=true`, 'GET', undefined, signal).then(catalog),
-    planningDocuments: (signal?: AbortSignal): Promise<{ documents: PlanningDocument[] }> => transport.json(`${base}/graphs/planning-documents`, 'GET', undefined, signal).then(value => {
-      const recordValue = record(value); owner(recordValue); closed(recordValue, ['project_id', 'scope', 'documents']); const documents = list(recordValue.documents, 100).map(checkedPlanningDocument); if (new Set(documents.map(document => document.id)).size !== documents.length) invalid(); return { documents };
-    }),
+    planningDocuments,
+    /** Existing projection plus original-owner pin checks; never adopts a newer version.
+     * The projection has no digest field. Verify the original version/digest both
+     * before and after reading it, relying on the owner's monotonic revisions.
+     * This is a display fence; original execution still checks the pin itself.
+     */
+    readDirectorWorkspace: async (value: PlanningSnapshot, signal?: AbortSignal) => {
+      const snapshot = checkedPlanningSnapshot(value, true);
+      const currentPin = async () => {
+        if (signal?.aborted) throw new DOMException('Read aborted', 'AbortError');
+        const { documents } = await planningDocuments(signal);
+        if (signal?.aborted) throw new DOMException('Read aborted', 'AbortError');
+        const document = documents.find(row => row.id === snapshot.id);
+        if (!document) throw new ApiError({ status: 404, code: 'STUDIO_GRAPH_DIRECTOR_UNAVAILABLE', message: '图绑定的导演文档当前不可读取，请重新核对来源与权限。' });
+        if (document.mode !== 'DIRECTOR' || document.version !== snapshot.version || document.digest !== snapshot.digest) {
+          throw new ApiError({ status: 409, code: 'CREATIVE_GRAPH_PLANNING_DOCUMENT_CHANGED', message: '导演文档与图中绑定的版本或摘要不同；未显示新版本，请在原文档与图中明确核对。' });
+        }
+      };
+      await currentPin();
+      const projection = await createDirectorWorkspaceClient(projectId, transport, capturedScope).readDirectorWorkspace(snapshot.id, signal);
+      if (signal?.aborted) throw new DOMException('Read aborted', 'AbortError');
+      owner(projection as unknown as Record<string, unknown>);
+      if (projection.document.mode !== 'DIRECTOR' || projection.document.version !== snapshot.version) {
+        throw new ApiError({ status: 409, code: 'CREATIVE_GRAPH_PLANNING_DOCUMENT_CHANGED', message: '导演文档在读取时已变化，未采用此结果，请重新核对来源。' });
+      }
+      await currentPin();
+      return projection;
+    },
     modelCapabilities: (signal?: AbortSignal): Promise<StudioGraphModelCapabilities> => transport.json(`${base}/graphs/model-capabilities`, 'GET', undefined, signal).then(value => graphModelCapabilities(value, owner)),
     list: (signal?: AbortSignal): Promise<{ items: StudioGraphRecord[] }> => transport.json(`${base}/graphs`, 'GET', undefined, signal).then(value => {
       const items = list(record(value).items, 25).map(item => checkedGraph(item));
@@ -1086,6 +1115,6 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
 
 // Older embedded clients can omit the advisory extension; execution stays unchanged.
 type StudioGraphMediaClient = Pick<ReturnType<typeof createStudioGraphClient>, 'previewMedia' | 'dispatchMedia' | 'executeMedia' | 'refreshMedia' | 'reconcileMedia' | 'reviewMedia' | 'mediaCandidate' | 'graphTimelineList' | 'graphTimelineGet'>;
-type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog' | 'productionCatalog' | 'planningDocuments' | 'videoCatalog' | 'videoStoryboard'>;
+type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog' | 'productionCatalog' | 'planningDocuments' | 'readDirectorWorkspace' | 'videoCatalog' | 'videoStoryboard'>;
 export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient | keyof StudioGraphImageClient>
   & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient> & Partial<StudioGraphImageClient>;
