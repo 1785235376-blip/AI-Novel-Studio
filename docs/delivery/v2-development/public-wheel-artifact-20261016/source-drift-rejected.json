@@ -1,0 +1,9 @@
+{
+  "status": "EXPECTED_REJECTION_OF_CHANGED_LIVE_SOURCE",
+  "error": "PUBLIC_WHEEL_SOURCE_DIGEST_MISMATCH",
+  "changed_path": "app/creative/graph.py",
+  "stage_receipt_stage_and_wheel_sha256": "aa9fcd0a1e404fae2cca3198da53367f696229109e39a3f4a362c93a36932c28",
+  "live_source_sha256_at_failure": "59feb956a83e2cc4aa039a5c0a9faa6ac961f00443a7e8e783bceb709b8b7d93",
+  "artifact_sha256": "57fc230c957462493c1ff1e6b3067155576ee408c27d4c9cd4ae104bac67ce5a",
+  "explanation": "A parallel approved graph edit changed the live source after stage capture. Re-verification against the immutable stage passed; no current-source equality is claimed for this probe."
+}

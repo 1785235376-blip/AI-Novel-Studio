@@ -340,6 +340,7 @@
     "app/plugin_worker_process.py",
     "app/plugin_worker_protocol.py",
     "app/privacy.py",
+    "app/project_retirement.py",
     "app/provider_routing_policy_v2.py",
     "app/provider_runtime_v2_contracts.py",
     "app/provider_runtime_v2_host_hardware_inventory.py",

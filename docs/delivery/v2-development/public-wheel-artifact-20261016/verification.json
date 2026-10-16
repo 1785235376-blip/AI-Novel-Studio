@@ -1,0 +1,69 @@
+{
+  "status": "PASS",
+  "base_head": "b1f161663974a9b0d489ef119a7c35bfcb55c9d5",
+  "source_tree_dirty_during_check": true,
+  "sources_changed_during_check": false,
+  "source_note": "The immutable PUBLIC stage includes the frozen, uncommitted graph-capacity change. This is not an artifact for the packaging-only commit; compare every staged input hash against the final combined commit.",
+  "dirty_public_input_git_blobs": {
+    "app/creative/graph.py": "0cf6a482588d234129ab71e9429fb98afa959060"
+  },
+  "owned_source_git_blobs": {
+    "packaging/public-build.json": "a1dbaf16cc16800355c0eac89bb2f2139705bac9",
+    "scripts/public_build.py": "b1fad266b7d41423d60d4916ddfee15483362db6",
+    "tests/test_public_wheel_artifact.py": "5e23aa03ca7a23a7f36dcd05f69f99cd16210c39"
+  },
+  "owned_source_sha256": {
+    "packaging/public-build.json": "2ebda103d3b4c6212c492dc044a64c14a0fc2a93c45cbcd352dc63f4305402f7",
+    "scripts/public_build.py": "da22c889367f7b2eff46dc10f1f493fbb7daf1632715ef38924d3a137e9bcc01",
+    "tests/test_public_wheel_artifact.py": "1526146a452960ceff4f2e6caf7cab6cdfe299fab12571ffa8034b7454c18aee"
+  },
+  "stage_receipt_sha256": "58801e93b1acf1e629457b5b662458af7ac84d36e944a05df6124fd0a46a4d12",
+  "stage_input_count": 528,
+  "stage_matches_current_frozen_source": true,
+  "wheel_sha256": "41470b1795d04fb79cf0f4b8f3a38c27d52fec249e3d68d38b0704ff9c161f44",
+  "wheel_payload_count": 505,
+  "wheel_member_count": 509,
+  "wheel_binary_committed": false,
+  "artifact_path": ".runtime/v2-checks/public-wheel-final/pytest-tmp/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+  "metadata_dependencies_verified": true,
+  "tooling": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "setuptools": "84.0.0",
+    "wheel": "0.48.0",
+    "packaging": "26.3"
+  },
+  "verification": {
+    "tests": 56,
+    "independent_artifact_tests": 26,
+    "command": [
+      "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+      "-B",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "--basetemp",
+      ".runtime/v2-checks/public-wheel-final/pytest-tmp",
+      "tests/test_public_wheel_artifact.py",
+      "tests/test_public_build_profile.py"
+    ],
+    "started_utc": "2026-10-16T21:09:03.254996+00:00",
+    "finished_utc": "2026-10-16T21:09:11.906990+00:00",
+    "exit_code": 0,
+    "pytest_conftest_disabled": true,
+    "plugin_autoload_disabled": true,
+    "application_package_imports_blocked_in_builder": true,
+    "network_and_subprocess_operations_blocked_in_builder": true
+  },
+  "full_source_runner_receipt_sha256": "b96ed93bc3038e1329ec38313554138fccd05446d6adeaa189adeac6216c47d4",
+  "full_build_log_sha256": "891ee543cbd79a0f5650c63ea97dd58435d7d489d796460a13135a0304d26e8e",
+  "limitations": [
+    "No installed dependency runtime test",
+    "No sdist/tar inspection",
+    "No Docker image build or startup",
+    "No Windows assembly or startup",
+    "No binary publication or installation recommendation"
+  ]
+}

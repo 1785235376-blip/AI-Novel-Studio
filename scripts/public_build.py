@@ -1,4 +1,7 @@
-"""Bounded PUBLIC source closure and staged-payload validation (stdlib only).
+"""Bounded PUBLIC source closure and staged-payload validation.
+
+Base guards use only stdlib. Optional wheel verification requires the already-
+installed ``packaging`` parser; it never installs or downloads build tooling.
 
 The separate studio_private_extensions namespace is never an input. Shared policy vocabulary
 is public compatibility data, not an optional backend. This is packaging hygiene,
@@ -7,11 +10,16 @@ not a content classifier or a replacement for review of changed public code.
 from __future__ import annotations
 
 import argparse
+import base64
+import csv
+from collections import Counter
+from email.parser import BytesParser
 import hashlib
 import io
 import json
 from pathlib import Path, PurePosixPath
 import shutil
+import stat
 import tomllib
 import zipfile
 
@@ -190,6 +198,112 @@ def stage_public(source: Path, stage: Path, manifest: dict, *, docker: bool = Fa
     return verify_stage(source, stage, manifest, docker=docker)
 
 
+def verify_wheel(source: Path, wheel: Path, manifest: dict) -> dict:
+    """Check the actual Python distribution without importing application code.
+
+    Python package files and declared contract data must match the same PUBLIC
+    source hashes used by staging. Config/prompts/workflows remain separate stage
+    assets; a wheel receipt is not standalone application or platform acceptance.
+    """
+    try:
+        from packaging.markers import Marker
+        from packaging.requirements import InvalidRequirement, Requirement
+        from packaging.utils import canonicalize_name
+    except ImportError:
+        fail('PUBLIC_WHEEL_VERIFIER_TOOLING_UNAVAILABLE: packaging')
+    sources = check_source(source, manifest)
+    sources.update(check_docker_inputs(source, manifest))
+    project = tomllib.loads((source / 'pyproject.toml').read_text())
+    metadata = project['project']
+    distribution = metadata['name'].replace('-', '_') + '-' + metadata['version']
+    info = distribution + '.dist-info/'
+    python_roots = ROOTS[:3]
+    expected = {name: digest for name, digest in sources.items()
+                if PurePosixPath(name).parts[0] in python_roots}
+    source_names = {name: name for name in expected}
+    for destination, patterns in project['tool']['setuptools'].get('data-files', {}).items():
+        for pattern in patterns:
+            matches = list(source.glob(pattern))
+            if not matches:
+                fail('PUBLIC_WHEEL_DATA_GLOB_EMPTY')
+            for path in matches:
+                original = path.relative_to(source).as_posix()
+                name = f'{distribution}.data/data/{destination}/{path.name}'
+                if original not in sources or name in expected or path.is_symlink():
+                    fail('PUBLIC_WHEEL_DATA_INPUT_INVALID')
+                expected[name] = sources[original]
+                source_names[name] = original
+    metadata_names = {info + name for name in ('METADATA', 'WHEEL', 'top_level.txt', 'RECORD')}
+    if wheel.is_symlink() or not wheel.is_file() or wheel.suffix != '.whl':
+        fail('PUBLIC_WHEEL_INVALID')
+    with zipfile.ZipFile(wheel) as archive:
+        check_archive(archive)
+        entries = archive.infolist()
+        names = [entry.filename for entry in entries]
+        if any(name.startswith('/') or '\\' in name or '..' in PurePosixPath(name).parts
+               or PurePosixPath(name).as_posix() != name for name in names):
+            fail('PUBLIC_WHEEL_UNSAFE_PATH')
+        if len(names) != len(set(names)) or any(stat.S_ISLNK(entry.external_attr >> 16) for entry in entries):
+            fail('PUBLIC_WHEEL_DUPLICATE_OR_SYMLINK')
+        if set(names) != set(expected) | metadata_names:
+            fail('PUBLIC_WHEEL_CLOSURE_MISMATCH')
+        if any(entry.file_size != (source / source_names[entry.filename]).stat().st_size
+               for entry in entries if entry.filename in expected):
+            fail('PUBLIC_WHEEL_SOURCE_DIGEST_MISMATCH')
+        if any(entry.file_size > 1024 * 1024 for entry in entries if entry.filename in metadata_names):
+            fail('PUBLIC_WHEEL_METADATA_TOO_LARGE')
+        payloads = {name: archive.read(name) for name in names}
+        if any(hashlib.sha256(payloads[name]).hexdigest() != digest for name, digest in expected.items()):
+            fail('PUBLIC_WHEEL_SOURCE_DIGEST_MISMATCH')
+        if any(PRIVATE.encode() in payloads[name].lower() for name in metadata_names):
+            fail('PUBLIC_PRIVATE_WHEEL_METADATA')
+        headers = BytesParser().parsebytes(payloads[info + 'METADATA'])
+        wheel_headers = BytesParser().parsebytes(payloads[info + 'WHEEL'])
+        if (headers.get_all('Name') != [metadata['name']] or headers.get_all('Version') != [metadata['version']]
+                or headers.get_all('Requires-Python') != [metadata['requires-python']]
+                or wheel_headers.get_all('Wheel-Version') != ['1.0']
+                or wheel_headers.get_all('Root-Is-Purelib') != ['true']
+                or wheel_headers.get_all('Tag') != ['py3-none-any']
+                or Counter(payloads[info + 'top_level.txt'].decode().splitlines()) != Counter(python_roots)):
+            fail('PUBLIC_WHEEL_METADATA_MISMATCH')
+        try:
+            requirements = [Requirement(value) for value in metadata.get('dependencies', [])]
+            extras = metadata.get('optional-dependencies', {})
+            for extra, values in extras.items():
+                for value in values:
+                    requirement = Requirement(value)
+                    marker = f'extra == "{canonicalize_name(extra)}"'
+                    requirement.marker = Marker(f'({requirement.marker}) and {marker}' if requirement.marker else marker)
+                    requirements.append(requirement)
+            actual_requirements = [Requirement(value) for value in headers.get_all('Requires-Dist', [])]
+        except InvalidRequirement:
+            fail('PUBLIC_WHEEL_DEPENDENCY_MISMATCH')
+        if (Counter(actual_requirements) != Counter(requirements)
+                or Counter(headers.get_all('Provides-Extra', [])) != Counter(canonicalize_name(extra) for extra in extras)):
+            fail('PUBLIC_WHEEL_DEPENDENCY_MISMATCH')
+        records = list(csv.reader(io.StringIO(payloads[info + 'RECORD'].decode())))
+        if any(len(row) != 3 for row in records) or len(records) != len(names) or {row[0] for row in records} != set(names):
+            fail('PUBLIC_WHEEL_RECORD_CLOSURE_MISMATCH')
+        for name, digest, size in records:
+            if name == info + 'RECORD':
+                if digest or size:
+                    fail('PUBLIC_WHEEL_RECORD_INVALID')
+                continue
+            actual = 'sha256=' + base64.urlsafe_b64encode(hashlib.sha256(payloads[name]).digest()).rstrip(b'=').decode()
+            if digest != actual or size != str(len(payloads[name])):
+                fail('PUBLIC_WHEEL_RECORD_DIGEST_MISMATCH')
+    return {'schema': SCHEMA, 'profile': 'PUBLIC', 'excluded_namespace': PRIVATE,
+            'optional_backend': 'NOT_INCLUDED', 'artifact': wheel.name,
+            'artifact_sha256': hashlib.sha256(wheel.read_bytes()).hexdigest(),
+            'file_count': len(expected), 'wheel_member_count': len(names),
+            'requires_dist': headers.get_all('Requires-Dist', []),
+            'metadata_dependencies_verified': True,
+            'wheel_tags': wheel_headers.get_all('Tag'),
+            'separate_stage_files': sorted(set(sources) - set(source_names.values())),
+            'files': [{'path': name, 'source_path': source_names[name], 'sha256': digest}
+                      for name, digest in sorted(expected.items())]}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, required=True)
@@ -197,6 +311,7 @@ def main() -> None:
     parser.add_argument('--stage', type=Path)
     parser.add_argument('--verify-stage', type=Path)
     parser.add_argument('--application', type=Path)
+    parser.add_argument('--wheel', type=Path)
     parser.add_argument('--receipt', type=Path)
     parser.add_argument('--docker', action='store_true')
     parser.add_argument('--with-fonts', action='store_true')
@@ -210,6 +325,8 @@ def main() -> None:
         result = verify_stage(args.source, args.verify_stage, manifest, docker=args.docker, with_fonts=args.with_fonts)
     if args.application:
         check_artifact_namespace(args.application)
+    if args.wheel:
+        result = verify_wheel(args.source, args.wheel, manifest)
     if args.receipt:
         # Refuse replacing an existing receipt, including symlinks.
         with args.receipt.open('x', encoding='utf-8') as stream:

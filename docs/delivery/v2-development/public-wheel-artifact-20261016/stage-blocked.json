@@ -1,0 +1,28 @@
+{
+  "status": "FAIL_CLOSED_BEFORE_STAGING",
+  "head": "b1f161663974a9b0d489ef119a7c35bfcb55c9d5",
+  "command": [
+    "python",
+    "-B",
+    "scripts/public_build.py",
+    "--source",
+    "<repository>",
+    "--stage",
+    "<repository>/.runtime/v2-checks/public-wheel-probe/stage",
+    "--docker",
+    "--receipt",
+    "<repository>/.runtime/v2-checks/public-wheel-probe/stage-receipt.json"
+  ],
+  "exit_code": 1,
+  "error": "PUBLIC_SOURCE_CLOSURE: added=['app/project_retirement.py'] missing=[]",
+  "stage_created": false,
+  "wheel_built": false,
+  "manifest_sha256": "eaeb7ef42366fc6bea408e8689026c2a9943f13c92b4852b0fd9c1dd9ec40a1d",
+  "provenance": {
+    "manifest_commit": "2eebbe4",
+    "missing_file": "app/project_retirement.py",
+    "added_by": "cd5e8ed30bf4776078c2df5597df9db97b45344d",
+    "current_and_codex_a072cf9_blob": "ea4c7230545920d1a55413e9127e951b535606af"
+  },
+  "receipt_note": "Recorded from the actual failed invocation; the guard fails before its own --receipt write. No allowlist changes or lifecycle execution were made."
+}

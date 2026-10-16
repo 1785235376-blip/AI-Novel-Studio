@@ -1,0 +1,6 @@
+Final lines of the real setuptools build log; full log retained under the owned runtime profile.
+ai_novel_studio-0.7.0-py3-none-any.whl
+APPLICATION_IMPORTS=NONE NETWORK=NONE
+warning: build_py: byte-compiling is disabled, skipping.
+
+warning: install_lib: byte-compiling is disabled, skipping.
