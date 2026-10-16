@@ -1,5 +1,5 @@
 """B02 current-actor/scope/feature guarded authoring and explicit execution."""
-from fastapi import APIRouter, Header, HTTPException, Response
+from fastapi import APIRouter, Header, HTTPException, Response, Query, Path
 from .common import api_call
 from .ux import ReadContext
 from .declarative_agents import FEATURE, WorkflowAuthoring, SaveDefinitionIn, TestIn, ActionIn
@@ -30,6 +30,17 @@ def create_declarative_agents_router(service, authorize, require_flag, *, prepar
     @router.get('/definitions')
     def definitions(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         response.headers['Cache-Control'] = 'no-store'; return read('definitions', nid, x_session_token, x_branch_id)
+    @router.get('/definitions/{rid}/history')
+    def definition_history(nid: str, rid: str, response: Response,
+                           limit: int = Query(20, ge=1, le=20), before_version: int | None = Query(None, ge=1),
+                           x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return read('definition_history', nid, x_session_token, x_branch_id, rid, limit, before_version)
+    @router.get('/definitions/{rid}/history/{version}')
+    def definition_history_version(nid: str, rid: str, response: Response, version: int = Path(ge=1),
+                                   x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return read('definition_history_version', nid, x_session_token, x_branch_id, rid, version)
     @router.post('/definitions', status_code=201)
     def create(nid: str, body: SaveDefinitionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, check = access(nid, x_session_token, x_branch_id, 'domain.write'); return api_call(service.save, ctx, None, body, check)

@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/experimental/DeclarativeTemplatePanels.test.tsx (8 tests) 1751ms
+   ✓ uses real form contracts, explicit graph check and version-bound creation before separate execute and review 460ms
+   ✓ previews installs favorites copies edits compares and reverts without running a workflow or overwriting instantiated work 375ms
+ ✓ src/experimental/AgentDefinitionHistory.test.tsx (16 tests) 2035ms
+   ✓ integrates draft-fill then explicit current-CAS save, resetting review without reviving the old run 570ms
+   ✓ preserves a dirty draft on drift and cancel, then explicitly reloads the current CAS base on confirmation 455ms
+
+ Test Files  2 passed (2)
+      Tests  24 passed (24)
+   Start at  06:52:01
+   Duration  5.31s (transform 243ms, setup 26ms, collect 459ms, tests 3.79s, environment 640ms, prepare 117ms)
+

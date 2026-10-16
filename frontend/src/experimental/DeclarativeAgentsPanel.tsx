@@ -3,6 +3,7 @@ import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Details, Field, ResourceState, useAction, useResource } from './shared';
 import { declarativeAgentsClient, type AgentDefinition, type AgentPreflight, type AgentRun, type AuthoredWorkflow, type SchemaField } from './declarativeAgentsClient';
+import { AgentDefinitionHistory } from './AgentDefinitionHistory';
 let sequence = 0;
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value));
 export function DeclarativeAgentsPanel(props: { client: ExperimentalClient; requestedJobId?: string }) {
@@ -23,6 +24,7 @@ function AgentsBody({ client, requestedJobId }: { client: ExperimentalClient; re
   const definitions = useResource(signal => api.definitions(signal), [api]);
   const runs = useResource(async signal => ({ ...(await api.runs(signal)), requestedJobId }), [api, requestedJobId]);
   const [definition, setDefinition] = useState<AuthoredWorkflow>(), [saved, setSaved] = useState<AgentDefinition>();
+  const [pendingSelection, setPendingSelection] = useState<{ row?: AgentDefinition; revision: number }>();
   const [preflight, setPreflight] = useState<AgentPreflight>(), [reviewGraph, setReviewGraph] = useState(false);
   const [input, setInput] = useState<Record<string, string>>({ source_text: '林舟等潮落。\n同伴举起合成地图。' }), [chapterId, setChapterId] = useState('');
   const [browsedRun, setRun] = useState<AgentRun>(), [reviewNote, setReviewNote] = useState(''), [reviewOutput, setReviewOutput] = useState(false);
@@ -39,16 +41,27 @@ function AgentsBody({ client, requestedJobId }: { client: ExperimentalClient; re
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; formEpoch.current++; runEpoch.current++; }; }, []);
   useEffect(() => { if (catalog.data && !initialized.current) { initialized.current = true; setDefinition(clone(catalog.data.default_definition)); } }, [catalog.data]);
   const action = useAction();
-  const edit = (next: AuthoredWorkflow) => { formEpoch.current++; setDefinition(next); setPreflight(undefined); setReviewGraph(false); };
+  const edit = (next: AuthoredWorkflow) => { formEpoch.current++; setPendingSelection(undefined); setDefinition(next); setPreflight(undefined); setReviewGraph(false); };
   const agentEdit = (value: Partial<AuthoredWorkflow['agent']>) => definition && edit({ ...definition, agent: { ...definition.agent, ...value } });
-  const choose = (row?: AgentDefinition) => { formEpoch.current++; setSaved(row); setDefinition(clone(row?.definition || catalog.data!.default_definition)); setPreflight(undefined); setReviewGraph(false); };
+  const choose = (row?: AgentDefinition) => { formEpoch.current++; setPendingSelection(undefined); setSaved(row); setDefinition(clone(row?.definition || catalog.data!.default_definition)); setPreflight(undefined); setReviewGraph(false); setReviewModel(false); setReviewOutput(false); };
   const dirty = !!definition && JSON.stringify(definition) !== JSON.stringify(saved?.definition);
+  const requestSelection = (row?: AgentDefinition) => {
+    if (saved && dirty) { formEpoch.current++; setPendingSelection({ row, revision: formEpoch.current }); }
+    else choose(row);
+  };
+  const pendingTarget = pendingSelection?.row && definitions.data?.items.find(row => row.id === pendingSelection.row?.id);
+  const pendingCurrent = !!pendingSelection && pendingSelection.revision === formEpoch.current && !definitions.loading && !definitions.error
+    && (!pendingSelection.row || !!pendingTarget && pendingTarget.version === pendingSelection.row.version && pendingTarget.definition_digest === pendingSelection.row.definition_digest);
+  useLayoutEffect(() => { if (!pendingCurrent) setPendingSelection(undefined); }, [pendingCurrent]);
+  const currentSaved = saved && !definitions.loading && !definitions.error ? definitions.data?.items.find(row => row.id === saved.id) : undefined;
+  const historyCurrent = currentSaved && currentSaved.version === saved?.version && currentSaved.definition_digest === saved.definition_digest;
+  const fillHistoricalDraft = (value: AuthoredWorkflow) => { edit(clone(value)); setReviewModel(false); setReviewOutput(false); };
   const runAction = (name: string) => action.run(async () => { if (!run) return; const ticket = runEpoch.current; const result = await api.transition(run, name, reviewNote); if (alive.current && ticket === runEpoch.current) { setRun(result); setReviewOutput(false); runs.reload(); } }, name === 'approve' ? '审核已记录，结果仍为草稿材料。正文与 Canon 未写入。' : '工作流状态已更新。');
   const modelAction = (name: 'preview' | 'dispatch' | 'refresh') => action.run(async () => { if (!run) return; const ticket = runEpoch.current; const result = await api.model(run, name); if (alive.current && ticket === runEpoch.current) { setRun(result); setReviewModel(false); setReviewOutput(false); runs.reload(); } }, name === 'dispatch' ? '已提交原生成执行器；请刷新原任务回执。不会自动重试。' : '已核对模型请求或原任务回执。');
   const modelNodeWaiting = run?.definition_snapshot?.nodes.some(n => n.id === run.current_node_id && n.type === 'agent_task') ?? false;
   const usable = !!run && !run.stale;
   return <section className="experimental-section" aria-label="Agent 与 Workflow">
-    <div className="experimental-actions"><h3>Agent 与 Workflow</h3><Badge>声明式 · 原执行器</Badge><Button disabled={action.busy} onClick={() => { catalog.reload(); definitions.reload(); runs.reload(); setPreflight(undefined); }}>刷新授权目录与记录</Button></div>
+    <div className="experimental-actions"><h3>Agent 与 Workflow</h3><Badge>声明式 · 原执行器</Badge><Button disabled={action.busy} onClick={() => { setPendingSelection(undefined); catalog.reload(); definitions.reload(); runs.reload(); setPreflight(undefined); }}>刷新授权目录与记录</Button></div>
     <p>复用原 Workflow DAG 与人工审核节点。支持单根分支 DAG，全部分支须汇入人工审核，最多 16 步；沿用原执行顺序。Python、JavaScript、shell、动态 import 与任意第三方插件均为 DENY_ALL。</p>
     {targetJob && <section aria-label="任务中心原声明式模型任务"><p>正在定位原模型任务 {targetJob}，仅重新读取原运行。</p>
       {!runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId && !run && <StatusMessage tone="warning">原模型任务在当前授权运行中不可用或身份不唯一；不会选择其他运行。</StatusMessage>}
@@ -57,7 +70,8 @@ function AgentsBody({ client, requestedJobId }: { client: ExperimentalClient; re
     {catalog.data && !catalog.error && <>
       <Panel title="Agent 表单与已保存定义">
         <ResourceState loading={definitions.loading} error={definitions.error} />
-        <Field label="已保存的 Agent 定义"><select value={saved?.id || ''} disabled={action.busy || definitions.loading || !!definitions.error} onChange={e => choose(definitions.data?.items.find(d => d.id === e.target.value))}><option value="">新建独立定义</option>{definitions.data?.items.map(d => <option key={d.id} value={d.id}>{d.definition.agent.title} · v{d.version}</option>)}</select></Field>
+        <Field label="已保存的 Agent 定义"><select value={saved?.id || ''} disabled={action.busy || definitions.loading || !!definitions.error} onChange={e => requestSelection(definitions.data?.items.find(d => d.id === e.target.value))}><option value="">新建独立定义</option>{definitions.data?.items.map(d => <option key={d.id} value={d.id}>{d.definition.agent.title} · v{d.version}</option>)}</select></Field>
+        {pendingSelection && pendingCurrent && <section aria-label="确认放弃 Agent 定义编辑"><StatusMessage tone="warning">切换将放弃未保存的编辑，并载入{pendingSelection.row ? `${pendingSelection.row.definition.agent.title} · v${pendingSelection.row.version}` : '新建独立定义'}。当前草稿在确认前保持不变。</StatusMessage><Button disabled={action.busy} onClick={() => setPendingSelection(undefined)}>取消切换，保留草稿</Button><Button disabled={action.busy} onClick={() => { if (pendingCurrent) choose(pendingTarget); }}>确认放弃编辑并载入所选定义</Button></section>}
         {definition && <>
           <Field label="Agent 名称"><input maxLength={160} value={definition.agent.title} onChange={e => agentEdit({ title: e.target.value })} /></Field>
           <Field label="Agent 用途"><textarea maxLength={2000} value={definition.agent.purpose} onChange={e => agentEdit({ purpose: e.target.value })} /></Field>
@@ -86,8 +100,10 @@ function AgentsBody({ client, requestedJobId }: { client: ExperimentalClient; re
         <ul aria-label="Workflow 连接">{definition.edges.map((edge, index) => <li key={index}>{edge.source} → {edge.target} <Button onClick={() => edit({ ...definition, edges: definition.edges.filter((_, i) => i !== index) })}>移除连接 {index + 1}</Button></li>)}</ul>
         <div className="experimental-grid"><Field label="连接起点"><select value={edgeSource} onChange={e => setEdgeSource(e.target.value)}><option value="">选择起点</option>{definition.nodes.map(n => <option key={n.id} value={n.id}>{n.id} · {n.name}</option>)}</select></Field><Field label="连接终点"><select value={edgeTarget} onChange={e => setEdgeTarget(e.target.value)}><option value="">选择终点</option>{definition.nodes.map(n => <option key={n.id} value={n.id}>{n.id} · {n.name}</option>)}</select></Field></div>
         <Button disabled={!edgeSource || !edgeTarget || definition.edges.length >= 40} onClick={() => edit({ ...definition, edges: [...definition.edges, { source: edgeSource, target: edgeTarget }] })}>添加连接</Button>
-        <div className="experimental-actions"><Button disabled={action.busy} onClick={() => action.run(async () => { const ticket = formEpoch.current; const result = await api.preflight(definition); if (alive.current && ticket === formEpoch.current) setPreflight(result); }, '服务端已验证 DAG、工具注册表、Schema 与边界。未执行节点。')}>验证 Workflow 图与权限</Button><Button disabled={action.busy || !definition.agent.title.trim()} onClick={() => action.run(async () => { const ticket = formEpoch.current; const row = await api.save(definition, saved); if (alive.current && ticket === formEpoch.current) { setSaved(row); setDefinition(clone(row.definition)); setPreflight(undefined); setReviewGraph(false); definitions.reload(); } }, '定义已保存。修改旧定义会使此前运行的来源检查失效。')}>{saved ? '保存 Agent 新版本' : '保存 Agent 定义'}</Button></div>
+        <div className="experimental-actions"><Button disabled={action.busy} onClick={() => action.run(async () => { const ticket = formEpoch.current; const result = await api.preflight(definition); if (alive.current && ticket === formEpoch.current) setPreflight(result); }, '服务端已验证 DAG、工具注册表、Schema 与边界。未执行节点。')}>验证 Workflow 图与权限</Button><Button disabled={action.busy || !definition.agent.title.trim()} onClick={() => action.run(async () => { const ticket = formEpoch.current; const row = await api.save(definition, saved); if (alive.current && ticket === formEpoch.current) { setSaved(row); setDefinition(clone(row.definition)); setPreflight(undefined); setReviewGraph(false); runEpoch.current++; setRun(undefined); setReviewModel(false); setReviewOutput(false); definitions.reload(); runs.reload(); } }, '定义已保存。修改旧定义会使此前运行的来源检查失效。')}>{saved ? '保存 Agent 新版本' : '保存 Agent 定义'}</Button></div>
         {saved && <p>已保存定义 {saved.id} · v{saved.version}{dirty ? ' · 当前表单有未保存修改' : ''}</p>}
+        {saved && historyCurrent && <AgentDefinitionHistory api={api} saved={saved} editorRevision={formEpoch.current} dirty={dirty} disabled={action.busy} onFill={fillHistoricalDraft} onDiscard={() => fillHistoricalDraft(saved.definition)} />}
+        {saved && currentSaved && !historyCurrent && <><StatusMessage tone="warning">当前已保存定义已变化，历史候选已隐藏。请核对表单草稿，再重新选择当前定义。</StatusMessage><Button disabled={action.busy} onClick={() => requestSelection(currentSaved)}>重新载入当前已保存定义</Button></>}
         {preflight && <>{preflight.adapter_contract && <Details label="Adapter 能力、运行时与 Schema 合约" value={preflight.adapter_contract} />}<p>拓扑顺序：{preflight.topological_order.join(' → ')}</p>{preflight.blockers.map(b => <StatusMessage key={b} tone="warning">{b}</StatusMessage>)}<p>{preflight.execution_available ? definition.agent.model_route ? '原本地模型执行器可用；模型节点仍需单独核对精确请求与费用。' : '确定性本地执行可用。' : '执行依赖尚未满足。'}</p></>}
       </Panel>}
       {definition && <Panel title="测试输入与明确启动">

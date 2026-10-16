@@ -23,6 +23,10 @@ FEATURE = 'declarative_agents_v2'
 LOCAL_NODES = {'agent_task', 'draft_prepare', 'knowledge_candidates', 'shot_proposals', 'review_artifact', 'manual_approval', 'checkpoint'}
 TOOLS = {'draft_prepare', 'knowledge_candidates', 'shot_proposals'}
 MAX_PACKAGE_BYTES = 128000
+# History response limits only; existing save semantics and stored history remain
+# unchanged. An oversized detail is unavailable, never silently trimmed.
+MAX_HISTORY_PAGE = 20
+MAX_HISTORY_METADATA_BYTES = 65536
 
 
 class Strict(BaseModel):
@@ -291,6 +295,82 @@ class DeclarativeAgentsService(DomainService):
 
     def definitions(self, ctx):
         return {'items': [{k: v for k, v in r.items() if k != 'history'} for r in self._rows(ctx, self.DEFINITIONS)]}
+
+    def _definition_history(self, ctx, rid):
+        row = self._owned(ctx, self.DEFINITIONS, rid)
+        history = row.get('history', [])
+        if not isinstance(history, list): raise ValueError('DECLARATIVE_HISTORY_UNAVAILABLE')
+        versions = set()
+        for item in history:
+            if (not isinstance(item, dict) or any(item.get(key) != row.get(key)
+                    for key in ('id', 'novel_id', 'scope', 'created_by'))
+                    or type(item.get('version')) is not int
+                    or not 1 <= item['version'] < row['version'] or item['version'] in versions):
+                raise ValueError('DECLARATIVE_HISTORY_UNAVAILABLE')
+            versions.add(item['version'])
+        return row, sorted(history, key=lambda item: item['version'], reverse=True)
+
+    @staticmethod
+    def _history_metadata(item):
+        value = item.get('definition')
+        agent = value.get('agent') if isinstance(value, dict) else None
+        title = agent.get('title') if isinstance(agent, dict) else None
+        sha, stamp = item.get('definition_digest'), item.get('updated_at')
+        if (not isinstance(title, str) or not 1 <= len(title) <= 160
+                or not isinstance(sha, str) or len(sha) != 64 or any(c not in '0123456789abcdef' for c in sha)
+                or not isinstance(stamp, str) or not 1 <= len(stamp) <= 64):
+            raise ValueError('DECLARATIVE_HISTORY_METADATA_UNAVAILABLE')
+        return {'version': item['version'], 'title': title, 'definition_digest': sha, 'updated_at': stamp}
+
+    def definition_history(self, ctx, rid, limit=MAX_HISTORY_PAGE, before_version=None):
+        """Metadata only, newest first; the cursor is an exclusive saved version."""
+        if (type(limit) is not int or not 1 <= limit <= MAX_HISTORY_PAGE
+                or before_version is not None and (type(before_version) is not int or before_version < 1)):
+            raise ValueError('DECLARATIVE_HISTORY_PAGE_INVALID')
+        row, history = self._definition_history(ctx, rid)
+        candidates = [item for item in history if before_version is None or item['version'] < before_version]
+        items = [self._history_metadata(item) for item in candidates[:limit]]
+        result = {'definition_id': row['id'], 'current_version': row['version'],
+                  'current_definition_digest': row['definition_digest'], 'items': items,
+                  'next_before_version': items[-1]['version'] if len(candidates) > limit else None}
+        if len(canonical(result).encode()) > MAX_HISTORY_METADATA_BYTES:
+            raise ValueError('DECLARATIVE_HISTORY_METADATA_LIMIT')
+        return result
+
+    def definition_history_version(self, ctx, rid, version):
+        """Authored data only. Never consult RUNS, source readers or model routes.
+
+        Static schema validation does not upgrade the stored historical payload.
+        Existing save/preflight still validate today's registered routes and a
+        new run still needs today's source, version, digest and explicit review.
+        """
+        if type(version) is not int or version < 1: raise ValueError('DECLARATIVE_HISTORY_VERSION_INVALID')
+        row, history = self._definition_history(ctx, rid)
+        item = next((item for item in history if item['version'] == version), None)
+        if item is None: raise FileNotFoundError(rid)
+        metadata = self._history_metadata(item)
+        definition = item.get('definition')
+        if len(canonical(definition).encode()) > MAX_PACKAGE_BYTES:
+            raise ValueError('DECLARATIVE_HISTORY_DETAIL_LIMIT')
+        try:
+            editable = WorkflowAuthoring.model_validate(definition).model_dump()
+            # These additive declarations are optional in the existing editor.
+            # Older canonical snapshots may omit them. All established fields
+            # must already be editor-safe; do not silently normalize or repair
+            # incomplete history while returning its original digest.
+            for key in ('capability_requirements', 'runtime_requirement'):
+                if key not in definition['agent']: editable['agent'].pop(key)
+            if canonical(editable) != canonical(definition):
+                raise ValueError('historical definition requires normalization')
+        except ValueError: raise ValueError('DECLARATIVE_HISTORY_DEFINITION_UNSUPPORTED') from None
+        if digest(definition) != metadata['definition_digest']:
+            raise ValueError('DECLARATIVE_HISTORY_DIGEST_MISMATCH')
+        result = {'definition_id': row['id'], 'current_version': row['version'],
+                  'current_definition_digest': row['definition_digest'], 'version': version,
+                  'definition_digest': metadata['definition_digest'], 'definition': deepcopy(definition)}
+        if len(canonical(result).encode()) > MAX_PACKAGE_BYTES:
+            raise ValueError('DECLARATIVE_HISTORY_DETAIL_LIMIT')
+        return result
 
     def save(self, ctx, rid, body, reauthorize=lambda: None):
         body = SaveDefinitionIn.model_validate(body)
