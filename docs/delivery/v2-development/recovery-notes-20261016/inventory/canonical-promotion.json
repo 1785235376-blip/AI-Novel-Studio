@@ -1,0 +1,12 @@
+{
+  "status": "EXACT_REVIEWED_BYTES_PROMOTED",
+  "source_checkpoint": "f06ad47742e8f5f480208198b61d54f5aac387e4",
+  "collection_head": "f06ad47742e8f5f480208198b61d54f5aac387e4",
+  "prior_sha256": "bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c",
+  "canonical_sha256": "5590bbfc4ee4c8b287ceea729af9419d19695439ff11a735f64b2a3c37551f79",
+  "candidate_path": ".runtime/recovery-notes-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz",
+  "prepromotion_source_and_companion_exact": true,
+  "method": "Byte copy of independently reviewed candidate; no regeneration or manual fields",
+  "tests_executed": false
+}

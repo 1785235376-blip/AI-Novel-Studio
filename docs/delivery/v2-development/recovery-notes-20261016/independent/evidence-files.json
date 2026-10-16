@@ -1,0 +1,21 @@
+{
+  "scope": "Independent overlapping verification of the same 24 frontend cases, plus read-only inventory and candidate reviews. The 24 cases are not additional unique tests.",
+  "files": [
+    {
+      "path": "dot-recovery-notes-candidate-review-20261016.json",
+      "sha256": "555d9c69452cd6b3cac024b2fd00f3b0c2e2bb2dd45d631cb84fa4c1253627a3"
+    },
+    {
+      "path": "dot-recovery-notes-independent-20261016.json",
+      "sha256": "74520ac6a23691cd0413db2dc5e49b0219949e58bbd075561d647a1c1cd94434"
+    },
+    {
+      "path": "dot-recovery-notes-independent-20261016.log",
+      "sha256": "8f825b133674c87fa23452ee850a3526e8d7da86656b98f41a0c97ec2c177bd4"
+    },
+    {
+      "path": "dot-recovery-notes-inventory-review-20261016.json",
+      "sha256": "246c66aa710a895958e7080c4ced0ffebe67b502362511af4994ad602d4c7793"
+    }
+  ]
+}

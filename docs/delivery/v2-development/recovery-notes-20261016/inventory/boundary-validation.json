@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "guard_boundaries": [
+    {
+      "path": ".github/ci/coverage_manifest.json.gz",
+      "sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+      "expected": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262"
+    },
+    {
+      "path": ".github/ci/coverage_manifest_v2.json.gz",
+      "sha256": "bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c",
+      "expected": "bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c"
+    },
+    {
+      "path": ".github/ci/suite_coverage.py",
+      "sha256": "570892af0975c125868710e250eb7f30cc5e51ba7cbef9429a3b0f8f10238da7",
+      "expected": "570892af0975c125868710e250eb7f30cc5e51ba7cbef9429a3b0f8f10238da7"
+    },
+    {
+      "path": ".github/ci/coverage_reconcile.py",
+      "sha256": "f097904d51cc21cb6f1ce8dcc688f692cf89bdd473f3952605eba3b1ae02e66a",
+      "expected": "f097904d51cc21cb6f1ce8dcc688f692cf89bdd473f3952605eba3b1ae02e66a"
+    },
+    {
+      "path": ".github/ci/postgres_gate.py",
+      "sha256": "d18ee804595ab98f8aec4c25745a7961e65a36755e318c8f4f257663b4358a8c",
+      "expected": "d18ee804595ab98f8aec4c25745a7961e65a36755e318c8f4f257663b4358a8c"
+    },
+    {
+      "path": "scripts/extend_v2_coverage_manifest.py",
+      "sha256": "337466ae33d15b2aafaeb15f2191ccdb0c65b22274e1b4d98ba10501dd30135e",
+      "expected": "337466ae33d15b2aafaeb15f2191ccdb0c65b22274e1b4d98ba10501dd30135e"
+    },
+    {
+      "path": "scripts/run_v2_checks.py",
+      "sha256": "64cf16c26412c5a1e36a1d4fb799519111ad409f7594ae15aa0b158e53396cd5",
+      "expected": "64cf16c26412c5a1e36a1d4fb799519111ad409f7594ae15aa0b158e53396cd5"
+    }
+  ],
+  "historical_skips_and_external_gates_exact": true,
+  "normal_traversal_entries": 2515,
+  "complete_generator_source_entries": 2577,
+  "source_map_matches_before": true,
+  "companion_count": 11,
+  "companion_exact": true
+}

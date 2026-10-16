@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-recovery-notes/frontend
+
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2033ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 666ms
+ ✓ src/creative/StudioGraphDraftRecovery.notes.test.tsx (7 tests) 1175ms
+   ✓ cached presentation recovery inspection through the original controller > pages every one of 1024 eligible short notes with at most twenty textareas and no truncation 993ms
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 9ms
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  08:22:06
+   Duration  6.12s (transform 1.05s, setup 33ms, collect 1.61s, tests 3.22s, environment 705ms, prepare 165ms)
+

@@ -37,3 +37,5 @@ New regression coverage proves literal/full/empty text, all 1024 notes reachable
 Actual visual acceptance: **NOT_RUN**. A previously established browser socket `EPERM` blocker was respected; no retry or bypass was attempted. Canonical design guidance was read, original shared Panel/Button/StatusMessage and native details/labels/textareas were reused, and no design tokens, shell geometry, CSS or protected surfaces changed.
 
 Parent final source review, manifest refresh and any local commit are separate follow-up steps; this report does not claim they have occurred.
+
+Final evidence staging note: unrestricted staged `git diff --check` reports exit 2 for the byte-preserved independent test log's final blank line only. Product source and test changes pass the whitespace check. The raw log is retained unchanged so its verified hash remains reproducible; this is not a runtime/test failure.

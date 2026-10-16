@@ -1,0 +1,13 @@
+{
+  "status": "NO_WRITE_CONFIRMATION_PASS",
+  "source_checkpoint": "f06ad47742e8f5f480208198b61d54f5aac387e4",
+  "collection_head": "f06ad47742e8f5f480208198b61d54f5aac387e4",
+  "canonical_sha256": "5590bbfc4ee4c8b287ceea729af9419d19695439ff11a735f64b2a3c37551f79",
+  "raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "raw_archive": ".runtime/recovery-notes-inventory/raw-confirmation-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+  "raw_rows": 15617,
+  "review_candidate_confirmation_byte_identical": true,
+  "source_and_companion_exact": true,
+  "protected_old_entries_exact": 1266,
+  "tests_executed": false
+}

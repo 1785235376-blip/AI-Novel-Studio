@@ -1,0 +1,39 @@
+{
+  "status": "REVIEW_INVENTORY_PASS",
+  "head": "f06ad47742e8f5f480208198b61d54f5aac387e4",
+  "raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "raw_archive": ".runtime/recovery-notes-inventory/raw-review-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+  "rows": 15617,
+  "all_15617_rows_order_and_classification_exact": true,
+  "new_backend_rows": 0,
+  "protected_entries_exact": 1266,
+  "source_delta": [
+    {
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.notes.test.tsx",
+      "before": null,
+      "after": "1729db23908b27c647b8ac181d6d6f3c0a993a646ff152d388753ea935c7b6e4"
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.tsx",
+      "before": "dcb9b9a543e1aa7b42f6b1676162c4714bb11f57f0eebccd2a5d7255868c13f5",
+      "after": "ac357fb519c41fe9c8359b97767107a1b788c5a79825168ff0a072e20ddcc9da"
+    }
+  ],
+  "source_stable": true,
+  "companion_files": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "canonical_unchanged": true,
+  "tests_executed": false,
+  "report_sha256": "9023144acdfc00963bc455270f7e9fe6976bd9e9e37bfa44e2796ef73adbf30c"
+}

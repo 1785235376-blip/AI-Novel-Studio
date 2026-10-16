@@ -1,5 +1,15 @@
 # Frozen capability continuation ledger — 2026-10-16
 
+## Latest verified checkpoint — 2026-10-16 23:23 UTC
+
+The baseline paragraphs and earlier slice entries below are historical evidence, not the latest remote state. A fresh `git ls-remote` at 23:22 UTC verified main `fed2404c8e30b44061b7139dced45b7f3301601c`, PR #47 `a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3`, and PR #48 `58bbaad11360330d51f49fc2bb78a955a26469f0`. Local continuation includes both histories and compatibility source commit `14ced1025b51af3b9636fc9564366bd5aba1946d`; inventory/evidence is bound by `fdc19f304a6416d0f003f4b2ed944ceb2c5187d6`. Cached note inspection is implemented in `f06ad47742e8f5f480208198b61d54f5aac387e4`; its follow-up inventory refresh, exact-byte promotion and separate confirmation passed, with canonical SHA256 `5590bbfc4ee4c8b287ceea729af9419d19695439ff11a735f64b2a3c37551f79`. See [the scoped inventory evidence](../delivery/v2-development/recovery-notes-20261016/inventory/README.md).
+
+The latest Codex lineage contains its independent project-retirement/incarnation fixes. Earlier references to the blocked local P0 candidate do not mean those newer fixes are absent. That older candidate remains untouched; this continuation has not rerun real PostgreSQL lifecycle acceptance. Published Codex receipts and newly executed local checks must be distinguished.
+
+Reconciliation preserves all 15,142 historical inventory rows and adds 475 rows, with identical classifications and ordering across three collections. Inventory is not execution. Bounded compatibility checks passed, including 110 clean-environment backend cases, focused frontend checks, TypeScript, production build and 166 CI helper tests. Full product, browser, PostgreSQL, GPU/model quality and target-platform acceptance remain open. No remote push, main merge, tag or release was performed. See [the bound reconciliation evidence](../delivery/v2-development/ci-reconciliation-20261016/README.md).
+
+## Historical baseline and slice record
+
 This is a current-source dependency ledger, not full product acceptance. Baseline source is local `69162fdc75328291f5b944de172bd8b69be29a4f`, tree `124ec1705e064732eab969f60d4387c6d8309454`, identical to published PR48 `58bbaad11360330d51f49fc2bb78a955a26469f0`. PR47 remains Draft at `045b865e5a003cac3333462d055f22099f6368d6`; main remains untouched. Read-only GitHub verification: 2026-10-16.
 
 The frozen user anchor is [archived verbatim](frozen-product-anchor-20261016.txt), SHA256 `ebabfe5314d9ed4535814baaca295ec6db0f17e5541d4dc35a6ed16805c129f4`. It specifies goals, not completion. The original referenced 904-line Master Roadmap was not located/read; this ledger uses its existing versioned matrix trace and does not claim exhaustive original-roadmap reconciliation.

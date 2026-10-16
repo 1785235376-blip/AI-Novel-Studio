@@ -1,0 +1,27 @@
+{
+  "status": "CANDIDATE_INVENTORY_PASS",
+  "head": "f06ad47742e8f5f480208198b61d54f5aac387e4",
+  "candidate_path": ".runtime/recovery-notes-inventory/candidate-manifest-v2.json.gz",
+  "candidate_sha256": "5590bbfc4ee4c8b287ceea729af9419d19695439ff11a735f64b2a3c37551f79",
+  "raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "raw_archive": ".runtime/recovery-notes-inventory/raw-candidate-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+  "rows": 15617,
+  "review_candidate_raw_byte_identical": true,
+  "source_map_exact": true,
+  "source_delta": [
+    {
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.notes.test.tsx",
+      "before": null,
+      "after": "1729db23908b27c647b8ac181d6d6f3c0a993a646ff152d388753ea935c7b6e4"
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.tsx",
+      "before": "dcb9b9a543e1aa7b42f6b1676162c4714bb11f57f0eebccd2a5d7255868c13f5",
+      "after": "ac357fb519c41fe9c8359b97767107a1b788c5a79825168ff0a072e20ddcc9da"
+    }
+  ],
+  "source_and_companion_stable": true,
+  "canonical_unchanged": true,
+  "product_nodes_added_nodes_skips_external_gates_unchanged": true,
+  "tests_executed": false
+}
