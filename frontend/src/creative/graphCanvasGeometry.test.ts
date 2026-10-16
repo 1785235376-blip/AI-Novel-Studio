@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   GRAPH_NODE_HEADER_HEIGHT, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT, GRAPH_POSITION_LIMIT,
-  alignGraphNodes, clampGraphZoom, graphEdgePath, graphNodeHeight, graphNodesInScreenRect, graphPortPosition,
+  alignGraphNodes, snapGraphNodes, clampGraphZoom, graphEdgePath, graphNodeHeight, graphNodesInScreenRect, graphPortPosition,
   graphScreenToWorld, graphSelectionRect, graphWorldToScreen, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
 import type { GraphCanvasNodeDefinition } from './graphCanvasGeometry';
@@ -120,5 +120,33 @@ describe('selected alignment geometry', () => {
       const bad = graph(); bad.nodes[0].position.x = value;
       expect(alignGraphNodes(bad, ['one', 'two'], 'center')).toBe(bad);
     }
+  });
+});
+
+
+describe('world-grid group snapping', () => {
+  it.each([0.35, 1, 2.5])('snaps the grabbed anchor at zoom %s without changing group offsets', zoom => {
+    const original = graph(); original.viewport.zoom = zoom;
+    const next = snapGraphNodes(original, ['one', 'two'], 'two', { x: 17 * zoom, y: -19 * zoom }, 24);
+    expect(next.nodes[1].position).toEqual({ x: 720, y: 384 });
+    expect(next.nodes[0].position).toEqual({ x: 30, y: 4 });
+    expect(next.edges).toBe(original.edges); expect(next.viewport).toBe(original.viewport);
+    expect(original.nodes[0].position).toEqual({ x: 10, y: 20 });
+  });
+  it('bounds the common translation rather than squashing group offsets at either limit', () => {
+    const original = graph(); original.nodes = [node('one', 99997, -99999), node('two', 99990, -99990)];
+    const next = snapGraphNodes(original, ['one', 'two'], 'two', { x: 1000, y: -1000 }, 32);
+    expect(next.nodes[0].position).toEqual({ x: 100000, y: -100000 });
+    expect(next.nodes[1].position).toEqual({ x: 99993, y: -99991 });
+  });
+  it('rejects invalid input, stale selection and a zero drag', () => {
+    const original = graph();
+    for (const [ids, anchor, delta, step] of [
+      [['one'], 'missing', { x: 1, y: 2 }, 24], [['one', 'missing'], 'one', { x: 1, y: 2 }, 24],
+      [['one'], 'one', { x: NaN, y: 2 }, 24], [['one'], 'one', { x: 1, y: 2 }, 0],
+      [['one'], 'one', { x: 0, y: 0 }, 24],
+    ] as const) expect(snapGraphNodes(original, ids, anchor, delta, step)).toBe(original);
+    original.nodes[0].position.x = Infinity;
+    expect(snapGraphNodes(original, ['one'], 'one', { x: 1, y: 2 }, 24)).toBe(original);
   });
 });

@@ -120,6 +120,40 @@ describe('independent studio graph content integration', () => {
     expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('未保存文字保持');
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
   });
+  it('commits snapped drag once through original undo/save/reopen without persisting view settings', async () => {
+    class Pointer extends MouseEvent {
+      readonly pointerId: number;
+      constructor(type: string, options: PointerEventInit = {}) { super(type, options); this.pointerId = options.pointerId ?? 1; }
+    }
+    vi.stubGlobal('PointerEvent', Pointer);
+    try {
+      saved.definition = { ...blankGraph(), viewport: { x: 21, y: -15, zoom: 2 }, nodes: [
+        { id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: 25, y: 37 }, parameters: { text: '原文字' } },
+      ] };
+      const before = structuredClone(saved.definition), mounted = mount(); await enter(); await open();
+      fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+      fireEvent.change(screen.getByLabelText('作者输入文本'), { target: { value: '保留未保存文字' } });
+      click('拖拽吸附'); fireEvent.change(screen.getByLabelText('网格间距'), { target: { value: '16' } });
+      const area = screen.getByRole('group', { name: '节点图交互区域' });
+      fireEvent.pointerDown(screen.getByRole('button', { name: /选择节点 .* · text$/ }), { button: 0, pointerId: 1, clientX: 100, clientY: 100 });
+      fireEvent.pointerMove(area, { pointerId: 1, clientX: 140, clientY: 140 });
+      fireEvent.pointerMove(area, { pointerId: 1, clientX: 150, clientY: 150 });
+      fireEvent.pointerUp(area, { pointerId: 1 });
+      expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('48');
+      expect(client.graphs.save).not.toHaveBeenCalled();
+      click('撤销图编辑'); expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('25');
+      expect((screen.getByLabelText('作者输入文本') as HTMLTextAreaElement).value).toBe('保留未保存文字');
+      click('重做图编辑'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+      const expected = { ...before, nodes: before.nodes.map(row => ({ ...row, position: { x: 48, y: 64 }, parameters: { text: '保留未保存文字' } })) };
+      expect(client.graphs.save).toHaveBeenCalledWith('saved-graph', { expected_version: 1, definition: expected });
+      mounted.unmount(); mount(); await enter(); await open();
+      fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
+      expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('48');
+      expect(screen.getByRole('button', { name: '拖拽吸附' }).getAttribute('aria-pressed')).toBe('false');
+      expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('24');
+      expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+    } finally { vi.unstubAllGlobals(); }
+  });
   it('applies selected alignment with one undo, preserves dirty text, and saves/reopens original positions', async () => {
     saved.definition = { ...blankGraph(), viewport: { x: 123, y: -45, zoom: 1.4 }, nodes: [
       { id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: 500, y: 400 }, parameters: { text: '原文字' } },

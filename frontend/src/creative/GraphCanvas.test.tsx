@@ -344,3 +344,49 @@ describe('selected-node alignment preview', () => {
     expect((screen.getByText('预览左对齐') as HTMLButtonElement).disabled).toBe(true);
   });
 });
+
+
+describe('transient world-grid controls', () => {
+  it('toggles grid/snap without moving nodes or saving, and aligns grid to the camera', () => {
+    const definition = initial(); definition.viewport = { x: -13, y: 29, zoom: 2 };
+    const { changes, rerender } = setup({ definition, interactionKey: 'owner-a', selectedNodeIds: ['source'] });
+    expect(viewport().style.backgroundSize).toBe('48px 48px');
+    expect(viewport().style.backgroundPosition).toBe('-37px 5px');
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    fireEvent.change(screen.getByLabelText('网格间距'), { target: { value: '16' } });
+    expect(viewport().style.backgroundSize).toBe('32px 32px');
+    fireEvent.click(screen.getByRole('button', { name: '显示网格' }));
+    expect(viewport().style.backgroundImage).toBe('none');
+    for (const target of [screen.getByRole('button', { name: '拖拽吸附' }), screen.getByLabelText('网格间距')]) {
+      fireEvent.keyDown(target, { key: 'ArrowRight' }); fireEvent.keyDown(target, { key: 'Delete' });
+    }
+    fireEvent.keyDown(viewport(), { key: 'ArrowRight', isComposing: true });
+    expect(changes).not.toHaveBeenCalled();
+    rerender({ interactionKey: 'owner-b' });
+    expect(screen.getByRole('button', { name: '拖拽吸附' }).getAttribute('aria-pressed')).toBe('false');
+    expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('24');
+  });
+  it('snaps a multi-drag once using the grabbed node, supports cancellation and free placement', () => {
+    const definition = initial(); definition.viewport.zoom = 2;
+    definition.nodes[1].position = { x: 481, y: 147 };
+    const { changes } = setup({ definition, selectedNodeIds: ['source', 'prepare'] });
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    down(prepare(), 100, 100); move(140, 140);
+    expect(position('prepare').left).toBe('504px'); expect(position('source').left).toBe('47px');
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.pointerCancel(viewport(), { pointerId: 1 }); expect(position('prepare').left).toBe('481px');
+    down(prepare(), 100, 100); move(140, 140); up();
+    expect(changes).toHaveBeenCalledTimes(1); expect(changes.mock.calls[0][1]).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    down(prepare(), 100, 100); move(102, 102); up();
+    expect(position('prepare').left).toBe('505px'); expect(changes).toHaveBeenCalledTimes(2);
+  });
+  it('preserves keyboard screen-distance nudges when snap is enabled and avoids no-op undo', () => {
+    const definition = initial(); definition.viewport.zoom = 2;
+    const { changes } = setup({ definition, selectedNodeIds: ['source'] });
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    down(source(), 100, 100); move(101, 101); up(); expect(changes).not.toHaveBeenCalled();
+    fireEvent.keyDown(viewport(), { key: 'ArrowRight' }); expect(position('source').left).toBe('28px');
+    fireEvent.keyDown(viewport(), { key: 'ArrowRight', shiftKey: true }); expect(position('source').left).toBe('44px');
+  });
+});

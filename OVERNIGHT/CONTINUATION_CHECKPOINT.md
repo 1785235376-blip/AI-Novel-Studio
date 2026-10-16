@@ -46,3 +46,12 @@ Baseline `e07b5b0799aab9a3cb252e2cbab0a9e7fcfd4590`; containing commit identifie
 194 selected mock UI/geometry tests, one original nonsecurity File presentation reopen/CAS test, 30 PUBLIC contracts, tsc/Vite/token/discovery and 487-file source closure pass. No browser/visual/runtime workaround, PG/P0, GPU/provider/Windows/full RC was attempted. No push or hosted CI; cost remains unknown. P0 remains BLOCKED, R3-GATE HOLD; Prompt Adoption writes disabled.
 
 Handoff: parent independent review before further tracked edits. Next bounded candidate is grid/snap or original-owner grouping/collapse/annotations, after auditing existing contracts. No second store or DAG/coordinate-budget increase. Preserve historical receipts and all user-machine/cost/denial boundaries.
+
+
+## World-grid snapping continuation — 2026-10-16
+
+Baseline `65b607de422eecfc2e5121c3145ff28885c9d048`; containing commit identifies delivery. Existing decorative grid now tracks world origin/zoom and can be hidden. Explicit opt-in drag snapping and 8/16/24/32-unit step preserve group offsets using the grabbed node as anchor; coordinate boundaries take priority over exact grid alignment. Original Graph history/save owns resulting positions. Settings are explicitly session-only, reset on owner/unmount, since current preferences have no canvas fields. No new store/backend/schema. Keyboard nudge remains 8 / Shift 32 screen pixels; new controls isolate keyboard and canvas ignores composing events.
+
+203 selected mocked UI/geometry tests, 1 original nonsecurity File presentation/CAS test, 30 PUBLIC contracts, tsc/Vite/token/discovery and 487-file source closure pass. Report/evidence: `docs/v2/canvas-grid-snapping-20261016.md` / `.json`. Browser/native input/visuals/PG/P0/GPU/provider/Windows/full RC NOT_RUN; P0 remains BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled. No push/hosted CI because cost unknown.
+
+Handoff: independent review before further tracked edits. Next candidate remains original-owner grouping/collapse/annotations after schema audit; durable grid preferences and unsaved recovery remain open. Preserve all prior receipts and user-machine/cost/denial boundaries.

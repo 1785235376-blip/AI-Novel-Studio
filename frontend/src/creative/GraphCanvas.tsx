@@ -6,7 +6,7 @@ import { GRAPH_NODE_LABELS } from './studioGraphLabels';
 import type { StudioGraphDefinition, StudioGraphPosition } from './studioGraphTypes';
 import {
   GRAPH_MAX_ZOOM, GRAPH_MIN_ZOOM, GRAPH_NODE_HEADER_HEIGHT, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT,
-  alignGraphNodes, clampGraphPosition, graphEdgePath, graphNodeHeight, graphNodesInScreenRect,
+  alignGraphNodes, clampGraphPosition, snapGraphNodes, graphEdgePath, graphNodeHeight, graphNodesInScreenRect,
   graphSelectionRect, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
 import type { GraphAlignment, GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
@@ -41,6 +41,8 @@ type Gesture = {
   latest: StudioGraphDefinition;
   ids: string[];
   additive: boolean;
+  anchorId: string;
+  snapStep: number | null;
   rect?: GraphCanvasRect;
   moved: boolean;
 };
@@ -58,6 +60,10 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const [viewportSize, setViewportSize] = useState<{ width: number; height: number } | null>(null);
   const [focusedNode, setFocusedNode] = useState<string | null>(null);
   const [showMiniMap, setShowMiniMap] = useState(true);
+  const [showGrid, setShowGrid] = useState(true);
+  const [snap, setSnap] = useState(false);
+  const [gridStep, setGridStep] = useState(24);
+  useEffect(() => { setShowGrid(true); setSnap(false); setGridStep(24); }, [interactionKey]);
   const [tool, setTool] = useState<'select' | 'pan'>('select');
   const [activeGesture, setActiveGesture] = useState<Gesture['kind'] | null>(null);
   const descriptionId = useId(), markerId = useId().replace(/:/g, '');
@@ -154,14 +160,14 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     return next;
   };
 
-  const startGesture = (event: PointerEvent, kind: Gesture['kind'], ids: string[] = selected) => {
+  const startGesture = (event: PointerEvent, kind: Gesture['kind'], ids: string[] = selected, anchorId = ids[0]) => {
     if (gesture.current || busy || (blocked && kind !== 'marquee')) return;
     event.preventDefault();
     setAlignment(null);
     const rect = viewportRef.current!.getBoundingClientRect();
     gesture.current = { kind, pointerId: event.pointerId, source: definition, owner: interactionKey,
       start: kind === 'marquee' ? { x: event.clientX - rect.left, y: event.clientY - rect.top } : { x: event.clientX, y: event.clientY },
-      latest: definition, ids, additive: event.shiftKey || event.ctrlKey || event.metaKey, moved: false };
+      latest: definition, ids, anchorId, snapStep: snap ? gridStep : null, additive: event.shiftKey || event.ctrlKey || event.metaKey, moved: false };
     wheelUntil.current = 0;
     setActiveGesture(kind);
     if (kind === 'marquee') setMarquee({ ...gesture.current.start, width: 0, height: 0 });
@@ -181,7 +187,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     }
     const delta = { x: event.clientX - current.start.x, y: event.clientY - current.start.y };
     current.moved = Boolean(delta.x || delta.y);
-    current.latest = current.kind === 'drag' ? moveGraphNodes(current.source, current.ids, delta)
+    current.latest = current.kind === 'drag' ? (current.snapStep ? snapGraphNodes(current.source, current.ids, current.anchorId, delta, current.snapStep) : moveGraphNodes(current.source, current.ids, delta))
       : { ...current.source, viewport: { ...current.source.viewport, x: clampGraphPosition(current.source.viewport.x + delta.x), y: clampGraphPosition(current.source.viewport.y + delta.y) } };
     setPreview({ source: current.source, value: current.latest });
   };
@@ -196,7 +202,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       const hits = current.moved && current.rect ? graphNodesInScreenRect(definition.nodes, current.rect, definition.viewport, nodeDefinitions) : [];
       const next = current.additive ? [...new Set([...current.ids, ...hits])] : hits;
       if (!sameIds(next, selectedNodeIds)) onSelectionChange(next);
-    } else if (current.moved) onDefinitionChange(current.latest, true);
+    } else if (current.moved && current.latest !== current.source) onDefinitionChange(current.latest, true);
   };
 
   const deleteSelected = () => {
@@ -223,7 +229,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (isGraphEditableTarget(event.target)) return;
+    if (event.nativeEvent.isComposing || event.keyCode === 229 || isGraphEditableTarget(event.target)) return;
     if (event.key === 'Escape') { event.preventDefault(); if (validAlignment) { setAlignment(null); return; } if (gesture.current) cancelGesture(); else onSelectionChange([]); return; }
     if (busy) return;
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') { event.preventDefault(); onSelectionChange(definition.nodes.map(node => node.id)); return; }
@@ -259,6 +265,15 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       {readonly && <Badge>只读</Badge>}
       <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || !removable.length} title={selected.length && !removable.length ? '已保存的资产引用只能移动或停用' : '删除所选节点及其连接'} onClick={deleteSelected}><Trash2 size={16} /></Button>
     </header>
+    <div className="graph-canvas__toolbar" role="group" aria-label="网格与吸附设置" onKeyDown={event => event.stopPropagation()}>
+      <Button type="button" variant="ghost" aria-pressed={showGrid} disabled={!!activeGesture} onClick={() => setShowGrid(value => !value)}>显示网格</Button>
+      <Button type="button" variant="ghost" aria-pressed={snap} disabled={blocked || !!activeGesture} onClick={() => setSnap(value => !value)}>拖拽吸附</Button>
+      <label className="graph-canvas__navigator">网格间距<select aria-label="网格间距" value={gridStep} disabled={!!activeGesture}
+        onChange={event => { const step = Number(event.target.value); if ([8, 16, 24, 32].includes(step)) setGridStep(step); }}>
+        {[8, 16, 24, 32].map(step => <option key={step} value={step}>{step} 世界单位</option>)}
+      </select></label>
+      <span className="graph-canvas__help">仅本次视图；吸附抓取节点，多选保持相对位置，边界优先。方向键仍按屏幕 8 / Shift 32 像素微调。</span>
+    </div>
     <div className="graph-canvas__toolbar" role="group" aria-label="所选节点对齐" onKeyDown={event => {
       event.stopPropagation();
       if (event.key === 'Escape') { event.preventDefault(); setAlignment(null); }
@@ -281,6 +296,8 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       </>}
     </div>
     <div ref={viewportRef} className={`graph-canvas__viewport${tool === 'pan' ? ' is-pan-tool' : ''}${activeGesture === 'pan' ? ' is-panning' : ''}`}
+      style={{ backgroundImage: showGrid ? undefined : 'none', backgroundSize: `${gridStep * visible.viewport.zoom}px ${gridStep * visible.viewport.zoom}px`,
+        backgroundPosition: `${visible.viewport.x - gridStep * visible.viewport.zoom / 2}px ${visible.viewport.y - gridStep * visible.viewport.zoom / 2}px` }}
       tabIndex={0} role="group" aria-label="节点图交互区域" aria-describedby={descriptionId}
       onFocusCapture={event => setFocusedNode((event.target as Element).closest('[data-graph-node-id]')?.getAttribute('data-graph-node-id') || null)}
       onBlurCapture={event => {
@@ -313,7 +330,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
                 if (busy || gesture.current) return;
                 event.currentTarget.focus();
                 const ids = selectNode(node.id, event.shiftKey || event.ctrlKey || event.metaKey);
-                if (!blocked && ids.includes(node.id)) startGesture(event, 'drag', ids);
+                if (!blocked && ids.includes(node.id)) startGesture(event, 'drag', ids, node.id);
               }}
               onClick={event => { if (event.detail === 0 && !busy) selectNode(node.id, event.shiftKey || event.ctrlKey || event.metaKey); }}>
               <span className="graph-canvas__node-label"><strong>{label}</strong><small>{node.id} · v{node.definition_version}</small></span>

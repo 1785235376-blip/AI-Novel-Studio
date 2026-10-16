@@ -69,6 +69,30 @@ export function moveGraphNodes(definition: StudioGraphDefinition, ids: readonly 
     : node) };
 }
 
+/** Snap the grabbed anchor in world units; one bounded translation preserves every selected offset.
+ * At the coordinate boundary, preserving the group takes precedence over exact grid alignment. */
+export function snapGraphNodes(definition: StudioGraphDefinition, ids: readonly string[], anchorId: string,
+  screenDelta: StudioGraphPosition, step: number): StudioGraphDefinition {
+  const selected = new Set(ids), nodes = definition.nodes.filter(node => selected.has(node.id));
+  const anchor = nodes.find(node => node.id === anchorId);
+  if (!anchor || nodes.length !== selected.size || ![8, 16, 24, 32].includes(step)
+    || !Number.isFinite(screenDelta.x) || !Number.isFinite(screenDelta.y)
+    || nodes.some(node => !Number.isFinite(node.position.x) || !Number.isFinite(node.position.y)
+      || Math.abs(node.position.x) > GRAPH_POSITION_LIMIT || Math.abs(node.position.y) > GRAPH_POSITION_LIMIT)
+    || (!screenDelta.x && !screenDelta.y)) return definition;
+  const zoom = clampGraphZoom(definition.viewport.zoom);
+  const delta = { x: 0, y: 0 };
+  for (const axis of ['x', 'y'] as const) {
+    const desired = Math.round((anchor.position[axis] + screenDelta[axis] / zoom) / step) * step - anchor.position[axis];
+    const minimum = Math.max(...nodes.map(node => -GRAPH_POSITION_LIMIT - node.position[axis]));
+    const maximum = Math.min(...nodes.map(node => GRAPH_POSITION_LIMIT - node.position[axis]));
+    delta[axis] = Math.max(minimum, Math.min(maximum, desired));
+  }
+  if (!delta.x && !delta.y) return definition;
+  return { ...definition, nodes: definition.nodes.map(node => selected.has(node.id)
+    ? { ...node, position: { x: node.position.x + delta.x, y: node.position.y + delta.y } } : node) };
+}
+
 export function graphPortPosition(node: Pick<StudioGraphNode, 'position'>, descriptor: GraphCanvasNodeDefinition | undefined, direction: 'input' | 'output', portId: string): StudioGraphPosition | null {
   const ports = direction === 'input' ? descriptor?.inputs : descriptor?.outputs;
   const index = ports?.findIndex(port => port.id === portId) ?? -1;
