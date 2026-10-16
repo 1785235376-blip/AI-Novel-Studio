@@ -92,7 +92,7 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
       setJudgeRevision({ client, chapter: chapterSnapshot, intent }); setSelected('revision_intelligence_v2'); setToolQuery('');
     } : undefined} />}
     {active === 'change_impact_v2' && <ChangeImpactPanel client={client} onNavigate={onNavigate} />}
-    {active === 'story_simulator_v2' && <StorySimulatorPanel client={client} requestedJobId={requestedTask?.authority === 'simulator_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={onNavigate} />}
+    {active === 'story_simulator_v2' && <StorySimulatorPanel client={client} requestedRunId={requestedTask?.authority === 'simulator_run' ? requestedTask.id : undefined} requestedJobId={requestedTask?.authority === 'simulator_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={onNavigate} />}
     {active === 'research_library_v2' && <ResearchLibraryPanel client={client} />}
     {active === 'reader_preflight_v2' && <ReaderPreflightPanel client={client} localDraftState={localDraftState} onNavigate={onNavigate} />}
     {active === 'writing_sessions_v2' && <WritingSessionPanel client={client} onNavigate={onNavigate} />}
@@ -113,7 +113,7 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     {active === 'writing_focus_v2' && <WritingFocusPanel client={client} chapter={chapter} flags={flags} onNavigate={onNavigate} focusActive={focusActive} onFocusChange={onFocusChange} onPreferencesChange={onPreferencesChange} onReferencesChange={onReferencesChange} />}
     {active === 'local_ai_workflow_inspector_v2' && <WorkflowInspectionPanel client={client} />}
     {active === 'workspace_tools_v2' && <WorkspaceToolsPanel client={client} chapter={chapter} flags={flags} onNavigate={onNavigate} currentAnchor={currentAnchor} initialSection={workspaceSection} focusActive={focusActive} saveFailure={saveFailure} workspaceView={workspaceView} onWorkspaceViewChange={onWorkspaceViewChange} onWorkspaceSaved={onWorkspaceSaved} />}
-    {active === 'advanced_planning_v2' && <PlanningPanel client={client} chapter={chapter} />}
+    {active === 'advanced_planning_v2' && <PlanningPanel client={client} chapter={chapter} requestedProposalId={requestedTask?.authority === 'planning_proposal' ? requestedTask.id : undefined} onNavigate={enabled(flags, 'story_simulator_v2') ? onNavigate : undefined} />}
     {active === 'semantic_import_v2' && <ImportPanel client={client} chapter={chapter} requestedTaskId={requestedTask?.authority === 'semantic_import' ? requestedTask.id : undefined} />}
     {active === 'world_character_engines_v2' && <WorldPanel client={client} chapter={chapter} requestedRecordId={requestedTask?.authority === 'world_record' ? requestedTask.id : undefined} />}
     {active === 'unified_review_inbox' && <InboxPanel client={client} requestedItemId={requestedTask?.authority === 'review_inbox' ? requestedTask.id : undefined} requestedDomain={requestedTask?.authority === 'review_inbox' ? requestedTask.parent_id : undefined} />}

@@ -28,7 +28,10 @@ vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: ({ onGenerate, onGene
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
 vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open broker</button> }));
-vi.mock('./experimental/DeferredExperimentalWorkbench', () => ({ DeferredExperimentalWorkbench: ({ onNavigate }: any) => <>
+vi.mock('./experimental/DeferredExperimentalWorkbench', () => ({ DeferredExperimentalWorkbench: ({ onNavigate, requestedTask, requestedTab }: any) => <>
+  <output aria-label="Exact original target">{JSON.stringify({ requestedTask, requestedTab })}</output>
+  <button onClick={() => onNavigate({ kind: 'feature', id: 'proposal-1', feature: 'advanced_planning_v2', task_authority: 'planning_proposal' })}>Open original proposal</button>
+  <button onClick={() => onNavigate({ kind: 'feature', id: 'run-1', feature: 'story_simulator_v2', task_authority: 'simulator_run' })}>Open original simulator</button>
   <button onClick={() => onNavigate({ kind: 'generation', id: 'author-one', chapter_id: 'recovery:1', version: 3, signal: navigationController?.signal })}>Open current author job</button>
   <button onClick={() => onNavigate({ kind: 'generation', id: 'author-two', chapter_id: 'recovery:2', version: 10 })}>Open other author job</button>
   <button onClick={() => onNavigate({ kind: 'generation', id: 'author-newest', chapter_id: 'recovery:1', version: 3 })}>Open newer author job</button>
@@ -42,7 +45,7 @@ function taskState(id: string, status = 'COMPLETED', output = 'READY FIRST', bas
 function deferred<T>() { let resolve!: (value: T) => void, reject!: (error: unknown) => void; const promise = new Promise<T>((yes, no) => { resolve = yes; reject = no; }); return { promise, resolve, reject }; }
 const clients: QueryClient[] = [];
 let navigationController: AbortController | undefined;
-function setup(enabled = true, strict = false) {
+function setup(enabled = true, strict = false, linked = false) {
   const query = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity }, mutations: { retry: false } } }); clients.push(query);
   query.setQueryData(['novels'], [{ id: 'recovery', title: 'Synthetic' }]);
   query.setQueryData(['chapter', 'file', 'recovery:1'], chapter());
@@ -52,7 +55,7 @@ function setup(enabled = true, strict = false) {
   query.setQueryData(['text-models'], []);
   query.setQueryData(['media-tasks', 'recovery'], { audiobook: [], motion: [] });
   query.setQueryData(['writing-goal', 'recovery'], { current_words: 0, target_words: 10, current_chapters: 2, target_chapters: 3, words_progress: 0 });
-  query.setQueryData(['experimental-features', 'file'], { experimental: enabled, default_enabled: false, features: { 'experimental.writing_recovery_v2': false, 'experimental.model_broker_v2': false, 'experimental.workspace_tools_v2': enabled } });
+  query.setQueryData(['experimental-features', 'file'], { experimental: enabled, default_enabled: false, features: { 'experimental.writing_recovery_v2': false, 'experimental.model_broker_v2': false, 'experimental.workspace_tools_v2': enabled, 'experimental.advanced_planning_v2': linked, 'experimental.story_simulator_v2': linked } });
   const app = <QueryClientProvider client={query}><App /></QueryClientProvider>;
   const view = render(strict ? <StrictMode>{app}</StrictMode> : app);
   return { query, view };
@@ -172,4 +175,13 @@ it('drops a lookup dismissed inside the child task surface without parent naviga
   await act(async () => pending.resolve(taskState('author-one', 'COMPLETED', 'CHILD DISMISSED OUTPUT')));
   expect(screen.getByLabelText('Audit draft').textContent).not.toContain('CHILD DISMISSED OUTPUT');
   expect(api.job).toHaveBeenCalledTimes(1);
+});
+
+it('preserves exact simulator/planning navigation when workspace tools are off', async () => {
+  setup(false, false, true); await openTasks();
+  fireEvent.click(screen.getByRole('button', { name: 'Open original proposal' }));
+  await waitFor(() => expect(JSON.parse(screen.getByLabelText('Exact original target').textContent || '{}')).toMatchObject({ requestedTab: 'advanced_planning_v2', requestedTask: { id: 'proposal-1', authority: 'planning_proposal' } }));
+  fireEvent.click(screen.getByRole('button', { name: 'Open original simulator' }));
+  await waitFor(() => expect(JSON.parse(screen.getByLabelText('Exact original target').textContent || '{}')).toMatchObject({ requestedTab: 'story_simulator_v2', requestedTask: { id: 'run-1', authority: 'simulator_run' } }));
+  expect(api.generate).not.toHaveBeenCalled(); expect(api.accept).not.toHaveBeenCalled();
 });
