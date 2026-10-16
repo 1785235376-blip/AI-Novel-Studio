@@ -3,6 +3,7 @@ import { Button, Panel, StatusMessage } from '../ui/primitives';
 import type { CollaborationContext } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import { createTaskCenterClient } from './taskCenterClient';
+import { createTaskCostReceiptClient } from './taskCostReceiptClient';
 import { TASK_CENTER_QUEUE_LABELS, type TaskCenterQueue } from './taskCenterTypes';
 import { useTaskCenter, type TaskCenterController, type TaskCenterControllerProps } from './useTaskCenter';
 import { ReviewInbox } from './ReviewInbox';
@@ -72,7 +73,7 @@ export function TaskCenter({ controller }: { controller: TaskCenterController })
   </Panel>;
 }
 
-export type TaskCenterPanelProps = Omit<TaskCenterControllerProps, 'client'> & {
+export type TaskCenterPanelProps = Omit<TaskCenterControllerProps, 'client' | 'costReceiptClient'> & {
   projectId: string;
   /** 与 `productionWorkflowClient` 相同的注入传输（例如 `studioTransport(context)`）。 */
   transport: StudioGraphTransport;
@@ -87,6 +88,8 @@ export type TaskCenterPanelProps = Omit<TaskCenterControllerProps, 'client'> & {
 export function TaskCenterPanel({ projectId, transport, scope, ...rest }: TaskCenterPanelProps) {
   const client = useMemo(() => createTaskCenterClient(projectId, transport, scope),
     [projectId, transport, scope?.workspaceId, scope?.projectId, scope?.storylineId, scope?.branchId]);
-  const controller = useTaskCenter({ ...rest, client });
+  const costReceiptClient = useMemo(() => createTaskCostReceiptClient(projectId, transport, scope),
+    [projectId, transport, scope?.workspaceId, scope?.projectId, scope?.storylineId, scope?.branchId]);
+  const controller = useTaskCenter({ ...rest, client, costReceiptClient });
   return <TaskCenter controller={controller}/>;
 }

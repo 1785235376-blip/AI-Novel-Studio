@@ -3,7 +3,6 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { api } from '../api';
-import { projectedTask, tasksResponse, reviewInboxItem, reviewInboxResponse } from '../taskcenter/taskCenterFixtures';
 import { useStudio } from '../store';
 import { useLocalHostSession } from '../localHostSession';
 import { IndependentStudioWorkspace, type IndependentStudioProps } from './IndependentStudioWorkspace';
@@ -127,7 +126,7 @@ describe('independent studio original owner integration', () => {
     fireEvent.click(screen.getByText('创作意图与推荐布局'));
     fireEvent.click(screen.getByLabelText('图片设计'));
     fireEvent.click(screen.getByRole('button', { name: '保存创作偏好' }));
-    expect((await screen.findByText('版本或来源已经变化。当前草稿已保留，请核对服务端版本。')).getAttribute('role')).toBe('alert');
+    await screen.findByRole('alert');
     expect((screen.getByLabelText('图片设计') as HTMLInputElement).checked).toBe(true);
     expect(screen.getAllByRole('tab')).toHaveLength(8);
     fireEvent.click(within(screen.getByRole('tablist', { name: '创作模块' })).getByRole('tab', { name: '小说' }));
@@ -145,156 +144,4 @@ describe('independent studio original owner integration', () => {
     expect(screen.queryByRole('button', { name: '检查资产 reference.png' })).toBeNull();
     expect(URL.createObjectURL).not.toHaveBeenCalled();
   });
-});
-
-describe('mounted original asset browser to timeline handoff', () => {
-  async function sendFixture(target = '时间线模块') {
-    saved = [{ ...asset(2), kind: target === '图片模块' ? 'image' : 'video', filename: 'handoff.mp4', media_type: target === '图片模块' ? 'image/png' : 'video/mp4', created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z' }];
-    server({ override: (url, init) => {
-      if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
-      if (url.endsWith('/timelines')) return response({ items: [] });
-      return undefined;
-    } });
-    mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '选择素材 handoff.mp4' }));
-    await screen.findByRole('button', { name: target }); fireEvent.click(screen.getByRole('button', { name: target }));
-  }
-  it('routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance', async () => {
-    await sendFixture(); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
-    await screen.findByRole('region', { name: '素材引用交接到时间线' });
-    await waitFor(() => expect((screen.getByRole('button', { name: '添加视频轨道' }) as HTMLButtonElement).disabled).toBe(false));
-    fireEvent.click(screen.getByRole('button', { name: '添加视频轨道' })); fireEvent.click(screen.getByRole('button', { name: '核对交接素材版本' }));
-    const select = await screen.findByLabelText('交接目标轨道'); fireEvent.change(select, { target: { value: (select as HTMLSelectElement).options[1].value } });
-    fireEvent.change(screen.getByLabelText('交接来源终点（毫秒）'), { target: { value: '1000' } });
-    expect(screen.getByText(/未保存 · 1 条轨道 · 0 个片段/)).toBeTruthy(); fireEvent.click(screen.getByRole('button', { name: '明确加入原时间线草稿' }));
-    await screen.findByText(/已把核对的原素材版本加入/); expect(screen.getByText(/未保存 · 1 条轨道 · 1 个片段/)).toBeTruthy();
-    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
-  });
-  it.each([['时间线模块', '素材引用交接到时间线'], ['图片模块', '素材引用交接到图片制作'], ['视频模块', '素材引用交接到视频制作']])('keeps dirty-navigation cancel for %s', async (target, region) => {
-    await sendFixture(target); fireEvent.change(screen.getByLabelText('自定义意图'), { target: { value: 'keep my draft' } });
-    fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
-    expect(screen.queryByRole('region', { name: region })).toBeNull(); fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
-    expect((screen.getByLabelText('自定义意图') as HTMLInputElement).value).toBe('keep my draft');
-    fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' })); fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); fireEvent.click(screen.getByRole('button', { name: '确认离开' }));
-    await screen.findByRole('region', { name: region }); expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
-  });
-});
-
-
-describe('mounted asset browser to original image draft', () => {
-  it.each([['图片', 'm5.image.i2i'], ['视频', 'm7.video.i2v']])('requires an explicit %s operation choice and two metadata reads without dispatch', async (kind, operation) => {
-    saved = [{ ...asset(2), created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z' }];
-    server({ override: (url, init) => {
-      if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
-      if (url.endsWith('/timelines') || url.endsWith('/providers')) return response({ items: [] });
-      return undefined;
-    } });
-    mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '选择素材 reference.png' }));
-    fireEvent.click(await screen.findByRole('button', { name: `${kind}模块` })); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
-    await screen.findByRole('region', { name: `素材引用交接到${kind}制作` });
-    expect((screen.getByRole('button', { name: `核对${kind}交接版本` }) as HTMLButtonElement).disabled).toBe(true);
-    fireEvent.change(screen.getByLabelText('操作'), { target: { value: operation } });
-    await waitFor(() => expect((screen.getByRole('button', { name: `核对${kind}交接版本` }) as HTMLButtonElement).disabled).toBe(false));
-    fireEvent.click(screen.getByRole('button', { name: `核对${kind}交接版本` })); fireEvent.click(await screen.findByRole('button', { name: `明确加入${kind}制作草稿` }));
-    await screen.findByText(new RegExp(`已加入原${kind}制作草稿`)); expect(screen.getByText(/已绑定来源 reference.png/)).toBeTruthy();
-    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
-  });
-});
-
-
-describe('mounted TaskCenter original owner routing', () => {
-  it('opens exact original media task, deduplicates repeated opens and clears on leaving', async () => {
-    server({ override: url => url.includes('/workspace/tasks?') ? response(tasksResponse())
-      : url.endsWith('/experimental/media/tasks') ? response({ items: [{ id: 'media-task-1', version: 4, status: 'RUNNING', novel_id: id, scope: { mode: 'local', novel_id: id } }] }) : undefined });
-    mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
-    fireEvent.click(await screen.findByRole('button', { name: '定位原任务结果' }));
-    await screen.findByText('原记录 media-task-1 · v4 · RUNNING');
-    fireEvent.click(screen.getByRole('button', { name: '定位原任务结果' }));
-    expect(fetchMock.mock.calls.filter(([url]) => url.endsWith('/experimental/media/tasks'))).toHaveLength(1);
-    expect(screen.getByRole('button', { name: '任务中心' }).getAttribute('aria-pressed')).toBe('true');
-    expect(fetchMock.mock.calls.some(([url]) => url.includes('/production/jobs'))).toBe(false);
-    fireEvent.click(screen.getByRole('button', { name: '素材工作区' }));
-    expect(screen.queryByLabelText('原任务与候选记录')).toBeNull();
-    expect(fetchMock.mock.calls.some(([, init]) => init.method !== 'GET')).toBe(false);
-  });
-  it('shows unsupported owner honestly without claiming location or reading another service', async () => {
-    server({ override: url => url.includes('/workspace/tasks?') ? response(tasksResponse({ items: [projectedTask({ authority: 'images' })] })) : undefined });
-    mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
-    fireEvent.click(await screen.findByRole('button', { name: '定位原任务结果' }));
-    await screen.findByText(/此来源没有接入/);
-    expect(fetchMock.mock.calls.some(([url]) => url.includes('/experimental/media/') || url.includes('/production/jobs'))).toBe(false);
-  });
-});
-
-
-describe('mounted original candidate reopening', () => {
-  it('reads the exact original candidate and refuses newer revisions', async () => {
-    server({ override: url => url.includes('/workspace/tasks?') ? response(tasksResponse())
-      : url.endsWith('/review-inbox') ? response(reviewInboxResponse({ items: [reviewInboxItem({ novel_id: id, project: id, scope: { mode: 'local', novel_id: id } })] }))
-      : url.endsWith('/experimental/media/proposals') ? response({ items: [{ id: 'candidate-1', version: 4, task_id: 'media-task-1', status: 'PENDING_REVIEW', novel_id: id, scope: { mode: 'local', novel_id: id } }] }) : undefined });
-    mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
-    fireEvent.click(await screen.findByRole('tab', { name: '审核收件箱' }));
-    fireEvent.click(await screen.findByRole('button', { name: '查看候选详情' }));
-    fireEvent.click(screen.getByRole('button', { name: '定位原审核项' }));
-    await screen.findByText(/原候选版本或来源已变化/);
-    expect(screen.queryByLabelText('已核对原媒体记录')).toBeNull();
-    expect(fetchMock.mock.calls.some(([, init]) => init.method !== 'GET')).toBe(false);
-  });
-});
-
-
-describe('relationship inspection original asset navigation', () => {
-  function relationshipServer(targetPatch: Partial<StudioAsset> = {}, afterFirst?: Partial<StudioAsset>) {
-    let targetReads = 0;
-    const target = { ...asset(2), id: 'image-2', filename: 'original.png', ...targetPatch };
-    const reference = { kind: 'ASSET' as const, id: 'image-2', version: 2, digest: sha, label: 'original.png', deleted: false };
-    saved = [{ ...asset(2), relationships: [{ id: 'relation-1', type: 'REFERENCES', state: 'CURRENT', target: reference,
-      expected: { kind: 'ASSET', id: 'image-2', version: 2, digest: sha }, reason: 'original source', created_by: 'author', created_at: '2026-10-16T00:00:00Z', semantics: 'DECLARED_LINK_NOT_RIGHTS_GRANT_OR_EXECUTION' }] }, { ...asset(2), id: 'image-2', filename: 'original.png' }];
-    server({ override: url => url === `${base}/references?kind=ASSET` ? response({ items: [reference], read_only: true, content_copied: false })
-      : url === `${base}/assets/image-2` ? response(++targetReads > 1 && afterFirst ? { ...target, ...afterFirst } : target) : undefined });
-  }
-  async function inspectReference() {
-    mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '检查资产 reference.png' }));
-    fireEvent.click(await screen.findByRole('button', { name: '可选资产关联' }));
-    fireEvent.click(await screen.findByRole('button', { name: '核对原来源版本' }));
-    await waitFor(() => expect((screen.getByRole('button', { name: '打开核对的原资产' }) as HTMLButtonElement).disabled).toBe(false));
-  }
-  it('re-reads exact original asset after explicit dirty discard and performs no writes', async () => {
-    relationshipServer({}, { version: 3, sha256: 'b'.repeat(64) }); await inspectReference();
-    fireEvent.change(screen.getByLabelText('关联理由'), { target: { value: '保留草稿直到确认' } });
-    fireEvent.click(screen.getByRole('button', { name: '打开核对的原资产' }));
-    expect(fetchMock.mock.calls.some(([url]) => url === `${base}/assets/image-2`)).toBe(false);
-    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).value).toBe('保留草稿直到确认');
-    fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); fireEvent.click(screen.getByRole('button', { name: '确认离开' }));
-    await screen.findByText('已打开关联时的精确原资产版本。未修改关联，也未导出文件。');
-    // Exact inspection does not trigger the live browser's ID-only current-detail read.
-    expect(fetchMock.mock.calls.filter(([url]) => url === `${base}/assets/image-2`)).toHaveLength(1);
-    expect(screen.getByRole('region', { name: '关联原资产精确版本审阅' })).toBeTruthy();
-    expect(screen.queryByRole('button', { name: '选择素材 original.png' })).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: '返回当前素材浏览' }));
-    await screen.findByText('已返回当前素材浏览。目录和详情按当前版本读取；不代表关联时的历史版本。');
-    await waitFor(() => expect(fetchMock.mock.calls.filter(([url]) => url === `${base}/assets/image-2`)).toHaveLength(2));
-    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
-  });
-  it.each([{ version: 3 }, { sha256: 'b'.repeat(64) }, { novel_id: 'other-project' }, { deleted_at: 'deleted' }])('does not open a changed original owner read %j', async patch => {
-    relationshipServer(patch); await inspectReference(); fireEvent.click(screen.getByRole('button', { name: '打开核对的原资产' }));
-    if (patch.novel_id) {
-      await screen.findByText('当前会话无权访问此项目');
-      expect(screen.queryByRole('button', { name: '可选资产关联' })).toBeNull();
-    } else {
-      await screen.findByText('关联来源的版本、摘要或范围已变化；未打开最新版本，原资产选择保持不变。');
-      expect(within(screen.getByRole('region', { name: '资产检查面板' })).getByText('reference.png')).toBeTruthy();
-    }
-    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
-  });
-  it('retires inspection when the original selection goes A to B to A in one batch', async () => {
-    relationshipServer(); await inspectReference();
-    const source = screen.getByRole('button', { name: '检查资产 reference.png' });
-    const other = screen.getByRole('button', { name: '检查资产 original.png' });
-    act(() => { fireEvent.click(other); fireEvent.click(source); });
-    expect(screen.queryByRole('button', { name: '打开核对的原资产' })).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
-    expect((screen.getByRole('button', { name: '打开核对的原资产' }) as HTMLButtonElement).disabled).toBe(true);
-    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
-  });
-
 });

@@ -4,6 +4,7 @@ import { MEDIA_OPERATION_LABELS, MEDIA_STATUS_LABELS, mediaProviderKey, useStudi
 import type { MediaOperation } from './studioProductionClient';
 import { usableCutoutSource } from './studioCutoutContract';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
+import { missingAudioMeasurementLabel } from './studioAudioReceiptContext';
 
 export type { StudioMediaExecutionProps } from './useStudioMediaExecution';
 const labels: Record<MediaParameter, string> = { scale: '超分倍率', width: '宽度（64–2048）', height: '高度（64–2048）', steps: '采样步数（1–150）', seed: '种子（0–2147483647）',
@@ -16,7 +17,9 @@ const kindLabels = { image: '图片', video: '视频', audio: '音频' };
 /** A replaceable presentation over the original receipt-aware media controller. */
 export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const state = useStudioMediaExecution(props), draft = state.draft, job = state.selected;
-  const providers = state.providers.filter(row => row.operation_id === draft.operation && (!state.routeSelectable || row.local === (draft.route === 'local')));
+  const crossRouteReferences = draft.operation === 'm5.image.reference';
+  const providers = state.providers.filter(row => row.operation_id === draft.operation && (crossRouteReferences || !state.routeSelectable || row.local === (draft.route === 'local')))
+    .sort((left, right) => Number(right.local) - Number(left.local));
   const upscale = draft.operation === 'm5.image.upscale';
   const cutout = draft.operation === 'm5.image.cutout';
   const inpaint = draft.operation === 'm5.image.inpaint', reference = draft.operation === 'm5.image.reference';
@@ -60,11 +63,11 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       </select></label>
       {cutout && <p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。输出同尺寸 PNG；不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>}
       {!trim && !cutout && <>
-        {state.routeSelectable && <><label>制作路线<select disabled={!state.canEdit || state.providerLoading} value={draft.route} onChange={event => state.changeRoute(event.target.value as 'local' | 'cloud')}><option value="local">本地</option><option value="cloud">云端</option></select></label><p>默认先查看本地配置；可自行切换云端或返回本地。切换不发送输入、不执行模型，也不自动选择服务商。</p></>}
+        {state.routeSelectable && <><label>制作路线<select disabled={!state.canEdit || state.providerLoading} value={draft.route} onChange={event => state.changeRoute(event.target.value as 'local' | 'cloud')}><option value="local">本地</option><option value="cloud">云端</option></select></label><p>{crossRouteReferences ? '参考图配置按本地优先列出，也明确标注云端项。选择配置会同步切换制作路线，并清除旧许可；云端发送仍须单独确认。' : '默认先查看本地配置；可自行切换云端或返回本地。切换不发送输入、不执行模型，也不自动选择服务商。'}</p></>}
         <label>服务商与模型<select disabled={!state.canEdit || state.providerLoading} value={draft.providerKey} onChange={event => state.changeField('providerKey', event.target.value)}>
           <option value="">明确选择当前配置</option>{providers.map(row => <option key={mediaProviderKey(row)} value={mediaProviderKey(row)}>{row.provider_id} · {row.model_id} · {row.local ? '本地' : '云端'}</option>)}
         </select></label>
-        <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && (state.routeSelectable ? `当前操作暂无${draft.route === 'local' ? '本地' : '云端'}配置；可以切换路线或先完成对应配置，不会自动回退。` : '暂无对应配置，请先完成服务商与模型配置。')}</p>
+        <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && (state.routeSelectable && !crossRouteReferences ? `当前操作暂无${draft.route === 'local' ? '本地' : '云端'}配置；可以切换路线或先完成对应配置，不会自动回退。` : '暂无对应配置，请先完成服务商与模型配置。')}</p>
         {state.provider?.image_capabilities && <p>当前图片配方：{state.provider.image_capabilities.recipe_id}。输入结构已核对，真实推理尚未验证。参考图最多 {state.provider.image_capabilities.reference_limit} 张；{state.provider.image_capabilities.reference_semantics === 'WEIGHTED_PIXEL_INITIALIZATION' ? '权重用于归一化混合参考像素后初始化生成，不代表角色或风格识别质量。' : '当前路线采用单图初始化。'}</p>}
         <Button disabled={!state.canRead || state.providerLoading} loading={state.providerLoading} onClick={() => void state.loadProviders()}>重新读取配置</Button>
         {!upscale && <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>}
@@ -147,7 +150,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
           {job.media_measurement.container === 'flac' && <details><summary>FLAC 样本与解码证明</summary><p>{job.media_measurement.total_samples} 个样本 · 解码 {job.media_measurement.decoded_pcm_bytes} 字节 S16</p><p>PCM SHA256：<code>{job.media_measurement.decoded_pcm_sha256}</code></p><p>流信息 MD5：<code>{job.media_measurement.streaminfo_md5}</code></p></details>}
           {job.media_measurement.container === 'mp3' && <details><summary>MP3 样本与有损解码证明</summary><p>{job.media_measurement.total_samples} 个样本 · 解码 {job.media_measurement.decoded_pcm_bytes} 字节 S16 · 容器时长 {job.media_measurement.container_duration_ms} 毫秒（含编码延迟与帧填充）</p><p>解码 PCM SHA256：<code>{job.media_measurement.decoded_pcm_sha256}</code></p></details>}
           <p>{job.media_measurement.container === 'mp3' ? '以上为实际 MP3 的解码测量；MP3 为有损格式，解码摘要用于识别本次输出，不证明与原音频相同或音质合格。候选仍须核对并人工审核。' : job.media_measurement.container === 'flac' ? '以上为服务端解码实际 FLAC 的测量；S16 处理后的无损压缩不代表原作未经变更。候选仍须读取实际字节、核对摘要并人工审核。' : '以上为服务端解码实际 WAV 的测量，不代表增益已测量。候选仍须读取实际字节、核对摘要并人工审核。'}</p>
-        </section> : <p>尚未读取到已核对的音频输出测量；原请求参数与执行配方不代表实际输出。</p>)}
+        </section> : <p>尚未读取到已核对的{missingAudioMeasurementLabel(job)}输出测量；原请求参数与执行配方不代表实际输出。</p>)}
         {job.processing_proof?.contract === 'studio-image-upscale-proof/1' && <details><summary>图片超分尺寸与摘要证明</summary><p>{job.processing_proof.source_width} × {job.processing_proof.source_height} → {job.processing_proof.output_width} × {job.processing_proof.output_height} · {job.processing_proof.scale} 倍 · PNG {job.processing_proof.output_bytes} 字节</p><code>{job.processing_proof.output_sha256}</code></details>}
         {job.processing_proof?.contract === 'cpu-binary-mask-cutout/1' && <details><summary>本地 CPU 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · PNG {job.processing_proof.output_bytes} 字节</p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
         {!!job.sources.length && <details><summary>本任务绑定的来源版本</summary><ul>{job.sources.map(source => <li key={`${source.kind}:${source.id}`}>{source.kind === 'ASSET' ? props.assets.find(row => row.id === source.id)?.filename || source.id : source.id} · v{source.version}<p>来源摘要：<code>{source.digest}</code></p></li>)}</ul></details>}

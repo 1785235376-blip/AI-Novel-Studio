@@ -356,13 +356,17 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     change({ ...draftRef.current, schema_version: 4 }); setImageSchemaConsent(''); setKind('image_reference');
   }
   function updateMediaField(key: 'operation_id' | 'provider_id' | 'model_id' | 'prompt' | 'allow_cloud' | 'license_note', value: string | boolean) {
+    if (!editable || !current() || locked()) return;
     const target = draftRef.current.nodes.find(row => row.id === selected[0]); if (!target || !['media_generate', 'image_generate', 'image_upscale', 'video_generate'].includes(target.definition_id)) return;
     if (['image_generate', 'image_upscale'].includes(target.definition_id) && key === 'prompt') return;
     if (target.definition_id === 'image_upscale' && (key === 'operation_id' || key === 'allow_cloud')) return;
     if (key === 'operation_id' && !(target.definition_id === 'video_generate' ? GRAPH_VIDEO_OPERATIONS.some(operation => operation === value) : target.definition_id === 'image_generate' ? GRAPH_IMAGE_OPERATIONS.some(operation => operation === value) : GRAPH_MEDIA_OPERATIONS.some(operation => operation === value))
       || (key === 'allow_cloud' ? typeof value !== 'boolean' : typeof value !== 'string')) return;
-    if (key === 'operation_id') providerPicker.reset();
-    change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value, ...(key === 'operation_id' && ['image_generate', 'video_generate'].includes(target.definition_id) ? { allow_cloud: false } : {}) } } : row) });
+    if (target.parameters[key] === value) return;
+    const manualBinding = key === 'provider_id' || key === 'model_id';
+    if (manualBinding && ['image_generate', 'video_generate', 'image_upscale'].includes(target.definition_id) && !providerPicker.manualBindingCurrent()) return;
+    if (key === 'operation_id' || manualBinding) providerPicker.reset();
+    change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, [key]: value, ...(manualBinding || key === 'operation_id' && ['image_generate', 'video_generate'].includes(target.definition_id) ? { allow_cloud: false } : {}) } } : row) });
   }
   function updateMediaParameter(key: string, value: string) {
     const target = draftRef.current.nodes.find(row => row.id === selected[0]), allowed = target?.parameters.operation_id && graphMediaParameterNames(target.parameters.operation_id, ['image_generate', 'image_upscale'].includes(target.definition_id));
@@ -653,8 +657,15 @@ function useGraphProviderPicker(props: {
     if (!row) return;
     latest.current.bind(row); setChoice(key);
   }
+  // Manual IDs may be authored without a catalog, but never through a retired
+  // node/owner callback or a stale editability decision. Reuse the picker epoch.
+  const manualBindingCurrent = () => sameScope(props) && capturedEpoch === epoch.current && alive.current
+    && latest.current.active && !latest.current.denied && latest.current.current() && !latest.current.locked()
+    && latest.current.editable && supported(latest.current);
   const stored = props.node?.parameters;
-  const matched = visible?.rows.some(row => row.operation_id === stored?.operation_id && row.provider_id === stored.provider_id && row.model_id === stored.model_id);
+  const matchedRow = visible?.rows.find(row => row.operation_id === stored?.operation_id && row.provider_id === stored.provider_id && row.model_id === stored.model_id);
+  const matched = !!matchedRow;
+  const bindingRoute = matchedRow ? matchedRow.local ? 'local' : 'cloud' : 'unknown';
   return { rows, route, choice: rows.some(row => mediaProviderKey(row) === choice && row.provider_id === stored?.provider_id && row.model_id === stored?.model_id) ? choice : '',
-    loading, error, loaded: !!visible, matched, canRead: readable(), canEdit: readable() && props.editable && !loading, load, choose, chooseRoute, reset };
+    loading, error, loaded: !!visible, matched, bindingRoute, manualBindingCurrent, canRead: readable(), canEdit: readable() && props.editable && !loading, load, choose, chooseRoute, reset };
 }

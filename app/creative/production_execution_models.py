@@ -117,7 +117,7 @@ class StoryboardShotPin(ExecutionModel):
     shot_digest: Digest
 
 
-class MediaCommand(ExecutionModel):
+class _MediaCommandShape(ExecutionModel):
     operation_id: MediaOperation
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
     provider_id: Name | None = None
@@ -132,17 +132,28 @@ class MediaCommand(ExecutionModel):
     mask_source: ProductionSourceSnapshot | None = None
     video_reference: VideoReference | None = None
     storyboard_shot: StoryboardShotPin | None = None
+    audio_profile: Literal["studio-audio-mp3/1"] | None = None
+
+    @field_validator("audio_profile", mode="before")
+    @classmethod
+    def explicit_audio_profile(cls, value):
+        # Absence preserves the old wire identity; null is not a profile.
+        if value is None:
+            raise ValueError("STUDIO_AUDIO_PROFILE_INVALID")
+        return value
 
     @model_serializer(mode="wrap")
     def legacy_image_identity(self, handler):
         value = handler(self)
-        for key in ("image_source", "image_references", "mask_source", "video_reference", "storyboard_shot"):
+        for key in ("image_source", "image_references", "mask_source", "video_reference", "storyboard_shot", "audio_profile"):
             if value.get(key) is None or (key == "image_references" and value[key] == []):
                 value.pop(key, None)
         return value
 
     @model_validator(mode="after")
     def operation_inputs(self):
+        if self.audio_profile is not None and (self.operation_id != "m8.audio.trim" or self.parameters.output_format != "MP3"):
+            raise ValueError("STUDIO_AUDIO_PROFILE_INVALID")
         if self.storyboard_shot is not None:
             pin = self.storyboard_shot.document_snapshot
             if (not self.operation_id.startswith("m7.") or not any(
@@ -253,6 +264,32 @@ class MediaCommand(ExecutionModel):
         assets = [source for source in self.source_snapshots if source.kind == "ASSET"]
         if [image_snapshot(source) for source in assets] != [image_snapshot(source) for source in snapshots]:
             raise ValueError("STUDIO_IMAGE_RUNTIME_SNAPSHOT_MISMATCH")
+
+
+class MediaCommand(_MediaCommandShape):
+    """Fresh public commands require an explicit versioned MP3 contract."""
+
+    @model_validator(mode="after")
+    def versioned_audio_submission(self):
+        if self.parameters.output_format == "MP3" and self.audio_profile != "studio-audio-mp3/1":
+            raise ValueError("STUDIO_AUDIO_PROFILE_REQUIRED")
+        return self
+
+
+class _HistoricalAudioCommand(_MediaCommandShape):
+    """Decode only a validated, server-loaded pre-versioned trim receipt.
+
+    This is deliberately not a MediaCommand subclass: public validation cannot
+    accept a historical object by treating it as an already validated command.
+    No persisted key, digest or recipe is upgraded during decoding.
+    """
+
+    @model_validator(mode="after")
+    def original_audio_shape(self):
+        if (self.operation_id != "m8.audio.trim" or self.parameters.output_format != "MP3"
+                or "audio_profile" in self.model_fields_set):
+            raise ValueError("STUDIO_AUDIO_HISTORICAL_COMMAND_INVALID")
+        return self
 
 
 class MediaCreate(ExecutionModel):

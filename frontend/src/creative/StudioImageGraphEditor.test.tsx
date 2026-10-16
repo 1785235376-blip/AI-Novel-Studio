@@ -10,10 +10,6 @@ import type { StudioGraphCreateInput, StudioGraphRecord, StudioGraphSaveInput } 
 import { blankGraph } from './graphDraft';
 import { imageGraphCatalog, imageGraphProject, imageGraphRecord } from './studioImageGraph.testFixtures';
 
-import { studioProductionClient } from './studioProductionClient';
-import { mediaProviderKey } from './useStudioMediaExecution';
-vi.mock('./studioProductionClient', async original => ({ ...await original<typeof import('./studioProductionClient')>(), studioProductionClient: vi.fn() }));
-const pickerRow = { operation_id: 'm5.image.reference' as const, provider_id: 'image-provider', model_id: 'image-model', local: true, route_digest: 'a'.repeat(64), capability: 'MEDIA', supported_parameters: [], readiness: 'CONFIGURED_NOT_VERIFIED' as const };
 vi.mock('./studioClient', async importOriginal => ({ ...await importOriginal<typeof import('./studioClient')>(), studioClient: vi.fn() }));
 let client: StudioClient, rows: StudioGraphRecord[], saved: StudioGraphRecord;
 const deferred = <T,>() => { let resolve!: (value: T) => void; const promise = new Promise<T>(yes => { resolve = yes; }); return { promise, resolve }; };
@@ -23,7 +19,6 @@ function originalCatalog() {
   delete value.capabilities.image_reference_semantics; delete value.capabilities.image_upscale_execution; return value;
 }
 beforeEach(() => {
-  vi.mocked(studioProductionClient).mockReturnValue({ providers: vi.fn().mockResolvedValue([pickerRow]) } as unknown as ReturnType<typeof studioProductionClient>);
   localStorage.clear(); useStudio.setState({ novelId: imageGraphProject, sessionToken: '', actor: undefined, scope: undefined });
   useLocalHostSession.setState({ token: 'image-graph-host', actorId: '' }); saved = { ...imageGraphRecord(), definition: blankGraph(), reference_states: [] }; rows = [saved];
   const overview: StudioOverview = { project: { id: imageGraphProject, title: 'Image graph fixture', entry_kind: 'NEUTRAL_STUDIO' }, preferences: { version: 1, intents: [], preset: 'IMAGE', custom_intent: '' },
@@ -66,7 +61,7 @@ describe('image Graph authoring through original controller and mounted workspac
   it('saves weighted reference and prompt parameters through original actions with no arbitrary JSON or direct generation', async () => {
     mount(); await enter(); await readImageCatalog(); upgrade(); add('image_reference');
     fireEvent.click(screen.getByLabelText('明确使用参考端口 source_1')); change('参考权重 source_1', '0.75'); add('image_prompt'); change('图片提示词', 'Image controller prompt');
-    add('image_generate'); change('图片操作', 'm5.image.reference'); click('读取节点服务配置'); await screen.findByRole('option', { name: 'image-provider · image-model · 本地' }); change('节点服务商与模型', mediaProviderKey(pickerRow));
+    add('image_generate'); change('图片操作', 'm5.image.reference'); change('图片服务商 ID', 'image-provider'); change('图片模型 ID', 'image-model');
     expect(screen.queryByLabelText('宽度')).toBeNull(); expect(screen.queryByLabelText('高度')).toBeNull(); expect(screen.queryByLabelText('图片规格')).toBeNull(); expect(screen.queryByLabelText('图片质量')).toBeNull();
     change('重绘强度（大于 0 至 1）', '0.5'); click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
     const definition = vi.mocked(client.graphs.create).mock.calls[0][0].definition;

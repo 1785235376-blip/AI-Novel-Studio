@@ -433,8 +433,6 @@ export type ReviewBatchRequest = { items: ReviewBatchItemRequest[] };
 
 /** 与 `productionWorkflowClient.ts` 同一个注入形状（见 `studioGraphClient.ts`）。 */
 export type TaskCenterClient = {
-  /** Optional read-only companion; aggregate task projection stays unchanged. */
-  readCostReceipt?: (task: Pick<TaskCenterTask, 'authority' | 'id'>, signal?: AbortSignal) => Promise<import('./taskCostReceipt').TaskCostReceipt>;
   readTasks: (query: TaskCenterTaskQuery, signal?: AbortSignal) => Promise<TaskCenterTasksProjection>;
   readInbox: (query: ReviewInboxQuery, signal?: AbortSignal) => Promise<ReviewInboxProjection>;
   cancelTask: (

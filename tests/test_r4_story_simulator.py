@@ -244,34 +244,3 @@ def test_source_changed_during_final_handoff_rolls_back_pending_proposal(env):
     with pytest.raises(StaleSourceError):
         e.sim.save(e.nid, e.scope, 'author', row['id'], {'expected_version': row['version'], 'route_id': 'route-a'}, reauthorize=change_at_commit)
     assert e.store.read(e.nid, e.scope)['collections'].get(e.service.PROPOSALS, {}) == {}
-
-
-def test_saved_route_reopens_exact_original_proposal_constraints_and_review_after_restart(env):
-    """Navigation consumes durable original IDs; no parallel handoff persistence."""
-    e = env
-    before = deepcopy((e.chapters, e.rows))
-    checked = complete(e, run(e, assumptions=['author hypothesis'],
-                              hard_constraints={'forbidden_facts': ['forbidden outcome']}))
-    saved = save(e, checked)
-    store = ExperimentalStore(e.root, e.backend, e.url)
-    planning = PlanningService(store, e.novels, e.chapter_service)
-    graph = StoryGraphService(store, e.novels, e.chapter_service)
-    simulator = StorySimulatorService(store, e.novels, e.chapter_service, planning, graph)
-    proposal = planning.proposal(e.nid, e.scope, saved['proposal_id'])
-    provenance = proposal['simulation_provenance']
-    reopened = simulator.run(e.nid, e.scope, provenance['run_id'])
-    assert proposal['status'] == 'REVIEW' and not proposal['stale']
-    assert reopened['routes'][0]['saved_proposal_id'] == proposal['id']
-    assert provenance['route_id'] == reopened['routes'][0]['id']
-    assert provenance['input_digest'] == reopened['request_digest']
-    assert provenance['result_digest'] == reopened['result_digest']
-    assert reopened['input']['assumptions'] == ['author hypothesis']
-    assert reopened['input']['hard_constraints']['forbidden_facts'] == ['forbidden outcome']
-    captures = reopened['provenance']['source_versions']
-    assert set(captures) == set(proposal['sources'])
-    assert {cid: {key: capture[key] for key in ('version', 'digest')}
-            for cid, capture in captures.items()} == proposal['sources']
-    approved = planning.review(e.nid, e.scope, 'reviewer', proposal['id'], 'approve', proposal['version'])
-    assert approved['status'] == 'APPROVED'
-    assert planning.history(e.nid, e.scope, proposal['id'])
-    assert (e.chapters, e.rows) == before

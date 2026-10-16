@@ -1,3 +1,4 @@
+import type { TaskCostReceiptClient } from './taskCostReceiptClient';
 import { useTaskCostReceipt } from './useTaskCostReceipt';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
@@ -24,6 +25,8 @@ export type TaskCenterControllerProps = {
   read: <T>(work: () => Promise<T>) => Promise<T>;
   mutate: <T>(work: () => Promise<T>) => Promise<T>;
   client: TaskCenterClient;
+  /** Explicit independent receipt reader; the task owner remains five operations. */
+  costReceiptClient?: TaskCostReceiptClient;
   /** 导航只能由调用方执行：这里只发出原 owner 的 id 与来源指针。 */
   onNavigate?: (target: TaskCenterNavigationTarget) => void;
   onUnavailable?: () => void;

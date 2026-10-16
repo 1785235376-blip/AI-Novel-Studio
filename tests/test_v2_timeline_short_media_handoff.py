@@ -59,6 +59,7 @@ def render_and_reopen(e, draft, tmp_path):
 def test_actual_short_mp3_handoff_renders_reviews_and_reopens(editing, tmp_path):
     e = editing
     value = command(source(e.audio_source), in_ms=100, out_ms=800, output_format='MP3', sample_rate=22050, channels=1)
+    value['audio_profile'] = 'studio-audio-mp3/1'
     preview = e.production.preview(e.nid, e.scope, e.actor, value, lambda: None)[0]
     queued = e.production.create(e.nid, e.scope, e.actor, {'command': value, 'reviewed_preview_digest': preview['preview_digest']}, lambda: None)
     ready = e.production.execute(e.nid, e.scope, e.actor, 'audio', queued['id'], action(queued), lambda: None)

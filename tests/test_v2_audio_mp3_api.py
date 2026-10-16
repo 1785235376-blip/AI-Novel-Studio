@@ -9,6 +9,10 @@ from test_r3_mounted_contracts import mounted, prefix
 def test_mounted_mp3_candidate_and_explicit_review_keep_actual_mime(audio_client):
     e = audio_client
     e.command = command(snapshot(e.source), output_format="MP3", sample_rate=22050, channels=1)
+    assert e.client.post(e.base + "/preview", headers=e.headers, json=e.command).status_code == 422
+    assert e.client.post(e.base + "/jobs", headers=e.headers,
+        json={"command": e.command, "reviewed_preview_digest": "a" * 64}).status_code == 422
+    e.command["audio_profile"] = "studio-audio-mp3/1"
     preview = checked(e.client.post(e.base + "/preview", headers=e.headers, json=e.command))
     assert preview["execution_recipe"]["output_profile"] == "MP3_LIBMP3LAME_22050_MONO_CBR64"
     queued = checked(e.client.post(e.base + "/jobs", headers=e.headers,

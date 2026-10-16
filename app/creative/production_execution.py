@@ -567,6 +567,8 @@ class ProductionExecutionService:
         elif command.operation_id == "m8.audio.trim":
             from ..services.studio_audio_execution import trim_output_profile
             recipe.update(adapter="LOCAL_FFMPEG", output_profile=trim_output_profile(parameters))
+            if command.audio_profile is not None:
+                recipe["audio_profile"] = command.audio_profile
         recipe["recipe_digest"] = digest(recipe)
         return recipe
 
@@ -1361,7 +1363,17 @@ class ProductionExecutionService:
                 source_guard=self._source_guard(nid, scope, guard), publish=publish,
                 inspect_source=self._source_guard(nid, scope, guard))
             return self.view(rendered, owner)
-        command = MediaCommand.model_validate(context["command"])
+        # _row has already verified original owner/scope/incarnation, immutable
+        # request bytes and any measured receipt. Only this server-loaded path
+        # retains explicit continuation of accepted pre-versioned MP3 jobs.
+        captured_command = context["command"]
+        if (owner == "audio" and captured_command.get("operation_id") == "m8.audio.trim"
+                and captured_command.get("parameters", {}).get("output_format") == "MP3"
+                and "audio_profile" not in captured_command):
+            from .production_execution_models import _HistoricalAudioCommand
+            command = _HistoricalAudioCommand.model_validate(captured_command)
+        else:
+            command = MediaCommand.model_validate(captured_command)
         host_guard = guard
         def guard():
             host_guard()

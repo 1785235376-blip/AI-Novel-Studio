@@ -17,17 +17,24 @@ from pydantic import ValidationError
 from app.creative.production_execution_models import MediaCommand
 from app.services.audiobook_service import AudiobookError
 from app.services.studio_audio_execution import _body, trim_output_profile
-from test_v2_audio_wav_controls import command, snapshot, production, preview, queue, action, run, get, review
+from test_v2_audio_wav_controls import command as legacy_command, snapshot, production, preview, queue, action, run, get, review
 from test_v2_independent_workspace import rig, reopened, import_asset
 
 RATES = (8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000)
+
+
+def command(source=None, **parameters):
+    value = legacy_command(source, **parameters)
+    if parameters.get("output_format") == "MP3":
+        value["audio_profile"] = "studio-audio-mp3/1"
+    return value
 
 
 def test_mp3_is_explicit_and_keeps_omitted_wav_identity():
     value = command(output_format="MP3", sample_rate=22050, channels=1)
     assert MediaCommand.model_validate(value).parameters.output_format == "MP3"
     assert trim_output_profile(value["parameters"]) == "MP3_LIBMP3LAME_22050_MONO_CBR64"
-    body = {key: value[key] for key in ("operation_id", "provider_id", "model_id", "prompt", "parameters", "source_snapshots")}
+    body = {key: value[key] for key in ("operation_id", "provider_id", "model_id", "prompt", "parameters", "source_snapshots", "audio_profile")}
     assert _body(body)["parameters"] == value["parameters"]
     assert trim_output_profile(command()["parameters"]) == "PCM_S16LE_WAV_48000_STEREO"
     assert "output_format" not in MediaCommand.model_validate(command()).model_dump()["parameters"]

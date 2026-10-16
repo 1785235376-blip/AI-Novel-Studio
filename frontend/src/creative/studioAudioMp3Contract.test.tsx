@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { webcrypto } from 'node:crypto';
 import { useLocalHostSession } from '../localHostSession';
-import { studioProductionClient, type MediaCommand } from './studioProductionClient';
+import { AUDIO_MP3_PROFILE, studioProductionClient, type MediaCommand } from './studioProductionClient';
 import { StudioMediaExecutionPanel } from './StudioMediaExecutionPanel';
 import type { StudioAsset } from './studioClient';
 import { audioPreview } from './studioAudioWav.testFixtures';
@@ -22,7 +22,10 @@ it('sends selected MP3 explicitly, preserves unsupported rate input, and never a
     if (url.endsWith('/jobs')) return response({ items: [] });
     if (url.endsWith('/preview')) {
       const input = JSON.parse(init!.body as string) as MediaCommand, preview = audioPreview(input);
-      if (input.parameters.output_format === 'MP3') preview.execution_recipe.output_profile = 'MP3_LIBMP3LAME_22050_MONO_CBR64';
+      if (input.parameters.output_format === 'MP3') {
+        preview.execution_recipe.output_profile = 'MP3_LIBMP3LAME_22050_MONO_CBR64';
+        preview.execution_recipe.audio_profile = input.audio_profile;
+      }
       return response({ ...preview, novel_id: project });
     }
     throw new Error('Unexpected controlled UI request');
@@ -39,17 +42,20 @@ it('sends selected MP3 explicitly, preserves unsupported rate input, and never a
   fireEvent.change(screen.getByLabelText('输出采样率（8000–96000 Hz，可选）'), { target: { value: '22050' } });
   fireEvent.click(screen.getByRole('button', { name: '读取制作预览' })); await screen.findByRole('region', { name: '制作预览确认' });
   const posts = () => fetcher.mock.calls.filter(([url]) => url.endsWith('/preview'));
+  expect(JSON.parse(posts()[0][1].body as string).audio_profile).toBe(AUDIO_MP3_PROFILE);
   expect(JSON.parse(posts()[0][1].body as string).parameters).toEqual({ in_ms: 100, out_ms: 800, sample_rate: 22050, channels: 1, output_format: 'MP3' });
   fireEvent.change(screen.getByLabelText('独立音频交付格式（可选）'), { target: { value: '' } });
   expect(screen.queryByRole('region', { name: '制作预览确认' })).toBeNull();
   fireEvent.click(screen.getByRole('button', { name: '读取制作预览' })); await screen.findByRole('region', { name: '制作预览确认' });
   expect(Object.hasOwn(JSON.parse(posts()[1][1].body as string).parameters, 'output_format')).toBe(false);
+  expect(Object.hasOwn(JSON.parse(posts()[1][1].body as string), 'audio_profile')).toBe(false);
   expect(fetcher.mock.calls.filter(([url, init]) => url.endsWith('/jobs') && init?.method === 'POST')).toHaveLength(0);
   expect(fetcher.mock.calls.filter(([url]) => url.endsWith('/execute') || url.endsWith('/review'))).toHaveLength(0);
 });
 
 // Original File-owner service DTOs from a real synthetic CPU encode/probe/decode.
-import capture from './fixtures/audio-mp3.capture.json';
+import capture from './fixtures/audio-mp3-versioned.capture.json';
+import historical from './fixtures/audio-mp3.capture.json';
 const capturedClient = () => studioProductionClient(capture.executed.novel_id, { sessionToken: '' });
 it('accepts original real MP3 preview, queued, measured and approved receipts', async () => {
   const api = capturedClient();
@@ -115,4 +121,44 @@ it.each(['audio/mpeg', 'audio/wav'])('shows measured lossy receipt and checks ca
     expect(screen.queryByLabelText('本任务的音频候选')).toBeNull(); expect(review().disabled).toBe(true);
   }
   expect(fetcher.mock.calls.some(([url]) => url.endsWith('/execute') || url.endsWith('/review'))).toBe(false);
+});
+
+
+it('keeps real historical unmarked receipts readable but rejects resubmission before transport', async () => {
+  const api = studioProductionClient(historical.executed.novel_id, { sessionToken: '' });
+  for (const row of [historical.queued, historical.executed, historical.approved]) {
+    fetcher.mockResolvedValue(response(row));
+    expect(await api.get('audio', row.id)).toEqual(row);
+    fetcher.mockResolvedValue(response({ items: [row] }));
+    expect(await api.list()).toEqual([row]);
+  }
+  fetcher.mockClear();
+  await expect(api.preview(historical.command as MediaCommand)).rejects.toBeTruthy();
+  await expect(api.create(historical.command as MediaCommand, historical.preview.preview_digest)).rejects.toBeTruthy();
+  expect(fetcher).not.toHaveBeenCalled();
+});
+
+it.each([undefined, null, '', false, 'studio-audio-mp3/2'])('rejects invalid new MP3 marker %s before transport', async marker => {
+  const command = structuredClone(capture.command) as Record<string, unknown>;
+  if (marker === undefined) delete command.audio_profile; else command.audio_profile = marker;
+  await expect(capturedClient().preview(command as unknown as MediaCommand)).rejects.toBeTruthy();
+  await expect(capturedClient().create(command as unknown as MediaCommand, capture.preview.preview_digest)).rejects.toBeTruthy();
+  expect(fetcher).not.toHaveBeenCalled();
+});
+
+it.each(['command', 'execution_recipe'])('rejects missing or mismatched preview marker in %s', async field => {
+  const preview = structuredClone(capture.preview);
+  delete (preview[field as 'command' | 'execution_recipe'] as Record<string, unknown>).audio_profile;
+  fetcher.mockResolvedValue(response(preview));
+  await expect(capturedClient().preview(capture.command as MediaCommand)).rejects.toBeTruthy();
+});
+
+it('keeps historical explicit action payload limited to original job/version/digest', async () => {
+  const api = studioProductionClient(historical.executed.novel_id, { sessionToken: '' });
+  fetcher.mockResolvedValue(response(historical.executed));
+  expect(await api.execute(historical.queued as never)).toEqual(historical.executed);
+  const [url, init] = fetcher.mock.calls[0];
+  expect(url).toContain('/jobs/audio/' + historical.queued.id + '/execute');
+  expect(JSON.parse(init.body)).toEqual({ expected_version: historical.queued.version, expected_request_digest: historical.queued.request_digest });
+  expect(fetcher).toHaveBeenCalledTimes(1);
 });

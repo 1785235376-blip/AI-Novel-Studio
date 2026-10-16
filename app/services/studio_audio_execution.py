@@ -30,6 +30,7 @@ CAPABILITIES = {"m8.audio.speech": "TTS", "m8.audio.music": "MUSIC", "m8.audio.e
 _ACTIVE: set[tuple[str, str, str]] = set()
 _ACTIVE_LOCK = threading.RLock()
 TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format"}
+AUDIO_MP3_PROFILE = "studio-audio-mp3/1"
 
 
 def trim_output_profile(parameters):
@@ -129,7 +130,16 @@ def _source_identity(value):
 
 
 def _body(value):
-    allowed = {"operation_id", "provider_id", "model_id", "prompt", "parameters", "source_snapshots"}
+    """Fresh owner admission; historical MP3 can never enter this path."""
+    body = _body_shape(value)
+    if body["parameters"].get("output_format") == "MP3" and "audio_profile" not in body:
+        raise _error("STUDIO_AUDIO_PROFILE_REQUIRED", "MP3 须使用明确的版本化音频契约", 400)
+    return body
+
+
+def _body_shape(value):
+    """Common strict shape, also used after stored owner/hash admission."""
+    allowed = {"operation_id", "provider_id", "model_id", "prompt", "parameters", "source_snapshots", "audio_profile"}
     if not isinstance(value, dict) or set(value) - allowed or value.get("operation_id") not in CAPABILITIES:
         raise _error("STUDIO_AUDIO_OPERATION_UNSUPPORTED", "原音频 owner 不支持此操作", 400)
     operation = value["operation_id"]
@@ -143,6 +153,9 @@ def _body(value):
     if set(parameters) - names:
         raise _error("AUDIO_PARAMETER_UNSUPPORTED", "原音频操作不支持所选参数", 400)
     parameters = copy.deepcopy(parameters)
+    if "audio_profile" in value and (value["audio_profile"] != AUDIO_MP3_PROFILE
+            or operation != "m8.audio.trim" or parameters.get("output_format") != "MP3"):
+        raise _error("STUDIO_AUDIO_PROFILE_INVALID", "音频版本化契约与原操作或格式不一致", 400)
     if operation == "m8.audio.speech":
         if "voice_id" in parameters: _name(parameters["voice_id"])
         rate = parameters.get("speech_rate", 1.0)
@@ -180,7 +193,8 @@ def _body(value):
     if operation != "m8.audio.trim" and any(source.get("kind") != "CREATIVE_DOCUMENT" for source in sources):
         raise _error("STUDIO_AUDIO_GENERATION_SOURCE_UNSUPPORTED", "生成只接受原创作文本来源，不会假装消费音频引用", 400)
     return {"operation_id": operation, "provider_id": value.get("provider_id"), "model_id": value.get("model_id"),
-            "prompt": prompt, "parameters": parameters, "source_snapshots": copy.deepcopy(sources)}
+            "prompt": prompt, "parameters": parameters, "source_snapshots": copy.deepcopy(sources),
+            **({"audio_profile": value["audio_profile"]} if "audio_profile" in value else {})}
 
 
 def _binding(value, body):
@@ -220,11 +234,37 @@ def _binding(value, body):
                 raise ValueError()
         except ValueError:
             raise _error("STUDIO_AUDIO_PROVIDER_ENDPOINT_INVALID", "原音频服务地址绑定无效", 400) from None
+    # New profiles bind the exact same marker at every immutable layer. Old
+    # marker-absent records keep their original bytes; null is never absence.
+    if "audio_profile" in body and ("command" not in value or "execution_recipe" not in value):
+        raise _error("STUDIO_AUDIO_PROFILE_BINDING_REQUIRED", "版本化音频请求缺少原命令或配方绑定", 403)
+    for captured in (value.get("command"), value.get("execution_recipe")):
+        if captured is not None and (not isinstance(captured, dict)
+                or ("audio_profile" in captured) != ("audio_profile" in body)
+                or captured.get("audio_profile") != body.get("audio_profile")):
+            raise _error("STUDIO_AUDIO_PROFILE_BINDING_CHANGED", "音频命令、请求与配方的版本绑定不一致", 409)
+    if "audio_profile" in body:
+        from ..creative.production_execution_models import MediaCommand
+        try:
+            command = MediaCommand.model_validate(value["command"])
+            projected = command.model_dump(exclude={"request_id", "allow_cloud", "license_note"})
+            projected["parameters"] = command.parameters.model_dump(exclude_none=True)
+            projected["source_snapshots"] = [source.model_dump(exclude={"reference_only"}, exclude_none=True)
+                for source in command.source_snapshots]
+            from ..experimental.store import canonical
+            command_context = {key: item for key, item in value.items() if key not in {"command", "request_digest"}}
+            request_digest = hashlib.sha256(canonical({"context": command_context, "command": value["command"]}).encode("utf-8")).hexdigest()
+            if (_body(projected) != body or command.request_id != value["request_id"]
+                    or request_digest != value["request_digest"]):
+                raise ValueError("versioned command binding")
+        except (ValueError, TypeError, KeyError):
+            raise _error("STUDIO_AUDIO_PROFILE_BINDING_CHANGED", "版本化音频命令与原请求摘要不一致", 409) from None
     if "execution_recipe" in value:
         recipe = value["execution_recipe"]
         fields = {"contract", "operation_id", "adapter", "parameters", "automatic_fallback", "recipe_digest"}
         trim = body["operation_id"] == "m8.audio.trim"
         if trim: fields.add("output_profile")
+        if "audio_profile" in body: fields.add("audio_profile")
         if (not isinstance(recipe, dict) or set(recipe) != fields
                 or recipe.get("contract") != "studio-execution-recipe/1"
                 or recipe.get("operation_id") != body["operation_id"]
@@ -233,7 +273,7 @@ def _binding(value, body):
                 or (trim and recipe.get("output_profile") != trim_output_profile(body["parameters"]))
                 or len(_canonical(recipe)) > 16 * 1024):
             raise _error("STUDIO_AUDIO_RECIPE_INVALID", "音频执行配方必须使用已审核的原操作参数", 400)
-        recipe_body = _body({**body, "parameters": recipe["parameters"]})
+        recipe_body = _body_shape({**body, "parameters": recipe["parameters"]})
         if (recipe_body != body or _sha(recipe["recipe_digest"]) !=
                 _digest({key: item for key, item in recipe.items() if key != "recipe_digest"})):
             raise _error("STUDIO_AUDIO_RECIPE_CHANGED", "音频执行配方与保存的请求不一致", 409)
@@ -301,7 +341,12 @@ class StudioAudioExecution:
         """Validate an already located original-owner row without rescanning."""
         if not self._matches(row, context):
             raise _error("STUDIO_AUDIO_JOB_NOT_FOUND", "当前原项目 owner 中没有此音频任务", 404)
-        body = _body(row.get("_studio_body")); binding = _binding(row.get("context"), body)
+        # Only original owner storage reaches this decoder. Verify the raw
+        # immutable bytes before permitting the historical marker-absent shape.
+        # Queue/preview still use the strict fresh-command admission path.
+        if row.get("request_sha256") != _digest({"body": row.get("_studio_body"), "context": row.get("context")}):
+            raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频任务绑定已变化，不能继续执行", 409)
+        body = _body_shape(row.get("_studio_body")); binding = _binding(row.get("context"), body)
         provider = binding["provider_binding"] or {}
         if (row.get("chapter_id") is not None or row.get("experimental_origin") != "narrative_production_v2"
                 or row.get("operation_id") != body["operation_id"] or row.get("provider_id") != provider.get("provider_id")
@@ -312,6 +357,11 @@ class StudioAudioExecution:
                 or row.get("request_sha256") != _digest({"body": body, "context": binding})):
             raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频任务绑定已变化，不能继续执行", 409)
         _version(row.get("version"))
+        if body["parameters"].get("output_format") == "MP3" and "audio_profile" not in body:
+            historical_receipt = copy.deepcopy(row)
+            self._receipt(historical_receipt)
+            if row.get("receipt_digest") != historical_receipt["receipt_digest"]:
+                raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频持久回执已变化，不能继续执行", 409)
         controlled_output = (body["operation_id"] == "m8.audio.trim" and TRIM_CONTROLS.intersection(body["parameters"])
             and (row.get("publication_ready") is not None or row.get("publication_state") in {"RESERVED", "VERIFIED"}
                  or row.get("output_asset_id") is not None or row.get("status") in {"AWAITING_REVIEW", "REVIEWING", "APPROVED"}))

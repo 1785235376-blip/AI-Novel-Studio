@@ -5,6 +5,7 @@ import { segment } from './api';
 import { Details, Field, Form, ids, ResourceState, useAction, useResource } from './shared';
 import type { WorkspaceNavigation } from './uxClient';
 import { ProductionReceiptReview, ReceiptNavigation } from './ProductionReceiptReview';
+import { PristineReplayNavigation, usePristineReplayNavigation } from './pristineReplayNavigation';
 import { originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage } from './productionReceiptReview';
 
 type Link = { id?: string; label?: string; version?: number; digest?: string; state: string };
@@ -90,33 +91,33 @@ function ManifestDetail({ client, manifest, onReplay, onNavigate }: Props & { ma
   </section>;
 }
 
-function ReplayCard({ client, row, refresh, onNavigate }: Props & { row: Replay; refresh: () => void }) {
+function ReplayCard({ client, row, refresh, onNavigate, navigationGate }: Props & { row: Replay; refresh: () => void; navigationGate: ReturnType<typeof usePristineReplayNavigation> }) {
   const action = useAction(refresh), cancellation = useAction(refresh);
-  const cancel = () => cancellation.run(async () => {
+  const cancel = () => { navigationGate.retire(); return cancellation.run(async () => {
     const latest = await client.get<{ items: Replay[] }>('/production/replays');
     const current = latest.items.find(item => item.id === row.id);
     if (!current) throw new Error('重放记录不可用');
     await client.post(`/production/replays/${segment(row.id)}/cancel`, { expected_task_version: current.task_version });
-  }, '已取消本地结果接收。');
+  }, '已取消本地结果接收。'); };
   return <article className="experimental-record" aria-label={`重放任务 ${row.task_id}`}><h3>新任务 {row.task_id}</h3><div className="experimental-actions"><Badge tone={row.status === 'SUCCEEDED' ? 'success' : row.status === 'FAILED' ? 'error' : 'neutral'}>{row.status} · v{row.task_version}</Badge><Badge tone={row.byte_equal === true ? 'success' : row.byte_equal === false ? 'warning' : 'neutral'}>输出逐字节一致：{row.byte_equal === null ? '尚未比较' : row.byte_equal ? '是' : '否'}</Badge></div>{action.feedback}{cancellation.feedback}
     {row.recovery && <StatusMessage tone="warning">任务结果需要重新核对。不会自动重试；请重新预检并创建新任务。</StatusMessage>}
-    <p>{row.broker_required ? '执行前将重新校验共用预算预留。' : '当前只支持无外发的确定性合成协议。'}</p><div className="experimental-actions">{row.status === 'QUEUED' && <Button disabled={action.busy || cancellation.busy} onClick={() => action.run(() => client.post(`/production/replays/${segment(row.id)}/execute`, { expected_task_version: row.task_version }), '执行结束，结果保留在原媒体审核流程。')}>{row.synthetic === false ? '执行这次本地重放' : '执行这次合成重放'}</Button>}{['QUEUED', 'RUNNING'].includes(row.status || '') && <Button disabled={cancellation.busy} onClick={cancel}>取消重放</Button>}<ReceiptNavigation target={originalTaskTarget(row.task_id)} label="核对确切重放任务" receiptIdentity={JSON.stringify(row)} onNavigate={onNavigate} disabled={action.busy || cancellation.busy} /></div>
+    <p>{row.broker_required ? '执行前将重新校验共用预算预留。' : '当前只支持无外发的确定性合成协议。'}</p><div className="experimental-actions">{row.status === 'QUEUED' && <Button disabled={action.busy || cancellation.busy} onClick={() => { navigationGate.retire(); void action.run(() => client.post(`/production/replays/${segment(row.id)}/execute`, { expected_task_version: row.task_version }), '执行结束，结果保留在原媒体审核流程。'); }}>{row.synthetic === false ? '执行这次本地重放' : '执行这次合成重放'}</Button>}{['QUEUED', 'RUNNING'].includes(row.status || '') && <Button disabled={cancellation.busy} onClick={cancel}>取消重放</Button>}{!!row.outputs.length && <PristineReplayNavigation gate={navigationGate} target={originalTaskTarget(row.task_id)} receiptIdentity={JSON.stringify(row)} onNavigate={onNavigate} disabled={action.busy || cancellation.busy} />}<div className="experimental-actions" onClickCapture={navigationGate.retire}><ReceiptNavigation target={originalTaskTarget(row.task_id)} label="核对确切重放任务" receiptIdentity={JSON.stringify(row)} onNavigate={onNavigate} disabled={action.busy || cancellation.busy} /></div></div>
     {row.outputs.map(o => <p key={o.proposal_id}>候选 {o.candidate_index + 1} · {o.proposal_id} · {o.status} · {o.digest}</p>)}
   </article>;
 }
 
-function ManifestWorkspace(props: Props) {
-  const { client } = props;
+function ManifestWorkspace(props: Props & { navigationGate: ReturnType<typeof usePristineReplayNavigation> }) {
+  const { client, navigationGate } = props;
   const resource = useResource(async signal => { const [manifests, tasks, replays] = await Promise.all([client.get<{ items: Manifest[] }>('/production/manifests', signal), client.get<Rows>('/media/tasks', signal), client.get<{ items: Replay[] }>('/production/replays', signal)]); return { manifests: manifests.items, tasks: tasks.items, replays: replays.items }; }, [client]);
   const [taskId, setTaskId] = useState(''), [selected, setSelected] = useState('');
   const action = useAction(resource.reload), data = resource.data;
   const completed = data?.tasks.filter(t => t.status === 'SUCCEEDED' && !t.benchmark_run_id && !t.safe_batch_id) || [];
   const task = completed.find(t => t.id === taskId);
   const manifest = data?.manifests.find(m => m.id === selected);
-  return <section className="experimental-section" aria-label="生产清单与重放"><div className="experimental-actions"><h3>生产清单与受控重放</h3><Button onClick={resource.reload} disabled={resource.loading || action.busy}>刷新清单与重放状态</Button></div>{action.feedback}<ResourceState loading={resource.loading} error={resource.error} />
-    {data && !resource.loading && !resource.error && <><Form onSubmit={() => task && action.run(async () => { const result = await client.post<Manifest>('/production/manifests', { task_id: task.id, expected_task_version: task.version }); setSelected(result.id); }, '生产清单已记录。')}><Field label="已完成的媒体任务"><select value={taskId} onChange={e => setTaskId(e.target.value)}><option value="">选择任务</option>{completed.map(t => <option key={t.id} value={t.id}>{t.operation} · {t.id} · v{t.version}</option>)}</select></Field><Button type="submit" disabled={action.busy || !task}>记录所选任务清单</Button></Form>
+  return <section className="experimental-section" aria-label="生产清单与重放"><div className="experimental-actions"><h3>生产清单与受控重放</h3><Button onClick={() => { navigationGate.retire(); resource.reload(); }} disabled={resource.loading || action.busy}>刷新清单与重放状态</Button></div>{action.feedback}<ResourceState loading={resource.loading} error={resource.error} />
+    {data && !resource.loading && !resource.error && <><Form onSubmit={() => { navigationGate.retire(); return task && action.run(async () => { const result = await client.post<Manifest>('/production/manifests', { task_id: task.id, expected_task_version: task.version }); setSelected(result.id); }, '生产清单已记录。'); }}><Field label="已完成的媒体任务"><select value={taskId} onFocus={navigationGate.retire} onChange={e => { navigationGate.retire(); setTaskId(e.target.value); }}><option value="">选择任务</option>{completed.map(t => <option key={t.id} value={t.id}>{t.operation} · {t.id} · v{t.version}</option>)}</select></Field><Button type="submit" disabled={action.busy || !task}>记录所选任务清单</Button></Form>
       {!completed.length && <EmptyState title="暂无可记录的完成任务" detail="先在封面与分镜中明确运行一个已配置的 Adapter。没有真实 Adapter 时，仅合成测试流程可用。" />}
-      <div className="experimental-actions" aria-label="生产清单列表">{data.manifests.map(m => <Button key={m.id} aria-pressed={selected === m.id} onClick={() => setSelected(m.id)}>清单 {m.operation} · {m.created_at}</Button>)}</div>
+      <div className="experimental-actions" aria-label="生产清单列表">{data.manifests.map(m => <Button key={m.id} aria-pressed={selected === m.id} onClick={() => { navigationGate.retire(); setSelected(m.id); }}>清单 {m.operation} · {m.created_at}</Button>)}</div>
       {manifest && <ManifestDetail key={manifest.id} {...props} manifest={manifest} onReplay={resource.reload} />}
       <section aria-label="重放历史" className="experimental-section"><h3>现有媒体任务中的重放记录</h3>{data.replays.length ? data.replays.map(r => <ReplayCard key={r.id} {...props} row={r} refresh={resource.reload} />) : <p>尚未创建重放任务。</p>}</section>
     </>}
@@ -124,12 +125,13 @@ function ManifestWorkspace(props: Props) {
 }
 
 function ProductionWorkspace(props: Props) {
+  const navigationGate = usePristineReplayNavigation();
   const { client, manifestsEnabled = false } = props;
   const resource = useResource(signal => client.get<{ items: Asset[] }>('/production/assets', signal), [client]);
   const [selected, setSelected] = useState('');
-  return <Panel title="资产来源与生产复现"><StatusMessage>复用现有资产库和媒体任务。缺失来源会保留占位关系，不会被当成原创；重放不会自动批准产物。</StatusMessage><div className="experimental-actions"><h3>资产来源</h3><Button onClick={resource.reload} disabled={resource.loading}>刷新资产列表</Button></div><ResourceState loading={resource.loading} error={resource.error} empty={resource.data?.items.length === 0} />
-    {resource.data && !resource.loading && !resource.error && <><div className="experimental-actions" aria-label="资产列表">{resource.data.items.map(a => <Button key={a.id} aria-pressed={selected === a.id} onClick={() => setSelected(a.id)}>{a.label} · v{a.version}{a.deleted ? ' · 已删除' : a.stale ? ' · 待核对' : ''}</Button>)}</div>{selected && <AssetDetail key={selected} {...props} id={selected} assets={resource.data.items} choose={setSelected} />}</>}
-    {manifestsEnabled ? <ManifestWorkspace {...props} /> : <StatusMessage>生产清单与重放未启用，资产来源仍可单独使用。</StatusMessage>}
+  return <Panel title="资产来源与生产复现"><StatusMessage>复用现有资产库和媒体任务。缺失来源会保留占位关系，不会被当成原创；重放不会自动批准产物。</StatusMessage><div className="experimental-actions"><h3>资产来源</h3><Button onClick={() => { navigationGate.retire(); resource.reload(); }} disabled={resource.loading}>刷新资产列表</Button></div><ResourceState loading={resource.loading} error={resource.error} empty={resource.data?.items.length === 0} />
+    {resource.data && !resource.loading && !resource.error && <><div className="experimental-actions" aria-label="资产列表">{resource.data.items.map(a => <Button key={a.id} aria-pressed={selected === a.id} onClick={() => { navigationGate.retire(); setSelected(a.id); }}>{a.label} · v{a.version}{a.deleted ? ' · 已删除' : a.stale ? ' · 待核对' : ''}</Button>)}</div>{selected && <AssetDetail key={selected} {...props} id={selected} assets={resource.data.items} choose={id => { navigationGate.retire(); setSelected(id); }} />}</>}
+    {manifestsEnabled ? <ManifestWorkspace {...props} navigationGate={navigationGate} /> : <StatusMessage>生产清单与重放未启用，资产来源仍可单独使用。</StatusMessage>}
   </Panel>;
 }
 

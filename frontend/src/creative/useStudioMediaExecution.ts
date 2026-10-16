@@ -1,5 +1,5 @@
 import { exactHandoffAsset, type TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
-import { AUDIO_MP3_SAMPLE_RATES } from './studioProductionClient';
+import { AUDIO_MP3_PROFILE, AUDIO_MP3_SAMPLE_RATES } from './studioProductionClient';
 import { checkedVideoReference, type VideoReference } from './studioVideoRuntimeContract';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
@@ -156,8 +156,10 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
       ...(references.length ? { image_references: references } : {}), ...(draft.maskSource ? { mask_source: draft.maskSource } : {}) }, sources, draft.operation, true);
     if (draft.operation === 'm5.image.inpaint' && provider.image_capabilities.mask_semantics !== 'WHITE_KEEP_BLACK_REPAINT') throw new Error('当前路线未提供本手绘遮罩的保留／重绘契约。');
   }
+  const chosenParameters = parameters(draft);
   return { operation_id: draft.operation, request_id: requestId, provider_id: localTrim ? null : provider!.provider_id,
-    model_id: localTrim ? null : provider!.model_id, prompt: localTrim || upscale ? '' : draft.prompt, parameters: parameters(draft),
+    model_id: localTrim ? null : provider!.model_id, prompt: localTrim || upscale ? '' : draft.prompt, parameters: chosenParameters,
+    ...(draft.operation === 'm8.audio.trim' && chosenParameters.output_format === 'MP3' ? { audio_profile: AUDIO_MP3_PROFILE } : {}),
     source_snapshots: sources.map(source => ({ ...source })), allow_cloud: localTrim || upscale ? false : draft.allowCloud, license_note: draft.licenseNote, ...image, ...checkedVideoReference(draft.videoReferencePurpose ? { source: sources[0], purpose: draft.videoReferencePurpose } : undefined, sources, draft.operation) };
 }
 
@@ -257,9 +259,20 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   function changeField(field: 'prompt' | 'licenseNote' | 'allowCloud' | 'providerKey' | 'videoReferencePurpose', value: string | boolean) {
     const next = { ...draftRef.current };
+    if (field === 'providerKey') {
+      if (typeof value !== 'string' || providerHandoffLoading.current) return;
+      const matches = providersRef.current.filter(row => mediaProviderKey(row) === value && row.operation_id === next.operation);
+      const selectedProvider = matches.length === 1 ? matches[0] : undefined;
+      if (value && !selectedProvider) return;
+      // The reference workflow keeps its explicit cross-route configuration choice.
+      // Selecting a row chooses its route, never permission to upload or execute.
+      if (selectedProvider && next.operation === 'm5.image.reference') next.route = selectedProvider.local ? 'local' : 'cloud';
+      else if (selectedProvider && routeSelectable(next.operation) && selectedProvider.local !== (next.route === 'local')) return;
+      edit({ ...next, providerKey: value, allowCloud: false }); return;
+    }
     if (field === 'videoReferencePurpose') { if (typeof value !== 'string' || value !== '' && !['style', 'action', 'camera'].includes(value)) return; if (value === '') delete next.videoReferencePurpose; else next.videoReferencePurpose = value as VideoReference['purpose']; next.allowCloud = false; edit(next); return; }
     if (field === 'allowCloud') { if (typeof value !== 'boolean') return; next.allowCloud = value; }
-    else { if (typeof value !== 'string') return; next[field] = value; if (field === 'providerKey' || field === 'prompt' && (next.imageSource || next.imageReferences.length || ['m5.image.reference', 'm5.image.inpaint'].includes(next.operation))) next.allowCloud = false; }
+    else { if (typeof value !== 'string') return; next[field] = value; if (field === 'prompt' && (next.imageSource || next.imageReferences.length || ['m5.image.reference', 'm5.image.inpaint'].includes(next.operation))) next.allowCloud = false; }
     edit(next);
   }
   function changeParameter(name: MediaParameter, value: string) { if (parameterNames.includes(name)) edit({ ...draftRef.current, parameters: { ...draftRef.current.parameters, [name]: value } }); }

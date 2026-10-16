@@ -24,6 +24,7 @@ import type { JudgeRevisionIntent } from './judgeRevisionHandoff';
 import { NarrativeJudgePanel } from './NarrativeJudgePanel';
 import { ChangeImpactPanel } from './ChangeImpactPanel';
 import { StorySimulatorPanel } from './StorySimulatorPanel';
+import { simulatorOwnerNavigation } from './simulatorOwnerNavigation';
 import { ResearchLibraryPanel } from './ResearchLibraryPanel';
 import { ReaderPreflightPanel } from './ReaderPreflightPanel';
 import { DirectorPanel } from './DirectorPanel';
@@ -50,6 +51,7 @@ export { EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from './experimentalNavigation
 import { EXPERIMENTAL_TABS } from './experimentalNavigation';
 export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavigate, currentAnchor, requestedTab, workspaceSection, focusActive, onFocusChange, onPreferencesChange, onReferencesChange, onUseCharacter, onExitCharacter, activeCharacterId, onOpenGeneration, onUseStyle, currentSelection, saved, onChapterSaved, revisionGeneration, localDraftState, saveFailure, workspaceView, onWorkspaceViewChange, onWorkspaceSaved, requestedTask }: { novelId: string; chapter?: Chapter; context: CollaborationContext; flags?: ExperimentalFlags; onNavigate?: (target: WorkspaceNavigation) => void; currentAnchor?: WorkspaceAnchor; requestedTab?: string; workspaceSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; focusActive?: boolean; onFocusChange?: (active: boolean) => void; onPreferencesChange?: (preferences: WritingFocusPreferences) => void; onReferencesChange?: () => void; onUseCharacter?: (characterId: string, chapterId: string, sceneId?: string) => void; onExitCharacter?: () => void; activeCharacterId?: string; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void>; onUseStyle?: (id: string) => void; currentSelection?: { from: number; to: number; text: string }; saved?: boolean; onChapterSaved?: (chapter: Chapter) => void; revisionGeneration?: RevisionGenerationOptions; localDraftState?: DraftStatus[]; saveFailure?: boolean; workspaceView?: WorkspaceView; onWorkspaceViewChange?: (view: WorkspaceView) => void; onWorkspaceSaved?: () => void; requestedTask?: { id: string; authority?: string; parent_id?: string } }) {
   const client = useMemo(() => experimentalClient(novelId, context), [novelId, context.sessionToken, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId, context.actor?.id]);
+  const navigateFromSimulator = useMemo(() => onNavigate ? simulatorOwnerNavigation(onNavigate) : undefined, [onNavigate]);
   const [selected, setSelected] = useState(requestedTab || 'advanced_planning_v2');
   const [judgeRevision, setJudgeRevision] = useState<{ client: typeof client; chapter: string; intent: JudgeRevisionIntent }>();
   const chapterSnapshot = JSON.stringify(chapter);
@@ -92,7 +94,7 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
       setJudgeRevision({ client, chapter: chapterSnapshot, intent }); setSelected('revision_intelligence_v2'); setToolQuery('');
     } : undefined} />}
     {active === 'change_impact_v2' && <ChangeImpactPanel client={client} onNavigate={onNavigate} />}
-    {active === 'story_simulator_v2' && <StorySimulatorPanel client={client} requestedRunId={requestedTask?.authority === 'simulator_run' ? requestedTask.id : undefined} requestedJobId={requestedTask?.authority === 'simulator_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={onNavigate} />}
+    {active === 'story_simulator_v2' && <StorySimulatorPanel client={client} requestedRunId={requestedTask?.authority === 'simulator_run' ? requestedTask.id : undefined} requestedJobId={requestedTask?.authority === 'simulator_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={navigateFromSimulator} />}
     {active === 'research_library_v2' && <ResearchLibraryPanel client={client} />}
     {active === 'reader_preflight_v2' && <ReaderPreflightPanel client={client} localDraftState={localDraftState} onNavigate={onNavigate} />}
     {active === 'writing_sessions_v2' && <WritingSessionPanel client={client} onNavigate={onNavigate} />}

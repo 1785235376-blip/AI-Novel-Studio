@@ -154,7 +154,7 @@ describe('WAV controls through the original mounted production workspace', () =>
   it('does not manufacture actual measurements for a legacy completed receipt', async () => {
     mount(); await choose(); currentJob = { ...audioJob('AWAITING_REVIEW', 3), media_measurement: null };
     fireEvent.click(button('读取任务列表')); await screen.findByLabelText('已保存任务'); change('已保存任务', 'audio:audio-job'); await screen.findByText('任务 audio-job · v3');
-    expect(screen.queryByRole('region', { name: '音频实际输出测量' })).toBeNull(); expect(screen.getByText(/尚未读取到已核对的音频输出测量/)).toBeTruthy();
+    expect(screen.queryByRole('region', { name: '音频实际输出测量' })).toBeNull(); expect(screen.getByText(/尚未读取到已核对的 WAV 输出测量/)).toBeTruthy();
   });
   it('rejects private candidate size outside the verified output measurement', async () => {
     mount(); await execute(); media = new NodeBlob([audioBytes().slice(0, -1)], { type: 'audio/wav' }) as unknown as Blob;

@@ -10,15 +10,10 @@ import { createStudioGraphClient } from './studioGraphClient';
 import type { StudioGraphCreateInput, StudioGraphRecord } from './studioGraphTypes';
 import { imageGraphCatalog, imageGraphProject, imageGraphRecord } from './studioImageGraph.testFixtures';
 import catalogFixture from './fixtures/phase5.capture.video-catalog.json';
-import { studioProductionClient } from './studioProductionClient';
-import { mediaProviderKey } from './useStudioMediaExecution';
-vi.mock('./studioProductionClient', async original => ({ ...await original<typeof import('./studioProductionClient')>(), studioProductionClient: vi.fn() }));
-const pickerRow = { operation_id: 'm7.video.t2v' as const, provider_id: 'synthetic-comfy', model_id: 'observed-only-model', local: true, route_digest: 'a'.repeat(64), capability: 'MEDIA', supported_parameters: [], readiness: 'CONFIGURED_NOT_VERIFIED' as const };
 vi.mock('./studioClient', async importOriginal => ({ ...await importOriginal<typeof import('./studioClient')>(), studioClient: vi.fn() }));
 const copy = <T,>(value: T): T => structuredClone(value);
 let client: StudioClient;
 beforeEach(() => {
-  vi.mocked(studioProductionClient).mockReturnValue({ providers: vi.fn().mockResolvedValue([pickerRow]) } as unknown as ReturnType<typeof studioProductionClient>);
   localStorage.clear(); useStudio.setState({ novelId: imageGraphProject, sessionToken: '', actor: undefined, scope: undefined }); useLocalHostSession.setState({ token: 'synthetic-shot-binding-unit', actorId: '' });
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
@@ -53,7 +48,7 @@ describe('Phase 5 independent Video author flow can explicitly omit a new Shot b
     fireEvent.change(screen.getByLabelText('节点类型'), { target: { value: 'video_generate' } }); fireEvent.click(screen.getByRole('button', { name: '添加节点' }));
     const binding = screen.getByLabelText('绑定镜头来源') as HTMLInputElement; expect(binding.checked).toBe(true); expect(binding.disabled).toBe(false);
     fireEvent.click(binding); expect(binding.checked).toBe(false); expect(binding.disabled).toBe(true);
-    fireEvent.click(screen.getByRole('button', { name: '读取节点服务配置' })); await screen.findByRole('option', { name: 'synthetic-comfy · observed-only-model · 本地' }); fireEvent.change(screen.getByLabelText('节点服务商与模型'), { target: { value: mediaProviderKey(pickerRow) } });
+    fireEvent.change(screen.getByLabelText('视频服务商 ID'), { target: { value: 'synthetic-comfy' } }); fireEvent.change(screen.getByLabelText('视频模型 ID'), { target: { value: 'observed-only-model' } });
     fireEvent.change(screen.getByLabelText('视频提示词'), { target: { value: 'An independent authored short clip' } }); fireEvent.click(screen.getByRole('button', { name: '保存创作图' }));
     await screen.findByText('创作图已保存 · v1。没有自动创建运行。'); const saved = vi.mocked(client.graphs.create).mock.calls[0][0].definition;
     expect(Object.hasOwn(saved.nodes[0].parameters, 'bind_shot')).toBe(false); expect(saved.nodes[0].parameters.prompt).toBe('An independent authored short clip'); expect(saved.edges).toEqual([]);

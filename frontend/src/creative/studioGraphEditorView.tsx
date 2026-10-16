@@ -90,12 +90,19 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     return <label key={name}>{label}<input type={range ? 'number' : 'text'} min={range?.[0]} max={range?.[1]} step={range?.[2]} maxLength={name === 'voice_id' ? 240 : undefined}
       value={String(value)} disabled={!editable} onChange={event => updateMediaParameter(name, event.target.value)} /></label>;
   }
+  const providerLabel = node?.definition_id === 'video_generate' ? '视频' : node?.definition_id === 'image_upscale' ? '超分' : '图片';
   const providerControl = node && <fieldset><legend>节点服务配置</legend>
     {node.definition_id !== 'image_upscale' && <label>节点制作路线<select value={providerPicker.route} disabled={!providerPicker.canEdit} onChange={event => providerPicker.chooseRoute(event.target.value)}><option value="local">本地</option><option value="cloud">云端</option></select></label>}
     <p>{node.definition_id === 'image_upscale' ? '超分仅列出本地配置，不使用云端回退。' : '默认查看本地配置；可自行切换云端或返回本地。切换只改变列表，不改写节点或授权发送。'}</p>
     <Button disabled={!providerPicker.canRead || providerPicker.loading} loading={providerPicker.loading} onClick={() => void providerPicker.load()}>读取节点服务配置</Button>
     <label>节点服务商与模型<select value={providerPicker.choice} disabled={!providerPicker.canEdit} onChange={event => providerPicker.choose(event.target.value)}><option value="">明确选择配置</option>{providerPicker.rows.map(row => <option key={mediaProviderKey(row)} value={mediaProviderKey(row)}>{row.provider_id} · {row.model_id} · {row.local ? '本地' : '云端'}</option>)}</select></label>
     <p>节点当前标识：{node.parameters.provider_id || '未选择服务商'} / {node.parameters.model_id || '未选择模型'}。</p>
+    <details><summary>高级：手动填写已有配置标识</summary>
+      <label>{providerLabel}服务商 ID<input maxLength={240} disabled={!editable} value={node.parameters.provider_id || ''} onChange={event => updateMediaField('provider_id', event.target.value)} /></label>
+      <label>{providerLabel}模型 ID<input maxLength={240} disabled={!editable} value={node.parameters.model_id || ''} onChange={event => updateMediaField('model_id', event.target.value)} /></label>
+      <p>仅填写原配置已有的准确标识，不新建服务或启动模型。编辑会清除云端许可；保存、预览和执行仍由原服务重新校验。</p>
+    </details>
+    {!!(node.parameters.provider_id || node.parameters.model_id) && <p>当前标识路线：{providerPicker.bindingRoute === 'unknown' ? '未知，尚未由当前配置目录核对' : providerPicker.bindingRoute === 'local' ? '当前目录标记为本地' : '当前目录标记为云端'}。列表筛选不证明手填标识属于本地；实际执行可用性仍未验证。</p>}
     {providerPicker.loaded && !providerPicker.matched && (node.parameters.provider_id || node.parameters.model_id) && <StatusMessage tone="warning">当前配置目录没有匹配的节点标识；原标识保持，只有明确选择才会替换。</StatusMessage>}
     {providerPicker.loaded && !providerPicker.rows.length && <p>当前操作暂无{providerPicker.route === 'local' ? '本地' : '云端'}配置，不会自动回退或替换。</p>}
     {providerPicker.error && <StatusMessage tone="warning">{providerPicker.error}</StatusMessage>}

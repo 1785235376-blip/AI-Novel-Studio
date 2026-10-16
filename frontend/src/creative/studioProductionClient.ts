@@ -16,7 +16,7 @@ export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.referen
 export type ProductionSource = { id: string; kind: 'ASSET'; version: number; digest: string; asset_kind: 'image' | 'video' | 'audio'; reference_only?: true };
 export type MediaCommand = { operation_id: MediaOperation; request_id: string; provider_id?: string | null; model_id?: string | null; prompt: string;
   parameters: Record<string, string | number>; source_snapshots: RecordedProductionSource[]; allow_cloud: boolean; license_note: string;
-  image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource; video_reference?: VideoReference; storyboard_shot?: ShotPin };
+  image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource; video_reference?: VideoReference; storyboard_shot?: ShotPin; audio_profile?: typeof AUDIO_MP3_PROFILE };
 export type RecordedProductionSource = ProductionSource | { id: string; kind: 'CREATIVE_DOCUMENT'; version: number; digest: string; reference_only?: true };
 export type RecordedMediaCommand = Omit<MediaCommand, 'source_snapshots'> & { source_snapshots: RecordedProductionSource[] };
 export type ProductionProvider = { operation_id: MediaOperation; provider_id: string; model_id: string; local: boolean; route_digest: string; capability: string; supported_parameters: string[]; readiness: 'CONFIGURED_NOT_VERIFIED'; video_capabilities?: VideoCapabilities;
@@ -39,6 +39,7 @@ export type AudioFlacMeasurement = Omit<AudioWavMeasurement, 'container' | 'audi
   total_samples: number; decoded_pcm_bytes: number; streaminfo_md5: string; decoded_pcm_sha256: string };
 export type AudioMp3Measurement = Omit<AudioFlacMeasurement, 'container' | 'audio_codec' | 'profile_validation' | 'streaminfo_md5'> & {
   container: 'mp3'; audio_codec: 'mp3'; profile_validation: 'MP3_GAPLESS_PCM_VERIFIED'; bit_rate: number; container_duration_ms: number };
+export const AUDIO_MP3_PROFILE = 'studio-audio-mp3/1' as const;
 export const AUDIO_MP3_SAMPLE_RATES: readonly number[] = [8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000];
 export const audioMp3BitRate = (rate: number) => rate >= 32000 ? 128000 : 64000;
 export type ProductionJob = { contract: 'studio-production-job/1'; owner: ProductionOwner; id: string; novel_id: string; branch_id: string | null; version: number;
@@ -109,29 +110,42 @@ function trimParameters(v: unknown, projected = false): TrimParameters {
 function sameTrimParameters(a: Record<string, string | number>, b: Record<string, string | number>) {
   return Object.keys(a).length === Object.keys(b).length && Object.entries(a).every(([key, value]) => b[key] === value);
 }
-function trimCommand(v: unknown, projected = false): asserts v is MediaCommand {
+function trimCommandShape(v: unknown, projected = false): asserts v is MediaCommand {
   if (!record(v) || v.operation_id !== 'm8.audio.trim' || v.provider_id != null || v.model_id != null || v.prompt !== '' || v.allow_cloud !== false
     || typeof v.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(v.request_id)
     || typeof v.license_note !== 'string' || v.license_note.length > 2000
-    || Object.keys(v).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note'].includes(key))) invalid();
-  trimParameters(v.parameters, projected);
+    || Object.keys(v).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'audio_profile'].includes(key))) invalid();
+  const parameters = trimParameters(v.parameters, projected);
+  if (Object.hasOwn(v, 'audio_profile') && (v.audio_profile !== AUDIO_MP3_PROFILE || parameters.output_format !== 'MP3')) invalid();
   sources(v.source_snapshots, 1);
   if (v.source_snapshots.length !== 1 || v.source_snapshots[0].kind !== 'ASSET' || v.source_snapshots[0].asset_kind !== 'audio'
     || !projected && v.source_snapshots[0].reference_only !== undefined) invalid();
 }
-function trimRecipe(v: ProductionRecipe, command: unknown) {
-  trimCommand(command, true);
-  const parameters = trimParameters(command.parameters, true), keys = ['contract', 'operation_id', 'adapter', 'parameters', 'automatic_fallback', 'recipe_digest', 'output_profile'];
+function trimCommand(v: unknown, projected = false): asserts v is MediaCommand {
+  trimCommandShape(v, projected);
+  if (v.parameters.output_format === 'MP3' && v.audio_profile !== AUDIO_MP3_PROFILE) invalid();
+}
+// Used only by stored job read/action projections, never fresh preview admission.
+function recordedTrimRecipe(v: ProductionRecipe, command: unknown) {
+  trimCommandShape(command, true);
+  const parameters = trimParameters(command.parameters, true), keys = ['contract', 'operation_id', 'adapter', 'parameters', 'automatic_fallback', 'recipe_digest', 'output_profile', ...(Object.hasOwn(command, 'audio_profile') ? ['audio_profile'] : [])];
   if (Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key)) || v.adapter !== 'LOCAL_FFMPEG'
+    || Object.hasOwn(v, 'audio_profile') !== Object.hasOwn(command, 'audio_profile') || v.audio_profile !== command.audio_profile
     || v.output_profile !== (parameters.output_format === 'FLAC' ? `FLAC_S16_${parameters.sample_rate ?? 48000}_${parameters.channels === 1 ? 'MONO' : 'STEREO'}_COMPRESSION5` : parameters.output_format === 'MP3' ? `MP3_LIBMP3LAME_${parameters.sample_rate ?? 48000}_${parameters.channels === 1 ? 'MONO' : 'STEREO'}_CBR${audioMp3BitRate(parameters.sample_rate ?? 48000) / 1000}` : `PCM_S16LE_WAV_${parameters.sample_rate ?? 48000}_${parameters.channels === 1 ? 'MONO' : 'STEREO'}`)
     || !sameTrimParameters(parameters, trimParameters(v.parameters))) invalid();
   return parameters;
 }
+function trimRecipe(v: ProductionRecipe, command: unknown) {
+  trimCommand(command, true);
+  return recordedTrimRecipe(v, command);
+}
 function sameTrimCommand(expected: RecordedMediaCommand, value: RecordedMediaCommand | null) {
-  return !!value && sameCutoutCommand({ ...expected, provider_id: expected.provider_id ?? null, model_id: expected.model_id ?? null },
+  return !!value && Object.hasOwn(expected, 'audio_profile') === Object.hasOwn(value, 'audio_profile') && expected.audio_profile === value.audio_profile
+    && sameCutoutCommand({ ...expected, provider_id: expected.provider_id ?? null, model_id: expected.model_id ?? null },
     { ...value, provider_id: value.provider_id ?? null, model_id: value.model_id ?? null }) && sameTrimParameters(trimParameters(expected.parameters, true), trimParameters(value.parameters, true));
 }
 function commandScope(command: MediaCommand) {
+  if (Object.hasOwn(command, 'audio_profile') && command.operation_id !== 'm8.audio.trim') invalid();
   checkedVideoReference(command.video_reference, command.source_snapshots, command.operation_id);
   storyboardShotFields(command.storyboard_shot, command.source_snapshots, command.operation_id);
   checkedImageRuntimeInputs(command, command.source_snapshots, command.operation_id, true);
@@ -143,7 +157,7 @@ function commandScope(command: MediaCommand) {
   else if (Object.keys(command.parameters).some(key => trimControlKeys.includes(key))) invalid();
 }
 function audioMeasurement(v: unknown, executionRecipe: ProductionRecipe, command: unknown, candidate: unknown): AudioWavMeasurement | AudioFlacMeasurement | AudioMp3Measurement {
-  const parameters = trimRecipe(executionRecipe, command), flac = parameters.output_format === 'FLAC', mp3 = parameters.output_format === 'MP3';
+  const parameters = recordedTrimRecipe(executionRecipe, command), flac = parameters.output_format === 'FLAC', mp3 = parameters.output_format === 'MP3';
   const keys = ['duration_ms', 'byte_count', 'sample_rate', 'channels', 'sample_width', 'container', 'audio_codec', 'profile_validation', 'output_sha256', ...(flac || mp3 ? ['total_samples', 'decoded_pcm_bytes', 'decoded_pcm_sha256'] : []), ...(flac ? ['streaminfo_md5'] : mp3 ? ['bit_rate', 'container_duration_ms'] : [])];
   if (!record(v) || Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key))
     || v.profile_validation !== (flac ? 'FLAC_STREAMINFO_PCM_VERIFIED' : mp3 ? 'MP3_GAPLESS_PCM_VERIFIED' : 'PCM_DECODED') || v.container !== (flac ? 'flac' : mp3 ? 'mp3' : 'wav') || v.audio_codec !== (flac ? 'flac' : mp3 ? 'mp3' : 'pcm_s16le') || v.sample_width !== 2
@@ -173,8 +187,9 @@ function recipe(v: unknown, operation: unknown): ProductionRecipe {
   }
   if (!record(v) || v.contract !== 'studio-execution-recipe/1' || v.operation_id !== operation || !hex(v.recipe_digest)
     || v.automatic_fallback !== false || !['ORIGINAL_HTTP_PROVIDER', 'COMFYUI_BUILTIN_IMAGE', 'AUTOMATIC1111_IMAGE', 'LOCAL_FFMPEG', 'COMFYUI_BUILTIN_VIDEO'].includes(String(v.adapter))
-    || Object.keys(v).some(k => !['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline', 'export_profile', 'image_recipe_id', 'reference_weights', 'reference_semantics', 'mask_semantics', 'video_recipe_id', 'timing', 'structural_only', 'inference_verified', 'reference_video_execution', ...(operation === 'm5.image.upscale' ? ['source_dimensions', 'target_dimensions'] : [])].includes(k))
+    || Object.keys(v).some(k => !['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'audio_profile', 'workflow', 'defaults', 'denoising_strength', 'output_profile', 'timeline', 'export_profile', 'image_recipe_id', 'reference_weights', 'reference_semantics', 'mask_semantics', 'video_recipe_id', 'timing', 'structural_only', 'inference_verified', 'reference_video_execution', ...(operation === 'm5.image.upscale' ? ['source_dimensions', 'target_dimensions'] : [])].includes(k))
     || JSON.stringify(v).length > 131072) invalid();
+  if (Object.hasOwn(v, 'audio_profile') && (operation !== 'm8.audio.trim' || v.audio_profile !== AUDIO_MP3_PROFILE)) invalid();
   checkedImageRecipeFields(v, String(operation)); checkedVideoRecipe(v, String(operation));
   return v as ProductionRecipe;
 }
@@ -258,9 +273,10 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const c = v.command;
       if (!record(c) || c.operation_id !== v.operation_id || c.request_id !== v.request_id || typeof c.prompt !== 'string' || c.prompt.length > 16000
         || !record(c.parameters) || !Array.isArray(c.source_snapshots) || typeof c.allow_cloud !== 'boolean' || typeof c.license_note !== 'string' || c.license_note.length > 2000) invalid();
-      if (Object.keys(c).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference', 'storyboard_shot'].includes(key))
+      if (Object.keys(c).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference', 'storyboard_shot', 'audio_profile'].includes(key))
         || Object.entries(c.parameters).some(([key, value]) => !parameterKeys.includes(key) || c.operation_id !== 'm8.audio.trim' && trimControlKeys.includes(key)
           || (typeof value === 'number' ? !Number.isFinite(value) : typeof value !== 'string' || value.length > 8000))) invalid();
+      if (Object.hasOwn(c, 'audio_profile') && c.operation_id !== 'm8.audio.trim') invalid();
       sources(c.source_snapshots, 8);
       checkedVideoReference(c.video_reference, c.source_snapshots, String(c.operation_id));
       storyboardShotFields(c.storyboard_shot, c.source_snapshots, String(c.operation_id));
@@ -284,7 +300,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
         checkedCutoutProof(v.processing_proof, v.sources, v.output_candidate as { digest: string } | null);
       }
       else if (c.operation_id === 'm8.audio.trim') {
-        trimRecipe(executionRecipe, c);
+        recordedTrimRecipe(executionRecipe, c);
         if (v.media_measurement != null && (v.status === 'QUEUED'
           || ['AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED'].includes(String(v.status)) && v.output_candidate === null)) invalid();
         if (v.provider !== null || v.output_candidate !== null && (v.output_candidate as Record<string, unknown>).kind !== 'audio'

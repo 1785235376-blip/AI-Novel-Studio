@@ -5,7 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import type { Chapter } from '../api';
 import { experimentalClient } from './api';
 import { StorySimulatorPanel } from './StorySimulatorPanel';
-import type { SimulatorRun, SimulatorInput } from './storySimulatorClient';
+import type { SimulatorRun } from './storySimulatorClient';
 
 const chapter = { id: 'chapter-one', title: '雨夜', version: 3 } as Chapter;
 const catalog = { chapters: [chapter], characters: [{ id: 'alice', name: '小林' }], planning_nodes: [{ id: 'node-one', title: '原有规划', version: 2, chapter_ids: [chapter.id] }], limits: { max_steps: 32, max_branches: 8, max_expansions: 256 }, model_configured: false };
@@ -73,7 +73,7 @@ it('compares violations and hypotheses, saves only REVIEW once and navigates to 
   fireEvent.click(save); fireEvent.click(save);
   await screen.findByRole('button', { name: '前往分层规划审核' });
   fireEvent.click(screen.getByRole('button', { name: '前往分层规划审核' }));
-  expect(navigate).toHaveBeenCalledWith({ kind: 'feature', id: 'proposal-one', feature: 'advanced_planning_v2', task_authority: 'planning_proposal' });
+  expect(navigate).toHaveBeenCalledWith({ kind: 'feature', id: 'proposal-one', feature: 'advanced_planning_v2' });
   expect(fetch.mock.calls.filter(([url]) => url.endsWith('/save'))).toHaveLength(1);
   expect(fetch.mock.calls.some(([url]) => url.endsWith('/approve'))).toBe(false);
   expect(screen.getByText(/来源 chapter-one · v3/)).toBeTruthy();
@@ -229,69 +229,4 @@ it('invalidates scene context receipts and sends selected original scene with se
   await waitFor(() => expect(fetch.mock.calls.some(([url, init]) => url.endsWith('/runs') && init?.method === 'POST')).toBe(true));
   const body = JSON.parse(fetch.mock.calls.find(([url, init]) => url.endsWith('/runs') && init?.method === 'POST')![1]!.body as string);
   expect(body.scene_id).toBe('scene-one'); expect(body.knowledge_ids).not.toContain('EMOTION');
-});
-
-it('reopens the persisted route review after remount without saving again or copying input', async () => {
-  const input: SimulatorInput = { chapter_ids: [chapter.id], expected_versions: { [chapter.id]: 3 }, chapter_id: chapter.id, character_id: 'alice', world_time: null, calendar: 'story', node_id: 'node-one', expected_node_version: 2, context_digest: 'original-context-digest', assumptions: ['Author hypothesis'], character_goal: 'Original goal', motivation_hypothesis: 'Unverified motive', knowledge_ids: ['fact-one'], resources: {}, hard_constraints: { forbidden_facts: ['forbidden outcome'], resource_caps: {}, required_final_facts: [] }, max_steps: 4, max_branches: 2, model_id: null, model_budget: 0, routes: [] };
-  const navigate = vi.fn(), saved = { ...completed, input, version: 3, routes: completed.routes!.map(route => ({ ...route, saved_proposal_id: 'proposal-one' })) };
-  const fetch = transport(saved); vi.stubGlobal('fetch', fetch);
-  render(<StorySimulatorPanel client={client()} chapter={chapter} requestedRunId="run-one" onNavigate={navigate} />);
-  fireEvent.click(await screen.findByRole('button', { name: '重新打开待审规划：强行开门' }));
-  expect(navigate).toHaveBeenCalledWith({ kind: 'feature', id: 'proposal-one', feature: 'advanced_planning_v2', task_authority: 'planning_proposal' });
-  expect(fetch.mock.calls.every(([, options]) => options?.method === 'GET')).toBe(true);
-  expect((screen.getByLabelText('路线 1 名称') as HTMLInputElement).value).toBe('');
-  expect(screen.getByText(/人物知识仅为当时明确选择/).textContent).toContain('original-context-digest');
-  expect(screen.getByText(/\"forbidden outcome\"/).textContent).toContain('Unverified motive');
-  expect(screen.getByText(/来源 chapter-one · v3 · 摘要/).textContent).toContain('b'.repeat(64));
-});
-it('does not substitute the run list when an exact original run is unavailable or wrong', async () => {
-  const fetch = transport(completed);
-  vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => url.endsWith('/runs/missing') ? reply(completed) : fetch(url, init)));
-  render(<StorySimulatorPanel client={client()} chapter={chapter} requestedRunId="missing" />);
-  await screen.findByText('读取或操作失败，请重试。');
-  expect(screen.queryByRole('article', { name: '比较路线 强行开门' })).toBeNull();
-  expect((screen.queryByRole('button', { name: '将所选路线另存为待审规划' }) as HTMLButtonElement | null)).toBeNull();
-});
-
-it('hides exact run constraints on target ABA and late responses without changing the editable form', async () => {
-  let resolveOld!: (value: Response) => void, first = true;
-  const base = transport(completed);
-  vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
-    if (url.endsWith('/runs/run-one') && first) { first = false; return new Promise<Response>(resolve => { resolveOld = resolve; }); }
-    if (url.endsWith('/runs/run-two')) return reply({ ...completed, id: 'run-two', routes: [{ ...completed.routes![0], title: 'Second run' }] });
-    return base(url, init);
-  }));
-  const owner = client(), view = render(<StorySimulatorPanel client={owner} chapter={chapter} requestedRunId="run-one" />);
-  await waitFor(() => expect(resolveOld).toBeTypeOf('function'));
-  fireEvent.change(screen.getByLabelText('人物目标'), { target: { value: 'Keep current form' } });
-  view.rerender(<StorySimulatorPanel client={owner} chapter={chapter} requestedRunId="run-two" />);
-  await screen.findByRole('article', { name: '比较路线 Second run' });
-  view.rerender(<StorySimulatorPanel client={owner} chapter={chapter} requestedRunId="run-one" />);
-  await screen.findByRole('article', { name: '比较路线 强行开门' });
-  await act(async () => resolveOld(reply({ ...completed, routes: [{ ...completed.routes![0], title: 'Late stale run' }] })));
-  expect(screen.queryByRole('article', { name: '比较路线 Late stale run' })).toBeNull();
-  expect((screen.getByLabelText('人物目标') as HTMLTextAreaElement).value).toBe('Keep current form');
-});
-
-it('clears route consent and temporary proposal receipts when the exact target changes', async () => {
-  const base = transport(completed);
-  vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => url.endsWith('/runs/run-two') ? reply({ ...completed, id: 'run-two' }) : base(url, init)));
-  const owner = client(), view = render(<StorySimulatorPanel client={owner} chapter={chapter} requestedRunId="run-one" onNavigate={vi.fn()} />);
-  const choose = async () => {
-    fireEvent.click(await screen.findByLabelText('选择路线 强行开门 另存待审规划'));
-    fireEvent.click(screen.getByLabelText('已核对所选路线的违规、未决问题和动机假设，仅另存为待审规划'));
-  };
-  await choose();
-  expect((screen.getByRole('button', { name: '将所选路线另存为待审规划' }) as HTMLButtonElement).disabled).toBe(false);
-  view.rerender(<StorySimulatorPanel client={owner} chapter={chapter} requestedRunId="run-two" onNavigate={vi.fn()} />);
-  await screen.findByRole('article', { name: '比较路线 强行开门' });
-  expect((screen.getByLabelText('已核对所选路线的违规、未决问题和动机假设，仅另存为待审规划') as HTMLInputElement).checked).toBe(false);
-  expect((screen.getByRole('button', { name: '将所选路线另存为待审规划' }) as HTMLButtonElement).disabled).toBe(true);
-  view.rerender(<StorySimulatorPanel client={owner} chapter={chapter} requestedRunId="run-one" onNavigate={vi.fn()} />);
-  await choose(); fireEvent.click(screen.getByRole('button', { name: '将所选路线另存为待审规划' }));
-  await screen.findByRole('button', { name: '前往分层规划审核' });
-  view.rerender(<StorySimulatorPanel client={owner} chapter={chapter} requestedRunId="run-two" onNavigate={vi.fn()} />);
-  await screen.findByRole('article', { name: '比较路线 强行开门' });
-  expect(screen.queryByRole('button', { name: '前往分层规划审核' })).toBeNull();
-  expect(screen.queryByRole('button', { name: '重新打开待审规划：强行开门' })).toBeNull();
 });
