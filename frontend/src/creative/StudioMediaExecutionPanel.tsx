@@ -43,6 +43,15 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     {state.uncertain && <StatusMessage tone="warning">操作结果尚未确认，已阻止继续发送。请读取原任务核对；不会自动重试。</StatusMessage>}
     {state.repeatBlocked && <StatusMessage tone="warning">当前版本已有发送记录。相同动作不会再次发送，请继续读取原记录核对。</StatusMessage>}
     {state.uncertainRequestId && <p>待核对的原请求：<code>{state.uncertainRequestId}</code>。使用“读取任务列表”寻找已保存回执。</p>}
+    {props.assetHandoff && <section aria-label="素材引用交接到图片制作">
+      <h3>素材引用交接到图片制作</h3>
+      <p>{props.assetHandoff.reference.asset_id} · v{props.assetHandoff.reference.version} · {props.assetHandoff.reference.digest}</p>
+      <p>仅支持下方明确选择的“参考图片生成图片”操作。核对只读取元数据；加入前再次核对版本，不更改提示词、服务商或参数，也不覆盖已有基础图。</p>
+      <Button disabled={!state.canHandoff || state.providerLoading || state.handoffPending || state.handoffDone} onClick={() => void state.readHandoff(false)}>核对图片交接版本</Button>
+      {state.handoffAsset && <><p>{state.handoffAsset.filename} · image · {state.handoffAsset.size} 字节</p><Button disabled={!state.canHandoff || state.handoffPending} onClick={() => void state.readHandoff(true)}>明确加入图片制作草稿</Button></>}
+      <Button disabled={state.handoffDone} onClick={state.cancelHandoff}>取消图片交接</Button>
+      {state.handoffNotice && <StatusMessage>{state.handoffNotice}</StatusMessage>}
+    </section>}
     <section aria-label="媒体制作输入">{props.preparedCommand ? <><h3>{props.preparedCommand.operation_id.startsWith("m7.") ? "原分镜视频请求" : "原分镜图片请求"}</h3><p>输入来自已核对的分镜与镜头版本；更换参数须返回原分镜明确准备新请求。预览、入队、执行与审核仍分别确认。</p><details><summary>核对完整来源与输入</summary><pre>{JSON.stringify(props.preparedCommand, null, 2)}</pre></details><Button disabled={!state.canRead || state.providerLoading} onClick={() => void state.loadProviders()}>明确读取当前请求服务配置</Button><Button disabled={!state.canInspect} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canClosePrepared} onClick={state.clearInputs}>关闭当前请求视图，保留原任务</Button></> : <>
       <h3>制作输入</h3>
       <label>操作<select disabled={!state.canEdit} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>

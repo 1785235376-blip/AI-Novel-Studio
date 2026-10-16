@@ -1,0 +1,85 @@
+{
+  "baseline_commit": "8d71994c9ccf6b4e975b63172b025557d4fd2ee6",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/StudioImageAssetHandoff.test.tsx src/creative/StudioMediaRouteChoice.test.tsx src/creative/IndependentStudioWorkspace.test.tsx src/creative/IndependentStudioIdentity.regression.test.tsx src/creative/IndependentStudioReadFences.test.tsx src/creative/StudioImageRuntimeProduction.test.tsx src/creative/StudioImageUpscaleProduction.test.tsx src/creative/StudioTimelineAssetHandoff.test.tsx src/assetbrowser/AssetBrowserPanel.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T10:35:46.090735+00:00",
+      "finished_utc": "2026-10-16T10:35:55.539530+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/image-handoff-accepted-ui.log",
+      "log_sha256": "ae5f55de201bf817cc1e13c93d13f444f5892b65c9b1a2e0243c112482d2440c",
+      "receipt": "docs/delivery/v2-development/image-handoff-accepted-ui.json",
+      "receipt_sha256": "df331f19d36e9888397b89762ad67a16655fe3ff4abb0e70da7e9d7ae5ea4c7e"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/image-handoff-accepted-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T10:35:49.241573+00:00",
+      "finished_utc": "2026-10-16T10:35:58.091209+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/image-handoff-accepted-public.log",
+      "log_sha256": "3c13f013884f6afdf1d4fd298807ba8ed9ea1545dc457c5ed02f9050fa525df1",
+      "receipt": "docs/delivery/v2-development/image-handoff-accepted-public.json",
+      "receipt_sha256": "f57e16c14db896395464ffc2f247843ba22b3c010ca0b570970e95a4c9a29373"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T10:35:47.551805+00:00",
+      "finished_utc": "2026-10-16T10:36:24.436606+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/image-handoff-accepted-build.log",
+      "log_sha256": "fdeb3ff1e5c5b1706767a92cbcf53e2b3b60edad2e8bb170ba5998daccef5d5b",
+      "receipt": "docs/delivery/v2-development/image-handoff-accepted-build.json",
+      "receipt_sha256": "5c15712ea4ce4fe3dc17275a6a83f0baffabb9bb074bb9c67c1049a3bcbcb243"
+    }
+  ],
+  "changed_source_sha256": {
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "1534520190b26bed2d946fecef94c61267ace21950fdaa427912f0fb878fadd9",
+    "frontend/src/creative/IndependentStudioWorkspace.test.tsx": "de6819ae7b2b149252211a45fffd0bb618ef4167a79f8e68de628dd97c766547",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx": "36f3b87e759b34464253b7b5bb917a1784836e37fd127928e86385137ccb1e97",
+    "frontend/src/creative/useStudioMediaExecution.ts": "ab5fcdb99d271d40adf1d0fb4699b0c9298e37649201d979864360ad166a337a",
+    "frontend/src/creative/StudioImageAssetHandoff.test.tsx": "b4a7896d73e06a078359e7ee25cf217feb6c8bcc0cf1ba91b20d43eb42d85c7a"
+  },
+  "results": {
+    "mocked_ui_tests": 111,
+    "public_contracts": 30,
+    "public_source_files": 487
+  },
+  "original_nonsecurity_file": "NOT_REQUIRED: no backend owner or persisted contract changed",
+  "historical_failed_receipts": [
+    "docs/delivery/v2-development/image-handoff-ui-initial.json",
+    "docs/delivery/v2-development/image-handoff-reviewed-final-ui.json"
+  ],
+  "not_run": [
+    "browser/visual/native input/performance",
+    "PostgreSQL/P0/security lifecycle",
+    "Windows/GPU/provider/user computer",
+    "paid calls/hosted CI/push/full RC"
+  ],
+  "boundaries": {
+    "P0": "BLOCKED",
+    "R3_GATE": "HOLD",
+    "prompt_adoption_write_enabled": false,
+    "delivery_entitlement_producer": "BLOCKED"
+  }
+}

@@ -142,15 +142,15 @@ describe('independent studio original owner integration', () => {
 });
 
 describe('mounted original asset browser to timeline handoff', () => {
-  async function sendFixture() {
-    saved = [{ ...asset(2), kind: 'video', filename: 'handoff.mp4', media_type: 'video/mp4', created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z' }];
+  async function sendFixture(target = '时间线模块') {
+    saved = [{ ...asset(2), kind: target === '图片模块' ? 'image' : 'video', filename: 'handoff.mp4', media_type: target === '图片模块' ? 'image/png' : 'video/mp4', created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z' }];
     server({ override: (url, init) => {
       if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
       if (url.endsWith('/timelines')) return response({ items: [] });
       return undefined;
     } });
     mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '选择素材 handoff.mp4' }));
-    await screen.findByRole('button', { name: '时间线模块' }); fireEvent.click(screen.getByRole('button', { name: '时间线模块' }));
+    await screen.findByRole('button', { name: target }); fireEvent.click(screen.getByRole('button', { name: target }));
   }
   it('routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance', async () => {
     await sendFixture(); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
@@ -162,12 +162,33 @@ describe('mounted original asset browser to timeline handoff', () => {
     await screen.findByText(/已把核对的原素材版本加入/); expect(screen.getByText(/未保存 · 1 条轨道 · 1 个片段/)).toBeTruthy();
     expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
   });
-  it('keeps the original dirty-navigation decision and cancels without creating a handoff', async () => {
-    await sendFixture(); fireEvent.change(screen.getByLabelText('自定义意图'), { target: { value: 'keep my draft' } });
+  it.each([['时间线模块', '素材引用交接到时间线'], ['图片模块', '素材引用交接到图片制作']])('keeps dirty-navigation cancel for %s', async (target, region) => {
+    await sendFixture(target); fireEvent.change(screen.getByLabelText('自定义意图'), { target: { value: 'keep my draft' } });
     fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
-    expect(screen.queryByRole('region', { name: '素材引用交接到时间线' })).toBeNull(); fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
+    expect(screen.queryByRole('region', { name: region })).toBeNull(); fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
     expect((screen.getByLabelText('自定义意图') as HTMLInputElement).value).toBe('keep my draft');
     fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' })); fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); fireEvent.click(screen.getByRole('button', { name: '确认离开' }));
-    await screen.findByRole('region', { name: '素材引用交接到时间线' }); expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
+    await screen.findByRole('region', { name: region }); expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
+  });
+});
+
+
+describe('mounted asset browser to original image draft', () => {
+  it('requires an explicit I2I choice and two metadata reads without dispatch', async () => {
+    saved = [{ ...asset(2), created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z' }];
+    server({ override: (url, init) => {
+      if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
+      if (url.endsWith('/timelines') || url.endsWith('/providers')) return response({ items: [] });
+      return undefined;
+    } });
+    mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '选择素材 reference.png' }));
+    fireEvent.click(await screen.findByRole('button', { name: '图片模块' })); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
+    await screen.findByRole('region', { name: '素材引用交接到图片制作' });
+    expect((screen.getByRole('button', { name: '核对图片交接版本' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText('操作'), { target: { value: 'm5.image.i2i' } });
+    await waitFor(() => expect((screen.getByRole('button', { name: '核对图片交接版本' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(screen.getByRole('button', { name: '核对图片交接版本' })); fireEvent.click(await screen.findByRole('button', { name: '明确加入图片制作草稿' }));
+    await screen.findByText(/已加入原图片制作草稿/); expect(screen.getByText(/已绑定来源 reference.png/)).toBeTruthy();
+    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
   });
 });
