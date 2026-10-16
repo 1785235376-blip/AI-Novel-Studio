@@ -663,3 +663,16 @@ Independent review correction: exact relationship selection temporarily closes c
 ## P1 independent bounded spatial notes — 2026-10-16
 
 **PARTIAL:** original Graph presentation now persists up to 128 independent plain-text note cards, without execution nodes. Mounted add/edit/coordinate or pointer move/remove uses original undo/save/reopen/CAS and dirty guards, with viewport culling and isolated selection. Schemas 1–5 preserve legacy omission/digests; original execution projection and 16/24/40 budgets stay unchanged. Per-card 256 / aggregate 12000 Unicode codepoints and original 96000-byte whole-definition capacity remain bounded; conservative pre-apply size guard does not replace save authority. 387 mocked UI/pure, 81 schema, two File and 30 PUBLIC cases pass; forced type/build/discovery/tokens/diff/487-file closure indexed in `canvas-spatial-notes-20261016.json`, report beside it. Node-only 128-card timing/heap observations do not prove browser FPS/memory. The >=1000 persisted display-object goal remains unmet; MiniMap stays execution-node-only. Browser/native/HTTP/PG/P0/Windows/GPU/provider/full RC NOT_RUN; P0 BLOCKED and prior gates unchanged. Local only, parent final-SHA review before further tracked work; no cost-unknown push/CI.
+
+
+## A05 / B01 / B08 / B09 / U11 five-slice integration — 2026-10-16
+
+**PARTIAL; bounded increments independently reviewed and integrated.** Tested source `6689935b223bc03a158b8966fd63e11d66767d29`; [integration report](parallel-integration-20261016.md) and [machine-readable evidence](parallel-integration-20261016.json).
+
+- A05: explicit projected event → original author evidence → pending-copy form, exact event/source/character/category binding, refresh/ABA guards and Unicode validation. No new inference, automatic save, approval or model context expansion.
+- B01: structured project-copy section editing and bounded saved-history changed blocks via original CAS/history/revert; provenance retained, malformed JSON preserved, dirty switching protected by explicit discard.
+- B08: explicit exact pinned task chapter inspection, original review IDs/timestamped history, session-only decision-note preservation and stale transition gating. No new domain approval or persistent cross-session draft guarantee.
+- B09: readable original three-way comparison receipts, bounded Unicode excerpts, paging and conflict-choice display; original merge/confirmation/recovery controls unchanged.
+- U11: bounded diagnostic coverage and deterministic registered-code advice, refresh/failure invalidation and exact digest-bound download. No automatic retry/upload/provider or privacy-settings change.
+
+Combined 169 mock UI/pure/geometry tests pass, plus forced tsc, Vite build, discovery-only, token guard and 487-file PUBLIC source closure. Independent slice reruns total 150 tests and are not added to this combined count. No integrated File/PG/HTTP, browser/native, Windows/GPU/provider or full RC proof; owner-specific File evidence remains separate. Full malformed-response validation is not claimed for unchanged typed client envelopes. P0 BLOCKED, R3-GATE HOLD, Prompt Adoption disabled and DeliveryCenter grant-producer blocker remain unchanged. Local only; no cost-unknown push/hosted CI.
