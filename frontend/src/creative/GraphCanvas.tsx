@@ -3,7 +3,7 @@ import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react';
 import { Hand, MousePointer2, Trash2, ZoomIn, ZoomOut } from 'lucide-react';
 import { Badge, Button } from '../ui/primitives';
 import { GRAPH_NODE_LABELS } from './studioGraphLabels';
-import type { StudioGraphDefinition, StudioGraphPosition } from './studioGraphTypes';
+import type { StudioGraphDefinition, StudioGraphPosition, StudioGraphViewPreferences } from './studioGraphTypes';
 import {
   GRAPH_MAX_ZOOM, GRAPH_MIN_ZOOM, GRAPH_NODE_HEADER_HEIGHT, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT,
   alignGraphNodes, clampGraphPosition, snapGraphNodes, graphEdgePath, graphNodeHeight, graphNodesInScreenRect,
@@ -30,6 +30,8 @@ export type GraphCanvasProps = {
   connectionNodeIds?: readonly string[];
   /** Change with the active project/actor owner, even when the definition identity is reused. */
   interactionKey?: string | number;
+  /** Original loaded record identity: refresh/adoption resets temporary preferences even for the same graph/version. */
+  preferencesSource?: object;
   readonly?: boolean;
   busy?: boolean;
 };
@@ -52,7 +54,7 @@ type Gesture = {
 const sameIds = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id, index) => id === b[index]);
 
 export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSelectionChange, onDefinitionChange,
-  onPortSelect, protectedNodeIds = [], connectionNodeIds = [], interactionKey, readonly = false, busy = false }: GraphCanvasProps) {
+  onPortSelect, protectedNodeIds = [], connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
   const blocked = readonly || busy;
   const viewportRef = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
@@ -67,13 +69,21 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const collapsedGroups = foldCurrent ? fold!.ids : [];
   useEffect(() => { setFold(null); }, [interactionKey, definition.presentation?.groups]);
   const [focusedNode, setFocusedNode] = useState<string | null>(null);
-  const [showMiniMap, setShowMiniMap] = useState(true);
-  const [showGrid, setShowGrid] = useState(true);
+  const liveViewOwner = useRef({ definition, interactionKey, preferencesSource, blocked });
+  liveViewOwner.current = { definition, interactionKey, preferencesSource, blocked };
+  const canWriteView = () => !blocked && !gesture.current && liveViewOwner.current.definition === definition
+    && liveViewOwner.current.interactionKey === interactionKey && liveViewOwner.current.preferencesSource === preferencesSource && !liveViewOwner.current.blocked;
+  const savedView = definition.presentation?.view;
+  const viewKey = JSON.stringify(savedView);
+  const [sessionView, setSessionView] = useState<{ owner: GraphCanvasProps['interactionKey']; key: string | undefined; source?: object;
+    value: StudioGraphViewPreferences } | null>(null);
+  const view = sessionView && sessionView.owner === interactionKey && sessionView.key === viewKey && sessionView.source === preferencesSource ? sessionView.value
+    : savedView || { show_grid: true, snap: false, grid_step: 24 as const, show_minimap: true };
+  const { show_grid: showGrid, snap, grid_step: gridStep, show_minimap: showMiniMap } = view;
+  useEffect(() => { setSessionView(null); }, [interactionKey, viewKey, preferencesSource]);
+  const updateView = (patch: Partial<StudioGraphViewPreferences>) => setSessionView({ owner: interactionKey, key: viewKey, source: preferencesSource, value: { ...view, ...patch } });
   const [annotationLimit, setAnnotationLimit] = useState(false);
   useEffect(() => { setAnnotationLimit(false); }, [definition, interactionKey, blocked]);
-  const [snap, setSnap] = useState(false);
-  const [gridStep, setGridStep] = useState(24);
-  useEffect(() => { setShowGrid(true); setSnap(false); setGridStep(24); }, [interactionKey]);
   const [tool, setTool] = useState<'select' | 'pan'>('select');
   const [activeGesture, setActiveGesture] = useState<Gesture['kind'] | null>(null);
   const descriptionId = useId(), markerId = useId().replace(/:/g, '');
@@ -274,7 +284,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       <output aria-label="节点图缩放">{Math.round(visible.viewport.zoom * 100)}%</output>
       <Button type="button" variant="ghost" aria-label="放大节点图" disabled={blocked || visible.viewport.zoom >= GRAPH_MAX_ZOOM} onClick={() => zoomBy(1.2)}><ZoomIn size={16} /></Button>
       <span className="graph-canvas__count" role="status">{selected.length ? `已选 ${selected.length} 个节点` : `${definition.nodes.length} 个节点 · ${definition.edges.length} 条连接`}</span>
-      <Button type="button" variant="ghost" aria-label="显示小地图" aria-pressed={showMiniMap} onKeyDown={event => event.stopPropagation()} onClick={() => setShowMiniMap(value => !value)}>小地图</Button>
+      <Button type="button" variant="ghost" aria-label="显示小地图" aria-pressed={showMiniMap} onKeyDown={event => event.stopPropagation()} onClick={() => updateView({ show_minimap: !showMiniMap })}>小地图</Button>
       {readonly && <Badge>只读</Badge>}
       <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || !removable.length} title={selected.length && !removable.length ? '已保存的资产引用只能移动或停用' : '删除所选节点及其连接'} onClick={deleteSelected}><Trash2 size={16} /></Button>
     </header>
@@ -328,13 +338,26 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       </details>)}
     </section>}
     <div className="graph-canvas__toolbar" role="group" aria-label="网格与吸附设置" onKeyDown={event => event.stopPropagation()}>
-      <Button type="button" variant="ghost" aria-pressed={showGrid} disabled={!!activeGesture} onClick={() => setShowGrid(value => !value)}>显示网格</Button>
-      <Button type="button" variant="ghost" aria-pressed={snap} disabled={blocked || !!activeGesture} onClick={() => setSnap(value => !value)}>拖拽吸附</Button>
+      <Button type="button" variant="ghost" aria-pressed={showGrid} disabled={!!activeGesture} onClick={() => updateView({ show_grid: !showGrid })}>显示网格</Button>
+      <Button type="button" variant="ghost" aria-pressed={snap} disabled={blocked || !!activeGesture} onClick={() => updateView({ snap: !snap })}>拖拽吸附</Button>
       <label className="graph-canvas__navigator">网格间距<select aria-label="网格间距" value={gridStep} disabled={!!activeGesture}
-        onChange={event => { const step = Number(event.target.value); if ([8, 16, 24, 32].includes(step)) setGridStep(step); }}>
+        onChange={event => { const step = Number(event.target.value); if ([8, 16, 24, 32].includes(step)) updateView({ grid_step: step as 8 | 16 | 24 | 32 }); }}>
         {[8, 16, 24, 32].map(step => <option key={step} value={step}>{step} 世界单位</option>)}
       </select></label>
-      <span className="graph-canvas__help">仅本次视图；吸附抓取节点，多选保持相对位置，边界优先。方向键仍按屏幕 8 / Shift 32 像素微调。</span>
+      <Button type="button" variant="ghost" disabled={blocked || !!activeGesture || JSON.stringify(view) === JSON.stringify(savedView)}
+        onClick={() => {
+          if (!canWriteView()) return;
+          onDefinitionChange({ ...definition, presentation: { ...definition.presentation, view: { ...view } } }, true);
+        }}>将视图偏好写入图草稿</Button>
+      <Button type="button" variant="ghost" disabled={blocked || !!activeGesture || !savedView}
+        onClick={() => {
+          if (!canWriteView() || !savedView) return;
+          const next = { ...definition, presentation: { ...definition.presentation } };
+          delete next.presentation.view;
+          if (!Object.keys(next.presentation).length) delete (next as StudioGraphDefinition).presentation;
+          onDefinitionChange(next, true);
+        }}>移除已存视图偏好</Button>
+      <span className="graph-canvas__help">设置仅本次视图；写入草稿后需保存图才会保留，可撤销。折叠不保存；吸附抓取节点，多选保持相对位置，边界优先。方向键仍按屏幕 8 / Shift 32 像素微调。</span>
     </div>
     <div className="graph-canvas__toolbar" role="group" aria-label="所选节点对齐" onKeyDown={event => {
       event.stopPropagation();

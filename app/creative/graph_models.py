@@ -592,9 +592,25 @@ class GraphVisualGroup(Strict):
         return self
 
 
+class GraphViewPreferences(Strict):
+    """Explicit display preferences; no camera, node movement or execution policy."""
+    show_grid: bool = Field(strict=True)
+    snap: bool = Field(strict=True)
+    grid_step: int = Field(strict=True)
+    show_minimap: bool = Field(strict=True)
+
+    @field_validator("grid_step")
+    @classmethod
+    def bounded_step(cls, value):
+        if value not in (8, 16, 24, 32):
+            raise ValueError("CREATIVE_GRAPH_VIEW_INVALID")
+        return value
+
+
 class GraphPresentation(Strict):
     """Bounded display-only metadata, never execution input or authority."""
     comment: str | None = Field(default=None, strict=True, max_length=2000)
+    view: GraphViewPreferences | None = None
     groups: list[GraphVisualGroup] | None = Field(default=None, min_length=1, max_length=24, strict=True)
 
     @model_validator(mode="before")

@@ -63,11 +63,21 @@ describe('scoped graph transport', () => {
     const client = studioClient(projectId, context()).graphs;
     expect((await client.get(graphId)).definition).toEqual(original.definition);
     expect((await client.get(graphId)).definition).not.toHaveProperty('presentation');
-    original.definition.presentation = { comment: '🎬'.repeat(2000) };
+    original.definition.presentation = { comment: '🎬'.repeat(2000), view: { show_grid: false, snap: true, grid_step: 32, show_minimap: false } };
     fetchMock.mockResolvedValue(reply(original));
     expect((await client.get(graphId)).definition).toEqual(original.definition);
     expect((await client.save(graphId, { expected_version: 3, definition: original.definition })).definition).toEqual(original.definition);
     expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
+  });
+  it.each([null, {}, { show_grid: 1, snap: false, grid_step: 24, show_minimap: true },
+    { show_grid: true, snap: false, grid_step: 48, show_minimap: true },
+    { show_grid: true, snap: false, grid_step: NaN, show_minimap: true },
+    { show_grid: true, snap: false, grid_step: Infinity, show_minimap: true },
+    { show_grid: true, snap: false, grid_step: '２４', show_minimap: true },
+    { show_grid: true, snap: false, grid_step: 24, show_minimap: true, execute: true }])('rejects invalid view preferences %j', async view => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition, presentation: { view } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
   });
   it.each([null, {}, { comment: 1 }, { comment: 'x'.repeat(2001) }, { comment: '🎬'.repeat(2001) }, { comment: 'x', groups: [] }])('rejects malformed annotation from transport: %j', async presentation => {
     const value = graph();

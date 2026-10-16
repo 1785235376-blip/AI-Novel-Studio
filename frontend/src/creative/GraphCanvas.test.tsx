@@ -651,3 +651,47 @@ describe('session-only visual group collapse', () => {
     expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
   });
 });
+
+
+describe('explicit graph-owned view preferences', () => {
+  const preferences = { show_grid: false, snap: true, grid_step: 32 as const, show_minimap: false };
+  const persist = () => screen.getByRole('button', { name: '将视图偏好写入图草稿' });
+  it('keeps temporary defaults and toggles clean, then writes one display-only draft change', () => {
+    const definition = initial(); const { changes } = setup({ definition, interactionKey: 'a' });
+    fireEvent.click(screen.getByRole('button', { name: '显示网格' }));
+    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    fireEvent.change(screen.getByLabelText('网格间距'), { target: { value: '32' } });
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.click(persist());
+    expect(changes).toHaveBeenCalledTimes(1);
+    expect(changes).toHaveBeenLastCalledWith({ ...definition, presentation: { view: preferences } }, true);
+    expect((persist() as HTMLButtonElement).disabled).toBe(true);
+  });
+  it('restores saved values, discards temporary settings across owners, and follows undo/removal', () => {
+    const definition = { ...initial(), presentation: { view: preferences, comment: 'Keep' } };
+    const { rerender, changes } = setup({ definition, interactionKey: 'a', preferencesSource: {} });
+    expect(screen.getByRole('button', { name: '显示网格' }).getAttribute('aria-pressed')).toBe('false');
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    rerender({ interactionKey: 'a', definition, preferencesSource: {} });
+    expect(screen.getByRole('button', { name: '显示小地图' }).getAttribute('aria-pressed')).toBe('false');
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    rerender({ interactionKey: 'b', definition });
+    expect(screen.getByRole('button', { name: '显示小地图' }).getAttribute('aria-pressed')).toBe('false');
+    expect(changes).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '移除已存视图偏好' }));
+    expect(changes).toHaveBeenLastCalledWith({ ...initial(), presentation: { comment: 'Keep' } }, true);
+    expect(screen.getByRole('button', { name: '显示网格' }).getAttribute('aria-pressed')).toBe('true');
+    rerender({ definition: { ...definition }, interactionKey: 'b' });
+    expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('32');
+    rerender({ definition: initial(), interactionKey: 'c' });
+    expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('24');
+    expect(screen.getByRole('button', { name: '显示小地图' }).getAttribute('aria-pressed')).toBe('true');
+  });
+  it.each([{ readonly: true }, { busy: true }])('cannot dirty saved preferences when blocked %j', flags => {
+    const { changes } = setup({ ...flags, definition: { ...initial(), presentation: { view: preferences } } });
+    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
+    fireEvent.click(persist()); fireEvent.click(screen.getByRole('button', { name: '移除已存视图偏好' }));
+    expect(changes).not.toHaveBeenCalled();
+  });
+});

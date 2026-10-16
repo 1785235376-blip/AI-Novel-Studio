@@ -68,7 +68,7 @@ export type StudioGraphDefinition = {
   edges: StudioGraphEdge[];
   viewport: StudioGraphViewport;
   /** Optional display-only annotation and disjoint visual groups; excluded from execution projection. */
-  presentation?: { comment?: string; groups?: { id: string; name: string; node_ids: string[] }[] };
+  presentation?: { view?: StudioGraphViewPreferences; comment?: string; groups?: { id: string; name: string; node_ids: string[] }[] };
 };
 export type StudioGraphCreateInput = { request_id: string; expected_version: 0; definition: StudioGraphDefinition };
 export type StudioGraphSaveInput = { expected_version: number; definition: StudioGraphDefinition };
@@ -279,3 +279,5 @@ export type StudioGraphMediaPreviewInput = { expected_version: number; node_id: 
 export type StudioGraphMediaDispatchInput = StudioGraphMediaPreviewInput & { reviewed_preview_digest: string };
 export type StudioGraphMediaJobInput = StudioGraphMediaPreviewInput & { expected_job_version: number; expected_request_digest: string };
 export type StudioGraphMediaReviewInput = StudioGraphMediaJobInput & { reviewed_output_digest: string };
+
+export type StudioGraphViewPreferences = { show_grid: boolean; snap: boolean; grid_step: 8 | 16 | 24 | 32; show_minimap: boolean };

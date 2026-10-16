@@ -347,3 +347,20 @@ def test_cross_graph_copy_added_source_pin_revalidated_by_original_save(rig, dec
     assert updated['definition']['nodes'][0]['parameters'] == source['definition']['nodes'][0]['parameters']
     assert service(rig).get(rig.nid, rig.scope, rig.actor, target['id']) == updated
     assert service(rig).get(rig.nid, rig.scope, rig.actor, source['id']) == source
+
+
+def test_view_preferences_original_owner_reopen_cas_and_remove(rig):
+    original = create(rig)
+    changed = deepcopy(original['definition'])
+    changed['presentation'] = {'view': {'show_grid': False, 'snap': True, 'grid_step': 16, 'show_minimap': False}}
+    updated = save(rig, original, changed)
+    assert updated['definition'] == changed
+    assert updated['execution_digest'] == original['execution_digest']
+    assert updated['definition_digest'] != original['definition_digest']
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
+    with pytest.raises(CapabilityVersionConflict):
+        save(rig, original, original['definition'])
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
+    removed = save(rig, updated, original['definition'])
+    assert removed['definition_digest'] == original['definition_digest']
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == removed

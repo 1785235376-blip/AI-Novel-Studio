@@ -333,12 +333,20 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
     viewport: { ...position(viewport, input), zoom: number(viewport.zoom, 0.35, 2.5, input) } };
   if (row.presentation !== undefined) {
     const presentation = record(row.presentation, input);
-    if (!Object.keys(presentation).length || Object.keys(presentation).some(key => !['comment', 'groups'].includes(key))) invalid(input);
+    if (!Object.keys(presentation).length || Object.keys(presentation).some(key => !['comment', 'groups', 'view'].includes(key))) invalid(input);
     result.presentation = {};
     if (presentation.comment !== undefined) {
       const comment = text(presentation.comment, 4000, input, true);
       if (Array.from(comment).length > 2000) invalid(input);
       result.presentation.comment = comment;
+    }
+    if (presentation.view !== undefined) {
+      const view = record(presentation.view, input);
+      if (Object.keys(view).length !== 4 || Object.keys(view).some(key => !['show_grid', 'snap', 'grid_step', 'show_minimap'].includes(key))
+        || typeof view.show_grid !== 'boolean' || typeof view.snap !== 'boolean' || typeof view.show_minimap !== 'boolean'
+        || typeof view.grid_step !== 'number' || ![8, 16, 24, 32].includes(view.grid_step)) invalid(input);
+      result.presentation.view = { show_grid: view.show_grid as boolean, snap: view.snap as boolean,
+        grid_step: view.grid_step as 8 | 16 | 24 | 32, show_minimap: view.show_minimap as boolean };
     }
     if (presentation.groups !== undefined) {
       if (!Array.isArray(presentation.groups) || !presentation.groups.length || presentation.groups.length > 24) invalid(input);

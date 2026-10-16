@@ -78,3 +78,27 @@ def test_groups_reject_malformed_dangling_duplicate_or_overlapping_membership(gr
         parse_graph({'title': 'Graph', 'nodes': [
             {'id': 'text', 'definition_id': 'text_input'}, {'id': 'other', 'definition_id': 'text_input'}],
             'presentation': {'groups': groups}})
+
+
+VIEW = {'show_grid': False, 'snap': True, 'grid_step': 32, 'show_minimap': False}
+
+
+@pytest.mark.parametrize('schema', [1, 2, 3, 4, 5])
+def test_view_preferences_roundtrip_preserve_legacy_execution(schema):
+    old = parse_graph({'schema_version': schema, 'title': 'Graph'}).model_dump()
+    updated = {**old, 'presentation': {'view': VIEW, 'comment': '🎬' * 2000}}
+    assert parse_graph(updated).model_dump() == updated
+    assert GraphSave.model_validate({'expected_version': 1, 'definition': updated}).model_dump()['definition'] == updated
+    assert digest(execution_definition(updated)) == digest(execution_definition(old))
+    assert digest(updated) != digest(old)
+    assert parse_graph(old).model_dump() == old
+
+
+@pytest.mark.parametrize('view', [None, {}, {**VIEW, 'unknown': True}, {**VIEW, 'show_grid': 1},
+    {**VIEW, 'snap': 'true'}, {**VIEW, 'show_minimap': None}, {**VIEW, 'grid_step': True},
+    {**VIEW, 'grid_step': 24.0}, {**VIEW, 'grid_step': float('nan')},
+    {**VIEW, 'grid_step': float('inf')}, {**VIEW, 'grid_step': -1}, {**VIEW, 'grid_step': 48},
+    {**VIEW, 'grid_step': '２４'}])
+def test_view_preferences_are_strict_bounded_complete(view):
+    with pytest.raises(ValidationError):
+        parse_graph({'title': 'Graph', 'presentation': {'view': view}})
