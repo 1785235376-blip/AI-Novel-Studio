@@ -80,6 +80,9 @@ def create_prompt_adoption_router(adoption: PromptAdoptionService, invoke):
                        x_branch_id: str | None = Header(None)):
         """The pinned adoptions recorded on this document, with drift and readability."""
         return invoke(nid, x_session_token, x_branch_id, "domain.read",
-                      lambda actor, scope, guard: adoption.read(nid, scope, document_id, actor))
+                      lambda actor, scope, guard: {
+                          **adoption.read(nid, scope, document_id, actor),
+                          "write_enabled": PROMPT_ADOPTION_WRITE_ENABLED is True,
+                      })
 
     return router
