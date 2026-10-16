@@ -312,3 +312,33 @@ def test_delayed_preview_cannot_return_after_concurrent_adaptation_save(interact
         return result
     monkeypatch.setattr(module, 'play', delayed)
     with pytest.raises(CapabilityVersionConflict): e.service.preview(e.nid, e.scope, 'author', row['id'], {'expected_version': row['version']})
+
+
+def test_manual_issue_repair_preserves_pins_reopens_and_exports(interactive_env):
+    """Original File owner: exact issue IDs -> human repair -> explicit saved export."""
+    e = interactive_env; value = spec(e)
+    value['nodes'][0]['choices'][0]['condition'] = 'unknown_flag'
+    row = create(e, value)
+    assert {'code': 'UNDEFINED_VARIABLE', 'node_id': e.nodes[0], 'choice_id': 'harbour'} in row['analysis']['issues']
+    assert not row['analysis']['can_review']
+    corrected = deepcopy(row['spec']); corrected['nodes'][0]['choices'][0]['condition'] = 'trusted'
+    corrected['nodes'][0]['dialogue'] = '人工修复🙂é'
+    saved = e.service.save(e.nid, e.scope, 'author', row['id'], {'expected_version': row['version'], 'spec': corrected})
+    assert saved['spec']['graph_id'] == row['spec']['graph_id'] and saved['spec']['graph_version'] == row['spec']['graph_version']
+    assert [(n['node_id'], n['node_version']) for n in saved['spec']['nodes']] == [(n['node_id'], n['node_version']) for n in row['spec']['nodes']]
+    e.service = InteractiveStoryService(e.store, e.novels, e.chapters, e.planning, e.story_graph, e.assets)
+    reopened = e.service.story(e.nid, e.scope, 'author', row['id'])
+    assert reopened['spec'] == corrected and reopened['analysis']['can_review'] and reopened['status'] == 'DRAFT'
+    result = e.service.preview(e.nid, e.scope, 'author', row['id'], {'expected_version': reopened['version'], 'choices': ['harbour']})
+    assert result['status'] == 'ENDING' and result['variables']['courage'] == 2
+    history = e.service.revisions(e.nid, e.scope, 'author', row['id'], {'expected_version': reopened['version']})
+    assert history['items'][0]['spec'] == row['spec']
+    approved = approve(e, reopened)
+    preview = e.service.export_preview(e.nid, e.scope, 'author', row['id'], {'expected_version': approved['version']})
+    bundle = e.service.export(e.nid, e.scope, 'author', row['id'], {'expected_version': approved['version'], 'preview_digest': preview['preview_digest']})
+    with zipfile.ZipFile(io.BytesIO(base64.b64decode(bundle['content_base64']))) as archive:
+        name = next(n for n in archive.namelist() if n.endswith('/story.json') and '/godot/' not in n)
+        exported = json.loads(archive.read(name))
+        assert exported['adaptation_version'] == approved['version']
+        assert exported['spec']['nodes'][0]['dialogue'] == '人工修复🙂é'
+    assert bundle['target_runtime'] == 'NOT_RUN' and not bundle['published']

@@ -4,7 +4,7 @@ import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
 import { InteractiveStoryHistory } from './InteractiveStoryHistory';
 import { InteractiveStoryPreview } from './InteractiveStoryPreview';
-import { interactiveStoryClient, type InteractiveStory, type StoryAnalysis, type StoryCatalog, type StoryExportPreview, type StoryNode, type StoryReviewPreview, type StoryRefreshPreview, type StorySpec, type StoryVariable } from './interactiveStoryClient';
+import { interactiveStoryClient, type InteractiveStory, type StoryCatalog, type StoryExportPreview, type StoryIssue, type StoryNode, type StoryReviewPreview, type StoryRefreshPreview, type StorySpec, type StoryVariable } from './interactiveStoryClient';
 import './interactiveStory.css';
 let instance = 0;
 export function InteractiveStoryPanel({ client }: { client: ExperimentalClient }) {
@@ -42,7 +42,6 @@ function StoryBody({ client }: { client: ExperimentalClient }) {
     {story.status === 'ARCHIVED' && <Button disabled={action.busy || story.stale} onClick={() => perform(() => api.review(story, 'restore'), '改编恢复为待审草稿。')}>恢复互动改编</Button>}
   </Panel>
   {!story.stale && story.spec && catalog.data && <><StoryEditor key={`editor:${story.id}:${story.version}`} story={story} catalog={catalog.data} busy={action.busy} onDirty={setDirty} onSave={spec => perform(() => api.save(story, spec), '互动草稿已保存，需要重新审核。')} />
-    {story.analysis && <Analysis analysis={story.analysis} />}
     <InteractiveStoryHistory key={`history:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
     <InteractiveStoryPreview api={api} story={story} blocked={dirty || action.busy} />
     <StoryApproval key={`approval:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
@@ -50,26 +49,68 @@ function StoryBody({ client }: { client: ExperimentalClient }) {
   </>}
   </section>;
 }
-function Analysis({ analysis }: { analysis: StoryAnalysis }) {
-  return <Panel title="路径与变量检查"><StatusMessage tone={analysis.can_review ? 'success' : 'warning'}>已检查 {analysis.states_checked} 个状态；发现 {analysis.endings.length} 个可达结局；步数上限 {analysis.max_steps}。{analysis.analysis_complete ? '有限状态搜索完成。' : '达到分析边界，不能据此批准导出。'}</StatusMessage>
-    {analysis.issues.map((issue, i) => <p key={i}>需修复：{issue.code}{issue.node_id ? ` · 节点 ${issue.node_id}` : ''}</p>)}{analysis.warnings.map((issue, i) => <p key={i}>提醒：{issue.code} · {issue.node_id}</p>)}
-    {analysis.endings.map(e => <p key={e.node_id}>可验证结局：{e.ending} · {e.choices.length} 次选择</p>)}<p>循环会被报告并受运行步数限制；这是有界检查，不是所有可能故事的无限证明。</p>
+function issueNodeIndex(spec: StorySpec, issue: StoryIssue, removedChoices: ReadonlySet<string>): number {
+  if (typeof issue.node_id !== 'string' || !issue.node_id.trim()) return -1;
+  const matches = spec.nodes.flatMap((node, index) => node.node_id === issue.node_id ? [index] : []);
+  if (matches.length !== 1) return -1;
+  if ('choice_id' in issue && (removedChoices.has(JSON.stringify([issue.node_id, issue.choice_id])) || typeof issue.choice_id !== 'string' || !issue.choice_id.trim() || spec.nodes[matches[0]].choices.filter(choice => choice.id === issue.choice_id).length !== 1)) return -1;
+  return matches[0];
+}
+function Analysis({ story, spec, removedChoices, dirty, blocked, onLocate }: { story: InteractiveStory; spec: StorySpec; removedChoices: ReadonlySet<string>; dirty: boolean; blocked: boolean; onLocate: (issue: StoryIssue) => void }) {
+  const analysis = story.analysis!;
+  const [page, setPage] = useState(0);
+  const rows = [...analysis.issues.map(issue => ({ issue, label: '需修复' })), ...analysis.warnings.map(issue => ({ issue, label: '提醒' }))];
+  const pages = Math.max(1, Math.ceil(rows.length / 20));
+  return <Panel title="路径与变量检查"><p>检查来源：互动版本 v{story.version} · 原规划 {story.spec!.graph_id} v{story.spec!.graph_version}。定位只切换当前编辑节点，不保存或修改内容。</p>
+    {dirty && <StatusMessage tone="warning">以下是已保存版本的检查结果，未包含当前未保存输入。请保存后重新核对；定位会保留输入。</StatusMessage>}
+    <StatusMessage tone={analysis.can_review ? 'success' : 'warning'}>已检查 {analysis.states_checked} 个状态；发现 {analysis.endings.length} 个可达结局；步数上限 {analysis.max_steps}。{analysis.analysis_complete ? '有限状态搜索完成。' : '达到分析边界，不能据此批准导出。'}</StatusMessage>
+    {rows.slice(page * 20, (page + 1) * 20).map(({ issue, label }, i) => {
+      const available = issueNodeIndex(spec, issue, removedChoices) >= 0;
+      return <div key={page * 20 + i} className="experimental-record"><p>{label}：{issue.code}{issue.node_id ? ` · 节点 ${issue.node_id}` : ''}{issue.choice_id ? ` · 选择 ${issue.choice_id}` : ''}</p>
+        {issue.node_id && <><Button disabled={blocked || !available} onClick={() => onLocate(issue)} aria-label={`定位 ${issue.code} 节点 ${issue.node_id}${issue.choice_id ? ` 选择 ${issue.choice_id}` : ''}`}>定位原互动{issue.choice_id ? '选择' : '节点'}</Button>{!available && <p>当前草稿中没有唯一且未被替换的对应节点或选择，无法定位。</p>}</>}
+      </div>;
+    })}
+    {pages > 1 && <div className="experimental-actions"><Button disabled={page === 0} onClick={() => setPage(p => p - 1)}>上一页路径问题</Button><span>路径问题第 {page + 1} / {pages} 页</span><Button disabled={page + 1 >= pages} onClick={() => setPage(p => p + 1)}>下一页路径问题</Button></div>}
+    {analysis.endings.map(e => <p key={e.node_id}>可验证结局：{e.ending} · {e.choices.length} 次选择</p>)}<p>循环提醒不等于非法故事；无法到达结局或变量条件无出口需要修复。循环受运行步数限制；这是有界检查，不是所有可能故事的无限证明。</p>
   </Panel>;
 }
 function StoryEditor({ story, catalog, busy, onDirty, onSave }: { story: InteractiveStory; catalog: StoryCatalog; busy: boolean; onDirty: (value: boolean) => void; onSave: (spec: StorySpec) => void }) {
   const [spec, setSpec] = useState<StorySpec>(() => structuredClone(story.spec!)), [index, setIndex] = useState(0), [dirty, setDirty] = useState(false);
   const [name, setName] = useState(''), [kind, setKind] = useState<'bool' | 'int'>('bool'), [initial, setInitial] = useState('false'), [minimum, setMinimum] = useState(0), [maximum, setMaximum] = useState(100);
+  const titleInput = useRef<HTMLInputElement>(null), choiceInputs = useRef(new Map<string, HTMLInputElement>());
+  const [focusTarget, setFocusTarget] = useState<StoryIssue>();
+  const removedChoices = useRef(new Set<string>());
+  const composing = useRef(false); const [compositionActive, setCompositionActive] = useState(false);
   const node = spec.nodes[index]; const blocked = busy || story.status === 'ARCHIVED';
+  useEffect(() => {
+    if (!focusTarget || blocked || composing.current || node.node_id !== focusTarget.node_id) return;
+    const input = focusTarget.choice_id ? choiceInputs.current.get(focusTarget.choice_id) : titleInput.current;
+    input?.focus(); setFocusTarget(undefined);
+  }, [focusTarget, index, blocked, node.node_id]);
+  const liveEditor = useRef({ spec, blocked }); liveEditor.current = { spec, blocked };
+  const locate = (issue: StoryIssue) => {
+    const { spec: current, blocked: unavailable } = liveEditor.current;
+    if (unavailable || composing.current) return;
+    const targetIndex = issueNodeIndex(current, issue, removedChoices.current);
+    if (targetIndex < 0) return;
+    setIndex(targetIndex); setFocusTarget({ ...issue });
+  };
   useEffect(() => { if (!dirty) return; const guard = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; }; window.addEventListener('beforeunload', guard); return () => window.removeEventListener('beforeunload', guard); }, [dirty]);
-  const change = (value: StorySpec) => { setSpec(value); setDirty(true); onDirty(true); };
+  const change = (value: StorySpec) => {
+    // The original editor can reuse a removed choice ID. A saved issue must not
+    // silently navigate to that replacement before save and owner reanalysis.
+    for (const oldNode of spec.nodes) for (const choice of oldNode.choices) {
+      if (!value.nodes.find(n => n.node_id === oldNode.node_id)?.choices.some(c => c.id === choice.id)) removedChoices.current.add(JSON.stringify([oldNode.node_id, choice.id]));
+    }
+    setSpec(value); setDirty(true); onDirty(true); };
   const edit = (patch: Partial<StoryNode>) => change({ ...spec, nodes: spec.nodes.map((n, i) => i === index ? { ...n, ...patch } : n) });
   const variables = spec.variables;
-  return <Panel title="互动节点编辑"><fieldset disabled={blocked}>
+  return <><Panel title="互动节点编辑"><fieldset disabled={blocked} onCompositionStartCapture={() => { composing.current = true; setCompositionActive(true); setFocusTarget(undefined); }} onCompositionEndCapture={() => { composing.current = false; setCompositionActive(false); }}>
     <Field label="改编标题"><input value={spec.title} maxLength={160} onChange={e => change({ ...spec, title: e.target.value })} /></Field>
     <div className="experimental-grid"><Field label="故事入口节点"><select value={spec.entry_node_id} onChange={e => change({ ...spec, entry_node_id: e.target.value })}>{spec.nodes.map(n => <option key={n.node_id} value={n.node_id}>{n.title}</option>)}</select></Field><Field label="互动步数上限"><input type="number" min={1} max={128} value={spec.max_steps} onChange={e => change({ ...spec, max_steps: Number(e.target.value) })} /></Field></div>
-    <Field label="当前编辑节点"><select value={index} onChange={e => setIndex(Number(e.target.value))}>{spec.nodes.map((n, i) => <option key={n.node_id} value={i}>{n.title}</option>)}</select></Field>
+    <Field label="当前编辑节点"><select value={index} onChange={e => { setFocusTarget(undefined); setIndex(Number(e.target.value)); }}>{spec.nodes.map((n, i) => <option key={n.node_id} value={i}>{n.title}</option>)}</select></Field>
     <p>原节点 ID：{node.node_id} · v{node.node_version}</p>
-    <Field label="互动节点标题"><input value={node.title} maxLength={240} onChange={e => edit({ title: e.target.value })} /></Field>
+    <Field label="互动节点标题"><input ref={titleInput} value={node.title} maxLength={240} onChange={e => edit({ title: e.target.value })} /></Field>
     <Field label="对白或叙述"><textarea value={node.dialogue} maxLength={8000} onChange={e => edit({ dialogue: e.target.value })} /></Field>
     <div className="experimental-grid"><Field label="对白角色"><select value={node.character_id || ''} onChange={e => edit({ character_id: e.target.value || null })}><option value="">旁白</option>{catalog.characters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
     <Field label="背景资产引用"><select value={node.background_asset_id || ''} onChange={e => edit({ background_asset_id: e.target.value || null })}><option value="">无背景引用</option>{catalog.assets.filter(a => a.kind === 'image').map(a => <option key={a.id} value={a.id}>{a.label}</option>)}</select></Field>
@@ -78,7 +119,7 @@ function StoryEditor({ story, catalog, busy, onDirty, onSave }: { story: Interac
     {!!node.choices.length && <p>要改成结局，请先移除此节点的选择。</p>}
     {node.choices.map((choice, i) => <section className="experimental-record" key={choice.id} aria-label={`选择 ${i + 1}`}><Field label={`选择 ${i + 1} 文案`}><input value={choice.label} maxLength={240} onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, label: e.target.value } : c) })} /></Field>
       <Field label={`选择 ${i + 1} 目标`}><select value={choice.target} onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, target: e.target.value } : c) })}>{spec.nodes.map(n => <option key={n.node_id} value={n.node_id}>{n.title}</option>)}</select></Field>
-      <Field label={`选择 ${i + 1} 条件`}><input value={choice.condition} maxLength={240} placeholder="例如 courage >= 2 and trusted" onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, condition: e.target.value } : c) })} /></Field>
+      <Field label={`选择 ${i + 1} 条件`}><input ref={element => { if (element) choiceInputs.current.set(choice.id, element); else choiceInputs.current.delete(choice.id); }} value={choice.condition} maxLength={240} placeholder="例如 courage >= 2 and trusted" onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, condition: e.target.value } : c) })} /></Field>
       <p>仅允许 bool/int 变量、True/False、比较、and/or/not 和括号；不执行代码。留空为始终可选。</p>
       {variables.map(v => <div key={v.name}><label className="experimental-check"><input type="checkbox" checked={v.name in choice.assignments} onChange={e => { const assignments = { ...choice.assignments }; if (e.target.checked) assignments[v.name] = v.initial; else delete assignments[v.name]; edit({ choices: node.choices.map((c, j) => j === i ? { ...c, assignments } : c) }); }} />选择后设置 {v.name}</label>
         {v.name in choice.assignments && <Field label={`选择 ${i + 1} 设置 ${v.name}`}>{v.type === 'bool' ? <select value={String(choice.assignments[v.name])} onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, assignments: { ...c.assignments, [v.name]: e.target.value === 'true' } } : c) })}><option value="false">false</option><option value="true">true</option></select> : <input type="number" min={v.minimum} max={v.maximum} value={Number(choice.assignments[v.name])} onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, assignments: { ...c.assignments, [v.name]: Number(e.target.value) } } : c) })} />}</Field>}
@@ -91,8 +132,8 @@ function StoryEditor({ story, catalog, busy, onDirty, onSave }: { story: Interac
     {kind === 'int' && <><Field label="变量最小值"><input type="number" value={minimum} min={-10000} max={10000} onChange={e => setMinimum(Number(e.target.value))} /></Field><Field label="变量最大值"><input type="number" value={maximum} min={-10000} max={10000} onChange={e => setMaximum(Number(e.target.value))} /></Field></>}
     </div><Button disabled={!/^[a-z][a-z0-9_]{0,31}$/.test(name) || variables.some(v => v.name === name) || variables.length >= 16} onClick={() => { const variable: StoryVariable = { name, type: kind, initial: kind === 'bool' ? initial === 'true' : Number(initial), minimum, maximum }; change({ ...spec, variables: [...variables, variable] }); setName(''); }}>添加有界变量</Button>
     <fieldset><legend>关联已审核故事图谱记录（可选，不复制事实）</legend>{catalog.graph_records.map(r => <label className="experimental-check" key={r.id}><input type="checkbox" checked={spec.graph_record_ids.includes(r.id)} onChange={e => change({ ...spec, graph_record_ids: e.target.checked ? [...spec.graph_record_ids, r.id] : spec.graph_record_ids.filter(id => id !== r.id) })} />{r.title} · v{r.version}</label>)}</fieldset>
-    <div className="experimental-actions"><Button disabled={!dirty} onClick={() => onSave(spec)}>保存互动草稿</Button><Button disabled={!dirty} onClick={() => { setSpec(structuredClone(story.spec!)); setDirty(false); onDirty(false); }}>还原未保存输入</Button></div>
-    </fieldset></Panel>;
+    <div className="experimental-actions"><Button disabled={!dirty} onClick={() => onSave(spec)}>保存互动草稿</Button><Button disabled={!dirty} onClick={() => { removedChoices.current.clear(); setSpec(structuredClone(story.spec!)); setDirty(false); onDirty(false); }}>还原未保存输入</Button></div>
+    </fieldset></Panel>{story.analysis && <Analysis story={story} spec={spec} removedChoices={removedChoices.current} dirty={dirty} blocked={blocked || compositionActive} onLocate={locate} />}</>;
 }
 function StoryApproval({ api, story, blocked, perform }: { api: StoryApi; story: InteractiveStory; blocked: boolean; perform: (fn: () => Promise<InteractiveStory>, message: string) => void }) {
   const [review, setReview] = useState<StoryReviewPreview>(), [preview, setPreview] = useState<StoryExportPreview>(), [confirmed, setConfirmed] = useState(false);

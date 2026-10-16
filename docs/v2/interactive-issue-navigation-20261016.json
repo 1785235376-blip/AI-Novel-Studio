@@ -1,0 +1,144 @@
+{
+  "baseline_commit": "72b43bffd137d60b6215b10f048f3eefe3b1981b",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/InteractiveStoryPanel.test.tsx src/experimental/InteractiveStoryHistory.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T11:58:25.716041+00:00",
+      "finished_utc": "2026-10-16T11:58:28.933323+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "source_sha256": {
+        "frontend/src/experimental/InteractiveStoryPanel.tsx": "3e762f90137c48ed7fd9a64faeea53f85928e74a49d95fa8fbe84bbdb165e9a2",
+        "frontend/src/experimental/InteractiveStoryPanel.test.tsx": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+        "tests/test_r5_interactive_story.py": "f2f355c417f8c2def70afdb8dca4728ecd4773b9fec6215b0e362971de3d1414"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/interactive-navigation-reviewed-ui.log",
+      "log_sha256": "e5635ce1d7e49ce1c6224d382a8c7e207c6a3f70777c0d339c28ced7bcd164c6",
+      "receipt": "docs/delivery/v2-development/interactive-navigation-reviewed-ui.json",
+      "receipt_sha256": "eaaba7299ee94c0ce96203a1df84954681d9126569e781aa5f39e1bda3421477"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r5_interactive_story.py::test_manual_issue_repair_preserves_pins_reopens_and_exports[file]",
+        "tests/test_r5_interactive_story.py::test_path_analysis_detects_invalid_and_undefined[file-undefined-UNDEFINED_VARIABLE]",
+        "tests/test_r5_interactive_story.py::test_unreachable_cycle_no_exit_and_step_cap_are_explicit[file]",
+        "tests/test_r5_interactive_story.py::test_condition_blocks_forged_choice_and_ending_continuation[file]",
+        "tests/test_r5_interactive_story.py::test_state_explosion_is_bounded_and_cannot_approve_incomplete_analysis",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/interactive-navigation-final-file-public/tmp",
+        "-q"
+      ],
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/interactive-navigation-final-file-public/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/interactive-navigation-final-file-public/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/interactive-navigation-final-file-public/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/interactive-navigation-final-file-public/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/interactive-navigation-final-file-public/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/interactive-navigation-final-file-public/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/interactive-navigation-final-file-public/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/interactive-navigation-final-file-public/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "started_utc": "2026-10-16T11:58:48.675450+00:00",
+      "finished_utc": "2026-10-16T11:58:56.754440+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "source_sha256": {
+        "frontend/src/experimental/InteractiveStoryPanel.tsx": "3e762f90137c48ed7fd9a64faeea53f85928e74a49d95fa8fbe84bbdb165e9a2",
+        "frontend/src/experimental/InteractiveStoryPanel.test.tsx": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+        "tests/test_r5_interactive_story.py": "f2f355c417f8c2def70afdb8dca4728ecd4773b9fec6215b0e362971de3d1414"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/interactive-navigation-final-file-public.log",
+      "log_sha256": "d4521c852208b3b8e929275f4e04221485b8f453d32ac32f79e42350ac22300f",
+      "receipt": "docs/delivery/v2-development/interactive-navigation-final-file-public.json",
+      "receipt_sha256": "124c626fbedd6ead3fd640781645205a3c1db2bbaf924abf5ac54be174af37ee"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "isolated_environment": {},
+      "started_utc": "2026-10-16T11:59:24.832226+00:00",
+      "finished_utc": "2026-10-16T11:59:58.917395+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "source_sha256": {
+        "frontend/src/experimental/InteractiveStoryPanel.tsx": "3e762f90137c48ed7fd9a64faeea53f85928e74a49d95fa8fbe84bbdb165e9a2",
+        "frontend/src/experimental/InteractiveStoryPanel.test.tsx": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+        "tests/test_r5_interactive_story.py": "f2f355c417f8c2def70afdb8dca4728ecd4773b9fec6215b0e362971de3d1414"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/interactive-navigation-final-build.log",
+      "log_sha256": "80a70fd2be55da2f5fe74d9dd4bf81376fd868adc7097f9a7a51e02b35dab621",
+      "receipt": "docs/delivery/v2-development/interactive-navigation-final-build.json",
+      "receipt_sha256": "85d9cbbec3ee36efdfeb9f27dc8703c7a1a8a49ffd21aa5b4d33c486c6e9b78a"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-c",
+        "import pathlib,re; p=pathlib.Path(\"frontend/src/experimental/InteractiveStoryPanel.tsx\"); assert not re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",p.read_text(),re.I); print(\"Scoped token guard PASS\")"
+      ],
+      "isolated_environment": {},
+      "started_utc": "2026-10-16T11:59:26.289308+00:00",
+      "finished_utc": "2026-10-16T11:59:26.324051+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "source_sha256": {
+        "frontend/src/experimental/InteractiveStoryPanel.tsx": "3e762f90137c48ed7fd9a64faeea53f85928e74a49d95fa8fbe84bbdb165e9a2",
+        "frontend/src/experimental/InteractiveStoryPanel.test.tsx": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+        "tests/test_r5_interactive_story.py": "f2f355c417f8c2def70afdb8dca4728ecd4773b9fec6215b0e362971de3d1414"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/interactive-navigation-token.log",
+      "log_sha256": "0f60413763c866e35019437c33d233ca2415617df3bce60da78ae15ab1607a63",
+      "receipt": "docs/delivery/v2-development/interactive-navigation-token.json",
+      "receipt_sha256": "60a59253c7b38e5d0d9d8c81df09bd63d1846142c56e9e744078b6e4827a7432"
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/experimental/InteractiveStoryPanel.tsx": "3e762f90137c48ed7fd9a64faeea53f85928e74a49d95fa8fbe84bbdb165e9a2",
+    "frontend/src/experimental/InteractiveStoryPanel.test.tsx": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+    "tests/test_r5_interactive_story.py": "f2f355c417f8c2def70afdb8dca4728ecd4773b9fec6215b0e362971de3d1414"
+  },
+  "mock_ui_checks": 24,
+  "nonsecurity_file_fixture_checks": 4,
+  "pure_checks": 1,
+  "public_checks": 30,
+  "public_source_closure_files": 487,
+  "browser_native_visual_http": "NOT_RUN",
+  "renpy_godot_target_runtime": "NOT_RUN",
+  "windows_gpu_provider_full_rc": "NOT_RUN",
+  "postgres_p0": "BLOCKED_NOT_RUN",
+  "push_hosted_ci": "NOT_RUN_COST_UNKNOWN",
+  "independent_review": "Composition, malformed choice references and removed/reused choice identity were fixed. 27 combined independent UI cases passed; final SHA review pending.",
+  "superseded_receipts": [
+    "docs/delivery/v2-development/interactive-navigation-file-public.json",
+    "docs/delivery/v2-development/interactive-navigation-ui.json",
+    "docs/delivery/v2-development/interactive-navigation-final-ui.json",
+    "docs/delivery/v2-development/interactive-navigation-build.json"
+  ],
+  "limits": "B07 PARTIAL; saved-snapshot navigation only. Original save, source pins, bounded analysis/replay, human review/export, permissions and import execution contracts unchanged."
+}
