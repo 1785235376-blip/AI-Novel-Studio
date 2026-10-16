@@ -149,7 +149,9 @@ export type StudioGraphScope = { mode: 'local'; novel_id: string }
   | { mode: 'collaboration'; novel_id: string; workspace_id: string; storyline_id: string; branch_id: string };
 export type StudioGraphOwner = { project_id: string; scope: StudioGraphScope };
 export type StudioGraphReferenceState = { node_id: string; state: 'CURRENT' | 'STALE' | 'UNAVAILABLE' };
+export type StudioGraphCapacity = { history_used: number; history_limit: 20 | 80; record_bytes: number; record_limit_bytes: 2000000 };
 export type StudioGraphRecord = StudioGraphOwner & {
+  capacity?: StudioGraphCapacity;
   id: string;
   version: number;
   definition: StudioGraphDefinition;

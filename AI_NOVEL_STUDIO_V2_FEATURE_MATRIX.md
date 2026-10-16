@@ -2128,3 +2128,29 @@ Final display-note verification: **244 passed / 5 frontend files** under indepen
 review; **87 passed / 4 PostgreSQL cases deselected** in the final unchanged-source
 File receipt. The cap is for persisted text display notes only; all original
 execution, canonical-byte, history and scope limits remain unchanged.
+
+### 2026-10-16 — original graph capacity and explicit independent drafts (local only)
+
+Original graph views now expose exact current stored-record history usage/limit
+(20 or 80 by the original schema policy) and canonical bytes against the unchanged
+2000000-byte record cap. Missing metadata is explicitly unknown. Usage is advisory;
+there is no forecast of future save space or promise that scope capacity remains.
+
+At full history or a known atomic quota refusal, author input remains editable.
+An explicit draft-bound confirmation can prepare the **full current definition**
+as an independent new graph draft, preserving notes, groups, view/camera and exact
+source references. Preparation performs no write. The existing Save/create owner
+and one request ID own persistence and uncertain-create retry/recovery. The old
+record/history remain unchanged; no run, model, pin refresh or approval is implied.
+Original STALE source labels remain visible and changed sources can refuse create.
+
+Verification: **146 focused frontend cases**, an independent distinct **141-case**
+selection, **64 mounted adjacent cases**, and **91 ordinary File cases with 10
+PostgreSQL cases deselected**. Final File sources are unchanged; typecheck, build
+and token guard pass. Exact selectors, initial test-matcher failures, full-draft
+quota→create/reopen evidence and limits are in
+`docs/delivery/v2-development/graph-capacity-continuation-20261016/README.md`.
+Browser, PostgreSQL, real-model and release acceptance are still separate. The
+adjacent internal proposal-review preservation fix is already independently
+recorded at `director-review-preservation-20261016`; the earlier open-gap note is
+historical to its preceding integration slice.

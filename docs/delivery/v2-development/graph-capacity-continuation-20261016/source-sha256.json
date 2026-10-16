@@ -1,0 +1,10 @@
+{
+  "app/creative/graph.py": "59feb956a83e2cc4aa039a5c0a9faa6ac961f00443a7e8e783bceb709b8b7d93",
+  "frontend/src/creative/studioGraphTypes.ts": "e3a45ac0a836e2d7f3e1975c0efda36311a2d37b924169f253029924a74baa38",
+  "frontend/src/creative/studioGraphClient.ts": "4c68b39c7ee1d8b09b35fb838785f85b5f27e89947c16f982a7821f7182a7dfc",
+  "frontend/src/creative/studioGraphClient.test.ts": "a250b74c3e409063b8aa008f687f0856efc03391058ccb9fb9e24168162489fd",
+  "frontend/src/creative/useStudioGraphEditorController.ts": "a0326188484fec955fb8ada9ea69a1ca989b03bcad068f692e8cd6628d447fab",
+  "frontend/src/creative/studioGraphEditorView.tsx": "6364681fe9c5ba5070b37509641f5e2b375a05a995ef9e47a04cb8132d2fb189",
+  "frontend/src/creative/StudioGraphCapacityContinuation.test.tsx": "38872f7615c3bd50b3367dd3882eb6c681f45d37519511e49738057b32b43413",
+  "tests/test_v2_graph_capacity_continuation.py": "2bd99d93ffca7cbfea0eceb47105a131f91fd9f8a0a86734a7f861ea651ff40e"
+}

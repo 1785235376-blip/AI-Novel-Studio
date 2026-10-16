@@ -1,0 +1,52 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (27 tests) 21686ms
+   ✓ independent studio graph content integration > captures a saved source, chooses another graph, reviews and pastes once with original save/reopen 1488ms
+   ✓ independent studio graph content integration > previews same-graph copies, invalidates edits, pastes once and saves/reopens through original history 1220ms
+   ✓ independent studio graph content integration > explicitly persists view preferences with one undo step and original save/reopen 1451ms
+   ✓ independent studio graph content integration > persists groups through original undo/save/reopen and inspector node deletion 1147ms
+   ✓ independent studio graph content integration > saves independent notes with original undo, redo, reopen and removal 945ms
+   ✓ independent studio graph content integration > saves/reopens graph annotation with original undo, redo, removal and no model dispatch 851ms
+   ✓ independent studio graph content integration > guards departure when only an independent note is unsaved 444ms
+   ✓ independent studio graph content integration > warns before leaving when only the graph annotation changed 399ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 638ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 445ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 793ms
+   ✓ independent studio graph content integration > applies layout over dirty author text with one undo step, saves the camera, and restores both on reopen 930ms
+   ✓ independent studio graph content integration > commits snapped drag once through original undo/save/reopen without persisting view settings 1096ms
+   ✓ independent studio graph content integration > applies selected alignment with one undo, preserves dirty text, and saves/reopens original positions 1085ms
+   ✓ independent studio graph content integration > saves MiniMap camera via original history while preserving dirty author text and reopens it 795ms
+   ✓ independent studio graph content integration > searches current nodes without dispatch, then saves/reopens explicit camera navigation with dirty text and exact pins 875ms
+   ✓ independent studio graph content integration > restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent 493ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 409, with explicit checked adoption only 1245ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 0, with explicit checked adoption only 1209ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 500, with explicit checked adoption only 1222ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 606ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 381ms
+   ✓ persists nested visual organization with undo, dirty leave warning, reopen and parent-node deletion promotion 1173ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (9 tests) 13619ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 1262ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 1379ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 1136ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 537ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 587ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 2384ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 732ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 1590ms
+   ✓ reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution 4011ms
+ ✓ src/creative/GraphRunPanel.test.tsx (19 tests) 613ms
+ ✓ src/creative/StudioVideoGraphEditor.phase4.test.tsx (4 tests) 3858ms
+   ✓ Explicit video Graph keeps saved shot and original execution authority > retains Image schema descriptors and author input while a Video catalog awaits consent 1246ms
+   ✓ Explicit video Graph keeps saved shot and original execution authority > adds exact current shot pins and video controls without starting a job 1814ms
+   ✓ Explicit video Graph keeps saved shot and original execution authority > ignores a late saved shot receipt after same-token Host replacement 795ms
+ ✓ src/creative/StudioImageGraphEditor.test.tsx (5 tests) 3357ms
+   ✓ image Graph authoring through original controller and mounted workspace > requires explicit catalog read then separate schema consent and never dispatches while authoring 768ms
+   ✓ image Graph authoring through original controller and mounted workspace > binds consent to the current draft and refuses to remove incompatible old nodes during upgrade 801ms
+   ✓ image Graph authoring through original controller and mounted workspace > saves weighted reference and prompt parameters through original actions with no arbitrary JSON or direct generation 1345ms
+
+ Test Files  5 passed (5)
+      Tests  64 passed (64)
+   Start at  06:11:14
+   Duration  49.77s (transform 1.95s, setup 35ms, collect 4.14s, tests 43.13s, environment 1.53s, prepare 277ms)
+

@@ -1,0 +1,1 @@
+frontend/src/creative/StudioGraphCapacityContinuation.test.tsx(69,34): error TS2339: Property 'toHaveBeenCalledExactlyOnceWith' does not exist on type 'Assertion<(value: StudioGraphCreateInput) => Promise<StudioGraphRecord>>'.

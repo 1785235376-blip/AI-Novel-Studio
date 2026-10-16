@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/studioGraphClient.test.ts (125 tests) 105ms
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 8ms
+ ✓ src/creative/StudioGraphCapacityContinuation.test.tsx (10 tests) 3596ms
+   ✓ original graph capacity and explicit independent draft preparation > shows server usage, keeps the full draft editable at history capacity and writes only on original Save 906ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_HISTORY_CAPACITY 351ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_SCOPE_CAPACITY 308ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_COLLECTION_CAPACITY 346ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps the full unsaved independent draft and request after a known create refusal 349ms
+   ✓ original graph capacity and explicit independent draft preparation > freezes an unknown create and recovers the exact base-null snapshot and request after remount 481ms
+
+ Test Files  3 passed (3)
+      Tests  141 passed (141)
+   Start at  06:09:39
+   Duration  6.03s (transform 1.06s, setup 29ms, collect 1.50s, tests 3.71s, environment 281ms, prepare 153ms)
+

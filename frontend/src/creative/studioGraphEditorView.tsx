@@ -112,8 +112,20 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <div className="studio-graph-actions"><Button disabled={busy || externalDirty || executionDirty} onClick={() => navigate(newGraph)}>新建空图</Button><Button disabled={loading || busy} onClick={() => void load()}>刷新创作图目录</Button></div>
       <label>已保存创作图<select aria-label="已保存创作图" disabled={busy || externalDirty || executionDirty} value={base?.id || ''} onChange={event => { const id = event.target.value; if (id) navigate(() => void open(id)); }}><option value="">未选择已保存图</option>{records.map(row => <option key={row.id} value={row.id}>{row.definition.title} · v{row.version}</option>)}</select></label>
       <label>创作图标题<input maxLength={160} value={draft.title} disabled={!editable} onChange={event => change({ ...draft, title: event.target.value })} /></label>
+      {base && <section aria-label="原图保存容量">
+        {base.capacity ? <><p>当前服务端记录：历史 {base.capacity.history_used} / {base.capacity.history_limit}；记录 {base.capacity.record_bytes} / {base.capacity.record_limit_bytes} 字节。</p>
+          <p>这是当前已保存记录的用量，不是下次保存的可用空间承诺；保存还会追加历史快照，范围总容量也由原服务核对。</p>
+          {controller.historyFull && <StatusMessage tone="warning">当前格式的历史配额已满。可继续保留和编辑草稿，或明确准备独立新图；不会删除旧历史。</StatusMessage>}</>
+          : <p>原服务未返回此记录的容量用量，剩余保存容量未知；请保留草稿，保存时由原服务核对。</p>}
+        <label><input type="checkbox" checked={controller.independentConfirmed} disabled={!editable || checking || timelineEditor.formDirty} onChange={event => controller.confirmIndependentGraph(event.target.checked)} />确认将完整当前草稿准备为独立新图，保留原图与历史</label>
+        <Button disabled={!editable || !controller.independentConfirmed || checking || timelineEditor.formDirty} onClick={controller.prepareIndependentGraph}>准备独立新图草稿</Button>
+        <p>保留节点、连接、便笺、分组、视图和原版本引用。此操作尚不写入；新图没有旧图运行或审核回执，明确保存时仍需重新核对来源与容量。</p>
+      </section>}
+      {controller.independentOrigin && <section aria-label="独立新图来源上下文"><p>原图 {controller.independentOrigin.title} · {controller.independentOrigin.id} · v{controller.independentOrigin.version}。当前是独立新图，不是原图的继续版本。</p>
+        {controller.independentOrigin.references.map(row => <p key={row.node_id}>原图读取时绑定 {row.node_id}：{row.state}；未自动更新或批准。</p>)}
+        <Button disabled={busy || externalDirty || executionDirty} onClick={() => navigate(() => void open(controller.independentOrigin!.id))}>返回原图（保留原历史）</Button></section>}
       <Badge tone={dirty || blocked ? 'warning' : 'neutral'}>{base ? `v${base.version}` : '尚未保存'} · {dirty ? '未保存修改' : '无未保存修改'}</Badge>
-      <div className="studio-graph-actions"><Button variant="primary" disabled={!editable || !draft.title.trim() || !!base && !dirty} onClick={() => void save()}>保存创作图</Button><Button disabled={!editable || !past.length} onClick={() => travel(false)}>撤销图编辑</Button><Button disabled={!editable || !future.length} onClick={() => travel(true)}>重做图编辑</Button><Button disabled={busy || !base} onClick={() => navigate(() => void open(base!.id))}>重新读取创作图</Button></div>
+      <div className="studio-graph-actions"><Button variant="primary" disabled={!editable || controller.historyFull || !draft.title.trim() || !!base && !dirty} onClick={() => void save()}>保存创作图</Button><Button disabled={!editable || !past.length} onClick={() => travel(false)}>撤销图编辑</Button><Button disabled={!editable || !future.length} onClick={() => travel(true)}>重做图编辑</Button><Button disabled={busy || !base} onClick={() => navigate(() => void open(base!.id))}>重新读取创作图</Button></div>
     </Panel>
     {loading && <StatusMessage>正在读取当前范围的节点目录…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {externalDirty && <StatusMessage tone="warning">请先保存或处理导演／资产／偏好输入，再修改创作图。</StatusMessage>}

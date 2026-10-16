@@ -57,6 +57,16 @@ beforeEach(() => { fetchMock = vi.fn().mockResolvedValue(reply(graph())); vi.stu
 afterEach(() => { vi.unstubAllGlobals(); useLocalHostSession.setState({ token: '', actorId: '' }); });
 
 describe('scoped graph transport', () => {
+  it('accepts exact optional original capacity metadata and leaves legacy unknown', async () => {
+    const client = studioClient(projectId, context()).graphs;
+    expect(await client.get(graphId)).not.toHaveProperty('capacity');
+    const original = { ...graph(), capacity: { history_used: 2, history_limit: 20, record_bytes: 12345, record_limit_bytes: 2000000 } };
+    fetchMock.mockResolvedValue(reply(original)); expect((await client.get(graphId)).capacity).toEqual(original.capacity);
+  });
+  it.each([{ history_used: -1 }, { history_used: 21 }, { history_limit: 80 }, { record_bytes: 2000001 }, { record_limit_bytes: 3000000 }, { unexpected: true }])('rejects malformed original capacity %j', patch => {
+    fetchMock.mockResolvedValue(reply({ ...graph(), capacity: { history_used: 2, history_limit: 20, record_bytes: 12345, record_limit_bytes: 2000000, ...patch } }));
+    return expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toThrow();
+  });
   it.each([1, 2, 3, 4, 5] as const)('roundtrips optional presentation through original transport schema %s', async schema_version => {
     const original = graph(); original.definition = { ...definition(), schema_version, nodes: [], edges: [] };
     fetchMock.mockResolvedValue(reply(original));

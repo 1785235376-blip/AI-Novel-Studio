@@ -1,3 +1,4 @@
+import { checkedStudioGraphDraft } from './studioGraphClient';
 import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';
 import { autoLayout } from '../canvasops/canvasOps';
 import type { GraphDirectorSource } from './GraphDirectorConsole';
@@ -43,6 +44,8 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const [copySource, setCopySource] = useState<{ identity: string; client: StudioClient; record: StudioGraphRecord; selected: string[]; sourceEpoch: number }>();
   const [crossPreview, setCrossPreview] = useState<{ source: NonNullable<typeof copySource>; target: StudioGraphRecord; epoch: number; previewEpoch: number; draft: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
   const copySourceEpoch = useRef(0), crossCopyEpoch = useRef(0);
+  const [independentConsent, setIndependentConsent] = useState('');
+  const [independentOrigin, setIndependentOrigin] = useState<{ identity: string; client: StudioClient; id: string; title: string; version: number; references: StudioGraphRecord['reference_states'] }>();
   const [past, setPast] = useState<StudioGraphDefinition[]>([]), [future, setFuture] = useState<StudioGraphDefinition[]>([]);
   const [loading, setLoading] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [blocked, setBlocked] = useState(false);
   const [candidate, setCandidate] = useState<StudioGraphRecord>(), [replaceConsent, setReplaceConsent] = useState<string>(), [checking, setChecking] = useState(false);
@@ -93,6 +96,25 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     update: parameters => { const selectedNode = draftRef.current.nodes.find(row => row.id === selected[0]); if (selectedNode?.definition_id !== 'timeline_export') return;
       change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === selectedNode.id ? { ...row, parameters } : row) }); } });
   const dirty = !same(draft, base?.definition || blankGraph()) || timelineEditor.formDirty;
+  const independentKey = JSON.stringify([identity, base?.id, base?.version, draft]);
+  const independentConfirmed = independentConsent !== '' && independentConsent === independentKey;
+  const historyFull = !!base?.capacity && base.capacity.history_used >= base.capacity.history_limit
+    && draft.schema_version === base.definition.schema_version;
+  const visibleIndependentOrigin = active && !denied && current() && independentOrigin?.identity === identity && independentOrigin.client === client ? independentOrigin : undefined;
+  const confirmIndependentGraph = (checked: boolean) => { if (editable && current() && !locked()) setIndependentConsent(checked ? independentKey : ''); };
+  function prepareIndependentGraph() {
+    if (!active || !editable || !base || !independentConfirmed || !current() || locked() || checking || timelineEditor.formDirty || executionDirty || externalDirty) return;
+    try { checkedStudioGraphDraft(draftRef.current); } catch (reason) { setError(apiErrorView(reason, '当前完整草稿未通过原图校验，尚未准备新图。').message); return; }
+    const source = baseRef.current;
+    if (!source || source !== base || independentConsent !== JSON.stringify([identity, source.id, source.version, draftRef.current])) return;
+    const value = structuredClone(draftRef.current);
+    providerPicker.reset(); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate();
+    setIndependentOrigin({ identity, client, id: source.id, title: source.definition.title, version: source.version, references: structuredClone(source.reference_states) });
+    setIndependentConsent(''); setBase(undefined); setDraft(value); setSelected([]); setPast([]); setFuture([]); setBlocked(false);
+    setSourcePort(''); setTargetPort(''); setPendingNavigation(undefined); createRequest.current = graphId('graph'); reportSelection.current?.({});
+    setError(''); setNotice('已准备独立新图草稿，尚未写入。完整作者内容与原版本绑定保持；请明确保存，届时由原服务重新核对来源与容量。原图及历史未修改。');
+  }
+
   const replaceConfirmed = !!candidate && replaceConsent === candidateKey(candidate);
   const videoSchemaConfirmed = videoSchemaConsent !== '' && videoSchemaConsent === JSON.stringify(draft);
   const confirmVideoSchema = (value: boolean) => { if (editable && current() && !locked()) setVideoSchemaConsent(value ? JSON.stringify(draftRef.current) : ''); };
@@ -108,18 +130,18 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (current()) reportSelection.current?.({ graphId: baseRef.current?.id, runId });
   }, [current]);
   const accept = useCallback((record: StudioGraphRecord, restored = false) => {
-    timelineEditor.resetForm();
+    timelineEditor.resetForm(); setIndependentConsent(''); setIndependentOrigin(undefined);
     setMediaSchemaConsent(false);
     setImageSchemaConsent('');
     selectedEpoch.current++; invalidateCandidate(); setBase(record); setDraft(structuredClone(record.definition)); setPast([]); setFuture([]); setSelected([]); setBlocked(false); setSourcePort(''); setTargetPort('');
     setRecords(rows => [...rows.filter(row => row.id !== record.id), record]); createRequest.current = graphId('graph');
     if (!restored) reportSelection.current?.({ graphId: record.id });
   }, [invalidateCandidate]);
-  const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; providerPicker.reset(); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty, timelineEditor.clearForm]);
+  const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; setIndependentConsent(''); setIndependentOrigin(undefined); providerPicker.reset(); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty, timelineEditor.clearForm]);
   useEffect(() => { alive.current = true; return () => { alive.current = false; selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; candidateEpoch.current++; candidateRequest.current?.abort(); }; }, []);
   useEffect(() => { shotEpoch.current++; setShotReceipt(undefined); setShotChoice(''); setShotParent(''); setVideoSchemaConsent(''); planningEpoch.current++; setPlanningDocuments([]); setPlanningChoice(''); setPlanningLoading(false); setImageSchemaConsent(''); }, [identity, denied, canMutate, externalDirty, executionDirty]);
   useEffect(() => {
-    if (denied) { recoveryEpoch.current++; setLocalRecovery(undefined); setRecoveryBusy(false); setRecoveryError(''); timelineEditor.resetForm(); selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; invalidateCandidate(); setCatalog(undefined); setRecords([]); setBase(undefined); setDraft(blankGraph()); setPast([]); setFuture([]); setSelected([]); setAssets([]); setPreview(undefined); setPreviewState(undefined); setPendingNavigation(undefined); setMediaSchemaConsent(false); setExecutionDirty(false); setError(''); setNotice(''); }
+    if (denied) { setIndependentConsent(''); setIndependentOrigin(undefined); recoveryEpoch.current++; setLocalRecovery(undefined); setRecoveryBusy(false); setRecoveryError(''); timelineEditor.resetForm(); selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; invalidateCandidate(); setCatalog(undefined); setRecords([]); setBase(undefined); setDraft(blankGraph()); setPast([]); setFuture([]); setSelected([]); setAssets([]); setPreview(undefined); setPreviewState(undefined); setPendingNavigation(undefined); setMediaSchemaConsent(false); setExecutionDirty(false); setError(''); setNotice(''); }
   }, [denied, invalidateCandidate]);
 
   const load = useCallback(async () => {
@@ -246,7 +268,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     }); if (current() && epoch === selectedEpoch.current) { if (result.imageCatalog) { catalogEpoch.current++; setCatalog(result.imageCatalog); } accept(result.value); } }
     catch (value) { if (current() && epoch === selectedEpoch.current) setError(apiErrorView(value, '创作图读取失败，当前草稿未替换。').message); }
   }
-  function newGraph() { if (!current() || locked() || externalDirty || executionDirty) return; setCatalog(schemaCatalogs.current.get(1)); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setBase(undefined); setDraft(blankGraph()); setSelected([]); setPast([]); setFuture([]); setBlocked(false); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); reportSelection.current?.({}); }
+  function newGraph() { if (!current() || locked() || externalDirty || executionDirty) return; setIndependentConsent(''); setIndependentOrigin(undefined); setCatalog(schemaCatalogs.current.get(1)); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setBase(undefined); setDraft(blankGraph()); setSelected([]); setPast([]); setFuture([]); setBlocked(false); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); reportSelection.current?.({}); }
   function confirmNavigation() {
     if (!discardConfirmed || !pendingNavigation || !current() || locked() || externalDirty || executionDirty) return;
     const work = pendingNavigation; setPendingNavigation(undefined); setDiscardConfirmed(false); work();
@@ -257,12 +279,17 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   async function save(retry = false) {
     if ((!editable && !(retry && blocked && !base && canMutate && !busy && !externalDirty)) || timelineEditor.formDirty || executionDirty || locked() || !current() || !draft.title.trim()) return;
-    saving.current = true; setError(''); const epoch = selectedEpoch.current, value = structuredClone(draftRef.current), original = base, request = createRequest.current;
+    if (historyFull && !retry) { setError('当前服务端记录的历史配额已满。完整草稿仍保留，可明确准备独立新图后保存；原图历史不会删除。'); return; }
+    saving.current = true; setError(''); const originContext = visibleIndependentOrigin; const epoch = selectedEpoch.current, value = structuredClone(draftRef.current), original = base, request = createRequest.current;
     try {
       const saved = await mutate(() => original ? client.graphs.save(original.id, { expected_version: original.version, definition: value }) : client.graphs.create({ request_id: request, expected_version: 0, definition: value }));
-      if (current() && epoch === selectedEpoch.current) { accept(saved); setNotice(`创作图已保存 · v${saved.version}。没有自动创建运行。`); }
+      if (current() && epoch === selectedEpoch.current) { accept(saved); if (originContext) setIndependentOrigin(originContext); setNotice(originContext ? `独立新图已保存 · v${saved.version}。原图 ${originContext.id} 保持不变；没有创建运行。` : `创作图已保存 · v${saved.version}。没有自动创建运行。`); }
     } catch (value) {
-      if (current() && epoch === selectedEpoch.current) { setError(apiErrorView(value, '创作图未确认保存，输入已保留。').message); if (!(value instanceof ApiError) || value.status === 0 || value.status === 409 || value.status >= 500 || value.problem.code === 'STUDIO_RESPONSE_INVALID') setBlocked(true); }
+      if (current() && epoch === selectedEpoch.current) { const quota = value instanceof ApiError && value.status === 422 && value.problem.code === 'EXPERIMENTAL_INVALID'
+        ? ({ CREATIVE_GRAPH_HISTORY_CAPACITY: '原图历史数量或记录字节容量已满。草稿仍保留，可明确准备独立新图；原图历史不会删除。',
+          CREATIVE_GRAPH_SCOPE_CAPACITY: '当前范围的图与运行总容量已满。草稿仍保留；新图也受同一范围容量限制，不会自动重试。',
+          CREATIVE_GRAPH_COLLECTION_CAPACITY: '当前范围的图或运行数量已满。草稿仍保留；不能保证新图可保存，不会自动重试。' } as Record<string, string>)[value.problem.message] : undefined;
+        setError(quota || apiErrorView(value, '创作图未确认保存，输入已保留。').message); if (!(value instanceof ApiError) || value.status === 0 || value.status === 409 || value.status >= 500 || value.problem.code === 'STUDIO_RESPONSE_INVALID') setBlocked(true); }
     } finally { saving.current = false; }
   }
   async function checkServer() {
@@ -506,7 +533,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
         || fence.busy || fence.externalDirty || fence.executionDirty || !fence.canMutate || isBusy?.()
         || original !== JSON.stringify(draftRef.current)) return;
       if (localStorage.getItem(key) !== persistedDraftRaw.current) throw new Error('其他页面已更新本机图草稿，未替换当前输入；请重新打开后核对。');
-      timelineEditor.resetForm(); invalidateCandidate(); selectedEpoch.current++; setBase(record);
+      timelineEditor.resetForm(); setIndependentConsent(''); setIndependentOrigin(undefined); invalidateCandidate(); selectedEpoch.current++; setBase(record);
       draftRef.current = structuredClone(snapshot.definition); setDraft(draftRef.current); setSelected([]); setPast([]); setFuture([]);
       createRequest.current = snapshot.request_id; setBlocked(snapshot.uncertain); setSourcePort(''); setTargetPort('');
       setLocalRecovery(undefined); setRecoveryError(''); reportSelection.current?.({ graphId: record?.id });
@@ -542,6 +569,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     draftStorageNotice, draftSavedAt, draftOwnerCurrent, draftRecoverable, canRecoverDraft, recoverLocalDraft, discardLocalRecovery,
     providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true, automatic_video_dispatch: false } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
+    independentConfirmed, confirmIndependentGraph, prepareIndependentGraph, independentOrigin: visibleIndependentOrigin, historyFull,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,

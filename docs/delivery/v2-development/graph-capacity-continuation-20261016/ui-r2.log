@@ -1,0 +1,36 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/studioGraphClient.test.ts (125 tests) 139ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2397ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 780ms
+   ✓ mounted text graph autosave and explicit recovery > preserves a lost-create request identity and uncertainty across reload instead of replaying it 302ms
+ ❯ src/creative/StudioGraphCapacityContinuation.test.tsx (10 tests | 1 failed) 4000ms
+   × original graph capacity and explicit independent draft preparation > shows server usage, keeps the full draft editable at history capacity and writes only on original Save 814ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   ✓ original graph capacity and explicit independent draft preparation > distinguishes unavailable capacity from zero usage 301ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_HISTORY_CAPACITY 384ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_SCOPE_CAPACITY 333ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_COLLECTION_CAPACITY 426ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps the full unsaved independent draft and request after a known create refusal 417ms
+   ✓ original graph capacity and explicit independent draft preparation > freezes an unknown create and recovers the exact base-null snapshot and request after remount 595ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/StudioGraphCapacityContinuation.test.tsx > original graph capacity and explicit independent draft preparation > shows server usage, keeps the full draft editable at history capacity and writes only on original Save
+Error: Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+ ❯ src/creative/StudioGraphCapacityContinuation.test.tsx:69:32
+     67|     const request = cache().request_id;
+     68|     click('保存创作图'); await screen.findByText(/独立新图已保存 · v1/…
+     69|     expect(client.graphs.create).toHaveBeenCalledExactlyOnceWith({ req…
+       |                                ^
+     70|     expect(client.graphs.save).not.toHaveBeenCalled(); expect(client.g…
+     71|     expect(client.graphs.preflight).not.toHaveBeenCalled(); expect(cli…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 145 passed (146)
+   Start at  06:06:59
+   Duration  10.10s (transform 1.39s, setup 57ms, collect 2.21s, tests 6.54s, environment 686ms, prepare 183ms)
+

@@ -165,6 +165,11 @@ class CreativeGraphService:
             if node["id"] in denied:
                 node["parameters"] = {}
         public.update(can_edit=not denied, reference_states=states)
+        if not denied:
+            # Advisory metadata from this exact owned stored record, not a
+            # prediction of a future save (which also appends a snapshot).
+            public["capacity"] = {"history_used": len(row["history"]), "history_limit": history_limit(row),
+                "record_bytes": len(canonical(row).encode()), "record_limit_bytes": MAX_RECORD_BYTES}
         public.update(project_id=nid, scope=deepcopy(scope))
         guard()
         return public

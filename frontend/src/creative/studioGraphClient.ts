@@ -852,6 +852,14 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       definition_digest: digest(row.definition_digest), execution_digest: digest(row.execution_digest),
       created_at: text(row.created_at, 64), updated_at: text(row.updated_at, 64), can_edit: canEdit && unavailable.size === 0,
       reference_states: referenceStates };
+    if (row.capacity !== undefined) {
+      const capacity = record(row.capacity), limit = checkedDefinition.schema_version >= 3 ? 80 : 20;
+      if (Object.keys(capacity).length !== 4 || Object.keys(capacity).some(key => !['history_used', 'history_limit', 'record_bytes', 'record_limit_bytes'].includes(key))
+        || capacity.history_limit !== limit || capacity.record_limit_bytes !== 2000000) invalid();
+      const checked = { history_used: integer(capacity.history_used, 0, limit), history_limit: limit as 20 | 80,
+        record_bytes: integer(capacity.record_bytes, 1, 2000000), record_limit_bytes: 2000000 as const };
+      if (result.can_edit) result.capacity = checked;
+    }
     return result;
   }
   function rememberGraph(value: StudioGraphRecord): StudioGraphRecord {
