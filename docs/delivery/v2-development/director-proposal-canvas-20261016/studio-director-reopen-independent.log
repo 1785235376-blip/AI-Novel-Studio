@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/AIDirectorPanel.test.tsx (12 tests) 745ms
+ ✓ src/creative/AIDirectorReopen.test.tsx (26 tests) 1297ms
+
+ Test Files  2 passed (2)
+      Tests  38 passed (38)
+   Start at  05:38:11
+   Duration  3.75s (transform 308ms, setup 28ms, collect 683ms, tests 2.04s, environment 590ms, prepare 124ms)
+

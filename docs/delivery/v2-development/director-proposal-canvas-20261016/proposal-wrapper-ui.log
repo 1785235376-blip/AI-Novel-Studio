@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 171ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  05:38:10
+   Duration  998ms (transform 161ms, setup 26ms, collect 246ms, tests 171ms, environment 317ms, prepare 70ms)
+

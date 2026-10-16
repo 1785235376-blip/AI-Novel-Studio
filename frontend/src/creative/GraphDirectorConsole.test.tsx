@@ -63,6 +63,20 @@ describe('optional mounted graph director source authoring', () => {
     expect((screen.getByRole('button', { name: '保存草稿' }) as HTMLButtonElement).disabled).toBe(true);
   });
 
+  it('labels only its own save operation as saving while original reads remain disabled reads', async () => {
+    const { client, props } = setup(); let readDone!: (value: Awaited<ReturnType<GraphDirectorSource['export']>>) => void;
+    vi.mocked(client.export).mockReturnValue(new Promise(resolve => { readDone = resolve; }));
+    render(<GraphDirectorConsole {...props} pin={pin} />); await open(); click('读取选中导演节点原文档');
+    expect(screen.queryByRole('button', { name: '保存中…' })).toBeNull();
+    expect((screen.getByRole('button', { name: '保存草稿' }) as HTMLButtonElement).disabled).toBe(true);
+    await act(async () => readDone({ document: document(), document_digest: pin.digest, format: '', boundary: '' }));
+    change('文档标题', '明确保存操作'); let saveDone!: (value: CreativeDocument) => void;
+    vi.mocked(client.update).mockReturnValue(new Promise(resolve => { saveDone = resolve; })); click('保存草稿');
+    expect(screen.getByRole('button', { name: '保存中…' })).toBeTruthy();
+    await act(async () => saveDone({ ...document(2), title: '明确保存操作' }));
+    expect(screen.queryByRole('button', { name: '保存中…' })).toBeNull();
+  });
+
   it('does no background reads, saves authored scenes through original owner and reopens exact source', async () => {
     const { client, props } = setup(); const view = render(<GraphDirectorConsole {...props} />);
     expect(client.capabilities).not.toHaveBeenCalled(); expect(client.export).not.toHaveBeenCalled(); await open();

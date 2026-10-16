@@ -2057,3 +2057,37 @@ historical evidence. No timeout was relaxed, failure suite hidden, or whole-suit
 Browser/AT, Windows/device, GPU/model and blocked security/lifecycle limits remain open.
 Stage 11+ publication is still blocked and was not retried. Details and commands are appended
 in `docs/delivery/v2-development/dot-usability-20261015.md`; this is not V2/release acceptance.
+
+### 2026-10-16 — original director proposal/canvas loop (local integration)
+
+The isolated merge preserves local canvas/director history together with Codex
+`a072cf9` navigation, save-state and source-pinned read-only director behavior.
+The optional editable console now explicitly opens saved SCREENPLAY sources and
+the original proposal/review panel. Human acceptance produces an original separate
+DIRECTOR DRAFT; the graph remains unchanged until explicit original-document
+verification, exact version/digest node selection and graph save. A fresh panel can
+re-read an accepted proposal and open its exact linked draft with source checks.
+No parallel proposal store, automatic binding or execution was introduced.
+
+Final ordinary File selection: **94 passed / 13 PostgreSQL cases deselected**,
+including actual proposal acceptance, reconstructed-service draft/graph reopen,
+CURRENT pin evidence and changed-source refusal. No sources changed during the
+check. Wider frontend selection: **2233 passed / 117 files**, plus separately
+recorded independent graph/wrapper **18 passed / 2 files** at unchanged timeout;
+counts are not a whole-product
+acceptance total. Typecheck, Vite build and 52-file UI token guard pass. The earlier
+inherited refresh failure is repaired without weakening its original assertions.
+
+The independent long mounted graph case exceeded its default five-second budget
+under simultaneous build/test load; the failed receipt and subsequent clear-load
+result are retained separately. Initial new-test selector/spy typing failures are
+also preserved. Details, exact source hashes and final results are in
+`docs/delivery/v2-development/director-proposal-canvas-20261016/README.md`.
+
+Rule-assisted demo evidence proves workflow, not live model quality. Optional
+model controls retain existing consent and local/zero-cost guards. STORYBOARD
+proposal input is not claimed. Internal proposal-queue navigation can still discard
+review edits; its explicit-discard/read-then-adopt correction is a separate next
+slice. Browser, PostgreSQL, real-model/GPU and release acceptance remain open.
+The prior blocked lifecycle/security candidate was not run or modified; production
+prompt-adoption writes remain disabled. No push, hosted CI or publication occurred.

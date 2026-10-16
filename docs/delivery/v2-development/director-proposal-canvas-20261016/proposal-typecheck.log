@@ -1,0 +1,3 @@
+frontend/src/creative/AIDirectorReopen.test.tsx(53,14): error TS18048: 'init' is possibly 'undefined'.
+frontend/src/creative/AIDirectorReopen.test.tsx(54,14): error TS18048: 'init' is possibly 'undefined'.
+frontend/src/creative/AIDirectorReopen.test.tsx(96,53): error TS18048: 'init' is possibly 'undefined'.

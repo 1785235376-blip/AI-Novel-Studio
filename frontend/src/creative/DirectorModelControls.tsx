@@ -3,7 +3,7 @@ import { ApiError } from '../api';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import { CreativeField } from './CreativeCanvas';
 import type { CreativeClient, DirectorModelRoute, DirectorProposal } from './client';
-export function DirectorModelControls({ client, proposal, disabled, run, onUpdate }: { client: CreativeClient; proposal: DirectorProposal; disabled: boolean; run: (action: () => Promise<void>) => Promise<void>; onUpdate: (proposal: DirectorProposal) => void }) {
+export function DirectorModelControls({ client, proposal, disabled, run, onUpdate }: { client: Pick<CreativeClient, 'modelRoutes' | 'previewModel' | 'dispatchModel' | 'refreshModel' | 'cancelProposal'>; proposal: DirectorProposal; disabled: boolean; run: (action: () => Promise<void>) => Promise<void>; onUpdate: (proposal: DirectorProposal) => void }) {
   const [routes, setRoutes] = useState<DirectorModelRoute[]>([]), [routeId, setRouteId] = useState(''), [loading, setLoading] = useState(true), [error, setError] = useState(''), [reviewed, setReviewed] = useState(false), [unauthorized, setUnauthorized] = useState(false);
   const preview = proposal.model_preview, execution = proposal.model_execution;
   useEffect(() => { const controller = new AbortController(); setLoading(true); client.modelRoutes(controller.signal).then(value => { if (!controller.signal.aborted) { setRoutes(value.items); setError(''); } }).catch(value => { if (!controller.signal.aborted) { setError('本地模型路由尚不可用。可以继续审核规则辅助建议。'); if (value instanceof ApiError && [401, 403].includes(value.status)) { setUnauthorized(true); setRoutes([]); setReviewed(false); } } }).finally(() => { if (!controller.signal.aborted) setLoading(false); }); return () => controller.abort(); }, [client]);

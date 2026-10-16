@@ -20,6 +20,7 @@ export type StudioGraphEditorSelection = { graphId?: string; runId?: string };
 export type StudioGraphEditorProps = {
   active: boolean; denied: boolean; identity: string; client: StudioClient; canMutate: boolean; canReview: boolean;
   directorSource?: GraphDirectorSource;
+  onOpenModels?: () => void;
   providerSource?: Pick<StudioProductionClient, 'providers'>;
   busy: boolean; externalDirty: boolean; isCurrent: () => boolean;
   read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;

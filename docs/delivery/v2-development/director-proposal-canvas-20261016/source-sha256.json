@@ -1,0 +1,16 @@
+{
+  "frontend/src/creative/AIDirectorPanel.tsx": "bb7e63a5bf1d5dc4f50e08aa06e4598e25168ff71b36fe034d66251f4e857f86",
+  "frontend/src/creative/AIDirectorReopen.test.tsx": "ac9728406020a6f6414a87cd7a42dc535ba983b4d305dc0cdc1499adebe722ff",
+  "frontend/src/creative/DirectorModelControls.tsx": "88917d64ef2c40d9c85921a807b9015e72134ccd737d7ec0b40d26f41a067b00",
+  "frontend/src/creative/GraphDirectorConsole.test.tsx": "d290bc7f931ca6e4bdac312ecce7c30687df26c781df6dbc0b9369daee5ea721",
+  "frontend/src/creative/GraphDirectorConsole.tsx": "c2d8b5377e35d4578bef4c95915dcc2c39c205dca36c4614606fe9f3872f7209",
+  "frontend/src/creative/GraphDirectorProposalReview.test.tsx": "6cb7249b6cb747a7a0bcd77f9dee43de0530be0b17673f0d7b934f49692ad94a",
+  "frontend/src/creative/GraphDirectorProposalReview.tsx": "41e35bcdb626edf4503405e5358ba2578f4560cf55556e6e34180c6368f3a76b",
+  "frontend/src/creative/IndependentStudioWorkspace.tsx": "11e1c7faff33ad6cba30884431f11a6f0abccc4da56eedfb65a960350ae84645",
+  "frontend/src/creative/StudioProductionGraphEditor.test.tsx": "814ca68447d2dd16dd5ad3a84e2ed1a2b2ca4e62a46d05ff9ab6bf1fe9c41b2f",
+  "frontend/src/creative/client.ts": "193196909d30cf3d9346ce0a76d9079d5ca1fa976f91d97f4ef86ba12cf50674",
+  "frontend/src/creative/useStudioGraphEditor.tsx": "39aa7a097d589ed9cbd2e3993b45452e44ff4615722df0a5c10fa43f7ea9514c",
+  "frontend/src/creative/useStudioGraphEditorController.ts": "d85d91c52a3fb2dc64c5ff5ee4f935e877e3adda875facd7fc04a53d3d032499",
+  "tests/test_v2_director_proposal_reopen.py": "d892b7dc619c0a0e7c0f7b976d3fdc455ef25c6541f88af405a87df5736dc6af",
+  "tests/test_v2_graph_director_proposal_loop.py": "9bb2522fefd9602e071d9e1b5732789991044b8d73c3bb351fa90478412e2345"
+}

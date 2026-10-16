@@ -1,0 +1,20 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (9 tests) 13470ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 1316ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 1404ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 953ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 462ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 612ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 2514ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 796ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 1697ms
+   ✓ reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution 3715ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 166ms
+
+ Test Files  2 passed (2)
+      Tests  18 passed (18)
+   Start at  05:42:47
+   Duration  17.46s (transform 1.90s, setup 29ms, collect 2.75s, tests 13.64s, environment 657ms, prepare 115ms)
+

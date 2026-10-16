@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { GraphDirectorProposalReview, hasDirectorProposalReview, type GraphDirectorReviewSource } from './GraphDirectorProposalReview';
 import { ApiError, apiErrorView } from '../api';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
 import { GraphDirectorSourceImpact } from './GraphDirectorSourceImpact';
@@ -10,7 +11,7 @@ import { creativeAuthoringProblems, documentInput, newDocument, type CreativeDoc
 import type { PlanningSnapshot } from './studioProductionGraphContract';
 import './creative.css';
 
-export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive' | 'history'>;
+export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive' | 'history'> & GraphDirectorReviewSource;
 type Props = {
   client: GraphDirectorSource;
   pin?: PlanningSnapshot;
@@ -24,17 +25,19 @@ type Props = {
   read: <T>(work: () => Promise<T>) => Promise<T>;
   mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onDirtyChange: (dirty: boolean) => void;
+  onOpenModels?: () => void;
 };
 const empty = (): CreativeInput => ({ ...newDocument('DIRECTOR'), source_independent: true });
 const samePin = (a: PlanningSnapshot, b: PlanningSnapshot) => a.id === b.id && a.version === b.version && a.digest === b.digest;
 
 /** A mounted view of the original Creative owner. Only author drafts live here;
  * Graph retains its exact pin and all execution/review remains with its owners. */
-export function GraphDirectorConsole({ client, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange }: Props) {
+export function GraphDirectorConsole({ client, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange, onOpenModels }: Props) {
+  const [proposalPending, setProposalPending] = useState(false);
   const [handoffPending, setHandoffPending] = useState(false), [storyboardAllowed, setStoryboardAllowed] = useState(false);
   const [open, setOpen] = useState(false), [authorized, setAuthorized] = useState(false);
   const [draft, setDraft] = useState<CreativeInput>(empty), [base, setBase] = useState<CreativeDocument>();
-  const [dirty, setDirty] = useState(false), [blocked, setBlocked] = useState(false), [working, setWorking] = useState(false);
+  const [dirty, setDirty] = useState(false), [blocked, setBlocked] = useState(false), [working, setWorking] = useState(false), [saving, setSaving] = useState(false);
   const [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [candidate, setCandidate] = useState<{ document: CreativeDocument; pin: PlanningSnapshot }>();
   const [snapshot, setSnapshot] = useState<PlanningSnapshot>(), [discardConfirmed, setDiscardConfirmed] = useState(false);
@@ -53,11 +56,18 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
   const owns = (generation: number) => current() && scope.current.generation === generation;
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   useEffect(() => { if (!active) epoch.current++; }, [active]);
-  const pending = dirty || blocked || handoffPending;
+  const pending = dirty || blocked || handoffPending || proposalPending;
+  const pendingInputs = useRef({ dirty, blocked, handoffPending, onDirtyChange });
+  pendingInputs.current = { dirty, blocked, handoffPending, onDirtyChange };
+  const proposalChanged = useCallback((value: boolean) => {
+    setProposalPending(value);
+    const input = pendingInputs.current;
+    input.onDirtyChange(value || input.dirty || input.blocked || input.handoffPending);
+  }, []);
   const reportedPending = useRef(false);
   useEffect(() => { if (reportedPending.current !== pending) { reportedPending.current = pending; onDirtyChange(pending); } }, [pending, onDirtyChange]);
-  const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && isCurrent();
-  const mark = (value: boolean) => { setDirty(value); onDirtyChange(value); };
+  const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && !proposalPending && isCurrent();
+  const mark = (value: boolean) => { setDirty(value); onDirtyChange(value || blocked || handoffPending || proposalPending); };
   const fail = (reason: unknown) => {
     setError(apiErrorView(reason, '导演文档操作未完成，请核对连接与原文档。').message);
     if (reason instanceof ApiError && [401, 403].includes(reason.status)) {
@@ -96,7 +106,7 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
   }
   async function save() {
     if (!editing || lock.current || !dirty || !draft.title.trim() || creativeAuthoringProblems(draft).length) return;
-    lock.current = true; setWorking(true); setBlocked(true); setError('');
+    lock.current = true; setWorking(true); setSaving(true); setBlocked(true); setError('');
     setNotice('保存请求已提交，结果核对完成前不会重复写入。');
     const input = documentInput(draft), origin = base, generation = scope.current.generation, ticket = ++epoch.current;
     try {
@@ -112,7 +122,7 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
         setBlocked(true); onDirtyChange(true);
         setNotice('保存冲突或回执不确定，草稿保留，禁止重复写入。核对原文档后明确采用，或到原文档目录核对首次创建结果。');
       } else setBlocked(false);
-    } finally { lock.current = false; if (alive.current) setWorking(false); }
+    } finally { lock.current = false; if (alive.current) { setWorking(false); setSaving(false); } }
   }
   async function inspect(target: string, selectedPin?: PlanningSnapshot) {
     if (!current() || lock.current || busy || !target) return;
@@ -159,7 +169,19 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
       {pin && <GraphDirectorSourceImpact key={JSON.stringify([selectedKey, base?.id, base?.version])} client={client} pin={pin} graph={graph} selectedNodeId={selectedNodeId} active={active} busy={busy || working} isCurrent={isCurrent} read={read} />}
       {notice && <StatusMessage>{notice}</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}
       {working && <StatusMessage>正在读取或保存原导演文档…</StatusMessage>}
-      <CreativeCanvas draft={draft} version={base?.version} dirty={dirty} canEdit={editing} busy={busy || working}
+      {authorized && hasDirectorProposalReview(client) && <GraphDirectorProposalReview client={client}
+        active={active} canMutate={canMutate && !dirty && !blocked && !handoffPending} busy={busy || working}
+        isCurrent={isCurrent} read={read} mutate={mutate} onPendingChange={proposalChanged} onOpenModels={onOpenModels}
+        onDenied={() => fail(new ApiError({ status: 403, code: 'PROJECT_SCOPE_FORBIDDEN', message: '导演审核来源当前不可读取。' }))}
+        onDocument={row => {
+          if (!current() || dirty || blocked || handoffPending || lock.current) return;
+          if (row.mode !== 'DIRECTOR' || row.status !== 'DRAFT' || !row.id || !Number.isSafeInteger(row.version) || row.version < 1)
+            throw new Error('审核后的导演文档回执无效，请读取原建议状态。');
+          setBase(row); setDraft(documentInput(row)); setSnapshot(undefined); setCandidate(undefined);
+          setScene(undefined); setShot(undefined); setDiscardConfirmed(false); setError('');
+          setNotice(`已读取人工审核后的原导演草稿“${row.title}” · v${row.version}。请核对原文档摘要，再明确添加并保存画布节点；原图绑定保持不变。`);
+        }} />}
+      <CreativeCanvas draft={draft} version={base?.version} dirty={dirty} canEdit={editing} busy={busy || working} saving={saving}
         selectedSceneId={scene} selectedShotId={shot} onScene={setScene} onShot={setShot} onChange={change}
         onSave={() => void save()} onNew={fresh} />
       {base && <GraphDirectorStoryboardHandoff client={client} source={base} snapshot={snapshot} active={active && authorized} canCreate={editing && !dirty && storyboardAllowed} busy={busy || working} isCurrent={isCurrent} read={read} mutate={mutate} onPending={setHandoffPending} />}

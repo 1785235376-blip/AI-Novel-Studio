@@ -1,0 +1,29 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ❯ src/creative/StudioProductionGraphEditor.test.tsx (9 tests | 1 failed) 16438ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 1335ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 1594ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 1043ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 481ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 663ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 3181ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 908ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 2074ms
+   × reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution 5157ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 243ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/StudioProductionGraphEditor.test.tsx > reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 17 passed (18)
+   Start at  05:40:26
+   Duration  21.27s (transform 2.27s, setup 35ms, collect 3.27s, tests 16.68s, environment 785ms, prepare 144ms)
+

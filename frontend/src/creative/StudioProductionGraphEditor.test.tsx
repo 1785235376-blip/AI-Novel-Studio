@@ -11,8 +11,8 @@ import { blankGraph } from './graphDraft';
 import { imageGraphCatalog, imageGraphProject, imageGraphRecord } from './studioImageGraph.testFixtures';
 import rawProductionCatalog from './fixtures/productionGraph.catalog.json';
 import type { StudioGraphCatalog } from './studioGraphTypes';
-import { creativeClient } from './client';
-import { newDocument, type CreativeDocument } from './types';
+import { creativeClient, type DirectorProposal } from './client';
+import { newDocument, newScene, type CreativeDocument } from './types';
 vi.mock('./client', async original => ({ ...await original<typeof import('./client')>(), creativeClient: vi.fn() }));
 import type { PlanningDocument } from './studioProductionGraphContract';
 import { fixtureProjection } from '../director/directorWorkspaceFixtures.testFixture';
@@ -183,4 +183,66 @@ it('keeps an UNKNOWN storyboard handoff pending through cancelled workspace navi
   fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开');
   await screen.findByRole('button', { name: '打开导演总控台' }); expect(source.derive).toHaveBeenCalledTimes(1);
   expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
+});
+
+it('reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution', async () => {
+  const scene = newScene(1), sourceDigest = 'b'.repeat(64);
+  const screenplay: CreativeDocument = { ...newDocument('SCREENPLAY'), id: 'screenplay-owner', version: 2,
+    title: '原剧本', source_independent: true, scenes: [{ ...scene, heading: 'EXT. HARBOR - MORNING', action: 'The visitor stops.' }],
+    status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
+  const note = { id: 'note-one', number: 1, scene_id: scene.id, note: 'Pause before turning', shot_size: 'MEDIUM',
+    camera_angle: 'EYE_LEVEL', camera_motion: 'STATIC', duration_seconds: 5, emotion: '', pacing: '', performance: '', blocking: '' };
+  let proposal: DirectorProposal | undefined, director: CreativeDocument | undefined;
+  const source = {
+    capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['SCREENPLAY', 'DIRECTOR', 'STORYBOARD'] }),
+    list: vi.fn(async () => ({ items: [screenplay, ...(director ? [director] : [])] })),
+    proposals: vi.fn(async () => ({ items: proposal ? [proposal] : [] })),
+    proposal: vi.fn(async () => proposal!), get: vi.fn(async () => director!),
+    propose: vi.fn(async () => proposal = { id: 'proposal-owner', version: 1, status: 'NEEDS_REVIEW',
+      source_document_id: screenplay.id, source_version: screenplay.version, source_digest: sourceDigest, title: '待审导演建议',
+      director_notes: [note], output_digest: 'c'.repeat(64), provenance: { model_called: false } }),
+    review: vi.fn(async (_proposal: DirectorProposal, title: string) => {
+      director = { ...newDocument('DIRECTOR'), id: document.id, version: 3, title, source_independent: true,
+        scenes: screenplay.scenes, director_notes: [note], source_documents: { [screenplay.id]: { version: screenplay.version, digest: sourceDigest } },
+        status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
+      proposal = { ...proposal!, version: 2, status: 'APPROVED', document_id: director.id };
+      return { proposal, document: director };
+    }),
+    modelRoutes: vi.fn().mockResolvedValue({ items: [] }), previewModel: vi.fn(), dispatchModel: vi.fn(), refreshModel: vi.fn(), cancelProposal: vi.fn(),
+    create: vi.fn(), update: vi.fn(), derive: vi.fn(), history: vi.fn(),
+    export: vi.fn(async () => ({ document: director!, document_digest: document.digest, format: '', boundary: '' })),
+  };
+  vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
+  vi.mocked(client.graphs.planningDocuments!).mockImplementation(async () => ({ documents: director ? [{ ...document, title: director.title }] : [] }));
+  const view = mount(); await enter(); expect(source.proposals).not.toHaveBeenCalled(); click('打开导演总控台');
+  await screen.findByRole('button', { name: '从已保存剧本打开导演建议审核' });
+  click('从已保存剧本打开导演建议审核'); await screen.findByRole('option', { name: '原剧本 · v2' });
+  click('准备待审导演建议'); await screen.findByRole('region', { name: '导演建议审核' });
+  expect(source.review).not.toHaveBeenCalled(); expect(source.create).not.toHaveBeenCalled(); expect(client.graphs.create).not.toHaveBeenCalled();
+  expect((screen.getByRole('button', { name: '审核并采用' }) as HTMLButtonElement).disabled).toBe(true);
+  change('采用后的导演文档标题', '审核后的导演草稿');
+  expect((screen.getByRole('button', { name: '保存创作图' }) as HTMLButtonElement).disabled).toBe(true);
+  click('返回项目列表'); await screen.findByText(/有未保存的创作图／导演输入/); click('继续编辑');
+  expect((screen.getByLabelText('采用后的导演文档标题') as HTMLInputElement).value).toBe('审核后的导演草稿');
+  fireEvent.click(screen.getByLabelText('已核对来源、场面调度与导演建议；创建独立导演文档')); click('审核并采用');
+  await screen.findByText(/已读取人工审核后的原导演草稿/);
+  expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('审核后的导演草稿');
+  expect(client.graphs.create).not.toHaveBeenCalled(); expect(source.create).not.toHaveBeenCalled();
+  click('核对导演原文档版本'); await screen.findByText(/当前原文档：/);
+  await production(); change('节点类型', 'director_plan'); click('明确读取已保存导演与分镜文档');
+  await screen.findByRole('option', { name: '审核后的导演草稿 · v3' }); change('原创作文档', document.id); click('添加节点');
+  click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
+  const saved = await vi.mocked(client.graphs.create).mock.results[0].value as StudioGraphRecord;
+  expect(saved.definition.nodes[0].parameters.document_snapshot).toEqual({ id: document.id, version: 3, digest: document.digest });
+  vi.mocked(client.graphs.list).mockResolvedValue({ items: [saved] }); vi.mocked(client.graphs.get).mockResolvedValue(saved);
+  view.unmount(); mount(); await enter(); change('已保存创作图', saved.id);
+  fireEvent.click(await screen.findByRole('button', { name: new RegExp(`选择节点 .*${saved.definition.nodes[0].id}`) })); click('打开导演总控台');
+  await screen.findByRole('button', { name: '从已保存剧本打开导演建议审核' }); click('从已保存剧本打开导演建议审核');
+  fireEvent.click(await screen.findByRole('button', { name: /待审导演建议.*APPROVED/ }));
+  click('核对并打开已采用的导演草稿'); await screen.findByText(/已读取人工审核后的原导演草稿/);
+  expect(source.proposal).toHaveBeenCalledWith('proposal-owner', expect.any(AbortSignal));
+  expect(source.get).toHaveBeenCalledWith(document.id, expect.any(AbortSignal));
+  expect(source.review).toHaveBeenCalledTimes(1); expect(source.propose).toHaveBeenCalledTimes(1);
+  expect(source.dispatchModel).not.toHaveBeenCalled(); expect(source.previewModel).not.toHaveBeenCalled(); expect(client.graphs.createRun).not.toHaveBeenCalled();
+  expect(client.graphs.dispatchMedia).not.toHaveBeenCalled(); expect(client.graphs.save).not.toHaveBeenCalled();
 });

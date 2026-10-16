@@ -1,0 +1,65 @@
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(31,59): error TS2322: Type '{ client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 8 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(36,18): error TS2322: Type '{ busy: true; client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 7 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(37,18): error TS2322: Type '{ client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 8 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(43,46): error TS2322: Type '{ client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 8 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(49,59): error TS2322: Type '{ client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 8 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(51,18): error TS2322: Type '{ busy: boolean; canMutate: boolean; isCurrent: () => boolean; client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; ... 7 more ...; refreshModel: Mock<...>; }; ... 5 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(56,59): error TS2322: Type '{ client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 8 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(60,18): error TS2322: Type '{ active: false; client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 7 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(60,92): error TS2322: Type '{ client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 8 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(67,24): error TS2322: Type '{ client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 8 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(68,18): error TS2322: Type '{ active: false; client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 7 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(68,92): error TS2322: Type '{ client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 8 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+frontend/src/creative/GraphDirectorProposalReview.test.tsx(73,46): error TS2322: Type '{ client: { list: Mock<Procedure>; proposals: Mock<Procedure>; proposal: Mock<Procedure>; get: Mock<Procedure>; ... 6 more ...; refreshModel: Mock<...>; }; ... 8 more ...; onDenied: Mock<...>; }' is not assignable to type 'Props'.
+  The types returned by 'read(...)' are incompatible between these types.
+    Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+      Type 'unknown' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.

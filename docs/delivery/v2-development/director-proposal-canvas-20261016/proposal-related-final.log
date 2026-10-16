@@ -1,0 +1,271 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/GraphCanvas.test.tsx (96 tests) 6988ms
+   ✓ controlled typed graph canvas > creates, selects, drags, renames and removes persisted groups while retaining annotation 402ms
+   ✓ measured viewport rendering > filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing 869ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 4694ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 414ms
+ ✓ src/creative/StoryboardProductionPanel.phase4.test.tsx (24 tests) 1263ms
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 5544ms
+   ✓ Creative current document save-state ownership > hydrates a fresh saved document without inventing dirty content or a write 359ms
+   ✓ Creative current document save-state ownership > returns to clean only after a real title edit is restored exactly to the saved payload 332ms
+   ✓ Creative current document save-state ownership > adopts the actual normalized server response as both input and CAS base after saving 308ms
+   ✓ Creative current document save-state ownership > does not label explicit server verification as saving or silently replace the blocked draft 317ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after network failure until explicit original-server adoption 418ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after conflict failure until explicit original-server adoption 392ms
+ ✓ src/canvasops/canvasOpsPanels.test.tsx (26 tests) 908ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (27 tests) 27655ms
+   ✓ independent studio graph content integration > captures a saved source, chooses another graph, reviews and pastes once with original save/reopen 2377ms
+   ✓ independent studio graph content integration > previews same-graph copies, invalidates edits, pastes once and saves/reopens through original history 1647ms
+   ✓ independent studio graph content integration > explicitly persists view preferences with one undo step and original save/reopen 1747ms
+   ✓ independent studio graph content integration > persists groups through original undo/save/reopen and inspector node deletion 1380ms
+   ✓ independent studio graph content integration > saves independent notes with original undo, redo, reopen and removal 1113ms
+   ✓ independent studio graph content integration > saves/reopens graph annotation with original undo, redo, removal and no model dispatch 1003ms
+   ✓ independent studio graph content integration > guards departure when only an independent note is unsaved 475ms
+   ✓ independent studio graph content integration > warns before leaving when only the graph annotation changed 494ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 816ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 590ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 1068ms
+   ✓ independent studio graph content integration > applies layout over dirty author text with one undo step, saves the camera, and restores both on reopen 1280ms
+   ✓ independent studio graph content integration > commits snapped drag once through original undo/save/reopen without persisting view settings 1485ms
+   ✓ independent studio graph content integration > applies selected alignment with one undo, preserves dirty text, and saves/reopens original positions 1447ms
+   ✓ independent studio graph content integration > saves MiniMap camera via original history while preserving dirty author text and reopens it 1275ms
+   ✓ independent studio graph content integration > searches current nodes without dispatch, then saves/reopens explicit camera navigation with dirty text and exact pins 1274ms
+   ✓ independent studio graph content integration > restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent 617ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 409, with explicit checked adoption only 1472ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 0, with explicit checked adoption only 1369ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 500, with explicit checked adoption only 1401ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 605ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 403ms
+   ✓ persists nested visual organization with undo, dirty leave warning, reopen and parent-node deletion promotion 1409ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (23 tests) 8845ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 361ms
+   ✓ independent studio original owner integration > retains uploaded v1 after a declaration failure and retries only the declaration 355ms
+   ✓ mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance 526ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块 849ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块 702ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块 686ms
+   ✓ mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch 374ms
+   ✓ mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch 354ms
+   ✓ relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes 921ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"version":3} 447ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"} 458ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"} 413ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"} 457ms
+   ✓ relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch 587ms
+ ✓ src/creative/StoryboardVideoPipeline.phase5.test.tsx (12 tests) 2208ms
+ ✓ src/creative/IndependentStudioCpuCutout.test.tsx (21 tests) 8481ms
+   ✓ CPU cutout through the original mounted Image workspace > requires separate source/mask, preview, queue, execute, private byte check and review actions 917ms
+   ✓ CPU cutout through the original mounted Image workspace > re-reads the exact running job, cancels with its current CAS and ignores a late success while keeping global exclusion 448ms
+   ✓ CPU cutout through the original mounted Image workspace > keeps the workspace locked if execute settles before an in-flight cancellation response 431ms
+   ✓ CPU cutout through the original mounted Image workspace > offers explicit CANCELLED recovery without replay or automatic review 305ms
+   ✓ CPU cutout through the original mounted Image workspace > rejects candidate bytes outside the proven exact output size and clears review 541ms
+   ✓ CPU cutout through the original mounted Image workspace > does not dispatch cancellation after host ABA during its exact-job read 331ms
+   ✓ CPU cutout through the original mounted Image workspace > does not dispatch cancellation after project ABA during its exact-job read 378ms
+   ✓ CPU cutout through the original mounted Image workspace > blocks duplicate cancel while uncertain and does not let a late execute clear uncertainty 512ms
+   ✓ CPU cutout through the original mounted Image workspace > keeps cancel CAS conflict uncertain until an explicit original read, then binds a new explicit cancellation to that version 530ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches host ABA 447ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches host-rebind ABA 433ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches project ABA 437ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches actor ABA 408ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches branch ABA 436ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches session ABA 405ms
+ ✓ src/creative/GraphRunPanel.test.tsx (19 tests) 594ms
+ ✓ src/creative/GraphModelExecutionPanel.test.tsx (18 tests) 1107ms
+ ✓ src/creative/IndependentStudioAudioWav.test.tsx (28 tests) 9822ms
+   ✓ WAV controls through the original mounted production workspace > keeps blank controls absent, original defaults explicit, and preview/queue/execute separate 587ms
+   ✓ WAV controls through the original mounted production workspace > executes explicit controls, shows only measured WAV output, byte-checks privately and requires explicit review 705ms
+   ✓ WAV controls through the original mounted production workspace > keeps the shared workspace locked while executing and never submits a duplicate execution 417ms
+   ✓ WAV controls through the original mounted production workspace > cancels the queued task with exact CAS while preserving its selected controls 336ms
+   ✓ WAV controls through the original mounted production workspace > recovers the original UNKNOWN WAV reservation without reexecution or automatic review 323ms
+   ✓ WAV controls through the original mounted production workspace > rejects private candidate size outside the verified output measurement 574ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host ABA 511ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host-rebind ABA 541ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches project ABA 471ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches actor ABA 578ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches branch ABA 566ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches session ABA 489ms
+   ✓ WAV controls through the original mounted production workspace > ignores a candidate response arriving after project identity ABA 383ms
+ ✓ src/creative/StudioDiscoveredImageProduction.test.tsx (9 tests) 3472ms
+   ✓ discovered Image routes through the original mounted production workspace > consumes exact passive discovered IDs without selecting, probing or dispatching automatically 372ms
+   ✓ discovered Image routes through the original mounted production workspace > preserves explicit preview, queue, execute, byte verification and review for the discovered route 850ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after host-rebind 471ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after project-aba 467ms
+   ✓ discovered Image routes through the original mounted production workspace > rejects candidate bytes with a different digest without enabling review 488ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 749ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1072ms
+ ✓ src/creative/StudioManualMaskAuthoring.test.tsx (39 tests) 359ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (12 tests) 716ms
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3340ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 553ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 707ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1288ms
+   ✓ image runtime source roles through the mounted original workspace > retains exact request identity after lost create and recovers only by original read 319ms
+ ✓ src/creative/StudioGraphProviderChoice.test.tsx (19 tests) 1105ms
+ ✓ src/creative/CreativeAuthoringFields.test.tsx (12 tests) 1607ms
+   ✓ Full-document authoring uses the original save and history flow > updates all preserved content once with expected_version, reopens it, and restores previous genre/time as a new version 431ms
+   ✓ Full-document authoring uses the original save and history flow > retains genre/time on a save conflict until explicit server replacement 430ms
+ ✓ src/creative/TimelineTransferReview.test.tsx (19 tests) 1795ms
+   ✓ locates the exact original mounted clip without saving, granting consent or discarding local controls 389ms
+ ✓ src/creative/ProviderTaskMatchPanel.test.tsx (16 tests) 605ms
+ ✓ src/creative/IndependentStudioIdentity.regression.test.tsx (19 tests) 4315ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous project ABA and rejects a late list 690ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous session ABA and rejects a late list 585ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor ABA and rejects a late list 564ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous branch ABA and rejects a late list 698ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor workspace ABA and rejects a late list 651ms
+   ✓ independent Studio captured identity cannot revive before React effects > keeps only unsaved author text read-only while hiding private graph directory metadata 342ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 992ms
+   ✓ mounted original timeline draft owner > adds one exact pinned clip, supports one undo/redo, explicitly saves and reopens the original owner 333ms
+ ✓ src/creative/AIDirectorReopen.test.tsx (26 tests) 1227ms
+ ✓ src/creative/AssetRelationshipsPanel.test.tsx (12 tests) 573ms
+ ✓ src/creative/IndependentStudioReadFences.test.tsx (11 tests) 4660ms
+   ✓ independent asset read fences and truthful capability labels > locks mutation inputs during explicit refresh and preserves the next draft after the read finishes 1023ms
+   ✓ independent asset read fences and truthful capability labels > keeps refresh inputs visible until same-version read settles, then retires the old relationship view 570ms
+   ✓ independent asset read fences and truthful capability labels > keeps refresh inputs visible until failed read settles, then retires the old relationship view 635ms
+   ✓ independent asset read fences and truthful capability labels > removes the retained refresh form when the original asset read returns 401 363ms
+   ✓ independent asset read fences and truthful capability labels > removes the retained refresh form when the original asset read returns 403 423ms
+   ✓ independent asset read fences and truthful capability labels > ignores delayed recovery after the author explicitly selects a different asset and starts a draft 610ms
+ ✓ src/creative/SourceAdaptationPanel.test.tsx (9 tests) 374ms
+ ✓ src/creative/IndependentStudioManualMask.test.tsx (11 tests) 5900ms
+   ✓ manual mask in the original Image workspace > loads only explicitly and creates original MANUAL_EDIT Asset without jobs or automatic selection 1116ms
+   ✓ manual mask in the original Image workspace > uses the original shared semaphore to block imports and navigation until POST settles 637ms
+   ✓ manual mask in the original Image workspace > uses original discard confirmation for local dirty pixels 593ms
+   ✓ manual mask in the original Image workspace > latches host ABA before a late save response, with no Asset merge or selection 437ms
+   ✓ manual mask in the original Image workspace > latches host-rebind ABA before a late save response, with no Asset merge or selection 539ms
+   ✓ manual mask in the original Image workspace > latches project ABA before a late save response, with no Asset merge or selection 473ms
+   ✓ manual mask in the original Image workspace > latches actor ABA before a late save response, with no Asset merge or selection 447ms
+   ✓ manual mask in the original Image workspace > latches branch ABA before a late save response, with no Asset merge or selection 408ms
+   ✓ manual mask in the original Image workspace > latches session ABA before a late save response, with no Asset merge or selection 423ms
+   ✓ manual mask in the original Image workspace > keeps lost-save uncertainty after stale retry and provides an original list read 574ms
+ ✓ src/creative/StudioSelectLabels.test.tsx (4 tests) 922ms
+   ✓ stable exact names for Studio selects with populated options > keeps saved-graph, node, asset and port names stable while editing the real graph hook 675ms
+ ✓ src/creative/StudioVideoGraphEditor.phase4.test.tsx (4 tests) 3871ms
+   ✓ Explicit video Graph keeps saved shot and original execution authority > retains Image schema descriptors and author input while a Video catalog awaits consent 1249ms
+   ✓ Explicit video Graph keeps saved shot and original execution authority > adds exact current shot pins and video controls without starting a job 1777ms
+   ✓ Explicit video Graph keeps saved shot and original execution authority > ignores a late saved shot receipt after same-token Host replacement 843ms
+ ✓ src/creative/graphSelectionCopyController.test.tsx (23 tests) 1412ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2180ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 676ms
+ ✓ src/creative/studioBaselineTypeSafety.test.tsx (35 tests) 34ms
+ ✓ src/creative/GraphTextAssetPanel.test.tsx (13 tests) 681ms
+ ✓ src/creative/graphCanvasGeometry.test.ts (18 tests) 18ms
+ ✓ src/creative/StudioBinaryMaskCanvas.test.tsx (20 tests) 382ms
+ ✓ src/creative/studioCpuCutoutContract.test.ts (52 tests) 39ms
+ ✓ src/creative/StudioMediaRouteChoice.test.tsx (9 tests) 492ms
+ ✓ src/creative/StudioImageAssetHandoff.test.tsx (22 tests) 1246ms
+ ✓ src/creative/studioAudioMp3Contract.test.tsx (23 tests) 351ms
+ ✓ src/creative/studioAudioWavContract.test.ts (86 tests) 55ms
+ ✓ src/creative/screenplayPresets.test.tsx (18 tests) 542ms
+   ✓ creates a fresh unsaved draft once, preserves the saved document and uses original POST then versioned PUT 402ms
+ ✓ src/creative/StudioImageGraphEditor.test.tsx (5 tests) 3636ms
+   ✓ image Graph authoring through original controller and mounted workspace > requires explicit catalog read then separate schema consent and never dispatches while authoring 739ms
+   ✓ image Graph authoring through original controller and mounted workspace > binds consent to the current draft and refuses to remove incompatible old nodes during upgrade 883ms
+   ✓ image Graph authoring through original controller and mounted workspace > saves weighted reference and prompt parameters through original actions with no arbitrary JSON or direct generation 1512ms
+ ✓ src/creative/GraphDirectorSourceImpact.test.tsx (19 tests) 252ms
+ ✓ src/creative/StudioVideoAssetHandoff.test.tsx (26 tests) 1462ms
+ ✓ src/creative/GenericScriptWorkspace.test.tsx (7 tests) 1323ms
+   ✓ standalone Script uses original Creative workspace > creates an explicitly independent script in the existing five-stage shell 432ms
+ ✓ src/creative/IndependentStudioRelationships.test.tsx (5 tests) 3729ms
+   ✓ studio relationship ownership and draft integration > keeps a relationship draft across navigation attempts and prevents other asset mutations 1298ms
+   ✓ studio relationship ownership and draft integration > saves through the original asset owner and refreshes the source version without copying a target 775ms
+   ✓ studio relationship ownership and draft integration > preserves CAS-conflicted input and source version until an explicit reload 721ms
+   ✓ studio relationship ownership and draft integration > clears selected private content when saving the relationship is revoked 423ms
+   ✓ studio relationship ownership and draft integration > prevents relation writes while a provenance draft is being edited 511ms
+ ✓ src/creative/ApprovedOutputNavigation.test.tsx (11 tests) 4523ms
+   ✓ opens the approved version of a reopened job without execution, review or saving a file 671ms
+   ✓ does not substitute an asset after version mismatch 429ms
+   ✓ does not substitute an asset after digest mismatch 369ms
+   ✓ does not substitute an asset after kind mismatch 321ms
+   ✓ does not substitute an asset after deleted mismatch 405ms
+   ✓ does not substitute an asset after id mismatch 366ms
+   ✓ preserves dirty input when leaving is cancelled, and reads only after explicit discard 466ms
+   ✓ drops a late asset read after unmount and coalesces repeated clicks 321ms
+   ✓ keeps the original job visible when its asset read fails 350ms
+   ✓ does not overwrite a newer requested asset selection with a late approved-output read 372ms
+   ✓ retains the original selected job when asset validation fails after explicit draft discard 453ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 263ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 310ms
+ ✓ src/director/DirectorWorkspace.test.tsx (12 tests) 337ms
+ ✓ src/creative/studioAudioFlacContract.phase6.test.tsx (18 tests) 193ms
+ ✓ src/creative/StudioVideoShotBinding.phase5.test.tsx (4 tests) 1373ms
+   ✓ Phase 5 independent Video author flow can explicitly omit a new Shot binding > allows unchecking the initial true flag without a connected Shot and saves no implicit pin 1362ms
+ ✓ src/creative/IndependentStudioSequentialImport.test.tsx (2 tests) 1294ms
+   ✓ independent studio sequential import readiness > does not advertise readiness at lineage completion while the asset list refresh is still pending, then imports the next file once 996ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 443ms
+ ✓ src/creative/studioWorkspaceResume.test.ts (9 tests) 9ms
+ ✓ src/creative/AssetReferenceInspection.test.tsx (12 tests) 248ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 396ms
+ ✓ src/creative/IndependentStudioRunReads.regression.test.tsx (7 tests) 4695ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled list denial 401 after a reviewed run command finishes 990ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled list denial 403 after a reviewed run command finishes 709ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled selection denial 401 after the newer exact run loads 495ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled selection denial 403 after the newer exact run loads 533ms
+   ✓ original workspace respects graph read cancellation before denying access > still clears private state after a current list denial 401 589ms
+   ✓ original workspace respects graph read cancellation before denying access > still clears private state after a current list denial 403 580ms
+   ✓ original workspace respects graph read cancellation before denying access > still denies an active mutation after it supersedes a read-only list 799ms
+ ✓ src/creative/StudioImageUpscaleProduction.test.tsx (2 tests) 168ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 149ms
+ ✓ src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx (2 tests) 488ms
+   ✓ CreativeWorkspace adoption readback admission > accepts a verified adoption only against the still-current original target version 311ms
+ ✓ src/creative/CreativeStoryboardContinuity.phase4.test.tsx (4 tests) 330ms
+ ✓ src/creative/GraphTextExecutionReceipt.test.tsx (4 tests) 80ms
+ ✓ src/creative/ScreenplayExportPanel.test.tsx (7 tests) 159ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 224ms
+ ✓ src/creative/CreativeProductionCanvas.test.tsx (3 tests) 226ms
+ ✓ src/creative/ScreenplayEpubPanel.test.tsx (3 tests) 134ms
+ ✓ src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx (1 test) 282ms
+ ✓ src/creative/GraphNodeNavigator.test.tsx (2 tests) 160ms
+ ✓ src/creative/AssetRelationshipsRedaction.test.tsx (1 test) 132ms
+ ✓ src/creative/StudioWorkspacePreferencesForm.public.test.tsx (1 test) 115ms
+ ✓ src/creative/AdaptationHostCapability.test.tsx (1 test) 218ms
+ ✓ src/creative/BlankProjectEntry.test.tsx (2 tests) 108ms
+ ✓ src/creative/CreativeSelectLabels.test.tsx (3 tests) 89ms
+ ✓ src/creative/CreativeScriptLabelPersistence.test.tsx (1 test) 75ms
+ ✓ src/creative/CreativeStarterLabel.test.tsx (1 test) 92ms
+ ✓ src/canvasops/canvasOps.test.ts (70 tests) 39ms
+ ✓ src/creative/studioClient.test.ts (38 tests) 20ms
+ ✓ src/creative/studioGraphClient.test.ts (113 tests) 70ms
+ ✓ src/creative/studioRelationshipsClient.test.ts (58 tests) 36ms
+ ✓ src/creative/studioStoryboardContract.phase4.test.ts (52 tests) 38ms
+ ✓ src/creative/studioGraphVideoContract.phase4.test.ts (31 tests) 32ms
+ ✓ src/creative/studioGraphModelClient.test.ts (36 tests) 24ms
+ ✓ src/creative/graphDraft.test.ts (39 tests) 8ms
+ ✓ src/creative/studioVideoRuntimeContract.phase4.test.ts (52 tests) 27ms
+ ✓ src/creative/studioStoryboardPipeline.phase5.test.ts (31 tests) 38ms
+ ✓ src/creative/graphCanvasPresentation.test.ts (15 tests) 15ms
+ ✓ src/creative/studioProductionGraphClient.test.ts (17 tests) 24ms
+ ✓ src/creative/studioStorageAdmissionClient.test.ts (44 tests) 23ms
+ ✓ src/creative/studioImageGraphClient.test.ts (14 tests) 19ms
+ ✓ src/creative/studioGraphTextExecutionReceiptClient.test.ts (84 tests) 40ms
+ ✓ src/creative/graphSelectionCopy.test.ts (17 tests) 15ms
+ ✓ src/creative/studioGraphTextAssetClient.test.ts (57 tests) 29ms
+ ✓ src/creative/studioProviderClient.test.ts (62 tests) 29ms
+ ✓ src/creative/studioManualMaskContract.test.ts (48 tests) 77ms
+ ✓ src/creative/client.test.ts (11 tests) 11ms
+ ✓ src/creative/studioStoryboardShotContext.phase5.test.ts (18 tests) 23ms
+ ✓ src/director/directorWorkspaceContract.test.ts (15 tests) 13ms
+ ✓ src/creative/studioGraphTransportForwarding.test.ts (8 tests) 18ms
+ ✓ src/creative/studioBinaryMask.test.ts (38 tests) 357ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 16ms
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 10ms
+ ✓ src/creative/studioWorkspaceOperationContract.test.ts (6 tests) 9ms
+ ✓ src/creative/studioImageRuntimeContract.test.ts (11 tests) 9ms
+ ✓ src/creative/graphCanvasNotes.test.ts (3 tests) 10ms
+ ✓ src/creative/studioActivationReceipt.test.ts (17 tests) 11ms
+ ✓ src/creative/screenplayEpubClient.test.ts (6 tests) 13ms
+ ✓ src/creative/screenplayExportClient.test.ts (7 tests) 14ms
+ ✓ src/creative/studioWorkspacePreferences.test.ts (12 tests) 4ms
+ ✓ src/creative/creativeProductionClient.test.ts (2 tests) 5ms
+ ✓ src/creative/scriptExportClient.test.ts (5 tests) 16ms
+ ✓ src/creative/screenplayFountainParser.test.ts (1 test) 55ms
+ ✓ src/creative/CreativeWorkbenchEntry.test.ts (2 tests) 3ms
+ ✓ src/creative/adminStudioContext.test.ts (1 test) 4ms
+ ✓ src/creative/ProductionTimeline.css.test.ts (1 test) 2ms
+
+ Test Files  117 passed (117)
+      Tests  2233 passed (2233)
+   Start at  05:40:42
+   Duration  111.89s (transform 5.33s, setup 547ms, collect 25.31s, tests 152.11s, environment 24.92s, prepare 6.05s)
+

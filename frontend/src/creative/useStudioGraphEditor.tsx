@@ -25,7 +25,7 @@ export function useStudioGraphEditor(props: StudioGraphEditorProps) {
   }, [identity]);
   const view = studioGraphEditorView(controller, { ...props, externalDirty: props.externalDirty || directorDirty }, { local: canvasLocal, onLocal: setCanvasLocal });
   return { ...view, content: <>{props.active && !controller.retired && controller.catalog && <StudioGraphDraftRecovery controller={controller} />}{props.directorSource && !controller.retired && <GraphDirectorConsole key={`${props.identity}:${directorSession}`}
-    client={props.directorSource} selectionKey={JSON.stringify([controller.base?.id, controller.selected])} pin={controller.node?.definition_id === 'director_plan' ? controller.node.parameters.document_snapshot : undefined}
+    client={props.directorSource} onOpenModels={props.onOpenModels} selectionKey={JSON.stringify([controller.base?.id, controller.selected])} pin={controller.node?.definition_id === 'director_plan' ? controller.node.parameters.document_snapshot : undefined}
     graph={controller.draft} selectedNodeId={controller.node?.id}
     active={props.active && !props.denied} canMutate={props.canMutate && !props.externalDirty && !controller.executionDirty}
     busy={props.busy} isCurrent={props.isCurrent} read={props.read} mutate={props.mutate} onDirtyChange={setDirectorDirty} />}{view.content}</>,
