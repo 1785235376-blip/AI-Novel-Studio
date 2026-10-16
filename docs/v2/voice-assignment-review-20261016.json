@@ -8,21 +8,21 @@
         "cd frontend && ./node_modules/.bin/vitest run src/experimental/VoicePlanReview.test.tsx src/experimental/VoiceSubtitlePanels.test.tsx src/experimental/VoiceDirectionPanel.continuation.test.tsx src/experimental/ExperimentalWorkbench.continuation.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
       ],
       "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
-      "started_utc": "2026-10-16T13:33:58.750847+00:00",
-      "finished_utc": "2026-10-16T13:34:01.988057+00:00",
+      "started_utc": "2026-10-16T13:37:22.073960+00:00",
+      "finished_utc": "2026-10-16T13:37:24.976752+00:00",
       "exit_code": 0,
       "status": "PASS",
       "isolated_environment": {
         "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
         "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
-        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/data",
-        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/Local",
-        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/Roaming",
-        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/home",
-        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/home",
-        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/xdg-data",
-        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/xdg-config",
-        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/xdg-cache",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-ui/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-ui/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-ui/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-ui/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-ui/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-ui/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-ui/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-ui/xdg-cache",
         "CREDENTIAL_VAULT_BACKEND": "memory",
         "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
         "STORAGE_BACKEND": "file",
@@ -34,22 +34,22 @@
         "HF_HUB_OFFLINE": "1",
         "TRANSFORMERS_OFFLINE": "1"
       },
-      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "head": "8fb7e2cae1705f20db1bd5a3d7f4d11dc2163c95",
       "source_sha256": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "source_sha256_before": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "sources_changed_during_check": false,
-      "log": "docs/delivery/v2-development/voice-review-final-ui-r2.log",
-      "log_sha256": "f81cb9a428581c575f7f20f2cf8aa0ed0e6852676bca9f6f8acb7ffda42e1d88",
-      "receipt": "docs/delivery/v2-development/voice-review-final-ui-r2.json",
-      "receipt_sha256": "dec1eb22927e949a0da06d9a6bfc9045af7aa9d4654d763451179100bf6ec4a6"
+      "log": "docs/delivery/v2-development/voice-review-reviewed-final-ui.log",
+      "log_sha256": "07a54c1e0ede974a3cec22692862c02ae2396e54689db52b1cb8b9adcbcd9d17",
+      "receipt": "docs/delivery/v2-development/voice-review-reviewed-final-ui.json",
+      "receipt_sha256": "057796fee1edf75ca81dc6471685be6638086e21c077819408a9801ed6735916"
     },
     {
       "command": [
@@ -58,21 +58,21 @@
         "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs"
       ],
       "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
-      "started_utc": "2026-10-16T13:33:57.296317+00:00",
-      "finished_utc": "2026-10-16T13:34:34.181640+00:00",
+      "started_utc": "2026-10-16T13:37:25.501554+00:00",
+      "finished_utc": "2026-10-16T13:38:01.864946+00:00",
       "exit_code": 0,
       "status": "PASS",
       "isolated_environment": {
         "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
         "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
-        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/data",
-        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/Local",
-        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/Roaming",
-        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/home",
-        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/home",
-        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/xdg-data",
-        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/xdg-config",
-        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/xdg-cache",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-build/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-build/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-build/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-build/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-build/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-build/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-build/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-build/xdg-cache",
         "CREDENTIAL_VAULT_BACKEND": "memory",
         "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
         "STORAGE_BACKEND": "file",
@@ -84,22 +84,22 @@
         "HF_HUB_OFFLINE": "1",
         "TRANSFORMERS_OFFLINE": "1"
       },
-      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "head": "8fb7e2cae1705f20db1bd5a3d7f4d11dc2163c95",
       "source_sha256": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "source_sha256_before": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "sources_changed_during_check": false,
-      "log": "docs/delivery/v2-development/voice-review-final-build.log",
-      "log_sha256": "0cd4321c6a1d37ef00d2d75bc83648b567540b95de863a0dc7a91d2ed478fa9a",
-      "receipt": "docs/delivery/v2-development/voice-review-final-build.json",
-      "receipt_sha256": "07c1caca382de5e0782a7315a1101ebefe3f8c2592e52af76269e8029994c310"
+      "log": "docs/delivery/v2-development/voice-review-reviewed-final-build.log",
+      "log_sha256": "f039f815c21a53a57d3aca8f8a9604bc4ae78c96f61fbd8de3043ae9935c667f",
+      "receipt": "docs/delivery/v2-development/voice-review-reviewed-final-build.json",
+      "receipt_sha256": "189727120d8ef3837fd4a5068bddd42334305953b406ef845c388535873ffc86"
     },
     {
       "command": [
@@ -110,25 +110,25 @@
         "tests/test_r5_voice_subtitles.py::test_unknown_narration_override_lock_and_reorder[file]",
         "tests/test_r5_voice_subtitles.py::test_safe_pronunciation_no_cascade_markup_or_regex[file]",
         "tests/test_public_build_profile.py",
-        "--basetemp=.runtime/v2-checks/voice-review-final-file-public/tmp",
+        "--basetemp=.runtime/v2-checks/voice-review-reviewed-final-file-public/tmp",
         "-q"
       ],
       "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
-      "started_utc": "2026-10-16T13:34:18.503804+00:00",
-      "finished_utc": "2026-10-16T13:34:26.399799+00:00",
+      "started_utc": "2026-10-16T13:37:23.607874+00:00",
+      "finished_utc": "2026-10-16T13:37:31.934678+00:00",
       "exit_code": 0,
       "status": "PASS",
       "isolated_environment": {
         "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
         "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
-        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/data",
-        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/Local",
-        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/Roaming",
-        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/home",
-        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/home",
-        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/xdg-data",
-        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/xdg-config",
-        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/xdg-cache",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-file-public/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-file-public/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-file-public/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-file-public/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-file-public/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-file-public/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-file-public/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-final-file-public/xdg-cache",
         "CREDENTIAL_VAULT_BACKEND": "memory",
         "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
         "STORAGE_BACKEND": "file",
@@ -140,22 +140,22 @@
         "HF_HUB_OFFLINE": "1",
         "TRANSFORMERS_OFFLINE": "1"
       },
-      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "head": "8fb7e2cae1705f20db1bd5a3d7f4d11dc2163c95",
       "source_sha256": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "source_sha256_before": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "sources_changed_during_check": false,
-      "log": "docs/delivery/v2-development/voice-review-final-file-public.log",
-      "log_sha256": "7679e5c723acd30fcc406c1741bdcbc7a99d205946d70d93f17ae93844e31a35",
-      "receipt": "docs/delivery/v2-development/voice-review-final-file-public.json",
-      "receipt_sha256": "ef70ca54c5958697fde74cc5a9fc0466d989958659ab127c586e2c9ed3645742"
+      "log": "docs/delivery/v2-development/voice-review-reviewed-final-file-public.log",
+      "log_sha256": "7182f7a4e8d95a7849d3503125e015e9a4f145061aece1e6e1799767249f12c5",
+      "receipt": "docs/delivery/v2-development/voice-review-reviewed-final-file-public.json",
+      "receipt_sha256": "028d4b3a2eeeff10acc84e13f9661b216f5c3bb486e36b01fcb070bf4177a7bd"
     },
     {
       "command": [
@@ -164,21 +164,21 @@
         "node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
       ],
       "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
-      "started_utc": "2026-10-16T13:34:02.558498+00:00",
-      "finished_utc": "2026-10-16T13:34:02.762028+00:00",
+      "started_utc": "2026-10-16T13:37:32.413675+00:00",
+      "finished_utc": "2026-10-16T13:37:32.593974+00:00",
       "exit_code": 0,
       "status": "PASS",
       "isolated_environment": {
         "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
         "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
-        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/data",
-        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/Local",
-        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/Roaming",
-        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/home",
-        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/home",
-        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/xdg-data",
-        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/xdg-config",
-        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/xdg-cache",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-token/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-token/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-token/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-token/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-token/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-token/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-token/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-token/xdg-cache",
         "CREDENTIAL_VAULT_BACKEND": "memory",
         "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
         "STORAGE_BACKEND": "file",
@@ -190,22 +190,22 @@
         "HF_HUB_OFFLINE": "1",
         "TRANSFORMERS_OFFLINE": "1"
       },
-      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "head": "8fb7e2cae1705f20db1bd5a3d7f4d11dc2163c95",
       "source_sha256": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "source_sha256_before": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "sources_changed_during_check": false,
-      "log": "docs/delivery/v2-development/voice-review-token.log",
+      "log": "docs/delivery/v2-development/voice-review-reviewed-token.log",
       "log_sha256": "8dd3e0adcae13039aef7e12ddbfff56c34063c38c7656944780e00d6e40c2707",
-      "receipt": "docs/delivery/v2-development/voice-review-token.json",
-      "receipt_sha256": "da2af6fdffff6245df102221d3559d9956939450e030cbc95076dae57afa6cd0"
+      "receipt": "docs/delivery/v2-development/voice-review-reviewed-token.json",
+      "receipt_sha256": "6314efb587220e2784d9aeb4d9d685b8c4dd2d0b65baa97ec24aa05ee57a519b"
     },
     {
       "command": [
@@ -214,21 +214,21 @@
         "import pathlib,re; files=[\"frontend/src/experimental/VoiceDirectionPanel.tsx\",\"frontend/src/experimental/VoicePlanReview.tsx\"]; assert all(not re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",pathlib.Path(p).read_text(),re.I) for p in files); print(\"Scoped token guard PASS\")"
       ],
       "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
-      "started_utc": "2026-10-16T13:34:35.003282+00:00",
-      "finished_utc": "2026-10-16T13:34:35.031237+00:00",
+      "started_utc": "2026-10-16T13:37:33.058390+00:00",
+      "finished_utc": "2026-10-16T13:37:33.085573+00:00",
       "exit_code": 0,
       "status": "PASS",
       "isolated_environment": {
         "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
         "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
-        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/data",
-        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/Local",
-        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/Roaming",
-        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/home",
-        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/home",
-        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/xdg-data",
-        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/xdg-config",
-        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/xdg-cache",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-scoped-token/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-scoped-token/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-scoped-token/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-scoped-token/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-scoped-token/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-scoped-token/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-scoped-token/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-reviewed-scoped-token/xdg-cache",
         "CREDENTIAL_VAULT_BACKEND": "memory",
         "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
         "STORAGE_BACKEND": "file",
@@ -240,22 +240,72 @@
         "HF_HUB_OFFLINE": "1",
         "TRANSFORMERS_OFFLINE": "1"
       },
-      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "head": "8fb7e2cae1705f20db1bd5a3d7f4d11dc2163c95",
       "source_sha256": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "source_sha256_before": {
         "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
-        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
-        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
       },
       "sources_changed_during_check": false,
-      "log": "docs/delivery/v2-development/voice-review-scoped-token.log",
+      "log": "docs/delivery/v2-development/voice-review-reviewed-scoped-token.log",
       "log_sha256": "0f60413763c866e35019437c33d233ca2415617df3bce60da78ae15ab1607a63",
-      "receipt": "docs/delivery/v2-development/voice-review-scoped-token.json",
-      "receipt_sha256": "e0f4466373d2e63d4624a0c263623fc68ec6970e0ef2b82dceb62798d9a9dfe2"
+      "receipt": "docs/delivery/v2-development/voice-review-reviewed-scoped-token.json",
+      "receipt_sha256": "7d3494563b6eda9cd01cc23f059b750b1cb802287c3d045097e847f5bcb58ec6"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/VoicePlanReview.test.tsx src/experimental/VoiceSubtitlePanels.test.tsx src/experimental/VoiceDirectionPanel.continuation.test.tsx src/experimental/ExperimentalWorkbench.continuation.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:37:38.241705+00:00",
+      "finished_utc": "2026-10-16T13:37:41.185260+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-independent-final-ui/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-independent-final-ui/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-independent-final-ui/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-independent-final-ui/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-independent-final-ui/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-independent-final-ui/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-independent-final-ui/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-independent-final-ui/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "8fb7e2cae1705f20db1bd5a3d7f4d11dc2163c95",
+      "source_sha256": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/voice-review-independent-final-ui.log",
+      "log_sha256": "f4fc3012ab06c661e0ca2d1f3e592eb89854238c2a88058a753b2a76461442ca",
+      "receipt": "docs/delivery/v2-development/voice-review-independent-final-ui.json",
+      "receipt_sha256": "fe669baebf89e2f00890637105175be9a614c43d25484a051b17496ce21ba639"
     }
   ],
   "not_run": [

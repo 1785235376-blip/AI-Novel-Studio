@@ -5,7 +5,7 @@ import { VoiceDirectionPanel } from './VoiceDirectionPanel';
 import { VoicePlanReview, voiceAssignmentIssues } from './VoicePlanReview';
 import type { AudioPlan, AudioSegment, VoiceCatalog } from './voiceSubtitleClient';
 import type { ExperimentalClient } from './api';
-const line:AudioSegment={id:'line',version:1,kind:'DIALOGUE',text:'你好 🌙',character_id:'alice',profile_id:'voice',profile_version:2,attribution_status:'REVIEWED',source_start:3,source_end:7,source_text_digest:'exact',direction:{reviewed_text:'你好 🌙',emotion:'neutral',speech_rate:1,pause_ms:280,text_reviewed:true,voice_authorized:true,pronunciation_rules:[]}};
+const line:AudioSegment={id:'line',version:1,kind:'DIALOGUE',text:'你好 🌙',character_id:'alice',profile_id:'voice',profile_version:2,attribution_status:'REVIEWED',source_start:3,source_end:7,source_text_digest:'a'.repeat(64),direction:{reviewed_text:'你好 🌙',emotion:'neutral',speech_rate:1,pause_ms:280,text_reviewed:true,voice_authorized:true,pronunciation_rules:[]}};
 const plan:AudioPlan={id:'plan',version:4,title:'Saved',status:'PENDING_REVIEW',needs_review_count:0,segments:[line],sources:{chapter:{version:9,digest:'source-digest'}},character_snapshots:{alice:'character-digest'}};
 const catalog:VoiceCatalog={plans:[plan],profiles:[{id:'voice',version:2,display_name:'Voice',supports_emotion:false}],characters:[{id:'alice',name:'Alice'}],tts:{quality:'NOT_RUN'}};
 function client(){return {get:vi.fn(async(path:string)=>path.endsWith('/catalog')?catalog:{items:[]}),put:vi.fn(async()=>({...plan,version:5})),post:vi.fn()} as unknown as ExperimentalClient;}
@@ -69,4 +69,28 @@ it('preserves the original legacy segment emotion when loading the direction edi
  const api=client();vi.mocked(api.get).mockImplementation(async(path:string)=>(path.endsWith('/catalog')?{...catalog,plans:[{...plan,segments:[{...line,direction:undefined,emotion:'sad'}]}]}:{items:[]}) as never);
  render(<VoiceDirectionPanel client={api}/>);await screen.findByText('Saved · v4 · PENDING_REVIEW');fireEvent.change(screen.getByLabelText('声音导演有声计划'),{target:{value:'plan'}});expect((screen.getByLabelText('情绪参数') as HTMLInputElement).value).toBe('sad');
  fireEvent.click(screen.getByRole('button',{name:'保存声音方向'}));await waitFor(()=>expect(api.put).toHaveBeenCalledWith('/voice-direction/plans/plan/segments/line',expect.objectContaining({emotion:'sad',expected_version:4})));
+});
+
+it('never reports unknown enums, nonboolean review flags or malformed source/parameters as clean',()=>{
+ const invalid={...line,kind:'ALIEN',attribution_status:'UNKNOWN',profile_version:0,source_start:undefined,source_text_digest:'missing',direction:{...line.direction!,text_reviewed:'false',voice_authorized:'false',speech_rate:0,pause_ms:0.5}} as unknown as AudioSegment;
+ const issues=voiceAssignmentIssues(plan,invalid,{...catalog,profiles:[{...catalog.profiles[0],version:0}]});
+ for(const text of ['类型缺失','状态缺失','原文范围','朗读速度','版本不一致','朗读文本','声音使用授权'])expect(issues.some(issue=>issue.includes(text))).toBe(true);
+ expect(voiceAssignmentIssues(plan,{...line,kind:undefined,attribution_status:undefined} as unknown as AudioSegment,catalog)).toEqual(expect.arrayContaining([expect.stringMatching(/类型缺失/),expect.stringMatching(/状态缺失/)]));
+});
+function retainedClick(node:HTMLElement):()=>void {const key=Object.keys(node).find(k=>k.startsWith('__reactProps$'))!;return (node as any)[key].onClick;}
+it('invalidates retained review navigation across page ABA and unmount',()=>{
+ const locate=vi.fn(),segments=Array.from({length:21},(_,i)=>({...line,id:`s${i}`}));const view=render(<VoicePlanReview plan={{...plan,segments}} catalog={catalog} available onLocate={locate}/>);
+ const old=retainedClick(screen.getByRole('button',{name:'定位声音片段 1'}));fireEvent.click(screen.getByRole('button',{name:'下一页声音核对'}));fireEvent.click(screen.getByRole('button',{name:'上一页声音核对'}));old();expect(locate).not.toHaveBeenCalled();
+ const latest=retainedClick(screen.getByRole('button',{name:'定位声音片段 1'}));view.unmount();latest();expect(locate).not.toHaveBeenCalled();
+});
+it('invalidates retained location after profile-only refresh and plan ABA',async()=>{
+ const api=client();vi.mocked(api.get).mockImplementation(async(path:string)=>(path.endsWith('/catalog')?{...catalog,plans:[plan,{...plan,id:'other'}]}:{items:[]}) as never);
+ render(<VoiceDirectionPanel client={api}/>);await waitFor(()=>expect(screen.getAllByRole('option',{name:'Saved · v4 · PENDING_REVIEW'})).toHaveLength(2));fireEvent.change(screen.getByLabelText('声音导演有声计划'),{target:{value:'plan'}});fireEvent.click(screen.getByRole('button',{name:'核对已保存声音分配'}));
+ const old=retainedClick(screen.getByRole('button',{name:'定位声音片段 1'}));const focus=vi.spyOn(HTMLElement.prototype,'focus');fireEvent.change(screen.getByLabelText('声音导演有声计划'),{target:{value:'other'}});fireEvent.change(screen.getByLabelText('声音导演有声计划'),{target:{value:'plan'}});old();expect(focus).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'核对已保存声音分配'}));
+ const beforeRefresh=retainedClick(screen.getByRole('button',{name:'定位声音片段 1'}));vi.mocked(api.get).mockImplementation(async(path:string)=>(path.endsWith('/catalog')?{...catalog,profiles:[{...catalog.profiles[0],version:3}]}:{items:[]}) as never);fireEvent.click(screen.getByRole('button',{name:'刷新声音来源与任务'}));await screen.findByText(/声音 Profile 版本不一致/);beforeRefresh();expect(focus).not.toHaveBeenCalled();
+});
+
+it('recognizes original rule-confirmed attribution and renders malformed emotion as unknown',()=>{
+ expect(voiceAssignmentIssues(plan,{...line,attribution_status:'RULE_CONFIRMED'},catalog)).toEqual([]);
+ render(<VoicePlanReview plan={{...plan,segments:[{...line,direction:{...line.direction!,emotion:{} as string}}]}} catalog={catalog} available onLocate={()=>{}}/>);expect(screen.getByText('情绪参数缺失或无效')).toBeTruthy();
 });

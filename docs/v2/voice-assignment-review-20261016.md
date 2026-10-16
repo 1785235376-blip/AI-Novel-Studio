@@ -26,9 +26,11 @@ B03 remains PARTIAL. Actual browser/visual/native IME, HTTP integration, PG/P0/s
 
 Exact commands, isolated environment, exit codes and final source/log hashes are indexed in `voice-assignment-review-20261016.json`.
 
-- 31 selected mock UI/pure tests pass, including ten new review cases: exact focus with dirty text, explicit original save, version changes without rebasing, missing/duplicate refs, divergent voices, bounded pages, IME, failed refresh, owner/stale replacement, cross-plan reused IDs and legacy emotion persistence.
+- 35 selected mock UI/pure tests pass, including fourteen new review cases: exact focus with dirty text, explicit original save, version changes without rebasing, missing/duplicate refs, divergent voices, bounded pages, IME, failed refresh, owner/stale replacement, cross-plan reused IDs and legacy emotion persistence.
 - Three original nonsecurity File tests pass: only corrected audio invalidated with source text unchanged, unknown/narration/lock/reorder semantics, and literal safe pronunciation. No provider execution test was run.
 - 30 PUBLIC packaging tests, forced TypeScript/Vite build, test discovery, global/scoped token guards, diff whitespace and 487-file PUBLIC closure pass. Chunk-size warning remains.
 - Initial new test expected raw `Error` text, but original error UI deliberately uses a generic message; that test-only assertion was corrected. Failed and superseded receipts are retained. No permissions, dependency or environment bypass.
 
 Containing local commit is the deliverable. Independent parent review is required before further tracked feature work.
+
+Independent review corrections: unknown attribution/kind, nonboolean confirmations, nonpositive Profile versions and invalid source offsets/digests/rate/pause now produce diagnostics. Original RULE_CONFIRMED is recognized. Current catalog Profile metadata is explicitly distinct from saved version pins; malformed emotion renders unknown. Retained callbacks are invalidated by local page/lifetime changes as well as parent plan/catalog renders; page/plan ABA, unmount and Profile-only refresh regressions pass. Independent rerun: 35 selected UI checks pass. Initial commit `8fb7e2c`; containing follow-up commit identifies corrected delivery.
