@@ -11,6 +11,7 @@ import { directorVsShotOverride } from './storyboardOps';
 import { DirectorGoalPanel } from './DirectorGoalPanel';
 import { ShotDetailPanel } from './ShotDetailPanel';
 import { PromptAdoptionDisclosure } from './PromptAdoptionDisclosure';
+import { PromptAdoptionWritePanel } from './PromptAdoptionWritePanel';
 import { ShotList } from './ShotList';
 import { ShotSendToPanel } from './ShotSendToPanel';
 import { useStoryboardWorkspace } from './useStoryboardWorkspace';
@@ -27,6 +28,10 @@ export type StoryboardWorkspacePanelProps = {
   active: boolean;
   denied: boolean;
   busy: boolean;
+  /** Only the original host may admit writes. Missing remains read-only. */
+  writable?: boolean;
+  /** Verified original document, returned to the host's existing clean document state. */
+  onDocumentCommitted?: (document: CreativeDocument, expectedTargetVersion: number) => void;
   isCurrent: () => boolean;
   read: <T>(w: () => Promise<T>) => Promise<T>;
   mutate: <T>(w: () => Promise<T>) => Promise<T>;
@@ -49,7 +54,7 @@ const segment = encodeURIComponent;
  * 分镜工作区面板：组合 + 挂载入口。
  *
  * 它读到的每个字节都来自注入的传输，并且都经过父级的 `read` 闸门；没有定时器，
- * 也没有原分镜/原时间线的写入口。显示顺序草稿留在本地，跨模块动作只通过
+ * 显示顺序草稿留在本地；Prompt 采用仅经显式开放的原写入口。跨模块动作只通过
  * `onSendTo` 回调交回调用方 —— 本组件自己**不**导航、不执行。
  */
 export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
@@ -71,6 +76,7 @@ export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
   const [goalNotice, setGoalNotice] = useState('');
   const [directorOpen, setDirectorOpen] = useState(false);
   const [bibleOpen, setBibleOpen] = useState(false);
+  const [adoptionRefresh, setAdoptionRefresh] = useState(0);
   const directorClient = useMemo(
     () => createDirectorWorkspaceClient(props.projectId, props.transport, props.scope),
     [props.projectId, props.transport, props.scope],
@@ -166,11 +172,32 @@ export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
         <PromptAdoptionDisclosure
           projectId={props.projectId}
           documentId={controller.receipt?.document_snapshot.id ?? null}
-          identity={props.identity}
+          identity={`${props.identity}|adoption:${adoptionRefresh}`}
           read={props.read}
           shotId={controller.selected?.summary.shot_id ?? null}
           transport={props.transport}
           enabled={props.active && !props.denied && props.isCurrent()}
+        />
+        <PromptAdoptionWritePanel
+          projectId={props.projectId} identity={props.identity} transport={props.transport}
+          target={controller.receipt && controller.selected ? {
+            documentId: controller.receipt.document_snapshot.id,
+            shotId: controller.selected.summary.shot_id,
+            version: controller.receipt.document_snapshot.version,
+            digest: controller.receipt.document_snapshot.digest,
+          } : null}
+          enabled={props.active && !props.denied && props.isCurrent()} busy={props.busy || controller.loading}
+          writable={props.writable === true}
+          isCurrent={props.isCurrent} read={props.read} mutate={props.mutate} readDocument={getDocument}
+          onUnavailable={props.onUnavailable}
+          onCommitted={async (document, expectedTargetVersion) => {
+            if (!props.isCurrent()) throw new Error('工作区身份或草稿已变化。');
+            props.onDocumentCommitted?.(document, expectedTargetVersion);
+            await controller.load();
+            if (!props.isCurrent()) throw new Error('工作区身份或草稿已变化。');
+            setAdoptionRefresh(value => value + 1);
+            controller.toast('已回读确认 Prompt 采用；可查看固定的 Prompt 采用来源。');
+          }}
         />
         <ShotSendToPanel
           row={controller.selected}
