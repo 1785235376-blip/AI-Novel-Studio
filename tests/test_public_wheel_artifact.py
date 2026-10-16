@@ -42,16 +42,17 @@ def offline(event, args):
     if event in ('socket.connect', 'socket.bind', 'socket.getaddrinfo', 'subprocess.Popen'):
         raise RuntimeError('Packaging must remain offline and pure Python: ' + event)
 sys.addaudithook(offline)
-from setuptools.build_meta import build_wheel
-print(build_wheel(sys.argv[1]))
+from setuptools import build_meta
+assert sys.argv[2] in ('wheel', 'sdist')
+print(getattr(build_meta, 'build_' + sys.argv[2])(sys.argv[1]))
 assert not any(name.split('.')[0] in ('app', 'local_interop_protocol', 'local_interop_desktop') for name in sys.modules)
 print('APPLICATION_IMPORTS=NONE NETWORK=NONE')
 '''
 
 
-@pytest.fixture(scope='module')
-def artifact(tmp_path_factory):
-    root = tmp_path_factory.mktemp('public-wheel')
+def build_distribution(tmp_path_factory, kind='wheel'):
+    assert kind in ('wheel', 'sdist')
+    root = tmp_path_factory.mktemp('public-' + kind)
     python = os.environ.get('PUBLIC_WHEEL_BUILD_PYTHON', sys.executable)
     env = {key: value for key, value in os.environ.items()
            if not key.endswith(('_API_KEY', '_TOKEN', '_SECRET'))
@@ -70,26 +71,31 @@ def artifact(tmp_path_factory):
             pytest.fail('Selected packaging interpreter lacks installed setuptools/wheel: ' + available.stderr)
         pytest.skip('Offline wheel tooling unavailable; set PUBLIC_WHEEL_BUILD_PYTHON to an existing interpreter')
     manifest = build.load_manifest(ROOT / 'packaging/public-build.json')
-    source = Path(os.environ.get('PUBLIC_WHEEL_SOURCE', str(ROOT))).resolve()
+    source = Path(os.environ.get('PUBLIC_' + kind.upper() + '_SOURCE', os.environ.get('PUBLIC_WHEEL_SOURCE', str(ROOT)))).resolve()
     stage = root / 'public'
     receipt = build.stage_public(source, stage, manifest, docker=True)
     # Build in a disposable copy so egg-info/build output cannot alter the
     # pristine PUBLIC stage whose exact bytes own this artifact receipt.
     work = root / 'build-source'
     shutil.copytree(stage, work)
-    output = root / 'wheels'
+    output = root / (kind + 's')
     output.mkdir()
-    result = subprocess.run([python, '-B', '-c', BUILD, str(output)], cwd=work,
+    result = subprocess.run([python, '-B', '-c', BUILD, str(output), kind], cwd=work,
                             env=env, capture_output=True, text=True, timeout=120)
     (root / 'build.log').write_text(result.stdout + result.stderr)
     assert result.returncode == 0, result.stdout + result.stderr
     assert 'APPLICATION_IMPORTS=NONE NETWORK=NONE' in result.stdout
-    wheels = list(output.glob('*.whl'))
-    assert len(wheels) == 1
+    artifacts = list(output.glob('*.whl' if kind == 'wheel' else '*.tar.gz'))
+    assert len(artifacts) == 1
     (root / 'stage-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
-    verified = build.verify_wheel(stage, wheels[0], manifest)
-    (root / 'wheel-receipt.json').write_text(json.dumps(verified, indent=2) + '\n')
-    return root, stage, wheels[0], manifest, receipt, verified
+    verified = getattr(build, 'verify_' + kind)(stage, artifacts[0], manifest)
+    (root / (kind + '-receipt.json')).write_text(json.dumps(verified, indent=2) + '\n')
+    return root, stage, artifacts[0], manifest, receipt, verified
+
+
+@pytest.fixture(scope='module')
+def artifact(tmp_path_factory):
+    return build_distribution(tmp_path_factory)
 
 
 def payloads(wheel):

@@ -1,0 +1,23 @@
+Retained build log: .runtime/v2-checks/public-sdist-final/pytest-tmp/public-sdist0/build.log
+SHA256: 94f6b1be7d781dc3eb14972950e008c978a3c0565b7d1b0b3f5639585d7daf53
+
+running sdist
+running egg_info
+creating ai_novel_studio.egg-info
+writing ai_novel_studio.egg-info/PKG-INFO
+writing dependency_links to ai_novel_studio.egg-info/dependency_links.txt
+writing requirements to ai_novel_studio.egg-info/requires.txt
+writing top-level names to ai_novel_studio.egg-info/top_level.txt
+writing manifest file 'ai_novel_studio.egg-info/SOURCES.txt'
+[Repeated copy listing omitted; original log retained in owned profile.]
+copying local_interop_desktop/transport.py -> ai_novel_studio-0.7.0/local_interop_desktop
+copying local_interop_protocol/__init__.py -> ai_novel_studio-0.7.0/local_interop_protocol
+copying local_interop_protocol/generate_contracts.py -> ai_novel_studio-0.7.0/local_interop_protocol
+copying local_interop_protocol/models.py -> ai_novel_studio-0.7.0/local_interop_protocol
+copying local_interop_protocol/validation.py -> ai_novel_studio-0.7.0/local_interop_protocol
+Writing ai_novel_studio-0.7.0/setup.cfg
+Creating tar archive
+removing 'ai_novel_studio-0.7.0' (and everything under it)
+ai_novel_studio-0.7.0.tar.gz
+APPLICATION_IMPORTS=NONE NETWORK=NONE
+warning: sdist: standard file not found: should have one of README, README.rst, README.txt, README.md

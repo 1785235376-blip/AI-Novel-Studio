@@ -1,0 +1,88 @@
+{
+  "artifact": {
+    "bytes": 1550443,
+    "member_count": 534,
+    "path": ".runtime/v2-checks/public-sdist-final/pytest-tmp/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+    "sha256": "6c19645cbac0ca69d051405a000b4c6f91b175a0c6ed6c7b2f2d1d0f4978d86e",
+    "source_payload_count": 506
+  },
+  "artifact_only": true,
+  "build_guard": "APPLICATION_IMPORTS=NONE NETWORK=NONE; subprocess launch denied inside backend build; no extraction, application fixtures, security or lifecycle tests",
+  "capture_head": "1278e4f95affb1e33d8b7676c2930226ad7b49e0",
+  "capture_source_dirty": true,
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "--noconftest",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp",
+    ".runtime/v2-checks/public-sdist-final/pytest-tmp",
+    "tests/test_public_archive_limits.py",
+    "tests/test_public_sdist_artifact.py",
+    "tests/test_public_wheel_artifact.py",
+    "tests/test_public_build_profile.py"
+  ],
+  "dirty_source_explanation": "Approved four packaging paths and separate frontend handoff work were uncommitted. All 528 PUBLIC stage inputs already match the capture HEAD Git blobs; no application payload changed.",
+  "external_dependencies_bundled": false,
+  "finished_utc": "2026-10-16T21:31:03.011567+00:00",
+  "format_status": "FUTURE_FORMAT_VERIFICATION",
+  "independent_log_sha256": "111bd13ca226c541e6d6b6dfe3edf5902a5960a6c57b15cf63f736a980169366",
+  "independent_test_count": 147,
+  "installed": false,
+  "not_run": [
+    "Docker image or startup",
+    "Windows assembly or startup",
+    "bzip2/xz archive inspection",
+    "browser/visual/geometry"
+  ],
+  "owned_sources": {
+    "scripts/public_build.py": {
+      "git_blob": "1fcf5f1685a0b7eb85608b6b56c50e29704bd3ce",
+      "sha256": "052e5486633653cbe21725ac0d10843f03efb77eae8757503e5e249721f36619"
+    },
+    "tests/test_public_archive_limits.py": {
+      "git_blob": "ed499c1c81543d6b36cffa6270200ec4040b4fdd",
+      "sha256": "641738abe67766c6b1b7ed1d728a64fa5f466b45db5d9dd28cfe940035e24a63"
+    },
+    "tests/test_public_sdist_artifact.py": {
+      "git_blob": "e18862d0997eb027e06aa1bc969e413c7fe173cb",
+      "sha256": "9efa596bdf7903e7b469b413dff6911836981959a2b60ab88f6694f98ebabaa3"
+    },
+    "tests/test_public_wheel_artifact.py": {
+      "git_blob": "f890ba19fff8c3594e85603d874a8cced90da92e",
+      "sha256": "beb8eb68c94d590532123c1e6efd10ccd46404098aad9b6ec227a05285fdb85b"
+    }
+  },
+  "packaging_log_sha256": "691246b930cbabadeeb6fb428d668299baae660785f36165fef37d72d4dd6160",
+  "public_input_git_binding": {
+    "commit": "1278e4f95affb1e33d8b7676c2930226ad7b49e0",
+    "input_count": 528,
+    "mismatches": []
+  },
+  "published": false,
+  "raw_runner_receipt": ".runtime/v2-checks/public-sdist-final/runner-receipt.json",
+  "raw_runner_receipt_sha256": "8a9617cd2150ae0ff251d1bf21bc8b3933e2fc51f08fd4e9e5b793107bee0b61",
+  "sdist_receipt_sha256": "488340b067c3dd3b62966e84d1d3c40ed52b69442ee2a81c04cebe096e761a6c",
+  "source_snapshot_sha256": "9d2427a33a46e51ebee067013267d84d7d0e378335c7351914e97428fe849b5b",
+  "sources_changed_during_check": false,
+  "stage_receipt_sha256": "58801e93b1acf1e629457b5b662458af7ac84d36e944a05df6124fd0a46a4d12",
+  "started_utc": "2026-10-16T21:30:31.431576+00:00",
+  "status": "PASS",
+  "test_count": 147,
+  "tooling": {
+    "packaging": "26.3",
+    "python": "3.12.14",
+    "setuptools": "84.0.0",
+    "wheel": "0.48.0"
+  },
+  "wheel_regression": {
+    "member_count": 509,
+    "path": ".runtime/v2-checks/public-sdist-final/pytest-tmp/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+    "sha256": "350a815adfbb10f0827d7eda0e526c7f2410806c3fca18c81c9f498922c7a09e",
+    "source_payload_count": 505
+  }
+}
