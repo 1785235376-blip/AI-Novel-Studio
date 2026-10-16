@@ -48,3 +48,8 @@
 .graph-canvas__minimap-selected{fill:var(--color-accent-primary)}
 .graph-canvas__minimap-camera{fill:none;stroke:var(--color-accent-primary);stroke-width:2;vector-effect:non-scaling-stroke}
 .graph-canvas__minimap-row .graph-canvas__help{border:0}
+
+.graph-canvas__annotation{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);padding:var(--space-2);border-bottom:var(--border-default);font-size:12px}
+.graph-canvas__annotation textarea{flex:1;min-width:0;box-sizing:border-box;resize:vertical;padding:var(--space-2);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit}
+.graph-canvas__annotation textarea:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:-2px}
+.graph-canvas__annotation .graph-canvas__help{flex-basis:100%;padding:0;border:0}

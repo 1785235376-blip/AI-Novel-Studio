@@ -1,0 +1,107 @@
+{
+  "baseline_commit": "a132035c79d1c9182299f7c4a71a06a7bfd2eef3",
+  "scope": "Bounded original-owner graph-level annotation; groups remain MISSING",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/studioGraphClient.test.ts src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T08:50:37.244894+00:00",
+      "finished_utc": "2026-10-16T08:50:50.727004+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-annotation-final-ui-r3.log",
+      "log_sha256": "a7b0916eca99ab7021b8952ddf5597acc45bdf9c6497a07e2990b0b7627c6919",
+      "receipt": "docs/delivery/v2-development/canvas-annotation-final-ui-r3.json",
+      "receipt_sha256": "02d9ceaf19313bf51783d4fa2ab88c3c3ee31cde8abaf6ef8eed0ec75a8624cb"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_graph_presentation_contract.py",
+        "tests/test_v2_creative_graph_persistence.py::test_canvas_annotation_original_owner_reopen_remove_and_cas[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_empty_disconnected_graphs_reopen_without_chapter_or_model[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_create_idempotency_and_cas_conflicts_preserve_input[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-annotation-final-file-r3/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T08:51:02.538018+00:00",
+      "finished_utc": "2026-10-16T08:51:11.066750+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-annotation-final-file-r3.log",
+      "log_sha256": "43a2d3d69c98c3b74500661e39c7e2113f72758cbcfd93cf196e138bbd6b9687",
+      "receipt": "docs/delivery/v2-development/canvas-annotation-final-file-r3.json",
+      "receipt_sha256": "b7bf1b417263a691110f29e4e023c87659db067032904aceb8ab1896c7b0d1ea"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T08:51:00.874379+00:00",
+      "finished_utc": "2026-10-16T08:51:33.754104+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-annotation-build-r3.log",
+      "log_sha256": "44a803933639f8dd77219ce17ea08ca0ffcac1d67048d7d5e32768534fb98236",
+      "receipt": "docs/delivery/v2-development/canvas-annotation-build-r3.json",
+      "receipt_sha256": "7020695586b8be381dfc7fd592ca50e1e51081ec93fee5ae9fb23446851df3ca"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for(const p of [\"frontend/src/creative/GraphCanvas.tsx\", \"frontend/src/creative/graphCanvas.css\"]) if(/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Annotation reuses shared Button and existing design tokens; no protected shell or primitive edits.\");"
+      ],
+      "started_utc": "2026-10-16T08:51:18.851964+00:00",
+      "finished_utc": "2026-10-16T08:51:18.905376+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/canvas-annotation-token-scope-r3.log",
+      "log_sha256": "ad3d39315134e41ba65dc50e8ec88a9fad303534b27a082785ca52130165ff6a",
+      "receipt": "docs/delivery/v2-development/canvas-annotation-token-scope-r3.json",
+      "receipt_sha256": "fa190966227870bd1694626fac0aead192da17777a5e0dad4d6585ba41c8e1c6"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 268,
+    "files": 10,
+    "skipped": 0,
+    "environment": "jsdom/mock transport and pure geometry"
+  },
+  "backend_contract_tests": 11,
+  "file_owner_tests": 4,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "source_sha256": {
+    "app/creative/graph_models.py": "c6806103f13ab5b5dfa96c6572e35f863aaa19520b57930837e08b493f97a907",
+    "frontend/src/creative/GraphCanvas.test.tsx": "6e2fb7eb8805c75a623e025ddcec59136464e40bcbe4151ef8662b780a57adf9",
+    "frontend/src/creative/GraphCanvas.tsx": "cbd05a5b5a7835c0c5ac0b519d4586c0cbad69497bac7afe78476a95c97aa499",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "151feab0a6167430494bbc9e82c727664979e294ee46debb04e947d9e1b09c68",
+    "frontend/src/creative/graphCanvas.css": "a3d11e3ac8ba1555f897d702308e5abeccd0cec262f7e76b76f28671e3487d17",
+    "frontend/src/creative/studioGraphClient.test.ts": "cbe1f5194374de45f18f355c9940a6f457bbb5ba2ef3958e57c39b958de21b20",
+    "frontend/src/creative/studioGraphClient.ts": "d76bfcab82726b97167752e106f2733bd1bb744c24f3566e38a6a1f68485a82d",
+    "frontend/src/creative/studioGraphTypes.ts": "19d402de07bc11d7b14df36048b4dacc963ebb6a21e91baa1d892877b0548f30",
+    "tests/test_v2_creative_graph_persistence.py": "522d7353fb8216789d45831d6d3b82e13d7437469982407f75818f24c7c6a1f1",
+    "tests/test_v2_graph_presentation_contract.py": "31c8d81a6173cbd23d8eb3e37b5667a387b946ed86ed3cb33a758d501bc304e6"
+  },
+  "not_run": [
+    "PG/P0/security (BLOCKED and excluded)",
+    "Browser/native IME/visuals/accessibility/performance",
+    "Windows/GPU/provider/full RC",
+    "push/hosted CI"
+  ]
+}

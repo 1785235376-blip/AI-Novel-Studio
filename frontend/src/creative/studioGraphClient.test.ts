@@ -57,6 +57,24 @@ beforeEach(() => { fetchMock = vi.fn().mockResolvedValue(reply(graph())); vi.stu
 afterEach(() => { vi.unstubAllGlobals(); useLocalHostSession.setState({ token: '', actorId: '' }); });
 
 describe('scoped graph transport', () => {
+  it.each([1, 2, 3, 4, 5] as const)('roundtrips optional presentation through original transport schema %s', async schema_version => {
+    const original = graph(); original.definition = { ...definition(), schema_version, nodes: [], edges: [] };
+    fetchMock.mockResolvedValue(reply(original));
+    const client = studioClient(projectId, context()).graphs;
+    expect((await client.get(graphId)).definition).toEqual(original.definition);
+    expect((await client.get(graphId)).definition).not.toHaveProperty('presentation');
+    original.definition.presentation = { comment: '🎬'.repeat(2000) };
+    fetchMock.mockResolvedValue(reply(original));
+    expect((await client.get(graphId)).definition).toEqual(original.definition);
+    expect((await client.save(graphId, { expected_version: 3, definition: original.definition })).definition).toEqual(original.definition);
+    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
+  });
+  it.each([null, {}, { comment: 1 }, { comment: 'x'.repeat(2001) }, { comment: '🎬'.repeat(2001) }, { comment: 'x', groups: [] }])('rejects malformed annotation from transport: %j', async presentation => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition, presentation } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
+  });
+
   it('reuses captured Studio credentials and branch for all graph endpoints', async () => {
     const origin = context(), client = studioClient(projectId, origin).graphs, signal = new AbortController().signal;
     origin.sessionToken = 'later-session'; origin.scope!.branchId = 'later-branch'; origin.scope!.workspaceId = 'later-workspace';

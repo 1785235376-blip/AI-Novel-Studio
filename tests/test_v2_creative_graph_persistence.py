@@ -235,3 +235,24 @@ def test_presentation_positions_and_camera_reopen_with_original_cas_owner(rig):
     assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
     assert alternate['viewport']['x'] == -600.0
     assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}
+
+
+def test_canvas_annotation_original_owner_reopen_remove_and_cas(rig):
+    original = create(rig)
+    assert 'presentation' not in original['definition']
+    annotated = deepcopy(original['definition'])
+    annotated['presentation'] = {'comment': '场景组织说明\n<script>plain author text</script>'}
+    updated = save(rig, original, annotated)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
+    assert updated['definition'] == annotated
+    assert updated['execution_digest'] == original['execution_digest']
+    assert updated['definition_digest'] != original['definition_digest']
+    with pytest.raises(CapabilityVersionConflict):
+        save(rig, original, annotated)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
+    restored = save(rig, updated, original['definition'])
+    assert restored['definition'] == original['definition']
+    assert restored['definition_digest'] == original['definition_digest']
+    assert restored['execution_digest'] == original['execution_digest']
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == restored
+    assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}

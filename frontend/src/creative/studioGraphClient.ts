@@ -331,6 +331,13 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
   const viewport = record(row.viewport, input);
   const result: StudioGraphDefinition = { schema_version: row.schema_version, title: text(row.title, 160, input), nodes, edges,
     viewport: { ...position(viewport, input), zoom: number(viewport.zoom, 0.35, 2.5, input) } };
+  if (row.presentation !== undefined) {
+    const presentation = record(row.presentation, input);
+    if (Object.keys(presentation).some(key => key !== 'comment')) invalid(input);
+    const comment = text(presentation.comment, 4000, input, true);
+    if (Array.from(comment).length > 2000) invalid(input);
+    result.presentation = { comment };
+  }
   if (new TextEncoder().encode(JSON.stringify(result)).length > 96_000) invalid(input);
   return result;
 }

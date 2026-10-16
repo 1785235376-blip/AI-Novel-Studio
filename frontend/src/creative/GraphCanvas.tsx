@@ -61,6 +61,8 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const [focusedNode, setFocusedNode] = useState<string | null>(null);
   const [showMiniMap, setShowMiniMap] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
+  const [annotationLimit, setAnnotationLimit] = useState(false);
+  useEffect(() => { setAnnotationLimit(false); }, [definition, interactionKey, blocked]);
   const [snap, setSnap] = useState(false);
   const [gridStep, setGridStep] = useState(24);
   useEffect(() => { setShowGrid(true); setSnap(false); setGridStep(24); }, [interactionKey]);
@@ -265,6 +267,26 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       {readonly && <Badge>只读</Badge>}
       <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || !removable.length} title={selected.length && !removable.length ? '已保存的资产引用只能移动或停用' : '删除所选节点及其连接'} onClick={deleteSelected}><Trash2 size={16} /></Button>
     </header>
+    <div className="graph-canvas__annotation" onKeyDown={event => event.stopPropagation()}>
+      <label htmlFor={`${descriptionId}-comment`}>画布说明</label>
+      <textarea id={`${descriptionId}-comment`} rows={2} maxLength={4000} value={definition.presentation?.comment || ''}
+        disabled={blocked || !!activeGesture} aria-describedby={`${descriptionId}-comment-help`}
+        onChange={event => {
+          if (blocked || gesture.current) return;
+          const comment = event.target.value;
+          if (Array.from(comment).length > 2000) { setAnnotationLimit(true); return; }
+          setAnnotationLimit(false);
+          onDefinitionChange({ ...definition, presentation: { comment } }, true);
+        }} />
+      <Button type="button" variant="ghost" disabled={blocked || !!activeGesture || !definition.presentation}
+        onClick={() => {
+          if (blocked || gesture.current) return;
+          const next = { ...definition }; delete next.presentation;
+          onDefinitionChange(next, true);
+        }}>移除画布说明</Button>
+      <p id={`${descriptionId}-comment-help`} className="graph-canvas__help">最多 2000 个 Unicode 字符。仅作整张图的创作备注；使用“保存创作图”保存，可撤销。不会作为模型输入或运行节点。</p>
+      {annotationLimit && <p role="alert" className="graph-canvas__help">说明超过 2000 个字符，本次输入未应用；原有说明已保留。</p>}
+    </div>
     <div className="graph-canvas__toolbar" role="group" aria-label="网格与吸附设置" onKeyDown={event => event.stopPropagation()}>
       <Button type="button" variant="ghost" aria-pressed={showGrid} disabled={!!activeGesture} onClick={() => setShowGrid(value => !value)}>显示网格</Button>
       <Button type="button" variant="ghost" aria-pressed={snap} disabled={blocked || !!activeGesture} onClick={() => setSnap(value => !value)}>拖拽吸附</Button>

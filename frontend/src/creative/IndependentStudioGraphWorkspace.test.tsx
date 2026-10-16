@@ -65,6 +65,34 @@ async function open() { fireEvent.change(screen.getByLabelText('已保存创作�
 function add(kind: StudioGraphDefinitionId) { fireEvent.change(screen.getByLabelText('节点类型'), { target: { value: kind } }); click('添加节点'); }
 
 describe('independent studio graph content integration', () => {
+  it('saves/reopens graph annotation with original undo, redo, removal and no model dispatch', async () => {
+    saved.definition.nodes = [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true,
+      position: { x: 48, y: 64 }, parameters: { text: 'Original author text' } }];
+    const before = structuredClone(saved.definition), mounted = mount(); await enter(); await open();
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: '先确认场景连续性' } });
+    expect(client.graphs.save).not.toHaveBeenCalled();
+    click('撤销图编辑'); expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe('');
+    click('重做图编辑'); expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe('先确认场景连续性');
+    click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    expect(client.graphs.save).toHaveBeenCalledWith('saved-graph', { expected_version: 1,
+      definition: { ...before, presentation: { comment: '先确认场景连续性' } } });
+    mounted.unmount(); mount(); await enter(); await open();
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe('先确认场景连续性');
+    click('移除画布说明'); click('保存创作图'); await screen.findByText('创作图已保存 · v3。没有自动创建运行。');
+    expect(saved.definition).toEqual(before);
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
+
+  it('warns before leaving when only the graph annotation changed', async () => {
+    mount(); await enter(); await open();
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: 'Only unsaved annotation' } });
+    click('素材工作区');
+    await screen.findByText('有未保存的创作图输入。可以继续编辑，或确认放弃后离开。');
+    click('继续编辑');
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe('Only unsaved annotation');
+    expect(client.graphs.save).not.toHaveBeenCalled();
+  });
+
   it('promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing', async () => {
     vi.mocked(client.graphs.catalog).mockResolvedValue(modelCatalog());
     client.graphs.modelCapabilities = vi.fn(); client.graphs.previewModel = vi.fn(); client.graphs.dispatchModel = vi.fn();
@@ -226,10 +254,13 @@ describe('independent studio graph content integration', () => {
     const mounted = mount(); await enter(); await open();
     fireEvent.click(screen.getByRole('button', { name: /选择节点 .* · text$/ }));
     click('应用自动布局到草稿');
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: '保留未确认备注' } });
     vi.mocked(client.graphs.save).mockRejectedValueOnce(new ApiError({ status, code: status === 409 ? 'CREATIVE_GRAPH_VERSION_CONFLICT' : 'UNKNOWN', message: '保存未确认' }));
     click('保存创作图'); await screen.findByText('保存版本或回执不确定。草稿已保留，不会自动覆盖或重试。');
     expect((screen.getByLabelText('节点 X') as HTMLInputElement).value).toBe('0');
     expect((screen.getByRole('button', { name: '应用自动布局到草稿' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe('保留未确认备注');
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).disabled).toBe(true);
     saved = { ...saved, version: 2, definition: { ...saved.definition, viewport: { x: -77, y: 20, zoom: 0.8 } } }; rows = [saved];
     click('核对图服务端版本'); await screen.findByRole('region', { name: '图服务端版本' });
     expect(document.querySelector('.graph-canvas__world')?.getAttribute('style')).toContain('translate(99px, 80px) scale(1.5)');

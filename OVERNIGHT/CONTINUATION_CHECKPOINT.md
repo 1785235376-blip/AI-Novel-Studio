@@ -55,3 +55,11 @@ Baseline `65b607de422eecfc2e5121c3145ff28885c9d048`; containing commit identifie
 203 selected mocked UI/geometry tests, 1 original nonsecurity File presentation/CAS test, 30 PUBLIC contracts, tsc/Vite/token/discovery and 487-file source closure pass. Report/evidence: `docs/v2/canvas-grid-snapping-20261016.md` / `.json`. Browser/native input/visuals/PG/P0/GPU/provider/Windows/full RC NOT_RUN; P0 remains BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled. No push/hosted CI because cost unknown.
 
 Handoff: independent review before further tracked edits. Next candidate remains original-owner grouping/collapse/annotations after schema audit; durable grid preferences and unsaved recovery remain open. Preserve all prior receipts and user-machine/cost/denial boundaries.
+
+## Graph annotation continuation — 2026-10-16
+
+Baseline `a132035c79d1c9182299f7c4a71a06a7bfd2eef3`; containing commit identifies delivery. Audit found no persisted annotation/group field and an exact legacy-definition digest check. Added bounded optional `presentation.comment` with omission-compatible serialization across schemas 1–5, strict frontend transport, mounted canvas author note/removal through original history/save/reopen. No second store or execution/permission/limit changes. This is one graph-level note, not named grouping or nested/subgraph completion.
+
+268 selected mocked UI/transport/geometry tests, 11 pure serialization/validation tests, 4 original nonsecurity File tests and 30 PUBLIC contracts pass; tsc/Vite/discovery/token/scoped-color/487-file PUBLIC closure pass. Report/evidence: `docs/v2/canvas-annotation-20261016.md` / `.json`. Browser/native IME/visuals/performance, PG/P0, Windows/GPU/provider/full RC NOT_RUN. P0 stays BLOCKED, R3-GATE HOLD, Prompt Adoption writes disabled. No push/hosted CI because cost unknown.
+
+Handoff: independent parent review before further tracked edits. Next candidate is strict original-owner named visual grouping with selection/movement and non-destructive group removal; grouping/collapse/nesting remain missing. Preserve earlier receipts, all environment/cost/denial boundaries, and existing exact graph pins.

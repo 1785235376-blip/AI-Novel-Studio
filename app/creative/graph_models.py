@@ -580,12 +580,27 @@ class TypedEdge(Strict):
     target_port: Id
 
 
+class GraphPresentation(Strict):
+    """Bounded author annotation, never execution input or authority."""
+    comment: str = Field(strict=True, max_length=2000)
+
+
 class GraphInput(Strict):
     schema_version: Literal[1] = 1
     title: str = Field(min_length=1, max_length=160)
     nodes: list[NodeInstance] = Field(default_factory=list, max_length=MAX_NODES)
     edges: list[TypedEdge] = Field(default_factory=list, max_length=MAX_EDGES)
     viewport: Viewport = Field(default_factory=Viewport)
+    presentation: GraphPresentation | None = None
+
+    @model_serializer(mode="wrap")
+    def preserve_legacy_presentation(self, handler):
+        # Old stored definitions are checked by exact canonical digest. Do not
+        # inject a new default key into them (including nested create payloads).
+        value = handler(self)
+        if self.presentation is None:
+            value.pop("presentation", None)
+        return value
 
     @field_validator("schema_version", mode="before")
     @classmethod

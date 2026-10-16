@@ -48,6 +48,46 @@ beforeEach(() => { vi.stubGlobal('PointerEvent', TestPointerEvent); });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe('controlled typed graph canvas', () => {
+  it('edits and removes plain graph annotations without changing node geometry, pins or selection', () => {
+    const definition = initial(), { changes, selections, rerender } = setup({ definition, selectedNodeIds: ['source'] });
+    const text = '场景说明\n<script>plain text</script>';
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: text } });
+    expect(changes).toHaveBeenLastCalledWith({ ...definition, presentation: { comment: text } }, true);
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).maxLength).toBe(4000);
+    fireEvent.keyDown(screen.getByLabelText('画布说明'), { key: 'Delete' });
+    fireEvent.keyDown(screen.getByLabelText('画布说明'), { key: 'ArrowRight' });
+    expect(changes).toHaveBeenCalledTimes(1); expect(selections).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '移除画布说明' }));
+    expect(changes).toHaveBeenLastCalledWith(definition, true);
+    rerender({ definition: { ...initial(), presentation: { comment: 'Other owner' } }, interactionKey: 'other' });
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe('Other owner');
+  });
+
+  it('preserves 2000 supplementary characters and rejects overflow without dropping existing text', () => {
+    const { changes } = setup();
+    const text = '🎬'.repeat(2000);
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: text } });
+    expect(changes.mock.calls.at(-1)![0].presentation.comment).toBe(text);
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: text + '尾' } });
+    expect(changes).toHaveBeenCalledTimes(1);
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe(text);
+    expect(screen.getByRole('alert').textContent).toContain('原有说明已保留');
+    const mixed = '字'.repeat(1999) + '🎬';
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: mixed } });
+    expect(changes.mock.calls.at(-1)![0].presentation.comment).toBe(mixed);
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: '新增' + mixed } });
+    expect(changes).toHaveBeenCalledTimes(2);
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe(mixed);
+  });
+
+  it.each([{ readonly: true }, { busy: true }])('blocks annotation mutations when owner is blocked: %j', props => {
+    const { changes } = setup({ ...props, definition: { ...initial(), presentation: { comment: 'Keep' } } });
+    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: 'No' } });
+    fireEvent.click(screen.getByRole('button', { name: '移除画布说明' }));
+    expect(changes).not.toHaveBeenCalled();
+  });
+
   it('uses accessible node buttons, explicit typed port labels and edge descriptions', () => {
     const onPortSelect = vi.fn(); setup({ onPortSelect });
     expect(source().getAttribute('aria-pressed')).toBe('false');
