@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-integration/frontend
+
+ ✓ src/creative/AssetRelationshipsPanel.test.tsx (12 tests) 670ms
+ ✓ src/creative/IndependentStudioReadFences.test.tsx (9 tests) 4323ms
+   ✓ independent asset read fences and truthful capability labels > locks mutation inputs during explicit refresh and preserves the next draft after the read finishes 1181ms
+   ✓ independent asset read fences and truthful capability labels > keeps refresh inputs visible until same-version read settles, then retires the old relationship view 734ms
+   ✓ independent asset read fences and truthful capability labels > keeps refresh inputs visible until failed read settles, then retires the old relationship view 685ms
+   ✓ independent asset read fences and truthful capability labels > ignores delayed recovery after the author explicitly selects a different asset and starts a draft 601ms
+ ✓ src/creative/IndependentStudioRelationships.test.tsx (5 tests) 4355ms
+   ✓ studio relationship ownership and draft integration > keeps a relationship draft across navigation attempts and prevents other asset mutations 1461ms
+   ✓ studio relationship ownership and draft integration > saves through the original asset owner and refreshes the source version without copying a target 875ms
+   ✓ studio relationship ownership and draft integration > preserves CAS-conflicted input and source version until an explicit reload 905ms
+   ✓ studio relationship ownership and draft integration > clears selected private content when saving the relationship is revoked 537ms
+   ✓ studio relationship ownership and draft integration > prevents relation writes while a provenance draft is being edited 577ms
+ ✓ src/creative/AssetReferenceInspection.test.tsx (12 tests) 250ms
+
+ Test Files  4 passed (4)
+      Tests  38 passed (38)
+   Start at  05:30:38
+   Duration  8.65s (transform 2.24s, setup 40ms, collect 4.61s, tests 9.60s, environment 1.34s, prepare 230ms)
+

@@ -121,6 +121,11 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   }, [projectId]);
   const [pendingNavigation, setPendingNavigation] = useState<() => void>(), [discard, setDiscard] = useState(false);
   const selectionEpoch = useRef(0), overviewEpoch = useRef(0), storageEpoch = useRef(0), storageReading = useRef(false);
+  // A request retires stale callbacks immediately, but the current relationship
+  // form remains visibly disabled until that same-source read settles. The new
+  // epoch then remounts it even when the returned asset version is unchanged.
+  const relationshipRenderEpoch = useRef(selectionEpoch.current);
+  if (!readingAsset) relationshipRenderEpoch.current = selectionEpoch.current;
   const overviewReading = useRef<AbortController>(), storageRequest = useRef<AbortController>();
   const graphDirtyRef = useRef(false);
   const [mediaDirty, setMediaDirty] = useState(false), [timelineDirty, setTimelineDirty] = useState(false), [productionRevision, setProductionRevision] = useState(0);
@@ -536,7 +541,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     <StudioAssetDeclarationForm key={`${selected.id}:${selected.version}:${formRevision}`} row={lineageAsset(selected)} assets={rows.map(lineageAsset)} readOnly={!writable || busy || relationshipDirty || maskDirty} onDirtyChange={setLineageDirty} saved={() => {}} saveLineage={async body => { if (busyRef.current || !writable || relationshipDirtyRef.current || maskDirtyRef.current) throw new Error('请先保存或放弃关联输入，再保存来源声明。'); busyRef.current = true; setBusy(true); try { const value = await guarded(() => client.lineage(selected.id, body)); refreshedAsset(value); setNotice('来源声明已保存。'); return value; } finally { busyRef.current = false; if (alive.current) setBusy(false); } }} />
     <Button disabled={busy} onClick={() => navigate(() => { void refreshSelectedAsset(selected.id); })}>重新读取当前资产</Button>
   </section>}
-    <AssetRelationshipsPanel key={`${selectionEpoch.current}:${selected.id}:${selected.version}:${formRevision}`} asset={selected} client={client} canMutate={writable} canReview={overview?.capabilities.can_review === true && !denied} blocked={lineageDirty || maskDirty} busy={busy} isCurrent={current} read={guarded} onDirtyChange={setRelationshipDirty} onOpenAsset={openRelationshipAsset} mutate={async operation => {
+    <AssetRelationshipsPanel key={`${relationshipRenderEpoch.current}:${selected.id}:${selected.version}:${formRevision}`} asset={selected} client={client} canMutate={writable} canReview={overview?.capabilities.can_review === true && !denied} blocked={lineageDirty || maskDirty} busy={busy} isCurrent={current} read={guarded} onDirtyChange={setRelationshipDirty} onOpenAsset={openRelationshipAsset} mutate={async operation => {
       if (busyRef.current || lineageDirtyRef.current || maskDirtyRef.current || !current()) throw new Error('请先保存或放弃来源输入，再修改关联。');
       busyRef.current = true; setBusy(true);
       try { const asset = await guarded(operation); refreshedAsset(asset); setNotice('关联已保存，原文件和引用内容未改变。'); return asset; }

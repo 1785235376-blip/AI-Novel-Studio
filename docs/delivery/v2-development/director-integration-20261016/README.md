@@ -16,3 +16,9 @@ Seven textual conflicts were composed individually. Original App navigation inte
 Browser/geometry not rerun because the prior own-cloud socket EPERM block remains unlifted. Historical Codex browser receipts do not establish browser acceptance for this integrated source. PostgreSQL, real models, GPU/Windows and hosted CI were not run. Shared dependency package contents were reused read-only via individual local links; Vite temporary configuration and caches stayed within this new worktree. No dependencies were installed.
 
 All append-only historical feature-matrix sections and the frozen product attachment are preserved. The frozen attachment and raw test logs retain their original trailing blank lines; no source whitespace errors remain.
+
+## Relationship refresh correction
+
+The inherited failure is repaired without changing its original assertions. Request `selectionEpoch` still advances synchronously; only the relationship view's render key is held during `readingAsset`, so the original form remains visibly disabled while the current asset read is pending. On success, same-version completion or failure, the new epoch remounts old relationship/reference state. Asset ID/version, host/project identity and revocation fences remain independent.
+
+The original failing suite now passes, including two added same-version/failure completion cases. The related selection (`IndependentStudioReadFences`, `IndependentStudioRelationships`, `AssetReferenceInspection`, `AssetRelationshipsPanel`) passed 38 tests in 4 files, exit 0. The pre-fix failed receipt is retained next to the corrected receipt. This is targeted verification; the earlier broad failure remains a historical result until the wider suite is rerun.

@@ -51,6 +51,21 @@ describe('independent asset read fences and truthful capability labels', () => {
     expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).value).toBe('刷新后新草稿'); expect(leave).not.toHaveBeenCalled();
   });
 
+  it.each(['same-version', 'failed'] as const)('keeps refresh inputs visible until %s read settles, then retires the old relationship view', async outcome => {
+    mount(); await screen.findByRole('region', { name: '独立资产来源' });
+    fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
+    await screen.findByText('当前没有可选引用；可以保持独立创作。');
+    const finish = deferredRead(); fireEvent.click(screen.getByRole('button', { name: '重新读取当前资产' }));
+    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).disabled).toBe(true);
+    await act(async () => finish(outcome === 'same-version' ? reply(makeAsset()) : { ...reply({ code: 'READ_FAILED' }), ok: false, status: 500 }));
+    expect(screen.queryByLabelText('关联理由')).toBeNull();
+    expect(screen.getByRole('region', { name: '独立资产来源' }).textContent).toContain('版本 v2');
+    fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
+    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).disabled).toBe(false);
+    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).value).toBe('');
+    expect(fetchMock.mock.calls.some(([, init]) => init?.method && init.method !== 'GET')).toBe(false);
+  });
+
   it('ignores delayed recovery after the author explicitly selects a different asset and starts a draft', async () => {
     const finish = deferredRead(); mount();
     fireEvent.click(await screen.findByRole('button', { name: '检查资产 target.png' }));
