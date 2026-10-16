@@ -1774,6 +1774,7 @@ export default function App() {
           enabled={true} novelId={s.novelId} context={{ sessionToken: s.sessionToken, actor: s.actor, scope: s.scope }} scope={shellScope} actor={s.actor?.displayName || "本机作者"}
           chapter={chapter.data} chapterCount={chapters.data?.length || 0} manuscriptReady={saveState === 'saved' && !composing && !savePending.current && hydratedIdentity === editorIdentity}
           novelMain={mainWorkspace} novelSidebar={sidebar} novelInspector={inspector} novelStatus={<>保存：{saveDisplayLabel} · 连接：{scope ? "协作服务" : "本机"}{localTutor.entry}</>}
+          commonStatus={<>连接：{scope ? "协作服务" : "本机"}{localTutor.entry}</>}
           onExit={() => setCreativeWorkbenchOpen(false)} onModuleChange={value => { setCreativeWorkbenchOpen(false); navigateStudioModule(value); }} onGlobalSearch={openWorkspaceSearch}
         /> : <AppShell
           module={studioModule}
