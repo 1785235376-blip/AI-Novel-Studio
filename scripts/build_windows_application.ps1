@@ -115,6 +115,12 @@ $hostProjectPath = Resolve-ExistingPath $hostProject 'DesktopHost project'
 $frontendSource = Resolve-ExistingPath (Join-Path $projectRoot 'frontend') 'Frontend source'
 $backendAppSource = Resolve-ExistingPath (Join-Path $projectRoot 'app') 'Backend app source'
 
+# Public source closure is checked before any build or staging side effects.
+$publicBuildScript = Join-Path $projectRoot 'scripts\public_build.py'
+$publicPython = Resolve-ExistingPath (Join-Path $baseApplicationPath 'Runtime\Python\python.exe') 'Packaging Python'
+& $publicPython -B $publicBuildScript --source $projectRoot
+if ($LASTEXITCODE -ne 0) { throw 'PUBLIC source closure validation failed' }
+
 $installedSdks = @(& $dotnetExecutable --list-sdks 2>$null)
 if ($LASTEXITCODE -ne 0 -or $installedSdks.Count -eq 0) {
     throw '.NET SDK is required for same-run DesktopHost provenance'
@@ -296,6 +302,9 @@ if ($backendStageInventory.Count -eq 0 -or -not (Test-Path -LiteralPath (Join-Pa
 }
 Assert-InventoriesMatch $backendSourceInventory $backendStageInventory 'Backend'
 
+& $publicPython -B $publicBuildScript --source $projectRoot --verify-stage $stagedBackend --receipt (Join-Path $OutputRoot 'public-build-receipt.json')
+if ($LASTEXITCODE -ne 0) { throw 'PUBLIC staged backend validation failed' }
+
 $fontSource = Resolve-ExistingPath $VerifiedFontDirectory 'Pinned CJK font directory'
 $fontName = 'NotoSansSC-Regular.ttf'
 $fontHash = 'eeb06b8a64fd04a2744d95579db1571b51027cda61ed78c62e4b730791525461'
@@ -396,6 +405,8 @@ $release = Get-Content -LiteralPath (Join-Path $projectRoot 'release\version.jso
 [ordered]@{
     product_version = $release.version
     channel = 'beta'
+    build_profile = 'PUBLIC'
+    public_build_receipt = (Join-Path $OutputRoot 'public-build-receipt.json')
     packaged_at_utc = [DateTime]::UtcNow.ToString('o')
     application = (Resolve-Path -LiteralPath $outputApplication).Path
     frozen_payload_source = $baseApplicationPath
@@ -428,6 +439,10 @@ $release = Get-Content -LiteralPath (Join-Path $projectRoot 'release\version.jso
     python_runtime = (& (Join-Path $baseApplicationPath 'Runtime\Python\python.exe') --version)
     postgresql_runtime = (& (Join-Path $baseApplicationPath 'PostgreSQL\bin\pg_ctl.exe') --version)
 } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $applicationManifest -Encoding utf8
+
+# Include frozen runtime and archive member names in the final exclusion check.
+& $publicPython -B $publicBuildScript --source $projectRoot --verify-stage $stagedBackend --with-fonts --application $outputApplication
+if ($LASTEXITCODE -ne 0) { throw 'PUBLIC application exclusion validation failed' }
 
 Write-Output "APPLICATION_STAGED $outputApplication"
 Write-Output "DESKTOPHOST_DLL_SHA256 $freshHash"
