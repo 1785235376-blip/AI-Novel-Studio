@@ -71,6 +71,12 @@ HEAD at completion, and the subsequent token receipt records that same HEAD.
 The build did **not** start on the later SHA. Commit movement is not presented
 as a clean-tree or stable-HEAD run; unchanged source hashes are the binding.
 
+Raw-log formatting exception: unrestricted `git diff --cached --check` exited 2
+with `docs/delivery/v2-development/definition-history-ui-final.log:15: new blank line at EOF.`
+The exact runner log bytes and recorded hash were retained. The separate
+source/documentation whitespace check, excluding raw `*.log` captures, passed.
+The unrestricted check is not claimed as passing.
+
 The interpreter is borrowed only as an installed executable from the adjacent
 worktree. All selected tests and application sources are from this integration
 worktree. The original runner creates an owned `.runtime/v2-checks/` profile,
