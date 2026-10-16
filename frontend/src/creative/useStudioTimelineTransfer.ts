@@ -211,6 +211,8 @@ export function useStudioTimelineTransfer(options: Options) {
   return { available, owns, direction, format, content: owns ? content : '', mappings: owns ? mappings : [], preview: owns ? preview : undefined,
     acknowledged, confirmed, pending, unknown: owns ? unknown : undefined, error: owns ? error : '', notice: owns ? notice : '',
     attachment: owns ? attachment : undefined, dirty, locked, canOperate: available && options.canOperate && !locked,
+    isCurrentPreview: (value: TimelineTransferPreview) => current() && available && !busy.current && !attempt.current
+      && latest.current.canOperate && latest.current.isReady() && form.current.preview === value,
     change, selectFile, discoverReferences, previewTransfer, importTransfer, checkOriginal, attachmentTransfer,
     clear: () => { if (current() && !busy.current && !attempt.current) reset(); },
     setAcknowledged: (value: boolean) => { if (current() && !busy.current && !attempt.current && form.current.preview) { form.current.acknowledged = value; setAcknowledged(value); } },

@@ -1,10 +1,11 @@
 import { appendTimelineAsset, StudioTimelineAssetHandoff } from './StudioTimelineAssetHandoff';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { TIMELINE_LIMITS, timelineClipDuration, timelineSourceState, type StudioTimelineClip, type StudioTimelineDraft, type StudioTimelineTrack } from './studioTimelineTypes';
 import { useStudioTimelineEditor, type StudioTimelineEditorProps } from './useStudioTimelineEditor';
 import { StudioTimelineExportPanel } from './StudioTimelineExportPanel';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
+import { transferClipTarget } from './timelineTransferReview';
 import { StudioTimelineTransferPanel } from './StudioTimelineTransferPanel';
 import { StudioTimelinePlaybackPanel } from './StudioTimelinePlaybackPanel';
 import { StudioTimelineSourceEditPanel } from './StudioTimelineSourceEditPanel';
@@ -32,6 +33,10 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   const [nleView, setNleView] = useState({ startMs: 0, scale: 1 });
   const [nleNotice, setNleNotice] = useState('');
   useEffect(() => { setPicked({}); setClipEdits({}); }, [props.client]);
+  const clipElements = useRef(new Map<string, HTMLElement>()), composing = useRef(false);
+  useEffect(() => { composing.current = false; }, [props.client]);
+  const latestReview = useRef({ c, props }); latestReview.current = { c, props };
+  const reviewGeneration = c.getHandoffRevision();
   const draft = c.draft;
   if (!draft) return <Panel title="时间线"><EmptyState title="当前时间线入口不可用" detail="请重新核对项目、身份与原可信会话。旧输入和回执不会跨身份显示。" /></Panel>;
   const extended = draft.timeline.schema_version === 2;
@@ -60,7 +65,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   const locked = !c.canEdit || props.busy;
   const readLocked = c.denied || props.busy || !!c.pending || c.transfer.locked || c.playback.locked || c.sourceEdit.locked;
   const clipsCount = draft.timeline.tracks.reduce((sum, track) => sum + track.clips.length, 0);
-  return <Panel title="多轨时间线" aria-label="Studio 多轨时间线编辑器" actions={<Button loading={c.pending === 'LIST'} disabled={readLocked} onClick={() => void c.reload()}>刷新时间线列表</Button>}>
+  return <Panel title="多轨时间线" aria-label="Studio 多轨时间线编辑器" onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }} actions={<Button loading={c.pending === 'LIST'} disabled={readLocked} onClick={() => void c.reload()}>刷新时间线列表</Button>}>
     <p>选择已有视频和音频素材，设定裁剪与摆放。视频按轨道顺序叠放，音频轨道混音；视频自身声音只在扩展编辑中明确加入。总长最多十分钟，产物仍须在制作任务中预览和人工审核。</p>
     <label>读取已保存时间线<select disabled={readLocked} value={c.candidate?.id ?? c.base?.id ?? ''} onChange={event => { if (event.currentTarget.value) void c.checkServer(event.currentTarget.value); }}>
       <option value="">选择时间线后核对</option>{c.rows.map(row => <option key={row.id} value={row.id}>{row.title} · v{row.version}</option>)}
@@ -117,7 +122,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       </select></label>
       <Button disabled={!picked[track.id] || clipsCount >= 30} onClick={() => addClip(track.id)}>将所选素材加入轨道</Button>
       {!track.clips.length && <p>此轨道尚无片段，保存前请加入素材或移除此轨道。</p>}
-      {track.clips.map((clip, clipIndex) => <section key={clip.id} aria-label={`轨道 ${index + 1} 片段 ${clipIndex + 1}`}>
+      {track.clips.map((clip, clipIndex) => <section key={clip.id} tabIndex={-1} ref={element => { if (element) clipElements.current.set(clip.id, element); else clipElements.current.delete(clip.id); }} aria-label={`轨道 ${index + 1} 片段 ${clipIndex + 1}`}>
         <h4>{props.assets.find(asset => asset.id === clip.source_snapshot.id)?.filename ?? '素材不可用'} · 片段 {clipIndex + 1}</h4>
         <Badge tone={timelineSourceState(clip.source_snapshot, props.assets) === 'CURRENT' ? 'neutral' : 'warning'}>{sourceLabel[timelineSourceState(clip.source_snapshot, props.assets)]} · v{clip.source_snapshot.version}</Badge>
         <details><summary>片段与素材绑定</summary><p>片段 <code>{clip.id}</code> · 素材 <code>{clip.source_snapshot.id}</code> · {clip.source_snapshot.asset_kind} · v{clip.source_snapshot.version}</p><code>{clip.source_snapshot.digest}</code></details>
@@ -216,7 +221,23 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       <Button loading={c.pending === 'RENDER'} disabled={!c.canRender} onClick={() => void c.render()}>明确渲染此保存版本</Button>
     </section>}
     <StudioTimelineExportPanel controller={c} />
-    <StudioTimelineTransferPanel controller={c.transfer} assets={props.assets} />
+    <StudioTimelineTransferPanel controller={c.transfer} assets={props.assets} onLocate={(preview, path) => {
+      const now = latestReview.current;
+      if (now.c !== c || now.props.client !== props.client || !props.isCurrent() || composing.current || readLocked
+        || props.isBusy?.() || c.getHandoffRevision() !== reviewGeneration
+        || !c.transfer.isCurrentPreview(preview) || c.transfer.preview !== preview || c.inputDirty || !c.base
+        || preview.timeline_snapshot.id !== c.base.id || preview.timeline_snapshot.version !== c.base.version
+        || preview.timeline_snapshot.digest !== c.base.timeline_digest || c.attempt?.state === 'UNKNOWN') return;
+      const target = transferClipTarget(preview, path);
+      if (!target) return;
+      const currentTrack = draft.timeline.tracks.find(track => track.id === target.track.id);
+      const currentClip = currentTrack?.clips.find(clip => clip.id === target.clip.id);
+      if (!currentClip || JSON.stringify(currentClip) !== JSON.stringify(target.clip)) return;
+      const element = clipElements.current.get(target.clip.id);
+      if (!element?.isConnected) return;
+      element.focus(); element.scrollIntoView?.({ block: 'nearest' });
+      setNleClips([target.clip.id]); setNlePlayhead(target.clip.start_ms);
+    }} />
     <StudioTimelinePlaybackPanel controller={c.playback} />
     {c.attempt && <StatusMessage tone={c.attempt.state === 'UNKNOWN' ? 'warning' : 'info'}>{c.attempt.state === 'UNKNOWN' ? '渲染或导出结果仍需核对，请从制作任务读取原回执；不会再次发送此请求。' : '此快照与配置的请求已有回执，不会从这里重复发起。'} 原请求：<code>{c.attempt.requestId}</code>{c.attempt.exportProfile && <> · 导出 {c.attempt.exportProfile.preset}</>}</StatusMessage>}
     {c.attempt && <StudioTimelineMeasurement measurement={c.attempt.measurement} />}
