@@ -1,0 +1,99 @@
+{
+  "baseline_commit": "0b0bebc3cc4e2a978aa8ac4aea260cd258b55a6e",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/TerminologyIssueNavigator.test.tsx src/experimental/MultilingualEditionsPanel.test.tsx src/experimental/LanguageTranslationPanel.test.tsx src/experimental/TranslationMemoryPanel.test.tsx src/ui/AuthorTerminology.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T11:40:35.955563+00:00",
+      "finished_utc": "2026-10-16T11:40:39.080384+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/terminology-navigation-accepted-ui.log",
+      "log_sha256": "fb2d02cbeddd310682171889a245e0d74c8bbbe7715846668d4b5fc05b883222",
+      "receipt": "docs/delivery/v2-development/terminology-navigation-accepted-ui.json",
+      "receipt_sha256": "d1dc9ca3d34105181425adbc04eb3d31966252f0de69cb43027e34e18289e6f7"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r5_multilingual_editions.py::test_terms_aliases_forbidden_transliteration_and_approval_trace[file]",
+        "tests/test_r5_multilingual_editions.py::test_rule_conflicts_and_missing_translation_block_accept_and_export[file]",
+        "tests/test_r5_multilingual_editions.py::test_exact_unicode_duplicate_paragraph_alignment[file]",
+        "tests/test_r5_multilingual_editions.py::test_unicode_rules_are_literal_bounded_and_preservation_is_exact",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/terminology-navigation-accepted-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T11:40:38.919468+00:00",
+      "finished_utc": "2026-10-16T11:40:47.227587+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/terminology-navigation-accepted-file-public.log",
+      "log_sha256": "d71cc0886a2cece4810fa6fb3d38f16ac03857a32fc8fa1e1be9cefb5beebc27",
+      "receipt": "docs/delivery/v2-development/terminology-navigation-accepted-file-public.json",
+      "receipt_sha256": "d04281645fc5f23566bd8e2563431b1c19a392b838983915194daae2feb1f982"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T11:40:37.511004+00:00",
+      "finished_utc": "2026-10-16T11:41:14.484403+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/terminology-navigation-accepted-build.log",
+      "log_sha256": "591d4cbd5ebdcc012cb74d223627506fae253e292e8473529cddb27aaacc0ca9",
+      "receipt": "docs/delivery/v2-development/terminology-navigation-accepted-build.json",
+      "receipt_sha256": "7d826e04a083f25b7bfce20741eac687e302f8d8c56f88c8f3541874d862a652"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-c",
+        "import pathlib,re; files=[pathlib.Path(\"frontend/src/experimental\")/name for name in [\"MultilingualEditionsPanel.tsx\",\"TerminologyIssueNavigator.tsx\"]]; assert not [str(p) for p in files if re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",p.read_text(),re.I)]; print(\"Scoped token guard PASS\")"
+      ],
+      "started_utc": "2026-10-16T11:40:40.343959+00:00",
+      "finished_utc": "2026-10-16T11:40:40.375853+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/terminology-navigation-accepted-token.log",
+      "log_sha256": "0f60413763c866e35019437c33d233ca2415617df3bce60da78ae15ab1607a63",
+      "receipt": "docs/delivery/v2-development/terminology-navigation-accepted-token.json",
+      "receipt_sha256": "8fccce9fbd0be7afe7001c123ddca89679fffa7aef8f4520757e843dd8e70fa8"
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/experimental/MultilingualEditionsPanel.tsx": "35edff81c7fcfd088dcf29cafad2fd044b281f07f52af8017452fc8853cca8ba",
+    "frontend/src/experimental/MultilingualEditionsPanel.test.tsx": "54be2f23bec2cecbe300967755827124a9c0d3dbcdd4ab523a9416d12ddad72f",
+    "frontend/src/experimental/multilingualEditionsClient.ts": "7e93390268774b764b75447f5ea14becf8d31c15ca69ab5e7de705fb265b9247",
+    "frontend/src/experimental/TerminologyIssueNavigator.tsx": "d4f15a8e524ea814c3031ca496c4691a5316bca61d831dd4b3bfe21a9ad6c8cb",
+    "frontend/src/experimental/TerminologyIssueNavigator.test.tsx": "fe158d61cc910b4254ebe9e1d692180b5397c3b316bb4bd8c1894452217eb768"
+  },
+  "ui_checks": 41,
+  "nonsecurity_file_checks": 3,
+  "pure_unicode_checks": 1,
+  "public_checks": 30,
+  "public_source_closure_files": 487,
+  "browser_visual_http": "NOT_RUN",
+  "postgres_p0": "BLOCKED_NOT_RUN",
+  "windows_gpu_provider_real_translation_quality": "NOT_RUN",
+  "push_hosted_ci": "NOT_RUN_COST_UNKNOWN",
+  "preserved_failed_receipts": [
+    "docs/delivery/v2-development/terminology-navigation-final-ui.json",
+    "docs/delivery/v2-development/terminology-navigation-build.json",
+    "docs/delivery/v2-development/terminology-navigation-independent-adversarial.json"
+  ],
+  "independent_review": "Seven temporary adversarial tests passed after IME/page/source-identity corrections; review test removed before final source-bound checks. Parent final SHA review pending.",
+  "limits": "B05 PARTIAL. Saved evidence navigation only; no target offsets or live unsaved matching, new authority, provider calls or automatic edits. Original save/review/CAS remains authoritative."
+}
