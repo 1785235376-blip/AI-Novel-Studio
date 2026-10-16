@@ -24,7 +24,7 @@ it('only reads saved local sources on mount; no fetch, parse, search or model ex
   render(<StrictMode><ResearchLibraryPanel client={client()} /></StrictMode>);
   await screen.findByRole('button', { name: '打开来源 潮汐参考' });
   expect(fetch.mock.calls.every(([url, init]) => init.method === 'GET' && !/fetch-webpage|search\?|generate|import/.test(url))).toBe(true);
-  expect(screen.getByText(/向量、OCR 与视觉解析当前未配置/)).toBeTruthy();
+  expect(screen.getByText(/此入口不运行向量、OCR 或视觉解析/)).toBeTruthy();
   expect((screen.getByRole('button', { name: '抓取这个网页一次' }) as HTMLButtonElement).disabled).toBe(true);
 });
 
@@ -153,4 +153,18 @@ it('shows image page-only citation without inventing extraction or rendering act
   await screen.findByText('仅原始页面引用。OCR 与视觉理解未配置，没有提取或理解这页内容。');
   expect(screen.queryByText('暮色中的港口关闭潮门。')).toBeNull();
   expect(document.querySelectorAll('iframe, img, script')).toHaveLength(0);
+});
+
+it('locates page-only evidence in the original source without claiming extracted text', async () => {
+  const pageRef = { ...ref, paragraph: 0, page: 2 };
+  const image = { ...source, format: 'IMAGE', paragraphs: [], paragraph_count: 0, page_citations: [pageRef] };
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => reply(url.endsWith('/sources/source') ? image : url.endsWith('/sources') ? { items: [image] } : url.endsWith('/citation') ? { ...evidence, citation: pageRef, paragraph: 0, page: 2, text: '', not_understood: true } : { items: [] })));
+  render(<ResearchLibraryPanel client={client()} />);
+  fireEvent.click(await screen.findByRole('button', { name: '打开来源 潮汐参考' }));
+  fireEvent.click(await screen.findByRole('button', { name: '核对页面引用 2' }));
+  fireEvent.click(await screen.findByRole('button', { name: '在原来源中定位此引用' }));
+  const located = await screen.findByRole('region', { name: '已定位的原始页面引用' });
+  await waitFor(() => expect(document.activeElement).toBe(located));
+  expect(screen.getByText(/未解析页面引用；没有原文理解证明/)).toBeTruthy();
+  expect(screen.getByText('已选择 0 段引用。')).toBeTruthy();
 });
