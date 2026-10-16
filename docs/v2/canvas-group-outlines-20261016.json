@@ -1,0 +1,107 @@
+{
+  "baseline_commit": "43457402dac5c0579d8332fb8d53e73a813fba04",
+  "scope": "World-space bounded group frames and explicit member selection; no collapse/nesting/schema change",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/studioGraphClient.test.ts src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T09:04:52.155862+00:00",
+      "finished_utc": "2026-10-16T09:05:12.364475+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-outlines-ui.json",
+      "receipt_sha256": "84445013053134421292a3070fd846f339d664af74069bef7c30fe68182afeed",
+      "log": "docs/delivery/v2-development/canvas-outlines-ui.log",
+      "log_sha256": "bcffac9821ac67c48a1bce0139a0ebbe1692704b9965453cddbf425c66caa30e"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_graph_presentation_contract.py",
+        "tests/test_v2_creative_graph_persistence.py::test_visual_groups_original_owner_reopen_rename_remove_and_cas[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_canvas_annotation_original_owner_reopen_remove_and_cas[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_presentation_positions_and_camera_reopen_with_original_cas_owner[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-outlines-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T09:04:55.276340+00:00",
+      "finished_utc": "2026-10-16T09:05:05.360828+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-outlines-file.json",
+      "receipt_sha256": "2c9a2009c0dc321aed570f69cde36a69adebc8d880a403ff9cdb22504780a27d",
+      "log": "docs/delivery/v2-development/canvas-outlines-file.log",
+      "log_sha256": "b347255897e9de191d0eba0efa6ea397392ee06691517f187e17266350987b48"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T09:04:53.770054+00:00",
+      "finished_utc": "2026-10-16T09:05:28.100245+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-outlines-build.json",
+      "receipt_sha256": "942ce963116e4eae71c5d5e55e8b94cbf9b44ae7fb966690872a16eed9e63dbc",
+      "log": "docs/delivery/v2-development/canvas-outlines-build.log",
+      "log_sha256": "433b8304c8854d11817405dafbda8acaa385a30f3a52d0538b3b5e297f156291"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for(const p of [\"frontend/src/creative/GraphCanvas.tsx\", \"frontend/src/creative/graphCanvas.css\"]) if(/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); const css=fs.readFileSync(\"frontend/src/creative/graphCanvas.css\",\"utf8\"); if(!/\\.graph-canvas__group-frame\\{[^}]*pointer-events:none/.test(css)||!/\\.graph-canvas__group-label\\.ui-button\\{[^}]*pointer-events:auto/.test(css)) throw new Error(\"Group hit-test policy changed\"); console.log(\"Frame pointer isolation and shared token/color scope PASS; browser hit-testing NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T09:05:40.609869+00:00",
+      "finished_utc": "2026-10-16T09:05:40.666806+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-outlines-token-scope.json",
+      "receipt_sha256": "765558ebc5bfc92b9bbfbfe227e3c9832995b9407d544cc587573dfadc35bebf",
+      "log": "docs/delivery/v2-development/canvas-outlines-token-scope.log",
+      "log_sha256": "67c7a0c8482cab01aec2d0c66749de5217d24651492cfe3abcf5933ab7abeef8"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 301,
+    "files": 10,
+    "skipped": 0,
+    "environment": "mocked jsdom/transport and pure geometry"
+  },
+  "backend_contract_tests": 32,
+  "file_owner_tests": 3,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "benchmark": {
+    "command": "node --expose-gc frontend/scripts/benchmark-graph-display.mjs > docs/v2/canvas-group-outlines-benchmark-20261016.json",
+    "exit_code": 0,
+    "path": "docs/v2/canvas-group-outlines-benchmark-20261016.json"
+  },
+  "source_sha256": {
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/src/creative/GraphCanvas.test.tsx": "979248acd3986e831e9fd25a2fc1ad133fed0ca7ebed6be5c66ca8b3d63f4568",
+    "frontend/src/creative/GraphCanvas.tsx": "d2005755b9b220d221aa3a1e8aa371f33d95a82a09a9a1f3b4bad55575420933",
+    "frontend/src/creative/graphCanvas.css": "127030fab1ef5f2e8c3b8c2e52cbbe52e43a592ce061b886cda43da07b992de5",
+    "frontend/src/creative/graphCanvasPresentation.test.ts": "099d7bd60d7f1334d93b2128a9ff1f10f05772a714a33d7053abb619b52b2013",
+    "frontend/src/creative/graphCanvasPresentation.ts": "06bc0ec97519ce3e176750ff738f4727a3a3f6b9907e9b93979bf95f58045e78"
+  },
+  "not_run": [
+    "Browser/visual/hit-testing/native IME/accessibility/FPS/memory",
+    "PG/P0/security (BLOCKED and excluded)",
+    "Windows/GPU/provider/full RC",
+    "push/hosted CI"
+  ]
+}

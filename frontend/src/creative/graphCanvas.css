@@ -58,3 +58,9 @@
 .graph-canvas__groups input,.graph-canvas__groups select{min-width:0;max-width:100%;min-height:var(--control-height-sm);padding:var(--space-1);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit}
 .graph-canvas__groups input:focus-visible,.graph-canvas__groups select:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:-2px}
 .graph-canvas__groups .graph-canvas__help{overflow-wrap:anywhere}
+
+/* Frames are behind cards/ports. Only the explicit label is hit-testable. */
+.graph-canvas__group-frame{position:absolute;box-sizing:border-box;border:var(--border-default);border-radius:var(--radius-lg);pointer-events:none}
+.graph-canvas__group-frame.is-selected{border-color:var(--color-selection-border)}
+.graph-canvas__group-label.ui-button{display:block;max-width:100%;height:var(--space-8);min-height:0;box-sizing:border-box;padding:var(--space-1) var(--space-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-secondary);pointer-events:auto}
+.graph-canvas__group-label.ui-button[aria-pressed=true]{background:var(--color-selection-bg);border-color:var(--color-selection-border)}

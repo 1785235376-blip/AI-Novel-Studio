@@ -1,4 +1,4 @@
-import type { StudioGraphEdge, StudioGraphNode, StudioGraphViewport } from './studioGraphTypes';
+import type { StudioGraphDefinition, StudioGraphEdge, StudioGraphNode, StudioGraphViewport } from './studioGraphTypes';
 import { GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT, graphNodeHeight, graphPortPosition, graphScreenToWorld, clampGraphZoom } from './graphCanvasGeometry';
 import type { GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
 
@@ -9,7 +9,7 @@ export const GRAPH_VIEW_OVERSCAN = 160; // Screen pixels, independent of world z
 const intersects = (a: GraphCanvasRect, b: GraphCanvasRect) => a.x <= b.x + b.width && a.x + a.width >= b.x
   && a.y <= b.y + b.height && a.y + a.height >= b.y;
 
-export function createGraphDisplayIndex(nodes: readonly GraphDisplayNode[], edges: readonly StudioGraphEdge[], definitions: readonly GraphCanvasNodeDefinition[]) {
+export function createGraphDisplayIndex(nodes: readonly GraphDisplayNode[], edges: readonly StudioGraphEdge[], definitions: readonly GraphCanvasNodeDefinition[], groups: NonNullable<StudioGraphDefinition['presentation']>['groups'] = []) {
   const descriptors = new Map(definitions.map(item => [item.id, item]));
   const byId = new Map(nodes.map(node => [node.id, node]));
   const cards = nodes.map(node => ({ id: node.id, bounds: { ...node.position, width: GRAPH_NODE_WIDTH, height: graphNodeHeight(descriptors.get(node.definition_id)) } }));
@@ -27,12 +27,24 @@ export function createGraphDisplayIndex(nodes: readonly GraphDisplayNode[], edge
     const right = Math.max(start.x, end.x, start.x + bend, end.x - bend);
     connections.push({ id: edge.id, start, end, bounds: { x: left, y: Math.min(start.y, end.y), width: right - left, height: Math.abs(end.y - start.y) } });
   }
-  return { cards, connections, descriptors };
+  const cardById = new Map(cards.map(card => [card.id, card.bounds]));
+  const frames = (groups || []).flatMap(group => {
+    const members = group.node_ids.map(id => cardById.get(id));
+    if (!members.length || members.some(rect => !rect || !Object.values(rect).every(Number.isFinite))) return [];
+    const rects = members as GraphCanvasRect[];
+    const left = Math.min(...rects.map(rect => rect.x)), top = Math.min(...rects.map(rect => rect.y));
+    const right = Math.max(...rects.map(rect => rect.x + rect.width)), bottom = Math.max(...rects.map(rect => rect.y + rect.height));
+    // Domain geometry: 16-unit gutter plus a 32-unit label band above member cards.
+    // React renders plain text; remove control/bidi characters without rewriting stored names.
+    const label = group.name.replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g, ' ').trim() || '未命名分组';
+    return [{ id: group.id, label, nodeIds: [...group.node_ids], bounds: { x: left - 16, y: top - 48, width: right - left + 32, height: bottom - top + 64 } }];
+  });
+  return { cards, connections, descriptors, frames };
 }
 export type GraphDisplayIndex = ReturnType<typeof createGraphDisplayIndex>;
 
 export function projectGraphDisplay(index: GraphDisplayIndex, viewport: StudioGraphViewport,
-  size: { width: number; height: number } | null, retainedIds: readonly string[] = [], overscan = GRAPH_VIEW_OVERSCAN) {
+  size: { width: number; height: number } | null, retainedIds: readonly string[] = [], overscan = GRAPH_VIEW_OVERSCAN, retainedGroupId: string | null = null) {
   // Unknown/hidden layout must not accidentally hide the whole graph (SSR, first
   // layout, unsupported ResizeObserver). Recover automatically on next measurement.
   const measured = size && Number.isFinite(size.width) && Number.isFinite(size.height) && size.width > 0 && size.height > 0;
@@ -40,7 +52,8 @@ export function projectGraphDisplay(index: GraphDisplayIndex, viewport: StudioGr
   const world = measured ? { ...graphScreenToWorld({ x: -margin, y: -margin }, viewport), width: (size.width + margin * 2) / zoom, height: (size.height + margin * 2) / zoom } : null;
   const nodeIds = new Set(retainedIds);
   for (const card of index.cards) if (!world || intersects(card.bounds, world)) nodeIds.add(card.id);
-  return { nodeIds, edges: index.connections.filter(edge => !world || intersects(edge.bounds, world)) };
+  return { nodeIds, edges: index.connections.filter(edge => !world || intersects(edge.bounds, world)),
+    frames: index.frames.filter(frame => frame.id === retainedGroupId || !world || intersects(frame.bounds, world)) };
 }
 
 /** Fixed display coordinates keep SVG arithmetic independent of graph extent. */

@@ -10,7 +10,7 @@ import {
   graphSelectionRect, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
 import type { GraphAlignment, GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
-import { createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap } from './graphCanvasPresentation';
+import { createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap, GRAPH_VIEW_OVERSCAN } from './graphCanvasPresentation';
 import { GraphVisualGroups } from './GraphVisualGroups';
 import './graphCanvas.css';
 
@@ -59,6 +59,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const [preview, setPreview] = useState<{ source: StudioGraphDefinition; value: StudioGraphDefinition } | null>(null);
   const [marquee, setMarquee] = useState<GraphCanvasRect | null>(null);
   const [viewportSize, setViewportSize] = useState<{ width: number; height: number } | null>(null);
+  const [focusedGroup, setFocusedGroup] = useState<string | null>(null);
   const [focusedNode, setFocusedNode] = useState<string | null>(null);
   const [showMiniMap, setShowMiniMap] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
@@ -77,10 +78,10 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     && alignment.ids === selectionKey && !blocked && !activeGesture ? alignment : null;
   useEffect(() => { setAlignment(null); }, [definition, interactionKey, selectionKey, blocked]);
   const visible = validAlignment?.value || (preview?.source === definition ? preview.value : definition);
-  const displayIndex = useMemo(() => createGraphDisplayIndex(visible.nodes, visible.edges, nodeDefinitions), [visible.nodes, visible.edges, nodeDefinitions]);
+  const displayIndex = useMemo(() => createGraphDisplayIndex(visible.nodes, visible.edges, nodeDefinitions, visible.presentation?.groups), [visible.nodes, visible.edges, nodeDefinitions, visible.presentation?.groups]);
   const allNodeIds = useMemo(() => new Set(definition.nodes.map(node => node.id)), [definition.nodes]);
   const selected = selectedNodeIds.filter(id => allNodeIds.has(id));
-  const display = projectGraphDisplay(displayIndex, visible.viewport, viewportSize, [...selected, ...(gesture.current?.ids || []), ...connectionNodeIds, ...(focusedNode ? [focusedNode] : [])]);
+  const display = projectGraphDisplay(displayIndex, visible.viewport, viewportSize, [...selected, ...(gesture.current?.ids || []), ...connectionNodeIds, ...(focusedNode ? [focusedNode] : [])], GRAPH_VIEW_OVERSCAN, focusedGroup);
   const renderedNodes = visible.nodes.filter(node => display.nodeIds.has(node.id));
   const selectedSet = new Set(selected);
   // Keep lightweight accessibility entries stable during camera-only updates.
@@ -107,7 +108,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     window.addEventListener('resize', measure);
     return () => { observer?.disconnect(); window.removeEventListener('resize', measure); };
   }, []);
-  useEffect(() => { setFocusedNode(null); }, [interactionKey]);
+  useEffect(() => { setFocusedNode(null); setFocusedGroup(null); }, [interactionKey]);
 
   const releaseCapture = useCallback((pointerId: number) => {
     const element = viewportRef.current;
@@ -325,10 +326,13 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       style={{ backgroundImage: showGrid ? undefined : 'none', backgroundSize: `${gridStep * visible.viewport.zoom}px ${gridStep * visible.viewport.zoom}px`,
         backgroundPosition: `${visible.viewport.x - gridStep * visible.viewport.zoom / 2}px ${visible.viewport.y - gridStep * visible.viewport.zoom / 2}px` }}
       tabIndex={0} role="group" aria-label="节点图交互区域" aria-describedby={descriptionId}
-      onFocusCapture={event => setFocusedNode((event.target as Element).closest('[data-graph-node-id]')?.getAttribute('data-graph-node-id') || null)}
+      onFocusCapture={event => {
+        setFocusedNode((event.target as Element).closest('[data-graph-node-id]')?.getAttribute('data-graph-node-id') || null);
+        setFocusedGroup((event.target as Element).closest('[data-graph-group-id]')?.getAttribute('data-graph-group-id') || null);
+      }}
       onBlurCapture={event => {
         const next = event.relatedTarget;
-        if (!(next instanceof Element) || !event.currentTarget.contains(next)) setFocusedNode(null);
+        if (!(next instanceof Element) || !event.currentTarget.contains(next)) { setFocusedNode(null); setFocusedGroup(null); }
       }}
       onPointerDown={event => {
         if (busy || isGraphEditableTarget(event.target) || (event.button !== 0 && event.button !== 1)) return;
@@ -340,6 +344,23 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       onPointerCancel={event => { if (gesture.current?.pointerId === event.pointerId) cancelGesture(); }}
       onLostPointerCapture={event => { if (gesture.current?.pointerId === event.pointerId) cancelGesture(); }}>
       <div className="graph-canvas__world" style={{ transform: `translate(${visible.viewport.x}px, ${visible.viewport.y}px) scale(${visible.viewport.zoom})` }}>
+        {display.frames.map(frame => {
+          const fullySelected = frame.nodeIds.every(id => selectedSet.has(id));
+          return <div key={frame.id} data-graph-group-id={frame.id} className={`graph-canvas__group-frame${fullySelected ? ' is-selected' : ''}`}
+            style={{ left: frame.bounds.x, top: frame.bounds.y, width: frame.bounds.width, height: frame.bounds.height }}>
+            <Button type="button" variant="ghost" className="graph-canvas__group-label" title={frame.label}
+              aria-label={`选择视觉分组 ${frame.label} 的 ${frame.nodeIds.length} 个成员`} aria-pressed={fullySelected}
+              disabled={busy || !!activeGesture} onKeyDown={event => event.stopPropagation()}
+              onPointerDown={event => {
+                if (event.button !== 0 || event.altKey || tool === 'pan') return;
+                event.stopPropagation();
+              }} onClick={event => {
+                if (busy || gesture.current || event.altKey || (tool === 'pan' && event.detail !== 0)) return;
+                setAlignment(null);
+                onSelectionChange([...frame.nodeIds]);
+              }}>{frame.label} · {frame.nodeIds.length} 个节点 · 选择成员</Button>
+          </div>;
+        })}
         <svg className="graph-canvas__edges" aria-hidden="true">
           <defs><marker id={markerId} viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" /></marker></defs>
           {display.edges.map(edge => <path key={edge.id} data-graph-edge-id={edge.id} d={graphEdgePath(edge.start, edge.end)} markerEnd={`url(#${markerId})`} />)}

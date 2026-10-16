@@ -1,0 +1,66 @@
+{
+  "kind": "offline-display-geometry-microbenchmark",
+  "browser_fps": "NOT_RUN",
+  "browser_memory": "NOT_RUN",
+  "backend_execution": "NOT_RUN",
+  "note": "Timing covers projection only, not React/DOM/native select/paint. Heap deltas are noisy Node GC observations; no browser-memory claim. Selected/focused/connection retention can intentionally render all cards.",
+  "runtime": "v24.19.0",
+  "platform": "linux",
+  "timestamp": "2026-10-16T09:05:02.847Z",
+  "source_sha256": {
+    "graphCanvasGeometry.ts": "5a8b11cfd636ea6c0666b4d5e2d0bfd220e82a33f8ebc439c4a43dc7b301d188",
+    "graphCanvasPresentation.ts": "06bc0ec97519ce3e176750ff738f4727a3a3f6b9907e9b93979bf95f58045e78"
+  },
+  "results": [
+    {
+      "display_nodes": 1000,
+      "display_edges": 975,
+      "display_groups": 24,
+      "home_rendered_group_frames": 5,
+      "max_rendered_group_frames": 18,
+      "maximum_additional_frame_and_button_elements": 36,
+      "index_ms": 5.30910700000004,
+      "viewport_samples": 1000,
+      "projection_ms_median": 0.01800700000001143,
+      "projection_ms_p95": 0.07198700000003555,
+      "projection_ms_max": 1.3455330000000458,
+      "home_rendered_cards": 9,
+      "home_rendered_edges": 9,
+      "max_rendered_cards": 100,
+      "max_rendered_edges": 90,
+      "retained_index_heap_delta_bytes_samples": [
+        468144,
+        301824,
+        447832,
+        461024,
+        461256
+      ],
+      "accessibility_directory_options": 1000
+    },
+    {
+      "display_nodes": 10000,
+      "display_edges": 9750,
+      "display_groups": 24,
+      "home_rendered_group_frames": 5,
+      "max_rendered_group_frames": 18,
+      "maximum_additional_frame_and_button_elements": 36,
+      "index_ms": 17.56576999999993,
+      "viewport_samples": 1000,
+      "projection_ms_median": 0.16117000000008375,
+      "projection_ms_p95": 0.2036439999999402,
+      "projection_ms_max": 4.292781999999988,
+      "home_rendered_cards": 9,
+      "home_rendered_edges": 9,
+      "max_rendered_cards": 100,
+      "max_rendered_edges": 90,
+      "retained_index_heap_delta_bytes_samples": [
+        4510600,
+        4521224,
+        4505448,
+        4505384,
+        4505336
+      ],
+      "accessibility_directory_options": 10000
+    }
+  ]
+}

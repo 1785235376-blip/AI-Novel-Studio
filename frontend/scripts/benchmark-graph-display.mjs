@@ -16,31 +16,35 @@ for (const count of [1000, 10000]) {
   const columns = 40;
   const nodes = Array.from({ length: count }, (_, id) => ({ id: String(id), definition_id: 'text_input', position: { x: (id % columns) * 500, y: Math.floor(id / columns) * 300 } }));
   const edges = nodes.filter((_, id) => id % columns !== columns - 1).map(node => ({ id: `e${node.id}`, source_node_id: node.id, target_node_id: String(Number(node.id) + 1), source_port: 'out', target_port: 'in' }));
+  // Existing persistence budget: at most 24 groups with 24 members each.
+  const groups = Array.from({ length: 24 }, (_, id) => ({ id: `g${id}`, name: `Group ${id}`, node_ids: nodes.slice(id * 24, (id + 1) * 24).map(node => node.id) }));
   const started = performance.now();
-  const index = createGraphDisplayIndex(nodes, edges, definitions);
+  const index = createGraphDisplayIndex(nodes, edges, definitions, groups);
   const indexMilliseconds = performance.now() - started;
   const size = { width: 1280, height: 720 };
   const home = projectGraphDisplay(index, { x: 0, y: 0, zoom: 1 }, size);
   for (let i = 0; i < 100; i++) projectGraphDisplay(index, { x: -i * 20, y: -i * 10, zoom: 1 }, size);
-  const durations = [], nodeCounts = [], edgeCounts = [];
+  const durations = [], nodeCounts = [], edgeCounts = [], frameCounts = [];
   for (let i = 0; i < 1000; i++) {
     const zoom = [0.35, 0.5, 1, 2.5][i % 4];
     const viewport = { x: -(i % columns) * 500 * zoom, y: -(i % Math.ceil(count / columns)) * 300 * zoom, zoom };
     const start = performance.now(), result = projectGraphDisplay(index, viewport, size);
-    durations.push(performance.now() - start); nodeCounts.push(result.nodeIds.size); edgeCounts.push(result.edges.length);
+    durations.push(performance.now() - start); nodeCounts.push(result.nodeIds.size); edgeCounts.push(result.edges.length); frameCounts.push(result.frames.length);
   }
   // Isolated retained-index heap deltas are runtime/GC observations, not browser
   // memory. Report every sample including noise; no heap/FPS acceptance threshold.
   const heapSamples = [];
   const sampleRetainedIndex = () => {
     global.gc(); const before = process.memoryUsage().heapUsed;
-    const retained = createGraphDisplayIndex(nodes, edges, definitions);
+    const retained = createGraphDisplayIndex(nodes, edges, definitions, groups);
     global.gc(); const delta = process.memoryUsage().heapUsed - before;
     if (retained.cards.length !== count) throw new Error('Index lost display objects');
     return delta;
   };
   if (global.gc) for (let i = 0; i < 5; i++) heapSamples.push(sampleRetainedIndex());
-  results.push({ display_nodes: count, display_edges: edges.length, index_ms: indexMilliseconds,
+  results.push({ display_nodes: count, display_edges: edges.length, display_groups: index.frames.length,
+    home_rendered_group_frames: home.frames.length, max_rendered_group_frames: Math.max(...frameCounts),
+    maximum_additional_frame_and_button_elements: Math.max(...frameCounts) * 2, index_ms: indexMilliseconds,
     viewport_samples: durations.length, projection_ms_median: percentile(durations, 0.5), projection_ms_p95: percentile(durations, 0.95), projection_ms_max: Math.max(...durations),
     home_rendered_cards: home.nodeIds.size, home_rendered_edges: home.edges.length, max_rendered_cards: Math.max(...nodeCounts), max_rendered_edges: Math.max(...edgeCounts),
     retained_index_heap_delta_bytes_samples: heapSamples, accessibility_directory_options: count });

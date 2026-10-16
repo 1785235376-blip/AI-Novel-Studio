@@ -480,3 +480,63 @@ describe('transient world-grid controls', () => {
     fireEvent.keyDown(viewport(), { key: 'ArrowRight', shiftKey: true }); expect(position('source').left).toBe('44px');
   });
 });
+
+
+describe('world-space visual group outlines', () => {
+  const grouped = (): StudioGraphDefinition => ({ ...initial(), presentation: { groups: [{ id: 'scene', name: '场景 <b>🎬</b>', node_ids: ['source', 'prepare'] }] } });
+  const label = () => screen.getByRole('button', { name: '选择视觉分组 场景 <b>🎬</b> 的 2 个成员' });
+  const frame = () => document.querySelector('[data-graph-group-id="scene"]') as HTMLElement;
+  it('renders bounded plain labels, selects only on explicit activation and follows drag preview without writing presentation', () => {
+    const definition = grouped();
+    const { changes, selections } = setup({ definition });
+    expect(frame().style.left).toBe('8px'); expect(frame().style.top).toBe('-24px');
+    expect(frame().style.width).toBe('808px'); expect(frame().style.height).toBe('344px');
+    expect(label().querySelector('b')).toBeNull();
+    down(label(), 20, 0); move(70, 30); up(70, 30);
+    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
+    fireEvent.click(label());
+    expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
+    expect(label().getAttribute('aria-pressed')).toBe('true');
+    fireEvent.keyDown(label(), { key: 'Delete' }); fireEvent.keyDown(label(), { key: 'ArrowRight' });
+    expect(changes).not.toHaveBeenCalled();
+    down(source(), 40, 40); move(72, 56);
+    expect(frame().style.left).toBe('40px'); expect(frame().style.top).toBe('-8px');
+    expect(changes).not.toHaveBeenCalled(); up(72, 56);
+    expect(changes).toHaveBeenCalledTimes(1);
+    expect(changes.mock.calls[0][0].presentation).toEqual(definition.presentation);
+  });
+  it('keeps readonly selection available, busy selection disabled, and replaces stale owner frames', () => {
+    const { changes, selections, rerender } = setup({ definition: grouped(), readonly: true });
+    fireEvent.click(label()); expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
+    expect(changes).not.toHaveBeenCalled();
+    rerender({ busy: true }); expect((label() as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(label()); expect(selections).toHaveBeenCalledTimes(1);
+    rerender({ definition: initial(), busy: false, interactionKey: 'other' });
+    expect(document.querySelector('[data-graph-group-id]')).toBeNull();
+  });
+  it('culls distant frames, retains focused labels, and keeps ports and background selection independent', () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, toJSON: () => ({}) });
+    const definition = grouped(), onPortSelect = vi.fn();
+    const { changes, selections, rerender } = setup({ definition, onPortSelect });
+    const port = screen.getByRole('button', { name: /文本输入 source 输出端口/ });
+    down(port, 344, 112); fireEvent.click(port); up();
+    expect(onPortSelect).toHaveBeenCalledTimes(1); expect(selections).not.toHaveBeenCalled();
+    act(() => label().focus());
+    rerender({ definition: { ...definition, viewport: { x: 0, y: -5000, zoom: 1 } } });
+    expect(frame()).not.toBeNull();
+    act(() => viewport().focus());
+    expect(frame()).toBeNull();
+    rerender({ definition }); expect(frame()).not.toBeNull();
+    down(viewport(), 0, 0); move(350, 140); up(350, 140);
+    expect(selections).toHaveBeenLastCalledWith(['source']);
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('preserves pan from a group label and uses the same zoom transform as cards', () => {
+    const definition = grouped(); definition.viewport = { x: 20, y: 30, zoom: 2 };
+    const { changes, selections } = setup({ definition });
+    expect(document.querySelector('.graph-canvas__world')!.getAttribute('style')).toContain('scale(2)');
+    down(label(), 40, 40, { altKey: true }); move(72, 56); up(72, 56);
+    expect(changes.mock.calls[0][0].viewport).toEqual({ x: 52, y: 46, zoom: 2 });
+    expect(selections).not.toHaveBeenCalled();
+  });
+});

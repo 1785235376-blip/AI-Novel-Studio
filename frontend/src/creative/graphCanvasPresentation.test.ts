@@ -71,3 +71,33 @@ describe('MiniMap geometry', () => {
     expect(index.cards[999].bounds.x).toBe(499500);
   });
 });
+
+
+describe('derived visual group frames', () => {
+  const groups = [{ id: 'scene', name: '场景 🎬', node_ids: ['a', 'b'] }];
+  it('bounds all member cards including tall ports with label band and gutter, without mutation', () => {
+    const nodes = [node('a', -100, -50), node('b', 500, 200)];
+    const before = JSON.stringify({ nodes, groups });
+    const index = createGraphDisplayIndex(nodes, [], [{ ...definitions[0], inputs: Array.from({ length: 4 }, (_, i) => ({ id: String(i), type: 'TEXT' })) }], groups);
+    expect(index.frames[0].bounds).toEqual({ x: -116, y: -98, width: 952, height: 570 });
+    expect(index.frames[0].nodeIds).toEqual(['a', 'b']);
+    expect(JSON.stringify({ nodes, groups })).toBe(before);
+    expect(projectGraphMiniMap(index, viewport, size).cards).toHaveLength(2);
+  });
+  it('keeps crossing frames when all members are culled; culls distant frames, retaining focused labels', () => {
+    const index = createGraphDisplayIndex([node('a', -1000), node('b', 2000)], [], definitions, groups);
+    expect(projectGraphDisplay(index, viewport, size, [], 0).nodeIds.size).toBe(0);
+    expect(projectGraphDisplay(index, viewport, size, [], 0).frames).toHaveLength(1);
+    expect(projectGraphDisplay(index, { x: 0, y: -5000, zoom: 2.5 }, size, [], 0).frames).toHaveLength(0);
+    expect(projectGraphDisplay(index, { x: 0, y: -5000, zoom: 2.5 }, size, [], 0, 'scene').frames).toHaveLength(1);
+    expect(projectGraphDisplay(index, viewport, null).frames).toHaveLength(1);
+  });
+  it('does not fabricate dangling/empty/invalid frames and renders control-stripped plain labels', () => {
+    const index = createGraphDisplayIndex([node('a', 0), node('b', Infinity)], [], definitions,
+      [...groups, { id: 'empty', name: 'Empty', node_ids: [] }, { id: 'missing', name: 'Missing', node_ids: ['absent'] },
+        { id: 'valid', name: '<img>\u202e\n标题', node_ids: ['a'] }]);
+    expect(index.frames).toHaveLength(1);
+    expect(index.frames[0].label).toBe('<img>  标题');
+    expect(createGraphDisplayIndex([node('a', 0)], [], definitions).frames).toEqual([]);
+  });
+});

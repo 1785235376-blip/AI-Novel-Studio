@@ -1,0 +1,24 @@
+# World-space visual group outlines — 2026-10-16
+
+Baseline `43457402dac5c0579d8332fb8d53e73a813fba04`; delivery is the containing local commit on `work/dot-usability-handoff11-20261015`. This slice extends persisted visual groups with actual canvas outlines and explicit member selection. Collapse/nesting are deliberately deferred: hiding members would require a separately verified edge/port/accessibility projection, not just CSS concealment.
+
+## Implemented boundary
+
+The existing disposable display index derives group bounds from all original member card bounds, including catalog-dependent port heights. A 16-world-unit gutter and 32-unit label band sit around those bounds. Frames share the existing camera transform and track drag/alignment previews without a separate position, execution node, persisted field, store or save call. The original `presentation.groups`, original group authoring panel, node selection/history/save/CAS/reopen and backend schema remain unchanged. Legacy/comment-only definitions render no frames and serialize exactly as before.
+
+Frames are behind all cards/ports and have no pointer hit area. Only their bounded, ellipsized shared Button labels receive events; control/bidi characters are stripped from displayed labels without modifying stored names, and React renders literal text rather than HTML. Explicit activation selects members; the pressed state means every member is selected. Selection itself never writes a definition. Existing selected-node drag/snap/nudge is still the only movement path. Label keys do not bubble into node deletion/nudge. Read-only labels can select, matching read-only node selection; busy and active gestures disable them. Alt/middle/pan-tool pointer gestures retain the existing camera path. No automatic drag, save, provider call or group creation occurs.
+
+Frame viewport intersection uses existing screen-pixel overscan and world conversion. A crossing frame is kept even if both endpoint members are culled; a focused label is retained until focus leaves. Existing node retention, edge culling and accessible node/connection lists are unchanged. MiniMap remains node/edge/camera based, with selected members reflected through existing selection; frames do not expand its extent or add fictitious nodes. Empty/dangling/nonfinite display groups are omitted defensively; the original transport/backend still rejects invalid stored groups. Frame extents can exceed node coordinate bounds by their fixed decoration gutter without changing legal stored positions.
+
+## Verification
+
+[Measured command receipts and source hashes](canvas-group-outlines-20261016.json) and [offline benchmark](canvas-group-outlines-benchmark-20261016.json) preserve exact results.
+
+- 301 targeted tests in 10 files pass: mocked mounted UI/transport, pure geometry, original undo/save/reopen/conflict recovery and PUBLIC placeholder. New coverage includes exact card-derived frame bounds, tall cards, negative positions, crossing/distant/focus-retained frames, plain/control-stripped labels, explicit selection, drag-preview following, read-only/busy/owner replacement, key isolation, port routing, background marquee and transformed pan.
+- 32 pure backend contract tests, 3 nonsecurity original File-owner roundtrip/CAS tests and 30 PUBLIC tests pass (65 total for that command). Backend/schema files were not modified.
+- tsc -b, Vite production build, discovery, token guard, scoped raw-color/hit-test policy checks, 487-file PUBLIC source closure and diff check pass. Existing Vite large-chunk warning remains. An initial 71-test focused run also passed; overlapping counts are not summed.
+- Offline Node geometry benchmark includes 1000 and 10000 synthetic display nodes plus 24 groups of 24 members. At 1000 nodes, index construction measured 5.309 ms and projection p95 0.072 ms; sampled maximum 18 visible groups adds 36 frame/button elements. The persistence ceiling of 24 groups means at most 48 such elements if all render. These counts are predicted from projection and markup, not browser DOM/performance acceptance. Accessibility directory/connection costs remain. Heap figures are noisy Node retained-index observations; no browser FPS/memory claim or executable large DAG was produced.
+
+Browser visual/hit-testing/native keyboard/IME/accessibility/performance is NOT_RUN under the existing blocked browser boundary, with no workaround attempted. No PG/P0/lifecycle/security work, user-machine access, GPU/provider, paid resources, push or hosted CI was attempted. Windows/full RC remain LOCAL_REQUIRED/NOT_RUN. P0 remains BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled. No claim of nested subgraphs, collapsed groups, full LOD or unlimited workspace acceptance.
+
+Handoff: independent parent review before next tracked feature edits. Preserve prior receipts and all existing environment/cost/denial limits; no push while hosted CI cost is unknown.

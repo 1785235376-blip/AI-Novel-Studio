@@ -72,3 +72,12 @@ Baseline `6620f008da3309a16ae500ff07903bc2dde01a9e`; containing commit identifie
 294 targeted mocked UI/transport/geometry, 32 pure backend, 3 nonsecurity File and 30 PUBLIC tests pass; tsc/Vite/discovery/token/scoped-color/487-file PUBLIC closure pass. Evidence/report: `docs/v2/canvas-visual-groups-20261016.md` and `.json`. Browser/visual/native IME/performance, PG/P0, user computer/GPU/provider/Windows/full RC were not attempted. P0 stays BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled; no push/hosted CI because cost remains unknown.
 
 Handoff: parent independent review before further tracked feature edits. Preserve previous evidence and environment/cost/denial boundaries. No full grouping/collapse/infinite-workspace acceptance claim; next work needs review coordination.
+
+
+## World-space group outline continuation — 2026-10-16
+
+Baseline `43457402dac5c0579d8332fb8d53e73a813fba04`; containing commit identifies local delivery. Existing presentation.groups now renders derived card-bounded world frames and explicit member-selection labels, with camera/drag/alignment following, culling/focus retention, plain display labels and no definition write on selection. Original persistence/schema/history/CAS/ports/MiniMap/execution budgets remain unchanged. Collapse/nesting are deferred for separate edge/port/accessibility design and verification. Report/evidence: `docs/v2/canvas-group-outlines-20261016.md` / `.json`; adjacent benchmark records 1000/10000 display objects with 24 groups.
+
+301 targeted mocked UI/geometry tests, 32 pure backend contracts, 3 nonsecurity File owner tests and 30 PUBLIC tests pass; tsc/Vite/discovery/token/scoped-color/hit-test policy/487-file closure pass. Browser/native input/visual/hit-testing/FPS/memory, PG/P0, Windows/GPU/provider/full RC NOT_RUN. P0 stays BLOCKED, R3-GATE HOLD, production Prompt Adoption disabled. No push/hosted CI because cost remains unknown.
+
+Handoff: independent parent review before further tracked feature edits. No new store/schema/execution nodes; no collapsed/nested-subgraph completion claim. Preserve all previous receipts and user-machine/cost/denial boundaries.
