@@ -113,4 +113,15 @@ describe('optional descriptive asset relationships', () => {
     const graph = await screen.findByRole('region', { name: '项目关联概览' });
     expect(within(graph).getByText(/原始来源关系（只读）/)).toBeTruthy(); expect(graph.textContent).toContain('不会执行'); expect(client.addRelationship).not.toHaveBeenCalled();
   });
+  it('shows only recorded direct incoming relationships and explicitly limits impact coverage', async () => {
+    const { client } = setup();
+    client.relationships.mockResolvedValue({ graph_kind: 'ASSET_RELATIONSHIPS', nodes: [
+      { id: 'other', kind: 'ASSET', asset_kind: 'image', label: '使用此图的素材', version: 3, digest },
+    ], edges: [{ id: 'incoming', from: 'other', owner: 'ASSET_LINEAGE', type: 'DERIVED_FROM', state: 'CURRENT', target: reference('ASSET', { id: 'source' }) }], executable: false, knowledge_graph: false, automatic_regeneration: false });
+    await open(); fireEvent.click(screen.getByRole('button', { name: '读取项目关联概览' }));
+    const impact = await screen.findByRole('region', { name: '当前资产引用影响' });
+    expect(impact.textContent).toContain('使用此图的素材'); expect(screen.getByText(/不是完整影响清单/)).toBeTruthy();
+    expect(client.addRelationship).not.toHaveBeenCalled(); expect(client.removeRelationship).not.toHaveBeenCalled();
+  });
+
 });

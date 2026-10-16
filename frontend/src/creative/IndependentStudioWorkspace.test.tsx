@@ -234,3 +234,61 @@ describe('mounted original candidate reopening', () => {
     expect(fetchMock.mock.calls.some(([, init]) => init.method !== 'GET')).toBe(false);
   });
 });
+
+
+describe('relationship inspection original asset navigation', () => {
+  function relationshipServer(targetPatch: Partial<StudioAsset> = {}, afterFirst?: Partial<StudioAsset>) {
+    let targetReads = 0;
+    const target = { ...asset(2), id: 'image-2', filename: 'original.png', ...targetPatch };
+    const reference = { kind: 'ASSET' as const, id: 'image-2', version: 2, digest: sha, label: 'original.png', deleted: false };
+    saved = [{ ...asset(2), relationships: [{ id: 'relation-1', type: 'REFERENCES', state: 'CURRENT', target: reference,
+      expected: { kind: 'ASSET', id: 'image-2', version: 2, digest: sha }, reason: 'original source', created_by: 'author', created_at: '2026-10-16T00:00:00Z', semantics: 'DECLARED_LINK_NOT_RIGHTS_GRANT_OR_EXECUTION' }] }, { ...asset(2), id: 'image-2', filename: 'original.png' }];
+    server({ override: url => url === `${base}/references?kind=ASSET` ? response({ items: [reference], read_only: true, content_copied: false })
+      : url === `${base}/assets/image-2` ? response(++targetReads > 1 && afterFirst ? { ...target, ...afterFirst } : target) : undefined });
+  }
+  async function inspectReference() {
+    mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '检查资产 reference.png' }));
+    fireEvent.click(await screen.findByRole('button', { name: '可选资产关联' }));
+    fireEvent.click(await screen.findByRole('button', { name: '核对原来源版本' }));
+    await waitFor(() => expect((screen.getByRole('button', { name: '打开核对的原资产' }) as HTMLButtonElement).disabled).toBe(false));
+  }
+  it('re-reads exact original asset after explicit dirty discard and performs no writes', async () => {
+    relationshipServer({}, { version: 3, sha256: 'b'.repeat(64) }); await inspectReference();
+    fireEvent.change(screen.getByLabelText('关联理由'), { target: { value: '保留草稿直到确认' } });
+    fireEvent.click(screen.getByRole('button', { name: '打开核对的原资产' }));
+    expect(fetchMock.mock.calls.some(([url]) => url === `${base}/assets/image-2`)).toBe(false);
+    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).value).toBe('保留草稿直到确认');
+    fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); fireEvent.click(screen.getByRole('button', { name: '确认离开' }));
+    await screen.findByText('已打开关联时的精确原资产版本。未修改关联，也未导出文件。');
+    // Exact inspection does not trigger the live browser's ID-only current-detail read.
+    expect(fetchMock.mock.calls.filter(([url]) => url === `${base}/assets/image-2`)).toHaveLength(1);
+    expect(screen.getByRole('region', { name: '关联原资产精确版本审阅' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: '选择素材 original.png' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '返回当前素材浏览' }));
+    await screen.findByText('已返回当前素材浏览。目录和详情按当前版本读取；不代表关联时的历史版本。');
+    await waitFor(() => expect(fetchMock.mock.calls.filter(([url]) => url === `${base}/assets/image-2`)).toHaveLength(2));
+    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
+  });
+  it.each([{ version: 3 }, { sha256: 'b'.repeat(64) }, { novel_id: 'other-project' }, { deleted_at: 'deleted' }])('does not open a changed original owner read %j', async patch => {
+    relationshipServer(patch); await inspectReference(); fireEvent.click(screen.getByRole('button', { name: '打开核对的原资产' }));
+    if (patch.novel_id) {
+      await screen.findByText('当前会话无权访问此项目');
+      expect(screen.queryByRole('button', { name: '可选资产关联' })).toBeNull();
+    } else {
+      await screen.findByText('关联来源的版本、摘要或范围已变化；未打开最新版本，原资产选择保持不变。');
+      expect(within(screen.getByRole('region', { name: '资产检查面板' })).getByText('reference.png')).toBeTruthy();
+    }
+    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
+  });
+  it('retires inspection when the original selection goes A to B to A in one batch', async () => {
+    relationshipServer(); await inspectReference();
+    const source = screen.getByRole('button', { name: '检查资产 reference.png' });
+    const other = screen.getByRole('button', { name: '检查资产 original.png' });
+    act(() => { fireEvent.click(other); fireEvent.click(source); });
+    expect(screen.queryByRole('button', { name: '打开核对的原资产' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
+    expect((screen.getByRole('button', { name: '打开核对的原资产' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
+  });
+
+});

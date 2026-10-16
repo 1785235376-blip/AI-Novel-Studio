@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiErrorView, type Asset } from '../api';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
+import { AssetReferenceInspection, type AssetReferencePin } from './AssetReferenceInspection';
 import type { StudioAsset, StudioClient, StudioReference, StudioReferenceKind, StudioRelationshipType, StudioRelationshipGraph } from './studioClient';
 
 const types: [StudioRelationshipType, string][] = [
@@ -23,10 +24,11 @@ type Props = {
   read: <T>(operation: () => Promise<T>) => Promise<T>;
   mutate: (operation: () => Promise<StudioAsset>) => Promise<StudioAsset>;
   onDirtyChange: (dirty: boolean) => void;
+  onOpenAsset?: (pin: AssetReferencePin) => void;
 };
 
 /** Versioned, optional descriptions of existing content. Never executes a graph. */
-export function AssetRelationshipsPanel({ asset, client, canMutate, canReview, blocked, busy, isCurrent, read, mutate, onDirtyChange }: Props) {
+export function AssetRelationshipsPanel({ asset, client, canMutate, canReview, blocked, busy, isCurrent, read, mutate, onDirtyChange, onOpenAsset }: Props) {
   const [open, setOpen] = useState(false), [kind, setKind] = useState<StudioReferenceKind>('ASSET');
   const [type, setType] = useState<StudioRelationshipType>('REFERENCES'), [target, setTarget] = useState<StudioReference>();
   const [reason, setReason] = useState(''), [references, setReferences] = useState<StudioReference[]>();
@@ -84,7 +86,7 @@ export function AssetRelationshipsPanel({ asset, client, canMutate, canReview, b
       <ul className="asset-relationships__list">{asset.relationships?.map(link => <li key={link.id}>
         <strong>{labels[link.type] || link.type}</strong> · <Badge tone={link.state === 'CURRENT' ? 'neutral' : 'warning'}>{states[link.state]}</Badge>
         <p>{link.target.label}</p>
-        {link.state !== 'UNAVAILABLE' && <><p>目标 {link.target.kind} · v{link.target.version} · {link.target.deleted ? '已删除' : '可读取'}</p><p>关联时 v{link.expected.version} · 当前 v{link.target.version}</p><p>理由：{link.reason || '未填写'}</p></>}
+        {link.state !== 'UNAVAILABLE' && <><p>目标 {link.target.kind} · v{link.target.version} · {link.target.deleted ? '已删除' : '可读取'}</p><p>关联时 v{link.expected.version} · 当前 v{link.target.version}</p><p>理由：{link.reason || '未填写'}</p><AssetReferenceInspection expected={link.expected} client={client} read={read} isCurrent={current} busy={busy} onOpenAsset={onOpenAsset} /></>}
         <Button variant="ghost" disabled={!canMutate || locked || draft} onClick={() => { setRemoving(link.id); setConfirmed(false); }}>移除关联 {labels[link.type] || link.type}</Button>
       </li>)}</ul>
       {removing && <section role="alert" aria-label="确认移除关联"><p>只移除此关联，保留两端内容和历史记录。</p><label><input type="checkbox" checked={confirmed} disabled={locked} onChange={event => setConfirmed(event.target.checked)} />确认移除此关联</label><Button variant="danger" disabled={!confirmed || !canMutate || locked} onClick={() => { if (canMutate && confirmed && removing) void save(() => client.removeRelationship(asset.id, removing, asset.version!)); }}>确认移除</Button><Button disabled={busy} onClick={() => { setRemoving(undefined); setConfirmed(false); }}>取消移除</Button></section>}
@@ -108,7 +110,7 @@ export function AssetRelationshipsPanel({ asset, client, canMutate, canReview, b
       </form>
       <Button variant="ghost" disabled={graphBusy} onClick={() => { if (!current()) return; setGraphBusy(true); setGraphError(''); void read(() => client.relationships()).then(value => { if (current()) setGraph(value); }).catch(value => { if (current()) setGraphError(apiErrorView(value, '项目关联读取失败。').message); }).finally(() => { if (current()) setGraphBusy(false); }); }}>读取项目关联概览</Button>
       {graphBusy && <StatusMessage>正在读取关联概览…</StatusMessage>}{graphError && <StatusMessage tone="error">{graphError}</StatusMessage>}
-      {graph && <section aria-label="项目关联概览"><p>{graph.nodes.length} 个资产 · {graph.edges.length} 条关联</p><p>描述性资产关系；不会执行、自动重新生成或写入知识图谱。</p><ul className="asset-relationships__list">{graph.edges.map(edge => <li key={edge.id}>{graph.nodes.find(node => node.id === edge.from)?.label || '当前可访问资产'} → {edge.target.label} · {labels[edge.type] || edge.type} · {states[edge.state]}{edge.owner === 'ASSET_LINEAGE' && ' · 原始来源关系（只读）'}</li>)}</ul></section>}
+      {graph && <section aria-label="项目关联概览"><p>{graph.nodes.length} 个资产 · {graph.edges.length} 条关联</p><p>描述性资产关系；不会执行、自动重新生成或写入知识图谱。</p><p>这是当前可读的已记录关系，不是完整影响清单；未覆盖的 Prompt、镜头和 Timeline 引用仍未知。原始来源关系仅返回当前目标版本，不能据此还原关联时的历史版本。</p><section aria-label="当前资产引用影响"><h3>当前资产的已记录直接引用</h3>{graph.edges.filter(edge => edge.state !== 'UNAVAILABLE' && edge.target.kind === 'ASSET' && edge.target.id === asset.id).map(edge => <p key={edge.id}>{graph.nodes.find(node => node.id === edge.from)?.label || '当前可访问资产'} · {labels[edge.type] || edge.type} · {states[edge.state]}</p>)}{!graph.edges.some(edge => edge.state !== 'UNAVAILABLE' && edge.target.kind === 'ASSET' && edge.target.id === asset.id) && <p>没有已记录的直接引用，不代表没有下游影响。</p>}</section><ul className="asset-relationships__list">{graph.edges.map(edge => <li key={edge.id}>{graph.nodes.find(node => node.id === edge.from)?.label || '当前可访问资产'} → {edge.target.label} · {labels[edge.type] || edge.type} · {states[edge.state]}{edge.owner === 'ASSET_LINEAGE' && ' · 原始来源关系（只读）'}</li>)}</ul></section>}
     </>}
   </section>;
 }
