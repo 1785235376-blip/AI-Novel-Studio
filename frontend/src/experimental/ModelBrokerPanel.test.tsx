@@ -211,6 +211,9 @@ it('preserves an uncertain submission and explicitly retries the identical owner
   fireEvent.change(screen.getByLabelText('本次创作要求'), { target: { value: 'Next draft, not the pending request' } });
   expect((screen.getByRole('button', { name: '按预览路线预占并生成' }) as HTMLButtonElement).disabled).toBe(true);
   expect(screen.getByLabelText('偏好模型路线').closest('fieldset')?.disabled).toBe(false);
+  fireEvent.change(screen.getByLabelText('创作隐私模式'), { target: { value: 'HYBRID' } });
+  fireEvent.change(screen.getByLabelText('偏好模型路线'), { target: { value: '' } });
+  expect(screen.queryByRole('region', { name: '模型路线预览' })).toBeNull();
   fireEvent.click(retry);
   await screen.findByDisplayValue('Actual existing job draft');
   const sends = fetch.mock.calls.filter(([url]) => url.endsWith('/model-broker/generate'));
