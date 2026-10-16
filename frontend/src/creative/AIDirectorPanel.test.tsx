@@ -30,6 +30,25 @@ const reviewCheck = () => screen.getByLabelText('已核对来源、场面调度�
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe('AI director local proposal and explicit review', () => {
+  it('keeps the shared genre field bounded in preparation and review without losing the other target fields', async () => {
+    const { mutations } = setup(); await screen.findByText('没有待审导演建议');
+    const prepared = screen.getByLabelText('建议准备 文档类型 / 题材') as HTMLInputElement;
+    fireEvent.change(prepared, { target: { value: '🎬'.repeat(2001) } });
+    expect((screen.getByRole('button', { name: '准备待审导演建议' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(prepared.value).toBe('🎬'.repeat(2001)); expect(mutations()).toHaveLength(0);
+    fireEvent.change(prepared, { target: { value: '🎬'.repeat(2000) } });
+    fireEvent.change(screen.getByLabelText('建议准备 视觉风格'), { target: { value: '原有风格' } });
+    await prepare();
+    expect(JSON.parse(String(mutations()[0][1]?.body)).visual_target).toMatchObject({ genre: '🎬'.repeat(2000), style: '原有风格' });
+    const reviewed = screen.getByLabelText('建议审核 文档类型 / 题材') as HTMLInputElement;
+    fireEvent.change(reviewed, { target: { value: '题'.repeat(2001) } }); fireEvent.click(reviewCheck());
+    expect((screen.getByRole('button', { name: '审核并采用' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.change(reviewed, { target: { value: '审核题材' } }); expect((reviewCheck() as HTMLInputElement).checked).toBe(false);
+    fireEvent.click(reviewCheck()); fireEvent.click(screen.getByRole('button', { name: '审核并采用' }));
+    await screen.findByText('已创建导演文档。小说正文保持原有保存与审核流程。');
+    expect(JSON.parse(String(mutations()[1][1]?.body))).toMatchObject({ expected_version: 2, visual_target: { genre: '审核题材' } });
+  });
+
   it('honestly prepares local rules without model calls and requires reviewed edited output before adoption', async () => {
     const { fetchMock, mutations, onDocument } = setup(); await screen.findByText('没有待审导演建议');
     expect(screen.getByText(/本地规则辅助会整理场景调度草案。不会调用模型/)).toBeTruthy(); await prepare();

@@ -1,3 +1,4 @@
+import { AUDIO_MP3_SAMPLE_RATES } from './studioProductionClient';
 import { checkedVideoReference, type VideoReference } from './studioVideoRuntimeContract';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
@@ -89,7 +90,7 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
   const ranges: Partial<Record<MediaParameter, [number, number]>> = { width: [64, 2048], height: [64, 2048], steps: [1, 150], seed: [0, 2147483647], duration_seconds: [1, 600], frame_rate: [1, 60], in_ms: [0, 600000], out_ms: [1, 600000], sample_rate: [8000, 96000], channels: [1, 2] };
   for (const name of parametersByOperation[draft.operation]) {
     const value = draft.parameters[name]; if (value === '') continue;
-    if (name === 'output_format') { if (value !== 'FLAC') throw new Error('独立音频格式请选择 FLAC，或留空保留默认 WAV。'); result[name] = value; }
+    if (name === 'output_format') { if (value !== 'FLAC' && value !== 'MP3') throw new Error('独立音频格式请选择 FLAC 或 MP3，或留空保留默认 WAV。'); result[name] = value; }
     else if (name === 'negative_prompt') { if (value.length > 8000) throw new Error('负向提示超过长度限制。'); result[name] = value; }
     else if (name === 'voice_id') { if (value.length > 240 || !value.trim() || /[\x00-\x1f\x7f]/.test(value)) throw new Error('请填写有效的语音标识。'); result[name] = value; }
     else if (name === 'size') { if (!['auto', '1024x1024', '1536x1024', '1024x1536'].includes(value)) throw new Error('图片规格不受支持。'); result[name] = value; }
@@ -114,6 +115,8 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
   if (draft.operation === 'm5.image.upscale' && result.scale !== 2 && result.scale !== 4) throw new Error('先明确选择 2 倍或 4 倍超分。');
   if (draft.operation === 'm8.audio.trim' && (typeof result.in_ms !== 'number' || typeof result.out_ms !== 'number' || result.out_ms <= result.in_ms || result.out_ms - result.in_ms > 120000)) throw new Error('截取需填写起止毫秒，终点须大于起点，片段最长 120 秒。');
   if (draft.operation === 'm8.audio.trim' && Math.ceil(((result.out_ms as number) - (result.in_ms as number)) * Number(result.sample_rate ?? 48000) / 1000) * Number(result.channels ?? 2) * 2 + 4096 > 25 * 1024 * 1024) throw new Error('所选时长、采样率和声道预计超过 25 MiB 输出上限，请调整后重新预览。');
+  if (result.output_format === 'MP3' && Number(result.out_ms) - Number(result.in_ms) < 10) throw new Error('MP3 片段至少 10 毫秒，以保留准确的解码时长。');
+  if (result.output_format === 'MP3' && !AUDIO_MP3_SAMPLE_RATES.includes(Number(result.sample_rate ?? 48000))) throw new Error('MP3 采样率仅支持 8000、11025、12000、16000、22050、24000、32000、44100、48000 Hz；请明确修改，不会自动重采样。');
   return result;
 }
 function commandFor(draft: Draft, providers: ProductionProvider[], assets: StudioAsset[], requestId: string): MediaCommand {
@@ -472,6 +475,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
         && (blob.size !== job.media_measurement.byte_count || !['audio/wav', 'audio/x-wav', 'audio/wave'].includes(blob.type))) throw invalid('本地 WAV 候选与实际输出测量不一致，不可审核。');
       if (job.operation_id === 'm8.audio.trim' && job.media_measurement?.profile_validation === 'FLAC_STREAMINFO_PCM_VERIFIED'
         && (blob.size !== job.media_measurement.byte_count || !['audio/flac', 'audio/x-flac'].includes(blob.type))) throw invalid('本地 FLAC 候选与实际输出测量不一致，不可审核。');
+      if (job.operation_id === 'm8.audio.trim' && job.media_measurement?.profile_validation === 'MP3_GAPLESS_PCM_VERIFIED'
+        && (blob.size !== job.media_measurement.byte_count || blob.type !== 'audio/mpeg')) throw invalid('本地 MP3 候选与实际输出测量不一致，不可审核。');
       if (digest !== job.output_candidate.digest) throw invalid('候选字节摘要与任务回执不符，不可审核。');
       const next = { url: URL.createObjectURL(blob), kind: job.output_candidate.kind, binding }; candidateRef.current = next; setCandidate(next);
     } catch (reason) { if (live(value)) failure(reason, '候选媒体读取失败。', true); } finally { finish(value); }

@@ -21,7 +21,7 @@ import { ScreenplayExportPanel } from './ScreenplayExportPanel';
 import { ProductionTimeline } from './ProductionTimeline';
 import { AIDirectorPanel } from './AIDirectorPanel';
 import { SourceAdaptationPanel } from './SourceAdaptationPanel';
-import { documentInput, modeForDocument, newDocument, newScene, type CreativeAsset, type CreativeCapabilities, type CreativeDocument, type CreativeInput, type CreativeReferences, type WorkspaceMode } from './types';
+import { creativeAuthoringProblems, documentInput, modeForDocument, newDocument, newScene, type CreativeAsset, type CreativeCapabilities, type CreativeDocument, type CreativeInput, type CreativeReferences, type WorkspaceMode } from './types';
 import './creative.css';
 
 type Draft = { value: CreativeInput; base?: CreativeDocument; dirty: boolean; blocked?: boolean };
@@ -80,7 +80,7 @@ function CreativeWorkspaceSession({ novelId, context, scope, actor, chapter, cha
   const navigate = (action: () => void) => { if (busy || directorBusy || productionDirty || mutationLock.current) return; if (revoked.current) { action(); return; } if (dirtyModes.length || adaptationDraft) { setPendingNavigation(() => action); setDiscardChecked(false); } else action(); };
   const openDocument = (row: CreativeDocument) => { if (revoked.current) return; const target = modeForDocument(row.mode); if (currentDrafts.current[target]?.dirty) { setNotice(`“${row.title}”已保存在服务端。请先保存或处理${target}中的未保存草稿，再打开。`); return; } setMode(target); setDraft({ value: documentInput(row), base: row, dirty: false }, target); setHistory(undefined); setRestoreVersion(undefined); setServerCandidate(undefined); setSceneId(undefined); setShotId(undefined); setError(''); };
   const save = async () => {
-    if (!draft || !canEdit || productionDirty || mutationLock.current || !draft.dirty || !draft.value.title.trim()) return;
+    if (!draft || !canEdit || productionDirty || mutationLock.current || !draft.dirty || creativeAuthoringProblems(draft.value).length || !draft.value.title.trim()) return;
     const originMode = mode, originDraft = draft; mutationLock.current = true; setBusy(true); setError(''); setNotice('');
     try { const row = originDraft.base ? await client.update(originDraft.base.id, originDraft.base.version, originDraft.value) : await client.create(originDraft.value); if (!mounted.current || revoked.current) return; setDocuments(rows => [...rows.filter(item => item.id !== row.id), row]); setDraft({ value: documentInput(row), base: row, dirty: false }, originMode); setNotice(`已保存“${row.title}” · v${row.version}`); }
     catch (value) { if (!mounted.current || revoked.current) return; setError(describe(value)); const uncertain = !(value instanceof ApiError) || value.status >= 500 || value.status === 409; if (uncertain) { setDraft({ ...originDraft, blocked: true }, originMode); setNotice('草稿已保留。版本冲突或写入回执不确定，继续写入前需核对服务端。'); } if (value instanceof ApiError && [401, 403].includes(value.status)) deny(); }

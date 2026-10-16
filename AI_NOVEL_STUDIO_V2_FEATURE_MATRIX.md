@@ -1848,3 +1848,90 @@ uses first approved or first matching profile. Distinguishing remains owner/hist
 Bible dimensions. Browser/geometry remains **BLOCKED / NOT_RUN**; earlier baseline/hosted and
 advanced-runtime limitations remain open. This is not V2 completion, merge, release or deployment.
 Details: `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+
+### 2026-10-15 — existing Director genre and shot-time authoring checkpoint
+
+Append-only observation after visual-authoring checkpoint `61b1f039`. Original document and
+shot editors now expose existing `visual_target.genre` and `continuity.time` fields, with the
+same full-document owner, expected version, explicit history restore and conflict recovery.
+The shared Director proposal editor also preserves and bounds genre. Optional fields stay
+omitted until edited; explicit empty values retain sibling data and links. Code-point limits
+match the original schema. Ordinary shot lighting and stored continuity overrides remain intact.
+No backend production model/service, endpoint/gate, protected shell, CSS or dependency changed.
+
+Synthetic focused frontend **60 passed / 7 files**, combined prior-stage and relevant regression
+**561 passed / 50 files**, and isolated original File-owner/projection selection **39 passed /
+2 existing authority/method tests deselected**. Counts overlap. The v1→v2→fresh-store reread→v3
+clear→v4 restore sequence verifies exact saved content/history, authored genre, changed-time
+warning and unknown one-sided time. Read-only Director projection remains read-only. Browser,
+real geometry, model/GPU and broader runtime acceptance remain unavailable/unverified. Baseline
+and hosted failures remain open. See `docs/delivery/v2-development/dot-usability-20261015.md`
+for commands, final review/publication evidence and limits.
+
+Clarification: Prompt adoption implementation already exists with a mounted read-only panel;
+its closed write path and unfinished acceptance are unchanged. Earlier “absent” wording is not
+an assertion of absent source code. No adoption or separately blocked lifecycle work was done.
+
+Stage 11 publication status: **LOCAL_REVIEWED / PUBLICATION_BLOCKED**. The initial upload of the
+updated existing matrix and one evidence-backed identical retry were rejected by an external
+approval requirement. No Stage 11 remote mutation or PR update succeeded; Draft PR #48 remains
+at `61b1f0390077b403b62cc57cbd50048d2324ae40`. Exact-published rerun/new hosted CI are NOT_RUN.
+No alternate upload route was attempted. See the appended publication status in the rolling report.
+
+### 2026-10-15 — original standalone MP3 export checkpoint (local only)
+
+Current-source `AUDIO-12` gap advanced: the original standalone trim/export DTO, recipe, Audio
+Inspector and actual receipt path now accept explicit MP3 while preserving omitted/default WAV
+and explicit FLAC. No parallel job, provider, Asset or Review owner. Local libmp3lame CBR profiles
+are 128 kb/s at 32/44.1/48 kHz and 64 kb/s at the six supported lower rates; mono/stereo, reviewed
+gain, 10 ms–120 s interval and 25 MiB encoded/decoded bound are explicit. Unsupported rates and
+sub-10-ms clips are rejected; missing encoder/ffprobe yields an honest unavailable receipt.
+Actual MP3 stream probe, bounded gapless PCM decode, exact output/decoded digests and duration
+proof are persisted. Decoded timing allows one sample; container padding is separately bounded
+and disclosed. S16 decode is not a lossless claim. Candidates remain private until explicit
+review; failure/cancellation cleanup and original unknown-result recovery/no-replay remain.
+
+Synthetic original File owner and mounted functional regression **116 passed / 76 deselected**;
+new/existing audio frontend **155 passed / 4 files**. Counts overlap. Independent review passed
+45 real minimum-duration codec combinations, re-probed captured bytes and exact legacy hashes.
+An expanded 131-file frontend run exposed two old ambiguous global-alert waits; both reproduced
+in unchanged `e4cb8f5`. Their correction asserts exact conflict text plus alert role and retains
+all draft/version/no-dispatch checks. Historical failures stay recorded. Current final rerun and
+local commit details follow in the rolling report `docs/delivery/v2-development/dot-usability-20261015.md`.
+
+This is local synthetic CPU codec/functional evidence only. Browser/native-player/Windows/GPU,
+real-model, live authorization/isolation and broader Audio Studio/V2 acceptance are unproven.
+The blocked lifecycle/security candidate and all gates remain untouched. Stage 11/later publication
+remains **BLOCKED**; no upload/ref/PR mutation was retried. PR #48 remains last verified Stage 10.
+Final expanded frontend rerun: **2074 passed / 131 files**, exit 0; final typecheck passes.
+The two corrected conflict-selector failures are closed at test level only; no production or
+security acceptance is inferred. Earlier failed receipts are retained rather than rewritten.
+Local implementation commit: `a8c2f2df4c1ecce5fb4c0e6293a1b4fac1375cb9`, tree
+`9e517487aef6519875fd4b182cbf88856d3f08d0`; independent review also cleared both selector-only
+corrections. The following documentation-only checkpoint does not alter production/test bytes.
+Publication remains blocked and was not attempted.
+
+### 2026-10-15 — frontend runner discovery correction (local only)
+
+The original Vitest config accidentally collected all three `frontend/e2e` Playwright
+specs, producing framework-level collection errors. Adding the missing `e2e/**`
+exclusion now preserves the exact **399 unit/component files** and leaves every existing
+test/assertion/timeout unchanged. The new `pnpm test:discovery` regression and explicit
+runner manifest prove all three specs remain with their existing Playwright owners:
+**8 Studio release cases**, plus **7 Prompt cases × 3 viewports = 21 project-cases**.
+Both Playwright commands use `--list` only. The 80 pre-existing `tests/e2e`/`tests/visual`
+specs and their separate configs/exclusions are unchanged; those configs were not loaded.
+
+Baseline inventory was 402 files (399 units + 3 mistaken Playwright specs); regression
+is red against that config and green after the single exclusion. Representative unchanged
+unit/component verification: **62 passed / 5 files**. Typecheck/build/token guard pass
+with the existing bundle warning. This proves runner discovery, not browser acceptance.
+
+Stage 12's later exact-commit broad frontend retries remain **TIMING-FLAKY / INCONCLUSIVE**:
+four workers 2071 passed/3 timeout failures; serial 2072 passed/2 different timeout failures,
+with unchanged affected files passing in isolation. The earlier 2074-pass result is separate
+historical evidence. No timeout was relaxed, failure suite hidden, or whole-suite green claimed.
+Browser/AT, Windows/device, GPU/model and blocked security/lifecycle limits remain open.
+Stage 11+ publication is still blocked and was not retried. Details and commands are appended
+in `docs/delivery/v2-development/dot-usability-20261015.md`; this is not V2/release acceptance.
