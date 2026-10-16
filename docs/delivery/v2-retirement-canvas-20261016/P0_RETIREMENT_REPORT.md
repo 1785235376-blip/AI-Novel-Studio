@@ -61,3 +61,35 @@ and scope repositories, authorization protocol/service, collaboration scope serv
 Tests: `test_v2_project_retirement.py`, `test_round3i_pg_incarnation.py`,
 `test_v2_project_retirement_file_io.py`, `test_v2_retirement_lock_order.py`.
 `test_file_project_lifecycle.py` is retained byte-for-byte; new IO cases are additive.
+
+## Followup: pre-upgrade orphan authority and audited scope writes
+
+The earlier checkpoint's orphan-creation gap is now implemented and validated. The retained
+`scope-legacy-orphan-before` receipt reproduced stale same-id authority before this followup.
+Both normal and reserved creation now retire same-workspace orphan grants/scopes inside the
+existing creation transaction. A conflicting foreign binding returns exact HTTP 400 and
+leaves no public owner; rollback restores prior orphan state so a legitimate retry can succeed.
+Assignment rejects an absent original novel even when a historical binding still exists.
+
+Original scope creation holds the project authority lease from parent validation through
+write. Audited project/storyline/branch mutations reauthorize the original actor and active
+membership inside their commit boundary. Revocation at final validation returns exact
+`403 INACTIVE_MEMBERSHIP` and rolls back scope/audit writes. No second authorization owner
+or manual database repair was introduced.
+
+Final followup evidence, pinned Python/pytest 8.4.2:
+
+- File: **62 passed**, 47 PostgreSQL cases deselected; `scope-orphan-file-r3`.
+- Real PostgreSQL 16.15: initial followup **20 passed** (`scope-orphan-pg-r1`), then
+  combined final candidate **48 passed**, 47 File cases deselected;
+  `retirement-scope-pg-final`, fresh migrated database, owned server stopped cleanly.
+- Final frozen lifecycle/additive IO/lock-order regression: **32 passed**;
+  `retirement-io-lock-pinned-final`.
+- Final File 62, File IO/locks 32 and combined PG 48 receipts record unchanged source
+  snapshots during their respective checks. The earlier PG 29 receipt recorded concurrent
+  File-only source changes; it is retained but replaced by this combined final acceptance.
+
+This closes the specified reincarnation/orphan defects within the tested lifecycle paths.
+The complete V2 remains **PARTIAL**. Prompt write-time binding, tombstone/deletion and broader
+R3 concurrency gates still require their own source-backed acceptance; File compensation is
+still not power-loss atomicity. See `SCOPE_ORPHAN_FOLLOWUP_REPORT.md` and the final round report.

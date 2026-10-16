@@ -38,6 +38,8 @@ class AuthorizationService:
  def _validate_scope(self,scope):
   self.scope_service.get_workspace(scope.workspace_id)
   if scope.project_id is None:return scope
+  try:self.scope_service.novels.get(scope.project_id)
+  except (FileNotFoundError,KeyError) as exc:raise ValueError("project does not exist") from exc
   if scope.storyline_id is None:
    if self.scope_service.repository.project_workspace(scope.project_id)!=scope.workspace_id:raise ValueError("project does not belong to workspace")
    return scope
