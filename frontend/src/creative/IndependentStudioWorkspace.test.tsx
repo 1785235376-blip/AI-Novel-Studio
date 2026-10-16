@@ -3,6 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { api } from '../api';
+import { projectedTask, tasksResponse, reviewInboxItem, reviewInboxResponse } from '../taskcenter/taskCenterFixtures';
 import { useStudio } from '../store';
 import { useLocalHostSession } from '../localHostSession';
 import { IndependentStudioWorkspace, type IndependentStudioProps } from './IndependentStudioWorkspace';
@@ -190,5 +191,46 @@ describe('mounted asset browser to original image draft', () => {
     fireEvent.click(screen.getByRole('button', { name: `核对${kind}交接版本` })); fireEvent.click(await screen.findByRole('button', { name: `明确加入${kind}制作草稿` }));
     await screen.findByText(new RegExp(`已加入原${kind}制作草稿`)); expect(screen.getByText(/已绑定来源 reference.png/)).toBeTruthy();
     expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
+  });
+});
+
+
+describe('mounted TaskCenter original owner routing', () => {
+  it('opens exact original media task, deduplicates repeated opens and clears on leaving', async () => {
+    server({ override: url => url.includes('/workspace/tasks?') ? response(tasksResponse())
+      : url.endsWith('/experimental/media/tasks') ? response({ items: [{ id: 'media-task-1', version: 4, status: 'RUNNING', novel_id: id, scope: { mode: 'local', novel_id: id } }] }) : undefined });
+    mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
+    fireEvent.click(await screen.findByRole('button', { name: '定位原任务结果' }));
+    await screen.findByText('原记录 media-task-1 · v4 · RUNNING');
+    fireEvent.click(screen.getByRole('button', { name: '定位原任务结果' }));
+    expect(fetchMock.mock.calls.filter(([url]) => url.endsWith('/experimental/media/tasks'))).toHaveLength(1);
+    expect(screen.getByRole('button', { name: '任务中心' }).getAttribute('aria-pressed')).toBe('true');
+    expect(fetchMock.mock.calls.some(([url]) => url.includes('/production/jobs'))).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: '素材工作区' }));
+    expect(screen.queryByLabelText('原任务与候选记录')).toBeNull();
+    expect(fetchMock.mock.calls.some(([, init]) => init.method !== 'GET')).toBe(false);
+  });
+  it('shows unsupported owner honestly without claiming location or reading another service', async () => {
+    server({ override: url => url.includes('/workspace/tasks?') ? response(tasksResponse({ items: [projectedTask({ authority: 'images' })] })) : undefined });
+    mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
+    fireEvent.click(await screen.findByRole('button', { name: '定位原任务结果' }));
+    await screen.findByText(/此来源没有接入/);
+    expect(fetchMock.mock.calls.some(([url]) => url.includes('/experimental/media/') || url.includes('/production/jobs'))).toBe(false);
+  });
+});
+
+
+describe('mounted original candidate reopening', () => {
+  it('reads the exact original candidate and refuses newer revisions', async () => {
+    server({ override: url => url.includes('/workspace/tasks?') ? response(tasksResponse())
+      : url.endsWith('/review-inbox') ? response(reviewInboxResponse({ items: [reviewInboxItem({ novel_id: id, project: id, scope: { mode: 'local', novel_id: id } })] }))
+      : url.endsWith('/experimental/media/proposals') ? response({ items: [{ id: 'candidate-1', version: 4, task_id: 'media-task-1', status: 'PENDING_REVIEW', novel_id: id, scope: { mode: 'local', novel_id: id } }] }) : undefined });
+    mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
+    fireEvent.click(await screen.findByRole('tab', { name: '审核收件箱' }));
+    fireEvent.click(await screen.findByRole('button', { name: '查看候选详情' }));
+    fireEvent.click(screen.getByRole('button', { name: '定位原审核项' }));
+    await screen.findByText(/原候选版本或来源已变化/);
+    expect(screen.queryByLabelText('已核对原媒体记录')).toBeNull();
+    expect(fetchMock.mock.calls.some(([, init]) => init.method !== 'GET')).toBe(false);
   });
 });

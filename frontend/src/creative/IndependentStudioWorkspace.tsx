@@ -40,6 +40,8 @@ import type { ProductionWorkflowAssetKind, ProductionWorkflowModuleId } from '..
 // intent / interface-mode surface (UX-01). Both are additive mounted content in
 // their own folders; neither introduces a second project, task or preference owner.
 import { TaskCenterPanel } from '../taskcenter/TaskCenter';
+import { TaskOwnerResult } from '../taskcenter/TaskOwnerResult';
+import type { TaskCenterNavigationTarget } from '../taskcenter/taskCenterTypes';
 // UX-PRODUCT batch 2 (UX-03): the reuse-oriented asset browser. Additive content in
 // the ASSETS view; it reads through the same captured transport and never copies an
 // asset, executes a target module or physically deletes a file.
@@ -89,6 +91,9 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [productionStage, setProductionStage] = useState<StudioWorkspaceStage>(resume.state === 'SAVED' ? resume.location.stage : 'M4');
   const [graphLocation, setGraphLocation] = useState<Pick<StudioWorkspaceLocation, 'graphId' | 'runId'>>(resume.state === 'SAVED'
     ? { graphId: resume.location.graphId, runId: resume.location.runId } : {});
+  const [taskTarget, setTaskTarget] = useState<{ id: string; target: TaskCenterNavigationTarget }>();
+  const taskTransport = useMemo(() => studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined }), [client]);
+  useEffect(() => { if (workspaceView !== 'TASKS') setTaskTarget(undefined); }, [workspaceView]);
   const [assetHandoff, setAssetHandoff] = useState<TimelineAssetHandoff>();
   const [mediaHandoff, setMediaHandoff] = useState<TimelineAssetHandoff & { target?: 'IMAGE' | 'VIDEO' }>();
   useEffect(() => { if (workspaceView !== 'PRODUCTION') setMediaHandoff(undefined); }, [workspaceView]);
@@ -403,8 +408,15 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
       scope={context.scope} identity={cacheKey} active={workspaceView === 'TASKS' && !denied && !identityRetired}
       denied={denied || identityRetired} busy={busy} isCurrent={current} read={guarded} mutate={graphMutation}
-      onNavigate={target => { if (!current()) return; if (target.queue === 'TASKS') { navigate(() => setWorkspaceView('PRODUCTION')); setNotice(`已定位到原任务 ${target.task_id}（${target.authority}）：这里只发出定位回调，没有重新提交模型或渲染。`); } else { navigate(() => setWorkspaceView('ASSETS')); setNotice(`已定位到待审候选 ${target.item_id}（${target.domain}）：请在对应工作区按原版本复核。`); } }}
+      onNavigate={target => {
+        if (!current() || busyRef.current) return;
+        const epoch = selectionEpoch.current;
+        navigate(() => { if (current() && epoch === selectionEpoch.current && !busyRef.current) setTaskTarget(previous => previous && JSON.stringify(previous.target) === JSON.stringify(target) ? previous : { id: crypto.randomUUID(), target: structuredClone(target) }); });
+      }}
       onUnavailable={deny} />}
+    {workspaceView === 'TASKS' && !denied && !identityRetired && taskTarget && <TaskOwnerResult key={taskTarget.id}
+      projectId={projectId} scope={context.scope} identity={cacheKey} target={taskTarget.target} transport={taskTransport}
+      busy={busy} isCurrent={current} read={guarded} onClose={() => setTaskTarget(undefined)} />}
     {startVisible && <StudioStartPanel controller={entry} onOpenProject={id => {
       if (id === projectId) { navigate(() => setWorkspaceView(resume.state === 'SAVED' ? resume.location.view : 'ASSETS')); setNotice('已回到本项目保存的位置。'); return; }
       setNotice(`项目“${id}”已经存在；请从项目列表打开它，当前工作区不会自动切换，也不会为它新建任何内容。`);
