@@ -12,11 +12,16 @@ import { imageGraphCatalog, imageGraphProject, imageGraphRecord } from './studio
 import rawProductionCatalog from './fixtures/productionGraph.catalog.json';
 import type { StudioGraphCatalog } from './studioGraphTypes';
 import type { PlanningDocument } from './studioProductionGraphContract';
+import { studioProductionClient } from './studioProductionClient';
+import { mediaProviderKey } from './useStudioMediaExecution';
+vi.mock('./studioProductionClient', async original => ({ ...await original<typeof import('./studioProductionClient')>(), studioProductionClient: vi.fn() }));
+const pickerRow = { operation_id: 'm5.image.upscale' as const, provider_id: 'enabled-comfy', model_id: 'installed-upscaler', local: true, route_digest: 'a'.repeat(64), capability: 'MEDIA', supported_parameters: [], readiness: 'CONFIGURED_NOT_VERIFIED' as const };
 vi.mock('./studioClient', async importOriginal => ({ ...await importOriginal<typeof import('./studioClient')>(), studioClient: vi.fn() }));
 let client: StudioClient;
 const document: PlanningDocument = { id: 'synthetic-director', mode: 'DIRECTOR', title: 'Synthetic Director', version: 3, digest: 'a'.repeat(64) };
 const deferred = <T,>() => { let resolve!: (value: T) => void; const promise = new Promise<T>(yes => { resolve = yes; }); return { promise, resolve }; };
 beforeEach(() => {
+  vi.mocked(studioProductionClient).mockReturnValue({ providers: vi.fn().mockResolvedValue([pickerRow]) } as unknown as ReturnType<typeof studioProductionClient>);
   localStorage.clear(); useStudio.setState({ novelId: imageGraphProject, sessionToken: '', actor: undefined, scope: undefined });
   useLocalHostSession.setState({ token: 'production-graph-host', actorId: '' });
   const original = imageGraphCatalog(); original.definitions = original.definitions.filter(row => !row.id.startsWith('image_'));
@@ -46,7 +51,7 @@ describe('Production Graph UI keeps original controller and execution authority'
     change('节点类型', 'image_style'); click('添加节点'); change('图片风格', 'quiet cinematic');
     change('节点类型', 'director_plan'); expect((screen.getByRole('button', { name: '添加节点' }) as HTMLButtonElement).disabled).toBe(true);
     click('明确读取已保存导演与分镜文档'); await screen.findByRole('option', { name: 'Synthetic Director · v3' }); change('原创作文档', document.id); click('添加节点');
-    change('节点类型', 'image_upscale'); click('添加节点'); change('超分服务商 ID', 'enabled-comfy'); change('超分模型 ID', 'installed-upscaler'); change('超分倍率（2 或 4）', '4');
+    change('节点类型', 'image_upscale'); click('添加节点'); click('读取节点服务配置'); await screen.findByRole('option', { name: 'enabled-comfy · installed-upscaler · 本地' }); change('节点服务商与模型', mediaProviderKey(pickerRow)); change('超分倍率（2 或 4）', '4');
     click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
     const input = vi.mocked(client.graphs.create).mock.calls[0][0]; expect(input.definition.schema_version).toBe(4);
     expect(input.definition.nodes[0].parameters.style).toBe('quiet cinematic');

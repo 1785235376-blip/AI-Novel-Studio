@@ -1,3 +1,5 @@
+import { TaskCostReceiptView } from './TaskCostReceipt';
+import { taskRecoveryGuidance } from './taskCostReceipt';
 import { useState } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import {
@@ -45,6 +47,7 @@ function TaskCard({ controller, task }: { controller: TaskCenterController; task
       {unknown && <StatusMessage tone="warning">{TASK_CENTER_NOTICES.unknownStatus}</StatusMessage>}
       {task.raw_status !== task.status && <StatusMessage tone="warning">{TASK_CENTER_NOTICES.statusNotOwnerDefined}</StatusMessage>}
       <p>{task.lifecycle}</p>
+      <p>{taskRecoveryGuidance(task)}</p>
       <p className="task-center-task__limits">
         原来源声明的动作限额：重试 {task.action_limits.retry}、恢复 {task.action_limits.resume}、审核 {task.action_limits.review}（策略 {task.retry_policy}）。
         {TASK_CENTER_NOTICES.noAutoRetry}
@@ -57,6 +60,8 @@ function TaskCard({ controller, task }: { controller: TaskCenterController; task
         <ol>{task.history.map((entry, index) => <li key={index}>v{entry.version ?? '—'} · {entry.status}</li>)}</ol>
       </details>}
       <div className="task-center__actions">
+        <Button disabled={!controller.canRead} aria-expanded={controller.costReceipt.selection?.task === task}
+          onClick={() => void controller.costReceipt.read(task)}>查看原任务费用回执</Button>
         {openable && <Button disabled={!controller.canRead} onClick={() => controller.navigateTask(task)}>
           {TASK_ACTION_LABELS.open_source}
         </Button>}
@@ -65,6 +70,7 @@ function TaskCard({ controller, task }: { controller: TaskCenterController; task
         </Button>}
         {!openable && task.navigation_contract !== 'FORMAL_SOURCE_ONLY' && <span>原服务没有声明可打开的来源动作，因此这里没有按钮。</span>}
       </div>
+      <TaskCostReceiptView controller={controller} task={task}/>
       {confirming && <section className="task-center-batch" aria-label="确认取消原任务">
         <h4>取消 {task.label}（{task.authority} · {task.id}）？</h4>
         <p>{TASK_CENTER_NOTICES.cancelScope}</p>
@@ -82,9 +88,11 @@ function TaskCard({ controller, task }: { controller: TaskCenterController; task
 }
 
 /** 任务队列：过滤在按需刷新时生效；按钮可用性只看原 owner 的 `actions`。 */
-export function TaskList({ controller }: { controller: TaskCenterController }) {
+export function TaskList({ controller, panelId, labelledBy }: {
+  controller: TaskCenterController; panelId?: string; labelledBy?: string;
+}) {
   const { filters, setFilters } = controller;
-  return <section className="task-center__queue" role="tabpanel" aria-label="任务队列">
+  return <section className="task-center__queue" role="tabpanel" id={panelId} aria-labelledby={labelledBy} aria-label="任务队列">
     <form className="task-center__filters" onSubmit={event => { event.preventDefault(); controller.applyFilters(); }}>
       <label className="task-center__field"><span>按任务 ID、类型或阶段搜索</span>
         <input maxLength={160} value={filters.query} onChange={event => setFilters({ query: event.target.value })} />

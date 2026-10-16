@@ -36,7 +36,7 @@ describe('Phase 6 actual standalone FLAC receipts retain original media ownershi
   ])('rejects %s before exposing a reviewed receipt', async (_name, mutate) => {
     const raw = copy(capture.audio_receipts.approved); mutate(raw.media_measurement as Record<string, unknown>); fetcher.mockResolvedValue(response(raw)); await expect(client().get('audio', raw.id)).rejects.toBeTruthy();
   });
-  it.each(['WAV', 'MP3', 'flac', false, null])('rejects non-opt-in format %s without network', async format => {
+  it.each(['WAV', 'mp3', 'flac', false, null])('rejects non-opt-in format %s without network', async format => {
     const input = command(); input.parameters.output_format = format as string; await expect(client().preview(input)).rejects.toBeTruthy(); expect(fetcher).not.toHaveBeenCalled();
   });
   it.each(['m8.audio.speech', 'm8.audio.music', 'm7.video.t2v'] as const)('does not admit FLAC controls for %s', async operation_id => {

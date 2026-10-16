@@ -43,7 +43,7 @@ class MediaExecutionParameters(MediaParameters):
     gain_db: float | None = Field(default=None, ge=-60, le=12)
     sample_rate: int | None = Field(default=None, ge=8000, le=96000)
     channels: int | None = Field(default=None, ge=1, le=2)
-    output_format: Literal["FLAC"] | None = None
+    output_format: Literal["FLAC", "MP3"] | None = None
     denoising_strength: float | None = Field(default=None, gt=0, le=1)
     scale: Literal[2, 4] | None = None
 
@@ -190,6 +190,11 @@ class MediaCommand(ExecutionModel):
                     or self.allow_cloud or self.parameters.scale is None or len(self.source_snapshots) != 1):
                 raise ValueError("STUDIO_IMAGE_UPSCALE_EXPLICIT_LOCAL_SOURCE_REQUIRED")
         elif self.operation_id == "m8.audio.trim":
+            if (self.parameters.output_format == "MP3" and self.parameters.in_ms is not None
+                    and self.parameters.out_ms is not None and self.parameters.out_ms - self.parameters.in_ms < 10):
+                raise ValueError("STUDIO_AUDIO_MP3_DURATION_INVALID")
+            if self.parameters.output_format == "MP3" and (self.parameters.sample_rate or 48000) not in (8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000):
+                raise ValueError("STUDIO_AUDIO_MP3_SAMPLE_RATE_INVALID")
             if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt:
                 raise ValueError("STUDIO_AUDIO_TRIM_LOCAL_ONLY")
             if (len(self.source_snapshots) != 1 or self.source_snapshots[0].asset_kind != "audio"

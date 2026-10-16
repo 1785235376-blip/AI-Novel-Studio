@@ -61,7 +61,7 @@ def test_actual_flac_original_private_review_reopen_and_pcm_proof(audio, tmp_pat
     e.production = production(e, reopened(e)); assert get(e, queued) == approved
 
 
-@pytest.mark.parametrize("format", ["WAV", "flac", "MP3", True, 1, {}, []])
+@pytest.mark.parametrize("format", ["WAV", "flac", "mp3", True, 1, {}, []])
 def test_format_is_closed_in_original_command_and_audio_body(format):
     value = command(output_format=format)
     with pytest.raises(ValidationError): MediaCommand.model_validate(value)

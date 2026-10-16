@@ -89,6 +89,7 @@ const calls = (suffix: string) => fetcher.mock.calls.filter(([url]) => url.endsW
 async function choose(operation: MediaOperation) {
   fireEvent.click(await screen.findByRole('button', { name: '制作操作' })); await waitFor(() => expect((screen.getByLabelText('操作') as HTMLSelectElement).disabled).toBe(false));
   change('操作', operation); await screen.findByRole('option', { name: 'image-provider · image-model · 本地' }).catch(() => undefined);
+  if (!providers.find(row => row.operation_id === operation)!.local) change('制作路线', 'cloud');
   change('服务商与模型', mediaProviderKey(providers.find(row => row.operation_id === operation)!)); change('本次提示词', 'Image fixture prompt');
 }
 async function reference() { await choose('m5.image.reference'); fireEvent.click(screen.getByLabelText('参考 source.png · v2')); fireEvent.click(screen.getByLabelText('参考 second.png · v3'));

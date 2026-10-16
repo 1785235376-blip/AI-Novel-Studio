@@ -13,11 +13,16 @@ import storyboard from './fixtures/phase4.file-api-storyboard.json';
 import { checkedStoryboardReceipt } from './studioStoryboardContract';
 import { connectionIssue, graphCatalogForSchema } from './graphDraft';
 import type { PlanningDocument } from './studioProductionGraphContract';
+import { studioProductionClient } from './studioProductionClient';
+import { mediaProviderKey } from './useStudioMediaExecution';
+vi.mock('./studioProductionClient', async original => ({ ...await original<typeof import('./studioProductionClient')>(), studioProductionClient: vi.fn() }));
+const pickerRow = { operation_id: 'm7.video.t2v' as const, provider_id: 'synthetic-comfy', model_id: 'observed-model', local: true, route_digest: 'a'.repeat(64), capability: 'MEDIA', supported_parameters: [], readiness: 'CONFIGURED_NOT_VERIFIED' as const };
 vi.mock('./studioClient', async importOriginal => ({ ...await importOriginal<typeof import('./studioClient')>(), studioClient: vi.fn() }));
 let client: StudioClient;
 const document: PlanningDocument = { ...storyboard.document_snapshot, mode: 'STORYBOARD', title: 'Synthetic saved storyboard' };
 const deferred = <T,>() => { let resolve!: (value: T) => void; const promise = new Promise<T>(yes => { resolve = yes; }); return { promise, resolve }; };
 beforeEach(() => {
+  vi.mocked(studioProductionClient).mockReturnValue({ providers: vi.fn().mockResolvedValue([pickerRow]) } as unknown as ReturnType<typeof studioProductionClient>);
   localStorage.clear(); useStudio.setState({ novelId: imageGraphProject, sessionToken: '', actor: undefined, scope: undefined });
   useLocalHostSession.setState({ token: 'video-graph-host', actorId: '' });
   const original = imageGraphCatalog(); original.definitions = original.definitions.filter(row => !row.id.startsWith('image_'));
@@ -57,7 +62,7 @@ describe('Explicit video Graph keeps saved shot and original execution authority
     change('节点类型', 'storyboard_shot'); expect((screen.getByRole('button', { name: '添加节点' }) as HTMLButtonElement).disabled).toBe(true);
     const source = screen.getByLabelText('图中分镜来源') as HTMLSelectElement; change('图中分镜来源', source.options[1].value); click('明确读取来源分镜镜头');
     await screen.findByRole('option', { name: 'SHOT 1 · shot-1 · v1' }); change('原分镜镜头', 'shot-1'); click('添加节点');
-    change('节点类型', 'video_generate'); click('添加节点'); change('视频服务商 ID', 'synthetic-comfy'); change('视频模型 ID', 'observed-model');
+    change('节点类型', 'video_generate'); click('添加节点'); click('读取节点服务配置'); await screen.findByRole('option', { name: 'synthetic-comfy · observed-model · 本地' }); change('节点服务商与模型', mediaProviderKey(pickerRow));
     change('视频操作', 'm7.video.v2v'); change('参考视频用途', 'camera'); click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
     const definition = vi.mocked(client.graphs.create).mock.calls[0][0].definition;
     expect(definition.schema_version).toBe(5); expect(definition.nodes[1].parameters).toEqual({ shot_id: 'shot-1', shot_version: storyboard.shots[0].shot_version, shot_digest: storyboard.shots[0].shot_digest });

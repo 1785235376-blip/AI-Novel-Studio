@@ -16,13 +16,14 @@ export const SCRIPT_PURPOSES = [
 export type ScriptPurpose = typeof SCRIPT_PURPOSES[number]['id'];
 export type ScriptContent = { purpose: ScriptPurpose; body: string };
 export type Dialogue = { speaker: string; text: string; delivery: string };
-export type VisualTarget = { style: string; atmosphere: string; reference_works: string[]; color: string; rhythm: string };
+export type VisualTarget = { style: string; atmosphere: string; reference_works: string[]; color: string; rhythm: string; genre?: string | null };
 export type DirectorPerformance = { character: string; action: string; expression: string; state: string };
+export type DirectorPlanning = { rationale: string; sequence_reason: string; duration_reason: string; uncertainty: string; assumptions: string[]; alternatives: { choice: string; tradeoff: string }[]; evidence: { scene_id: string; field: string; dialogue_index: number | null; excerpt: string }[] };
 export type DirectorNote = { id: string; note: string; shot_size: string; camera_angle: string; camera_motion: string; duration_seconds: number; emotion: string; pacing: string; performance: string;
-  shot_suggestion?: string | null; composition?: string | null; lens?: string | null; character_state?: string | null; performances?: DirectorPerformance[] | null; lighting?: string | null; color_palette?: string | null; material?: string | null; transition?: string | null };
+  planning?: DirectorPlanning | null; shot_suggestion?: string | null; composition?: string | null; lens?: string | null; character_state?: string | null; performances?: DirectorPerformance[] | null; lighting?: string | null; color_palette?: string | null; material?: string | null; transition?: string | null };
 export type DirectorSceneNote = DirectorNote & { number: number; scene_id: string; blocking: string };
 export type CreativeScene = { id: string; sequence: number; source_chapter_id: string | null; heading: string; time: string; location: string; characters: string[]; action: string; dialogue: Dialogue[]; emotion: string; director_notes: DirectorNote[] };
-export type ShotContinuity = { previous_shot_id?: string | null; next_shot_id?: string | null; characters: string; outfit: string; environment: string; camera: string };
+export type ShotContinuity = { previous_shot_id?: string | null; next_shot_id?: string | null; characters: string; outfit: string; environment: string; camera: string; time?: string | null; lighting?: string | null };
 export type CreativeShot = { id: string; number: number; scene_id: string; shot_size: string; camera_angle: string; camera_motion: string; duration_seconds: number; frame_prompt: string; composition: string; color: string; action: string; dialogue: Dialogue[]; sound_effect: string; lens: string; lighting: string; environment: string; sound: string; director_notes: DirectorNote[]; characters?: string[] | null; emotion?: string | null; continuity?: ShotContinuity | null; director_note_ids?: string[] | null; video_generation_hint?: string | null };
 export type VideoSegment = { shot_id: string; duration_seconds: number; note: string };
 export type VideoPlan = { frame_rate: number; width: number; height: number; notes: string; segments: VideoSegment[] };
@@ -44,4 +45,14 @@ export function newShot(number: number, sceneId: string): CreativeShot {
 }
 export function newDocument(mode: CreativeMode, chapterId?: string): CreativeInput {
   return { mode, title: '', source_chapter_ids: chapterId ? [chapterId] : [], source_independent: false, scenes: [], director_notes: [], shots: [], video_plan: mode === 'PRODUCTION' || mode === 'VIDEO_PLANNING' ? { frame_rate: 24, width: 1920, height: 1080, notes: '', segments: [] } : null, ...(mode === 'SCRIPT' ? { script: { purpose: 'CUSTOM', body: '' } as ScriptContent } : {}) };
+}
+
+// Existing optional owner limits count Unicode code points, not UTF-16 units.
+export const creativeTextLength = (value?: string | null) => Array.from(value || '').length;
+export const validDirectorGenre = (target?: VisualTarget | null) => creativeTextLength(target?.genre) <= 2000;
+export function creativeAuthoringProblems(value: CreativeInput): string[] {
+  return [
+    ...(!validDirectorGenre(value.visual_target) ? ['文档类型 / 题材超过 2000 字符'] : []),
+    ...value.shots.filter(shot => creativeTextLength(shot.continuity?.time) > 4000).map(shot => `镜头 ${shot.number} 的时间连续性超过 4000 字符`),
+  ];
 }

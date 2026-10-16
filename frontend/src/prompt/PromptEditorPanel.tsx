@@ -6,14 +6,17 @@
  *
  * 正文不做 trim：中文、换行、emoji 与空白都是创作内容。
  */
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import type { StudioInterfaceMode } from '../creative/studioWorkspaceResume';
 import type { Draft, DraftContent } from './promptDraft';
 import { bodyStateLabel } from './PromptLibraryPanel';
-import type { PromptEntry } from './promptTypes';
+import { PROMPT_BOUNDS, type PromptEntry } from './promptTypes';
 
 type Props = {
   draft: Draft;
+  /** UI receipt attribution only; never persisted or sent to the clipboard. */
+  copyScopeKey?: string;
   detail: PromptEntry | null;
   mode: StudioInterfaceMode;
   locked: boolean;
@@ -48,6 +51,59 @@ export function PromptEditorPanel(props: Props) {
     onEdit, onSave, onRetry, onRebase, onDiscard } = props;
   const professional = mode === 'PROFESSIONAL';
   const status = draftStatus(draft);
+  const fieldErrorId = useId();
+  const byteCountId = useId();
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const seedRef = useRef<HTMLInputElement>(null);
+  const parametersRef = useRef<HTMLTextAreaElement>(null);
+  const copyEpoch = useRef(0);
+  const copyBusy = useRef(false);
+  const copyAlive = useRef(true);
+  type CopySource = { scope: string | undefined; key: string; text: string };
+  const [copyFeedback, setCopyFeedback] = useState<(CopySource & { state: 'COPIED' | 'FAILED' }) | null>(null);
+  const [copyPending, setCopyPending] = useState<(CopySource & { stale: boolean }) | null>(null);
+  const matchesCopySource = (source: CopySource) => source.scope === props.copyScopeKey
+    && source.key === draft.key && source.text === draft.content.text;
+  const currentCopyFeedback = copyFeedback && matchesCopySource(copyFeedback) ? copyFeedback.state : null;
+  useEffect(() => {
+    copyAlive.current = true;
+    return () => { copyAlive.current = false; copyEpoch.current++; };
+  }, []);
+  useEffect(() => {
+    copyEpoch.current++;
+    setCopyFeedback(null);
+    setCopyPending(current => current ? { ...current, stale: true } : null);
+  }, [props.copyScopeKey, draft.key, draft.content.text]);
+  const copyBody = async () => {
+    if (copyBusy.current || locked || !draft.content.text) return;
+    const epoch = copyEpoch.current;
+    const source = { scope: props.copyScopeKey, key: draft.key, text: draft.content.text };
+    copyBusy.current = true;
+    setCopyPending({ ...source, stale: false });
+    setCopyFeedback(null);
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(source.text);
+      if (copyAlive.current && copyEpoch.current === epoch) setCopyFeedback({ ...source, state: 'COPIED' });
+    } catch {
+      if (copyAlive.current && copyEpoch.current === epoch) setCopyFeedback({ ...source, state: 'FAILED' });
+    } finally {
+      copyBusy.current = false;
+      if (copyAlive.current) setCopyPending(null);
+    }
+  };
+  const [parametersCorrectionKey, setParametersCorrectionKey] = useState<string | null>(null);
+  const showParameters = professional || fieldError?.field === 'parameters' || parametersCorrectionKey === draft.key;
+  const textBytes = useMemo(() => new TextEncoder().encode(draft.content.text).length, [draft.content.text]);
+  const excessBytes = textBytes - PROMPT_BOUNDS.textBytes;
+  useEffect(() => {
+    if (!fieldError || locked) return;
+    if (fieldError.field === 'parameters') setParametersCorrectionKey(draft.key);
+    const input = fieldError.field === 'text' ? textRef.current
+      : fieldError.field === 'seed' ? seedRef.current
+      : fieldError.field === 'parameters' ? parametersRef.current : null;
+    input?.focus();
+  }, [fieldError, locked, draft.key]);
 
   return (
     <section className="prompt-editor" aria-label="Prompt 编辑器">
@@ -60,7 +116,7 @@ export function PromptEditorPanel(props: Props) {
         </StatusMessage>
       )}
       {saveError && <StatusMessage tone="error">{saveError}</StatusMessage>}
-      {fieldError && <StatusMessage tone="error">{fieldError.message}</StatusMessage>}
+      {fieldError && <StatusMessage tone="error"><span id={fieldErrorId}>{fieldError.message}</span></StatusMessage>}
 
       {detail && detail.body.state !== 'COMPLETE' && (
         <StatusMessage tone="warning">
@@ -70,10 +126,29 @@ export function PromptEditorPanel(props: Props) {
       )}
 
       <label htmlFor="prompt-text">正文</label>
-      <textarea id="prompt-text" rows={8} value={draft.content.text} disabled={locked}
-        aria-describedby="prompt-text-hint"
+      <textarea ref={textRef} id="prompt-text" rows={8} value={draft.content.text} disabled={locked}
+        aria-describedby={`prompt-text-hint ${byteCountId}${fieldError?.field === 'text' ? ` ${fieldErrorId}` : ''}`}
+        aria-invalid={fieldError?.field === 'text' || excessBytes > 0}
         onChange={event => onEdit({ text: event.target.value })} />
       <p id="prompt-text-hint">按 UTF-8 字节计最长 64 KiB。不会自动去除空格、换行或 emoji。</p>
+      <p id={byteCountId}>正文已用 {textBytes} / {PROMPT_BOUNDS.textBytes} 字节 · {excessBytes > 0
+        ? `超过上限 ${excessBytes} 字节，请缩短后保存；当前内容未被截断。`
+        : `剩余 ${-excessBytes} 字节。`}</p>
+      <div className="prompt-editor-actions">
+        <Button type="button" disabled={locked || !draft.content.text || copyPending !== null}
+          onClick={() => void copyBody()}>{copyPending !== null ? '正在复制正文…' : '复制当前正文'}</Button>
+        {currentCopyFeedback === 'FAILED' && <Button type="button" variant="ghost" disabled={locked}
+          onClick={() => { textRef.current?.focus(); textRef.current?.select(); }}>选中正文手动复制</Button>}
+      </div>
+      <p>只复制当前正文，不包含其他参数，也不代表已保存。请粘贴到你选择的位置并核对。</p>
+      <p>离开页面不会取消已发出的复制请求；重新打开后请核对粘贴内容。</p>
+      {copyPending !== null && <StatusMessage>{copyPending.stale || !matchesCopySource(copyPending)
+        ? '先前正文的复制请求仍在处理中；当前正文尚未复制。'
+        : '正在请求剪贴板写入，尚未确认复制。'}</StatusMessage>}
+      {currentCopyFeedback === 'COPIED' && <StatusMessage>当前正文已复制到剪贴板；请粘贴后核对，未新增服务器修订。</StatusMessage>}
+      {currentCopyFeedback === 'FAILED' && <StatusMessage tone="warning">
+        无法自动复制。可选中正文后按 Ctrl+C 或 Command+C 手动复制；不会自动重试。
+      </StatusMessage>}
 
       <label htmlFor="prompt-negative">Negative Prompt</label>
       <textarea id="prompt-negative" rows={3} value={draft.content.negativePrompt} disabled={locked}
@@ -97,17 +172,20 @@ export function PromptEditorPanel(props: Props) {
         </div>
         <div>
           <label htmlFor="prompt-seed">Seed</label>
-          <input id="prompt-seed" inputMode="numeric" value={draft.content.seed} disabled={locked}
+          <input ref={seedRef} id="prompt-seed" inputMode="numeric" value={draft.content.seed} disabled={locked}
             aria-invalid={fieldError?.field === 'seed'}
+            aria-describedby={fieldError?.field === 'seed' ? fieldErrorId : undefined}
             onChange={event => onEdit({ seed: event.target.value })} />
         </div>
       </div>
 
-      {professional && (
+      {showParameters && (
         <>
+          {!professional && <p>参数已展开供修正与核对；修改不会自动保存。</p>}
           <label htmlFor="prompt-parameters">参数（JSON，不会执行）</label>
-          <textarea id="prompt-parameters" rows={3} value={draft.content.parameters} disabled={locked}
+          <textarea ref={parametersRef} id="prompt-parameters" rows={3} value={draft.content.parameters} disabled={locked}
             aria-invalid={fieldError?.field === 'parameters'}
+            aria-describedby={fieldError?.field === 'parameters' ? fieldErrorId : undefined}
             onChange={event => onEdit({ parameters: event.target.value })} />
         </>
       )}

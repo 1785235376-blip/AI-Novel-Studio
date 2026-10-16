@@ -61,7 +61,12 @@ class DirectorProposalService:
 
     @staticmethod
     def _public(row):
-        return deepcopy({key: value for key, value in row.items() if key != "history"})
+        from .camera_language import project_camera
+        result = deepcopy({key: value for key, value in row.items() if key != "history"})
+        # Auxiliary read-only vocabulary checks; no inferred spatial correctness.
+        result["rule_checks"] = [{"note_id": note["id"], "camera": project_camera(note)}
+                                 for note in row.get("director_notes", [])]
+        return result
 
     def get(self, nid, scope, actor, rid):
         row = self._owned(nid, scope, actor, rid)
@@ -79,11 +84,11 @@ class DirectorProposalService:
                     from ..experimental.ux import ReadContext
                     self.generation.validate_result(ReadContext(nid, scope, actor), row)
             except (KeyError, ValueError, PermissionError, FileNotFoundError):
-                result.update(status="MODEL_UNAVAILABLE", director_notes=[], model_preview=None,
+                result.update(status="MODEL_UNAVAILABLE", director_notes=[], rule_checks=[], model_preview=None,
                               output_digest=None, unavailable_reason="CREATIVE_MODEL_LIVE_AUTHORITY_REQUIRED")
                 result["model_execution"].update(receipt_state="UNKNOWN_NO_AUTOMATIC_REPLAY")
             except HTTPException:
-                result.update(status="MODEL_UNAVAILABLE", director_notes=[], model_preview=None,
+                result.update(status="MODEL_UNAVAILABLE", director_notes=[], rule_checks=[], model_preview=None,
                               output_digest=None, unavailable_reason="CREATIVE_MODEL_AUTHORITY_REVOKED")
         return result
 

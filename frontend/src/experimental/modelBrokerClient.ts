@@ -5,11 +5,14 @@ export type BrokerBudget = { version: number; limit_microusd: number | null; max
 export type BrokerStatus = { candidates: BrokerRoute[]; budget: BrokerBudget; prices: Row[]; author_execution_available: boolean };
 export type BrokerPreview = Row & { chosen: BrokerRoute | null; candidates: BrokerRoute[]; decision_reason: string; warnings: string[]; will_send: Record<string, unknown> };
 export type BrokerJob = { ledger: Row; job: { id: string; chapter_id: string; status: string; output: string; error?: string } | null; recovery: string | null; orphan_reconciliation_available?: boolean };
+/** Shared original actor/project-scoped read; does not probe providers or settle a ledger. */
+export const readModelBrokerHistory = (client: Pick<ExperimentalClient, 'get'>, signal?: AbortSignal) =>
+  client.get<{ decisions: BrokerPreview[]; ledger: Row[] }>('/model-broker/history', signal);
 export function modelBrokerClient(client: ExperimentalClient) {
   const base = '/model-broker', benchmarks = '/model-benchmarks';
   return {
     status: (signal?: AbortSignal) => client.get<BrokerStatus>(base + '/status', signal),
-    history: (signal?: AbortSignal) => client.get<{ decisions: BrokerPreview[]; ledger: Row[] }>(base + '/history', signal),
+    history: (signal?: AbortSignal) => readModelBrokerHistory(client, signal),
     preview: (body: Record<string, unknown>) => client.post<BrokerPreview>(base + '/preview', body),
     budget: (body: Record<string, unknown>) => client.put<BrokerBudget>(base + '/budget', body),
     price: (body: Record<string, unknown>) => client.put<Row>(base + '/price', body),

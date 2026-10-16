@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ApiError } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
@@ -203,5 +203,50 @@ describe('DeliveryCenterPanel：这个目录发不出第二次派发，也导不
     expect(screen.getByText(`单对象：${DELIVERY_ITEM_BYTES_LIMIT} 字节`)).toBeTruthy();
     expect(screen.getByText(`整包：${DELIVERY_PACKAGE_BYTES_LIMIT} 字节`)).toBeTruthy();
     expect(screen.getByText('上限是否被上调：否 — 永远不会')).toBeTruthy();
+  });
+});
+
+
+describe('Delivery receipt read feedback', () => {
+  it('waits for a completed empty read before claiming no receipt was returned', async () => {
+    let resolve!: (value: unknown) => void;
+    const pending = new Promise(done => { resolve = done; });
+    const { transport } = fakeTransport(() => pending);
+    mount({ transport });
+    await screen.findByText(/正在读取回执；完成前不能确认当前记录/);
+    expect(screen.queryByText('还没有读取到回执')).toBeNull();
+    expect(screen.getByLabelText('导出回执与恢复').getAttribute('aria-busy')).toBe('true');
+    await act(async () => resolve({ items: [], next_offset: null }));
+    await screen.findByText('还没有读取到回执');
+    expect(screen.getByLabelText('导出回执与恢复').getAttribute('aria-busy')).toBe('false');
+  });
+
+  it('recovers through the existing explicit read after failure without displaying a false empty history', async () => {
+    let failed = true;
+    const { transport, calls } = fakeTransport(() => {
+      if (failed) throw new ApiError({ status: 503, code: 'EXPORT_HISTORY_UNAVAILABLE', message: 'synthetic service unavailable' });
+      return { items: [], next_offset: null };
+    });
+    mount({ transport });
+    await screen.findByText(/本次回执读取失败/);
+    expect(screen.queryByText('还没有读取到回执')).toBeNull();
+    failed = false;
+    fireEvent.click(screen.getByRole('button', { name: '重新读取导出回执' }));
+    await screen.findByText('还没有读取到回执');
+    expect(calls).toHaveLength(2);
+    expect(calls.every(call => call.method === 'GET')).toBe(true);
+  });
+});
+
+describe('Delivery empty page with remaining history', () => {
+  it.each([0, 50])('does not describe an empty loaded page with next_offset %s as an empty project history', async next_offset => {
+    const { transport, calls } = fakeTransport(() => ({ items: [], next_offset }));
+    mount({ transport });
+    await screen.findByText(/不能视为完整历史/);
+    expect(screen.queryByText(/原导出服务在该项目下还没有记录/)).toBeNull();
+    expect(screen.getByText('当前页没有导出回执')).toBeTruthy();
+    expect(screen.getByText('当前页为空')).toBeTruthy();
+    expect(calls).toHaveLength(1);
+    expect(calls[0].method).toBe('GET');
   });
 });

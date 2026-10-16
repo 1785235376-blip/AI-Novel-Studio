@@ -67,8 +67,47 @@ class Dialogue(StrictCreativeModel):
     delivery: str = Field(default="", max_length=2000, strict=True)
 
 
+class DirectorPlanningText(StrictCreativeModel):
+    @model_validator(mode="after")
+    def nonblank_text(self):
+        if any(isinstance(value, str) and not value.strip() for value in self.__dict__.values()):
+            raise ValueError("CREATIVE_DIRECTOR_PLANNING_TEXT_REQUIRED")
+        return self
+
+
+class DirectorEvidence(DirectorPlanningText):
+    """Exact source excerpt location, not proof of an interpretation."""
+    scene_id: Identifier
+    field: Literal["action", "dialogue", "emotion", "heading", "location", "time"]
+    dialogue_index: int | None = Field(default=None, ge=0, le=199, strict=True)
+    excerpt: str = Field(min_length=1, max_length=2000, strict=True)
+
+
+class DirectorAlternative(DirectorPlanningText):
+    choice: str = Field(min_length=1, max_length=2000, strict=True)
+    tradeoff: str = Field(min_length=1, max_length=2000, strict=True)
+
+
+class DirectorPlanning(DirectorPlanningText):
+    rationale: str = Field(min_length=1, max_length=4000, strict=True)
+    sequence_reason: str = Field(min_length=1, max_length=2000, strict=True)
+    duration_reason: str = Field(min_length=1, max_length=2000, strict=True)
+    evidence: list[DirectorEvidence] = Field(default_factory=list, max_length=12)
+    assumptions: list[Annotated[str, Field(min_length=1, max_length=2000, strict=True)]] = Field(default_factory=list, max_length=12)
+    uncertainty: str = Field(min_length=1, max_length=2000, strict=True)
+    alternatives: list[DirectorAlternative] = Field(default_factory=list, max_length=3)
+
+    @model_validator(mode="after")
+    def speculative_choice_is_labelled(self):
+        if any(not value.strip() for value in self.assumptions):
+            raise ValueError("CREATIVE_DIRECTOR_PLANNING_TEXT_REQUIRED")
+        if not self.evidence and not self.assumptions:
+            raise ValueError("CREATIVE_DIRECTOR_SPECULATIVE_ASSUMPTION_REQUIRED")
+        return self
+
+
 class DirectorNote(OptionalProductionFields):
-    production_optional_fields = ("shot_suggestion", "composition", "lens", "character_state", "performances", "lighting", "color_palette", "material", "transition")
+    production_optional_fields = ("planning", "shot_suggestion", "composition", "lens", "character_state", "performances", "lighting", "color_palette", "material", "transition")
     id: Identifier = Field(default_factory=identifier)
     note: str = Field(default="", max_length=8000, strict=True)
     shot_size: str = Field(default="", max_length=80, strict=True)
@@ -79,6 +118,7 @@ class DirectorNote(OptionalProductionFields):
     pacing: str = Field(default="", max_length=2000, strict=True)
     performance: str = Field(default="", max_length=4000, strict=True)
     blocking: str = Field(default="", max_length=4000, strict=True)
+    planning: DirectorPlanning | None = None
     shot_suggestion: str | None = Field(default=None, max_length=8000, strict=True)
     composition: str | None = Field(default=None, max_length=4000, strict=True)
     lens: str | None = Field(default=None, max_length=1000, strict=True)
@@ -227,6 +267,29 @@ class CreativeDocumentIn(StrictCreativeModel):
             raise ValueError("CREATIVE_DUPLICATE_DIRECTOR_NOTE")
         if any(note.scene_id not in {scene.id for scene in self.scenes} for note in self.director_notes):
             raise ValueError("CREATIVE_DIRECTOR_UNKNOWN_SCENE")
+        scenes_by_id = {scene.id: scene for scene in self.scenes}
+        planning_notes = [(note, note.scene_id) for note in self.director_notes]
+        planning_notes.extend((note, scene.id) for scene in self.scenes for note in scene.director_notes)
+        planning_notes.extend((note, shot.scene_id) for shot in self.shots for note in shot.director_notes)
+        for note, scene_id in planning_notes:
+            if note.planning is None:
+                continue
+            for evidence in note.planning.evidence:
+                if evidence.scene_id != scene_id:
+                    raise ValueError("CREATIVE_DIRECTOR_EVIDENCE_SCENE_MISMATCH")
+                scene = scenes_by_id.get(scene_id)
+                if scene is None:
+                    raise ValueError("CREATIVE_DIRECTOR_EVIDENCE_SCENE_UNKNOWN")
+                if evidence.field == "dialogue":
+                    if evidence.dialogue_index is None or evidence.dialogue_index >= len(scene.dialogue):
+                        raise ValueError("CREATIVE_DIRECTOR_EVIDENCE_DIALOGUE_UNKNOWN")
+                    text = scene.dialogue[evidence.dialogue_index].text
+                else:
+                    if evidence.dialogue_index is not None:
+                        raise ValueError("CREATIVE_DIRECTOR_EVIDENCE_INDEX_INVALID")
+                    text = getattr(scene, evidence.field)
+                if evidence.excerpt not in text:
+                    raise ValueError("CREATIVE_DIRECTOR_EVIDENCE_EXCERPT_UNKNOWN")
         if self.mode == "DIRECTOR" and (self.shots or self.video_plan is not None):
             raise ValueError("CREATIVE_DIRECTOR_FIELDS_INVALID")
         if self.mode == "SCREENPLAY" and self.director_notes:

@@ -1,3 +1,4 @@
+import { useTaskCostReceipt } from './useTaskCostReceipt';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import {
@@ -434,11 +435,14 @@ export function useTaskCenter(props: TaskCenterControllerProps) {
     batch_semantics: 'PER_ITEM_CHECKPOINT',
   }), [inbox, selectedItems]);
 
+  const costReceipt = useTaskCostReceipt(props, visibleTasks, queue === 'TASKS' && tasksState === 'READY');
+
   const state = queue === 'TASKS' ? tasksState : reviewState;
   const problem = queue === 'TASKS' ? tasksProblem : reviewProblem;
   const canRead = !props.denied && !revoked.current && props.active && !props.busy && state !== 'LOADING';
 
   return {
+    costReceipt,
     queue, setQueue,
     filters, setFilters, applyFilters, resetFilters,
     filtersDirty: filters.query !== applied.query || filters.failed_only !== applied.failed_only

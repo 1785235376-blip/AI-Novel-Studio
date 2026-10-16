@@ -9,9 +9,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import type { StudioInterfaceMode } from '../creative/studioWorkspaceResume';
-import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
+import { Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { PromptEditorPanel } from './PromptEditorPanel';
-import { PromptLibraryPanel, bodyStateLabel } from './PromptLibraryPanel';
+import { PromptLibraryPanel } from './PromptLibraryPanel';
+import { RevisionDiff } from './PromptRevisionDiff';
+import { PromptVersionHistory } from './PromptVersionHistory';
 import { needsRebase } from './promptDraft';
 import { usePromptWorkspace } from './usePromptWorkspace';
 import './promptWorkspace.css';
@@ -81,6 +83,7 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
         <div className="prompt-detail-column">
           <PromptEditorPanel
             draft={state.draft} detail={detail} mode={mode}
+            copyScopeKey={JSON.stringify([projectId, branchId, actor])}
             locked={controller.locked || !writable} busy={state.loading}
             canSave={controller.canSave && writable}
             conflictCode={state.conflictCode} saveError={state.error}
@@ -97,18 +100,9 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
                   下面显示的不是一段可信的完整历史，请不要把某一版当作权威最新版。
                 </StatusMessage>
               )}
-              <ol className="prompt-version-list">
-                {[...versions].sort((a, b) => b.revision - a.revision).map(row => (
-                  <li key={row.assetId}>
-                    <span>修订 {row.revision}</span>
-                    {row.assetId === detail.headAssetId && <Badge tone="info">当前</Badge>}
-                    {!row.available && <Badge tone="warning">已删除 / 不可读</Badge>}
-                    {row.redacted && <Badge tone="warning">已脱敏</Badge>}
-                    {row.changeNote && <span className="prompt-version-note">{row.changeNote}</span>}
-                    {mode === 'PROFESSIONAL' && <code>{row.assetId.slice(0, 8)}</code>}
-                  </li>
-                ))}
-              </ol>
+              <PromptVersionHistory key={detail.familyId} versions={versions} headAssetId={detail.headAssetId}
+                professional={mode === 'PROFESSIONAL'} fromId={fromId} toId={toId}
+                onSelectFrom={setFromId} onSelectTo={setToId} />
               {detail.anomalies.length > 0 && (
                 <ul className="prompt-anomalies">
                   {detail.anomalies.map(row => <li key={row.kind}>{row.kind} {row.detail}</li>)}
@@ -170,69 +164,6 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
   );
 }
 
-/**
- * 只有 COMPLETE 且 verified 且完整读取的正文才做“完整正文差异”。
- * TRUNCATED 只是预览；REDACTED / DELETED / UNDECODABLE / UNAVAILABLE 明确标注不可比较 ——
- * 绝不把 digest 当作原文，也绝不凭版本号推断正文。
- */
-export function RevisionDiff(props: {
-  from: { revision: number; body: { state: string; value: string | null; verified: boolean; readComplete: boolean } };
-  to: { revision: number; body: { state: string; value: string | null; verified: boolean; readComplete: boolean } };
-  professional: boolean;
-}) {
-  const { from, to, professional } = props;
-  const complete = (side: typeof from) =>
-    side.body.state === 'COMPLETE' && side.body.verified && side.body.readComplete;
-  if (!complete(from) || !complete(to)) {
-    const blocked = [from, to].filter(side => !complete(side))
-      .map(side => `修订 ${side.revision}：${bodyStateLabel(side.body.state)}`
-        + (side.body.state === 'COMPLETE' ? '（未通过完整性校验）' : ''))
-      .join('；');
-    return (
-      <StatusMessage tone="warning">
-        无法比较完整正文：{blocked}。只有完整且通过校验的正文才能做正文差异比较。
-      </StatusMessage>
-    );
-  }
-  const before = (from.body.value ?? '').split('\n');
-  const after = (to.body.value ?? '').split('\n');
-  const max = Math.max(before.length, after.length);
-  const rows: { line: number; left: string; right: string; changed: boolean }[] = [];
-  for (let index = 0; index < max; index += 1) {
-    const left = before[index] ?? '';
-    const right = after[index] ?? '';
-    rows.push({ line: index + 1, left, right, changed: left !== right });
-  }
-  const changed = rows.filter(row => row.changed).length;
-  return (
-    <div className="prompt-diff">
-      <p>修订 {from.revision} → 修订 {to.revision}：{changed} 行不同（共 {max} 行）。</p>
-      <table>
-        <caption className="sr-only">两个修订的正文逐行差异</caption>
-        <thead>
-          <tr>
-            <th scope="col">行</th>
-            <th scope="col">修订 {from.revision}</th>
-            <th scope="col">修订 {to.revision}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(row => (
-            <tr key={row.line} className={row.changed ? 'prompt-diff-changed' : undefined}>
-              <td>{row.line}</td>
-              <td>{row.left || '\u00a0'}</td>
-              <td>{row.right || '\u00a0'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="prompt-diff-limit">
-        只比较正文。旧版修订的 negative prompt、模型偏好、参数与引用**没有**可授权的历史投影，
-        因此这些字段标注为“历史元数据不可比较”，不会用最新版本反推旧版本。
-      </p>
-      {professional && <p>两侧均为完整且已校验的正文；渲染时未写入任何日志。</p>}
-    </div>
-  );
-}
+export { RevisionDiff } from './PromptRevisionDiff';
 
 export { needsRebase };

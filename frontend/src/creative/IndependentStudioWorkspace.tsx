@@ -223,7 +223,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const rememberGraphLocation = useCallback((selection: { graphId?: string; runId?: string }) => {
     if (current()) setGraphLocation(previous => previous.graphId === selection.graphId && previous.runId === selection.runId ? previous : selection);
   }, [current]);
-  const graph = useStudioGraphEditor({ active: graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
+  const graph = useStudioGraphEditor({ active: graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, providerSource: productionClient, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
     requestedGraphId: graphLocation.graphId, requestedRunId: graphLocation.runId, onSelectionChange: rememberGraphLocation, isBusy: operationPending });
   graphDirtyRef.current = graph.dirty;
   // One additive read-only workflow projection over the same captured Studio transport.
@@ -349,6 +349,30 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (dirty || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
     action();
   };
+  const openApprovedAsset = (job: ProductionJob) => {
+    if (job.status !== 'APPROVED' || !job.output_candidate || !Number.isSafeInteger(job.approved_asset_version)
+      || !job.approved_asset_version || job.novel_id !== projectId) return;
+    // Capture the approved version, not the earlier private candidate version.
+    const expected = { ...job.output_candidate, version: job.approved_asset_version };
+    navigate(() => {
+      if (!current() || busyRef.current) return;
+      // Explicit draft discard remounts production; retain its original job if the asset read fails.
+      setProductionJob({ client: productionClient, job });
+      const epoch = ++selectionEpoch.current;
+      busyRef.current = true; setBusy(true); setReadingAsset(true);
+      void guarded(() => client.asset(expected.id)).then(asset => {
+        if (!current() || epoch !== selectionEpoch.current) return;
+        if (asset.deleted_at || asset.id !== expected.id || asset.version !== expected.version
+          || asset.sha256 !== expected.digest || asset.kind !== expected.kind) {
+          setNotice('原任务已审核素材的版本、摘要或类型已变化，或素材已移除。未改选其他素材，请重新核对原记录。');
+          return;
+        }
+        refreshedAsset(asset); setWorkspaceView('ASSETS');
+        setNotice(`已打开原任务 ${job.id} 的已审核素材 ${asset.filename} · v${asset.version}。下载仍需在素材中明确选择。`);
+      }).catch(reason => { if (current() && epoch === selectionEpoch.current) setNotice(apiErrorView(reason, '原任务已审核素材当前无法读取。未改选其他素材，请重新核对原记录。').message); })
+        .finally(() => { busyRef.current = false; if (current()) { setBusy(false); setReadingAsset(false); } });
+    });
+  };
   const confirmNavigation = () => {
     if (!discard || !pendingNavigation || !current()) return;
     if (busyRef.current || preferenceController.pending) { setNotice('当前操作尚未结束，未放弃输入或离开。请先核对结果。'); return; }
@@ -412,7 +436,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       <StudioMediaExecutionPanel key={`media:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} canReview={overview.capabilities.can_review === true}
         busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} mutate={graphMutation} cutoutExecution={cutoutExecution}
-        onDirtyChange={mediaDraftChanged} onUnavailable={deny} externalJob={productionJob?.client === productionClient ? productionJob.job : undefined} onApproved={productionApproved} />
+        onDirtyChange={mediaDraftChanged} onUnavailable={deny} externalJob={productionJob?.client === productionClient ? productionJob.job : undefined} onApproved={productionApproved} onOpenApprovedAsset={openApprovedAsset} />
       <StudioTimelineEditor key={`timeline:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows} projectId={projectId}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}
         isCurrent={current} read={guarded} mutate={graphMutation} onDirtyChange={timelineDraftChanged} onUnavailable={deny}

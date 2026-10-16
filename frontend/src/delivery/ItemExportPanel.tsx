@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import {
   DELIVERY_DECLARED_LIMITS, exportableItem, formatAvailability, formatRefusal, sizeAndLimitsReport,
@@ -38,8 +38,15 @@ export function ItemExportPanel(props: ItemExportPanelProps) {
   const [format, setFormat] = useState<DeliveryFormatId>(entitlements.formats[0] ?? 'json');
   const [notice, setNotice] = useState('');
   const [refusal, setRefusal] = useState<DeliveryFormatRefusal | null>(null);
+  const kindRef = useRef<HTMLSelectElement>(null);
   const selection = items.filter(item => props.selection.includes(item.id));
   const report = sizeAndLimitsReport(selection, entitlements);
+
+  const changeKind = (kind: DeliveryItemKind | ''): void => {
+    setNotice('');
+    setRefusal(null);
+    props.onKindChange(kind);
+  };
 
   const inspect = (item: DeliveryItem): void => {
     // 显式拒绝：格式不被支持时，这里只产出 REFUSED，永远不会产出成功。
@@ -58,8 +65,8 @@ export function ItemExportPanel(props: ItemExportPanelProps) {
       <h3>单个对象导出</h3>
       <label className="delivery-center__field">
         <span>对象种类</span>
-        <select aria-label="对象种类过滤" value={props.kind}
-          onChange={event => props.onKindChange(event.target.value as DeliveryItemKind | '')}>
+        <select ref={kindRef} aria-label="对象种类过滤" value={props.kind}
+          onChange={event => changeKind(event.target.value as DeliveryItemKind | '')}>
           <option value="">全部种类</option>
           {Object.entries(DELIVERY_ITEM_KIND_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select>
@@ -67,7 +74,7 @@ export function ItemExportPanel(props: ItemExportPanelProps) {
       <label className="delivery-center__field">
         <span>导出格式</span>
         <select aria-label="单对象导出格式" value={format}
-          onChange={event => { setFormat(event.target.value as DeliveryFormatId); setRefusal(null); }}>
+          onChange={event => { setFormat(event.target.value as DeliveryFormatId); setRefusal(null); setNotice(''); }}>
           {(entitlements.formats.length ? entitlements.formats : ['json' as DeliveryFormatId])
             .map(value => <option key={value} value={value}>{value}</option>)}
         </select>
@@ -78,8 +85,14 @@ export function ItemExportPanel(props: ItemExportPanelProps) {
 
     {!entitlements.can_export && <StatusMessage tone="warning">当前身份没有被授予导出权利，因此没有任何对象可以导出。</StatusMessage>}
     {!items.length && <EmptyState title="没有可核对的导出对象" detail="本目录只清点父层明确给出的对象；没有给出时不显示任何可导出项，也不会用整个项目冒充。" />}
+    {!!items.length && !visible.length && <>
+      <EmptyState title="当前种类没有匹配对象" detail="已载入的对象中没有当前种类；可切换对象种类，或显示全部种类。现有交接包选择会保留。" />
+      <Button type="button" variant="secondary" onClick={() => { changeKind(''); kindRef.current?.focus(); }}>
+        显示全部种类
+      </Button>
+    </>}
 
-    {!!items.length && <ul className="delivery-item__list">
+    {!!visible.length && <ul className="delivery-item__list">
       {visible.map(item => {
         const decision = exportableItem(item, entitlements);
         const available = formatAvailability(item, entitlements);

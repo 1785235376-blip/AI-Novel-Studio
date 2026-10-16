@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useId, useMemo, useRef, type KeyboardEvent } from 'react';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
 import type { CollaborationContext } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
@@ -35,17 +35,40 @@ import './taskCenter.css';
  */
 export function TaskCenter({ controller }: { controller: TaskCenterController }) {
   const queue: TaskCenterQueue = controller.queue;
+  const id = useId();
+  const queues = ['TASKS', 'REVIEW'] as const;
+  const tabs = useRef<Partial<Record<TaskCenterQueue, HTMLButtonElement | null>>>({});
+  const tabId = (value: TaskCenterQueue) => `${id}-${value}-tab`;
+  const panelId = (value: TaskCenterQueue) => `${id}-${value}-panel`;
+  const moveTabFocus = (event: KeyboardEvent<HTMLButtonElement>, value: TaskCenterQueue) => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const index = queues.indexOf(value);
+    const next = event.key === 'ArrowRight' ? (index + 1) % queues.length
+      : event.key === 'ArrowLeft' ? (index + queues.length - 1) % queues.length
+      : event.key === 'Home' ? 0 : event.key === 'End' ? queues.length - 1 : null;
+    if (next === null) return;
+    event.preventDefault();
+    tabs.current[queues[next]]?.focus();
+  };
   return <Panel title="统一任务中心" className="task-center" aria-label="统一任务中心"
     actions={<Button loading={controller.state === 'LOADING'} disabled={!controller.canRead}
       onClick={() => void controller.reload()}>重新读取当前队列</Button>}>
     <div className="task-center__tabs" role="tablist" aria-label="任务中心队列">
-      {(['TASKS', 'REVIEW'] as const).map(value => <Button key={value} role="tab"
+      {queues.map(value => <Button key={value} type="button" role="tab" id={tabId(value)}
+        ref={element => { tabs.current[value] = element; }} aria-controls={panelId(value)}
+        tabIndex={queue === value ? 0 : -1} onKeyDown={event => moveTabFocus(event, value)}
         aria-selected={queue === value} variant={queue === value ? 'primary' : 'secondary'}
         onClick={() => controller.setQueue(value)}>{TASK_CENTER_QUEUE_LABELS[value]}</Button>)}
     </div>
+    <p>左右方向键切换队列标签的焦点；按 Enter 或空格打开队列。焦点移动不会自动读取。</p>
     <p>把原任务服务的任务与原领域的待审候选放在一处：状态、进度、来源与可用动作全部照原服务显示，不新增第二套队列或审核。执行已完成不等于交付，取消与重试都由原任务服务决定。</p>
     {controller.notice && <StatusMessage>{controller.notice}</StatusMessage>}
-    {queue === 'TASKS' ? <TaskList controller={controller}/> : <ReviewInbox controller={controller}/>}
+    {queue === 'TASKS'
+      ? <TaskList controller={controller} panelId={panelId('TASKS')} labelledBy={tabId('TASKS')}/>
+      : <div role="tabpanel" id={panelId('TASKS')} aria-labelledby={tabId('TASKS')} hidden />}
+    {queue === 'REVIEW'
+      ? <ReviewInbox controller={controller} panelId={panelId('REVIEW')} labelledBy={tabId('REVIEW')}/>
+      : <div role="tabpanel" id={panelId('REVIEW')} aria-labelledby={tabId('REVIEW')} hidden />}
   </Panel>;
 }
 
