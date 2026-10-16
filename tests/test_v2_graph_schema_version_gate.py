@@ -96,7 +96,7 @@ def test_legacy_rows_are_still_readable_without_being_upgraded():
 
 # --- illegal versions -------------------------------------------------------
 
-@pytest.mark.parametrize("illegal", ILLEGAL_VERSIONS, ids=lambda value: repr(value))
+@pytest.mark.parametrize("illegal", ILLEGAL_VERSIONS, ids=lambda value: 'opaque-object' if type(value) is object else repr(value))
 def test_illegal_version_is_refused(illegal):
     with pytest.raises(ValueError, match="CREATIVE_GRAPH_SCHEMA_VERSION_INVALID"):
         normalise_schema_version(illegal)
