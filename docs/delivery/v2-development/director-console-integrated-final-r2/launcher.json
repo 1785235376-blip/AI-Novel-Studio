@@ -1,0 +1,13 @@
+{
+  "backend": "real File",
+  "identity_owner": "LocalSessionBootstrap",
+  "development_sessions": false,
+  "response_mocks": false,
+  "model_execution": "NOT_REQUESTED",
+  "runtime_model_counter": "NOT_INSTRUMENTED",
+  "owned_backend_pid": 68340,
+  "bootstrap_status": 200,
+  "workspace_status": 200,
+  "playwright_exit": 0,
+  "owned_backend_stopped": true
+}

@@ -1,0 +1,2187 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 74ms
+ ✓ src/ui/LocalAiDiscovery.test.tsx (24 tests) 597ms
+ ✓ src/canvasops/canvasOpsPanels.test.tsx (25 tests) 1269ms
+ ✓ src/ui/LocalAiWorkflowPrerequisites.test.tsx (66 tests) 1965ms
+   ✓ read-only same-scan workflow prerequisite evidence > pages the bounded workflow and component declarations locally without probes 326ms
+ ✓ src/experimental/OfflineSyncPanel.test.tsx (11 tests) 2194ms
+   ✓ withdraws one chapter only after versioned preview, clears cached file and blocks its pending review 448ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 483ms
+ ✓ src/experimental/StyleReviewPanels.test.tsx (16 tests) 2630ms
+   ✓ reads without running analysis, requires explicit preview/review/use, and validates the receipt again 397ms
+ ✓ src/taskcenter/TaskCenter.test.tsx (11 tests) 761ms
+ ✓ src/experimental/DeclarativeTemplatePanels.test.tsx (8 tests) 3171ms
+   ✓ uses real form contracts, explicit graph check and version-bound creation before separate execute and review 930ms
+   ✓ invalidates graph preflight on edits, never lists browser invented tools, and preserves input on rejected save 362ms
+   ✓ previews installs favorites copies edits compares and reverts without running a workflow or overwriting instantiated work 427ms
+   ✓ requires a separate exact model preview confirmation and never auto dispatches or approves a deferred model node 604ms
+   ✓ late model preview cannot restore data after the captured client scope changes 403ms
+ ✓ src/ui/LocalAiModelFiles.test.tsx (20 tests) 682ms
+ ✓ src/novel/StoryCoreRecordVersionEditor.test.tsx (59 tests) 3850ms
+ ✓ src/creative/StoryboardProductionPanel.phase4.test.tsx (24 tests) 2940ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 2272ms
+ ✓ src/ui/ModelCenter.test.tsx (10 tests) 274ms
+ ✓ src/creative/StoryboardVideoPipeline.phase5.test.tsx (12 tests) 3535ms
+   ✓ Phase 5 explicit original Video production view > prepares a pinned I2V command for the original media panel without dispatch 487ms
+   ✓ Phase 5 separate original Timeline ownership and UNKNOWN recovery > adopts only a reviewed video into the mapped original clip and keeps initial creation evidence 329ms
+   ✓ Phase 5 separate original Timeline ownership and UNKNOWN recovery > does not replay unknown adoption after a saved Storyboard read or a current Timeline lacking the effect proof 399ms
+   ✓ Phase 5 separate original Timeline ownership and UNKNOWN recovery > clears unknown adoption only for the exact current full request receipt, without another write 451ms
+   ✓ Phase 5 separate original Timeline ownership and UNKNOWN recovery > blocks locked tracks and invalid source ranges before calling the original adoption endpoint 323ms
+   ✓ Phase 5 separate original Timeline ownership and UNKNOWN recovery > permits a fresh explicit range confirmation after a definite pre-execution 422 without automatic retry 311ms
+ ✓ src/experimental/WorkspaceToolsPanel.test.tsx (30 tests) 4644ms
+   ✓ real workspace tools UI > shows stale recovery choice and never jumps until explicit current-version approval 494ms
+   ✓ real workspace tools UI > discards pending search and action responses after A → B → A scope changes 330ms
+   ✓ real workspace tools UI > supports keyboard search results and only exposes enabled safe scenario navigation 325ms
+   ✓ keeps the newest safe command instead of a delayed search jump 310ms
+   ✓ deduplicates repeated resolves and only honors the reopened search request 540ms
+   ✓ captures actual split visibility and keeps search/task filters across section changes and remount 405ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 683ms
+ ✓ src/creative/GraphRunPanel.test.tsx (19 tests) 970ms
+ ✓ src/novel/PluginManagerPanel.test.tsx (15 tests) 675ms
+ ✓ src/experimental/WritingFocusPanel.test.tsx (13 tests) 2016ms
+   ✓ U04 actual writing focus controls > invalidates copy preview when field changes and on stale response 430ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 1079ms
+   ✓ Phase 6 original Timeline controller preserves source, locks and UNKNOWN > keeps old embedded clients functional and exposes explicit formal-source controls only when available 464ms
+ ✓ src/taskcenter/useTaskCenter.test.ts (9 tests) 1198ms
+ ✓ src/experimental/StorySimulatorPanel.test.tsx (14 tests) 7492ms
+   ✓ reads only on opening; builds explicit bounded manual inputs with captured authority and normalized fact lines 834ms
+   ✓ compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority 667ms
+   ✓ advances explicitly, cancels explicitly, and stops offering expansion after cancellation 370ms
+   ✓ preserves editable drafts on failure and requires recovery before retry 748ms
+   ✓ ignores late context from an old session/branch and drops its saved inputs on scope switch 309ms
+   ✓ invalidates source-bound context immediately when the active chapter revision advances 612ms
+   ✓ recovers persisted manual inputs only by explicit action and requires renewed context review 385ms
+   ✓ previews exact local character request, dispatches once with consent, then manually selects checked candidate 837ms
+   ✓ model cancellation and unknown admission never offer automatic replay or candidate adoption 413ms
+   ✓ ignores late model preview from a replaced scope and never preserves its consent 441ms
+   ✓ changing selected model route clears consent and fences a previously reviewed request 436ms
+   ✓ invalidates scene context receipts and sends selected original scene with separate mind claims 993ms
+ ✓ src/creative/GraphModelExecutionPanel.test.tsx (18 tests) 2067ms
+ ✓ src/ui/LocalAiDiscoveryConsent.test.tsx (23 tests) 1495ms
+   ✓ discloses all registered-model safety inspections without truncating the backend scope 342ms
+ ✓ src/experimental/ModelBrokerPanel.test.tsx (9 tests) 1503ms
+   ✓ captures actual scoped route preview and requires exact author receipt plus review before existing job dispatch 454ms
+ ✓ src/onboarding/useStudioEntry.test.tsx (15 tests) 1114ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 424ms
+ ✓ src/experimental/RevisionIntelligencePanel.test.tsx (10 tests) 1492ms
+   ✓ captures original PM selection, previews two accepted blocks, and requires explicit confirmation 373ms
+   ✓ compares real-version pins and explicitly labels imported model interpretations 353ms
+ ✓ src/AppRevisionHistory.test.tsx (23 tests) 2950ms
+   ✓ refreshes mounted history when the server chapter advances from v2 to v3 325ms
+ ✓ src/AuditGenerationScope.test.tsx (28 tests) 3057ms
+   ✓ AUDIT fences a late generation creation response after chapter navigation 372ms
+ ✓ src/creative/StudioManualMaskAuthoring.test.tsx (39 tests) 480ms
+ ✓ src/novel/ImageGenerationPanel.test.tsx (10 tests) 770ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 1702ms
+   ✓ authors Unicode choices and typed variables then saves exact original IDs and scope 312ms
+   ✓ requires exact review preview and drops receipt when edited 366ms
+ ✓ src/assetbrowser/AssetBrowserPanel.test.tsx (13 tests) 1549ms
+ ✓ src/experimental/ExperimentalWorkbench.test.tsx (14 tests) 1654ms
+ ✓ src/AppDraftRecovery.test.tsx (21 tests) 4362ms
+   ✓ suppresses autosave and manual submit throughout composition and submits after it ends 1185ms
+   ✓ labels browser-offline drafts honestly and permits an explicit reachable local-backend save 1070ms
+ ✓ src/storyboard/PromptAdoptionDisclosure.test.tsx (14 tests) 415ms
+ ✓ src/prompt/PromptWorkspace.detailRace2.test.tsx (4 tests) 1025ms
+   ✓ 任务 C：selectFamily 被 startNew 废弃后 loading 不得永久为 true > 新草稿仍可编辑并成功创建 311ms
+ ✓ src/guide/ProjectGuidePanel.test.tsx (22 tests) 291ms
+ ✓ src/novel/StoryRecordVersionEditor.test.tsx (14 tests) 826ms
+ ✓ src/experimental/ProductionLineagePanel.test.tsx (11 tests) 1005ms
+ ✓ src/novel/AuthorRequestPreviewPanel.test.tsx (11 tests) 616ms
+ ✓ src/prompt/PromptWorkspace.scoping.test.tsx (3 tests) 966ms
+   ✓ 保存成功后迟到的家族 A 详情不得污染用户已切换到的家族 B > 场景 A：保存后详情已发起但未返回时切到 B 373ms
+   ✓ 保存成功后迟到的家族 A 详情不得污染用户已切换到的家族 B > 场景 B：先完成 B 的详情，再释放保存后的 library 刷新，让 submit 之后才去读 A 313ms
+ ✓ src/creative/ProviderTaskMatchPanel.test.tsx (16 tests) 838ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1155ms
+ ✓ src/experimental/WriterRoomPanel.test.tsx (9 tests) 1094ms
+   ✓ renders actual task progress and responsible change-request round trip without domain approval 479ms
+ ✓ src/experimental/ReaderSessionPanels.test.tsx (9 tests) 725ms
+ ✓ src/AppAuthorTaskNavigation.test.tsx (10 tests) 1610ms
+ ✓ src/novel/ResearchPanel.test.tsx (14 tests) 1070ms
+ ✓ src/interop/LocalTutorIntegration.test.tsx (70 tests) 14466ms
+   ✓ defaults content unchecked, previews metadata only and sends only after confirmation 320ms
+   ✓ explicit stop clears grant and queued events without silently resuming 354ms
+   ✓ diagnostic preview pauses ongoing sharing before omissions and never resumes it after sending 359ms
+   ✓ reconnect leaves ongoing sharing unchecked even after a previously active grant 496ms
+   ✓ explicitly cancelling an event preview invalidates its server receipt 355ms
+   ✓ keeps failed disconnect UNKNOWN with a retry and no false stopped claim 326ms
+   ✓ master OFF failure remains UNKNOWN and checked until an acknowledged retry resolves it 433ms
+   ✓ refresh confirms an out-of-band standing revoke without ever silently restoring a grant 468ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 12204ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved SCREENPLAY when its stage is selected before the initial reads finish 644ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved PRODUCTION when its stage is selected before the initial reads finish 531ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved VIDEO_PLANNING when its stage is selected before the initial reads finish 375ms
+   ✓ creative workspace protected manuscript and request boundaries > initializes only the latest selected stage after a delayed successful empty list 330ms
+   ✓ creative workspace protected manuscript and request boundaries > keeps an explicit new document, including an untouched draft, across stage and source changes 354ms
+   ✓ creative workspace protected manuscript and request boundaries > does not treat a failed list read as an empty project and recovers on explicit retry 333ms
+   ✓ creative workspace protected manuscript and request boundaries > reloads saved content after confirmed discard and immediate workbench reopen 706ms
+   ✓ creative workspace protected manuscript and request boundaries > does not replace a blocked dirty draft when a recovery reread discovers its uncertain creation 403ms
+   ✓ creative workspace protected manuscript and request boundaries > exposes all five keyboard-accessible modes while the manuscript stays mounted 663ms
+   ✓ creative workspace protected manuscript and request boundaries > creates once, saves again with the returned version, and preserves captured identity 719ms
+   ✓ creative workspace protected manuscript and request boundaries > coalesces repeated save clicks while a mutation is pending 415ms
+   ✓ creative workspace protected manuscript and request boundaries > preserves and locks the local draft after uncertain status 409 525ms
+   ✓ creative workspace protected manuscript and request boundaries > preserves and locks the local draft after uncertain status 500 517ms
+   ✓ creative workspace protected manuscript and request boundaries > locks the workspace and removes creative contents after authorization is denied 458ms
+   ✓ creative workspace protected manuscript and request boundaries > cancels navigation without losing edits and requires explicit discard before exiting 508ms
+   ✓ creative workspace protected manuscript and request boundaries > ignores a late mutation receipt from the previous scope and captures the new branch 414ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 931ms
+   ✓ creative workspace protected manuscript and request boundaries > derives a storyboard from the saved version and never overwrites the screenplay 380ms
+   ✓ creative workspace protected manuscript and request boundaries > restores history only after explicit review and creates a new current version 606ms
+   ✓ creative workspace protected manuscript and request boundaries > reorders storyboard shots without replacing their identities and saves their new sequence 600ms
+ ✓ src/experimental/MultilingualEditionsPanel.test.tsx (10 tests) 1882ms
+   ✓ manual bilingual save→review→exact acceptance with RTL and no model calls 504ms
+ ✓ src/AppWorkspaceResume.test.tsx (33 tests) 8925ms
+   ✓ reopens the saved chapter through current authority and applies original reading/split state only after explicit restore 706ms
+   ✓ does not navigate away from dirty manuscript 471ms
+   ✓ retains newer typing when fresh chapter verification is delayed 362ms
+   ✓ discards a delayed verification after the restore panel is dismissed 368ms
+   ✓ preserves current U04 settings when the saved reference/preferences pointer changed 319ms
+   ✓ does not reopen after chapter A to B to A while current authority is being verified 369ms
+   ✓ preserves an existing target chapter draft instead of replacing it with the saved workspace 308ms
+   ✓ blocks reopening while IME composition has reserved the current buffer 310ms
+   ✓ opens another authorized project only after original inventory and exact chapter version revalidation 463ms
+   ✓ refuses cross-project search navigation while manuscript is dirty 478ms
+   ✓ drops a delayed cross-project source when the author types during revalidation 426ms
+   ✓ does not navigate to a search project removed from the refreshed original inventory 407ms
+   ✓ opens the exact revision model owner with its original chapter after authoritative verification 488ms
+   ✓ refuses a revision-owner chapter switch when the manuscript has unsaved work 491ms
+   ✓ rejects a mismatched original revision job and never falls back to another draft 497ms
+   ✓ drops delayed revision-owner navigation after new typing or scope change 462ms
+   ✓ does not open a delayed revision source after its feature is revoked 436ms
+ ✓ src/experimental/SafeBatchesPanel.test.tsx (10 tests) 711ms
+ ✓ src/creative/StudioDiscoveredImageProduction.test.tsx (9 tests) 9886ms
+   ✓ discovered Image routes through the original mounted production workspace > consumes exact passive discovered IDs without selecting, probing or dispatching automatically 499ms
+   ✓ discovered Image routes through the original mounted production workspace > preserves explicit preview, queue, execute, byte verification and review for the discovered route 1940ms
+   ✓ discovered Image routes through the original mounted production workspace > does not expose the T2I-only discovered route as I2I or fall back to a different operation 626ms
+   ✓ discovered Image routes through the original mounted production workspace > invalidates prior route consent when a fresh passive list has a different route digest 988ms
+   ✓ discovered Image routes through the original mounted production workspace > recovers a lost create using the exact original discovered request without replay 805ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after host-rebind 1379ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after project-aba 1611ms
+   ✓ discovered Image routes through the original mounted production workspace > ignores a provider list arriving after same-token Host replacement without dispatch 370ms
+   ✓ discovered Image routes through the original mounted production workspace > rejects candidate bytes with a different digest without enabling review 1668ms
+ ✓ src/delivery/deliveryClient.test.ts (11 tests) 624ms
+ ✓ src/prompt/PromptWorkspace.detailRace.test.tsx (4 tests) 781ms
+ ✓ src/novel/ScreenplayPanel.test.tsx (17 tests) 1246ms
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 7566ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 737ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 2102ms
+   ✓ image runtime source roles through the mounted original workspace > keeps rich I2I base separate and refuses duplicate base/reference or a route total-input limit 660ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 2154ms
+   ✓ image runtime source roles through the mounted original workspace > ignores a late preview after Host identity replacement without creating a task 821ms
+   ✓ image runtime source roles through the mounted original workspace > retains exact request identity after lost create and recovers only by original read 1090ms
+ ✓ src/manualPromptConsent.test.tsx (17 tests) 1058ms
+ ✓ src/delivery/DeliveryCenterPanel.test.tsx (11 tests) 544ms
+ ✓ src/experimental/ResearchLibraryPanel.test.tsx (10 tests) 1516ms
+ ✓ src/creative/SourceAdaptationPanel.test.tsx (9 tests) 638ms
+ ✓ src/experimental/Wave5TemplatesSdkComics.test.tsx (4 tests) 786ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1060ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 318ms
+ ✓ src/experimental/StoryGraphPanel.test.tsx (8 tests) 1084ms
+ ✓ src/creative/studioBaselineTypeSafety.test.tsx (35 tests) 58ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 1179ms
+   ✓ AI director local proposal and explicit review > honestly prepares local rules without model calls and requires reviewed edited output before adoption 362ms
+ ✓ src/creative/AssetRelationshipsPanel.test.tsx (11 tests) 701ms
+ ✓ src/creative/StudioSelectLabels.test.tsx (4 tests) 1196ms
+   ✓ stable exact names for Studio selects with populated options > keeps relationship, reference-kind and target names stable through selection and saving 336ms
+   ✓ stable exact names for Studio selects with populated options > keeps saved-graph, node, asset and port names stable while editing the real graph hook 762ms
+ ✓ src/creative/GraphTextAssetPanel.test.tsx (13 tests) 1076ms
+   ✓ same-confirmation automatic private TextAsset archival > discloses archival beside the original confirmation and submits one dispatch without another step 344ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 8088ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1491ms
+   ✓ independent studio graph content integration > keeps graphs lazy until an explicit content choice, with unchanged eight shell modules 490ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 1026ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 1796ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 1324ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 862ms
+   ✓ independent studio graph content integration > clears private graph draft after authoritative access denial and rejects a late scope response 397ms
+   ✓ independent studio graph content integration > displays redacted saved references without enabling a full-save or deletion roundtrip 450ms
+ ✓ src/experimental/ModelTaskReopen.test.tsx (16 tests) 1691ms
+   ✓ 'simulator' reopens the exact receipt, handles missing/back and never replays 388ms
+ ✓ src/assetbrowser/useAssetBrowser.test.tsx (14 tests) 1534ms
+ ✓ src/novel/ExportPanel.test.tsx (12 tests) 1912ms
+   ✓ ExportPanel industry formats > submits Fountain 剧本 through the authenticated durable queue 388ms
+ ✓ src/production/useProductionWorkflow.test.tsx (8 tests) 681ms
+ ✓ src/creative/StudioBinaryMaskCanvas.test.tsx (20 tests) 695ms
+ ✓ src/experimental/ProjectForksPanel.test.tsx (6 tests) 599ms
+ ✓ src/creative/IndependentStudioIdentity.regression.test.tsx (19 tests) 8776ms
+   ✓ independent Studio captured identity cannot revive before React effects > cannot submit a delayed local file after the project returns to its original value 305ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous project ABA and rejects a late list 1610ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous session ABA and rejects a late list 1436ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor ABA and rejects a late list 1424ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous branch ABA and rejects a late list 1442ms
+   ✓ independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor workspace ABA and rejects a late list 1305ms
+   ✓ independent Studio captured identity cannot revive before React effects > keeps only unsaved author text read-only while hiding private graph directory metadata 440ms
+ ✓ src/creative/studioCpuCutoutContract.test.ts (52 tests) 22ms
+ ✓ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx (14 tests) 1490ms
+   ✓ all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=false) 625ms
+   ✓ all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=true) 444ms
+ ✓ src/experimental/StyleAnalysisModelPanel.test.tsx (7 tests) 338ms
+ ✓ src/experimental/VoiceSubtitlePanels.test.tsx (7 tests) 736ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 3274ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 764ms
+   ✓ mounted text graph autosave and explicit recovery > rechecks a saved baseline exactly and keeps the original CAS version for explicit save 355ms
+   ✓ mounted text graph autosave and explicit recovery > retains a conflicting cache and exposes its author input without replacing the current editor 300ms
+   ✓ mounted text graph autosave and explicit recovery > rejects same-public-ID recreation before reading or resurrecting an old graph 386ms
+   ✓ mounted text graph autosave and explicit recovery > does not overwrite an existing local recovery cache with new unreviewed editor input 354ms
+   ✓ mounted text graph autosave and explicit recovery > preserves a lost-create request identity and uncertainty across reload instead of replaying it 387ms
+ ✓ src/creative/studioAudioWavContract.test.ts (86 tests) 53ms
+ ✓ src/experimental/LanguageTranslationPanel.test.tsx (5 tests) 1401ms
+   ✓ exact preview, explicit single dispatch, original recovery and separate adopt consent 490ms
+   ✓ adoption updates visible saved draft while requiring separate submit and review 616ms
+ ✓ src/VideoModelObservations.phase5.test.tsx (18 tests) 541ms
+ ↓ src/experimental/ExperimentalWorkbench.http.test.tsx (6 tests | 6 skipped)
+ ✓ src/prompt/PromptWorkspace.test.tsx (11 tests) 822ms
+ ✓ src/prompt/PromptWorkspace.p0.test.tsx (10 tests) 1394ms
+ ✓ src/experimental/ChangeImpactPanel.test.tsx (8 tests) 985ms
+   ✓ ChangeImpactPanel explicit scoped actions > shows exact/unknown evidence and preflights only explicitly selected nodes, never auto executes 317ms
+ ✓ src/experimental/StructuredForksPanel.test.tsx (7 tests) 533ms
+ ✓ src/creative/screenplayPresets.test.tsx (18 tests) 1418ms
+   ✓ creates a fresh unsaved draft once, preserves the saved document and uses original POST then versioned PUT 1217ms
+ ❯ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 1 failed) 4171ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 658ms
+   ✓ independent studio original owner integration > retains uploaded v1 after a declaration failure and retries only the declaration 783ms
+   ✓ independent studio original owner integration > keeps preview/export available in readonly mode while preventing all writes 507ms
+   × independent studio original owner integration > preserves a preference draft on CAS conflict and does not hide modules or run jobs 1427ms
+     → Found multiple elements with the role "alert"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+  [33mrole[39m=[32m"alert"[39m
+[36m>[39m
+  [0m版本或来源已经变化。当前草稿已保留，请核对服务端版本。[0m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+  [33mrole[39m=[32m"alert"[39m
+[36m>[39m
+  [0m连接未完成。请检查连接状态后重试。[0m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+  [33mrole[39m=[32m"alert"[39m
+[36m>[39m
+  [0m连接未完成。请检查连接状态后重试。[0m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+  [33mrole[39m=[32m"alert"[39m
+[36m>[39m
+  [0m连接未完成。请检查连接状态后重试。[0m
+  [36m<span>[39m
+    [0m · 代码 [0m
+    [0mSTUDIO_NETWORK_FAILED[0m
+  [36m</span>[39m
+[36m</div>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"IMAGE"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"[39m
+              [36m/...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"IMAGE"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"[39m
+              [36m/...
+ ✓ src/production/ProductionDashboard.test.tsx (6 tests) 530ms
+ ✓ src/experimental/NarrativeJudgeContinuationPanels.test.tsx (6 tests) 529ms
+ ✓ src/prompt/PromptWorkspace.p0c.test.tsx (6 tests) 702ms
+ ✓ src/experimental/StructuredSearchNavigation.test.tsx (12 tests) 2558ms
+   ✓ resolves organization with its exact original owner and original ID 492ms
+   ✓ resolves rule with its exact original owner and original ID 339ms
+   ✓ resolves story_graph with its exact original owner and original ID 346ms
+   ✓ resolves asset with its exact original owner and original ID 321ms
+   ✓ resolves workflow with its exact original owner and original ID 407ms
+ ✓ src/novel/AIPlanningPanel.project.test.tsx (11 tests) 466ms
+ ✓ src/production/productionDashboardMount.test.tsx (3 tests) 3789ms
+   ✓ production workflow dashboard mounted in the original Studio workspace > reads the projection once through the captured host session and renders it beside the operation contracts 795ms
+   ✓ production workflow dashboard mounted in the original Studio workspace > keeps the author selection through a 409 and saves it against the re-read version 1769ms
+   ✓ production workflow dashboard mounted in the original Studio workspace > asks before leaving the production view while the intent draft is unsaved 1224ms
+ ✓ src/novel/EntryExperience.test.tsx (10 tests) 876ms
+ ✓ src/novel/LocalHostSessionPanel.test.tsx (9 tests) 412ms
+ ✓ src/onboarding/StudioStartPanel.test.tsx (8 tests) 687ms
+ ✓ src/novel/PluginInspector.test.tsx (8 tests) 214ms
+ ✓ src/AppBrokerRecovery.test.tsx (4 tests) 869ms
+ ✓ src/creative/StudioVideoGraphEditor.phase4.test.tsx (4 tests) 7943ms
+   ✓ Explicit video Graph keeps saved shot and original execution authority > retains Image schema descriptors and author input while a Video catalog awaits consent 2051ms
+   ✓ Explicit video Graph keeps saved shot and original execution authority > adds exact current shot pins and video controls without starting a job 3602ms
+   ✓ Explicit video Graph keeps saved shot and original execution authority > ignores a late saved shot receipt after same-token Host replacement 2282ms
+ ✓ src/experimental/BranchManuscriptPanel.test.tsx (6 tests) 498ms
+ ✓ src/novel/MultimodalDirectorWorkspace.test.tsx (11 tests) 719ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 425ms
+ ✓ src/novel/FirstUsePanel.test.tsx (8 tests) 359ms
+ ✓ src/novel/AiWritingPanel.test.tsx (12 tests) 569ms
+ ✓ src/creative/GenericScriptWorkspace.test.tsx (7 tests) 4413ms
+   ✓ standalone Script uses original Creative workspace > creates an explicitly independent script in the existing five-stage shell 942ms
+   ✓ standalone Script uses original Creative workspace > reopens the actual saved Script and keeps its type when starting another document 743ms
+   ✓ standalone Script uses original Creative workspace > retains the dirty Script when changing modes or cancelling exit 688ms
+   ✓ standalone Script uses original Creative workspace > restores reviewed Script history with the current CAS version, preserving original versions 647ms
+   ✓ standalone Script uses original Creative workspace > locks a CAS-conflicted Script without erasing its local text or resubmitting 620ms
+   ✓ standalone Script uses original Creative workspace > drops an old identity’s late saved Script after project navigation 498ms
+ ✓ src/novel/AgentTeamPanel.selectionBoundary.test.tsx (7 tests) 360ms
+ ✓ src/experimental/WorkspaceInteractionPanel.test.tsx (13 tests) 393ms
+ ✓ src/novel/WorkflowScopeGuards.test.tsx (20 tests) 638ms
+ ✓ src/storyboard/PromptAdoptionPanel.test.tsx (8 tests) 173ms
+ ✓ src/experimental/MediaPanel.continuation.test.tsx (6 tests) 858ms
+ ✓ src/onboarding/IntentPicker.test.tsx (4 tests) 450ms
+ ✓ src/interop/client.test.ts (10 tests) 14ms
+ ✓ src/experimental/AdapterReceiptProjection.test.tsx (8 tests) 635ms
+ ✓ src/experimental/NarrativeJudgeModelPanel.test.tsx (6 tests) 198ms
+ ✓ src/novel/AuthorSourcePicker.test.tsx (5 tests) 497ms
+ ✓ src/experimental/MediaPanel.recovery.test.tsx (7 tests) 760ms
+   ✓ media promotion checkpoint recovery > makes interrupted cover approval recoverable with Inbox disabled, only after explicit action 306ms
+ ✓ src/experimental/PortableProjectsPanel.maintenance.test.tsx (5 tests) 448ms
+ ✓ src/director/DirectorWorkspace.test.tsx (12 tests) 460ms
+ ✓ src/bible/BibleWorkspace.test.tsx (12 tests) 316ms
+ ✓ src/guide/useProjectGuide.test.tsx (13 tests) 39ms
+ ✓ src/creative/IndependentStudioReadFences.test.tsx (7 tests) 8937ms
+   ✓ independent asset read fences and truthful capability labels > locks mutation inputs during explicit refresh and preserves the next draft after the read finishes 3966ms
+   ✓ independent asset read fences and truthful capability labels > ignores delayed recovery after the author explicitly selects a different asset and starts a draft 1910ms
+   ✓ independent asset read fences and truthful capability labels > labels review-only authority accurately while asset files remain readonly 686ms
+   ✓ independent asset read fences and truthful capability labels > describes presets as saved preferences without implying an active layout change 523ms
+   ✓ independent asset read fences and truthful capability labels > shows safe READY storage state without filesystem paths or cleanup controls 672ms
+   ✓ independent asset read fences and truthful capability labels > shows safe LOW_SPACE_OR_QUOTA storage state without filesystem paths or cleanup controls 636ms
+   ✓ independent asset read fences and truthful capability labels > shows safe UNAVAILABLE storage state without filesystem paths or cleanup controls 544ms
+ ✓ src/creative/StudioImageGraphEditor.test.tsx (5 tests) 8469ms
+   ✓ image Graph authoring through original controller and mounted workspace > requires explicit catalog read then separate schema consent and never dispatches while authoring 1531ms
+   ✓ image Graph authoring through original controller and mounted workspace > binds consent to the current draft and refuses to remove incompatible old nodes during upgrade 3124ms
+   ✓ image Graph authoring through original controller and mounted workspace > saves weighted reference and prompt parameters through original actions with no arbitrary JSON or direct generation 2862ms
+   ✓ image Graph authoring through original controller and mounted workspace > opens a saved schema 4 via the same owner image catalog without upgrading or executing an old graph 512ms
+   ✓ image Graph authoring through original controller and mounted workspace > ignores an image catalog arriving after a same-token Host identity replacement 439ms
+ ✓ src/AIEnvironmentSummaryOwner.test.tsx (8 tests) 240ms
+ ✓ src/experimental/WorkspaceSearch.test.tsx (6 tests) 2988ms
+   ✓ sends scoped filters, pages and a safe rebuild through the captured client 1058ms
+   ✓ cancels server work, drops late bodies/counts/suggestions, and permits retry 306ms
+   ✓ withholds source text and autocomplete after a revoked refresh or resolve 358ms
+   ✓ does not search unfinished IME composition and submits the completed Chinese text 707ms
+ ✓ src/creative/IndependentStudioManualMask.test.tsx (11 tests) 16616ms
+   ✓ manual mask in the original Image workspace > loads only explicitly and creates original MANUAL_EDIT Asset without jobs or automatic selection 1664ms
+   ✓ manual mask in the original Image workspace > uses the original shared semaphore to block imports and navigation until POST settles 1739ms
+   ✓ manual mask in the original Image workspace > uses original discard confirmation for local dirty pixels 1354ms
+   ✓ manual mask in the original Image workspace > latches host ABA before a late save response, with no Asset merge or selection 1109ms
+   ✓ manual mask in the original Image workspace > latches host-rebind ABA before a late save response, with no Asset merge or selection 1051ms
+   ✓ manual mask in the original Image workspace > latches project ABA before a late save response, with no Asset merge or selection 1592ms
+   ✓ manual mask in the original Image workspace > latches actor ABA before a late save response, with no Asset merge or selection 2151ms
+   ✓ manual mask in the original Image workspace > latches branch ABA before a late save response, with no Asset merge or selection 1738ms
+   ✓ manual mask in the original Image workspace > latches session ABA before a late save response, with no Asset merge or selection 1612ms
+   ✓ manual mask in the original Image workspace > does not reopen a late source decode after source A→B→A navigation 498ms
+   ✓ manual mask in the original Image workspace > keeps lost-save uncertainty after stale retry and provides an original list read 2107ms
+ ✓ src/creative/studioAudioFlacContract.phase6.test.tsx (18 tests) 364ms
+   ✓ Phase 6 replaceable Audio Inspector retains default WAV serialization > selects FLAC explicitly and clears only that control when returning to the old default 351ms
+ ✓ src/AppStorySourceNavigation.test.tsx (9 tests) 1988ms
+   ✓ reads the exact chapter through original authority before normal App hydration 393ms
+ ✓ src/novel/PendingCanonReviewPanel.test.tsx (7 tests) 859ms
+   ✓ original Canon review surface > requires human review, closes without write, and deduplicates clicks with exact CAS evidence 364ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 1170ms
+   ✓ WorkspaceAdminPanel production workspace switch > creates a workspace through the trusted admin API and refreshes the workspace cache 510ms
+   ✓ WorkspaceAdminPanel production workspace switch > renames the current workspace through the trusted admin API and refreshes the workspace cache 526ms
+ ✓ src/novel/ScreenplayPanel.revision.test.tsx (5 tests) 604ms
+   ✓ edits the real structured scene fields and preserves source provenance 313ms
+ ✓ src/experimental/WorkflowInspectionPanel.test.tsx (6 tests) 567ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (4 tests) 9664ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 3785ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 3615ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 1107ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 1156ms
+ ✓ src/creative/IndependentStudioCpuCutout.test.tsx (21 tests) 28398ms
+   ✓ CPU cutout through the original mounted Image workspace > requires separate source/mask, preview, queue, execute, private byte check and review actions 2998ms
+   ✓ CPU cutout through the original mounted Image workspace > shows no eligible mask without accepting an imported lookalike 607ms
+   ✓ CPU cutout through the original mounted Image workspace > revokes preview consent when source version changes and requires explicit rebinding 1048ms
+   ✓ CPU cutout through the original mounted Image workspace > revokes preview consent when mask version changes and requires explicit rebinding 923ms
+   ✓ CPU cutout through the original mounted Image workspace > keeps a lost create uncertain and recovers only the original saved request 740ms
+   ✓ CPU cutout through the original mounted Image workspace > re-reads the exact running job, cancels with its current CAS and ignores a late success while keeping global exclusion 1528ms
+   ✓ CPU cutout through the original mounted Image workspace > keeps the workspace locked if execute settles before an in-flight cancellation response 1448ms
+   ✓ CPU cutout through the original mounted Image workspace > offers explicit UNKNOWN recovery without replay or automatic review 845ms
+   ✓ CPU cutout through the original mounted Image workspace > offers explicit REVIEWING recovery without replay or automatic review 923ms
+   ✓ CPU cutout through the original mounted Image workspace > offers explicit CANCELLED recovery without replay or automatic review 1081ms
+   ✓ CPU cutout through the original mounted Image workspace > rejects candidate bytes outside the proven exact output size and clears review 1561ms
+   ✓ CPU cutout through the original mounted Image workspace > does not dispatch cancellation after host ABA during its exact-job read 936ms
+   ✓ CPU cutout through the original mounted Image workspace > does not dispatch cancellation after project ABA during its exact-job read 893ms
+   ✓ CPU cutout through the original mounted Image workspace > blocks duplicate cancel while uncertain and does not let a late execute clear uncertainty 1267ms
+   ✓ CPU cutout through the original mounted Image workspace > keeps cancel CAS conflict uncertain until an explicit original read, then binds a new explicit cancellation to that version 1742ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches host ABA 1849ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches host-rebind ABA 1685ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches project ABA 1882ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches actor ABA 1440ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches branch ABA 1521ms
+   ✓ CPU cutout through the original mounted Image workspace > redacts private candidate and latches session ABA 1479ms
+ ✓ src/novel/StoryRecordLifecycle.test.tsx (20 tests) 2231ms
+ ✓ src/ui/LocalAiBrowserJourneyContracts.test.tsx (4 tests) 418ms
+ ✓ src/novel/AiContextPreviewPanel.test.tsx (6 tests) 299ms
+ ✓ src/experimental/PortableProjectsPanel.test.tsx (5 tests) 478ms
+ ✓ src/localAiDiscoveryConsentApi.test.ts (20 tests) 16ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 814ms
+ ✓ src/experimental/EmbeddingPanel.continuation.test.tsx (5 tests) 592ms
+ ✓ src/creative/studioWorkspaceResume.test.ts (9 tests) 6ms
+ ✓ src/AIEnvironmentSummary.test.tsx (7 tests) 189ms
+ ✓ src/creative/graphCanvasGeometry.test.ts (9 tests) 15ms
+ ✓ src/novel/EntryExperience.studio.test.tsx (6 tests) 507ms
+ ✓ src/novel/ExportPanel.scope.test.tsx (13 tests) 1733ms
+ ✓ src/prompt/PromptWorkspace.loadingOwner.test.tsx (1 test) 353ms
+   ✓ 任务 1：被废弃的读取不得清除仍在进行的读取所拥有的 loading > A 失败时 B 仍在读取，界面不得提前认为已就绪 353ms
+ ✓ src/ConflictDialog.test.tsx (6 tests) 50ms
+ ❯ src/creative/IndependentStudioRelationships.test.tsx (5 tests | 1 failed) 9817ms
+   ✓ studio relationship ownership and draft integration > keeps a relationship draft across navigation attempts and prevents other asset mutations 3022ms
+   ✓ studio relationship ownership and draft integration > saves through the original asset owner and refreshes the source version without copying a target 2235ms
+   × studio relationship ownership and draft integration > preserves CAS-conflicted input and source version until an explicit reload 2406ms
+     → Found multiple elements with the role "alert"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+  [33mrole[39m=[32m"alert"[39m
+[36m>[39m
+  [0m连接未完成。请检查连接状态后重试。[0m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+  [33mrole[39m=[32m"alert"[39m
+[36m>[39m
+  [0m连接未完成。请检查连接状态后重试。[0m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+  [33mrole[39m=[32m"alert"[39m
+[36m>[39m
+  [0m连接未完成。请检查连接状态后重试。[0m
+  [36m<span>[39m
+    [0m · 代码 [0m
+    [0mSTUDIO_NETWORK_FAILED[0m
+  [36m</span>[39m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+  [33mrole[39m=[32m"alert"[39m
+[36m>[39m
+  [0m版本或来源已经变化。当前草稿已保留，请核对服务端版本。[0m
+[36m</div>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"IMAGE"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"[39m
+              [36m/...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"IMAGE"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"[39m
+              [36m/...
+   ✓ studio relationship ownership and draft integration > clears selected private content when saving the relationship is revoked 1228ms
+   ✓ studio relationship ownership and draft integration > prevents relation writes while a provenance draft is being edited 924ms
+ ✓ src/creative/StudioVideoShotBinding.phase5.test.tsx (4 tests) 2039ms
+   ✓ Phase 5 independent Video author flow can explicitly omit a new Shot binding > allows unchecking the initial true flag without a connected Shot and saves no implicit pin 2031ms
+ ✓ src/novel/FindingReviewPanel.test.tsx (5 tests) 665ms
+   ✓ source-bound finding review > requires reason and human confirmation, cancellation writes nothing, and submits exact CAS tokens 322ms
+ ✓ src/creative/IndependentStudioSequentialImport.test.tsx (2 tests) 3586ms
+   ✓ independent studio sequential import readiness > does not advertise readiness at lineage completion while the asset list refresh is still pending, then imports the next file once 2724ms
+   ✓ independent studio sequential import readiness > rejects a synthetic change sent to the disabled input instead of silently queueing another upload 861ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 530ms
+ ✓ src/creative/IndependentStudioAudioWav.test.tsx (28 tests) 31405ms
+   ✓ WAV controls through the original mounted production workspace > keeps blank controls absent, original defaults explicit, and preview/queue/execute separate 1214ms
+   ✓ WAV controls through the original mounted production workspace > executes explicit controls, shows only measured WAV output, byte-checks privately and requires explicit review 2192ms
+   ✓ WAV controls through the original mounted production workspace > rejects gain_db -60.1 without preview dispatch 747ms
+   ✓ WAV controls through the original mounted production workspace > rejects gain_db 12.1 without preview dispatch 710ms
+   ✓ WAV controls through the original mounted production workspace > rejects sample_rate 7999 without preview dispatch 488ms
+   ✓ WAV controls through the original mounted production workspace > rejects sample_rate 96001 without preview dispatch 509ms
+   ✓ WAV controls through the original mounted production workspace > rejects sample_rate 22050.5 without preview dispatch 596ms
+   ✓ WAV controls through the original mounted production workspace > enforces the combined byte budget without rewriting the chosen controls 557ms
+   ✓ WAV controls through the original mounted production workspace > invalidates consent when gain_db is edited, including ABA back to blank 595ms
+   ✓ WAV controls through the original mounted production workspace > invalidates consent when sample_rate is edited, including ABA back to blank 708ms
+   ✓ WAV controls through the original mounted production workspace > invalidates consent when channels is edited, including ABA back to blank 870ms
+   ✓ WAV controls through the original mounted production workspace > clears controls when leaving trim and does not expose them to generated audio 532ms
+   ✓ WAV controls through the original mounted production workspace > revokes source-bound preview when source version changes 970ms
+   ✓ WAV controls through the original mounted production workspace > recovers a lost create using the original controls/request without replay 950ms
+   ✓ WAV controls through the original mounted production workspace > keeps the shared workspace locked while executing and never submits a duplicate execution 1604ms
+   ✓ WAV controls through the original mounted production workspace > cancels the queued task with exact CAS while preserving its selected controls 894ms
+   ✓ WAV controls through the original mounted production workspace > recovers the original RUNNING WAV reservation without reexecution or automatic review 916ms
+   ✓ WAV controls through the original mounted production workspace > recovers the original UNKNOWN WAV reservation without reexecution or automatic review 837ms
+   ✓ WAV controls through the original mounted production workspace > recovers the original REVIEWING WAV reservation without reexecution or automatic review 774ms
+   ✓ WAV controls through the original mounted production workspace > does not manufacture actual measurements for a legacy completed receipt 457ms
+   ✓ WAV controls through the original mounted production workspace > rejects private candidate size outside the verified output measurement 1697ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host ABA 2237ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host-rebind ABA 2073ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches project ABA 1725ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches actor ABA 1758ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches branch ABA 1730ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches session ABA 1659ms
+   ✓ WAV controls through the original mounted production workspace > ignores a candidate response arriving after project identity ABA 1405ms
+ ✓ src/AppAdaptationNavigation.test.tsx (12 tests) 1363ms
+ ✓ src/experimental/RegisteredMediaPanel.test.tsx (4 tests) 706ms
+ ✓ src/novel/AdaptationPanel.test.tsx (6 tests) 666ms
+ ✓ src/localAiDiscoveryLegacyOwner.test.ts (14 tests) 13ms
+ ✓ src/novel/AIPlanningPanel.test.tsx (6 tests) 360ms
+ ✓ src/creative/StudioImageUpscaleProduction.test.tsx (2 tests) 228ms
+ ✓ src/novel/AudiobookManifestPanel.test.tsx (4 tests) 327ms
+ ✓ src/experimental/RevisionComparisonModelPanel.test.tsx (4 tests) 181ms
+ ✓ src/novel/VideoTimeline.test.tsx (12 tests) 149ms
+ ✓ src/novel/CharacterAuthorPanel.test.tsx (3 tests) 374ms
+ ✓ src/workspaceSelection.v2.test.ts (10 tests) 8ms
+ ✓ src/experimental/DirectorPanel.test.tsx (3 tests) 449ms
+ ✓ src/drafts.test.ts (6 tests) 21ms
+ ✓ src/novel/AiWritingVariants.test.tsx (6 tests) 398ms
+ ✓ src/novel/AdaptationLifecycleControls.test.tsx (4 tests) 561ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 253ms
+ ✓ src/novel/AuthorSourceItems.test.tsx (4 tests) 223ms
+ ✓ src/experimental/TimelineExchangePanel.test.tsx (4 tests) 365ms
+ ✓ src/interop/DesktopIntegrationDetails.test.tsx (19 tests) 284ms
+ ✓ src/novel/ExportPanel.recovery.test.tsx (4 tests) 1134ms
+   ✓ rediscovers the same durable job and snapshot after full remount and downloads it 547ms
+ ✓ src/creative/CreativeStoryboardContinuity.phase4.test.tsx (4 tests) 499ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 126ms
+ ✓ src/ui/AppShell.projectNoun.test.tsx (12 tests) 216ms
+ ✓ src/experimental/PlanningPanel.recovery.test.tsx (2 tests) 984ms
+   ✓ planning same-node version recovery > retains local edits after external change and only rebases through an explicit action 614ms
+   ✓ planning same-node version recovery > retains local edits after proposal approval and only rebases through an explicit action 368ms
+ ✓ src/experimental/TranslationMemoryPanel.test.tsx (4 tests) 232ms
+ ✓ src/novel/AgentTeamPanel.additional.test.tsx (5 tests) 438ms
+ ✓ src/novel/NovelImportPanel.test.tsx (3 tests) 91ms
+ ✓ src/RevisionPanel.test.tsx (4 tests) 98ms
+ ✓ src/novel/MotionTaskWorkspace.test.tsx (5 tests) 175ms
+ ✓ src/ui/MediaProviderSettings.test.tsx (3 tests) 156ms
+ ✓ src/Editor.anchor.test.tsx (3 tests) 223ms
+ ✓ src/novel/VisualReferencePanel.test.tsx (3 tests) 279ms
+ ✓ src/creative/ScreenplayExportPanel.test.tsx (7 tests) 256ms
+ ✓ src/creative/IndependentStudioRunReads.regression.test.tsx (7 tests) 8379ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled list denial 401 after a reviewed run command finishes 1636ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled list denial 403 after a reviewed run command finishes 1653ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled selection denial 401 after the newer exact run loads 993ms
+   ✓ original workspace respects graph read cancellation before denying access > ignores cancelled selection denial 403 after the newer exact run loads 800ms
+   ✓ original workspace respects graph read cancellation before denying access > still clears private state after a current list denial 401 1067ms
+   ✓ original workspace respects graph read cancellation before denying access > still clears private state after a current list denial 403 1037ms
+   ✓ original workspace respects graph read cancellation before denying access > still denies an active mutation after it supersedes a read-only list 1193ms
+ ✓ src/experimental/SharedUniversePanel.test.tsx (3 tests) 320ms
+ ✓ src/creative/GraphTextExecutionReceipt.test.tsx (4 tests) 83ms
+ ✓ src/AppProjectStory.test.tsx (4 tests) 984ms
+   ✓ opens and saves world settings through the project owner before a first chapter exists 375ms
+   ✓ the actual App navigation opens the project Story database without requiring a chapter 347ms
+ ✓ src/ui/FeatureLauncher.test.tsx (5 tests) 630ms
+ ✓ src/novel/ImageInfiniteCanvas.test.tsx (6 tests) 202ms
+ ✓ src/prompt/PromptWorkspace.strictmode.test.tsx (3 tests) 277ms
+ ✓ src/novel/ChapterTree.accessibility.test.tsx (5 tests) 275ms
+ ✓ src/experimental/ResearchLibraryPanel.continuation.test.tsx (3 tests) 720ms
+   ✓ replaces original file bytes against the selected source version 386ms
+ ✓ src/ui/ModelCenterLegacyOwner.test.tsx (4 tests) 290ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 388ms
+ ✓ src/novel/VisualTextWorkflow.test.tsx (3 tests) 151ms
+ ✓ src/novel/ChapterTree.test.tsx (5 tests) 315ms
+ ✓ src/Editor.recovery.test.tsx (4 tests) 307ms
+ ✓ src/localHostSession.test.ts (6 tests) 12ms
+ ✓ src/experimental/TaskOwnerNavigation.continuation.test.tsx (4 tests) 258ms
+ ✓ src/novel/useMultimodalWorkspacePersistence.test.ts (7 tests) 19ms
+ ✓ src/novel/DirectorShotList.test.tsx (6 tests) 192ms
+ ✓ src/PermissionManagement.test.tsx (3 tests) 60ms
+ ✓ src/prompt/PromptWorkspace.p0i.test.tsx (2 tests) 351ms
+ ✓ src/creative/CreativeProductionCanvas.test.tsx (3 tests) 334ms
+ ✓ src/novel/CreationWorkbenchPanel.test.tsx (4 tests) 259ms
+ ✓ src/novel/WorldTimelineView.test.tsx (3 tests) 187ms
+ ✓ src/experimental/ExperimentalWorkbench.continuation.test.tsx (5 tests) 129ms
+ ✓ src/ui/ModelCenterOnboarding.test.tsx (3 tests) 339ms
+ ✓ src/creative/ScreenplayEpubPanel.test.tsx (3 tests) 223ms
+ ✓ src/novel/A43ChapterIdentity.test.tsx (2 tests) 261ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 74ms
+ ✓ src/novel/AssetLibraryPanel.test.tsx (4 tests) 341ms
+ ✓ src/AppWritingGoalRecovery.test.tsx (4 tests) 348ms
+ ✓ src/ui/SaveControls.test.tsx (5 tests) 35ms
+ ✓ src/Editor.a43-rich.test.tsx (3 tests) 184ms
+ ✓ src/novel/SourcePrivacyControl.test.tsx (2 tests) 277ms
+ ✓ src/novel/ChapterTree.lifecycle.test.tsx (5 tests) 358ms
+ ✓ src/novel/WorldRelationshipGraph.test.tsx (4 tests) 157ms
+ ✓ src/novel/AgentTeamPanel.test.tsx (2 tests) 215ms
+ ✓ src/novel/SpeechSynthesisPanel.test.tsx (3 tests) 197ms
+ ✓ src/novel/WorkflowPanel.test.tsx (2 tests) 471ms
+ ✓ src/AuditColdStorage.test.ts (4 tests) 53ms
+ ✓ src/experimental/VoiceDirectionPanel.continuation.test.tsx (3 tests) 307ms
+ ✓ src/novel/WorldBuildingDashboard.test.tsx (4 tests) 284ms
+ ✓ src/experimental/EmbeddingPanel.hybrid.test.tsx (2 tests) 320ms
+ ✓ src/RevisionHistory.independent-audit.test.tsx (3 tests) 198ms
+ ✓ src/novel/GenerationWorkflowTimeline.test.tsx (7 tests) 91ms
+ ✓ src/experimental/DeferredExperimentalWorkbench.test.tsx (2 tests) 144ms
+ ✓ src/ui/ModuleWorkspaceRoutes.test.tsx (7 tests) 270ms
+ ✓ src/AppWorldSummary.test.tsx (3 tests) 432ms
+ ✓ src/novel/ImageQueuePanel.test.tsx (2 tests) 195ms
+ ✓ src/novel/ContinuityCheckPanel.test.tsx (2 tests) 186ms
+ ✓ src/creative/AssetRelationshipsRedaction.test.tsx (1 test) 260ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 9ms
+ ✓ src/StorySearchNavigation.test.tsx (1 test) 115ms
+ ✓ src/novel/DirectorShotCard.test.tsx (4 tests) 128ms
+ ✓ src/experimental/ProductionLineagePanel.continuation.test.tsx (2 tests) 298ms
+ ✓ src/creative/AdaptationHostCapability.test.tsx (1 test) 321ms
+   ✓ explains missing Host authority without reading private proposals or locking manual Creative editing 321ms
+ ✓ src/novel/AuthorRequestControls.test.tsx (2 tests) 133ms
+ ✓ src/novel/ScreenplayPipelinePanel.test.tsx (3 tests) 184ms
+ ✓ src/experimental/ModelBenchmarkPanel.continuation.test.tsx (1 test) 218ms
+ ✓ src/novel/AgentQueuePanel.test.tsx (2 tests) 218ms
+ ✓ src/novel/RuntimeDiagnostics.test.tsx (3 tests) 116ms
+ ✓ src/experimental/InboxPanel.findings.test.tsx (2 tests) 337ms
+ ✓ src/ui/taskSummary.test.ts (4 tests) 4ms
+ ✓ src/ui/AiControlCenter.test.tsx (1 test) 177ms
+ ✓ src/interop/entryScopeReview.test.tsx (1 test) 183ms
+ ✓ src/novel/GenerationRecoveryPicker.test.tsx (2 tests) 143ms
+ ✓ src/experimental/shared.test.tsx (2 tests) 80ms
+ ✓ src/novel/VideoTaskInspector.test.tsx (3 tests) 86ms
+ ✓ src/novel/AudioGenerationPanel.test.tsx (2 tests) 217ms
+ ✓ src/generationRecovery.test.ts (3 tests) 3ms
+ ✓ src/interop/entry.test.tsx (1 test) 120ms
+ ✓ src/novel/NovelOverviewPanel.test.tsx (1 test) 65ms
+ ✓ src/novel/StoryPlanningWorkspace.test.tsx (2 tests) 86ms
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 120ms
+ ✓ src/novel/AgentActivityCenter.test.tsx (2 tests) 241ms
+ ✓ src/novel/MotionPrivacyPanel.test.tsx (1 test) 111ms
+ ✓ src/novel/VideoAssemblyPanel.test.tsx (1 test) 121ms
+ ✓ src/workspaceSelection.test.ts (3 tests) 3ms
+ ✓ src/creative/BlankProjectEntry.test.tsx (2 tests) 126ms
+ ✓ src/novel/AssetInspector.test.tsx (2 tests) 121ms
+ ✓ src/localAiEnvironmentApi.test.ts (2 tests) 7ms
+ ✓ src/ui/AuthorTerminology.test.tsx (2 tests) 14ms
+ ✓ src/novel/ConstraintImportPreview.test.tsx (2 tests) 63ms
+ ✓ src/novel/SceneEditor.test.tsx (1 test) 156ms
+ ✓ src/novel/ScreenplayPanel.motion-binding.test.ts (2 tests) 4ms
+ ✓ src/experimental/revisionLocks.test.ts (2 tests) 54ms
+ ✓ src/creative/CreativeSelectLabels.test.tsx (3 tests) 209ms
+ ✓ src/experimental/WorldPanel.test.tsx (1 test) 224ms
+ ✓ src/novel/AgentResultReview.test.tsx (2 tests) 121ms
+ ✓ src/novel/ForeshadowingEditor.test.tsx (1 test) 220ms
+ ✓ src/novel/useMultimodalBindingManifest.test.ts (2 tests) 24ms
+ ✓ src/novel/StoryDatabase.test.tsx (2 tests) 85ms
+ ✓ src/novel/VisualContextPanel.test.tsx (2 tests) 77ms
+ ✓ src/novel/ImageTaskInspector.test.tsx (2 tests) 85ms
+ ✓ src/novel/WorkflowPanel.independent-audit.test.tsx (1 test) 40ms
+ ✓ src/novel/StoryRecordNavigation.test.tsx (2 tests) 278ms
+ ✓ src/novel/AudioTaskInspector.test.tsx (2 tests) 77ms
+ ✓ src/novel/TimelineEditor.test.tsx (1 test) 101ms
+ ✓ src/novel/RelationshipEditor.test.tsx (1 test) 139ms
+ ✓ src/novel/StoryRouteEditor.test.tsx (1 test) 122ms
+ ✓ src/creative/CreativeScriptLabelPersistence.test.tsx (1 test) 128ms
+ ✓ src/novel/OutlineEditor.test.tsx (1 test) 133ms
+ ✓ src/novel/VolumeEditor.test.tsx (1 test) 116ms
+ ✓ src/novel/WorkflowInspector.test.tsx (2 tests) 77ms
+ ✓ src/novel/CharacterEditor.test.tsx (1 test) 163ms
+ ✓ src/ui/CapabilityRoadmapPanel.test.tsx (1 test) 57ms
+ ✓ src/creative/CreativeStarterLabel.test.tsx (1 test) 122ms
+ ✓ src/delivery/deliveryOps.test.ts (23 tests) 18ms
+ ✓ src/assetbrowser/assetBrowserOps.test.ts (30 tests) 25ms
+ ✓ src/production/productionWorkflowContract.test.ts (12 tests) 13ms
+ ✓ src/taskcenter/taskCenterContract.test.ts (17 tests) 12ms
+ ✓ src/ui/CapabilityStatusCenter.test.tsx (1 test) 66ms
+ ✓ src/canvasops/canvasOps.test.ts (69 tests) 24ms
+ ✓ src/novel/LocationEditor.test.tsx (1 test) 145ms
+ ✓ src/storyboard/storyboardOps.test.ts (36 tests) 20ms
+ ✓ src/storyboard/storyboardWorkspaceContract.test.ts (16 tests) 15ms
+ ✓ src/creative/studioStoryboardContract.phase4.test.ts (52 tests) 27ms
+ ✓ src/modelcenter/modelCenterOps.test.ts (79 tests) 27ms
+ ✓ src/guide/projectGuideOps.test.ts (39 tests) 26ms
+ ✓ src/novel/DirectorVoiceToolbar.test.tsx (1 test) 30ms
+ ✓ src/novel/BindingManifestPanel.test.tsx (1 test) 25ms
+ ✓ src/creative/studioGraphVideoContract.phase4.test.ts (31 tests) 26ms
+ ✓ src/assetbrowser/assetBrowserContract.test.ts (19 tests) 15ms
+ ✓ src/creative/studioGraphModelClient.test.ts (36 tests) 21ms
+ ✓ src/novel/WorldSummaryEditor.test.tsx (1 test) 74ms
+ ✓ src/creative/graphDraft.test.ts (39 tests) 6ms
+ ✓ src/delivery/deliveryContract.test.ts (10 tests) 13ms
+ ✓ src/creative/studioStorageAdmissionClient.test.ts (44 tests) 15ms
+ ✓ src/creative/studioRelationshipsClient.test.ts (58 tests) 23ms
+ ✓ src/creative/studioClient.test.ts (38 tests) 23ms
+ ✓ src/creative/studioStoryboardPipeline.phase5.test.ts (31 tests) 37ms
+ ✓ src/creative/studioGraphClient.test.ts (48 tests) 35ms
+ ✓ src/taskcenter/taskCenterClient.test.ts (7 tests) 15ms
+ ✓ src/onboarding/studioEntryClient.test.ts (9 tests) 13ms
+ ✓ src/assetbrowser/assetBrowserClient.test.ts (12 tests) 14ms
+ ✓ src/creative/studioVideoRuntimeContract.phase4.test.ts (52 tests) 21ms
+ ✓ src/creative/studioProductionGraphClient.test.ts (17 tests) 37ms
+ ✓ src/bible/bibleContract.test.ts (17 tests) 9ms
+ ✓ src/production/productionWorkflowClient.test.ts (6 tests) 9ms
+ ✓ src/creative/studioImageGraphClient.test.ts (14 tests) 18ms
+ ✓ src/creative/studioGraphTextAssetClient.test.ts (57 tests) 27ms
+ ✓ src/creative/studioGraphTextExecutionReceiptClient.test.ts (84 tests) 29ms
+ ✓ src/creative/studioStoryboardShotContext.phase5.test.ts (18 tests) 12ms
+ ✓ src/creative/studioProviderClient.test.ts (62 tests) 18ms
+ ✓ src/creative/studioManualMaskContract.test.ts (48 tests) 87ms
+ ✓ src/prompt/promptContract.test.ts (12 tests) 6ms
+ ✓ src/prompt/promptProducerContract.test.ts (11 tests) 9ms
+ ✓ src/creative/client.test.ts (11 tests) 11ms
+ ✓ src/onboarding/studioEntryContract.test.ts (7 tests) 7ms
+ ✓ src/prompt/promptDraft.pending.test.ts (9 tests) 4ms
+ ✓ src/prompt/promptDraft.test.ts (12 tests) 5ms
+ ✓ src/director/directorWorkspaceContract.test.ts (15 tests) 10ms
+ ✓ src/creative/studioBinaryMask.test.ts (38 tests) 314ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 13ms
+ ✓ src/creative/studioGraphTransportForwarding.test.ts (8 tests) 14ms
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 7ms
+ ✓ src/prompt/promptDraft.aliasing.test.ts (8 tests) 5ms
+ ✓ src/creative/studioWorkspaceOperationContract.test.ts (6 tests) 7ms
+ ✓ src/experimental/api.test.ts (5 tests) 23ms
+ ✓ src/production/productionWorkflowRealProjection.test.ts (7 tests) 4ms
+ ✓ src/creative/studioImageRuntimeContract.test.ts (11 tests) 6ms
+ ✓ src/interop/ChapterWireIdentity.test.ts (3 tests) 27ms
+ ✓ src/packagedHost.test.ts (7 tests) 6ms
+ ✓ src/creative/creativeProductionClient.test.ts (2 tests) 5ms
+ ✓ src/creative/studioWorkspacePreferences.test.ts (12 tests) 5ms
+ ✓ src/creative/screenplayEpubClient.test.ts (6 tests) 31ms
+ ✓ src/creative/studioActivationReceipt.test.ts (17 tests) 14ms
+ ✓ src/creative/screenplayExportClient.test.ts (7 tests) 20ms
+ ✓ src/creative/scriptExportClient.test.ts (5 tests) 22ms
+ ✓ src/collaborationGuards.test.ts (7 tests) 4ms
+ ✓ src/productLanguage.test.ts (4 tests) 3ms
+ ✓ src/contracts.test.ts (7 tests) 20ms
+ ✓ src/e2eDatabaseContract.test.ts (20 tests) 815ms
+   ✓ E2E database environment contract > keeps the DSN out of Playwright commands and scopes each child environment 698ms
+ ✓ src/novel/ChapterTree.css.test.ts (4 tests) 3ms
+ ✓ src/ui/FeatureLauncher.css.test.ts (3 tests) 3ms
+ ✓ src/novel/AdaptationRouteMatching.test.ts (1 test) 5ms
+ ✓ src/experimental/api.surface-flags.test.ts (4 tests) 19ms
+ ✓ src/creative/screenplayFountainParser.test.ts (1 test) 200ms
+ ✓ src/novel/importRecovery.test.ts (2 tests) 6ms
+ ✓ src/creative/CreativeWorkbenchEntry.test.ts (2 tests) 3ms
+ ✓ src/ui/scopeLabels.test.ts (4 tests) 3ms
+ ✓ src/Editor.typography.test.ts (3 tests) 2ms
+ ✓ src/planningProjectApi.test.ts (1 test) 4ms
+ ✓ src/novel/findingReviewClient.test.ts (2 tests) 3ms
+ ✓ src/novel/firstUseClient.test.ts (2 tests) 4ms
+ ✓ src/experimental/writingFocus.layout.test.ts (1 test) 2ms
+ ✓ src/creative/ProductionTimeline.css.test.ts (1 test) 2ms
+ ✓ src/sourcePrivacyApi.test.ts (1 test) 4ms
+ ✓ src/creative/adminStudioContext.test.ts (1 test) 4ms
+ ✓ src/novel/MotionTaskBatchControls.test.ts (1 test) 2ms
+ ✓ src/novel/FountainParser.test.ts (21 tests) 3331ms
+ ✓ src/generationVariants.test.ts (7 tests) 4ms
+ ✓ src/App.test.tsx (12 tests) 12ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/IndependentStudioRelationships.test.tsx > studio relationship ownership and draft integration > preserves CAS-conflicted input and source version until an explicit reload
+TestingLibraryElementError: Found multiple elements with the role "alert"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<div
+  class="ui-status-message ui-status-message--error"
+  role="alert"
+>
+  连接未完成。请检查连接状态后重试。
+</div>
+
+Ignored nodes: comments, script, style
+<div
+  class="ui-status-message ui-status-message--error"
+  role="alert"
+>
+  连接未完成。请检查连接状态后重试。
+</div>
+
+Ignored nodes: comments, script, style
+<div
+  class="ui-status-message ui-status-message--error"
+  role="alert"
+>
+  连接未完成。请检查连接状态后重试。
+  <span>
+     · 代码 
+    STUDIO_NETWORK_FAILED
+  </span>
+</div>
+
+Ignored nodes: comments, script, style
+<div
+  class="ui-status-message ui-status-message--error"
+  role="alert"
+>
+  版本或来源已经变化。当前草稿已保留，请核对服务端版本。
+</div>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-shell"
+      data-module="IMAGE"
+      style="--layout-inspector-width: 340px;"
+    >
+      <header
+        class="global-header"
+      >
+        <div
+          aria-label="AI Novel Studio"
+          class="product-mark"
+        >
+          <span
+            class="product-mark__icon"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-book-open-text"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M16 12h2"
+              />
+              <path
+                d="M16 8h2"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+              <path
+                d="M6 12h2"
+              />
+              <path
+                d="M6 8h2"
+              />
+            </svg>
+          </span>
+          <span
+            class="product-mark__name"
+          >
+            <strong>
+              AI Novel
+            </strong>
+            <small>
+              Studio
+            </small>
+          </span>
+        </div>
+        <div
+          aria-label="创作模块"
+          class="module-switcher"
+          role="tablist"
+        >
+          <button
+            aria-selected="false"
+            class=""
+            data-module-tab="NOVEL"
+            id="module-tab-novel"
+            role="tab"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-book-open"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+            </svg>
+            <span>
+              小说
+            </span>
+          </button>
+          <button
+            aria-selected="true"
+            class="is-active"
+            data-module-tab="IMAGE"
+            id="module-tab-image"
+            role="tab"
+            tabindex="0"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-image"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="18"
+                rx="2"
+                ry="2"
+                width="18"
+                x="3"
+                y="3"
+              />
+              <circle
+                cx="9"
+                cy="9"
+                r="2"
+              />
+              <path
+                d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"
+              />
+            </svg>
+            <span>
+              图片
+            </span>
+          </button>
+          <button
+            aria-selected="false"
+            class=""
+            data-module-tab="VIDEO"
+            id="module-tab-video"
+            role="tab"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-video"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"
+              /...
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-shell"
+      data-module="IMAGE"
+      style="--layout-inspector-width: 340px;"
+    >
+      <header
+        class="global-header"
+      >
+        <div
+          aria-label="AI Novel Studio"
+          class="product-mark"
+        >
+          <span
+            class="product-mark__icon"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-book-open-text"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M16 12h2"
+              />
+              <path
+                d="M16 8h2"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+              <path
+                d="M6 12h2"
+              />
+              <path
+                d="M6 8h2"
+              />
+            </svg>
+          </span>
+          <span
+            class="product-mark__name"
+          >
+            <strong>
+              AI Novel
+            </strong>
+            <small>
+              Studio
+            </small>
+          </span>
+        </div>
+        <div
+          aria-label="创作模块"
+          class="module-switcher"
+          role="tablist"
+        >
+          <button
+            aria-selected="false"
+            class=""
+            data-module-tab="NOVEL"
+            id="module-tab-novel"
+            role="tab"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-book-open"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+            </svg>
+            <span>
+              小说
+            </span>
+          </button>
+          <button
+            aria-selected="true"
+            class="is-active"
+            data-module-tab="IMAGE"
+            id="module-tab-image"
+            role="tab"
+            tabindex="0"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-image"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="18"
+                rx="2"
+                ry="2"
+                width="18"
+                x="3"
+                y="3"
+              />
+              <circle
+                cx="9"
+                cy="9"
+                r="2"
+              />
+              <path
+                d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"
+              />
+            </svg>
+            <span>
+              图片
+            </span>
+          </button>
+          <button
+            aria-selected="false"
+            class=""
+            data-module-tab="VIDEO"
+            id="module-tab-video"
+            role="tab"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-video"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"
+              /...
+ ❯ waitForWrapper ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/creative/IndependentStudioRelationships.test.tsx:66:18
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/creative/IndependentStudioWorkspace.test.tsx > independent studio original owner integration > preserves a preference draft on CAS conflict and does not hide modules or run jobs
+TestingLibraryElementError: Found multiple elements with the role "alert"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<div
+  class="ui-status-message ui-status-message--error"
+  role="alert"
+>
+  版本或来源已经变化。当前草稿已保留，请核对服务端版本。
+</div>
+
+Ignored nodes: comments, script, style
+<div
+  class="ui-status-message ui-status-message--error"
+  role="alert"
+>
+  连接未完成。请检查连接状态后重试。
+</div>
+
+Ignored nodes: comments, script, style
+<div
+  class="ui-status-message ui-status-message--error"
+  role="alert"
+>
+  连接未完成。请检查连接状态后重试。
+</div>
+
+Ignored nodes: comments, script, style
+<div
+  class="ui-status-message ui-status-message--error"
+  role="alert"
+>
+  连接未完成。请检查连接状态后重试。
+  <span>
+     · 代码 
+    STUDIO_NETWORK_FAILED
+  </span>
+</div>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-shell"
+      data-module="IMAGE"
+      style="--layout-inspector-width: 340px;"
+    >
+      <header
+        class="global-header"
+      >
+        <div
+          aria-label="AI Novel Studio"
+          class="product-mark"
+        >
+          <span
+            class="product-mark__icon"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-book-open-text"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M16 12h2"
+              />
+              <path
+                d="M16 8h2"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+              <path
+                d="M6 12h2"
+              />
+              <path
+                d="M6 8h2"
+              />
+            </svg>
+          </span>
+          <span
+            class="product-mark__name"
+          >
+            <strong>
+              AI Novel
+            </strong>
+            <small>
+              Studio
+            </small>
+          </span>
+        </div>
+        <div
+          aria-label="创作模块"
+          class="module-switcher"
+          role="tablist"
+        >
+          <button
+            aria-selected="false"
+            class=""
+            data-module-tab="NOVEL"
+            id="module-tab-novel"
+            role="tab"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-book-open"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+            </svg>
+            <span>
+              小说
+            </span>
+          </button>
+          <button
+            aria-selected="true"
+            class="is-active"
+            data-module-tab="IMAGE"
+            id="module-tab-image"
+            role="tab"
+            tabindex="0"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-image"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="18"
+                rx="2"
+                ry="2"
+                width="18"
+                x="3"
+                y="3"
+              />
+              <circle
+                cx="9"
+                cy="9"
+                r="2"
+              />
+              <path
+                d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"
+              />
+            </svg>
+            <span>
+              图片
+            </span>
+          </button>
+          <button
+            aria-selected="false"
+            class=""
+            data-module-tab="VIDEO"
+            id="module-tab-video"
+            role="tab"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-video"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"
+              /...
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-shell"
+      data-module="IMAGE"
+      style="--layout-inspector-width: 340px;"
+    >
+      <header
+        class="global-header"
+      >
+        <div
+          aria-label="AI Novel Studio"
+          class="product-mark"
+        >
+          <span
+            class="product-mark__icon"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-book-open-text"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M16 12h2"
+              />
+              <path
+                d="M16 8h2"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+              <path
+                d="M6 12h2"
+              />
+              <path
+                d="M6 8h2"
+              />
+            </svg>
+          </span>
+          <span
+            class="product-mark__name"
+          >
+            <strong>
+              AI Novel
+            </strong>
+            <small>
+              Studio
+            </small>
+          </span>
+        </div>
+        <div
+          aria-label="创作模块"
+          class="module-switcher"
+          role="tablist"
+        >
+          <button
+            aria-selected="false"
+            class=""
+            data-module-tab="NOVEL"
+            id="module-tab-novel"
+            role="tab"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-book-open"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+            </svg>
+            <span>
+              小说
+            </span>
+          </button>
+          <button
+            aria-selected="true"
+            class="is-active"
+            data-module-tab="IMAGE"
+            id="module-tab-image"
+            role="tab"
+            tabindex="0"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-image"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="18"
+                rx="2"
+                ry="2"
+                width="18"
+                x="3"
+                y="3"
+              />
+              <circle
+                cx="9"
+                cy="9"
+                r="2"
+              />
+              <path
+                d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"
+              />
+            </svg>
+            <span>
+              图片
+            </span>
+          </button>
+          <button
+            aria-selected="false"
+            class=""
+            data-module-tab="VIDEO"
+            id="module-tab-video"
+            role="tab"
+            tabindex="-1"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-video"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"
+              /...
+ ❯ waitForWrapper ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/creative/IndependentStudioWorkspace.test.tsx:124:18
+    122|     fireEvent.click(screen.getByLabelText('图片设计'));
+    123|     fireEvent.click(screen.getByRole('button', { name: '保存创作偏好' …
+    124|     await screen.findByRole('alert');
+       |                  ^
+    125|     expect((screen.getByLabelText('图片设计') as HTMLInputElement).che…
+    126|     expect(screen.getAllByRole('tab')).toHaveLength(8);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  2 failed | 383 passed | 1 skipped (386)
+      Tests  2 failed | 4161 passed | 6 skipped (4169)
+   Start at  23:02:24
+   Duration  63.80s (transform 50.21s, setup 4.86s, collect 211.31s, tests 407.71s, environment 332.92s, prepare 57.94s)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-retirement-canvas-20261016/frontend-full-r3.json

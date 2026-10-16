@@ -1,0 +1,122 @@
+<testsuites id="" name="" tests="3" failures="3" skipped="0" errors="0" time="4.695933">
+<testsuite name="v2-director-console-live.spec.ts" timestamp="2026-10-16T15:20:48.936Z" hostname="director-1366x768" tests="1" failures="1" skipped="0" time="1.023" errors="0">
+<testcase name="real File Director graph participant saves, reopens and refuses a changed source" classname="v2-director-console-live.spec.ts" time="1.023">
+<properties>
+<property name="verification" value="Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1366x768\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1366x768\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [director-1366x768] › v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 400
+
+      14 |     if (path.startsWith('/api/')) calls.push({ method: value.request().method(), path, status: value.status() }); });
+      15 |   const exact = async (response: APIResponse, status: number) => {
+    > 16 |     expect(response.status(), await response.text()).toBe(status); return response.json();
+         |                                                      ^
+      17 |   };
+      18 |   info.annotations.push({ type: 'verification', description: 'Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.' });
+      19 |   const enterWorkspace = async () => {
+        at exact (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:16:54)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:31:21
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-development\director-console-integrated-final\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-development\director-console-integrated-final\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1366x768\error-context.md
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="v2-director-console-live.spec.ts" timestamp="2026-10-16T15:20:48.936Z" hostname="director-1440x900" tests="1" failures="1" skipped="0" time="0.46" errors="0">
+<testcase name="real File Director graph participant saves, reopens and refuses a changed source" classname="v2-director-console-live.spec.ts" time="0.46">
+<properties>
+<property name="verification" value="Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [director-1440x900] › v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 400
+
+      14 |     if (path.startsWith('/api/')) calls.push({ method: value.request().method(), path, status: value.status() }); });
+      15 |   const exact = async (response: APIResponse, status: number) => {
+    > 16 |     expect(response.status(), await response.text()).toBe(status); return response.json();
+         |                                                      ^
+      17 |   };
+      18 |   info.annotations.push({ type: 'verification', description: 'Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.' });
+      19 |   const enterWorkspace = async () => {
+        at exact (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:16:54)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:31:21
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-development\director-console-integrated-final\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-development\director-console-integrated-final\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\error-context.md
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="v2-director-console-live.spec.ts" timestamp="2026-10-16T15:20:48.936Z" hostname="director-1920x1080" tests="1" failures="1" skipped="0" time="0.45" errors="0">
+<testcase name="real File Director graph participant saves, reopens and refuses a changed source" classname="v2-director-console-live.spec.ts" time="0.45">
+<properties>
+<property name="verification" value="Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1920x1080\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1920x1080\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [director-1920x1080] › v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 400
+
+      14 |     if (path.startsWith('/api/')) calls.push({ method: value.request().method(), path, status: value.status() }); });
+      15 |   const exact = async (response: APIResponse, status: number) => {
+    > 16 |     expect(response.status(), await response.text()).toBe(status); return response.json();
+         |                                                      ^
+      17 |   };
+      18 |   info.annotations.push({ type: 'verification', description: 'Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.' });
+      19 |   const enterWorkspace = async () => {
+        at exact (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:16:54)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:31:21
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-development\director-console-integrated-final\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1920x1080\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-development\director-console-integrated-final\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1920x1080\error-context.md
+]]>
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

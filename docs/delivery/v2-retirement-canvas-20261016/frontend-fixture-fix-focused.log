@@ -1,0 +1,19 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 1362ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 472ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests) 1495ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 362ms
+ ✓ src/creative/IndependentStudioRelationships.test.tsx (5 tests) 2999ms
+   ✓ studio relationship ownership and draft integration > keeps a relationship draft across navigation attempts and prevents other asset mutations 1157ms
+   ✓ studio relationship ownership and draft integration > saves through the original asset owner and refreshes the source version without copying a target 579ms
+   ✓ studio relationship ownership and draft integration > preserves CAS-conflicted input and source version until an explicit reload 547ms
+   ✓ studio relationship ownership and draft integration > clears selected private content when saving the relationship is revoked 357ms
+   ✓ studio relationship ownership and draft integration > prevents relation writes while a provenance draft is being edited 357ms
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  23:05:29
+   Duration  5.94s (transform 1.56s, setup 34ms, collect 5.00s, tests 5.86s, environment 1.89s, prepare 297ms)
+

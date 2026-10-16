@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-16T15:37:22.858941+00:00",
+  "owned_loopback_ports": {
+    "8128": {
+      "loopback_connect_exit": 10035
+    },
+    "5198": {
+      "loopback_connect_exit": 10035
+    },
+    "53564": {
+      "loopback_connect_exit": 10035
+    },
+    "50678": {
+      "loopback_connect_exit": 10035
+    }
+  },
+  "owned_ports_accepting_connections": [],
+  "drive_d_bytes": {
+    "total": 1785315979264,
+    "used": 1610268848128,
+    "free": 175047131136
+  },
+  "initial_observed_drive_d_free_bytes": 175556718592,
+  "net_free_space_change_bytes": -509587456,
+  "space_reclaimed_claim": false,
+  "retained": [
+    ".runtime validation profiles and PostgreSQL data/databases",
+    "D:/PoemSeed/Worktrees/v2-baseline-regression-20261016",
+    "all passing and failing evidence"
+  ],
+  "cleanup_limit": "Automatic approval review rejected temporary-directory/worktree cleanup with generic blocked-by-policy reason. Cleanup was not retried through an alternative deletion path.",
+  "original_checkout_head": "5af9bfc40abc305154a1a35e50f5e8e47c1c1322",
+  "original_checkout_porcelain": "?? .graphflow/\n?? build/"
+}

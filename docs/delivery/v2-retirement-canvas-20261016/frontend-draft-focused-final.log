@@ -1,0 +1,25 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/creative/graphDraft.test.ts (39 tests) 6ms
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 5ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 520ms
+ ✓ src/creative/StudioSelectLabels.test.tsx (4 tests) 496ms
+   ✓ stable exact names for Studio selects with populated options > keeps saved-graph, node, asset and port names stable while editing the real graph hook 309ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 1092ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 417ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (4 tests) 2088ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 622ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 792ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 342ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 331ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 2411ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 546ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 467ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 399ms
+
+ Test Files  7 passed (7)
+      Tests  98 passed (98)
+   Start at  22:59:00
+   Duration  4.81s (transform 1.65s, setup 42ms, collect 5.06s, tests 6.62s, environment 2.64s, prepare 739ms)
+

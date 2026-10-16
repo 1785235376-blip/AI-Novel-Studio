@@ -1,0 +1,23 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/creative/graphDraft.test.ts (39 tests) 6ms
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 6ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 503ms
+ ✓ src/creative/StudioSelectLabels.test.tsx (4 tests) 519ms
+   ✓ stable exact names for Studio selects with populated options > keeps saved-graph, node, asset and port names stable while editing the real graph hook 310ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (10 tests) 965ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 367ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (4 tests) 1890ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 597ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 726ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 2082ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 500ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 429ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 313ms
+
+ Test Files  7 passed (7)
+      Tests  97 passed (97)
+   Start at  22:57:57
+   Duration  4.46s (transform 1.62s, setup 61ms, collect 4.88s, tests 5.97s, environment 2.91s, prepare 802ms)
+

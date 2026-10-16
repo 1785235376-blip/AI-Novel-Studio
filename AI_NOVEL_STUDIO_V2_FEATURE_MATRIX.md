@@ -1689,3 +1689,35 @@ defaults, and a **deliberate redaction precedent** (`production_lineage.py:289` 
 | Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
 
 This section adds current facts only.
+
+
+<!-- V2-RETIREMENT-CANVAS-20261016 -->
+## 2026-10-16 — Project retirement + Canvas/Director foundation 最新检查点
+
+本节为 append-only 当前事实；早期记录保留，旧 `authoring NOT_RUN` 与旧 lock 描述不作为当前结论。
+实现 HEAD `62d4aaf621eb7663e37d2ad88f2f9c64db9095f9`，后续仅发布报告与原始证据。PR #47 原分支 fast-forward 推送，main/frozen refs 未改。
+完整逐文件、失败/通过回执、范围与下一入口见 [docs/delivery/v2-retirement-canvas-20261016/V2_RETIREMENT_CANVAS_ROUND_REPORT.md](docs/delivery/v2-retirement-canvas-20261016/V2_RETIREMENT_CANVAS_ROUND_REPORT.md)。
+
+| 项目 | 当前结论 |
+| --- | --- |
+| Project retirement / incarnation isolation | 本轮指定缺陷已实现并通过真实 File/PG：项目级授权/binding/scopes 随原 owner 退休；新 incarnation 不继承旧授权；exact 403 与合法新作者 201/200 均有控制。 |
+| Cross-workspace / orphan / scope races | 同 workspace 历史 orphan 在原创建事务清除；foreign binding exact 400、无公开 orphan；原 owner 租约覆盖 scope validation/save；audited mutations 原边界前后重验 actor/membership。不是所有路由的撤权/ABA 并发证明。 |
+| Canvas / GRAPH | PARTIAL foundation：现有 Studio 挂载、schema 1/2 文本图本地恢复、incarnation/version/digest 复核与显式恢复；媒体/外部引用/分组注释恢复及完整 Infinite Canvas 未建立验收。 |
+| Director / CONSOLE / DIR | PARTIAL foundation：原 director_plan Graph 节点打开原 DirectorWorkspace 只读投影，前后 pin 校验、stale/revocation 拒绝、collapse/expand/reopen 已验证；完整 authoring/决策/review/rollback 未完成。 |
+| Prompt / R3 | authoring 的创建/修订/CAS/幂等实现已存在；production adoption gate 仍关闭，503 PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED。继续原 Asset/Review owner，不能重建。 |
+| 真实 File | scope/retirement/orphan/权限基础 62 passed；冻结生命周期/额外 IO/通知/锁顺序 32 passed。 |
+| 真实 PostgreSQL | 最终稳定源码组合 48 passed，47 File cases deselected；PostgreSQL 16.15、新空库、原 20 migrations、实例已停止。 |
+| Frontend / tsc / build | 4163 passed、6 skipped、0 failed；tsc -b 与 Vite build PASS。 |
+| Browser | 原 Chromium visual/geometry 7 passed；真实 File Canvas+Director 最终三视口 3 passed，无响应 mock/dev session registry。 |
+| 冻结保护 | 750 frozen test/gate sources、752 选定保护 artifacts 与基线原字节相同；9151 manifest 不变。增量清单14910为 INVENTORY_ONLY，不是测试通过数。 |
+| 高级功能 / release | Storyboard/媒体图/NLE EDIT-16/3D/Tutor/storage/internal Mature 完整增量与全 V2集成未由本轮交付；整体 PARTIAL，非 freeze/RC。 |
+| NOT_RUN / LOCAL_REQUIRED | hosted 最终 HEAD CI、真实 PG browser、Windows installer/clean-machine、真实模型/GPU inference。既有 Prompt browser spec 存在，本轮未重新审计其运行回执。 |
+
+下一精确入口：`app/creative/prompt_adoption_api.py:adopt_prompt` 与
+`PromptAdoptionService.adopt_atomic`，在真实原路径证明 write-time binding（当前
+`source_bindings_verified=False`）、私有 Prompt 删除→tombstone、跨进程/撤权并发及 R3 browser gate；
+production adoption gate 在验证成立前保持关闭。复用现有 `_write`、File/PG 服务测试及 Prompt browser spec。
+原 `AssetLibraryService.project_scope` 当前已持 `workspace_mutation` 跨越 yield，不能沿用旧测试说明断言它无跨序列锁。
+
+原始失败记录全部保留；本轮 API/Vite/PG 已停止。自动审批复核阻止临时目录/worktree 清理，保留 profile、
+PG 数据与 baseline regression worktree，未通过其他删除路径绕过，也未宣称回收磁盘空间。
