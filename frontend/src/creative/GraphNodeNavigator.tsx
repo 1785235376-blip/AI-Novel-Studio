@@ -26,6 +26,7 @@ export function GraphNodeNavigator({ nodes, definitions, owner, busy, readonly, 
   const index = Math.min(active, Math.max(0, matches.length - 1));
   const start = Math.floor(index / GRAPH_NAVIGATION_PAGE_SIZE) * GRAPH_NAVIGATION_PAGE_SIZE;
   const page = matches.slice(start, start + GRAPH_NAVIGATION_PAGE_SIZE);
+  useEffect(() => { setActive(0); }, [entries]);
   useEffect(() => { setOpen(false); setQuery(''); setActive(0); }, [owner]);
   useEffect(() => { if (open && !busy) input.current?.focus(); }, [open, busy]);
   useEffect(() => {
@@ -38,8 +39,8 @@ export function GraphNodeNavigator({ nodes, definitions, owner, busy, readonly, 
     if (event.nativeEvent.isComposing || event.keyCode === 229) return;
     if (event.key === 'Escape' && open) { event.preventDefault(); close(); }
   }}>
-    <Button ref={trigger} type="button" variant="ghost" disabled={busy && !open} aria-expanded={open} aria-controls={`${id}-panel`}
-      onClick={() => open ? close() : setOpen(true)}>查找图中节点</Button>
+    <Button ref={trigger} type="button" variant="ghost" aria-disabled={busy && !open} aria-expanded={open} aria-controls={`${id}-panel`}
+      onClick={() => { if (open) close(); else if (!busy) setOpen(true); }}>查找图中节点</Button>
     {open && <section id={`${id}-panel`} aria-label="图中节点目录" className="graph-canvas__groups">
       <label htmlFor={`${id}-input`}>按名称、类型或 ID 查找</label>
       <input ref={input} id={`${id}-input`} role="combobox" aria-label="查找图中节点" autoComplete="off"

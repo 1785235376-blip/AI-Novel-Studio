@@ -331,7 +331,7 @@ describe('measured viewport rendering', () => {
     fireEvent.change(screen.getByRole('combobox', { name: '查找图中节点' }), { target: { value: 'prepare' } });
     fireEvent.keyDown(screen.getByRole('combobox', { name: '查找图中节点' }), { key: 'Enter' });
     expect(selections).toHaveBeenCalledWith(['prepare']); expect(changes).not.toHaveBeenCalled();
-    rerender({ busy: true }); expect((screen.getByRole('button', { name: '查找图中节点' }) as HTMLButtonElement).disabled).toBe(true);
+    rerender({ busy: true }); expect(screen.getByRole('button', { name: '查找图中节点' }).getAttribute('aria-disabled')).toBe('true');
   });
   it('filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing', () => {
     measure();
