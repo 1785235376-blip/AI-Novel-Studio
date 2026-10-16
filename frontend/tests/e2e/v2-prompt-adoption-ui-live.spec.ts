@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { expect, test, type APIResponse } from '@playwright/test';
-import { openPromptWorkspace, promptLibrary } from '../../e2e/promptAcceptanceEntry';
+import { openPromptWorkspace, promptLibrary, studioSwitcher } from '../../e2e/promptAcceptanceEntry';
 
 const FIRST = '  采用成功闭环 第一版\n逐字中文与 emoji 🙂  \n';
 const NEWER = '  来源家族第二版；不应自动替换已采用修订 🎬\n';
@@ -91,6 +91,11 @@ test('isolated original button commits bound Prompt and reload preserves its exa
       }
       if (await projectChoice.isVisible()) await projectChoice.click();
       await expect(currentScope).toBeVisible();
+      // Scope is restored before the original App overview/entry effect ends.
+      // Wait for its real IMAGE destination and loaded workspace before asking
+      // the original module navigation to open the storyboard.
+      await expect(page.getByRole('tab', { name: '图片', exact: true })).toHaveAttribute('aria-selected', 'true');
+      await expect(studioSwitcher(page)).toBeVisible();
     };
     const openBoard = async () => {
       await page.getByRole('tab', { name: '小说', exact: true }).click();
