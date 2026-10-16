@@ -1,0 +1,270 @@
+{
+  "baseline_commit": "85fdf375423446d13c8badea7694657cae840aac",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/VoicePlanReview.test.tsx src/experimental/VoiceSubtitlePanels.test.tsx src/experimental/VoiceDirectionPanel.continuation.test.tsx src/experimental/ExperimentalWorkbench.continuation.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:33:58.750847+00:00",
+      "finished_utc": "2026-10-16T13:34:01.988057+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-ui-r2/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "source_sha256": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/voice-review-final-ui-r2.log",
+      "log_sha256": "f81cb9a428581c575f7f20f2cf8aa0ed0e6852676bca9f6f8acb7ffda42e1d88",
+      "receipt": "docs/delivery/v2-development/voice-review-final-ui-r2.json",
+      "receipt_sha256": "dec1eb22927e949a0da06d9a6bfc9045af7aa9d4654d763451179100bf6ec4a6"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:33:57.296317+00:00",
+      "finished_utc": "2026-10-16T13:34:34.181640+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-build/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "source_sha256": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/voice-review-final-build.log",
+      "log_sha256": "0cd4321c6a1d37ef00d2d75bc83648b567540b95de863a0dc7a91d2ed478fa9a",
+      "receipt": "docs/delivery/v2-development/voice-review-final-build.json",
+      "receipt_sha256": "07c1caca382de5e0782a7315a1101ebefe3f8c2592e52af76269e8029994c310"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r5_voice_subtitles.py::test_only_corrected_audio_invalidated_and_source_text_unchanged[file]",
+        "tests/test_r5_voice_subtitles.py::test_unknown_narration_override_lock_and_reorder[file]",
+        "tests/test_r5_voice_subtitles.py::test_safe_pronunciation_no_cascade_markup_or_regex[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/voice-review-final-file-public/tmp",
+        "-q"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:34:18.503804+00:00",
+      "finished_utc": "2026-10-16T13:34:26.399799+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-final-file-public/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "source_sha256": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/voice-review-final-file-public.log",
+      "log_sha256": "7679e5c723acd30fcc406c1741bdcbc7a99d205946d70d93f17ae93844e31a35",
+      "receipt": "docs/delivery/v2-development/voice-review-final-file-public.json",
+      "receipt_sha256": "ef70ca54c5958697fde74cc5a9fc0466d989958659ab127c586e2c9ed3645742"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:34:02.558498+00:00",
+      "finished_utc": "2026-10-16T13:34:02.762028+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-token/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "source_sha256": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/voice-review-token.log",
+      "log_sha256": "8dd3e0adcae13039aef7e12ddbfff56c34063c38c7656944780e00d6e40c2707",
+      "receipt": "docs/delivery/v2-development/voice-review-token.json",
+      "receipt_sha256": "da2af6fdffff6245df102221d3559d9956939450e030cbc95076dae57afa6cd0"
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import pathlib,re; files=[\"frontend/src/experimental/VoiceDirectionPanel.tsx\",\"frontend/src/experimental/VoicePlanReview.tsx\"]; assert all(not re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",pathlib.Path(p).read_text(),re.I) for p in files); print(\"Scoped token guard PASS\")"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T13:34:35.003282+00:00",
+      "finished_utc": "2026-10-16T13:34:35.031237+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/voice-review-scoped-token/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "85fdf375423446d13c8badea7694657cae840aac",
+      "source_sha256": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/VoiceDirectionPanel.tsx": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+        "frontend/src/experimental/VoicePlanReview.tsx": "f590f7684168d3e71da7a9aad3f0f9f395989b34a60d4f3dfb2de3649d87f9ce",
+        "frontend/src/experimental/VoicePlanReview.test.tsx": "8071b6bff82a18a91b070770a23e77d22276facc4475d0246b857700512c2a5b"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/voice-review-scoped-token.log",
+      "log_sha256": "0f60413763c866e35019437c33d233ca2415617df3bce60da78ae15ab1607a63",
+      "receipt": "docs/delivery/v2-development/voice-review-scoped-token.json",
+      "receipt_sha256": "e0f4466373d2e63d4624a0c263623fc68ec6970e0ef2b82dceb62798d9a9dfe2"
+    }
+  ],
+  "not_run": [
+    "browser/visual/native",
+    "HTTP",
+    "PG/P0",
+    "Windows/GPU",
+    "provider/TTS/real voice quality",
+    "full RC",
+    "push/hosted CI"
+  ]
+}
