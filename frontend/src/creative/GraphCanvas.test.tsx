@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GraphCanvas } from './GraphCanvas';
@@ -193,5 +193,69 @@ describe('controlled typed graph canvas', () => {
     const { changes } = setup(); fireEvent.wheel(viewport(), { deltaY: 100 }); expect(changes).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: '放大节点图' })); expect(screen.getByLabelText('节点图缩放').textContent).toBe('120%');
     fireEvent.click(screen.getByRole('button', { name: '缩小节点图' })); expect(screen.getByLabelText('节点图缩放').textContent).toBe('100%');
+  });
+});
+
+
+describe('measured viewport rendering', () => {
+  const measure = () => vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, toJSON: () => ({}) });
+  const distant = () => { const graph = initial(); graph.nodes[1].position = { x: 5000, y: 144 }; return graph; };
+  it('culls cards, retains crossing edges and recovers unchanged nodes after pan', () => {
+    measure(); const definition = distant(), original = JSON.stringify(definition);
+    const { changes } = setup({ definition });
+    expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+    expect(edgePath()).toBeTruthy();
+    down(viewport(), 0, 0, { altKey: true }); move(-4800, 0); up(-4800, 0);
+    expect(prepare()).toBeTruthy(); expect(screen.queryByRole('button', { name: '选择节点 文本输入 · source' })).toBeNull();
+    expect(changes.mock.calls[0][0].nodes).toBe(definition.nodes); expect(JSON.stringify(definition)).toBe(original);
+  });
+  it('retains selected nodes and controller-owned connection anchors without changing graph data', () => {
+    measure(); const { changes, rerender } = setup({ definition: distant(), selectedNodeIds: ['prepare'] });
+    expect(prepare()).toBeTruthy(); rerender({ selectedNodeIds: [], connectionNodeIds: ['prepare'] }); expect(prepare()).toBeTruthy();
+    rerender({ selectedNodeIds: [], connectionNodeIds: [] }); expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+    expect(changes).not.toHaveBeenCalled();
+  });
+  it('preserves a focused port while zoom/pan moves its card offscreen and releases it after blur', () => {
+    measure(); const definition = initial(), onPortSelect = vi.fn(); const { rerender } = setup({ definition, onPortSelect });
+    const port = screen.getByRole('button', { name: '草稿整理 prepare 输入端口 text · TEXT · 必需' });
+    act(() => port.focus());
+    rerender({ definition: { ...definition, viewport: { x: -5000, y: 0, zoom: 1 } } });
+    expect(document.activeElement).toBe(port); fireEvent.click(port); expect(onPortSelect).toHaveBeenCalledTimes(1);
+    act(() => viewport().focus());
+    expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+  });
+  it('offers keyboard-native selection of every offscreen node and centers via existing controlled viewport', () => {
+    measure(); const { changes } = setup({ definition: distant() });
+    const navigator = screen.getByRole('combobox', { name: '选择图节点' });
+    fireEvent.change(navigator, { target: { value: 'prepare' } });
+    expect(prepare().getAttribute('aria-pressed')).toBe('true');
+    expect(changes.mock.calls[0][0].viewport.x).toBe(-4760);
+    expect(changes.mock.calls[0][0].nodes[1].position.x).toBe(5000);
+    fireEvent.keyDown(navigator, { key: 'Delete' }); expect(changes).toHaveBeenCalledTimes(1);
+  });
+  it('keeps readonly navigation selection nonmutating and disables the directory while busy', () => {
+    measure(); const { changes, selections, rerender } = setup({ definition: distant(), readonly: true });
+    fireEvent.change(screen.getByRole('combobox', { name: '选择图节点' }), { target: { value: 'prepare' } });
+    expect(selections).toHaveBeenCalledWith(['prepare']); expect(changes).not.toHaveBeenCalled();
+    rerender({ busy: true }); expect((screen.getByRole('combobox', { name: '选择图节点' }) as HTMLSelectElement).disabled).toBe(true);
+  });
+  it('selects all offscreen cards and preserves a dragged card until cancellation', () => {
+    measure(); const { changes } = setup({ definition: distant() });
+    fireEvent.keyDown(viewport(), { key: 'a', ctrlKey: true }); expect(prepare().getAttribute('aria-pressed')).toBe('true');
+    down(source(), 30, 30); move(-5000, -5000); expect(source()).toBeTruthy(); expect(prepare()).toBeTruthy();
+    fireEvent.keyDown(viewport(), { key: 'Escape' }); expect(position('source').left).toBe('24px'); expect(changes).not.toHaveBeenCalled();
+  });
+  it('drops focus retention when the interaction owner changes', () => {
+    measure(); const definition = initial(); const { rerender } = setup({ definition, interactionKey: 'one', onPortSelect: vi.fn() });
+    act(() => screen.getByRole('button', { name: '草稿整理 prepare 输入端口 text · TEXT · 必需' }).focus());
+    rerender({ definition: { ...definition, viewport: { x: -5000, y: 0, zoom: 1 } }, interactionKey: 'two' });
+    expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+  });
+  it('responds to ResizeObserver and disconnects it on unmount', () => {
+    const bounds = measure(); let notify = () => {}; const disconnect = vi.fn();
+    vi.stubGlobal('ResizeObserver', class { constructor(callback: () => void) { notify = callback; } observe() {} disconnect = disconnect; });
+    const { unmount } = setup({ definition: distant() }); expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
+    bounds.mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 6000, bottom: 400, width: 6000, height: 400, toJSON: () => ({}) });
+    act(() => notify()); expect(prepare()).toBeTruthy(); unmount(); expect(disconnect).toHaveBeenCalledOnce();
   });
 });

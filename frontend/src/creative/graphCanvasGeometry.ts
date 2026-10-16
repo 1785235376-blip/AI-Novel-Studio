@@ -69,7 +69,7 @@ export function moveGraphNodes(definition: StudioGraphDefinition, ids: readonly 
     : node) };
 }
 
-export function graphPortPosition(node: StudioGraphNode, descriptor: GraphCanvasNodeDefinition | undefined, direction: 'input' | 'output', portId: string): StudioGraphPosition | null {
+export function graphPortPosition(node: Pick<StudioGraphNode, 'position'>, descriptor: GraphCanvasNodeDefinition | undefined, direction: 'input' | 'output', portId: string): StudioGraphPosition | null {
   const ports = direction === 'input' ? descriptor?.inputs : descriptor?.outputs;
   const index = ports?.findIndex(port => port.id === portId) ?? -1;
   if (index < 0) return null;

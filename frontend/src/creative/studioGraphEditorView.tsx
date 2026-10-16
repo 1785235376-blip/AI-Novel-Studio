@@ -39,6 +39,12 @@ function pendingConnectionIssue(definition: StudioGraphDefinition, catalog: read
       source_port: source[1], target_node_id: target[0], target_port: target[1] });
   } catch { return undefined; }
 }
+function connectionNodeIds(...keys: string[]): string[] {
+  return keys.flatMap(key => {
+    try { const value: unknown = JSON.parse(key); return Array.isArray(value) && value.length === 2 && typeof value[0] === 'string' && typeof value[1] === 'string' ? [value[0]] : []; }
+    catch { return []; }
+  });
+}
 /** Render only. UI refactors consume the same controller without replacing operation contracts. */
 export function studioGraphEditorView(controller: StudioGraphEditorController, props: StudioGraphEditorProps,
   canvas?: { local: LocalCanvasState; onLocal: (next: LocalCanvasState) => void }) {
@@ -138,7 +144,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
         local={canvas.local} onLocal={canvas.onLocal}
         onKind={value => setKind(value as StudioGraphDefinitionId)} onSourcePort={setSourcePort} onTargetPort={setTargetPort}
         onAddNode={addNode} onConnect={connect} onSelect={setSelected} onTravel={direction => travel(direction === 'REDO')} />}
-      <GraphCanvas definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => { if (port.direction === 'output') setSourcePort(portKey(port.nodeId, port.portId)); else setTargetPort(portKey(port.nodeId, port.portId)); }} />
+      <GraphCanvas connectionNodeIds={connectionNodeIds(sourcePort, targetPort)} definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => { if (port.direction === 'output') setSourcePort(portKey(port.nodeId, port.portId)); else setTargetPort(portKey(port.nodeId, port.portId)); }} />
       <section aria-label="图连接列表"><h3>已保存到草稿的连接</h3>{!draft.edges.length && <p>暂无连接；不相连节点可以独立保存。</p>}<ul>{draft.edges.map(edge => <li key={edge.id}>{edge.source_node_id}.{edge.source_port} → {edge.target_node_id}.{edge.target_port}<Button disabled={!editable} onClick={() => change({ ...draft, edges: draft.edges.filter(row => row.id !== edge.id) })}>移除连接 {edge.id}</Button></li>)}</ul></section>
       <GraphRunPanel client={client.graphs} graph={base} targetNodeIds={selected} dirty={dirty || blocked} busy={busy} canMutate={canMutate && !externalDirty} canReview={canReview && !externalDirty} modelExecutionEnabled={!videoGraph && catalog.capabilities.model_execution && catalog.capabilities.model_execution_contract === 'creative-graph-model/1'} mediaExecutionEnabled={mediaEnabled} onDirtyChange={setExecutionDirty} isCurrent={current} read={read} mutate={mutate} requestedRunId={requestedRunId} onRunSelectionChange={reportRunSelection} />
     </>}

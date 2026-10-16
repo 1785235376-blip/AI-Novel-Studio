@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react';
 import { Hand, MousePointer2, Trash2, ZoomIn, ZoomOut } from 'lucide-react';
 import { Badge, Button } from '../ui/primitives';
@@ -6,10 +6,11 @@ import { GRAPH_NODE_LABELS } from './studioGraphLabels';
 import type { StudioGraphDefinition, StudioGraphPosition } from './studioGraphTypes';
 import {
   GRAPH_MAX_ZOOM, GRAPH_MIN_ZOOM, GRAPH_NODE_HEADER_HEIGHT, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT,
-  clampGraphPosition, graphEdgePath, graphNodeHeight, graphNodesInScreenRect, graphPortPosition,
+  clampGraphPosition, graphEdgePath, graphNodeHeight, graphNodesInScreenRect,
   graphSelectionRect, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
 import type { GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
+import { createGraphDisplayIndex, projectGraphDisplay } from './graphCanvasPresentation';
 import './graphCanvas.css';
 
 export type { GraphCanvasNodeDefinition, GraphCanvasPort } from './graphCanvasGeometry';
@@ -23,6 +24,8 @@ export type GraphCanvasProps = {
   onDefinitionChange: (definition: StudioGraphDefinition, record?: boolean) => void;
   onPortSelect?: (selection: GraphCanvasPortSelection) => void;
   protectedNodeIds?: readonly string[];
+  /** Pending connection endpoints owned by the existing editor controller. */
+  connectionNodeIds?: readonly string[];
   /** Change with the active project/actor owner, even when the definition identity is reused. */
   interactionKey?: string | number;
   readonly?: boolean;
@@ -45,19 +48,44 @@ type Gesture = {
 const sameIds = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id, index) => id === b[index]);
 
 export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSelectionChange, onDefinitionChange,
-  onPortSelect, protectedNodeIds = [], interactionKey, readonly = false, busy = false }: GraphCanvasProps) {
+  onPortSelect, protectedNodeIds = [], connectionNodeIds = [], interactionKey, readonly = false, busy = false }: GraphCanvasProps) {
   const blocked = readonly || busy;
   const viewportRef = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
   const wheelUntil = useRef(0);
   const [preview, setPreview] = useState<{ source: StudioGraphDefinition; value: StudioGraphDefinition } | null>(null);
   const [marquee, setMarquee] = useState<GraphCanvasRect | null>(null);
+  const [viewportSize, setViewportSize] = useState<{ width: number; height: number } | null>(null);
+  const [focusedNode, setFocusedNode] = useState<string | null>(null);
   const [tool, setTool] = useState<'select' | 'pan'>('select');
   const [activeGesture, setActiveGesture] = useState<Gesture['kind'] | null>(null);
   const descriptionId = useId(), markerId = useId().replace(/:/g, '');
   const visible = preview?.source === definition ? preview.value : definition;
-  const selected = selectedNodeIds.filter(id => definition.nodes.some(node => node.id === id));
+  const displayIndex = useMemo(() => createGraphDisplayIndex(visible.nodes, visible.edges, nodeDefinitions), [visible.nodes, visible.edges, nodeDefinitions]);
+  const allNodeIds = useMemo(() => new Set(definition.nodes.map(node => node.id)), [definition.nodes]);
+  const selected = selectedNodeIds.filter(id => allNodeIds.has(id));
+  const display = projectGraphDisplay(displayIndex, visible.viewport, viewportSize, [...selected, ...(gesture.current?.ids || []), ...connectionNodeIds, ...(focusedNode ? [focusedNode] : [])]);
+  const renderedNodes = visible.nodes.filter(node => display.nodeIds.has(node.id));
+  const selectedSet = new Set(selected);
+  // Keep lightweight accessibility entries stable during camera-only updates.
+  const nodeOptions = useMemo(() => definition.nodes.map(node => <option key={node.id} value={node.id}>{displayIndex.descriptors.get(node.definition_id)?.label || GRAPH_NODE_LABELS[node.definition_id] || node.definition_id} · {node.id}</option>), [definition.nodes, displayIndex.descriptors]);
+  const edgeDescriptions = useMemo(() => definition.edges.map(edge => <li key={edge.id}>{edge.source_node_id} 输出 {edge.source_port} 连接至 {edge.target_node_id} 输入 {edge.target_port}</li>), [definition.edges]);
   const removable = selected.filter(id => !protectedNodeIds.includes(id));
+
+  useEffect(() => {
+    const element = viewportRef.current;
+    if (!element) return;
+    const measure = () => {
+      const { width, height } = element.getBoundingClientRect();
+      setViewportSize(previous => previous?.width === width && previous.height === height ? previous : { width, height });
+    };
+    measure();
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
+    observer?.observe(element);
+    window.addEventListener('resize', measure);
+    return () => { observer?.disconnect(); window.removeEventListener('resize', measure); };
+  }, []);
+  useEffect(() => { setFocusedNode(null); }, [interactionKey]);
 
   const releaseCapture = useCallback((pointerId: number) => {
     const element = viewportRef.current;
@@ -195,11 +223,25 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       <output aria-label="节点图缩放">{Math.round(visible.viewport.zoom * 100)}%</output>
       <Button type="button" variant="ghost" aria-label="放大节点图" disabled={blocked || visible.viewport.zoom >= GRAPH_MAX_ZOOM} onClick={() => zoomBy(1.2)}><ZoomIn size={16} /></Button>
       <span className="graph-canvas__count" role="status">{selected.length ? `已选 ${selected.length} 个节点` : `${definition.nodes.length} 个节点 · ${definition.edges.length} 条连接`}</span>
+      <label className="graph-canvas__navigator">节点目录<select aria-label="选择图节点" value="" disabled={busy} onChange={event => {
+        if (busy || gesture.current) return;
+        const node = visible.nodes.find(item => item.id === event.target.value);
+        if (!node) return;
+        onSelectionChange([node.id]);
+        if (!blocked && viewportSize) onDefinitionChange({ ...definition, viewport: { ...definition.viewport,
+          x: clampGraphPosition(viewportSize.width / 2 - (node.position.x + GRAPH_NODE_WIDTH / 2) * definition.viewport.zoom),
+          y: clampGraphPosition(viewportSize.height / 2 - (node.position.y + graphNodeHeight(displayIndex.descriptors.get(node.definition_id)) / 2) * definition.viewport.zoom) } }, true);
+      }}><option value="">选择节点</option>{nodeOptions}</select></label>
       {readonly && <Badge>只读</Badge>}
       <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || !removable.length} title={selected.length && !removable.length ? '已保存的资产引用只能移动或停用' : '删除所选节点及其连接'} onClick={deleteSelected}><Trash2 size={16} /></Button>
     </header>
     <div ref={viewportRef} className={`graph-canvas__viewport${tool === 'pan' ? ' is-pan-tool' : ''}${activeGesture === 'pan' ? ' is-panning' : ''}`}
       tabIndex={0} role="group" aria-label="节点图交互区域" aria-describedby={descriptionId}
+      onFocusCapture={event => setFocusedNode((event.target as Element).closest('[data-graph-node-id]')?.getAttribute('data-graph-node-id') || null)}
+      onBlurCapture={event => {
+        const next = event.relatedTarget;
+        if (!(next instanceof Element) || !event.currentTarget.contains(next)) setFocusedNode(null);
+      }}
       onPointerDown={event => {
         if (busy || isGraphEditableTarget(event.target) || (event.button !== 0 && event.button !== 1)) return;
         if (event.button === 1 || event.altKey || tool === 'pan') { startGesture(event, 'pan'); return; }
@@ -212,20 +254,14 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       <div className="graph-canvas__world" style={{ transform: `translate(${visible.viewport.x}px, ${visible.viewport.y}px) scale(${visible.viewport.zoom})` }}>
         <svg className="graph-canvas__edges" aria-hidden="true">
           <defs><marker id={markerId} viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" /></marker></defs>
-          {visible.edges.map(edge => {
-            const source = visible.nodes.find(node => node.id === edge.source_node_id), target = visible.nodes.find(node => node.id === edge.target_node_id);
-            if (!source || !target) return null;
-            const start = graphPortPosition(source, nodeDefinitions.find(item => item.id === source.definition_id), 'output', edge.source_port);
-            const end = graphPortPosition(target, nodeDefinitions.find(item => item.id === target.definition_id), 'input', edge.target_port);
-            return start && end ? <path key={edge.id} data-graph-edge-id={edge.id} d={graphEdgePath(start, end)} markerEnd={`url(#${markerId})`} /> : null;
-          })}
+          {display.edges.map(edge => <path key={edge.id} data-graph-edge-id={edge.id} d={graphEdgePath(edge.start, edge.end)} markerEnd={`url(#${markerId})`} />)}
         </svg>
-        {visible.nodes.map(node => {
-          const descriptor = nodeDefinitions.find(item => item.id === node.definition_id);
+        {renderedNodes.map(node => {
+          const descriptor = displayIndex.descriptors.get(node.definition_id);
           const label = descriptor?.label || GRAPH_NODE_LABELS[node.definition_id] || node.definition_id;
           const style = { left: node.position.x, top: node.position.y, width: GRAPH_NODE_WIDTH, height: graphNodeHeight(descriptor), '--graph-node-header-height': `${GRAPH_NODE_HEADER_HEIGHT}px`, '--graph-port-row-height': `${GRAPH_PORT_ROW_HEIGHT}px` } as CSSProperties;
-          return <article key={node.id} data-graph-node-id={node.id} className={`graph-canvas__node${selected.includes(node.id) ? ' is-selected' : ''}${!node.enabled ? ' is-disabled' : ''}`} style={style}>
-            <Button type="button" variant="ghost" className="graph-canvas__node-select" aria-label={`选择节点 ${label} · ${node.id}`} aria-pressed={selected.includes(node.id)} disabled={busy}
+          return <article key={node.id} data-graph-node-id={node.id} className={`graph-canvas__node${selectedSet.has(node.id) ? ' is-selected' : ''}${!node.enabled ? ' is-disabled' : ''}`} style={style}>
+            <Button type="button" variant="ghost" className="graph-canvas__node-select" aria-label={`选择节点 ${label} · ${node.id}`} aria-pressed={selectedSet.has(node.id)} disabled={busy}
               onPointerDown={event => {
                 if (event.button !== 0 || event.altKey || tool === 'pan') return;
                 event.stopPropagation();
@@ -259,6 +295,6 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       {!definition.nodes.length && <p className="graph-canvas__empty">从节点目录添加第一个节点，再选择输入和输出端口连接。</p>}
     </div>
     <p id={descriptionId} className="graph-canvas__help">拖动节点移动；空白处框选；Shift 多选；Alt 拖动或平移工具移动视图；Ctrl / ⌘ + 滚轮缩放。选中节点后可用方向键移动、Delete 删除，Esc 取消操作。</p>
-    <ul className="sr-only" aria-label="节点图连接">{definition.edges.map(edge => <li key={edge.id}>{edge.source_node_id} 输出 {edge.source_port} 连接至 {edge.target_node_id} 输入 {edge.target_port}</li>)}</ul>
+    <ul className="sr-only" aria-label="节点图连接">{edgeDescriptions}</ul>
   </section>;
 }

@@ -11,3 +11,12 @@ Next authorized product slice after review coordination: persistent canvas-only 
 Current stopping boundary: this bounded slice awaits parent review/next-slice coordination, not a claim of continuous background execution. Preserve untracked historical/local verification receipts; do not reset/clean. Keep only existing Dot cloud/Astra scope, no user computer or QingJian, no paid APIs, no unknown-cost push/CI.
 
 Future acceptance sequence noted by the user: later perform appropriately scoped local acceptance, then attach its results for a permitted cloud review/recheck. This is a future sequence only, not approval of a particular test scope or permission to access the user computer now. Local results do not automatically lift platform restrictions. P0 remains BLOCKED; no denial bypass or alternate local reproduction is authorized by this note. Independent feature work can continue.
+
+
+## Display culling continuation — 2026-10-16
+
+Baseline for this slice: local `3698c3dbb6b6be18252f58e2bb525fba933436f3`, tree `fcb488ed5294768958dd0637fabdc253fedab54c`. The containing commit adds disposable display geometry projection and mounted viewport culling without changing Graph execution or persistence owners. Full report/evidence: `docs/v2/canvas-display-culling-20261016.md` and adjacent JSON; synthetic benchmark: `canvas-display-benchmark-20261016.json`. No push/CI or browser runtime was attempted.
+
+Selected/focused/gesture/pending connection nodes remain mounted; crossing curves survive offscreen endpoints. Native directory keeps all nodes keyboard-selectable. The complete graph, parameters, selection, existing save/undo/CAS and connection owner remain intact. This is culling, not full LOD/infinite-canvas completion: native options and accessible connection descriptions still scale with all objects, retained all-selection may render all cards, hidden/unmeasured layout falls back to rendering all cards. Only pure display DTOs were used at 1000/10000 scale; no backend budgets were raised and no large DAG was executed.
+
+Current handoff: local commit awaits independent parent review. After review, next queued bounded slice is persistent canvas-only presentation state through an existing owner, followed by actual grouping/collapse/layout and MiniMap; reconcile current owner contracts before edits. No new phase question is needed under the frozen continuing task. P0 security/lifecycle remains BLOCKED and completely excluded; browser remains BLOCKED/NOT_RUN, all earlier account/cost/environment limits persist.
