@@ -1,4 +1,5 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { StyleComparisonReview } from './StyleComparisonReview';
 import { StyleAnalysisModelPanel } from './StyleAnalysisModelPanel';
 import { ApiError, type Chapter } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
@@ -117,6 +118,7 @@ function AnalysisReport({ row, title, onNavigate, api, chapter, onChanged, targe
     {(row.model_opinion_state === 'NOT_CONFIGURED' || row.model_opinion_state === 'NOT_REQUESTED') && <StatusMessage>Model Opinion：尚未请求模型意见。可以在下方明确选择本地模型并核对预览。描写和感官语义占比均未测量；人称词频不等于第一或第三人称判定。</StatusMessage>}
     {row.sample_metrics?.map((sample, index) => <details className="experimental-details" key={`${sample.chapter_id}:${sample.start}:${index}`}><summary>来源样本 {index + 1} 的独立测量与原文位置</summary><p>{sample.chapter_id} · v{sample.expected_version} · 原始 Markdown Unicode 范围 {sample.start}–{sample.end}</p><MeasuredRatios metrics={sample.metrics} />{sample.paragraphs.map(paragraph => <section key={`${paragraph.paragraph}:${paragraph.start}`}><p>原文段落 {paragraph.paragraph} · 范围 {paragraph.start}–{paragraph.end}{paragraph.partial_paragraph ? ' · 仅选择段落的一部分' : ''}</p><Field label={`样本 ${index + 1} 段落 ${paragraph.paragraph} 原文`}><textarea readOnly value={paragraph.quote} /></Field></section>)}{sample.paragraphs_truncated && <StatusMessage tone="warning">原文位置显示前 200 段；统计仍覆盖完整选区。</StatusMessage>}</details>)}
     {!!row.limitations?.length && <ul>{row.limitations.map((text, index) => <li key={index}>{text}</li>)}</ul>}
+    <StyleComparisonReview key={`${row.id}:${row.version}`} row={row} onNavigate={onNavigate} />
     <Details value={{ metrics: row.metrics, samples: row.samples, sample_metrics: row.sample_metrics, comparison: row.comparison }} label="核对原始计数、范围与比较数据" />
     {onNavigate && <div className="experimental-actions">{row.samples.map((sample, index) => <Button key={`${sample.chapter_id}:${index}`} onClick={() => onNavigate({ kind: 'chapter', id: sample.chapter_id, version: sample.expected_version })}>打开样本来源 {index + 1}</Button>)}</div>}
     <StyleAnalysisModelPanel api={api} analysis={row} chapter={chapter} onChanged={onChanged} />

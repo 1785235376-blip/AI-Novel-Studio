@@ -1,0 +1,242 @@
+{
+  "baseline_commit": "9e52e08fe5e66b0f23fd5159d9c3f4376811f0fb",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/StyleComparisonReview.test.tsx src/experimental/StyleReviewPanels.test.tsx src/experimental/StyleAnalysisModelPanel.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T12:43:19.495353+00:00",
+      "finished_utc": "2026-10-16T12:43:21.925404+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-ui-r2/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-ui-r2/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-ui-r2/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-ui-r2/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-ui-r2/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-ui-r2/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-ui-r2/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-ui-r2/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "9e52e08fe5e66b0f23fd5159d9c3f4376811f0fb",
+      "source_sha256": {
+        "frontend/src/experimental/StyleAnalysisPanel.tsx": "8c515d9d33ab7453865c0abb1f9925f74e785a7eea43f1dfe60a51654d45ed82",
+        "frontend/src/experimental/StyleComparisonReview.tsx": "08ca2a2191591d2b5195d7e595c5c99fe2c69337e5b2a51aac9f8a24b7f53be5",
+        "frontend/src/experimental/styleComparison.ts": "980f8b4624ca962ddfc0cab7ff46fcb15bf6b853a53f14128b1e25852535fff9",
+        "frontend/src/experimental/StyleComparisonReview.test.tsx": "e457255e0326f186ce6f67a770b5c2628087476c2a7f2b3b1997df919a048ff3",
+        "frontend/src/experimental/StyleReviewPanels.test.tsx": "e2c9a8749ad93afb88daf4c94fdf98645bca242fa9df582ac85879fc6128bcbc",
+        "tests/test_style_comparison_review.py": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/StyleAnalysisPanel.tsx": "8c515d9d33ab7453865c0abb1f9925f74e785a7eea43f1dfe60a51654d45ed82",
+        "frontend/src/experimental/StyleComparisonReview.tsx": "08ca2a2191591d2b5195d7e595c5c99fe2c69337e5b2a51aac9f8a24b7f53be5",
+        "frontend/src/experimental/styleComparison.ts": "980f8b4624ca962ddfc0cab7ff46fcb15bf6b853a53f14128b1e25852535fff9",
+        "frontend/src/experimental/StyleComparisonReview.test.tsx": "e457255e0326f186ce6f67a770b5c2628087476c2a7f2b3b1997df919a048ff3",
+        "frontend/src/experimental/StyleReviewPanels.test.tsx": "e2c9a8749ad93afb88daf4c94fdf98645bca242fa9df582ac85879fc6128bcbc",
+        "tests/test_style_comparison_review.py": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/style-comparison-final-ui-r2.log",
+      "log_sha256": "1841ccb90d3853f51e22bbf18a49c06205873d254da67ddb81eef2fe74af32cf",
+      "receipt": "docs/delivery/v2-development/style-comparison-final-ui-r2.json",
+      "receipt_sha256": "d1cbf6f8af3bcb43b6a7ae3e90af522803e25b2e9a7adb3870ffa889d3e92092"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_style_comparison_review.py::test_saved_target_unicode_measurements_reopen_without_editing_original_owners[file]",
+        "tests/test_r4_style_judge.py::test_style_uses_existing_profile_and_real_restart[file]",
+        "tests/test_r4_style_judge.py::test_style_edit_remove_sample_invalidates_and_hides_all_derived_metrics[file]",
+        "tests/test_r4_style_judge.py::test_reproducible_raw_language_metrics_no_quality_scores",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/style-comparison-final-file-public/tmp",
+        "-q"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T12:44:13.552127+00:00",
+      "finished_utc": "2026-10-16T12:44:21.367591+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-file-public/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-file-public/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-file-public/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-file-public/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-file-public/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-file-public/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-file-public/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-file-public/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "9e52e08fe5e66b0f23fd5159d9c3f4376811f0fb",
+      "source_sha256": {
+        "frontend/src/experimental/StyleAnalysisPanel.tsx": "8c515d9d33ab7453865c0abb1f9925f74e785a7eea43f1dfe60a51654d45ed82",
+        "frontend/src/experimental/StyleComparisonReview.tsx": "08ca2a2191591d2b5195d7e595c5c99fe2c69337e5b2a51aac9f8a24b7f53be5",
+        "frontend/src/experimental/styleComparison.ts": "980f8b4624ca962ddfc0cab7ff46fcb15bf6b853a53f14128b1e25852535fff9",
+        "frontend/src/experimental/StyleComparisonReview.test.tsx": "e457255e0326f186ce6f67a770b5c2628087476c2a7f2b3b1997df919a048ff3",
+        "frontend/src/experimental/StyleReviewPanels.test.tsx": "e2c9a8749ad93afb88daf4c94fdf98645bca242fa9df582ac85879fc6128bcbc",
+        "tests/test_style_comparison_review.py": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/StyleAnalysisPanel.tsx": "8c515d9d33ab7453865c0abb1f9925f74e785a7eea43f1dfe60a51654d45ed82",
+        "frontend/src/experimental/StyleComparisonReview.tsx": "08ca2a2191591d2b5195d7e595c5c99fe2c69337e5b2a51aac9f8a24b7f53be5",
+        "frontend/src/experimental/styleComparison.ts": "980f8b4624ca962ddfc0cab7ff46fcb15bf6b853a53f14128b1e25852535fff9",
+        "frontend/src/experimental/StyleComparisonReview.test.tsx": "e457255e0326f186ce6f67a770b5c2628087476c2a7f2b3b1997df919a048ff3",
+        "frontend/src/experimental/StyleReviewPanels.test.tsx": "e2c9a8749ad93afb88daf4c94fdf98645bca242fa9df582ac85879fc6128bcbc",
+        "tests/test_style_comparison_review.py": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/style-comparison-final-file-public.log",
+      "log_sha256": "281e758214c332cc9197ed5400940f6799a67664b3a65d5f8aa2e38d069ae8b7",
+      "receipt": "docs/delivery/v2-development/style-comparison-final-file-public.json",
+      "receipt_sha256": "73c7d8c32fb32614730142f808018995eea385820d05469970a1780017e9c5cb"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T12:43:30.652344+00:00",
+      "finished_utc": "2026-10-16T12:44:04.946261+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-build/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-build/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-build/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-build/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-build/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-build/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-build/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-final-build/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "9e52e08fe5e66b0f23fd5159d9c3f4376811f0fb",
+      "source_sha256": {
+        "frontend/src/experimental/StyleAnalysisPanel.tsx": "8c515d9d33ab7453865c0abb1f9925f74e785a7eea43f1dfe60a51654d45ed82",
+        "frontend/src/experimental/StyleComparisonReview.tsx": "08ca2a2191591d2b5195d7e595c5c99fe2c69337e5b2a51aac9f8a24b7f53be5",
+        "frontend/src/experimental/styleComparison.ts": "980f8b4624ca962ddfc0cab7ff46fcb15bf6b853a53f14128b1e25852535fff9",
+        "frontend/src/experimental/StyleComparisonReview.test.tsx": "e457255e0326f186ce6f67a770b5c2628087476c2a7f2b3b1997df919a048ff3",
+        "frontend/src/experimental/StyleReviewPanels.test.tsx": "e2c9a8749ad93afb88daf4c94fdf98645bca242fa9df582ac85879fc6128bcbc",
+        "tests/test_style_comparison_review.py": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/StyleAnalysisPanel.tsx": "8c515d9d33ab7453865c0abb1f9925f74e785a7eea43f1dfe60a51654d45ed82",
+        "frontend/src/experimental/StyleComparisonReview.tsx": "08ca2a2191591d2b5195d7e595c5c99fe2c69337e5b2a51aac9f8a24b7f53be5",
+        "frontend/src/experimental/styleComparison.ts": "980f8b4624ca962ddfc0cab7ff46fcb15bf6b853a53f14128b1e25852535fff9",
+        "frontend/src/experimental/StyleComparisonReview.test.tsx": "e457255e0326f186ce6f67a770b5c2628087476c2a7f2b3b1997df919a048ff3",
+        "frontend/src/experimental/StyleReviewPanels.test.tsx": "e2c9a8749ad93afb88daf4c94fdf98645bca242fa9df582ac85879fc6128bcbc",
+        "tests/test_style_comparison_review.py": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/style-comparison-final-build.log",
+      "log_sha256": "e69146ea4eec9229c923a2006637a7c90e472544079558041f4c5b018b8a1ada",
+      "receipt": "docs/delivery/v2-development/style-comparison-final-build.json",
+      "receipt_sha256": "350e5b734b72678b0d005d7b60947cffaa9131230e6d4fefc72f5bd319e31c5d"
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import pathlib,re; files=[\"frontend/src/experimental/StyleAnalysisPanel.tsx\",\"frontend/src/experimental/StyleComparisonReview.tsx\",\"frontend/src/experimental/styleComparison.ts\"]; assert all(not re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",pathlib.Path(p).read_text(),re.I) for p in files); print(\"Scoped token guard PASS\")"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-usability",
+      "started_utc": "2026-10-16T12:43:32.141454+00:00",
+      "finished_utc": "2026-10-16T12:43:32.169423+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "isolated_environment": {
+        "PROJECT_ROOT": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-usability",
+        "NOVEL_DATA_PATH": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-token/data",
+        "LOCALAPPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-token/Local",
+        "APPDATA": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-token/Roaming",
+        "HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-token/home",
+        "USERPROFILE": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-token/home",
+        "XDG_DATA_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-token/xdg-data",
+        "XDG_CONFIG_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-token/xdg-config",
+        "XDG_CACHE_HOME": "/workspace/scratch/20a0022d2b33/studio-usability/.runtime/v2-checks/style-comparison-token/xdg-cache",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+        "STORAGE_BACKEND": "file",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "ENABLE_PACKAGED_RUNTIME": "false",
+        "ENABLE_COLLABORATION_RUNTIME": "false",
+        "MOCK_PROVIDER": "true",
+        "ENABLE_CLOUD": "false",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "head": "9e52e08fe5e66b0f23fd5159d9c3f4376811f0fb",
+      "source_sha256": {
+        "frontend/src/experimental/StyleAnalysisPanel.tsx": "8c515d9d33ab7453865c0abb1f9925f74e785a7eea43f1dfe60a51654d45ed82",
+        "frontend/src/experimental/StyleComparisonReview.tsx": "08ca2a2191591d2b5195d7e595c5c99fe2c69337e5b2a51aac9f8a24b7f53be5",
+        "frontend/src/experimental/styleComparison.ts": "980f8b4624ca962ddfc0cab7ff46fcb15bf6b853a53f14128b1e25852535fff9",
+        "frontend/src/experimental/StyleComparisonReview.test.tsx": "e457255e0326f186ce6f67a770b5c2628087476c2a7f2b3b1997df919a048ff3",
+        "frontend/src/experimental/StyleReviewPanels.test.tsx": "e2c9a8749ad93afb88daf4c94fdf98645bca242fa9df582ac85879fc6128bcbc",
+        "tests/test_style_comparison_review.py": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+      },
+      "source_sha256_before": {
+        "frontend/src/experimental/StyleAnalysisPanel.tsx": "8c515d9d33ab7453865c0abb1f9925f74e785a7eea43f1dfe60a51654d45ed82",
+        "frontend/src/experimental/StyleComparisonReview.tsx": "08ca2a2191591d2b5195d7e595c5c99fe2c69337e5b2a51aac9f8a24b7f53be5",
+        "frontend/src/experimental/styleComparison.ts": "980f8b4624ca962ddfc0cab7ff46fcb15bf6b853a53f14128b1e25852535fff9",
+        "frontend/src/experimental/StyleComparisonReview.test.tsx": "e457255e0326f186ce6f67a770b5c2628087476c2a7f2b3b1997df919a048ff3",
+        "frontend/src/experimental/StyleReviewPanels.test.tsx": "e2c9a8749ad93afb88daf4c94fdf98645bca242fa9df582ac85879fc6128bcbc",
+        "tests/test_style_comparison_review.py": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+      },
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/style-comparison-token.log",
+      "log_sha256": "0f60413763c866e35019437c33d233ca2415617df3bce60da78ae15ab1607a63",
+      "receipt": "docs/delivery/v2-development/style-comparison-token.json",
+      "receipt_sha256": "75927186d5bdccaa6519155905a438d7521cb699b3929abdd9dd924d48909e1a"
+    }
+  ],
+  "not_run": [
+    "browser/visual/native/HTTP",
+    "PG/P0/security",
+    "GPU/provider/Windows/full RC",
+    "push/CI"
+  ]
+}
