@@ -1,0 +1,8 @@
+INFO:     127.0.0.1:56993 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57036 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57042 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57044 - "GET /api/novels/693ad851-3230-4ea9-aa7d-546deaf4020d/experimental/creative/documents/aba73ad1-9539-4841-8c19-4e4b6103dc5c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57095 - "GET /api/projects/693ad851-3230-4ea9-aa7d-546deaf4020d/studio/documents/aba73ad1-9539-4841-8c19-4e4b6103dc5c/prompt-adoption HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57165 - "POST /api/projects/693ad851-3230-4ea9-aa7d-546deaf4020d/studio/documents/aba73ad1-9539-4841-8c19-4e4b6103dc5c/shots/36ec612d-cc8f-4767-8d3e-13692243f1e3/prompt-adoption HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:57220 - "GET /api/novels/693ad851-3230-4ea9-aa7d-546deaf4020d/experimental/creative/documents/aba73ad1-9539-4841-8c19-4e4b6103dc5c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57265 - "DELETE /api/collaboration/admin/workspaces/workspace-a/projects/693ad851-3230-4ea9-aa7d-546deaf4020d HTTP/1.1" 204 No Content

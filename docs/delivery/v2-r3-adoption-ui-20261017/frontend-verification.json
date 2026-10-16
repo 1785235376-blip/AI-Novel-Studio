@@ -1,0 +1,137 @@
+{
+  "status": "FINAL_FRONTEND_PASS_WITH_RETAINED_DIAGNOSTICS",
+  "implementation_head": "db1f687108fac6e45a577196494dfac01cc63aca",
+  "checks": {
+    "src": {
+      "status": "PASS",
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-src-final-r4.json",
+      "receipt_sha256": "6b5cebd3da6d46a6c19ad2df790acc8a3e68ed3e1162ee519b33b2801eba6d37",
+      "command": [
+        "D:\\PoemSeed\\Cache\\Tests\\expansion-20261013-97da10e1\\venv\\Scripts\\python.exe",
+        "-c",
+        "import os,subprocess,sys; os.chdir('frontend'); raise SystemExit(subprocess.call(sys.argv[1:]))",
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src",
+        "--maxWorkers=4",
+        "--minWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\frontend-src-final-r4.json"
+      ],
+      "log": "docs/delivery/v2-development/r3-adoption-ui-src-final-r4.log",
+      "log_sha256": "aba22b63f2eea538a9c683852726f2c6b65b9689a7c5b13289988bcc72c5b66e",
+      "receipt_head": "db1f687108fac6e45a577196494dfac01cc63aca",
+      "source_count": 2301,
+      "sources_changed_during_check": false,
+      "passed": 4208,
+      "skipped": 6,
+      "failed": 0,
+      "test_files": 390,
+      "raw_json": "frontend-src-final-r4.json",
+      "raw_json_sha256": "93e0b6fce0927088185450a2b8a8061f631d2b4009329f0a513d9c0b4054b583",
+      "cwd": "frontend"
+    },
+    "build": {
+      "status": "PASS",
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-build-final-r3.json",
+      "receipt_sha256": "9ebf692f372ceb10119698704654a19ef1e158bed8df9db108ca5998238295c2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "--prefix",
+        "frontend",
+        "run",
+        "build"
+      ],
+      "log": "docs/delivery/v2-development/r3-adoption-ui-build-final-r3.log",
+      "log_sha256": "af2ac79d21e7eacd1df4060f3f1886315a146828294cc83988fe638af4082199",
+      "receipt_head": "db1f687108fac6e45a577196494dfac01cc63aca",
+      "source_count": 2301,
+      "sources_changed_during_check": false
+    },
+    "visual": {
+      "status": "PASS",
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-visual-final-r3.json",
+      "receipt_sha256": "bc135d17cfb7dd501c7b1c6e610c835696b3b134526de80b25fa3fa73e27705b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "frontend/node_modules/@playwright/test/cli.js",
+        "test",
+        "--config",
+        "frontend/playwright.visual.config.ts",
+        "tests/visual/design-system.spec.ts",
+        "--grep",
+        "workspace visual baseline|shell geometry",
+        "--output",
+        "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\visual-results-r3"
+      ],
+      "log": "docs/delivery/v2-development/r3-adoption-ui-visual-final-r3.log",
+      "log_sha256": "dd4285ed4a59fc3a3a758d48edaa678d59e84c5fbb82e0c369abad1ab2273322",
+      "receipt_head": "db1f687108fac6e45a577196494dfac01cc63aca",
+      "source_count": 2301,
+      "sources_changed_during_check": false,
+      "passed": 7,
+      "output_dir": "visual-results-r3",
+      "scope": "Original three module visual baselines plus four shell geometries; no baseline updated."
+    },
+    "tokens": {
+      "status": "PASS",
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-tokens-final-r3.json",
+      "receipt_sha256": "da794f86596ea2a4614b625c29102faa9e03e8d57e18fde09f119c7e7018491c",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "scripts/check_ui_design_tokens.mjs"
+      ],
+      "log": "docs/delivery/v2-development/r3-adoption-ui-tokens-final-r3.log",
+      "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b",
+      "receipt_head": "db1f687108fac6e45a577196494dfac01cc63aca",
+      "source_count": 2301,
+      "sources_changed_during_check": false,
+      "files": 52,
+      "scope": "Original frontend/src/ui guard only. New feature CSS was separately reviewed for token use."
+    }
+  },
+  "source_consistency": {
+    "count": 2301,
+    "all_four_receipt_maps_identical": true,
+    "working_raw_bytes_match": true,
+    "delta_from_historical_6aed": {
+      "added": [
+        "frontend/src/AppLocalEntryAuthorityRace.test.tsx"
+      ],
+      "removed": [],
+      "changed": [
+        "frontend/src/App.tsx",
+        "frontend/tests/e2e/v2-prompt-adoption-ui-live.spec.ts"
+      ]
+    }
+  },
+  "historical_summary": {
+    "path": "historical-6aed/frontend-verification.json",
+    "raw_sha256": "9feece394e7ace56df7ddca4196766bc030fb7c98546be05980a580ec80747a2"
+  },
+  "cwd_diagnostic": {
+    "status": "FAIL",
+    "passed": 4160,
+    "failed": 40,
+    "skipped": 6,
+    "raw_json": "frontend-src-final.json",
+    "raw_json_sha256": "b7af59db6a85e1cae211e51529d794641e4ce9a4c88165eee9a737c1471e27b8",
+    "receipt": "../v2-development/r3-adoption-ui-src-final.json",
+    "cause": "Root verification launched Vitest with --root frontend but process cwd stayed at repository root. Existing relative fixture readers require cwd frontend. No application or test source was changed to repair this command."
+  },
+  "additional_retained_diagnostics": [
+    "frontend-local-entry-authority-red-r1.log",
+    "frontend-local-entry-authority-tsc-r1.log",
+    "runner-receipts/r3-adoption-ui-browser-file-final-r2.json",
+    "runner-receipts/r3-adoption-ui-browser-pg-final-r1.json"
+  ],
+  "earlier_src_preparation": {
+    "receipt": "../v2-development/r3-adoption-ui-src-final-r3.json",
+    "raw_json": "frontend-src-final-r3.json",
+    "scope": "Previous snapshot before the original App connection guard/new regression; retained, not substituted for final r4."
+  },
+  "build_boundary": "Original tsc -b and Vite build passed; existing large-chunk warning retained.",
+  "evidence_boundary": "Component suites and type/build/visual checks do not substitute for File/PostgreSQL browser runtime acceptance."
+}

@@ -1,0 +1,20 @@
+{
+  "baseline": "95420aa59acb4c196d92e7292df0744098f6d2ff",
+  "files": [
+    {
+      "path": "scripts/run_v2_prompt_r3_browser.py",
+      "same_raw_bytes": true,
+      "sha256": "83a7c384dd4a871d11fa880b9e3c6ecee7ee34c8388e51bc5a26deba37d0c74d"
+    },
+    {
+      "path": "frontend/playwright.prompt-r3-live.config.ts",
+      "same_raw_bytes": true,
+      "sha256": "d4bfb90bd1422738fed650a3161f9414f6557fbe305a9a82ee139c38a90afccf"
+    },
+    {
+      "path": "frontend/tests/e2e/v2-prompt-r3-live.spec.ts",
+      "same_raw_bytes": true,
+      "sha256": "6ee8e331cd394186f8ca3c0dfcd4d89eae79fce90d3cd5bcc901ac836cceee9d"
+    }
+  ]
+}

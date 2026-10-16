@@ -1,0 +1,10 @@
+{
+  "status": 503,
+  "code": "PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED",
+  "write_enabled": false,
+  "target_id": "20809f1f-f6a1-4394-b7d9-1f681c60bfad",
+  "target_version": 1,
+  "before_owner_sha256": "0db5a65443c99c6b946be994b664c4ad1dbfdc2654e2779f8b0f48d034a1c79c",
+  "after_owner_sha256": "0db5a65443c99c6b946be994b664c4ad1dbfdc2654e2779f8b0f48d034a1c79c",
+  "owner_unchanged": true
+}

@@ -1,0 +1,14 @@
+{
+  "source_count_before": 2300,
+  "source_count_after": 2300,
+  "delta": [
+    {
+      "path": "frontend/tests/e2e/v2-prompt-adoption-ui-live.spec.ts",
+      "before": "b09eda6377a49dfad8fbb8cb7b294fbaa4476eaab3373aaccd77163e95d7d9f0",
+      "after": "c08ca7584301c2a257fd93f3603357e7aafc3a6812a4288a8178da4d7d4062a6"
+    }
+  ],
+  "reason": "Wait for original App neutral-studio overview/IMAGE entry restoration and loaded original studioSwitcher before user navigation; no sleeps or repeated clicks.",
+  "retained_failure": "runner-receipts/r3-adoption-ui-browser-pg-final-r1.json",
+  "product_sources_changed": false
+}

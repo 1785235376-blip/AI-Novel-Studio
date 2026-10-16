@@ -1,0 +1,275 @@
+{
+  "count": 30,
+  "screenshots": [
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-checkbox.png",
+      "checkpoint": "real-ui-adoption-before-confirm-checkbox",
+      "width": 1366,
+      "height": 768,
+      "bytes": 116456,
+      "sha256": "72f1dfc1abbba45d73509e8d11e5290bf0ed707b9317acae167283704f90b117"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-form.png",
+      "checkpoint": "real-ui-adoption-before-confirm-form",
+      "width": 1366,
+      "height": 768,
+      "bytes": 116456,
+      "sha256": "72f1dfc1abbba45d73509e8d11e5290bf0ed707b9317acae167283704f90b117"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-committed-pin.png",
+      "checkpoint": "real-ui-adoption-committed-pin",
+      "width": 1366,
+      "height": 768,
+      "bytes": 103576,
+      "sha256": "6e6f2f5e5da5192306fa2e95851633da792c5c581d68112dd0757bcb577b59c9"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-historical-source-pin.png",
+      "checkpoint": "real-ui-adoption-historical-source-pin",
+      "width": 1366,
+      "height": 768,
+      "bytes": 114293,
+      "sha256": "22d3ae509654aa2c7dc05223ae389a8d55022b9a6959cdd59d5dbefe4de1971c"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-reopened-pin.png",
+      "checkpoint": "real-ui-adoption-reopened-pin",
+      "width": 1366,
+      "height": 768,
+      "bytes": 107916,
+      "sha256": "2a9a8644120de5da28ad1e31a899de2154798b5f7b001ae6239711a69a7eada0"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-checkbox.png",
+      "checkpoint": "real-ui-adoption-before-confirm-checkbox",
+      "width": 1440,
+      "height": 900,
+      "bytes": 132065,
+      "sha256": "5c2af54fe6e8716f8f6d5cc59219d53042d89876b06d37c7f54d35f93684774d"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-form.png",
+      "checkpoint": "real-ui-adoption-before-confirm-form",
+      "width": 1440,
+      "height": 900,
+      "bytes": 137089,
+      "sha256": "4540bc3561e6dab79491732c125521feba1130eb2d780f6a61b771a5a51f1430"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-committed-pin.png",
+      "checkpoint": "real-ui-adoption-committed-pin",
+      "width": 1440,
+      "height": 900,
+      "bytes": 114931,
+      "sha256": "9a90f7c841b9b77f8db3e474d6c0ef10c80355f7ad913527430ea14a4d2ac4b3"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-historical-source-pin.png",
+      "checkpoint": "real-ui-adoption-historical-source-pin",
+      "width": 1440,
+      "height": 900,
+      "bytes": 134138,
+      "sha256": "d114c142f55bf65d5fe157d90e697d8e153eced50fd7ee45059695dac8b843a9"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-reopened-pin.png",
+      "checkpoint": "real-ui-adoption-reopened-pin",
+      "width": 1440,
+      "height": 900,
+      "bytes": 121641,
+      "sha256": "c55ed3e8b7b391e69db4016a846266c200b75e2b7ca59740743743f2a0dca7a4"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-checkbox.png",
+      "checkpoint": "real-ui-adoption-before-confirm-checkbox",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 157070,
+      "sha256": "3b2e7d3b61e9480465f92056a105255dc10c3d24fa698d91e7540d15ae7aa47a"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-form.png",
+      "checkpoint": "real-ui-adoption-before-confirm-form",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 157070,
+      "sha256": "3b2e7d3b61e9480465f92056a105255dc10c3d24fa698d91e7540d15ae7aa47a"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-committed-pin.png",
+      "checkpoint": "real-ui-adoption-committed-pin",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 143327,
+      "sha256": "c2bf6ccbb1a9454cef6868639489c0698fe8451b9b4392c38cd96cc1a868a0b8"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-historical-source-pin.png",
+      "checkpoint": "real-ui-adoption-historical-source-pin",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 163509,
+      "sha256": "5d74c1e38f5bdfcf75b890cc7ca110d59f066d9a7d3ccc64d9f45fcaed8693b3"
+    },
+    {
+      "backend": "file",
+      "path": "r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-reopened-pin.png",
+      "checkpoint": "real-ui-adoption-reopened-pin",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 151218,
+      "sha256": "734a43a1988fe188d92bd4a4e5e6ee8ebf3595f02c02c339483bed3694ea8a98"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-checkbox.png",
+      "checkpoint": "real-ui-adoption-before-confirm-checkbox",
+      "width": 1366,
+      "height": 768,
+      "bytes": 112231,
+      "sha256": "44ba359a0f8698054217a8320fe1fda0b7e83f8df4c23da5e71d7ff883236624"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-form.png",
+      "checkpoint": "real-ui-adoption-before-confirm-form",
+      "width": 1366,
+      "height": 768,
+      "bytes": 116569,
+      "sha256": "b0b188427120f6d84bb1b98b83150c95905b8c7f35f004fe65b978feb56c5147"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-committed-pin.png",
+      "checkpoint": "real-ui-adoption-committed-pin",
+      "width": 1366,
+      "height": 768,
+      "bytes": 103600,
+      "sha256": "2af2ae33cb036d10aea6cff94940352a1bf02bd73f5b06f18479afddc7a7e7c2"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-historical-source-pin.png",
+      "checkpoint": "real-ui-adoption-historical-source-pin",
+      "width": 1366,
+      "height": 768,
+      "bytes": 114373,
+      "sha256": "910c711ac453a371c6a09b2ebbd18cc4231a095cc20307c7efd2b467ab2535cf"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-reopened-pin.png",
+      "checkpoint": "real-ui-adoption-reopened-pin",
+      "width": 1366,
+      "height": 768,
+      "bytes": 107955,
+      "sha256": "de5ad608975ac915c79eb64af14cb96e152e6a53f71f126e19d22e111d44cff5"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-checkbox.png",
+      "checkpoint": "real-ui-adoption-before-confirm-checkbox",
+      "width": 1440,
+      "height": 900,
+      "bytes": 132180,
+      "sha256": "71247e022161546cd901961ffe36fb90a236ec91f58c2e820015952d925e9796"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-form.png",
+      "checkpoint": "real-ui-adoption-before-confirm-form",
+      "width": 1440,
+      "height": 900,
+      "bytes": 137113,
+      "sha256": "a94a102e6f2589ce462e2b79929c59750fbb805eaed15fe88b78fa280a7e5dce"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-committed-pin.png",
+      "checkpoint": "real-ui-adoption-committed-pin",
+      "width": 1440,
+      "height": 900,
+      "bytes": 114962,
+      "sha256": "8676992b6839f33213c80c9ca2b6bf31053d85b788289dc90e03fb5cc9a76469"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-historical-source-pin.png",
+      "checkpoint": "real-ui-adoption-historical-source-pin",
+      "width": 1440,
+      "height": 900,
+      "bytes": 134209,
+      "sha256": "9ae89926d8573310eeb9cb41404ee0e40115cf4436bd8a78635e6638b2d9862a"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-reopened-pin.png",
+      "checkpoint": "real-ui-adoption-reopened-pin",
+      "width": 1440,
+      "height": 900,
+      "bytes": 121899,
+      "sha256": "ab9080bc9025e3a2bf25b9ec6dd62f16293ec99972ebac552ddbb8334bd1aab9"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-checkbox.png",
+      "checkpoint": "real-ui-adoption-before-confirm-checkbox",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 157076,
+      "sha256": "c4915a2feb212ff0c886488f76a38820ced5795815b8cd33402e9396d2c9d87f"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-form.png",
+      "checkpoint": "real-ui-adoption-before-confirm-form",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 156938,
+      "sha256": "2cb453fd3d1bb2a69234a91023afcdbb5686042446191b990c467c321cb12145"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-committed-pin.png",
+      "checkpoint": "real-ui-adoption-committed-pin",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 143145,
+      "sha256": "06e70cd060d6198ba15e318e694f7567edbd98ba86164e48ea44f3829201b3a5"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-historical-source-pin.png",
+      "checkpoint": "real-ui-adoption-historical-source-pin",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 163400,
+      "sha256": "f9687cc88708f72ff64f291d3b00ff391a39b5c4a98fe47f193368888e36b638"
+    },
+    {
+      "backend": "postgres",
+      "path": "r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-reopened-pin.png",
+      "checkpoint": "real-ui-adoption-reopened-pin",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 150902,
+      "sha256": "6fdf371df0e7a98f5bb89a3daef7acc2b3c3ca40a45de1e1de08b3ee0de3fdef"
+    }
+  ]
+}

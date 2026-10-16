@@ -1,0 +1,31 @@
+{
+  "status": "PREPARATION_PASS",
+  "base": "95420aa59acb4c196d92e7292df0744098f6d2ff",
+  "captured_at": "2026-10-17T01:05:20.3832615+08:00",
+  "focused": {
+    "files": 5,
+    "log": "frontend-adoption-focused-r5.log",
+    "passed": 84
+  },
+  "broader": {
+    "files": 22,
+    "log": "frontend-adoption-broader-r1.log",
+    "passed": 261
+  },
+  "typescript": {
+    "exit_code": 0,
+    "log": "frontend-adoption-tsc-r2.log"
+  },
+  "raw_sha256": {
+    "frontend/src/storyboard/PromptAdoptionWritePanel.tsx": "f7c78499ce61dbbc809f5aead7749139cc1f2a7b609c600d567d3f3d426ebe5a",
+    "frontend/src/storyboard/promptAdoptionWriteClient.ts": "df6d39b64c0f37f01f2fabd4e29b5aafe1ddfb21496f5110af5aead707afb62d",
+    "frontend/src/storyboard/promptAdoptionWrite.css": "33e586cce3bd9a3b6359b6427360a215e4d63f03874177cb60a2b9661b0cc362",
+    "frontend/src/storyboard/PromptAdoptionWritePanel.test.tsx": "c899a05a85e881d3bb8209a91cbf52cb1b942c5a1a2f2d8dc6bee2b63589a6a4",
+    "frontend/src/storyboard/promptAdoptionWriteClient.test.ts": "ddd827268cef3f3bdb64a7392d067625e2b08e9e9a91a21ef4d2bac26543e278",
+    "frontend/src/storyboard/StoryboardWorkspacePanel.tsx": "b1dd980cdbaf8091005d71cd449c48139a554c14a9427ae024a4db537c9db0d2",
+    "frontend/src/creative/CreativeWorkspace.tsx": "21467ce7f675569d32cff90f566a81a187d197bda18b3644ff7ac9ef30344630"
+  },
+  "real_browser": "Owned by security_acceptance; pending",
+  "full_visual": "Owned by root; pending",
+  "production_gate": "Unchanged literal False"
+}

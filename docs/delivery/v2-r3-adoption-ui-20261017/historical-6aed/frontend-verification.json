@@ -1,0 +1,101 @@
+{
+  "status": "FINAL_FRONTEND_PASS_WITH_RETAINED_CWD_FAILURE",
+  "checks": {
+    "src": {
+      "status": "PASS",
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-src-final-r2.json",
+      "receipt_sha256": "109d3e77ac5f74a35c1f368e57d55f89d49eddee4db73d418e95bbd8c3741941",
+      "command": [
+        "D:\\PoemSeed\\Cache\\Tests\\expansion-20261013-97da10e1\\venv\\Scripts\\python.exe",
+        "-c",
+        "import os,subprocess,sys; os.chdir('frontend'); raise SystemExit(subprocess.call(sys.argv[1:]))",
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src",
+        "--maxWorkers=4",
+        "--minWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\frontend-src-final-r2.json"
+      ],
+      "log": "docs/delivery/v2-development/r3-adoption-ui-src-final-r2.log",
+      "log_sha256": "304a60b43bd9a6d69899477859d6650591cf5d7c93786da38e17fdf8bf2c1f7d",
+      "source_count": 2300,
+      "sources_changed_during_check": false,
+      "passed": 4204,
+      "skipped": 6,
+      "failed": 0,
+      "test_files": 389,
+      "raw_json": "frontend-src-final-r2.json",
+      "raw_json_sha256": "18d52c4f0f7fe1bec1e78f47a84ba131f01f437836b4c87adb024f1560057407",
+      "cwd": "frontend"
+    },
+    "build": {
+      "status": "PASS",
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-build-final.json",
+      "receipt_sha256": "6013932cf258ef52b2457f5af64670dbc6dad5aafd8000b81eb1151075ec90fe",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "--prefix",
+        "frontend",
+        "run",
+        "build"
+      ],
+      "log": "docs/delivery/v2-development/r3-adoption-ui-build-final.log",
+      "log_sha256": "504f1acd4e8fc641a1ccc57085750b396c39312c8ec58aa1bbfc2b9aaf6e26b0",
+      "source_count": 2300,
+      "sources_changed_during_check": false
+    },
+    "visual": {
+      "status": "PASS",
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-visual-final.json",
+      "receipt_sha256": "97bad55153fca5a57e33d274d0b9a69ae593fe89bde4c96a3675144dc2582961",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "frontend/node_modules/@playwright/test/cli.js",
+        "test",
+        "--config",
+        "frontend/playwright.visual.config.ts",
+        "tests/visual/design-system.spec.ts",
+        "--grep",
+        "workspace visual baseline|shell geometry",
+        "--output",
+        "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\visual-results"
+      ],
+      "log": "docs/delivery/v2-development/r3-adoption-ui-visual-final.log",
+      "log_sha256": "e831f8352dca42572826b9e914356dbfde3404f8a93842890097310427536d80",
+      "source_count": 2300,
+      "sources_changed_during_check": false,
+      "passed": 7,
+      "scope": "Original three module visual baselines plus four shell geometries; no baseline updated."
+    },
+    "tokens": {
+      "status": "PASS",
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-tokens-final.json",
+      "receipt_sha256": "3409696d1900e05ab1f29879ce89d3926ac316845157f97f1d41e0903012a1e6",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "scripts/check_ui_design_tokens.mjs"
+      ],
+      "log": "docs/delivery/v2-development/r3-adoption-ui-tokens-final.log",
+      "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b",
+      "source_count": 2300,
+      "sources_changed_during_check": false,
+      "files": 52,
+      "scope": "Original frontend/src/ui guard only. New feature CSS was separately reviewed for token use."
+    }
+  },
+  "cwd_diagnostic": {
+    "status": "FAIL",
+    "passed": 4160,
+    "failed": 40,
+    "skipped": 6,
+    "raw_json": "frontend-src-final.json",
+    "raw_json_sha256": "b7af59db6a85e1cae211e51529d794641e4ce9a4c88165eee9a737c1471e27b8",
+    "receipt": "../v2-development/r3-adoption-ui-src-final.json",
+    "cause": "Root verification launched Vitest with --root frontend but process cwd stayed at repository root. Existing relative fixture readers require cwd frontend. No application or test source was changed to repair this command."
+  },
+  "build_boundary": "Original tsc -b and Vite build passed; existing large-chunk warning retained.",
+  "evidence_boundary": "Component suites and type/build/visual checks do not substitute for File/PostgreSQL browser runtime acceptance."
+}

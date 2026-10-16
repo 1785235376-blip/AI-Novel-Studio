@@ -1,0 +1,2337 @@
+{
+  "utc": "2026-10-16T17:52:56.851280+00:00",
+  "base": "95420aa59acb4c196d92e7292df0744098f6d2ff",
+  "byte_contract": ".gitattributes -text for raw delivery evidence; SHA256 describes retained on-disk bytes.",
+  "files": [
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r1.json",
+      "bytes": 543369,
+      "sha256": "430578954df602165884ea31695cfb218dee09e7ad79a805796745ad6c59d63b"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r1.log",
+      "bytes": 1054,
+      "sha256": "af25e89b5f47f8059bfb013a9fc963374aaac81b17e7b571053e851057b18838"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r2.json",
+      "bytes": 543657,
+      "sha256": "8efaaae367a18ccefef6f38f54725912e814ba848408b7db85e267e196a9a776"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r2.log",
+      "bytes": 1054,
+      "sha256": "9c1594f41a203d6554ed78e147138354bf7f2e452e5b84e430c4013ea61d3db9"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r3.json",
+      "bytes": 543657,
+      "sha256": "03a7f390f6d1ee26f79d14ef52eaef2975164302d03f6b343006b627cc98f4d5"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r3.log",
+      "bytes": 1054,
+      "sha256": "f99430b5263e3fb4b86d086ca757188d541c37a4f5ce7aa7a93faf4ccec1348b"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r4.json",
+      "bytes": 543657,
+      "sha256": "a62580add26de0233d24366001f63fd9c5ec07513ef58d170faf04490c9ec20f"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r4.log",
+      "bytes": 1054,
+      "sha256": "7d4856232b7fbaaf474c7d671019eb08556ad6c904d2eed9d7fb14049741d38d"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r5.json",
+      "bytes": 543657,
+      "sha256": "f2a758fdc439d41659154a6933feb874bdef3ceedaf215b5fdf1782856642df9"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r5.log",
+      "bytes": 1054,
+      "sha256": "a5769f4e4f3d4426754f6f6a64daa28f9a91e811b56e2b5a2d85eb4ab9c26547"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r6.json",
+      "bytes": 543657,
+      "sha256": "00b2904dc8908215e157ebc4c489fe78cebdc3c5829b2dc569048a8ced0d510d"
+    },
+    {
+      "path": "docs/delivery/v2-development/adoption-ui-file-smoke-r6.log",
+      "bytes": 1054,
+      "sha256": "4c1c1d68df566493ecedbedd1cf934fe13db1b19f6d6704f148031109ed545d6"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-bindings-file-final-r1.json",
+      "bytes": 544040,
+      "sha256": "234dad20c0ca751d2aa7f7be77fa27e047309420006ba8b21a513aef7ed23892"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-bindings-file-final-r1.log",
+      "bytes": 664,
+      "sha256": "ec96b5be7df5df7ad111135a1e1cafc4889a77001f65d17b5cba57b1cf1f5fb0"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-bindings-file-final-r2.json",
+      "bytes": 544040,
+      "sha256": "8854c53c5d2445a055bbfb4f4ac4b5ad264a1d4e23de20d3c01d7436a4cb878f"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-bindings-file-final-r2.log",
+      "bytes": 664,
+      "sha256": "58d04938e8d1e43ceccea9814a56df36a6bc89c0b26e1e0055deb18f61400a81"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-bindings-file-final-r3.json",
+      "bytes": 544290,
+      "sha256": "01078885cbb5d83d259478af4ea6901a101395275b7853a4d7f7b0b3ad18395d"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-bindings-file-final-r3.log",
+      "bytes": 664,
+      "sha256": "253e09641905cb5115704b8ed5949956d07823fcc57ff8850648df9c3720e181"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-file-final-r1.json",
+      "bytes": 543717,
+      "sha256": "489f8870fbc27e949d1cc287dbe1fdfae1439b1a1c86f9f1389b166a4e452640"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-file-final-r1.log",
+      "bytes": 1054,
+      "sha256": "98160b83e7f1eb0f2317f9608285f653c6e3cc3630629d470fd897bde60f172e"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-file-final-r2.json",
+      "bytes": 543717,
+      "sha256": "cc45499916dd5620126cb2d8100174c3cc1ab415205230d788b1d66adc190f32"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-file-final-r2.log",
+      "bytes": 1054,
+      "sha256": "f662a3a469a7200d09fc1d2f564d1ecb741ab0003d38de90981dcbd777862d5c"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-file-final-r3.json",
+      "bytes": 543967,
+      "sha256": "eee87b123937106dc81e1c972bfe5bf0cb3de5c2f08c52ff7117b650942166cd"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-file-final-r3.log",
+      "bytes": 1054,
+      "sha256": "d8b30ce81bba615a24b41390d6383092ada4b6a61fb45a701154e36b24497059"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-pg-final-r1-postgres-runtime.json",
+      "bytes": 9750,
+      "sha256": "7ee06d074feaea678d5a7276e889d6d8d029873728d0bc8dcc76aca7521d024c"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-pg-final-r1.json",
+      "bytes": 543794,
+      "sha256": "a969267e302c7cbc7d839ba4b8326f10490dd8411315105a056afdbad2ce9102"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-pg-final-r1.log",
+      "bytes": 1258,
+      "sha256": "b046a3596470a66120d83c39501e4a17875523159f6b90c295705d201411308d"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-pg-final-r3-postgres-runtime.json",
+      "bytes": 9750,
+      "sha256": "ca6a21795a4edf0d08fd96c905efa87e0330b04840ab177dedb94de60198b547"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-pg-final-r3.json",
+      "bytes": 544044,
+      "sha256": "82e011c1126f4758eadf2ecddcaf6c6ac4f777929a1371a654b4f60335e3ea40"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-browser-pg-final-r3.log",
+      "bytes": 1258,
+      "sha256": "3094f9824521d02c458d93e148fd1695f737e085b1eab8022de9c5db3aa00806"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-build-final-r3.json",
+      "bytes": 543835,
+      "sha256": "9ebf692f372ceb10119698704654a19ef1e158bed8df9db108ca5998238295c2"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-build-final-r3.log",
+      "bytes": 1980,
+      "sha256": "af2ac79d21e7eacd1df4060f3f1886315a146828294cc83988fe638af4082199"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-build-final.json",
+      "bytes": 543558,
+      "sha256": "6013932cf258ef52b2457f5af64670dbc6dad5aafd8000b81eb1151075ec90fe"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-build-final.log",
+      "bytes": 1980,
+      "sha256": "504f1acd4e8fc641a1ccc57085750b396c39312c8ec58aa1bbfc2b9aaf6e26b0"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-capability-file-r1.json",
+      "bytes": 542714,
+      "sha256": "f4074f07db054a6b62104a996cb574874bc57fcef3c1123b194f5637a1e35632"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-capability-file-r1.log",
+      "bytes": 2691,
+      "sha256": "535aae399301cd32ea02914303ed46788b6c65fe382e7e6ab252be8ff4e7c156"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-capability-file-r2.json",
+      "bytes": 542713,
+      "sha256": "5f1431f874fa497520374e59daa48c0d45c72e06db3d5d758f6a9041c2a6939d"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-capability-file-r2.log",
+      "bytes": 663,
+      "sha256": "f6bfac4b599811ad93eee7709dda9604a87bf573f29b4f171233348ca14e63f6"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-ci-selfchecks-final-r2.json",
+      "bytes": 543875,
+      "sha256": "e1e72d2a9867664c6b7e72f667c5b784de7ea1fd50c1bd3e9c07cc3ddb39346a"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-ci-selfchecks-final-r2.log",
+      "bytes": 264,
+      "sha256": "3a528000f3d44a986455ad29dbfd589b7065abade8a1d39d270e1b792aac0691"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-ci-selfchecks-final-r3.json",
+      "bytes": 544125,
+      "sha256": "03c0ee8dbc065719d6a58f3f9373bc7489077b651467ddd59136a3306a6be259"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-ci-selfchecks-final-r3.log",
+      "bytes": 264,
+      "sha256": "02dffb1bbbb3caf6ee1089a63855bcb03892a26be305dd117ac72c374efa3c72"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-ci-selfchecks-final.json",
+      "bytes": 543845,
+      "sha256": "81d75cbe64442814750450c3db43cc8cf5ffea7780c43fe0003bb6fc65ddd07e"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-ci-selfchecks-final.log",
+      "bytes": 264,
+      "sha256": "34cfb073dc81e5b5825904ff98d4095c9f5c41c113869cae2cf6c207cb470934"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r1.json",
+      "bytes": 543752,
+      "sha256": "6e4740469b16c52cce556a74506130a930de5fc96e88dcc325a2cb94db1de3eb"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r1.log",
+      "bytes": 961,
+      "sha256": "8fd1137207539a3c603802f96ebdb5697e7ea88937073f25cdeb74cf9920ede6"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r2.json",
+      "bytes": 543752,
+      "sha256": "1dba48c2c58154643c7e5700e15f34f4009819041c389f4b917e29599f466f8d"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r2.log",
+      "bytes": 961,
+      "sha256": "7ab46e6688ad186ce551d7172366ab3f3494ff4b4035140de1214f03a7f70677"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r3.json",
+      "bytes": 544002,
+      "sha256": "d39e3c5d1ef79c41801b8f4bd108960aabfb5cf33832a26e1fb1e4628cb32e3d"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r3.log",
+      "bytes": 961,
+      "sha256": "25fc55c26af479d542ecfc3896625809f974e1d384235126204826572b8b7738"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r1.json",
+      "bytes": 543698,
+      "sha256": "b1e0786ca548566f9610ed904852d0513910dd788d09864adeac2190cdf9c2d4"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r1.log",
+      "bytes": 1117,
+      "sha256": "fcea8e6ff4f8bc471f359871fd53ad5a64be5448bc17f81b87fe79dacd972866"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r2.json",
+      "bytes": 543698,
+      "sha256": "9550c0299b263822b01bd005cb71d6100a196548666fa133d34e0d87cb1a3c8a"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r2.log",
+      "bytes": 1117,
+      "sha256": "5252813e725f38292f85b1d8ede9ec7aac4892a64454f7dc9655b2fd7aa669b6"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r3.json",
+      "bytes": 543948,
+      "sha256": "c3381edfe74a231a25e339a4a8087021ac509003082e27749c95d3e7a47eef94"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r3.log",
+      "bytes": 1117,
+      "sha256": "68bd339477655735a5e7fb38b8c58d2473530a535a0cd26dce48353b6a7abe0c"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-combined-pg-final-r1-postgres-runtime.json",
+      "bytes": 9726,
+      "sha256": "72a871bc14029db5fcd079d613d0d64fcb2eeb6b04048cabff6e55a6bff0b301"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-combined-pg-final-r1.json",
+      "bytes": 544021,
+      "sha256": "cfdbf45bc38e2a3e493d29bcef2cb583772bba993e6ddd2118b5bbbe3debe901"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-combined-pg-final-r1.log",
+      "bytes": 675,
+      "sha256": "bdaa7947727c1d75353a1a548d895d61e2e5a3420d993ebd4f0b9fd021d535a2"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-combined-pg-final-r3-postgres-runtime.json",
+      "bytes": 9726,
+      "sha256": "d99006471fc9710e1b274936c480587196566b80bccdf3a85b43eb8f9cf73df1"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-combined-pg-final-r3.json",
+      "bytes": 544271,
+      "sha256": "91e224c6a3a710ee412ca46abe06512cfa287728248e26638887201359f0e282"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-combined-pg-final-r3.log",
+      "bytes": 675,
+      "sha256": "51d778c8cb6820704aa1af64f213f228bd504ce551fc1daf8dd0f9e5a738a67c"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-src-final-r2.json",
+      "bytes": 543924,
+      "sha256": "109d3e77ac5f74a35c1f368e57d55f89d49eddee4db73d418e95bbd8c3741941"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-src-final-r2.log",
+      "bytes": 144,
+      "sha256": "304a60b43bd9a6d69899477859d6650591cf5d7c93786da38e17fdf8bf2c1f7d"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-src-final-r3.json",
+      "bytes": 543924,
+      "sha256": "52e4f5facbe9f14ef704dd2fe38cb8d73f545183e3c023225913a728083935d4"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-src-final-r3.log",
+      "bytes": 144,
+      "sha256": "fe426202fa76f7684b05f24aea93a49a34db193220652e45e2e220ca29956404"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-src-final-r4.json",
+      "bytes": 544174,
+      "sha256": "6b5cebd3da6d46a6c19ad2df790acc8a3e68ed3e1162ee519b33b2801eba6d37"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-src-final-r4.log",
+      "bytes": 144,
+      "sha256": "aba22b63f2eea538a9c683852726f2c6b65b9689a7c5b13289988bcc72c5b66e"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-src-final.json",
+      "bytes": 543729,
+      "sha256": "a8d899276076c96d4532de6f2defda7587a82c279bae93c9ae12f91900bfbbd3"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-src-final.log",
+      "bytes": 141,
+      "sha256": "8092f300417a805d0b2658515f5864257e5f9b6f3a8bf2fa949337a7435c5c64"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-tokens-final-r3.json",
+      "bytes": 543757,
+      "sha256": "da794f86596ea2a4614b625c29102faa9e03e8d57e18fde09f119c7e7018491c"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-tokens-final-r3.log",
+      "bytes": 32,
+      "sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-tokens-final.json",
+      "bytes": 543480,
+      "sha256": "3409696d1900e05ab1f29879ce89d3926ac316845157f97f1d41e0903012a1e6"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-tokens-final.log",
+      "bytes": 32,
+      "sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-visual-final-r3.json",
+      "bytes": 544093,
+      "sha256": "bc135d17cfb7dd501c7b1c6e610c835696b3b134526de80b25fa3fa73e27705b"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-visual-final-r3.log",
+      "bytes": 1380,
+      "sha256": "dd4285ed4a59fc3a3a758d48edaa678d59e84c5fbb82e0c369abad1ab2273322"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-visual-final.json",
+      "bytes": 543813,
+      "sha256": "97bad55153fca5a57e33d274d0b9a69ae593fe89bde4c96a3675144dc2582961"
+    },
+    {
+      "path": "docs/delivery/v2-development/r3-adoption-ui-visual-final.log",
+      "bytes": 1380,
+      "sha256": "e831f8352dca42572826b9e914356dbfde3404f8a93842890097310427536d80"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/ADOPTION_UI_RUNTIME_ACCEPTANCE_REPORT.md",
+      "bytes": 4981,
+      "sha256": "6a850dfe2bd67ca10de7b2952f8e59da9c623c8fb57a76f71903d8efc2588736"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/BACKEND_CAPABILITY_CONTRACT_REPORT.md",
+      "bytes": 6621,
+      "sha256": "9ae6c8c2e78fd6564a529e1ac97e74f39550dfe03f98a021f8a85c07daee6445"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/ENTRY_CONNECTION_RACE_REPORT.md",
+      "bytes": 9284,
+      "sha256": "7571b70cfe90a2c6763ee9d61de05560fcc14d954ca016cbb1b676f034e0ca28"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/FINAL_FRONTEND_VISUAL_REVIEW.md",
+      "bytes": 11694,
+      "sha256": "5144a7b9a1e21a725b2d9a3c0e7718cf4459479c96a9ed18e657ab657b799623"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/FINAL_SOURCE_PROVENANCE_REVIEW.md",
+      "bytes": 9205,
+      "sha256": "617eea4c298ec2651b7d38946118b27a57a24a3b77187e649f40812926b60dc9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/FINAL_SOURCE_PROVENANCE_REVIEW_DETAILS.json",
+      "bytes": 15048,
+      "sha256": "725e3b04db13c6983917e892f1276e719c0e7fa3d91a921328cbadc079ecac26"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/FRONTEND_ADOPTION_IMPLEMENTATION_REPORT.md",
+      "bytes": 6214,
+      "sha256": "a64ad83353c588c819104b3427c6d820c7a1d3dc6311ccb8ddf2d05b86409a43"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/FRONTEND_PREPARATION_RECEIPT.json",
+      "bytes": 1525,
+      "sha256": "a2cd4ace1a91ff92597d22a1c17534a16bea3dcb49e9f3bc7810eed77680ba2a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/FRONTEND_PREPARATION_RECEIPT_R2.json",
+      "bytes": 1603,
+      "sha256": "52b356c48ac2e3d052a702a1c50972258888ad2bf97e91210477121606e7d4f5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/INDEPENDENT_UI_ISOLATION_REVIEW.md",
+      "bytes": 4015,
+      "sha256": "19ddef6320b9d352c1b5ea3097e5f8b40532206bc263e96ffb99ba9c2579613b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/V2_R3_ADOPTION_UI_ROUND_REPORT.md",
+      "bytes": 11750,
+      "sha256": "ae31d826601094f39c20111f8adec9f3d81b48ca6763a8d630c81b5f93c51e5f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "bab7a125ce13630b5e755a3176c4acdd645667e91fb8ff1fb58aba5724982f19"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/isolated_acceptance.stdout.log",
+      "bytes": 1141,
+      "sha256": "c47c3c3867d79c589badb6b44187b69a86a8bda756de9fa79bc72d0ee46f5a6c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/junit.xml",
+      "bytes": 3238,
+      "sha256": "1ba17a7d7926ac52c4c66683dcbc4c1614ffec09ae815130e5855ca6a1b5b90e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/launcher.json",
+      "bytes": 1138,
+      "sha256": "21f8a64e95f181ebf44c9d18594668145bf09ef81ec81f0ec5e14edf1146bf1b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/playwright.log",
+      "bytes": 2797,
+      "sha256": "3e0c27019354de8f6f73b12108910cbf903156c62107c7fc4542bf2c85b36d94"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/production-after-control.json",
+      "bytes": 397,
+      "sha256": "648135073570ec0afa39a8b5505a766da7ea525e2764714879651bc97be461b4"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/production-before-control.json",
+      "bytes": 397,
+      "sha256": "648135073570ec0afa39a8b5505a766da7ea525e2764714879651bc97be461b4"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "a9f3dc82698b8e55ea460d13ada55b0b50e058bd942cb7e43249e82145f63d5c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "9ca6d14b4a2b0a3cbe15c7adf1dfa371dafc7753d7bf9659765878ca8e918898"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "d8b9b8bc883b7ae206fffe18dfe31e9361d70caf769aa0bf8532251a70f13c9f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "5c21f04d158026241bb22da80b747fcb850e11cf080ce89e8a609b047a4238d2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/results.json",
+      "bytes": 9603,
+      "sha256": "89a68a50a8eb25807a75c06791aa8b0c8761ce1fc11d366930a2aac5d1c1afbb"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/test-results/.last-run.json",
+      "bytes": 96,
+      "sha256": "09a1f87fa203e6c9ad1ec7079ae9b91c278ec4ff75bac7b704db6cc412c0ffc2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/error-context.md",
+      "bytes": 10333,
+      "sha256": "c9b52de1d2851a8e44e20c154f186f0ddf4045d14e849451fa5975b37ff03c75"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/test-failed-1.png",
+      "bytes": 4817,
+      "sha256": "031955752f3d332d1394c71c5b0cda3009f2ba39837c91e593ebf3302edf0062"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "4af5c8abc244e12bbccb0f7002225ba863875f0c9619650b4d46566bfb3064f6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "d3ed2073ed709260b9319c78938a99d8dcc85d667f24f7c650d6a4f446eb581b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/isolated_acceptance.stdout.log",
+      "bytes": 6374,
+      "sha256": "6262a47f11b9d4ff3d696e67d91094677acad3080a948c42ee8d1e5553f2918c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/junit.xml",
+      "bytes": 3070,
+      "sha256": "66ac0312224560fc0d8ba21b5c213fcfb58f9eb386761a6bdc013057fe815a10"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/launcher.json",
+      "bytes": 1138,
+      "sha256": "b52733dabfa223013f2f16835589f935ee62d06b47e5cd3940ad5667f5f61f4a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/playwright.log",
+      "bytes": 2924,
+      "sha256": "2203ee4cd3ca1f73e5f7512099c3fe0cdee3f770b7074bd5ade976b25e9672fb"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/production-after-control.json",
+      "bytes": 397,
+      "sha256": "2fc20339c22fd8fd813a6113b38e644f88ec0588624b8bf186db1d55d843435a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/production-before-control.json",
+      "bytes": 397,
+      "sha256": "2fc20339c22fd8fd813a6113b38e644f88ec0588624b8bf186db1d55d843435a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "27f41addcfc6b771468241b54676c0b68e5d57f5989d0739d080be8116b58650"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "8e3faf082573fd469446f5f9446d3bd37f8ced060bc77060174f8907643b9ca5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "d0ee1c96c16043b9a132972b3ed3236752e3fd525fab3d59c65050569bc47f75"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "4b3954e405f4ad1ddb81d7bf06172f1278c4916e485ab007648334f99dba5410"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/results.json",
+      "bytes": 9757,
+      "sha256": "cfeba78cd834739d88f4bc2f1b6690c47c2a036009c77c68ec3d805b9e63bdc6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/test-results/.last-run.json",
+      "bytes": 96,
+      "sha256": "09a1f87fa203e6c9ad1ec7079ae9b91c278ec4ff75bac7b704db6cc412c0ffc2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/error-context.md",
+      "bytes": 23005,
+      "sha256": "2a833e370aeed3730c1ebdeacbae3cda3751d76995a4c081646ded7d4ac40edf"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/test-failed-1.png",
+      "bytes": 84616,
+      "sha256": "fc43cbb677c7788862a96c96bb039a01f7b02ab7820823b104ebadb8bba14856"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r2/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "d03b2c84c22aaf3d8e6c971d1b05a99fc0cf9aae5562fb314d3fca903e93ec7c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "a23f0de1ef4f0ff4f6aff8d312eed9a5659c607a51be6adb1afba561199df026"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/isolated_acceptance.stdout.log",
+      "bytes": 9600,
+      "sha256": "1a4d3fa955037b047749fa3e2b545861003673ebf6a05dc4783aba0d335b43e9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/junit.xml",
+      "bytes": 3042,
+      "sha256": "8b9dead62f3326222fcb55cd50f8c2042d1395b2a0846c5db5df331681fe23df"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/launcher.json",
+      "bytes": 1138,
+      "sha256": "d930043009aa7c66d3455f5d96f29396c1c77590cc26fdf7f8707cd5dfb44332"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/playwright.log",
+      "bytes": 2894,
+      "sha256": "5130bab706e73c8d2a8aa105d7e3221216052e0387dfd1dd1ef4dea8e4dceb45"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/production-after-control.json",
+      "bytes": 397,
+      "sha256": "9292cb1a3014715c18b7de362633d3ac20f6d7fd7e3f5ea21e76c5ba87aaa84a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/production-before-control.json",
+      "bytes": 397,
+      "sha256": "9292cb1a3014715c18b7de362633d3ac20f6d7fd7e3f5ea21e76c5ba87aaa84a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "5bcf5e555f36a349e7a1392c8b2451515d649852b89aa81069c706327ff99a50"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "322796a7929c11c9b880ab818ed468f4bb3fd11a00e6b1545e50643ee6e34fa1"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "782925fee58332a0e2da0c92d76e819bbc397b63844ded6f36c70775de54d962"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "5be3a2c434f2ad2de2fa8194c14de1f498d1aa3ff677fa3839ed0f66a1f80659"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/results.json",
+      "bytes": 9208,
+      "sha256": "8c357f364ba22a053136189d89c40befb26336c6a99f3f9157f1833ddd536db9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/test-results/.last-run.json",
+      "bytes": 96,
+      "sha256": "09a1f87fa203e6c9ad1ec7079ae9b91c278ec4ff75bac7b704db6cc412c0ffc2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/error-context.md",
+      "bytes": 44219,
+      "sha256": "6e10de93bb694854660322c98e02ceb999a16e4816749c59f223e04598c60154"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/test-failed-1.png",
+      "bytes": 116016,
+      "sha256": "11fdca3e89a4457c2256fb8b9365eba6e3d0b0033d1486509d2fce6834ae16a5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r3/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "31d61f0fea3c13bba1d19eb0b366e0be3ef60d0cb4d0d2f5a1b15bc3cff80a63"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "64c74e47e7c390b5a66c01608a8a7edb12e493021c2ae1785254c969b8d87248"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/isolated_acceptance.stdout.log",
+      "bytes": 12171,
+      "sha256": "ec24353ff506696c4a656711dbd98c36df31c8bc79f4f462cb075d0c2ebdb1c2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/junit.xml",
+      "bytes": 3123,
+      "sha256": "c151880da93a3d8966aa1b999bd40ad2463f82910acec336c5586ac7ecff2071"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/launcher.json",
+      "bytes": 1138,
+      "sha256": "db3c307aa795151ca884726d269617977eaf5893200d259375f38d08342eaa11"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/playwright.log",
+      "bytes": 2967,
+      "sha256": "937f8297cbb238beb3d08b079cff136d65c6f686661d221ff0cfc71d408a5c6e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/production-after-control.json",
+      "bytes": 397,
+      "sha256": "e3277ab73abb38455850149cc40900bec31a6642f4c3aec58ff1ba189b166ff2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/production-before-control.json",
+      "bytes": 397,
+      "sha256": "e3277ab73abb38455850149cc40900bec31a6642f4c3aec58ff1ba189b166ff2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "f6e60f170de63213e46227ed79a01da71fc7d788261c3d1f604731cecc415ff5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "cb3ee9bc3e0c04d25e956ee4aff01adf79257b15ad53f45df2d3f36decd8d644"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "035db2305477368019e3e476c265d872ecc2d79f424c0fdb36108424306f30bf"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "0c5942db8d2269770aa7778b0cfbd4927643e41b16038d1773d712bdf404e600"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/results.json",
+      "bytes": 10061,
+      "sha256": "03e07b76187789335cc58b6a0f028859b2871e35054dc0ebcedc21d3a275bffd"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/test-results/.last-run.json",
+      "bytes": 96,
+      "sha256": "09a1f87fa203e6c9ad1ec7079ae9b91c278ec4ff75bac7b704db6cc412c0ffc2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/error-context.md",
+      "bytes": 29319,
+      "sha256": "3910a2e8278428ce90fc7cf5419cc23a8e6e14956094816c257da52110fb9e3d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 115240,
+      "sha256": "170a1206ae19c26c0696331123051ee480b9d031784f57f1b27591983fd668c1"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-form.png",
+      "bytes": 116151,
+      "sha256": "c03c2a80f3f8d7b019ab261ca9ecae3b8f4c99e20320ce83e9526641c92a4856"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/test-failed-1.png",
+      "bytes": 107356,
+      "sha256": "298d2dbadc3fd4f755896bab208ca5d0ad370b7d7ee7017d07e7249b076fe28d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "1a5ab61cc0a008b5751b279176f64fb2b0f57d21fc491b21a9711f825ee76586"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "9c1b7a8c4d386b58c750b7cae06ff713111c77527528260410f72c8edc50605f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/isolated_acceptance.stdout.log",
+      "bytes": 11590,
+      "sha256": "8607c8d6d5d4f53dad70dcd7d967be13da5ab6d79bb60a89dba4a1db4899674f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/junit.xml",
+      "bytes": 2777,
+      "sha256": "5168e689d0f80083c4b70c0cf36998f303153c2bb956f4afafe7aeed4b5fd2c9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/launcher.json",
+      "bytes": 1138,
+      "sha256": "d3f5e38aa21c2f130f766069cf958a9b64749f3d8c46f9017130901022b2f552"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/playwright.log",
+      "bytes": 2621,
+      "sha256": "12880162a2fa9a41bc3de913f2efb2319f106841840aac14f5a0b74c090622d6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/production-after-control.json",
+      "bytes": 397,
+      "sha256": "9bed6f345abf1d49a88bdffc18759abe955ea3208dcfc089f7f651e71c757aab"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/production-before-control.json",
+      "bytes": 397,
+      "sha256": "9bed6f345abf1d49a88bdffc18759abe955ea3208dcfc089f7f651e71c757aab"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "5c3420334ccb780699a782a127fd553052b9bb7c9cd982e1babc975c96320031"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "0f69050ee35fa2641b0a95432d24c0a9c5b51dd1a3c472f895420a1277526169"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "91bf7c2ba3286c6ff29bdf4fe669820728563adf15315325147ca7b151e24d1f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "6ee4c4f3c584ed23cac7aaaafd285b656eb4f2ff7c3d8a91f82c910916dc9646"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/results.json",
+      "bytes": 8958,
+      "sha256": "e800afe9c8ae8fa8d49674670cbe03ce25558569c3d438e9024ba1f98d989fbe"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/test-results/.last-run.json",
+      "bytes": 96,
+      "sha256": "09a1f87fa203e6c9ad1ec7079ae9b91c278ec4ff75bac7b704db6cc412c0ffc2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/error-context.md",
+      "bytes": 41044,
+      "sha256": "c923bb0bb4fecd6cdd71ed68f61e690bfce3558f0ce908e0945898b54b38e31a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 114693,
+      "sha256": "28035a3d79e1c2afd3481962619da83770486f9ea861e845cd19075d4e7f59d3"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-form.png",
+      "bytes": 115820,
+      "sha256": "86a3eb76dabd7360c713d6fabea0996328197d4e8ee6e2a5d17c2a21552e29c9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-committed-pin.png",
+      "bytes": 103471,
+      "sha256": "4af7edea8ba0eb6f237da47176364cc1ffca25b086f4b15096703b42ff992492"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/test-failed-1.png",
+      "bytes": 103378,
+      "sha256": "94b72f80e1fde5f58de0a644d8a1fe8a887323f3f2992431dac2731fbf002046"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r5/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "9f0b29b9bf1a025dc1bacec2d484ea28faa4a851c61c359a1cdca18805349302"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "f4ef46c13446b70f72d6cbbb035e3982ef8d657d32fcf18e205f64b4f23c27c8"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/isolated_acceptance.stdout.log",
+      "bytes": 21789,
+      "sha256": "ee037f75582ae00ae44b5b92a01580365b9cbe6aff7e20beef3dd6576aa7e296"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/junit.xml",
+      "bytes": 491,
+      "sha256": "02f9375d08abc47dbe9c764277de77425a3a96904d19d8d6dc6c8271e2aef4b9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/launcher.json",
+      "bytes": 1138,
+      "sha256": "b1d1761d81d40b1624dea1af2cddf99d7714bdb87706d698a8bddad0bde2179e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/playwright.log",
+      "bytes": 577,
+      "sha256": "9a56faf91f0ee256b53589b8bd43aeeac00d69cb645d285d0005d8e9127d3dd2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/production-after-control.json",
+      "bytes": 397,
+      "sha256": "dded0f8f5a5cc6bd0a8f7f85bde32bd8fb38a98cd5210907dcf4c68a1e07d333"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/production-before-control.json",
+      "bytes": 397,
+      "sha256": "dded0f8f5a5cc6bd0a8f7f85bde32bd8fb38a98cd5210907dcf4c68a1e07d333"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "c17ec87a9f9924979f0e73dbad770857889bf5bff84bcb38cba7b6abf40b470d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "15513d5e5e8bac96cfb6a5060d32fe2fbc53c72b4767ea1c6009ef04da6cc993"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "93f1b73fbe7c74ff3b337402e2b6241ff3f16c397e55b691b3dc378eb8e69ddb"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "00a1facf3c8a38d1a74355c434d7ffbf265d945758d3de60449a293a97e60ac2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/results.json",
+      "bytes": 41402,
+      "sha256": "e49b00b25c009b84caed93598830eeb5f578c4b207b38445614b5985948c0ae2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/test-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 112109,
+      "sha256": "b3060993b4465739d4440aca85332f2a533ea6c738327a868b208d649671a7bc"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-form.png",
+      "bytes": 115979,
+      "sha256": "c11b5c081ebd8bdd2f06ddc2c4438691dfcc47d2f34dd85fb419a33060afd2bb"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-committed-pin.png",
+      "bytes": 103627,
+      "sha256": "4181c3052c60b3ac2fa5173cf44d2cc64ecb26e5f59785c311d3f9a5fec03014"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-historical-source-pin.png",
+      "bytes": 114315,
+      "sha256": "ed3c9682bf06fcb32972f7ed8fe29b3e61f51bf88bc2afdc9187d3ea14b5b9fd"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-reopened-pin.png",
+      "bytes": 107918,
+      "sha256": "d457dd94e5f33edefdcf924443b0da06d1edf1f4ab086c3a822e6129dec8592d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r6/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "5d415fc35ca91b4ad007f15132c0402365c4912687f9e8b6501a5513e3fb609c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/collection-confirmation-rows.json.gz",
+      "bytes": 196846,
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/collection-confirmation.json",
+      "bytes": 21636,
+      "sha256": "a2424c0b3d1ba9411dd714a358039b9603e71640295c7fd6d91f959fb37ea859"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/collection-delta-final.json",
+      "bytes": 5620,
+      "sha256": "b50f2c8c3085c184dbf8dcb0edab8394ecc6ef0d9b40a2ce45f3f4948ee305c5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/collection-first-rows.json.gz",
+      "bytes": 196846,
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/collection-first.json",
+      "bytes": 21792,
+      "sha256": "570b3e7e1ec018ffa72af75246af791746e498ead681d7dc05b4d100601f84df"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/final-browser-proof-index.json",
+      "bytes": 3511,
+      "sha256": "b26d4f445fa8e1af698bba23a8b65473f9ccf1b048a01ed7c0ba223eba54a97d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/final-browser-screenshots.json",
+      "bytes": 13572,
+      "sha256": "9aa5df1eb8e07d5722d4391f8e2abf055c568a0c64d9af869ce74feff78ac0f5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/final-runtime-cleanup.json",
+      "bytes": 1380,
+      "sha256": "26e4dd7413a7f481e998fbd6ae1a1aaf5541b70d536aafbdb5ecaf7d7be7ab5d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/final-source-binding.json",
+      "bytes": 2275,
+      "sha256": "657b3607819892e78b4bf62d799968c0fba22c7625e59d90d840d4e4da373b51"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-adoption-broader-r1.log",
+      "bytes": 1705,
+      "sha256": "a58fb2fff2f0434187711b83d0e4c51b804cbcedb4c011b9be347f627cf563c5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-adoption-broader-r2.log",
+      "bytes": 1787,
+      "sha256": "71c54cd68558b560827e02bd238f0079b297a1573cfb5b9e96c399f51a41426c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-adoption-focused-r2.log",
+      "bytes": 626,
+      "sha256": "9c86d9faa638de18b8e8b9360b4e39865e1eb2d20b6e0237e6ab0990f142d1ef"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-adoption-focused-r3.log",
+      "bytes": 33477,
+      "sha256": "150c3aad4d49d4e685a99893dbeba99d467b57dfc0d1621cd83924f482f533cf"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-adoption-focused-r4.log",
+      "bytes": 15243,
+      "sha256": "3878a8b24032e37c73ab987706d9066e6598ae3f143be53fbebe416c6179e3ee"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-adoption-focused-r5.log",
+      "bytes": 626,
+      "sha256": "46e5bd0d4dd5fced64c8cb9296497f1fa8f35ac1ac854e98263f34a45e4c4e8b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-adoption-tsc-r2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-adoption-tsc-r3.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-host-cas-red-r2.log",
+      "bytes": 1547,
+      "sha256": "34156a22ebd1b56bacaf709690a618b0dbf953d509c653dbfafaaa1484e5241a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-host-cas-red.log",
+      "bytes": 15093,
+      "sha256": "109f7b160b2421865fe59b57415ae9eb4ea19b8fe510838a533b7ca6eb4f0f9a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-local-entry-authority-broader-r1.log",
+      "bytes": 616,
+      "sha256": "b151cf8a7a0e234045d282a3dcf765986f438092e3fe5505fa50449c651a4578"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-local-entry-authority-green-r1.log",
+      "bytes": 333,
+      "sha256": "42a72a25f224bc302989b8fdc8d69ac01d60856bac213541041ed843e97a99af"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-local-entry-authority-green-r2.log",
+      "bytes": 333,
+      "sha256": "3ee67acbb26e168c4f67f1e8236ca57e1a4790dd42ce9d6dd88b67041e5febbf"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-local-entry-authority-red-r1.log",
+      "bytes": 55413,
+      "sha256": "90097e693a36bfcbae7f4656cf3909f4d811379efc5358ef4644c3a23068a94d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-local-entry-authority-tsc-r1.log",
+      "bytes": 1606,
+      "sha256": "c9a83373cc2d8c095d01cd595c8a10c11c4ad958f156174cd8b281994b6f25ef"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-local-entry-authority-tsc-r2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-src-final-r2.json",
+      "bytes": 1563685,
+      "sha256": "18d52c4f0f7fe1bec1e78f47a84ba131f01f437836b4c87adb024f1560057407"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-src-final-r3.json",
+      "bytes": 1563420,
+      "sha256": "c52be6b4a9d4c800fb5781ae21d5d09ec37745c30fe7c45b3e17b75db11b2180"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-src-final-r4.json",
+      "bytes": 1564979,
+      "sha256": "93e0b6fce0927088185450a2b8a8061f631d2b4009329f0a513d9c0b4054b583"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-src-final.json",
+      "bytes": 1942048,
+      "sha256": "b7af59db6a85e1cae211e51529d794641e4ce9a4c88165eee9a737c1471e27b8"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/frontend-verification.json",
+      "bytes": 6259,
+      "sha256": "b272f31fcd0ac099acb41845f153254f74b307929f07d91f31122311abd6c9b8"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/historical-6aed/FINAL_FRONTEND_VISUAL_REVIEW.md",
+      "bytes": 7282,
+      "sha256": "4641cea8676a9fc71627073c3facaea6d9e330818f0d4def25835cd11f8ed733"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/historical-6aed/frontend-verification.json",
+      "bytes": 4600,
+      "sha256": "9feece394e7ace56df7ddca4196766bc030fb7c98546be05980a580ec80747a2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/historical-6aed/hosted-ci-implementation.json",
+      "bytes": 10421,
+      "sha256": "b3c1b7a9fcdf239abe2685d976bd3c47ce09a902e9f097bd00f8f3d2944789d5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/historical-6aed/implementation-publication-audit.json",
+      "bytes": 1434,
+      "sha256": "52372a00e468eabb53e80dd9e9e8d668313926fb49063c6bbdfaf39c0a0df035"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/historical-6aed/manifest-source-git-binding-final.json",
+      "bytes": 596,
+      "sha256": "b8a3eab4498ec9a38d008ab46ce402a8c0b33d2956a566c9f11b7d995cff9883"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/historical-6aed/protection-final.json",
+      "bytes": 871,
+      "sha256": "51daa5516de8a0a4d48ea93e478bfc72cf4e0a216c1617c244665264df87b05c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/historical-6aed/source-git-binding-final.json",
+      "bytes": 597563,
+      "sha256": "a0bae784e375270cf77be1f73fc8533ec7308c0f2fcfce228999aeaabb67b357"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/FINAL_SOURCE_PROVENANCE_REVIEW.md",
+      "bytes": 6273,
+      "sha256": "08e9f99a0faa7e0ed09acaf93579f890741331be910207fd411073a67c7bdf23"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/FINAL_SOURCE_PROVENANCE_REVIEW_DETAILS.json",
+      "bytes": 6611,
+      "sha256": "718e8461435886b68a56eb0288514321302a8d8e614e347750f0b01a83b6083c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/archive-index.json",
+      "bytes": 4775,
+      "sha256": "d17bbfd505a2aa57ee38b448e2835355997149de84b16722445683cd4658b55c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-confirmation-rows.json.gz",
+      "bytes": 196846,
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-confirmation.json",
+      "bytes": 21636,
+      "sha256": "bf4410243fb11e347a3715c2b1981d8a338bd81f724c9f98ed6eaa6378ff1aa2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-delta-final.json",
+      "bytes": 4127,
+      "sha256": "00e1aa0afd0c89c2db10193189f49a71966b75252e29d04a8aa3ea473d4921f1"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-first-rows.json.gz",
+      "bytes": 196846,
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-first.json",
+      "bytes": 21792,
+      "sha256": "3e53b6cebf46b8d4e5a612d4b34edabdd5504be943669d0043fbb8eab3d5e3bd"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/coverage_manifest_v2.json.gz",
+      "bytes": 545025,
+      "sha256": "2f2d2bb16c6159579ba4d051dc139147e17cf821ddbe783985d4bb4069b0b1c2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/manifest-source-git-binding-final.json",
+      "bytes": 596,
+      "sha256": "b8a3eab4498ec9a38d008ab46ce402a8c0b33d2956a566c9f11b7d995cff9883"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/r3-adoption-ui-collection-confirmation-r1.json",
+      "bytes": 543752,
+      "sha256": "6e4740469b16c52cce556a74506130a930de5fc96e88dcc325a2cb94db1de3eb"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/r3-adoption-ui-collection-confirmation-r1.log",
+      "bytes": 961,
+      "sha256": "8fd1137207539a3c603802f96ebdb5697e7ea88937073f25cdeb74cf9920ede6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/r3-adoption-ui-collection-final-r1.json",
+      "bytes": 543698,
+      "sha256": "b1e0786ca548566f9610ed904852d0513910dd788d09864adeac2190cdf9c2d4"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/r3-adoption-ui-collection-final-r1.log",
+      "bytes": 1117,
+      "sha256": "fcea8e6ff4f8bc471f359871fd53ad5a64be5448bc17f81b87fe79dacd972866"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/source-git-binding-final.json",
+      "bytes": 597563,
+      "sha256": "a0bae784e375270cf77be1f73fc8533ec7308c0f2fcfce228999aeaabb67b357"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/archive-index.json",
+      "bytes": 3788,
+      "sha256": "bce7f908491059d4601e299c8e878c171ba38be8b0efd18f97a9961252227e8c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-confirmation-rows.json.gz",
+      "bytes": 196846,
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-confirmation.json",
+      "bytes": 21636,
+      "sha256": "4a4341b9af0fcd3da28048365d686d77775e93fa27f69fafe019698370ca3c5d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-delta-final.json",
+      "bytes": 5038,
+      "sha256": "1029f9a0920adee8c450747b8382f6b6200ff208ae5b5b9b6aed945240afc3a6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-first-rows.json.gz",
+      "bytes": 196846,
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-first.json",
+      "bytes": 21792,
+      "sha256": "bd7a19a1abb0c61f341245cfcab374af6ec5ce0ca8a78c6727aafaea2c7743ec"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/coverage_manifest_v2.json.gz",
+      "bytes": 545034,
+      "sha256": "02b066ddfbfa3a7ced0e8270fe7166b8ea73e3923a36f28bff2f8fd1e41830dd"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/r3-adoption-ui-collection-confirmation-r2.json",
+      "bytes": 543752,
+      "sha256": "1dba48c2c58154643c7e5700e15f34f4009819041c389f4b917e29599f466f8d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/r3-adoption-ui-collection-confirmation-r2.log",
+      "bytes": 961,
+      "sha256": "7ab46e6688ad186ce551d7172366ab3f3494ff4b4035140de1214f03a7f70677"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/r3-adoption-ui-collection-final-r2.json",
+      "bytes": 543698,
+      "sha256": "9550c0299b263822b01bd005cb71d6100a196548666fa133d34e0d87cb1a3c8a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/r3-adoption-ui-collection-final-r2.log",
+      "bytes": 1117,
+      "sha256": "5252813e725f38292f85b1d8ede9ec7aac4892a64454f7dc9655b2fd7aa669b6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/history/db1f687-hosted-first.json",
+      "bytes": 8758,
+      "sha256": "a5c5d8857c14a49d08ee95bdd4c9f4609891b2ffcc702fbce6a5897be40afafc"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/hosted-ci-baseline.json",
+      "bytes": 10421,
+      "sha256": "23365ee3ee4dd31e3419a89314b2b0bfd02e9a4900a451f886cda3025caddb28"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/hosted-ci-implementation.json",
+      "bytes": 10421,
+      "sha256": "3e366d382959ba341855c52352186dbe5e109bdb33d24cd5e42ca1997fe50844"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/implementation-publication-audit.json",
+      "bytes": 1790,
+      "sha256": "e42952860cb44c6f9fd2ca49a3b2eddfb0ddb65314ed2d281dbb45e5a2b939dc"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/manifest-source-git-binding-final.json",
+      "bytes": 596,
+      "sha256": "5abfe1fe805b085bc3f7c330104ceffa75ba9653c0b784ac9d1aa58acec8edc1"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/original-closed-gate-harness-preservation.json",
+      "bytes": 653,
+      "sha256": "9e1c7e374ca777cffca21598fb766b3c600d0edd3b76d4bf2291a6c4b036c629"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/protection-baseline.json",
+      "bytes": 871,
+      "sha256": "abd07d54332b0ef12c89e4ad6730573861fcae44731c72ef9a85219627ab0db5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/protection-final.json",
+      "bytes": 871,
+      "sha256": "14f6fc1e8f363d30e714a4f43190e478c69af8231fcdd27d47b808a78191040f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/publication-preflight-diagnostic.json",
+      "bytes": 1322,
+      "sha256": "7ff848ba560f5c75fc989da1457c7732e15b9afc9cf84fcdf9db6b19569a6cbd"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/decoded-receipts/prompt-adoption-ui-1366x768.json",
+      "bytes": 27167,
+      "sha256": "96535ca636085d590cf60824c74d402e2fa25ef39a7920136dcedcc138773433"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/decoded-receipts/prompt-adoption-ui-1440x900.json",
+      "bytes": 26659,
+      "sha256": "aaaab3a1d28cb0f8fa7f741092b5bbb6ef5072d75af605f7c29b08d4efccfcf2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/decoded-receipts/prompt-adoption-ui-1920x1080.json",
+      "bytes": 26761,
+      "sha256": "be50b8089f78c6e160d6d7fc106b4d42f01343ba86a51d2a926613dffdacfa4c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "60e069b1e71ca96156400fa4bf4248a827e0c38835396393792602d7884d8e6f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/isolated_acceptance.stdout.log",
+      "bytes": 63352,
+      "sha256": "e077cdc523a2bed2391b0a0153f814d9024a441a735842c6fdaa8e1c061d1262"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/junit.xml",
+      "bytes": 1244,
+      "sha256": "9a28c9089660872df6982ede10baa744a0f55d4dcb934fd81d62e398a738bdcf"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/launcher.json",
+      "bytes": 1138,
+      "sha256": "5b666411588e53e7d9c9a49432a1175a548160e40801b4f5733b8c22198f2723"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/playwright.log",
+      "bytes": 1632,
+      "sha256": "7b4fbe7f1c872c4ce363f65d5c30abbaf279c303cfbfdbf5860548884f09545e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/production-after-control.json",
+      "bytes": 397,
+      "sha256": "20f0109782e6f624a306fddd1ffe09845e21ee60c40a8f7c0dd654961107e1c4"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/production-before-control.json",
+      "bytes": 397,
+      "sha256": "20f0109782e6f624a306fddd1ffe09845e21ee60c40a8f7c0dd654961107e1c4"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "242a2e9806602c2dc5403b0beabe26797e54e109b6c7b03f7d44685d99fbb531"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "c44d72414c4ce5371c60ca9a2098a8974d633888facaae2031e8a2f8b346bc43"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "edfbe2f2484828093f204cdc7755ba0b02714386e0a20ac0f12b114d0f3cb308"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "47ae1c5698a61d4e9dcdf3d7b781a22e0fe69475b57f8645e6998e17e6862f97"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/results.json",
+      "bytes": 115378,
+      "sha256": "3308a4c7b1eceb18f1d78c5487267950c70420d0ba5691edd4ac2ebd7a0671ad"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 116290,
+      "sha256": "71776437a5a3335d749cd398c58d22dcdf533bee0346fb21d0f75db6995e9543"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-form.png",
+      "bytes": 116290,
+      "sha256": "71776437a5a3335d749cd398c58d22dcdf533bee0346fb21d0f75db6995e9543"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-committed-pin.png",
+      "bytes": 104232,
+      "sha256": "824387d4dbbb8582a692c5a38fffecb1a524640f58b0365713e1f2f141584248"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-historical-source-pin.png",
+      "bytes": 114463,
+      "sha256": "0e422c2d546d6977191476a557f5224f79603819e61b9db50087f6838d1f417d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-reopened-pin.png",
+      "bytes": 108561,
+      "sha256": "6ea983b33b932200802e6aa6e7dc95a3e4325ebdd6898ffa83863eeea9b5eca3"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 131999,
+      "sha256": "9dfcfcfa5f9f6b5afcb6782fe911deaae8183282539a971b7f21514525d326b7"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-form.png",
+      "bytes": 136790,
+      "sha256": "93ce8fc7eb92296edcafeaa8b2fc1b41bbec2d165e7f421f2f7dedd4f2ab4910"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-committed-pin.png",
+      "bytes": 114854,
+      "sha256": "cb0a2afe98affa9448ca163ec5917d21736cf15cc97e7e24c014f5f5690daefe"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-historical-source-pin.png",
+      "bytes": 134059,
+      "sha256": "57d3929421cdab560adfead044ade058e9515a6e7173e3b2107304e9fe7ee133"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-reopened-pin.png",
+      "bytes": 121399,
+      "sha256": "4e434793ff78d4685c399d88a5d0053d8337e7521e8558528c611af2bfb4f88b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 157478,
+      "sha256": "be22cf6be292c2f5a1d10a99063b3cb4d2c2044a859db63f01f6200770581965"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-form.png",
+      "bytes": 157436,
+      "sha256": "b97addebdcbae82d9c08163e6944dbfa31ac635fbe66777c7c050b599c4394a5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-committed-pin.png",
+      "bytes": 143287,
+      "sha256": "028092732e5f9031905ed7b1eaa1a9935175db973456eb39cd480c56066feef6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-historical-source-pin.png",
+      "bytes": 163413,
+      "sha256": "d177c33581d0b07a8224293988f2c32ca1aefec0e05e58b520d4069b43e054dc"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-reopened-pin.png",
+      "bytes": 151009,
+      "sha256": "208671867ab7eed9b304d0eac6953fe7afea06bb82a5e33897266c49477f4f0e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r1/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "d938dc06d49ffb81b96204d4db6ce62a9badba0e225c6c3c980a70a35aac9955"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "58e424120bae5fde92f44d820062b299d862779bafe2046f605fb75b716dbf6c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/isolated_acceptance.stdout.log",
+      "bytes": 46043,
+      "sha256": "7935291f05094b43ed30f0fea79c758aa28475e526af4c217f9aaadc9522a9d2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/junit.xml",
+      "bytes": 4011,
+      "sha256": "ecc61826b13426e437d9e0a5123db1af2fc2f344758e61beae76d8ca83979b1f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/launcher.json",
+      "bytes": 1138,
+      "sha256": "3614bc1627905c5b908295c43f016073afbc4bfb0188434f93c1ba6c2f49f9ac"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/playwright.log",
+      "bytes": 4168,
+      "sha256": "a9abd340d958713507eca8457ae4e690c9fdd3053bf801814fbd479993b258db"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/production-after-control.json",
+      "bytes": 397,
+      "sha256": "3cbe9a209ac1adaa100c784e4829d4cea452f27d78febc94a4cdb2a6e255e861"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/production-before-control.json",
+      "bytes": 397,
+      "sha256": "3cbe9a209ac1adaa100c784e4829d4cea452f27d78febc94a4cdb2a6e255e861"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "0a0e03aaf07db9c28fb45abaa0fb3188692ebe7018a250ba94416bd1ebde6a92"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "2e59c42b8de1a2499e8e794e45c9a384b690169fca68b2376e9cb9b37092047b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "fcdf13376adeefe61f766e90f8dc778f08e89835265c0957c598758d3b61307c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "50c489b2df5fd5d7d23323b97a99f2ea44b0ae1d67c123f56a90a76d906408e2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/results.json",
+      "bytes": 85376,
+      "sha256": "7cb14f6bb07a3f2410292b6bdb36ea57273761ca5206237da22cb15f82ff56ab"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/.last-run.json",
+      "bytes": 96,
+      "sha256": "09a1f87fa203e6c9ad1ec7079ae9b91c278ec4ff75bac7b704db6cc412c0ffc2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/error-context.md",
+      "bytes": 19672,
+      "sha256": "420f50c636f2092a326b62ca50be93790405186e26895dc267687c2281c2318f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/test-failed-1.png",
+      "bytes": 62286,
+      "sha256": "4576085111638f3ac5e8914ce49d29d63a6ef07f0f292cb3696f0c4ba83aa43c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 132481,
+      "sha256": "bb595fd5cb476139018eabab04e518bbe3c0e5734e36c6b040ec23806a3777f1"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-form.png",
+      "bytes": 138185,
+      "sha256": "ec3d7940d0886500cf8e0357b7cbc27ca2c1384279dd40b59c874455870162a2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-committed-pin.png",
+      "bytes": 115551,
+      "sha256": "7babab6f48d492a58b15ace8653a858f0c5a02c8b20ac1dd5ec84b8683ed1dc2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-historical-source-pin.png",
+      "bytes": 134762,
+      "sha256": "7bb051c07c89b0cfcefbbcdf7d37962f30e3d6294d139c65942dac4156540264"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-reopened-pin.png",
+      "bytes": 122561,
+      "sha256": "904fba1d68e530065adba3179e61cf89aeca0af44f8dee2e51dc96ce4ed97359"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 157121,
+      "sha256": "cc5669c5c68f498e6f3c8ad5da596f2ee647cb80e632327133886cb8ffb64f54"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-form.png",
+      "bytes": 156985,
+      "sha256": "7546aee1133cf7433eed22ec7cbfe9d5a1267a80a02f1368c01bdd28eb11e9c3"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-committed-pin.png",
+      "bytes": 144068,
+      "sha256": "1ae79d81d70ce4a5adcb1bceceb3d1e6e87f56f6d18cd99319dabc3e4952d801"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-historical-source-pin.png",
+      "bytes": 163514,
+      "sha256": "5a1ab84809151bca6c0d97235562770d6910a0c370d8742b2b12fde828dc1a27"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-reopened-pin.png",
+      "bytes": 150993,
+      "sha256": "85644e6b02bd1d33a06cf45f4730652656c3c64e247e874ebfd789059ac71140"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r2/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "8dbeefb06db23bfe7da00923256963a2bbc0ce4555b19a25ab83349ff1876543"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/decoded-receipts/prompt-adoption-ui-1366x768.json",
+      "bytes": 27167,
+      "sha256": "dfac349cda2cc6d98aabb2be71657858d947fa32df239ea2de29c3c9a2b24769"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/decoded-receipts/prompt-adoption-ui-1440x900.json",
+      "bytes": 27704,
+      "sha256": "20ad27eff1198b27eaa2cd968ab1138dd882f42542d27218b1b448165d98c07b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/decoded-receipts/prompt-adoption-ui-1920x1080.json",
+      "bytes": 27609,
+      "sha256": "aa8bdf655ffb70ec67ca24c7444fb5e82b2bbcef98258804359282e721467620"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "bdfdce5b4c876c54071d09e587685e962319bfb19f78efdca1681e943b3bda6c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/isolated_acceptance.stdout.log",
+      "bytes": 65643,
+      "sha256": "0b29538614c4e57406fe8de2276e43a9f3421f05a46297478a9ba62ccb881637"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/junit.xml",
+      "bytes": 1246,
+      "sha256": "809fedc8993ad8d0cb912fb07b58f81d0878b7da9121b5d5aaa42c5c5e9445cc"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/launcher.json",
+      "bytes": 1138,
+      "sha256": "4ee0e2ffe211104eae953ed1662dad4397bcdcc0a39ba97568a0c8f2099c4387"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/playwright.log",
+      "bytes": 1633,
+      "sha256": "561f064114cd8c08682e0e689c23f6a8364564867e41b3a6b6d5606f88445ddf"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/production-after-control.json",
+      "bytes": 397,
+      "sha256": "c0805b87da9e9185aac1f3249587ae3167fdcabb77ae303cc1562804f5b7ea21"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/production-before-control.json",
+      "bytes": 397,
+      "sha256": "c0805b87da9e9185aac1f3249587ae3167fdcabb77ae303cc1562804f5b7ea21"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "298f3822a686450e62e72c11d3478d7c51b5eb194e6cbf46488d48a1c7243f52"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "e781983a23cd0e45f32315fb5955c69203fbef384635312ab1d4f398b310ab0b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "abb7e4931879aba3d1f161b9e6f114ec7acc7444cd8281e0fae22997d78bef57"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "7aae4d4cb3d91600afa40ba2f67337d4772285aa56fa869fc3c60e4a34306f99"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/results.json",
+      "bytes": 117899,
+      "sha256": "c74f39c365602dd8aeb75165d57f84d7a4c7fbed52bbe2f5755a86fc025fed60"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 116456,
+      "sha256": "72f1dfc1abbba45d73509e8d11e5290bf0ed707b9317acae167283704f90b117"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-form.png",
+      "bytes": 116456,
+      "sha256": "72f1dfc1abbba45d73509e8d11e5290bf0ed707b9317acae167283704f90b117"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-committed-pin.png",
+      "bytes": 103576,
+      "sha256": "6e6f2f5e5da5192306fa2e95851633da792c5c581d68112dd0757bcb577b59c9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-historical-source-pin.png",
+      "bytes": 114293,
+      "sha256": "22d3ae509654aa2c7dc05223ae389a8d55022b9a6959cdd59d5dbefe4de1971c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-reopened-pin.png",
+      "bytes": 107916,
+      "sha256": "2a9a8644120de5da28ad1e31a899de2154798b5f7b001ae6239711a69a7eada0"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 132065,
+      "sha256": "5c2af54fe6e8716f8f6d5cc59219d53042d89876b06d37c7f54d35f93684774d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-form.png",
+      "bytes": 137089,
+      "sha256": "4540bc3561e6dab79491732c125521feba1130eb2d780f6a61b771a5a51f1430"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-committed-pin.png",
+      "bytes": 114931,
+      "sha256": "9a90f7c841b9b77f8db3e474d6c0ef10c80355f7ad913527430ea14a4d2ac4b3"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-historical-source-pin.png",
+      "bytes": 134138,
+      "sha256": "d114c142f55bf65d5fe157d90e697d8e153eced50fd7ee45059695dac8b843a9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-reopened-pin.png",
+      "bytes": 121641,
+      "sha256": "c55ed3e8b7b391e69db4016a846266c200b75e2b7ca59740743743f2a0dca7a4"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 157070,
+      "sha256": "3b2e7d3b61e9480465f92056a105255dc10c3d24fa698d91e7540d15ae7aa47a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-form.png",
+      "bytes": 157070,
+      "sha256": "3b2e7d3b61e9480465f92056a105255dc10c3d24fa698d91e7540d15ae7aa47a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-committed-pin.png",
+      "bytes": 143327,
+      "sha256": "c2bf6ccbb1a9454cef6868639489c0698fe8451b9b4392c38cd96cc1a868a0b8"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-historical-source-pin.png",
+      "bytes": 163509,
+      "sha256": "5d74c1e38f5bdfcf75b890cc7ca110d59f066d9a7d3ccc64d9f45fcaed8693b3"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-reopened-pin.png",
+      "bytes": 151218,
+      "sha256": "734a43a1988fe188d92bd4a4e5e6ee8ebf3595f02c02c339483bed3694ea8a98"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-file-final-r3/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "627f583c50d94e40d8d85f208da95a0f8957e9d0ff207c9cc9b01d6a5d6ee703"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/isolated_acceptance.stderr.log",
+      "bytes": 202,
+      "sha256": "d2b99edfdc576cd8fe73e0e32a24d4ace33ec29d9c9f6205bd91b3815c685943"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/isolated_acceptance.stdout.log",
+      "bytes": 55526,
+      "sha256": "c08a7025ad26be708e3b5bfc344b5c78e5f2fabd315e39211972c37f902c5e5c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/junit.xml",
+      "bytes": 9234,
+      "sha256": "ddd8791f14142b3d59975f81f7d0d7a180971d22896dc2d0c16c0c526baa7075"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/launcher.json",
+      "bytes": 1372,
+      "sha256": "efc8ef84e21957a933d16b4c81be1064be9c364f448e527059d7c30c67c87b3a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/playwright.log",
+      "bytes": 8914,
+      "sha256": "490fcbe8e2c5a140fe936936b4f8b2ee063e0b4cf075b284a99eecbc7c704a07"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/production-after-control.json",
+      "bytes": 397,
+      "sha256": "fb3cb46a6c6b674498a6db78e1170f753f3fd727e4ae77838f9d87d12ddefe4e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/production-before-control.json",
+      "bytes": 397,
+      "sha256": "fb3cb46a6c6b674498a6db78e1170f753f3fd727e4ae77838f9d87d12ddefe4e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "a83b219902316a01a6143538a75e3e0701b1f5a8896abb544e8ee5ce464b5ccc"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "9dc8a34a3321fc8982f8a11c62f3e97cfcc49ee69012ce1191101ca3087728b9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "9aca1d7aca8f937717b147ed7e3462be3fc6a47e98627765b23c780768d6306f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "457d78595eb0af9cc0980092a2c8f435cb8514004222af57483451f04a2487e6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/results.json",
+      "bytes": 20617,
+      "sha256": "7a96a224df1cd4ea7511bcbeaf59266d222221f2f98b1913686ff16aab8c1230"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/.last-run.json",
+      "bytes": 194,
+      "sha256": "f6d80bc7c9e981cc53c7a97e0e84d4d3a512b3732c6b894a6c25287fd1499402"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/error-context.md",
+      "bytes": 29628,
+      "sha256": "1ddae4e37094a64a4cc563dd3555774c953fb2d66f40c468ae6de3716d6700f2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 111941,
+      "sha256": "438031324471f3a569d61c99f2960b1b4d63e8a2994cdc6f6640316606492109"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-form.png",
+      "bytes": 116143,
+      "sha256": "7bac903d675907dc6faa839bef18622d62081b46af8abe12c26ffff16c8ebffc"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-committed-pin.png",
+      "bytes": 103480,
+      "sha256": "864aaf102a593ca09860fd38bfbb3c795b3fe1ee61b05b410a9499ce2ef88505"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/test-failed-1.png",
+      "bytes": 83181,
+      "sha256": "03b4178a8287239d600bc1d1942f9efca0248a1c8cd8fba6675766d981d2cfbb"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/error-context.md",
+      "bytes": 29628,
+      "sha256": "9f9d2efae5b19334ad3dcc6bdbe68dfd40d23c10456603db6f070cf8f89be953"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 131994,
+      "sha256": "ab56c10fe3db437b0fee373c2cce8add720a4701d20277d0f92e354c5ed626ec"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-form.png",
+      "bytes": 136920,
+      "sha256": "98f39c313867ec66b8abfbc4a1c848f38cfa7b788ac597b89c812ca468f513f0"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-committed-pin.png",
+      "bytes": 114936,
+      "sha256": "8decef52ea7b65b499f89c7d2c9646cceeedd4dc960c2351300c4858b002d60a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/test-failed-1.png",
+      "bytes": 86711,
+      "sha256": "c191e0076ef2e49be84015350ff0b6b216abc646301f0f998eae29e393c11e34"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/error-context.md",
+      "bytes": 29630,
+      "sha256": "069de43ee967059d60e135d4ee9b63a3326bc5e3e19eedb5252301b192234bfd"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 157380,
+      "sha256": "48a1c79ce2e1f3c6ada0b217068f3dde60291e719e43fff69d4a6380543d0b07"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-form.png",
+      "bytes": 157380,
+      "sha256": "48a1c79ce2e1f3c6ada0b217068f3dde60291e719e43fff69d4a6380543d0b07"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-committed-pin.png",
+      "bytes": 143742,
+      "sha256": "b382ebeb3fd3c7dfcb4e0a631505bc8dfb6e530ca5bd4605a2c8977751b7d9f5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/test-failed-1.png",
+      "bytes": 96900,
+      "sha256": "56ec06f49411657d65aa36ebb2546bbc96d1867000570a5e47c9266d568998fd"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r1/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "31d61f0fea3c13bba1d19eb0b366e0be3ef60d0cb4d0d2f5a1b15bc3cff80a63"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/decoded-receipts/prompt-adoption-ui-1366x768.json",
+      "bytes": 31355,
+      "sha256": "966e9ea3108a107f0d2d4742cebb3ef4f9b7b80f6785af3e7ea1750944b6168e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/decoded-receipts/prompt-adoption-ui-1440x900.json",
+      "bytes": 31355,
+      "sha256": "0b75579228e7b7c5e649b67b223da323737cc8f59283aa04fcbe74689a5c0eb0"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/decoded-receipts/prompt-adoption-ui-1920x1080.json",
+      "bytes": 31360,
+      "sha256": "0fdd718d948054c264a2910290ae2ac491d04d4d24136376d41e1e8f21fa9e3c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/isolated_acceptance.stderr.log",
+      "bytes": 19808,
+      "sha256": "81364ca00fdd9b724e49658c10946134f9303b12664b2ba1543ebf5ec6f8ecd5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/isolated_acceptance.stdout.log",
+      "bytes": 79269,
+      "sha256": "59c7692f9b69c93b77ef9593173f03603b0a2c2614e554b32c40b3c35ee72b42"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/junit.xml",
+      "bytes": 1257,
+      "sha256": "0cf06515a1014e3b44dee9fc59911a157073f2a62770cde52181fbb2993c6694"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/launcher.json",
+      "bytes": 1372,
+      "sha256": "9f1758bdbaff5b30fe295eaaf04603c01ae7e8c6dbf07ca21374d064a03da305"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/playwright.log",
+      "bytes": 1631,
+      "sha256": "5f8be4c475326cce33d853328cb6257128c7e99429d1199d9ca9539a8ce33034"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/production-after-control.json",
+      "bytes": 397,
+      "sha256": "30c8fe97b40b978aac4ce652b5111591cc268a5138b48b8bb1756b3194c32a9e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/production-before-control.json",
+      "bytes": 397,
+      "sha256": "30c8fe97b40b978aac4ce652b5111591cc268a5138b48b8bb1756b3194c32a9e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/production_after.stderr.log",
+      "bytes": 202,
+      "sha256": "b782561b792ac4d657af84b748f1f49e7c7c0630ddc29d09d34bfd2dda7c4b99"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/production_after.stdout.log",
+      "bytes": 1122,
+      "sha256": "d5bdc0e82d41ff759bcc533902e8d7e3aae00ca70f81484f4f55ddcb97094feb"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/production_before.stderr.log",
+      "bytes": 202,
+      "sha256": "ad8e3bc36bf41821346378516be5500697072369a7787bdeea7a84131e54f33c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/production_before.stdout.log",
+      "bytes": 2359,
+      "sha256": "70dfeb0bf16d95e31313991fe9bbd79d174162547c74b0cccfcc2eed2930ee3d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/results.json",
+      "bytes": 133351,
+      "sha256": "23a897d08286b969a4e65c73bc2c6b16c268365ce385a76d5e24ae1a823a2b98"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 112231,
+      "sha256": "44ba359a0f8698054217a8320fe1fda0b7e83f8df4c23da5e71d7ff883236624"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-before-confirm-form.png",
+      "bytes": 116569,
+      "sha256": "b0b188427120f6d84bb1b98b83150c95905b8c7f35f004fe65b978feb56c5147"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-committed-pin.png",
+      "bytes": 103600,
+      "sha256": "2af2ae33cb036d10aea6cff94940352a1bf02bd73f5b06f18479afddc7a7e7c2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-historical-source-pin.png",
+      "bytes": 114373,
+      "sha256": "910c711ac453a371c6a09b2ebbd18cc4231a095cc20307c7efd2b467ab2535cf"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768/real-ui-adoption-reopened-pin.png",
+      "bytes": 107955,
+      "sha256": "de5ad608975ac915c79eb64af14cb96e152e6a53f71f126e19d22e111d44cff5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 132180,
+      "sha256": "71247e022161546cd901961ffe36fb90a236ec91f58c2e820015952d925e9796"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-before-confirm-form.png",
+      "bytes": 137113,
+      "sha256": "a94a102e6f2589ce462e2b79929c59750fbb805eaed15fe88b78fa280a7e5dce"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-committed-pin.png",
+      "bytes": 114962,
+      "sha256": "8676992b6839f33213c80c9ca2b6bf31053d85b788289dc90e03fb5cc9a76469"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-historical-source-pin.png",
+      "bytes": 134209,
+      "sha256": "9ae89926d8573310eeb9cb41404ee0e40115cf4436bd8a78635e6638b2d9862a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900/real-ui-adoption-reopened-pin.png",
+      "bytes": 121899,
+      "sha256": "ab9080bc9025e3a2bf25b9ec6dd62f16293ec99972ebac552ddbb8334bd1aab9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-checkbox.png",
+      "bytes": 157076,
+      "sha256": "c4915a2feb212ff0c886488f76a38820ced5795815b8cd33402e9396d2c9d87f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-before-confirm-form.png",
+      "bytes": 156938,
+      "sha256": "2cb453fd3d1bb2a69234a91023afcdbb5686042446191b990c467c321cb12145"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-committed-pin.png",
+      "bytes": 143145,
+      "sha256": "06e70cd060d6198ba15e318e694f7567edbd98ba86164e48ea44f3829201b3a5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-historical-source-pin.png",
+      "bytes": 163400,
+      "sha256": "f9687cc88708f72ff64f291d3b00ff391a39b5c4a98fe47f193368888e36b638"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/test-results/v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080/real-ui-adoption-reopened-pin.png",
+      "bytes": 150902,
+      "sha256": "6fdf371df0e7a98f5bb89a3daef7acc2b3c3ca40a45de1e1de08b3ee0de3fdef"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/r3-adoption-ui-browser-pg-final-r3/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "8e45a9b5414911817d49fa8efe3a85656cfa8b2660cab2e7108fdd88e9c7c02a"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts-mirror.json",
+      "bytes": 6488,
+      "sha256": "20916a342536651f59578fcb3d9e48fb6e106d21ba66f18bfaf3ad95765a5ce4"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r1.json",
+      "bytes": 543369,
+      "sha256": "430578954df602165884ea31695cfb218dee09e7ad79a805796745ad6c59d63b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r1.log",
+      "bytes": 1054,
+      "sha256": "af25e89b5f47f8059bfb013a9fc963374aaac81b17e7b571053e851057b18838"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r2.json",
+      "bytes": 543657,
+      "sha256": "8efaaae367a18ccefef6f38f54725912e814ba848408b7db85e267e196a9a776"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r2.log",
+      "bytes": 1054,
+      "sha256": "9c1594f41a203d6554ed78e147138354bf7f2e452e5b84e430c4013ea61d3db9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r3.json",
+      "bytes": 543657,
+      "sha256": "03a7f390f6d1ee26f79d14ef52eaef2975164302d03f6b343006b627cc98f4d5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r3.log",
+      "bytes": 1054,
+      "sha256": "f99430b5263e3fb4b86d086ca757188d541c37a4f5ce7aa7a93faf4ccec1348b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r4.json",
+      "bytes": 543657,
+      "sha256": "a62580add26de0233d24366001f63fd9c5ec07513ef58d170faf04490c9ec20f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r4.log",
+      "bytes": 1054,
+      "sha256": "7d4856232b7fbaaf474c7d671019eb08556ad6c904d2eed9d7fb14049741d38d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r5.json",
+      "bytes": 543657,
+      "sha256": "f2a758fdc439d41659154a6933feb874bdef3ceedaf215b5fdf1782856642df9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r5.log",
+      "bytes": 1054,
+      "sha256": "a5769f4e4f3d4426754f6f6a64daa28f9a91e811b56e2b5a2d85eb4ab9c26547"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r6.json",
+      "bytes": 543657,
+      "sha256": "00b2904dc8908215e157ebc4c489fe78cebdc3c5829b2dc569048a8ced0d510d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r6.log",
+      "bytes": 1054,
+      "sha256": "4c1c1d68df566493ecedbedd1cf934fe13db1b19f6d6704f148031109ed545d6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r1.json",
+      "bytes": 543717,
+      "sha256": "489f8870fbc27e949d1cc287dbe1fdfae1439b1a1c86f9f1389b166a4e452640"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r1.log",
+      "bytes": 1054,
+      "sha256": "98160b83e7f1eb0f2317f9608285f653c6e3cc3630629d470fd897bde60f172e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r2.json",
+      "bytes": 543717,
+      "sha256": "cc45499916dd5620126cb2d8100174c3cc1ab415205230d788b1d66adc190f32"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r2.log",
+      "bytes": 1054,
+      "sha256": "f662a3a469a7200d09fc1d2f564d1ecb741ab0003d38de90981dcbd777862d5c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r3.json",
+      "bytes": 543967,
+      "sha256": "eee87b123937106dc81e1c972bfe5bf0cb3de5c2f08c52ff7117b650942166cd"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r3.log",
+      "bytes": 1054,
+      "sha256": "d8b30ce81bba615a24b41390d6383092ada4b6a61fb45a701154e36b24497059"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r1-postgres-runtime.json",
+      "bytes": 9750,
+      "sha256": "7ee06d074feaea678d5a7276e889d6d8d029873728d0bc8dcc76aca7521d024c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r1.json",
+      "bytes": 543794,
+      "sha256": "a969267e302c7cbc7d839ba4b8326f10490dd8411315105a056afdbad2ce9102"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r1.log",
+      "bytes": 1258,
+      "sha256": "b046a3596470a66120d83c39501e4a17875523159f6b90c295705d201411308d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r3-postgres-runtime.json",
+      "bytes": 9750,
+      "sha256": "ca6a21795a4edf0d08fd96c905efa87e0330b04840ab177dedb94de60198b547"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r3.json",
+      "bytes": 544044,
+      "sha256": "82e011c1126f4758eadf2ecddcaf6c6ac4f777929a1371a654b4f60335e3ea40"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r3.log",
+      "bytes": 1258,
+      "sha256": "3094f9824521d02c458d93e148fd1695f737e085b1eab8022de9c5db3aa00806"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r1-postgres-runtime.json",
+      "bytes": 9726,
+      "sha256": "72a871bc14029db5fcd079d613d0d64fcb2eeb6b04048cabff6e55a6bff0b301"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r1.json",
+      "bytes": 544021,
+      "sha256": "cfdbf45bc38e2a3e493d29bcef2cb583772bba993e6ddd2118b5bbbe3debe901"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r1.log",
+      "bytes": 675,
+      "sha256": "bdaa7947727c1d75353a1a548d895d61e2e5a3420d993ebd4f0b9fd021d535a2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r3-postgres-runtime.json",
+      "bytes": 9726,
+      "sha256": "d99006471fc9710e1b274936c480587196566b80bccdf3a85b43eb8f9cf73df1"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r3.json",
+      "bytes": 544271,
+      "sha256": "91e224c6a3a710ee412ca46abe06512cfa287728248e26638887201359f0e282"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r3.log",
+      "bytes": 675,
+      "sha256": "51d778c8cb6820704aa1af64f213f228bd504ce551fc1daf8dd0f9e5a738a67c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runtime-retention-final.json",
+      "bytes": 967,
+      "sha256": "c0a5babcdd2dc59353c20f86c6571a0b17ac41f24ab20220a73473269927ca49"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/security-browser-artifact-index.json",
+      "bytes": 81938,
+      "sha256": "341bb6a577761ae2509cbdced49b5168e77120bfcb54c41fd9a1e732b9c04ff9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/source-binding-final.json",
+      "bytes": 6785,
+      "sha256": "b7e5b0ce96fb71ef56689bde6cca14abf9237e8df75b21d34465e4e579841e28"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/source-git-binding-final.json",
+      "bytes": 597830,
+      "sha256": "15b9313a7139cfbce2d7e7852112278e86bbe75329499b9bb0398583c0e6e746"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/startup-ready-harness-delta.json",
+      "bytes": 636,
+      "sha256": "87164cbb20abeb77c236019a0d6da25285757957ffc4e788c89c7d125d51eb35"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/validation-toolchain.json",
+      "bytes": 305,
+      "sha256": "1010af4d6f74dc354bb44e141e5c79b639e582489d5cd4624acd3c0b0f1b9790"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/visual-results-r3/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/visual-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    }
+  ]
+}

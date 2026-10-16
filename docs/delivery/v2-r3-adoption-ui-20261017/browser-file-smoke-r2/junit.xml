@@ -1,0 +1,45 @@
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="28.749259">
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:07:54.676Z" hostname="prompt-adoption-ui-1366x768" tests="1" failures="1" skipped="0" time="27.75" errors="0">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="27.75">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [prompt-adoption-ui-1366x768] › v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('采用 UI 验收 prompt-adoption-ui-1366x768', { exact: true }).first()
+    Expected: visible
+    Timeout: 25000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 25000ms
+      - waiting for getByText('采用 UI 验收 prompt-adoption-ui-1366x768', { exact: true }).first()
+
+
+      90 |       }
+      91 |       if (await projectChoice.isVisible()) await projectChoice.click();
+    > 92 |       await expect(page.getByText(title, { exact: true }).first()).toBeVisible();
+         |                                                                    ^
+      93 |     };
+      94 |     const openBoard = async () => {
+      95 |       await page.getByRole('button', { name: '小说', exact: true }).click();
+        at enterProject (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:92:68)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:114:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r2\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r2\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md
+]]>
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

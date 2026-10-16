@@ -1,0 +1,42 @@
+{
+  "source_count": 2301,
+  "canonical_sorted_compact_source_map_sha256": "1f8bfabc61da1841f7edebcedc6c7a6a7e9455ca348c41a4c23496cb15a2df65",
+  "all_final_maps_identical": true,
+  "current_sources_match": true,
+  "sources_changed_during_any_final_check": false,
+  "receipts": [
+    {
+      "label": "r3-adoption-ui-browser-file-final-r3",
+      "status": "PASS",
+      "recorded_head": "6aed517611117771d767eb275a54773b24ba0300",
+      "source_count": 2301,
+      "source_map_sha256": "1f8bfabc61da1841f7edebcedc6c7a6a7e9455ca348c41a4c23496cb15a2df65",
+      "receipt": "runner-receipts/r3-adoption-ui-browser-file-final-r3.json"
+    },
+    {
+      "label": "r3-adoption-ui-combined-pg-final-r3",
+      "status": "PASS",
+      "recorded_head": "db1f687108fac6e45a577196494dfac01cc63aca",
+      "source_count": 2301,
+      "source_map_sha256": "1f8bfabc61da1841f7edebcedc6c7a6a7e9455ca348c41a4c23496cb15a2df65",
+      "receipt": "runner-receipts/r3-adoption-ui-combined-pg-final-r3.json"
+    },
+    {
+      "label": "r3-adoption-ui-browser-pg-final-r3",
+      "status": "PASS",
+      "recorded_head": "db1f687108fac6e45a577196494dfac01cc63aca",
+      "source_count": 2301,
+      "source_map_sha256": "1f8bfabc61da1841f7edebcedc6c7a6a7e9455ca348c41a4c23496cb15a2df65",
+      "receipt": "runner-receipts/r3-adoption-ui-browser-pg-final-r3.json"
+    }
+  ],
+  "specific_source_sha256": {
+    "app/creative/prompt_adoption_api.py": "a35c5a392fec0bc38446752e0c44cf79a3853edda7b5ce3fc40e2d58e78d8089",
+    "frontend/src/App.tsx": "ede1d8adf0d7ce960cc5783b288abfe023b854c7c8137520d437f078af878074",
+    "frontend/src/AppLocalEntryAuthorityRace.test.tsx": "72aaa0c9de38cce9554dfecae48f52ef2fd517ae5d73793ee23ecbbd12f2bde3",
+    "scripts/run_v2_prompt_adoption_ui_browser.py": "2b87d52a53bc41a38c299ffb9cd43c5e6ac2b42d43f20d6c723bcf14b5a5b7d8",
+    "frontend/playwright.prompt-adoption-ui-live.config.ts": "c0be257724b9ba0a60c3dec954491d4173cc4c570e28fc1ee1966bbd47fbe972",
+    "frontend/tests/e2e/v2-prompt-adoption-ui-live.spec.ts": "c08ca7584301c2a257fd93f3603357e7aafc3a6812a4288a8178da4d7d4062a6"
+  },
+  "git_metadata_note": "Stable commits and manifest-only commits may advance recorded HEAD without changing these exact source bytes."
+}

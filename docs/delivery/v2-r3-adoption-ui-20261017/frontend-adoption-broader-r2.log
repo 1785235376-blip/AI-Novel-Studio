@@ -1,0 +1,32 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/prompt/promptProducerContract.test.ts (11 tests) 7ms
+ ✓ src/prompt/promptContract.test.ts (12 tests) 5ms
+ ✓ src/storyboard/storyboardOps.test.ts (36 tests) 14ms
+ ✓ src/storyboard/storyboardWorkspaceContract.test.ts (16 tests) 13ms
+ ✓ src/prompt/promptDraft.test.ts (12 tests) 4ms
+ ✓ src/prompt/promptDraft.pending.test.ts (9 tests) 3ms
+ ✓ src/prompt/promptDraft.aliasing.test.ts (8 tests) 4ms
+ ✓ src/storyboard/promptAdoptionWriteClient.test.ts (25 tests) 6ms
+ ✓ src/storyboard/PromptAdoptionPanel.test.tsx (8 tests) 145ms
+ ✓ src/prompt/PromptWorkspace.strictmode.test.tsx (3 tests) 141ms
+ ✓ src/prompt/PromptWorkspace.p0i.test.tsx (2 tests) 154ms
+ ✓ src/prompt/PromptWorkspace.loadingOwner.test.tsx (1 test) 223ms
+ ✓ src/storyboard/PromptAdoptionDisclosure.test.tsx (14 tests) 316ms
+ ✓ src/prompt/PromptWorkspace.p0c.test.tsx (6 tests) 336ms
+ ✓ src/prompt/PromptWorkspace.test.tsx (11 tests) 366ms
+ ✓ src/prompt/PromptWorkspace.p0.test.tsx (10 tests) 529ms
+ ✓ src/prompt/PromptWorkspace.scoping.test.tsx (3 tests) 556ms
+ ✓ src/prompt/PromptWorkspace.detailRace.test.tsx (4 tests) 568ms
+ ✓ src/prompt/PromptWorkspace.detailRace2.test.tsx (4 tests) 642ms
+ ✓ src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx (2 tests) 296ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 610ms
+ ✓ src/storyboard/PromptAdoptionWritePanel.test.tsx (14 tests) 682ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 2470ms
+
+ Test Files  23 passed (23)
+      Tests  264 passed (264)
+   Start at  01:06:57
+   Duration  4.69s (transform 1.64s, setup 170ms, collect 9.27s, tests 8.09s, environment 10.19s, prepare 2.44s)
+

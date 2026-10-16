@@ -1,0 +1,38 @@
+...........F                                                             [100%]
+================================== FAILURES ===================================
+_ test_explicit_process_enable_uses_original_commit_and_exact_replay[file-/api/v1] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000002342DD86BD0>, prefix='/api/v1', base='/api/v1/novel...b3a/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000002342A3C03E0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002342DD84710>
+
+    def test_explicit_process_enable_uses_original_commit_and_exact_replay(prompts, monkeypatch):
+        from app.creative import prompt_adoption_api
+        e = prompts
+        f = flow(e)
+        with monkeypatch.context() as patch:
+            patch.setattr(prompt_adoption_api, "PROMPT_ADOPTION_WRITE_ENABLED", True)
+            assert checked(e.client.get(f["read_url"], headers=headers(e)))["write_enabled"] is True
+>           result = checked(e.client.post(f["adopt_url"], headers=headers(e), json=f["dto"]))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_prompt_adoption_ui_capability.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [404 Not Found]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"39d580c8-2083-4610-a1f3-a61a811646ab"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\test_r3_mounted_contracts.py:61: AssertionError
+============================== warnings summary ===============================
+..\..\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\PoemSeed\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_prompt_adoption_ui_capability.py::test_explicit_process_enable_uses_original_commit_and_exact_replay[file-/api/v1]
+1 failed, 11 passed, 12 deselected, 1 warning in 9.57s

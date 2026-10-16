@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ❯ src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx (2 tests | 1 failed) 287ms
+   × CreativeWorkspace adoption readback admission > a late adoption v3 cannot replace a clean v4 already accepted from the original production owner 115ms
+     → expected [Function] to throw an error
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx > CreativeWorkspace adoption readback admission > a late adoption v3 cannot replace a clean v4 already accepted from the original production owner
+AssertionError: expected [Function] to throw an error
+ ❯ src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx:72:68
+     70|     act(() => captured.production!.onDocument(document(4, 'newer owner…
+     71|     expect(screen.getByText('已保存 · v4')).toBeTruthy();
+     72|     expect(() => h.deliver(document(3, 'late adopted prompt'), 2)).toT…
+       |                                                                    ^
+     73|     expect(screen.getByText('已保存 · v4')).toBeTruthy();
+     74|     expect((screen.getByLabelText('画面描述') as HTMLTextAreaElement).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  01:06:37
+   Duration  1.49s (transform 318ms, setup 10ms, collect 562ms, tests 287ms, environment 385ms, prepare 60ms)
+

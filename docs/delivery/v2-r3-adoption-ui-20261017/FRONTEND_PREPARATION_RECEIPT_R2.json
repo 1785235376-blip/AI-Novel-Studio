@@ -1,0 +1,31 @@
+{
+  "status": "PREPARATION_PASS",
+  "captured_at": "2026-10-17T01:07:59.6387491+08:00",
+  "broader": {
+    "files": 23,
+    "passed": 264,
+    "log": "frontend-adoption-broader-r2.log"
+  },
+  "typescript": {
+    "exit_code": 0,
+    "log": "frontend-adoption-tsc-r3.log"
+  },
+  "host_cas_red": {
+    "failed": 1,
+    "passed": 1,
+    "log": "frontend-host-cas-red-r2.log"
+  },
+  "raw_sha256": {
+    "frontend/src/storyboard/PromptAdoptionWritePanel.tsx": "edc68dc655967892f3c22b7ccca187c55d62c500daa199380a480f5a0a8ff7fc",
+    "frontend/src/storyboard/promptAdoptionWriteClient.ts": "df6d39b64c0f37f01f2fabd4e29b5aafe1ddfb21496f5110af5aead707afb62d",
+    "frontend/src/storyboard/promptAdoptionWrite.css": "33e586cce3bd9a3b6359b6427360a215e4d63f03874177cb60a2b9661b0cc362",
+    "frontend/src/storyboard/PromptAdoptionWritePanel.test.tsx": "47aa43da0bc0d4777ba324c9e953dbe90b82ecd5fc5a15214a54de1723995685",
+    "frontend/src/storyboard/promptAdoptionWriteClient.test.ts": "ddd827268cef3f3bdb64a7392d067625e2b08e9e9a91a21ef4d2bac26543e278",
+    "frontend/src/storyboard/StoryboardWorkspacePanel.tsx": "4f2d7b761302912e449eb96f4a6983f3467735915130256142e993eb5449b50c",
+    "frontend/src/creative/CreativeWorkspace.tsx": "7eeef6ea1764260ae735fbc3ce46e18feedab7960cca89518ed361efd02ee38e",
+    "frontend/src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx": "b83f996ff0e110983524ef51405295de08143fe69836b36a227a2e8395992a29"
+  },
+  "real_browser": "Separate owner, pending",
+  "final_visual": "Separate owner, pending",
+  "production_gate": "Unchanged literal False"
+}

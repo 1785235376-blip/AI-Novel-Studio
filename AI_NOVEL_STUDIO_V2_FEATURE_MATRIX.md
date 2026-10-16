@@ -1748,3 +1748,26 @@ PG 数据与 baseline regression worktree，未通过其他删除路径绕过，
 
 后续入口：解除外部账户账单锁后重跑最终 HEAD 托管 CI，并继续既有全 V2 产品验收；生产 adoption 闸门仍关闭。
 原始失败/中断、截图、profile、PG数据库和先前保留baseline worktree均保留；自有API/Vite/PG已停止，不宣称回收磁盘空间。
+
+
+<!-- V2-R3-ADOPTION-UI-20261017 -->
+## 2026-10-17 — R3 adoption UI 隔离成功写检查点
+
+本节追加当前事实，保留早期历史。隔离 adoption UI 成功写已通过；生产常量仍为 literal False。
+基线95420aa，稳定切片已逐个提交并推送 PR #47 原分支，实现/清单 HEAD `db1f687108fac6e45a577196494dfac01cc63aca`；本节与证据独立提交。
+PR保持Draft，main/V1 frozen refs未动，完整V2仍PARTIAL，非freeze/RC。
+原始证据和限制见[R3 adoption UI 最终报告](docs/delivery/v2-r3-adoption-ui-20261017/V2_R3_ADOPTION_UI_ROUND_REPORT.md)。
+
+| 范围 | 当前结论 |
+| --- | --- |
+| 原 owner/UI | 原 Storyboard 新增显式读取/审批/确认/采用；原Asset/Review/adopt_atomic/Creative CAS复用。成功回读原文档及固定来源、同步host，迟到回读不能覆盖已接受新版本。 |
+| 闸门 | GET write_enabled是能力而非授权；普通后端前后False/精确503/owner不变。仅验收子进程内存True，无产品开启入口。 |
+| 真实 File/PG | File55 passed；新空PG库OID27042，原20迁移，43 passed；各组有重叠。 |
+| 真实 UI | File/PG Edge各3视口通过：真实POST200、单版本/单proof、真实Character快照、正文同步、刷新重开、幂等及来源r2后仍pin r1。PG浏览器另新库OID27943，原20迁移。 |
+| 前端 | src4208 passed/6 skipped/0failed，tsc/build PASS，原visual7 PASS、token52文件PASS。 |
+| 清单/冻结 | 双collection15142=原15118+24，INVENTORY_ONLY；2301运行源码/2363清单输入绑定实现HEAD。166原CI自检PASS。750 frozen test/gate、752保护产物、9151 manifest原字节不变。 |
+| 原连接/既有限制 | File r2连接界面被迟到本机列表切走，已在原App自动恢复补身份一致性guard并先RED后GREEN。PG r1刷新重开失败保留；晚到overview覆盖早期导航仍未修复，final-r3只建立启动完成后的闭环。原摘要裁切/上游不可读限制保留。 |
+| Hosted/总体 | GitHub账单锁使job steps为空，单独BLOCKED；完整V2 PARTIAL。生产adoption、全V2集成、installer/clean-machine、真实模型/GPU未建立PASS。 |
+
+自有API/Vite/PG已停止，失败/通过回执、截图、profile和数据库保留。上一轮跨进程24/PG103仅历史证据。
+后续需解除外部账单锁并重跑最终HEAD托管CI，继续原全V2验收；生产adoption闸门继续关闭。

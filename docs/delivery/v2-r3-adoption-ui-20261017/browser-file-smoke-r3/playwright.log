@@ -1,0 +1,34 @@
+
+Running 1 test using 1 worker
+
+(node:80272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:80272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  1 [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin (28.8s)
+
+
+  1) [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    TimeoutError: locator.selectOption: Timeout 25000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: 'Prompt 采用操作', exact: true }).getByLabel('Prompt 来源家族', { exact: true })
+
+
+      130 |     await page.getByRole('button', { name: '核对 Prompt 采用条件', exact: true }).click();
+      131 |     const operation = page.getByRole('region', { name: 'Prompt 采用操作', exact: true });
+    > 132 |     await operation.getByLabel('Prompt 来源家族', { exact: true }).selectOption(source.family_id);
+          |                                                                ^
+      133 |     await operation.getByRole('button', { name: '读取所选 Prompt 修订', exact: true }).click();
+      134 |     await expect(operation).toContainText('采用成功闭环 第一版');
+      135 |     const approving = page.waitForResponse(response => new URL(response.url()).pathname
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:132:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r3\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r3\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md
+
+  1 failed
+    [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 

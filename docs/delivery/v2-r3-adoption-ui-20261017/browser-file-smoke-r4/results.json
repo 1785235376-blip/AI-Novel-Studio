@@ -1,0 +1,196 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.EXE",
+      "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.prompt-adoption-ui-live.config.ts",
+      "--project",
+      "prompt-adoption-ui-1366x768"
+    ],
+    "configFile": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\playwright.prompt-adoption-ui-live.config.ts",
+    "rootDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "prompt-adoption-ui-1366x768",
+        "name": "prompt-adoption-ui-1366x768",
+        "testDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "v2-prompt-adoption-ui-live.spec.ts"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "prompt-adoption-ui-1440x900",
+        "name": "prompt-adoption-ui-1440x900",
+        "testDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "v2-prompt-adoption-ui-live.spec.ts"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r4/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "prompt-adoption-ui-1920x1080",
+        "name": "prompt-adoption-ui-1920x1080",
+        "testDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "v2-prompt-adoption-ui-live.spec.ts"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\browser-file-smoke-r4\\results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\browser-file-smoke-r4\\junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-prompt-adoption-ui-live.spec.ts",
+      "file": "v2-prompt-adoption-ui-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "isolated original button commits bound Prompt and reload preserves its exact source pin",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "prompt-adoption-ui-1366x768",
+              "projectName": "prompt-adoption-ui-1366x768",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 29672,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('画面描述', { exact: true })\nExpected: \u001b[32m\"  采用成功闭环 第一版\u001b[39m\n\u001b[32m逐字中文与 emoji 🙂··\u001b[39m\n\u001b[32m\"\u001b[39m\nTimeout: 25000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 25000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('画面描述', { exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('画面描述', { exact: true })\nExpected: \u001b[32m\"  采用成功闭环 第一版\u001b[39m\n\u001b[32m逐字中文与 emoji 🙂··\u001b[39m\n\u001b[32m\"\u001b[39m\nTimeout: 25000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 25000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('画面描述', { exact: true })\u001b[22m\n\n    at D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts:187:60",
+                    "location": {
+                      "file": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts",
+                      "column": 60,
+                      "line": 187
+                    },
+                    "snippet": "  185 |     await expect(page.getByText('已回读确认 Prompt 采用；可查看固定的 Prompt 采用来源。', { exact: true })).toBeVisible();\n  186 |     await page.locator('.creative-shot-card').first().click();\n> 187 |     await expect(page.getByLabel('画面描述', { exact: true })).toHaveValue(FIRST);\n      |                                                            ^\n  188 |     await page.getByLabel('画面描述', { exact: true }).scrollIntoViewIfNeeded();\n  189 |     const firstPin = await pin();\n  190 |     await expect(firstPin).toContainText(source.asset_id);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts",
+                        "column": 60,
+                        "line": 187
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('画面描述', { exact: true })\nExpected: \u001b[32m\"  采用成功闭环 第一版\u001b[39m\n\u001b[32m逐字中文与 emoji 🙂··\u001b[39m\n\u001b[32m\"\u001b[39m\nTimeout: 25000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 25000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('画面描述', { exact: true })\u001b[22m\n\n\n  185 |     await expect(page.getByText('已回读确认 Prompt 采用；可查看固定的 Prompt 采用来源。', { exact: true })).toBeVisible();\n  186 |     await page.locator('.creative-shot-card').first().click();\n> 187 |     await expect(page.getByLabel('画面描述', { exact: true })).toHaveValue(FIRST);\n      |                                                            ^\n  188 |     await page.getByLabel('画面描述', { exact: true }).scrollIntoViewIfNeeded();\n  189 |     const firstPin = await pin();\n  190 |     await expect(firstPin).toContainText(source.asset_id);\n    at D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts:187:60"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T17:12:01.008Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\browser-file-smoke-r4\\test-results\\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\browser-file-smoke-r4\\test-results\\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts",
+                    "column": 60,
+                    "line": 187
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "70e78a525d8ad4e25282-0adf660e9b08801816d2",
+          "file": "v2-prompt-adoption-ui-live.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-16T17:12:00.457Z",
+    "duration": 30655.556,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

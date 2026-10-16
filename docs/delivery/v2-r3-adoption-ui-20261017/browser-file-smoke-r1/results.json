@@ -1,0 +1,196 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.EXE",
+      "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.prompt-adoption-ui-live.config.ts",
+      "--project",
+      "prompt-adoption-ui-1366x768"
+    ],
+    "configFile": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\playwright.prompt-adoption-ui-live.config.ts",
+    "rootDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "prompt-adoption-ui-1366x768",
+        "name": "prompt-adoption-ui-1366x768",
+        "testDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "v2-prompt-adoption-ui-live.spec.ts"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "prompt-adoption-ui-1440x900",
+        "name": "prompt-adoption-ui-1440x900",
+        "testDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "v2-prompt-adoption-ui-live.spec.ts"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-r3-adoption-ui-20261017/browser-file-smoke-r1/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "prompt-adoption-ui-1920x1080",
+        "name": "prompt-adoption-ui-1920x1080",
+        "testDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "v2-prompt-adoption-ui-live.spec.ts"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\browser-file-smoke-r1\\results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\browser-file-smoke-r1\\junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-prompt-adoption-ui-live.spec.ts",
+      "file": "v2-prompt-adoption-ui-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "isolated original button commits bound Prompt and reload preserves its exact source pin",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "prompt-adoption-ui-1366x768",
+              "projectName": "prompt-adoption-ui-1366x768",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 474,
+                  "error": {
+                    "message": "Error: {\"detail\":{\"code\":\"BRANCH_SOURCE_UNAVAILABLE\"},\"code\":\"BRANCH_SOURCE_UNAVAILABLE\",\"message\":\"BRANCH_SOURCE_UNAVAILABLE\",\"details\":{\"code\":\"BRANCH_SOURCE_UNAVAILABLE\"},\"request_id\":\"a48b379e-9c3f-467f-b125-0f832b714b38\"}\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m409\u001b[39m",
+                    "stack": "Error: {\"detail\":{\"code\":\"BRANCH_SOURCE_UNAVAILABLE\"},\"code\":\"BRANCH_SOURCE_UNAVAILABLE\",\"message\":\"BRANCH_SOURCE_UNAVAILABLE\",\"details\":{\"code\":\"BRANCH_SOURCE_UNAVAILABLE\"},\"request_id\":\"a48b379e-9c3f-467f-b125-0f832b714b38\"}\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m409\u001b[39m\n    at exact (D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts:29:54)\n    at D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts:46:23",
+                    "location": {
+                      "file": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts",
+                      "column": 54,
+                      "line": 29
+                    },
+                    "snippet": "  27 |   });\n  28 |   const exact = async (response: APIResponse, status: number) => {\n> 29 |     expect(response.status(), await response.text()).toBe(status);\n     |                                                      ^\n  30 |     return response.json();\n  31 |   };\n  32 |   const admin = '/api/collaboration/admin/workspaces/workspace-a';"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts",
+                        "column": 54,
+                        "line": 29
+                      },
+                      "message": "Error: {\"detail\":{\"code\":\"BRANCH_SOURCE_UNAVAILABLE\"},\"code\":\"BRANCH_SOURCE_UNAVAILABLE\",\"message\":\"BRANCH_SOURCE_UNAVAILABLE\",\"details\":{\"code\":\"BRANCH_SOURCE_UNAVAILABLE\"},\"request_id\":\"a48b379e-9c3f-467f-b125-0f832b714b38\"}\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m409\u001b[39m\n\n  27 |   });\n  28 |   const exact = async (response: APIResponse, status: number) => {\n> 29 |     expect(response.status(), await response.text()).toBe(status);\n     |                                                      ^\n  30 |     return response.json();\n  31 |   };\n  32 |   const admin = '/api/collaboration/admin/workspaces/workspace-a';\n    at exact (D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts:29:54)\n    at D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts:46:23"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T17:05:08.323Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\browser-file-smoke-r1\\test-results\\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-adoption-ui-20261017\\browser-file-smoke-r1\\test-results\\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\tests\\e2e\\v2-prompt-adoption-ui-live.spec.ts",
+                    "column": 54,
+                    "line": 29
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "70e78a525d8ad4e25282-0adf660e9b08801816d2",
+          "file": "v2-prompt-adoption-ui-live.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-16T17:05:07.915Z",
+    "duration": 1759.888,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,16 @@
+INFO:     127.0.0.1:56058 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56089 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56102 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56103 - "POST /api/collaboration/admin/workspaces/workspace-a/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56104 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56105 - "POST /api/projects/2a7c433c-fb89-4be1-8fce-839367ae38b3/studio/activate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56109 - "POST /api/projects/2a7c433c-fb89-4be1-8fce-839367ae38b3/studio/prompts HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56110 - "POST /api/projects/2a7c433c-fb89-4be1-8fce-839367ae38b3/studio/prompts/a570ba7a-f77a-4492-bf58-930e66eace48/revisions/1a732a64-2984-4167-8f1e-a2e236c6850b/approve?expected_version=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56112 - "POST /api/novels/2a7c433c-fb89-4be1-8fce-839367ae38b3/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56113 - "POST /api/novels/2a7c433c-fb89-4be1-8fce-839367ae38b3/experimental/creative/documents/25ec1780-e20d-4b44-840f-7d94d688c25b/derive HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56114 - "GET /api/projects/2a7c433c-fb89-4be1-8fce-839367ae38b3/studio/documents/8b6b3ae3-1591-44d0-9310-bf4b82808e48/prompt-adoption HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56115 - "GET /api/projects/2a7c433c-fb89-4be1-8fce-839367ae38b3/studio/prompts/a570ba7a-f77a-4492-bf58-930e66eace48/revisions/1a732a64-2984-4167-8f1e-a2e236c6850b/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56116 - "GET /api/novels/2a7c433c-fb89-4be1-8fce-839367ae38b3/experimental/creative/documents/8b6b3ae3-1591-44d0-9310-bf4b82808e48 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56117 - "GET /api/projects/2a7c433c-fb89-4be1-8fce-839367ae38b3/studio/documents/8b6b3ae3-1591-44d0-9310-bf4b82808e48/prompt-adoption HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56118 - "POST /api/projects/2a7c433c-fb89-4be1-8fce-839367ae38b3/studio/documents/8b6b3ae3-1591-44d0-9310-bf4b82808e48/shots/835d4cd4-8718-489e-846d-54af089571ea/prompt-adoption HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:56119 - "GET /api/novels/2a7c433c-fb89-4be1-8fce-839367ae38b3/experimental/creative/documents/8b6b3ae3-1591-44d0-9310-bf4b82808e48 HTTP/1.1" 200 OK

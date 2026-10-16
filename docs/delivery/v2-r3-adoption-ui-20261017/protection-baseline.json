@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-16T16:57:05.226896+00:00",
+  "head": "95420aa59acb4c196d92e7292df0744098f6d2ff",
+  "round_base": "95420aa59acb4c196d92e7292df0744098f6d2ff",
+  "frozen_test_gate_sources": 750,
+  "source_differences": [],
+  "protected_artifacts": 752,
+  "artifact_differences": [],
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "preexisting_reviewed_portable_entry_migration": {
+    "commit": "1b7ff50a7e64742916bc64730df884cea819b379",
+    "before_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+    "after_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f",
+    "exact_single_addition_verified": true
+  },
+  "boundary": "Frozen source/artifact byte preservation, not V1 runtime acceptance or all V1 app-source equality.",
+  "status": "SOURCE_PROTECTION_PASS"
+}

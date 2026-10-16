@@ -1,0 +1,69 @@
+{
+  "observed_utc": "2026-10-16T17:50:39.443307+00:00",
+  "postgres_status_exit": 3,
+  "postgres_running": false,
+  "checked_ports": [
+    8138,
+    5208,
+    50678
+  ],
+  "listeners": [],
+  "owned_final_process_workers_remaining": [],
+  "recorded_owned_process_ids": [
+    49604,
+    68128,
+    73436,
+    73528,
+    74316,
+    74532,
+    76156,
+    77216,
+    78004,
+    79108,
+    79572,
+    79676,
+    81924,
+    82136,
+    82444,
+    83628,
+    84968,
+    84988,
+    85052,
+    86332
+  ],
+  "port_connect_checks": [
+    {
+      "host": "127.0.0.1",
+      "port": 8138,
+      "connect_succeeded": false
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 5208,
+      "connect_succeeded": false
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 50678,
+      "connect_succeeded": false
+    }
+  ],
+  "launcher_checks": [
+    {
+      "label": "r3-adoption-ui-browser-file-final-r3",
+      "all_owned_stopped": true,
+      "gate_source_unchanged": true
+    },
+    {
+      "label": "r3-adoption-ui-browser-pg-final-r3",
+      "all_owned_stopped": true,
+      "gate_source_unchanged": true
+    }
+  ],
+  "databases_retained": [
+    "v2_r3_adoption_ui_20261017_final_r3",
+    "v2_r3_adoption_ui_browser_20261017_final_r3"
+  ],
+  "profiles_retained": true,
+  "cluster_retained": ".runtime/retirement-pg/data"
+}

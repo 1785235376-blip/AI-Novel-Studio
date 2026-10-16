@@ -1,0 +1,124 @@
+{
+  "utc": "2026-10-16T17:50:51.068018+00:00",
+  "head_at_check": "db1f687108fac6e45a577196494dfac01cc63aca",
+  "source_count": 2301,
+  "receipt_checks": [
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-bindings-file-final-r3.json",
+      "sha256": "01078885cbb5d83d259478af4ea6901a101395275b7853a4d7f7b0b3ad18395d",
+      "log_sha256": "253e09641905cb5115704b8ed5949956d07823fcc57ff8850648df9c3720e181",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-combined-pg-final-r3.json",
+      "sha256": "91e224c6a3a710ee412ca46abe06512cfa287728248e26638887201359f0e282",
+      "log_sha256": "51d778c8cb6820704aa1af64f213f228bd504ce551fc1daf8dd0f9e5a738a67c",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-browser-file-final-r3.json",
+      "sha256": "eee87b123937106dc81e1c972bfe5bf0cb3de5c2f08c52ff7117b650942166cd",
+      "log_sha256": "d8b30ce81bba615a24b41390d6383092ada4b6a61fb45a701154e36b24497059",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-browser-pg-final-r3.json",
+      "sha256": "82e011c1126f4758eadf2ecddcaf6c6ac4f777929a1371a654b4f60335e3ea40",
+      "log_sha256": "3094f9824521d02c458d93e148fd1695f737e085b1eab8022de9c5db3aa00806",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-src-final-r4.json",
+      "sha256": "6b5cebd3da6d46a6c19ad2df790acc8a3e68ed3e1162ee519b33b2801eba6d37",
+      "log_sha256": "aba22b63f2eea538a9c683852726f2c6b65b9689a7c5b13289988bcc72c5b66e",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-build-final-r3.json",
+      "sha256": "9ebf692f372ceb10119698704654a19ef1e158bed8df9db108ca5998238295c2",
+      "log_sha256": "af2ac79d21e7eacd1df4060f3f1886315a146828294cc83988fe638af4082199",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-visual-final-r3.json",
+      "sha256": "bc135d17cfb7dd501c7b1c6e610c835696b3b134526de80b25fa3fa73e27705b",
+      "log_sha256": "dd4285ed4a59fc3a3a758d48edaa678d59e84c5fbb82e0c369abad1ab2273322",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-tokens-final-r3.json",
+      "sha256": "da794f86596ea2a4614b625c29102faa9e03e8d57e18fde09f119c7e7018491c",
+      "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-ci-selfchecks-final-r3.json",
+      "sha256": "03c0ee8dbc065719d6a58f3f9373bc7489077b651467ddd59136a3306a6be259",
+      "log_sha256": "02dffb1bbbb3caf6ee1089a63855bcb03892a26be305dd117ac72c374efa3c72",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r3.json",
+      "sha256": "c3381edfe74a231a25e339a4a8087021ac509003082e27749c95d3e7a47eef94",
+      "log_sha256": "68bd339477655735a5e7fb38b8c58d2473530a535a0cd26dce48353b6a7abe0c",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r3.json",
+      "sha256": "d39e3c5d1ef79c41801b8f4bd108960aabfb5cf33832a26e1fb1e4628cb32e3d",
+      "log_sha256": "25fc55c26af479d542ecfc3896625809f974e1d384235126204826572b8b7738",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2301
+    }
+  ],
+  "changed_source_sha256": {
+    "app/creative/prompt_adoption_api.py": "a35c5a392fec0bc38446752e0c44cf79a3853edda7b5ce3fc40e2d58e78d8089",
+    "frontend/playwright.prompt-adoption-ui-live.config.ts": "c0be257724b9ba0a60c3dec954491d4173cc4c570e28fc1ee1966bbd47fbe972",
+    "frontend/src/App.tsx": "ede1d8adf0d7ce960cc5783b288abfe023b854c7c8137520d437f078af878074",
+    "frontend/src/AppLocalEntryAuthorityRace.test.tsx": "72aaa0c9de38cce9554dfecae48f52ef2fd517ae5d73793ee23ecbbd12f2bde3",
+    "frontend/src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx": "b83f996ff0e110983524ef51405295de08143fe69836b36a227a2e8395992a29",
+    "frontend/src/creative/CreativeWorkspace.tsx": "7eeef6ea1764260ae735fbc3ce46e18feedab7960cca89518ed361efd02ee38e",
+    "frontend/src/storyboard/PromptAdoptionWritePanel.test.tsx": "47aa43da0bc0d4777ba324c9e953dbe90b82ecd5fc5a15214a54de1723995685",
+    "frontend/src/storyboard/PromptAdoptionWritePanel.tsx": "edc68dc655967892f3c22b7ccca187c55d62c500daa199380a480f5a0a8ff7fc",
+    "frontend/src/storyboard/StoryboardWorkspacePanel.tsx": "4f2d7b761302912e449eb96f4a6983f3467735915130256142e993eb5449b50c",
+    "frontend/src/storyboard/promptAdoptionWrite.css": "33e586cce3bd9a3b6359b6427360a215e4d63f03874177cb60a2b9661b0cc362",
+    "frontend/src/storyboard/promptAdoptionWriteClient.test.ts": "ddd827268cef3f3bdb64a7392d067625e2b08e9e9a91a21ef4d2bac26543e278",
+    "frontend/src/storyboard/promptAdoptionWriteClient.ts": "df6d39b64c0f37f01f2fabd4e29b5aafe1ddfb21496f5110af5aead707afb62d",
+    "frontend/tests/e2e/v2-prompt-adoption-ui-live.spec.ts": "c08ca7584301c2a257fd93f3603357e7aafc3a6812a4288a8178da4d7d4062a6",
+    "scripts/run_v2_prompt_adoption_ui_browser.py": "2b87d52a53bc41a38c299ffb9cd43c5e6ac2b42d43f20d6c723bcf14b5a5b7d8",
+    "tests/test_v2_prompt_adoption_ui_capability.py": "1140798401e755effa4bb0d786224e325e56e7d441e3f043cad1074e641bbc5d"
+  },
+  "claim": "Exact current backend/frontend/runner/test sources match every selected successful original-runner snapshot; no source drift permitted."
+}

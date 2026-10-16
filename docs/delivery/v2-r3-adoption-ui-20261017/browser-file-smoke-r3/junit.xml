@@ -1,0 +1,37 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="1" time="29.77991">
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:09:11.182Z" hostname="prompt-adoption-ui-1366x768" tests="1" failures="0" skipped="0" time="28.768" errors="1">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="28.768">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md]]
+]]>
+</system-out>
+<error message="locator.selectOption: Timeout 25000ms exceeded." type="TimeoutError">
+<![CDATA[  [prompt-adoption-ui-1366x768] › v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    TimeoutError: locator.selectOption: Timeout 25000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: 'Prompt 采用操作', exact: true }).getByLabel('Prompt 来源家族', { exact: true })
+
+
+      130 |     await page.getByRole('button', { name: '核对 Prompt 采用条件', exact: true }).click();
+      131 |     const operation = page.getByRole('region', { name: 'Prompt 采用操作', exact: true });
+    > 132 |     await operation.getByLabel('Prompt 来源家族', { exact: true }).selectOption(source.family_id);
+          |                                                                ^
+      133 |     await operation.getByRole('button', { name: '读取所选 Prompt 修订', exact: true }).click();
+      134 |     await expect(operation).toContainText('采用成功闭环 第一版');
+      135 |     const approving = page.waitForResponse(response => new URL(response.url()).pathname
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:132:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r3\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r3\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>

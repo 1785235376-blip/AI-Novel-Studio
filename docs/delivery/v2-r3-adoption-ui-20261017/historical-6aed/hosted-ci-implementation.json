@@ -1,0 +1,258 @@
+{
+  "utc": "2026-10-16T17:20:22.525672+00:00",
+  "head": "6aed517611117771d767eb275a54773b24ba0300",
+  "status": "BLOCKED_HOSTED_ACCOUNT_BILLING",
+  "hosted_jobs_executed": false,
+  "runs": {
+    "Local Interop V1": {
+      "run": {
+        "conclusion": "failure",
+        "databaseId": 38938789083,
+        "event": "pull_request",
+        "headSha": "6aed517611117771d767eb275a54773b24ba0300",
+        "name": "Local Interop V1",
+        "status": "completed",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789083"
+      },
+      "detail": {
+        "conclusion": "failure",
+        "headSha": "6aed517611117771d767eb275a54773b24ba0300",
+        "jobs": [
+          {
+            "completedAt": "2026-10-16T17:19:38Z",
+            "conclusion": "failure",
+            "databaseId": 117100930131,
+            "name": "Windows current-user pipe reference (MOCK_ONLY)",
+            "startedAt": "2026-10-16T17:19:36Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789083/job/117100930131"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:38Z",
+            "conclusion": "failure",
+            "databaseId": 117100930254,
+            "name": "Protocol and local transport / postgres",
+            "startedAt": "2026-10-16T17:19:36Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789083/job/117100930254"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:38Z",
+            "conclusion": "failure",
+            "databaseId": 117100930487,
+            "name": "Protocol and local transport / file",
+            "startedAt": "2026-10-16T17:19:36Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789083/job/117100930487"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789083"
+      },
+      "sample_first_job_annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/1785235376-blip/AI-Novel-Studio/blob/6aed517611117771d767eb275a54773b24ba0300/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because your account is locked due to a billing issue.",
+          "raw_details": ""
+        }
+      ]
+    },
+    "Shared R123 evidence": {
+      "run": {
+        "conclusion": "failure",
+        "databaseId": 38938789102,
+        "event": "pull_request",
+        "headSha": "6aed517611117771d767eb275a54773b24ba0300",
+        "name": "Shared R123 evidence",
+        "status": "completed",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789102"
+      },
+      "detail": {
+        "conclusion": "failure",
+        "headSha": "6aed517611117771d767eb275a54773b24ba0300",
+        "jobs": [
+          {
+            "completedAt": "2026-10-16T17:19:37Z",
+            "conclusion": "failure",
+            "databaseId": 117100929425,
+            "name": "Original c6f2126 RED / Python 3.12.9",
+            "startedAt": "2026-10-16T17:19:36Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789102/job/117100929425"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789102"
+      },
+      "sample_first_job_annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/1785235376-blip/AI-Novel-Studio/blob/6aed517611117771d767eb275a54773b24ba0300/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because your account is locked due to a billing issue.",
+          "raw_details": ""
+        }
+      ]
+    },
+    "Cloud CI": {
+      "run": {
+        "conclusion": "failure",
+        "databaseId": 38938789086,
+        "event": "pull_request",
+        "headSha": "6aed517611117771d767eb275a54773b24ba0300",
+        "name": "Cloud CI",
+        "status": "completed",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086"
+      },
+      "detail": {
+        "conclusion": "failure",
+        "headSha": "6aed517611117771d767eb275a54773b24ba0300",
+        "jobs": [
+          {
+            "completedAt": "2026-10-16T17:19:39Z",
+            "conclusion": "failure",
+            "databaseId": 117100935106,
+            "name": "Windows / Host compile and native contracts",
+            "startedAt": "2026-10-16T17:19:37Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100935106"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:38Z",
+            "conclusion": "failure",
+            "databaseId": 117100935204,
+            "name": "V2 / Independent studio live media",
+            "startedAt": "2026-10-16T17:19:37Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100935204"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:39Z",
+            "conclusion": "failure",
+            "databaseId": 117100935252,
+            "name": "Windows / Fresh base and acceptance package",
+            "startedAt": "2026-10-16T17:19:37Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100935252"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:38Z",
+            "conclusion": "failure",
+            "databaseId": 117100935263,
+            "name": "Backend execution / postgres / shard 1",
+            "startedAt": "2026-10-16T17:19:37Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100935263"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:39Z",
+            "conclusion": "failure",
+            "databaseId": 117100935319,
+            "name": "V2 / Creative live workflows and geometry",
+            "startedAt": "2026-10-16T17:19:37Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100935319"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:39Z",
+            "conclusion": "failure",
+            "databaseId": 117100935327,
+            "name": "Frontend / unit-type-build-tokens",
+            "startedAt": "2026-10-16T17:19:37Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100935327"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:39Z",
+            "conclusion": "failure",
+            "databaseId": 117100935333,
+            "name": "Backend execution / original File TCP",
+            "startedAt": "2026-10-16T17:19:37Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100935333"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:39Z",
+            "conclusion": "failure",
+            "databaseId": 117100935410,
+            "name": "Backend execution / file / shard 0",
+            "startedAt": "2026-10-16T17:19:37Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100935410"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:39Z",
+            "conclusion": "failure",
+            "databaseId": 117100935561,
+            "name": "Backend execution / postgres / shard 0",
+            "startedAt": "2026-10-16T17:19:37Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100935561"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:41Z",
+            "conclusion": "failure",
+            "databaseId": 117100949545,
+            "name": "Backend / postgres",
+            "startedAt": "2026-10-16T17:19:39Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100949545"
+          },
+          {
+            "completedAt": "2026-10-16T17:19:41Z",
+            "conclusion": "failure",
+            "databaseId": 117100949625,
+            "name": "Backend / file",
+            "startedAt": "2026-10-16T17:19:39Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086/job/117100949625"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38938789086"
+      },
+      "sample_first_job_annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/1785235376-blip/AI-Novel-Studio/blob/6aed517611117771d767eb275a54773b24ba0300/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because your account is locked due to a billing issue.",
+          "raw_details": ""
+        }
+      ]
+    }
+  },
+  "boundary": "Original GitHub job/annotation reads. External billing blocker is separate from local runtime acceptance."
+}

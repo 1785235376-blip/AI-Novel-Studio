@@ -1,0 +1,53 @@
+<testsuites id="" name="" tests="3" failures="1" skipped="0" errors="0" time="45.128741000000005">
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:29:18.512Z" hostname="prompt-adoption-ui-1366x768" tests="1" failures="1" skipped="0" time="28.784" errors="0">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="28.784">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [prompt-adoption-ui-1366x768] › v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('navigation', { name: '当前创作范围', exact: true }).filter({ hasText: '采用 UI 验收 prompt-adoption-ui-1366x768' })
+    Expected: visible
+    Timeout: 25000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 25000ms
+      - waiting for getByRole('navigation', { name: '当前创作范围', exact: true }).filter({ hasText: '采用 UI 验收 prompt-adoption-ui-1366x768' })
+
+
+      91 |       }
+      92 |       if (await projectChoice.isVisible()) await projectChoice.click();
+    > 93 |       await expect(currentScope).toBeVisible();
+         |                                  ^
+      94 |       // Scope is restored before the original App overview/entry effect ends.
+      95 |       // Wait for its real IMAGE destination and loaded workspace before asking
+      96 |       // the original module navigation to open the storyboard.
+        at enterProject (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:93:34)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:120:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-file-final-r2\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-file-final-r2\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:29:18.512Z" hostname="prompt-adoption-ui-1440x900" tests="1" failures="0" skipped="0" time="6.85" errors="0">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="6.85">
+</testcase>
+</testsuite>
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:29:18.512Z" hostname="prompt-adoption-ui-1920x1080" tests="1" failures="0" skipped="0" time="6.666" errors="0">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="6.666">
+</testcase>
+</testsuite>
+</testsuites>
