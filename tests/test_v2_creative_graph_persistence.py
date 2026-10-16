@@ -364,3 +364,26 @@ def test_view_preferences_original_owner_reopen_cas_and_remove(rig):
     removed = save(rig, updated, original['definition'])
     assert removed['definition_digest'] == original['definition_digest']
     assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == removed
+
+
+def test_nested_visual_groups_original_owner_reopen_remove_and_cas(rig):
+    original = create(rig)
+    draft = deepcopy(original['definition'])
+    members = [node['id'] for node in draft['nodes']]
+    draft['presentation'] = {'groups': [
+        {'id': 'root', 'name': 'Root', 'node_ids': members[:1]},
+        {'id': 'child', 'name': 'Child', 'node_ids': members[1:], 'parent_id': 'root'}]}
+    updated = save(rig, original, draft)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
+    assert updated['execution_digest'] == original['execution_digest']
+    assert updated['definition']['nodes'] == original['definition']['nodes']
+    assert updated['definition']['edges'] == original['definition']['edges']
+    with pytest.raises(CapabilityVersionConflict):
+        save(rig, original, draft)
+    promoted = deepcopy(draft)
+    promoted['presentation']['groups'].pop(0)
+    del promoted['presentation']['groups'][0]['parent_id']
+    updated = save(rig, updated, promoted)
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id'])['definition'] == promoted
+    restored = save(rig, updated, original['definition'])
+    assert restored['definition_digest'] == original['definition_digest']

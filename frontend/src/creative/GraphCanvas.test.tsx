@@ -695,3 +695,48 @@ describe('explicit graph-owned view preferences', () => {
     expect(changes).not.toHaveBeenCalled();
   });
 });
+
+it('assigns and clears two-level parents, selects descendants and promotes children without rewriting nodes', () => {
+  const definition = initial();
+  definition.presentation = { groups: [{ id: 'root', name: 'Root', node_ids: ['source'] }, { id: 'child', name: 'Child', node_ids: ['prepare'] }] };
+  const { changes, selections } = setup({ definition });
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
+  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: 'root' } });
+  fireEvent.click(screen.getByRole('button', { name: '应用父组' }));
+  const nested = changes.mock.calls.at(-1)![0];
+  expect(nested.presentation.groups[1].parent_id).toBe('root');
+  expect(nested.nodes).toBe(definition.nodes); expect(nested.edges).toBe(definition.edges);
+  expect(changes.mock.calls.at(-1)![1]).toBe(true);
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'root' } });
+  expect((screen.getByLabelText('父视觉分组') as HTMLSelectElement).options.length).toBe(1);
+  fireEvent.click(screen.getByRole('button', { name: '选择分组成员' }));
+  expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
+  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: '' } });
+  fireEvent.click(screen.getByRole('button', { name: '应用父组' }));
+  expect(changes.mock.calls.at(-1)![0].presentation.groups[1]).not.toHaveProperty('parent_id');
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
+  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: 'root' } });
+  fireEvent.click(screen.getByRole('button', { name: '应用父组' }));
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'root' } });
+  fireEvent.click(screen.getByRole('button', { name: '移除分组（保留节点）' }));
+  const removed = changes.mock.calls.at(-1)![0];
+  expect(removed.presentation.groups).toEqual([{ id: 'child', name: 'Child', node_ids: ['prepare'] }]);
+  expect(removed.nodes).toBe(definition.nodes);
+});
+
+it('hides child compact controls under collapsed parents and expands both for selected descendants', () => {
+  const definition = initial();
+  definition.presentation = { groups: [{ id: 'root', name: 'Root', node_ids: ['source'] }, { id: 'child', name: 'Child', node_ids: ['prepare'], parent_id: 'root' }] };
+  const { changes } = setup({ definition });
+  fireEvent.click(screen.getByRole('button', { name: '折叠分组 Child' }));
+  fireEvent.click(screen.getByRole('button', { name: '折叠分组 Root' }));
+  expect(document.querySelectorAll('[data-graph-collapsed="true"]').length).toBe(1);
+  expect(document.querySelector('[data-graph-group-id="child"]')).toBeNull();
+  expect(screen.queryByRole('button', { name: /分组 Child/ })).toBeNull();
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
+  fireEvent.click(screen.getByRole('button', { name: '选择分组成员' }));
+  expect(document.querySelectorAll('[data-graph-collapsed="true"]').length).toBe(0);
+  expect(document.querySelector('[data-graph-node-id="prepare"]')).toBeTruthy();
+  expect(changes).not.toHaveBeenCalled();
+});

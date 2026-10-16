@@ -94,6 +94,25 @@ describe('scoped graph transport', () => {
     expect((await client.save(graphId, { expected_version: 3, definition: value.definition })).definition).toEqual(value.definition);
     expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(value.definition);
   });
+  it.each([1, 2, 3, 4, 5] as const)('roundtrips two-level presentation only in schema %s', async schema_version => {
+    const value = graph(); value.definition = { ...definition(), schema_version, nodes: [definition().nodes[0], { ...definition().nodes[0], id: 'draft' }], edges: [],
+      presentation: { groups: [{ id: 'root', name: 'Root', node_ids: ['source'] }, { id: 'child', name: 'Child', node_ids: ['draft'], parent_id: 'root' }] } };
+    fetchMock.mockResolvedValue(reply(value));
+    expect((await studioClient(projectId, context()).graphs.get(graphId)).definition).toEqual(value.definition);
+  });
+  it.each(['missing', 'g', null, 1])('rejects invalid parent %j', async parent_id => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition,
+      presentation: { groups: [{ id: 'g', name: 'Group', node_ids: ['source'], parent_id }] } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
+  });
+  it('rejects cyclic parent links from transport', async () => {
+    const value = graph();
+    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition,
+      presentation: { groups: [{ id: 'g', name: 'Group', node_ids: ['source'], parent_id: 'h' },
+        { id: 'h', name: 'Other', node_ids: ['draft'], parent_id: 'g' }] } } }));
+    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
+  });
   it.each([null, [], {}, [null],
     [{ id: 'g', name: '', node_ids: ['source'] }], [{ id: 'g', name: ' ', node_ids: ['source'] }],
     [{ id: 'g', name: '🎬'.repeat(81), node_ids: ['source'] }], [{ id: '1g', name: 'Name', node_ids: ['source'] }],

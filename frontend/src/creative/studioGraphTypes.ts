@@ -68,7 +68,7 @@ export type StudioGraphDefinition = {
   edges: StudioGraphEdge[];
   viewport: StudioGraphViewport;
   /** Optional display-only annotation and disjoint visual groups; excluded from execution projection. */
-  presentation?: { view?: StudioGraphViewPreferences; comment?: string; groups?: { id: string; name: string; node_ids: string[] }[] };
+  presentation?: { view?: StudioGraphViewPreferences; comment?: string; groups?: { id: string; name: string; node_ids: string[]; parent_id?: string }[] };
 };
 export type StudioGraphCreateInput = { request_id: string; expected_version: 0; definition: StudioGraphDefinition };
 export type StudioGraphSaveInput = { expected_version: number; definition: StudioGraphDefinition };

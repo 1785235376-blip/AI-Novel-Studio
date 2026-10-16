@@ -353,7 +353,7 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
       const ids = new Set<string>(), members = new Set<string>();
       result.presentation.groups = presentation.groups.map(value => {
         const group = record(value, input);
-        if (Object.keys(group).some(key => !['id', 'name', 'node_ids'].includes(key))) invalid(input);
+        if (Object.keys(group).some(key => !['id', 'name', 'node_ids', 'parent_id'].includes(key))) invalid(input);
         const groupId = text(group.id, 64, input), name = text(group.name, 160, input);
         if (!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(groupId) || ids.has(groupId) || Array.from(name).length > 80) invalid(input);
         ids.add(groupId);
@@ -363,8 +363,15 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
           if (!nodeMap.has(member) || members.has(member)) invalid(input);
           members.add(member); return member;
         });
-        return { id: groupId, name, node_ids };
+        const parent_id = group.parent_id === undefined ? undefined : text(group.parent_id, 64, input);
+        return { id: groupId, name, node_ids, ...(parent_id === undefined ? {} : { parent_id }) };
       });
+      for (const group of result.presentation.groups) {
+        if (group.parent_id !== undefined) {
+          const parent = result.presentation.groups.find(item => item.id === group.parent_id);
+          if (!parent || parent.id === group.id || parent.parent_id !== undefined) invalid(input);
+        }
+      }
     }
   }
   if (new TextEncoder().encode(JSON.stringify(result)).length > 96_000) invalid(input);

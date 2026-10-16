@@ -323,7 +323,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       {annotationLimit && <p role="alert" className="graph-canvas__help">说明超过 2000 个字符，本次输入未应用；原有说明已保留。</p>}
     </div>
     {!!displayIndex.frames.length && <section className="graph-canvas__groups" aria-label="分组折叠视图" onKeyDown={event => event.stopPropagation()}>
-      <div className="graph-canvas__toolbar">{displayIndex.frames.map(frame => {
+      <div className="graph-canvas__toolbar">{displayIndex.frames.filter(frame => !frame.parentId || !collapse.collapsedIds.has(frame.parentId)).map(frame => {
         const collapsed = collapse.collapsedIds.has(frame.id);
         const retainedMember = frame.nodeIds.some(id => retained.includes(id));
         return <Button key={frame.id} type="button" variant="ghost" aria-expanded={!collapsed}
@@ -331,7 +331,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
           title={retainedMember ? '请先取消成员选择或结束端口连接；正在使用的成员保持展开。' : undefined}
           onClick={() => toggleGroup(frame.id)}>{collapsed ? '展开' : '折叠'}分组 {frame.label}</Button>;
       })}</div>
-      <p className="graph-canvas__help">折叠仅本次视图，不保存；切换图或重开恢复展开。已选、聚焦、拖动或正在连接的成员保持展开；请先取消选择、结束连接再折叠。折叠时隐藏成员及其连线，展开后查看或编辑真实端口。框选或目录选择成员会展开该组；小地图仍显示全部原节点。</p>
+      <p className="graph-canvas__help">折叠仅本次视图，不保存；切换图或重开恢复展开。已选、聚焦、拖动或正在连接的成员保持展开；请先取消选择、结束连接再折叠。折叠时隐藏成员及其连线，展开后查看或编辑真实端口。框选或目录选择成员会展开该组；小地图仍显示全部原节点。父组折叠时一并隐藏子组；先展开父组再操作子组。</p>
       {collapse.summaries.map(group => <details key={group.id} className="graph-canvas__help">
         <summary>{group.label}：{group.nodeIds.length} 个成员 · {group.externalEdges.length} 条对外连接 · {group.internalCount} 条内部连接（线条已隐藏）</summary>
         <ul>{group.externalEdges.map(edge => <li key={edge.id}>{edge.source_node_id} 输出 {edge.source_port} → {edge.target_node_id} 输入 {edge.target_port}</li>)}</ul>

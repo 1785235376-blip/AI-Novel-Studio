@@ -102,3 +102,35 @@ def test_view_preferences_roundtrip_preserve_legacy_execution(schema):
 def test_view_preferences_are_strict_bounded_complete(view):
     with pytest.raises(ValidationError):
         parse_graph({'title': 'Graph', 'presentation': {'view': view}})
+
+
+@pytest.mark.parametrize('schema', [1, 2, 3, 4, 5])
+def test_two_level_visual_groups_preserve_old_hash_and_execution(schema):
+    old = parse_graph({'schema_version': schema, 'title': 'Hierarchy', 'nodes': [
+        {'id': name, 'definition_id': 'text_input', 'parameters': {'text': name}}
+        for name in ['first', 'second']], 'presentation': {'groups': [
+        {'id': 'root', 'name': 'Root', 'node_ids': ['first']},
+        {'id': 'child', 'name': 'Child', 'node_ids': ['second']}]}}).model_dump()
+    assert all('parent_id' not in group for group in old['presentation']['groups'])
+    nested = deepcopy(old)
+    nested['presentation']['groups'][1]['parent_id'] = 'root'
+    assert parse_graph(nested).model_dump() == nested
+    assert GraphSave.model_validate({'expected_version': 1, 'definition': nested}).model_dump()['definition'] == nested
+    assert digest(execution_definition(nested)) == digest(execution_definition(old))
+    assert nested['nodes'] == old['nodes'] and nested['edges'] == old['edges']
+    del nested['presentation']['groups'][1]['parent_id']
+    assert digest(parse_graph(nested).model_dump()) == digest(old)
+
+
+@pytest.mark.parametrize('parents', [
+    {'root': 'root'}, {'child': 'missing'}, {'child': None}, {'child': 1},
+    {'root': 'child', 'child': 'root'}, {'child': 'root', 'third': 'child'},
+])
+def test_visual_hierarchy_rejects_self_missing_null_cycle_and_depth(parents):
+    groups = [{'id': name, 'name': name, 'node_ids': [name],
+               **({'parent_id': parents[name]} if name in parents else {})}
+              for name in ['root', 'child', 'third']]
+    with pytest.raises(ValidationError):
+        parse_graph({'title': 'Hierarchy', 'nodes': [
+            {'id': name, 'definition_id': 'text_input'} for name in ['root', 'child', 'third']],
+            'presentation': {'groups': groups}})

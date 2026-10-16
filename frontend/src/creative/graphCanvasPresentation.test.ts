@@ -126,3 +126,22 @@ describe('non-executable collapse projection', () => {
     expect(projectGraphDisplay(collapsed, viewport, null).nodeIds.size).toBe(0);
   });
 });
+
+it('projects two-level descendant bounds, selection and nonduplicated collapse with retained anchors', () => {
+  const groups = [{ id: 'root', name: 'Root', node_ids: ['a'] }, { id: 'child', name: 'Child', node_ids: ['b'], parent_id: 'root' }];
+  const edges = [edge('internal', 'a', 'b'), edge('external', 'b', 'c')];
+  const index = createGraphDisplayIndex([node('a', 0), node('b', 2000), node('c', 3000)], edges, definitions, groups);
+  const root = index.frames[0], child = index.frames[1];
+  expect(root.nodeIds).toEqual(['a', 'b']);
+  expect(root.bounds.x).toBeLessThan(child.bounds.x);
+  expect(root.bounds.y).toBeLessThan(child.bounds.y);
+  expect(root.bounds.x + root.bounds.width).toBeGreaterThan(child.bounds.x + child.bounds.width);
+  const folded = collapseGraphDisplay(index, edges, ['root', 'child'], []);
+  expect(folded.summaries.map(item => item.id)).toEqual(['root']);
+  expect(folded.index.frames.map(item => item.id)).toEqual(['root']);
+  expect(folded.summaries[0].internalCount).toBe(1);
+  expect(folded.summaries[0].externalEdges.map(item => item.id)).toEqual(['external']);
+  expect([...folded.hiddenNodeIds]).toEqual(['a', 'b']);
+  expect(collapseGraphDisplay(index, edges, ['root', 'child'], ['b']).hiddenNodeIds.size).toBe(0);
+  expect(projectGraphDisplay(index, { x: -2000, y: 0, zoom: 1 }, size, [], 0).frames.map(item => item.id)).toEqual(['root', 'child']);
+});

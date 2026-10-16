@@ -1,3 +1,4 @@
+import { promoteOrphanGroups } from './graphVisualHierarchy';
 import type { StudioGraphDefinition, StudioGraphNode, StudioGraphPosition, StudioGraphViewport } from './studioGraphTypes';
 
 /** Domain geometry only; canvas chrome uses the shared design-system tokens. */
@@ -110,7 +111,7 @@ export function removeGraphNodes(definition: StudioGraphDefinition, ids: readonl
   const next = { ...definition, nodes: definition.nodes.filter(node => !removed.has(node.id)), edges: definition.edges.filter(edge => !removed.has(edge.source_node_id) && !removed.has(edge.target_node_id)) };
   if (definition.presentation?.groups) {
     next.presentation = { ...definition.presentation };
-    const groups = definition.presentation.groups.map(group => ({ ...group, node_ids: group.node_ids.filter(id => !removed.has(id)) })).filter(group => group.node_ids.length);
+    const groups = promoteOrphanGroups(definition.presentation.groups.map(group => ({ ...group, node_ids: group.node_ids.filter(id => !removed.has(id)) })).filter(group => group.node_ids.length));
     if (groups.length) next.presentation.groups = groups;
     else delete next.presentation.groups;
     if (!Object.keys(next.presentation).length) delete next.presentation;

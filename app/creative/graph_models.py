@@ -581,6 +581,23 @@ class TypedEdge(Strict):
 
 
 class GraphVisualGroup(Strict):
+    # Display-only hierarchy: root plus one child level. Absence is canonical.
+    parent_id: Id | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def explicit_parent(cls, value):
+        if isinstance(value, dict) and "parent_id" in value and value["parent_id"] is None:
+            raise ValueError("CREATIVE_GRAPH_GROUP_PARENT_INVALID")
+        return value
+
+    @model_serializer(mode="wrap")
+    def preserve_absent_parent(self, handler):
+        value = handler(self)
+        if self.parent_id is None:
+            value.pop("parent_id", None)
+        return value
+
     id: Id
     name: str = Field(strict=True, min_length=1, max_length=80)
     node_ids: list[Id] = Field(min_length=1, max_length=24, strict=True)
@@ -663,6 +680,12 @@ class GraphInput(Strict):
                     raise ValueError("CREATIVE_GRAPH_GROUP_MEMBERSHIP_INVALID")
                 group_ids.add(group.id)
                 members.update(group.node_ids)
+            groups_by_id = {group.id: group for group in self.presentation.groups}
+            for group in self.presentation.groups:
+                if group.parent_id is not None:
+                    parent = groups_by_id.get(group.parent_id)
+                    if parent is None or parent.id == group.id or parent.parent_id is not None:
+                        raise ValueError("CREATIVE_GRAPH_GROUP_PARENT_INVALID")
         seen, targets = set(), set()
         for edge in self.edges:
             if edge.source_node_id not in nodes or edge.target_node_id not in nodes:

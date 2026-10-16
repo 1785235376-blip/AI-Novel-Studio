@@ -1,0 +1,112 @@
+{
+  "baseline_commit": "379309720650cf727bcc1482b63e591b569c47b5",
+  "scope": "Two-level nested visual groups in original presentation only; no runtime subworkflow",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/canvasops src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/studioGraphClient.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T13:44:13.648431+00:00",
+      "finished_utc": "2026-10-16T13:44:43.587602+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-nested-final-ui.json",
+      "receipt_sha256": "23c039aa068e29bd6fc242a7a8616824f3cc795778d61abb6a37b07dd8a80ec2",
+      "log": "docs/delivery/v2-development/canvas-nested-final-ui.log",
+      "log_sha256": "6708a1ee2c1defa8c9cfc7a1ef502604692369927595b1ee71ba6b3c6eca8d24"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_graph_presentation_contract.py",
+        "tests/test_v2_creative_graph_persistence.py::test_nested_visual_groups_original_owner_reopen_remove_and_cas[file]",
+        "tests/test_v2_creative_graph_persistence.py::test_visual_groups_original_owner_reopen_rename_remove_and_cas[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/canvas-nested-final-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T13:44:16.650693+00:00",
+      "finished_utc": "2026-10-16T13:44:25.068418+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-nested-final-file.json",
+      "receipt_sha256": "a209de5eb9d512b8878fd404f4d244919b2276537150af95b2fb69b9be14ac6c",
+      "log": "docs/delivery/v2-development/canvas-nested-final-file.log",
+      "log_sha256": "b5cec183450bc007af6b9b2d932d90639f967a0a9f428d72e226fb55fbcdaebc"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T13:44:15.194547+00:00",
+      "finished_utc": "2026-10-16T13:44:55.039976+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-nested-final-build.json",
+      "receipt_sha256": "97f51933226c340e0b8ebc91667ac8ac7a6a8ecebaa1537163f967c53a892b0e",
+      "log": "docs/delivery/v2-development/canvas-nested-final-build.log",
+      "log_sha256": "2e1582ff37e630e1a10813ae3ab09c6eb161b25905eb2b4bb8c6f91c6a0a8be6"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for (const p of [\"frontend/src/creative/GraphVisualGroups.tsx\", \"frontend/src/creative/GraphCanvas.tsx\"]) if (/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Nested group controls reuse existing primitives/classes; scoped color check PASS. Browser NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T13:44:58.095489+00:00",
+      "finished_utc": "2026-10-16T13:44:58.156470+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "receipt": "docs/delivery/v2-development/canvas-nested-token.json",
+      "receipt_sha256": "8b760d41bef96aea897a6ac0986422c01302175d88a81578244c078e300c3cf8",
+      "log": "docs/delivery/v2-development/canvas-nested-token.log",
+      "log_sha256": "68a6048c5dcea06d3a6f7304156c5d4eaabcb4fd300b16deb690bd9552ff103d"
+    }
+  ],
+  "frontend_tests": {
+    "passed": 346,
+    "files": 10,
+    "environment": "mocked jsdom/transport and pure geometry"
+  },
+  "backend_contract_tests": 61,
+  "file_owner_tests": 2,
+  "public_contract_tests": 30,
+  "public_source_files": 487,
+  "source_sha256": {
+    "app/creative/graph_models.py": "66bcb141bdd31859af574e871103409b51d396e3bcad4e984ea590d690ecba6f",
+    "frontend/src/creative/GraphCanvas.test.tsx": "f9f9b820891c8d23c9d5c7205575a5821d8f0adab603d7dea24af6241d75866f",
+    "frontend/src/creative/GraphCanvas.tsx": "71c0ad37999d0410be9068ac6b00df2642ccdbbcef3d51ad32971c9d6ce26cdc",
+    "frontend/src/creative/GraphVisualGroups.tsx": "8c7162c9521d1bacaf2c11b4535d330f20185d1c43516e2bad152cacfc6e80f9",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx": "d78d50408abda351f79242a39219d5d479b85a94f66261a995c8e578daf8bfd2",
+    "frontend/src/creative/graphCanvasGeometry.ts": "01d5c1692ef36749583232dcb6bdbb49953b1978b4a3f2702325cda7511e1b0e",
+    "frontend/src/creative/graphCanvasPresentation.test.ts": "1b515a0d87a2d02e080b004e74b185907ae5c88f62bfd584dfbdc9dc32e96cf8",
+    "frontend/src/creative/graphCanvasPresentation.ts": "64da40d2c6ef1208612b471c08f47d967cafa09fca84e8c03827d5b024801542",
+    "frontend/src/creative/studioGraphClient.test.ts": "b216cf99a7f84ea24b7790f6caf89347cd6aa73a0c4d071154f7435683961ec9",
+    "frontend/src/creative/studioGraphClient.ts": "8e563b443ef64fe4b4fbab42fc57e340f609f631f33cec2bd3632a04ebbbf95e",
+    "frontend/src/creative/studioGraphTypes.ts": "b2fc4841379479241880cec904b5b9a8bd3e5d984509ab9807c7d509a8843f5f",
+    "tests/test_v2_creative_graph_persistence.py": "ed197d7f091ff8d3c9a10aa5b7f51f2654ebc4a11e02098fb21d540574ab2a59",
+    "tests/test_v2_graph_presentation_contract.py": "a7e5a22fe3794b0de3ffef0f81f31c579eab2321a16d6f47c447055bd5b6f7ad",
+    "frontend/src/creative/graphVisualHierarchy.ts": "823d440aee9594ae1e8082d5f9bbd8626e14c36164d8e2ddb7c10bdf2a186c78"
+  },
+  "initial_failures": [
+    "canvas-nested-ui: four established label assertions; preserved original wording",
+    "canvas-nested-ui-r2: two schema 4/5 fixtures used incompatible legacy draft ports; changed fixture to two text nodes"
+  ],
+  "not_run": [
+    "Browser/visual/native/HTTP integration/performance",
+    "PG/P0/security lifecycle (BLOCKED and excluded)",
+    "Windows/GPU/provider/user computer/full RC",
+    "push/hosted CI"
+  ]
+}

@@ -1,3 +1,4 @@
+import { visualGroupMembers } from './graphVisualHierarchy';
 import type { StudioGraphDefinition, StudioGraphEdge, StudioGraphNode, StudioGraphViewport } from './studioGraphTypes';
 import { GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT, graphNodeHeight, graphPortPosition, graphScreenToWorld, clampGraphZoom } from './graphCanvasGeometry';
 import type { GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
@@ -29,7 +30,8 @@ export function createGraphDisplayIndex(nodes: readonly GraphDisplayNode[], edge
   }
   const cardById = new Map(cards.map(card => [card.id, card.bounds]));
   const frames = (groups || []).flatMap(group => {
-    const members = group.node_ids.map(id => cardById.get(id));
+    const nodeIds = visualGroupMembers(groups || [], group.id);
+    const members = nodeIds.map(id => cardById.get(id));
     if (!members.length || members.some(rect => !rect || !Object.values(rect).every(Number.isFinite))) return [];
     const rects = members as GraphCanvasRect[];
     const left = Math.min(...rects.map(rect => rect.x)), top = Math.min(...rects.map(rect => rect.y));
@@ -37,7 +39,9 @@ export function createGraphDisplayIndex(nodes: readonly GraphDisplayNode[], edge
     // Domain geometry: 16-unit gutter plus a 32-unit label band above member cards.
     // React renders plain text; remove control/bidi characters without rewriting stored names.
     const label = group.name.replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g, ' ').trim() || '未命名分组';
-    return [{ id: group.id, label, nodeIds: [...group.node_ids], bounds: { x: left - 16, y: top - 48, width: right - left + 32, height: bottom - top + 64 } }];
+    const nested = (groups || []).some(child => child.parent_id === group.id);
+    const gutter = nested ? 32 : 16, band = nested ? 96 : 48;
+    return [{ id: group.id, parentId: group.parent_id, label, nodeIds, bounds: { x: left - gutter, y: top - band, width: right - left + gutter * 2, height: bottom - top + band + gutter } }];
   });
   return { cards, connections, descriptors, frames };
 }
@@ -60,7 +64,8 @@ export function projectGraphDisplay(index: GraphDisplayIndex, viewport: StudioGr
 export function collapseGraphDisplay(index: GraphDisplayIndex, edges: readonly StudioGraphEdge[],
   requested: readonly string[], retainedIds: readonly string[]) {
   const retained = new Set(retainedIds), wanted = new Set(requested);
-  const collapsed = index.frames.filter(frame => wanted.has(frame.id) && !frame.nodeIds.some(id => retained.has(id)));
+  const eligible = index.frames.filter(frame => wanted.has(frame.id) && !frame.nodeIds.some(id => retained.has(id)));
+  const collapsed = eligible.filter(frame => !eligible.some(parent => parent.id === frame.parentId));
   const collapsedIds = new Set(collapsed.map(frame => frame.id));
   const hiddenNodeIds = new Set(collapsed.flatMap(frame => frame.nodeIds));
   const hiddenEdgeIds = new Set(edges.filter(edge => hiddenNodeIds.has(edge.source_node_id) || hiddenNodeIds.has(edge.target_node_id)).map(edge => edge.id));
@@ -72,7 +77,7 @@ export function collapseGraphDisplay(index: GraphDisplayIndex, edges: readonly S
   return { collapsedIds, hiddenNodeIds, summaries, index: { ...index,
     cards: index.cards.filter(card => !hiddenNodeIds.has(card.id)),
     connections: index.connections.filter(edge => !hiddenEdgeIds.has(edge.id)),
-    frames: index.frames.map(frame => collapsedIds.has(frame.id)
+    frames: index.frames.filter(frame => !frame.parentId || !collapsedIds.has(frame.parentId)).map(frame => collapsedIds.has(frame.id)
       ? { ...frame, bounds: { ...frame.bounds, width: GRAPH_NODE_WIDTH, height: 128 } } : frame),
   } };
 }

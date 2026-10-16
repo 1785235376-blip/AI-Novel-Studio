@@ -420,3 +420,27 @@ describe('independent studio graph content integration', () => {
     expect(title().disabled).toBe(true); expect((screen.getByRole('button', { name: '保存创作图' }) as HTMLButtonElement).disabled).toBe(true); expect(client.graphs.save).not.toHaveBeenCalled();
   });
 });
+
+it('persists nested visual organization with undo, dirty leave warning, reopen and parent-node deletion promotion', async () => {
+  saved.definition.nodes = ['text', 'other'].map((id, i) => ({ id, definition_id: 'text_input', definition_version: 1, enabled: true,
+    position: { x: 48 + i * 400, y: 64 }, parameters: { text: `Original ${id}` } }));
+  saved.definition.presentation = { groups: [{ id: 'root', name: 'Root', node_ids: ['text'] }, { id: 'child', name: 'Child', node_ids: ['other'] }] };
+  const before = structuredClone(saved.definition), mounted = mount(); await enter(); await open();
+  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
+  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: 'root' } }); click('应用父组');
+  expect(screen.getByRole('option', { name: 'Root / Child · 1 个节点' })).toBeTruthy();
+  click('撤销图编辑'); expect(screen.queryByRole('option', { name: 'Root / Child · 1 个节点' })).toBeNull();
+  click('重做图编辑'); click('素材工作区');
+  await screen.findByText('有未保存的创作图输入。可以继续编辑，或确认放弃后离开。'); click('继续编辑');
+  expect(client.graphs.save).not.toHaveBeenCalled();
+  click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+  expect(saved.definition.nodes).toEqual(before.nodes); expect(saved.definition.edges).toEqual(before.edges);
+  expect(saved.definition.presentation!.groups![1].parent_id).toBe('root');
+  mounted.unmount(); mount(); await enter(); await open();
+  expect(screen.getByRole('option', { name: 'Root / Child · 1 个节点' })).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: '选择节点 文本输入 · text' })); click('移除当前节点');
+  click('保存创作图'); await screen.findByText('创作图已保存 · v3。没有自动创建运行。');
+  expect(saved.definition.presentation!.groups).toEqual([{ id: 'child', name: 'Child', node_ids: ['other'] }]);
+  expect(saved.definition.nodes).toEqual([before.nodes[1]]);
+  expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+});
