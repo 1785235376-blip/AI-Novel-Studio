@@ -1,12 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { ApiError, type Chapter } from '../api';
+import { type Chapter } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { enabled, type ExperimentalClient, type ExperimentalFlags } from './api';
+import { WorkspaceDiagnostics } from './WorkspaceDiagnostics';
 import { WorkspaceSearch } from './WorkspaceSearch';
 import { WorkspaceInteractionPanel } from './WorkspaceInteractionPanel';
 import { NoticeCenterAddon } from './WritingSessionPanel';
 import { ErrorMessage, Field, ResourceState, useAction, useResource } from './shared';
-import { formalAdapterNotice, defaultLayout, defaultWorkspaceView, workspaceClient, type WorkspaceAnchor, type WorkspaceNavigation, type WorkspaceLayout, type WorkspaceView, type ResumeItem, type DiagnosticOptions, type DiagnosticResult, type TaskItem } from './uxClient';
+import { formalAdapterNotice, defaultLayout, defaultWorkspaceView, workspaceClient, type WorkspaceAnchor, type WorkspaceNavigation, type WorkspaceLayout, type WorkspaceView, type ResumeItem, type TaskItem } from './uxClient';
 
 export type WorkspaceToolsProps = { focusActive?: boolean; saveFailure?: boolean; client: ExperimentalClient; chapter?: Chapter; flags?: ExperimentalFlags; currentAnchor?: WorkspaceAnchor; initialSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; onNavigate?: (target: WorkspaceNavigation) => void; workspaceView?: WorkspaceView; onWorkspaceViewChange?: (view: WorkspaceView) => void; onWorkspaceSaved?: () => void };
 const commands = [
@@ -185,22 +186,6 @@ function WorkspaceTasks({ api, navigate, advanced, filters, updateFilters }: { a
     {tasks.data?.truncated && <StatusMessage tone="warning">显示范围达到上限；更早的记录请进入原任务工具查找。</StatusMessage>}
     {!tasks.loading && !tasks.error && <div className="experimental-list">{tasks.data?.items.map(task => <article key={`${task.authority}:${task.id}`} className="experimental-record"><div className="experimental-actions"><h3>{task.label}</h3><Badge tone={task.status === 'FAILED' || task.status === 'UNKNOWN' ? 'warning' : 'neutral'}>{task.stage_label}</Badge>{task.stale && <Badge tone="warning">来源已变化</Badge>}</div><p>任务 ID：{task.id}</p><p>{task.progress ? `${task.progress.completed} / ${task.progress.total} ${task.progress.unit}` : '原服务未报告可量化进度，仅显示阶段。'} · 预估费用：未知 · 实际费用：未知</p><p>Provider：{task.provider_id || '未知'} · Model：{task.model_id || '未知'}{task.route_state === 'REQUESTED' ? '（请求路线，尚未证明实际执行）' : task.route_state === 'OBSERVED' ? '（原任务已记录）' : ''}</p>{task.error_code && <p>错误码：{task.error_code}。{task.navigation_contract === 'FORMAL_SOURCE_ONLY' ? '此处只显示原领域回执状态。' : '请打开来源工具核对可执行的下一步。'}</p>}<p>{task.lifecycle}</p>{task.action_limits?.cancel && <p>{task.action_limits.cancel === 'RECEIPT_CAPACITY_EXHAUSTED' ? '原回执已无可用取消修订容量；需在原领域创建新回执，不会自动重放。' : task.action_limits.cancel === 'ORIGIN_COORDINATOR_REQUIRED' ? '此任务由批处理协调器管理，请在原批次中取消。' : task.action_limits.cancel === 'SOURCE_AUTHORITY_ONLY' ? '当前来源没有通用取消接口，请在原工具查看可用操作。' : '当前阶段不能取消；终态结果保留。'}</p>}{advanced && <details><summary>原任务状态历史</summary>{task.history.length ? <ol>{task.history.map((entry, index) => <li key={index}>v{entry.version ?? '—'} · {entry.status}</li>)}</ol> : <p>来源没有提供历史。</p>}</details>}<div className="experimental-actions">{task.navigation_contract === 'FORMAL_SOURCE_ONLY' ? <StatusMessage>{formalAdapterNotice(task.source_domain)}</StatusMessage> : <Button disabled={!navigate} onClick={() => openSource(task.owner_navigation || task.source || { kind: 'feature', id: task.id, feature: task.feature })}>{task.source?.kind === 'generation' ? '打开原生成草稿' : '打开来源工具'}</Button>}{task.actions?.includes('cancel') && task.revision && <Button disabled={action.busy} onClick={() => { stopLookup(); setCancelling(task); }}>取消原任务</Button>}<Button disabled={action.busy || !navigator.clipboard?.writeText} title={!navigator.clipboard?.writeText ? '当前浏览器不支持剪贴板写入，可在诊断包中导出安全信息。' : undefined} onClick={() => action.run(() => navigator.clipboard.writeText(JSON.stringify({ component: 'workspace_tools_v2', authority: task.authority, status: task.status, error_code: task.error_code, cost_state: 'UNKNOWN' }, null, 2)), '已复制脱敏状态，不含正文、任务 ID 或密钥')}>复制脱敏状态</Button></div></article>)}</div>}
     {cancelling && <section className="experimental-record" aria-label="确认取消原任务"><h3>取消{cancelling.label}？</h3><p>任务 ID：{cancelling.id}。{cancelling.navigation_contract === 'FORMAL_SOURCE_ONLY' ? '请求发送给原领域服务；取消会清除回执的派生结果，原始来源保持不变。' : '请求发送给原任务服务；已完成结果保留，已发生费用不会自动退回。'}状态改变后需重新核对。</p><div className="experimental-actions"><Button disabled={action.busy} onClick={() => cancel(cancelling)}>确认请求取消</Button><Button disabled={action.busy} onClick={() => setCancelling(undefined)}>继续保留任务</Button></div></section>}
-    {action.feedback}
-  </Panel>;
-}
-
-function WorkspaceDiagnostics({ api }: { api: ReturnType<typeof workspaceClient> }) {
-  const alive = useRef(true);
-  useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
-  const [options, setOptions] = useState<DiagnosticOptions>({ include_environment: true, include_task_states: true, include_error_codes: true });
-  const [preview, setPreview] = useState<DiagnosticResult>();
-  const action = useAction();
-  const select = (key: keyof DiagnosticOptions, checked: boolean) => { setOptions(value => ({ ...value, [key]: checked })); setPreview(undefined); };
-  return <Panel title="隐私友好诊断包">
-    <p>只收集允许的组件信息、任务阶段和已登记错误码。不读取正文、原始提示词、运行日志、路径、密钥、Cookie 或设备标识。不会自动上传。</p>
-    {([['include_environment', '组件与存储类型'], ['include_task_states', '任务阶段（不含标题与 ID）'], ['include_error_codes', '安全错误码']] as const).map(([key, label]) => <label className="experimental-check" key={key}><input type="checkbox" checked={options[key]} disabled={action.busy} onChange={e => select(key, e.target.checked)} />{label}</label>)}
-    <div className="experimental-actions"><Button disabled={action.busy} onClick={() => action.run(async () => { const result = await api.preview(options); if (alive.current) setPreview(result); }, '诊断预览已生成，请检查后导出')}>生成诊断预览</Button><Button disabled={!preview || action.busy} onClick={() => action.run(async () => { let data: DiagnosticResult; try { data = await api.export(options, preview!.preview_digest); } catch (error) { if (alive.current && error instanceof ApiError && error.status === 409) setPreview(undefined); throw error; } if (!alive.current) return; const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); const link = document.createElement('a'); link.href = url; link.download = 'workspace-diagnostics.json'; link.click(); URL.revokeObjectURL(url); }, '已请求下载诊断包，未上传')}>导出已选诊断项</Button></div>
-    {preview && <section className="experimental-record" aria-label="诊断预览"><h3>将包含的诊断信息</h3>{preview.sections.environment && <p>组件：{preview.sections.environment.component}；存储：{preview.sections.environment.storage}；范围：{preview.sections.environment.scope_mode}</p>}{preview.sections.task_states && <><h3>任务阶段</h3>{preview.sections.task_states.length ? <ul>{preview.sections.task_states.map((task, index) => <li key={index}>{task.authority} · {task.status} · 费用未知</li>)}</ul> : <p>没有可提供的任务记录。</p>}</>}{preview.sections.error_codes && <p>错误码：{preview.sections.error_codes.join('、') || '没有已报告的错误码'}</p>}<p>原始日志：不包含。上传：否。</p></section>}
     {action.feedback}
   </Panel>;
 }

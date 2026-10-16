@@ -1,0 +1,28 @@
+{
+  "slice": "parallel-diagnostics-20261016",
+  "base": "ece0ac7c5206904e4ba97aaa73d7e10403a3ac3e",
+  "capability": "U12",
+  "frozen_prose_reference": "U11",
+  "state": "IMPLEMENTED_BOUNDED_FRONTEND",
+  "overall_state": "PARTIAL",
+  "focused_tests": {
+    "passed": 36,
+    "exit_code": 0,
+    "environment": "jsdom"
+  },
+  "typecheck_exit_code": 0,
+  "build_exit_code": 0,
+  "design_tokens_exit_code": 0,
+  "not_run": [
+    "browser",
+    "visual_geometry",
+    "real_backend",
+    "Windows_GPU",
+    "CI",
+    "push"
+  ],
+  "original_owner_preserved": true,
+  "automatic_upload": false,
+  "new_model_calls": false,
+  "privacy_limit": "Original allowlist contract trusted; no malformed-response or comprehensive privacy guarantee."
+}
