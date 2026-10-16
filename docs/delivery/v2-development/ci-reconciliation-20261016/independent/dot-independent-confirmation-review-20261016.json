@@ -1,0 +1,16 @@
+{
+  "status": "FINAL_CONFIRMATION_PASS",
+  "source_commit": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+  "canonical_manifest_sha256": "bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c",
+  "raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "rows": 15617,
+  "old_rows_preserved": 15142,
+  "additional_rows": 475,
+  "source_map_entries": 2576,
+  "bracket_total_including_companion": 2525,
+  "companion_entries": 11,
+  "protected_entries": 1266,
+  "errors": [],
+  "inventory_only": true,
+  "full_test_execution_claim": false
+}

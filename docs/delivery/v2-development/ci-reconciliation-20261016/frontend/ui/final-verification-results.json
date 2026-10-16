@@ -1,0 +1,66 @@
+[
+  {
+    "name": "retry",
+    "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "src/AppAuthorTaskNavigation.test.tsx",
+      "src/AppAuthorTaskNavigation.additive.test.tsx",
+      "src/taskcenter/useTaskCostReceipt.test.ts",
+      "--no-cache",
+      "--minWorkers=1",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=/tmp/studio-ui-reconciliation/vitest-retry-results.json"
+    ],
+    "startedUtc": "2026-10-16T22:44:22.215195+00:00",
+    "exitCode": 0,
+    "durationSeconds": 8.951,
+    "log": "/tmp/studio-ui-reconciliation/final-retry.log",
+    "sourceSnapshotUnchanged": true
+  },
+  {
+    "name": "typecheck",
+    "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit"
+    ],
+    "startedUtc": "2026-10-16T22:44:31.224003+00:00",
+    "exitCode": 0,
+    "durationSeconds": 27.803,
+    "log": "/tmp/studio-ui-reconciliation/final-typecheck.log",
+    "sourceSnapshotUnchanged": true
+  },
+  {
+    "name": "build",
+    "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+    "command": [
+      "node",
+      "node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    "startedUtc": "2026-10-16T22:44:59.083393+00:00",
+    "exitCode": 0,
+    "durationSeconds": 6.828,
+    "log": "/tmp/studio-ui-reconciliation/final-build.log",
+    "sourceSnapshotUnchanged": true
+  },
+  {
+    "name": "token-lint",
+    "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+    "command": [
+      "node",
+      "../scripts/check_ui_design_tokens.mjs"
+    ],
+    "startedUtc": "2026-10-16T22:45:05.972075+00:00",
+    "exitCode": 0,
+    "durationSeconds": 0.075,
+    "log": "/tmp/studio-ui-reconciliation/final-token-lint.log",
+    "sourceSnapshotUnchanged": true
+  }
+]

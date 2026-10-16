@@ -1,0 +1,276 @@
+{
+  "status": "REVIEW_INVENTORY_PASS",
+  "head": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+  "raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "old_rows": 15142,
+  "raw_rows": 15617,
+  "added_rows": 475,
+  "source_count": 2525,
+  "companion_count": 11,
+  "old_order_and_full_rows_exact": true,
+  "canonical_unchanged": true,
+  "errors": [],
+  "added_suites": {
+    "tests/test_declarative_checkpoint_edit.py": {
+      "rows": 4,
+      "backends": {
+        "file": 2,
+        "postgres": 2
+      },
+      "sha256": "6d86584f0d88efe63716296ba4fdd680bfaa645a498553250ef9a8dfe6dd973a"
+    },
+    "tests/test_declarative_definition_history.py": {
+      "rows": 42,
+      "backends": {
+        "file": 21,
+        "postgres": 21
+      },
+      "sha256": "383bc14e759347b4d457ff8925ba8d42ea40e575d5d4f0cbb77e88639f6d61c6"
+    },
+    "tests/test_public_archive_limits.py": {
+      "rows": 62,
+      "backends": {
+        "file": 62
+      },
+      "sha256": "641738abe67766c6b1b7ed1d728a64fa5f466b45db5d9dd28cfe940035e24a63"
+    },
+    "tests/test_public_build_profile.py": {
+      "rows": 30,
+      "backends": {
+        "both": 30
+      },
+      "sha256": "950d714dbae610c01d73c926440376fda33293515a5b8b091e1d36c4c9ac2a1c"
+    },
+    "tests/test_public_sdist_artifact.py": {
+      "rows": 29,
+      "backends": {
+        "file": 29
+      },
+      "sha256": "9efa596bdf7903e7b469b413dff6911836981959a2b60ab88f6694f98ebabaa3"
+    },
+    "tests/test_public_wheel_artifact.py": {
+      "rows": 26,
+      "backends": {
+        "file": 26
+      },
+      "sha256": "beb8eb68c94d590532123c1e6efd10ccd46404098aad9b6ec227a05285fdb85b"
+    },
+    "tests/test_r4_story_simulator_additive.py": {
+      "rows": 2,
+      "backends": {
+        "file": 1,
+        "postgres": 1
+      },
+      "sha256": "b28e1d0baf83102e37940ff24337ccf53ecc52f731cc6457862f777b25805c01"
+    },
+    "tests/test_r5_comic_layouts_additive.py": {
+      "rows": 2,
+      "backends": {
+        "file": 1,
+        "postgres": 1
+      },
+      "sha256": "622b87be3d5381df5b07a25ef76efc9f99183d18e9377a2207b625b6b9e1a76d"
+    },
+    "tests/test_r5_interactive_story_additive.py": {
+      "rows": 2,
+      "backends": {
+        "file": 1,
+        "postgres": 1
+      },
+      "sha256": "3cd6b3b0eb6bd770dca4ca27bbcb7e04a17b5a3a21ad8f609c87bd9d8976e262"
+    },
+    "tests/test_research_evidence_location.py": {
+      "rows": 2,
+      "backends": {
+        "file": 1,
+        "postgres": 1
+      },
+      "sha256": "88565844b0dce1fa05869e0991d3145ec6b1487cff543dbf96fb2540d08519b5"
+    },
+    "tests/test_round2_bible_additive.py": {
+      "rows": 3,
+      "backends": {
+        "both": 3
+      },
+      "sha256": "335b9c254cbf80b6e112497729416cc565e26ff186b992fa847876c66f067fd7"
+    },
+    "tests/test_style_comparison_review.py": {
+      "rows": 2,
+      "backends": {
+        "file": 1,
+        "postgres": 1
+      },
+      "sha256": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+    },
+    "tests/test_template_copy_editing_workflow.py": {
+      "rows": 2,
+      "backends": {
+        "file": 1,
+        "postgres": 1
+      },
+      "sha256": "ba854e8248ee0fc755061a1cda5626ac15df742506281e60482555bd0b6c6eed"
+    },
+    "tests/test_v2_audio_mp3.py": {
+      "rows": 66,
+      "backends": {
+        "both": 8,
+        "file": 29,
+        "postgres": 29
+      },
+      "sha256": "64b3707cca88d6542dd8fbb0a5ccded849ac2673e14b10020c6c3ed06b351bac"
+    },
+    "tests/test_v2_audio_mp3_api.py": {
+      "rows": 4,
+      "backends": {
+        "file": 2,
+        "postgres": 2
+      },
+      "sha256": "5e00029d37167e5f12c96dd28131f14cf27baec2c9b25b314e89b0e0050ef490"
+    },
+    "tests/test_v2_audio_mp3_compatibility.py": {
+      "rows": 26,
+      "backends": {
+        "file": 26
+      },
+      "sha256": "6bc390964aa2f21604f5ed9dea4897a29a815db84ec5f4325329084da483dfba"
+    },
+    "tests/test_v2_canvas_large_notes.py": {
+      "rows": 8,
+      "backends": {
+        "file": 3,
+        "postgres": 3,
+        "both": 2
+      },
+      "sha256": "51c4e16af771d5d24f66010fcd2530da453dcd7eecb59df6001eeb84b7f8b73e"
+    },
+    "tests/test_v2_caption_transfer_preflight.py": {
+      "rows": 12,
+      "backends": {
+        "both": 12
+      },
+      "sha256": "e83b7d4f9952e204bb378eabb0ea4176066663676521cca42698bc8f4cefed7e"
+    },
+    "tests/test_v2_creative_graph_persistence_additive.py": {
+      "rows": 18,
+      "backends": {
+        "file": 9,
+        "postgres": 9
+      },
+      "sha256": "aeae66012732c77b5362833cf00e41e3a2e4281247a6db395a3459d1ac642b5b"
+    },
+    "tests/test_v2_director_handoff_reopen.py": {
+      "rows": 4,
+      "backends": {
+        "file": 2,
+        "postgres": 2
+      },
+      "sha256": "feb404db88be35cf62cdb0d371704c3d65e07f60662ef7cc31558c2194c87dbf"
+    },
+    "tests/test_v2_director_model_planning.py": {
+      "rows": 17,
+      "backends": {
+        "both": 11,
+        "file": 3,
+        "postgres": 3
+      },
+      "sha256": "c79e97ca3f76afceeac31ae23d00480f6e4787378d9cdf0db9b9324f3e80be6d"
+    },
+    "tests/test_v2_director_proposal_reopen.py": {
+      "rows": 4,
+      "backends": {
+        "file": 2,
+        "postgres": 2
+      },
+      "sha256": "d892b7dc619c0a0e7c0f7b976d3fdc455ef25c6541f88af405a87df5736dc6af"
+    },
+    "tests/test_v2_director_workspace_additive.py": {
+      "rows": 4,
+      "backends": {
+        "both": 4
+      },
+      "sha256": "15d83ef1a71e037254d99e3fa1943e20602605a9e3f232b3021f92f818302923"
+    },
+    "tests/test_v2_graph_capacity_continuation.py": {
+      "rows": 8,
+      "backends": {
+        "file": 4,
+        "postgres": 4
+      },
+      "sha256": "2bd99d93ffca7cbfea0eceb47105a131f91fd9f8a0a86734a7f861ea651ff40e"
+    },
+    "tests/test_v2_graph_director_proposal_loop.py": {
+      "rows": 2,
+      "backends": {
+        "file": 1,
+        "postgres": 1
+      },
+      "sha256": "9bb2522fefd9602e071d9e1b5732789991044b8d73c3bb351fa90478412e2345"
+    },
+    "tests/test_v2_graph_presentation_contract.py": {
+      "rows": 81,
+      "backends": {
+        "both": 81
+      },
+      "sha256": "853f9b64f8308e8bbf5a4daacad74c92809d84762ca2386118262cba042be89a"
+    },
+    "tests/test_v2_nle_review.py": {
+      "rows": 3,
+      "backends": {
+        "both": 3
+      },
+      "sha256": "2f570dbdebb8cb66c3ba328d7b143d490b2a2b26998558794b9dbae2acbd6aba"
+    },
+    "tests/test_v2_timeline_asset_handoff.py": {
+      "rows": 2,
+      "backends": {
+        "file": 1,
+        "postgres": 1
+      },
+      "sha256": "7ac2724ae4aac24f4f5a958f6dee28d2324d7c35d10eabbbbb54464351837930"
+    },
+    "tests/test_v2_timeline_short_media_handoff.py": {
+      "rows": 8,
+      "backends": {
+        "file": 4,
+        "postgres": 4
+      },
+      "sha256": "18714c9f7a391e1dcf729c1eeaeac64c919fcae316f3f331d77fd56af52e2d3a"
+    }
+  },
+  "added_suites_previously_identified": 22,
+  "added_suites_compatibility_checkpoint": [
+    "tests/test_r4_story_simulator_additive.py",
+    "tests/test_r5_comic_layouts_additive.py",
+    "tests/test_r5_interactive_story_additive.py",
+    "tests/test_round2_bible_additive.py",
+    "tests/test_v2_audio_mp3_compatibility.py",
+    "tests/test_v2_creative_graph_persistence_additive.py",
+    "tests/test_v2_director_workspace_additive.py"
+  ],
+  "unexplained_new_suites": [],
+  "old_protected_sources": 1123,
+  "old_protected_mismatches": [],
+  "helper_receipts": [
+    {
+      "path": "docs/delivery/v2-development/ci-helper-suite-coverage-14ced1025b51.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "stable": true,
+      "log_hash_valid": true
+    },
+    {
+      "path": "docs/delivery/v2-development/ci-helper-coverage-reconcile-14ced1025b51.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "stable": true,
+      "log_hash_valid": true
+    },
+    {
+      "path": "docs/delivery/v2-development/ci-helper-v2-manifest-extension-14ced1025b51.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "stable": true,
+      "log_hash_valid": true
+    }
+  ]
+}

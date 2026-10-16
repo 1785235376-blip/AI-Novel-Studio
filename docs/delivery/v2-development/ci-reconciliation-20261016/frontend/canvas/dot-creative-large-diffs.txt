@@ -1,0 +1,1342 @@
+diff --git a/frontend/src/creative/GraphCanvas.test.tsx b/frontend/src/creative/GraphCanvas.test.tsx
+index 238069c..1b789f4 100644
+--- a/frontend/src/creative/GraphCanvas.test.tsx
++++ b/frontend/src/creative/GraphCanvas.test.tsx
+@@ -1,5 +1,5 @@
+ // @vitest-environment jsdom
+-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
++import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+ import { useEffect, useState } from 'react';
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ import { GraphCanvas } from './GraphCanvas';
+@@ -48,6 +48,96 @@ beforeEach(() => { vi.stubGlobal('PointerEvent', TestPointerEvent); });
+ afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+ 
+ describe('controlled typed graph canvas', () => {
++  it('creates, selects, drags, renames and removes persisted groups while retaining annotation', () => {
++    const definition = { ...initial(), presentation: { comment: 'Keep' } };
++    const { changes, selections } = setup({ definition, selectedNodeIds: ['source', 'prepare'] });
++    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '场景 🎬' } });
++    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' }));
++    const groups = [{ id: 'group_1', name: '场景 🎬', node_ids: ['source', 'prepare'] }];
++    expect(changes).toHaveBeenLastCalledWith({ ...definition, presentation: { comment: 'Keep', groups } }, true);
++    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } });
++    fireEvent.click(screen.getByRole('button', { name: '选择分组成员' }));
++    expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
++    down(source(), 40, 40); move(72, 56); up(72, 56);
++    const moved = changes.mock.calls.at(-1)![0];
++    expect(moved.nodes[0].position).toEqual({ x: 56, y: 40 });
++    expect(moved.nodes[1].position).toEqual({ x: 512, y: 160 });
++    expect(moved.presentation.groups).toEqual(groups);
++    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } });
++    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '新名称' } });
++    fireEvent.click(screen.getByRole('button', { name: '重命名分组' }));
++    expect(changes.mock.calls.at(-1)![0].presentation.groups[0].name).toBe('新名称');
++    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: 'Edited note' } });
++    expect(changes.mock.calls.at(-1)![0].presentation.groups[0].name).toBe('新名称');
++    fireEvent.click(screen.getByRole('button', { name: '移除画布说明' }));
++    expect(changes.mock.calls.at(-1)![0].presentation.groups).toHaveLength(1);
++    fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } });
++    fireEvent.click(screen.getByRole('button', { name: '移除分组（保留节点）' }));
++    expect(changes.mock.calls.at(-1)![0]).toEqual({ ...definition, nodes: moved.nodes, presentation: undefined });
++  });
++
++  it('rejects overlap, resets pending names on owner changes and enforces Unicode name limits', () => {
++    const definition = { ...initial(), presentation: { groups: [{ id: 'g', name: 'Old', node_ids: ['source'] }] } };
++    const { changes, rerender } = setup({ definition, selectedNodeIds: ['source', 'prepare'] });
++    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: 'New' } });
++    expect((screen.getByRole('button', { name: '用所选节点创建分组' }) as HTMLButtonElement).disabled).toBe(true);
++    rerender({ selectedNodeIds: ['prepare'] });
++    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '🎬'.repeat(81) } });
++    expect(screen.getByRole('alert').textContent).toContain('80');
++    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' })); expect(changes).not.toHaveBeenCalled();
++    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: '🎬'.repeat(80) } });
++    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' })); expect(changes).toHaveBeenCalledTimes(1);
++    fireEvent.change(screen.getByLabelText('分组名称'), { target: { value: 'Pending private name' } });
++    rerender({ interactionKey: 'other' }); expect((screen.getByLabelText('分组名称') as HTMLInputElement).value).toBe('');
++  });
++
++  it.each([{ readonly: true }, { busy: true }])('blocks all group actions: %j', props => {
++    const { changes, selections } = setup({ ...props, selectedNodeIds: ['source'] });
++    expect((screen.getByLabelText('分组名称') as HTMLInputElement).disabled).toBe(true);
++    fireEvent.click(screen.getByRole('button', { name: '用所选节点创建分组' }));
++    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
++  });
++
++  it('edits and removes plain graph annotations without changing node geometry, pins or selection', () => {
++    const definition = initial(), { changes, selections, rerender } = setup({ definition, selectedNodeIds: ['source'] });
++    const text = '场景说明\n<script>plain text</script>';
++    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: text } });
++    expect(changes).toHaveBeenLastCalledWith({ ...definition, presentation: { comment: text } }, true);
++    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).maxLength).toBe(4000);
++    fireEvent.keyDown(screen.getByLabelText('画布说明'), { key: 'Delete' });
++    fireEvent.keyDown(screen.getByLabelText('画布说明'), { key: 'ArrowRight' });
++    expect(changes).toHaveBeenCalledTimes(1); expect(selections).not.toHaveBeenCalled();
++    fireEvent.click(screen.getByRole('button', { name: '移除画布说明' }));
++    expect(changes).toHaveBeenLastCalledWith(definition, true);
++    rerender({ definition: { ...initial(), presentation: { comment: 'Other owner' } }, interactionKey: 'other' });
++    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe('Other owner');
++  });
++
++  it('preserves 2000 supplementary characters and rejects overflow without dropping existing text', () => {
++    const { changes } = setup();
++    const text = '🎬'.repeat(2000);
++    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: text } });
++    expect(changes.mock.calls.at(-1)![0].presentation.comment).toBe(text);
++    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: text + '尾' } });
++    expect(changes).toHaveBeenCalledTimes(1);
++    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe(text);
++    expect(screen.getByRole('alert').textContent).toContain('原有说明已保留');
++    const mixed = '字'.repeat(1999) + '🎬';
++    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: mixed } });
++    expect(changes.mock.calls.at(-1)![0].presentation.comment).toBe(mixed);
++    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: '新增' + mixed } });
++    expect(changes).toHaveBeenCalledTimes(2);
++    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).value).toBe(mixed);
++  });
++
++  it.each([{ readonly: true }, { busy: true }])('blocks annotation mutations when owner is blocked: %j', props => {
++    const { changes } = setup({ ...props, definition: { ...initial(), presentation: { comment: 'Keep' } } });
++    expect((screen.getByLabelText('画布说明') as HTMLTextAreaElement).disabled).toBe(true);
++    fireEvent.change(screen.getByLabelText('画布说明'), { target: { value: 'No' } });
++    fireEvent.click(screen.getByRole('button', { name: '移除画布说明' }));
++    expect(changes).not.toHaveBeenCalled();
++  });
++
+   it('uses accessible node buttons, explicit typed port labels and edge descriptions', () => {
+     const onPortSelect = vi.fn(); setup({ onPortSelect });
+     expect(source().getAttribute('aria-pressed')).toBe('false');
+@@ -195,3 +285,605 @@ describe('controlled typed graph canvas', () => {
+     fireEvent.click(screen.getByRole('button', { name: '缩小节点图' })); expect(screen.getByLabelText('节点图缩放').textContent).toBe('100%');
+   });
+ });
++
++
++describe('measured viewport rendering', () => {
++  const measure = () => vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, toJSON: () => ({}) });
++  const distant = () => { const graph = initial(); graph.nodes[1].position = { x: 5000, y: 144 }; return graph; };
++  it('culls cards, retains crossing edges and recovers unchanged nodes after pan', () => {
++    measure(); const definition = distant(), original = JSON.stringify(definition);
++    const { changes } = setup({ definition });
++    expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
++    expect(edgePath()).toBeTruthy();
++    down(viewport(), 0, 0, { altKey: true }); move(-4800, 0); up(-4800, 0);
++    expect(prepare()).toBeTruthy(); expect(screen.queryByRole('button', { name: '选择节点 文本输入 · source' })).toBeNull();
++    expect(changes.mock.calls[0][0].nodes).toBe(definition.nodes); expect(JSON.stringify(definition)).toBe(original);
++  });
++  it('retains selected nodes and controller-owned connection anchors without changing graph data', () => {
++    measure(); const { changes, rerender } = setup({ definition: distant(), selectedNodeIds: ['prepare'] });
++    expect(prepare()).toBeTruthy(); rerender({ selectedNodeIds: [], connectionNodeIds: ['prepare'] }); expect(prepare()).toBeTruthy();
++    rerender({ selectedNodeIds: [], connectionNodeIds: [] }); expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
++    expect(changes).not.toHaveBeenCalled();
++  });
++  it('preserves a focused port while zoom/pan moves its card offscreen and releases it after blur', () => {
++    measure(); const definition = initial(), onPortSelect = vi.fn(); const { rerender } = setup({ definition, onPortSelect });
++    const port = screen.getByRole('button', { name: '草稿整理 prepare 输入端口 text · TEXT · 必需' });
++    act(() => port.focus());
++    rerender({ definition: { ...definition, viewport: { x: -5000, y: 0, zoom: 1 } } });
++    expect(document.activeElement).toBe(port); fireEvent.click(port); expect(onPortSelect).toHaveBeenCalledTimes(1);
++    act(() => viewport().focus());
++    expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
++  });
++  it('offers keyboard-native selection of every offscreen node and centers via existing controlled viewport', () => {
++    measure(); const { changes } = setup({ definition: distant() });
++    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
++    const navigator = screen.getByRole('combobox', { name: '查找图中节点' });
++    fireEvent.change(navigator, { target: { value: 'prepare' } });
++    fireEvent.keyDown(navigator, { key: 'Enter' });
++    expect(prepare().getAttribute('aria-pressed')).toBe('true');
++    expect(changes.mock.calls[0][0].viewport.x).toBe(-4760);
++    expect(changes.mock.calls[0][0].nodes[1].position.x).toBe(5000);
++    fireEvent.keyDown(navigator, { key: 'Delete' }); expect(changes).toHaveBeenCalledTimes(1);
++  });
++  it('keeps readonly navigation selection nonmutating and disables the directory while busy', () => {
++    measure(); const { changes, selections, rerender } = setup({ definition: distant(), readonly: true });
++    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
++    fireEvent.change(screen.getByRole('combobox', { name: '查找图中节点' }), { target: { value: 'prepare' } });
++    fireEvent.keyDown(screen.getByRole('combobox', { name: '查找图中节点' }), { key: 'Enter' });
++    expect(selections).toHaveBeenCalledWith(['prepare']); expect(changes).not.toHaveBeenCalled();
++    rerender({ busy: true }); expect(screen.getByRole('button', { name: '查找图中节点' }).getAttribute('aria-disabled')).toBe('true');
++  });
++  it('filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing', () => {
++    measure();
++    const definition = initial();
++    definition.nodes = Array.from({ length: 1200 }, (_, i) => ({ ...definition.nodes[0], id: `display_${i}`, position: { x: i * 400, y: 24 } }));
++    definition.edges = [];
++    const { changes, selections } = setup({ definition });
++    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
++    const input = screen.getByRole('combobox', { name: '查找图中节点' });
++    expect(document.activeElement).toBe(input);
++    expect(screen.getAllByRole('option', { selected: false }).length + screen.getAllByRole('option', { selected: true }).length).toBeGreaterThanOrEqual(20);
++    expect(document.querySelectorAll('.graph-canvas__navigation-results [role=option]')).toHaveLength(20);
++    expect(screen.getByRole('region', { name: '图中节点目录' }).textContent).toContain('匹配 1200');
++    fireEvent.keyDown(input, { key: 'PageDown' });
++    expect(document.querySelector('.graph-canvas__navigation-results [role=option]')!.textContent).toContain('display_20');
++    fireEvent.change(input, { target: { value: '文本输入 text_input display_1199' } });
++    expect(document.querySelectorAll('.graph-canvas__navigation-results [role=option]')).toHaveLength(1);
++    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
++    fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
++    fireEvent.keyDown(input, { key: 'Escape', keyCode: 229 });
++    expect(screen.getByRole('combobox', { name: '查找图中节点' })).toBe(input);
++    expect(changes).not.toHaveBeenCalled();
++    fireEvent.keyDown(input, { key: 'Enter' });
++    expect(selections).toHaveBeenLastCalledWith(['display_1199']);
++    expect(changes).toHaveBeenCalledTimes(1);
++    expect(changes.mock.calls[0][0].nodes).toBe(definition.nodes);
++    expect(document.activeElement).toBe(screen.getByRole('button', { name: '查找图中节点' }));
++  });
++  it('cancels search without selection or writes, resets owner query, and reveals a folded member on confirmation', () => {
++    measure();
++    const definition = { ...initial(), presentation: { groups: [{ id: 'g', name: '场景', node_ids: ['prepare'] }] } };
++    const { changes, selections, rerender } = setup({ definition });
++    fireEvent.click(screen.getByRole('button', { name: '折叠分组 场景' }));
++    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
++    let input = screen.getByRole('combobox', { name: '查找图中节点' });
++    fireEvent.change(input, { target: { value: 'missing' } });
++    expect(document.querySelectorAll('.graph-canvas__navigation-results [role=option]')).toHaveLength(0);
++    fireEvent.keyDown(input, { key: 'Escape' });
++    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
++    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
++    input = screen.getByRole('combobox', { name: '查找图中节点' });
++    fireEvent.change(input, { target: { value: 'prepare' } });
++    fireEvent.keyDown(input, { key: 'Enter' });
++    expect(prepare().getAttribute('aria-pressed')).toBe('true');
++    expect(document.querySelector('[data-graph-collapsed]')).toBeNull();
++    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
++    fireEvent.change(screen.getByRole('combobox', { name: '查找图中节点' }), { target: { value: 'private' } });
++    rerender({ interactionKey: 'other-graph' });
++    expect(screen.queryByRole('combobox', { name: '查找图中节点' })).toBeNull();
++    fireEvent.click(screen.getByRole('button', { name: '查找图中节点' }));
++    expect((screen.getByRole('combobox', { name: '查找图中节点' }) as HTMLInputElement).value).toBe('');
++  });
++  it('selects all offscreen cards and preserves a dragged card until cancellation', () => {
++    measure(); const { changes } = setup({ definition: distant() });
++    fireEvent.keyDown(viewport(), { key: 'a', ctrlKey: true }); expect(prepare().getAttribute('aria-pressed')).toBe('true');
++    down(source(), 30, 30); move(-5000, -5000); expect(source()).toBeTruthy(); expect(prepare()).toBeTruthy();
++    fireEvent.keyDown(viewport(), { key: 'Escape' }); expect(position('source').left).toBe('24px'); expect(changes).not.toHaveBeenCalled();
++  });
++  it('drops focus retention when the interaction owner changes', () => {
++    measure(); const definition = initial(); const { rerender } = setup({ definition, interactionKey: 'one', onPortSelect: vi.fn() });
++    act(() => screen.getByRole('button', { name: '草稿整理 prepare 输入端口 text · TEXT · 必需' }).focus());
++    rerender({ definition: { ...definition, viewport: { x: -5000, y: 0, zoom: 1 } }, interactionKey: 'two' });
++    expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
++  });
++  it('responds to ResizeObserver and disconnects it on unmount', () => {
++    const bounds = measure(); let notify = () => {}; const disconnect = vi.fn();
++    vi.stubGlobal('ResizeObserver', class { constructor(callback: () => void) { notify = callback; } observe() {} disconnect = disconnect; });
++    const { unmount } = setup({ definition: distant() }); expect(screen.queryByRole('button', { name: '选择节点 草稿整理 · prepare' })).toBeNull();
++    bounds.mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 6000, bottom: 400, width: 6000, height: 400, toJSON: () => ({}) });
++    act(() => notify()); expect(prepare()).toBeTruthy(); unmount(); expect(disconnect).toHaveBeenCalledOnce();
++  });
++});
++
++describe('mounted MiniMap navigation', () => {
++  const map = () => screen.getByRole('button', { name: '小地图导航' }) as HTMLButtonElement;
++  function measure() {
++    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
++      return { x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: this.classList.contains('graph-canvas__minimap') ? 200 : 800, height: this.classList.contains('graph-canvas__minimap') ? 120 : 400, toJSON: () => ({}) };
++    });
++  }
++  it('uses one camera history update per click or arrow without moving selected nodes or changing zoom', () => {
++    measure(); const definition = initial(); definition.viewport.zoom = 2.5;
++    const { changes, selections } = setup({ definition, selectedNodeIds: ['source'] });
++    map().focus(); fireEvent.keyDown(map(), { key: 'ArrowRight' });
++    expect(changes).toHaveBeenCalledTimes(1);
++    const next = changes.mock.calls[0][0]; expect(next.viewport).toEqual({ x: -200, y: 0, zoom: 2.5 });
++    expect(next.nodes).toBe(definition.nodes); expect(next.edges).toBe(definition.edges); expect(changes.mock.calls[0][1]).toBe(true);
++    expect(document.activeElement).toBe(map()); expect(selections).not.toHaveBeenCalled();
++    fireEvent.click(map(), { detail: 1, clientX: 150, clientY: 80 });
++    expect(changes).toHaveBeenCalledTimes(2); expect(changes.mock.calls[1][0].viewport.zoom).toBe(2.5);
++    expect(document.querySelector('.graph-canvas__minimap-selected')?.getAttribute('d')).not.toBe('');
++    fireEvent.keyDown(map(), { key: 'Delete' }); expect(changes).toHaveBeenCalledTimes(2);
++  });
++  it('hides and restores overview without history changes and blocks read-only, busy and unmeasured navigation', () => {
++    const { changes, rerender } = setup(); expect(map().disabled).toBe(true);
++    fireEvent.click(screen.getByRole('button', { name: '显示小地图' })); expect(screen.queryByRole('button', { name: '小地图导航' })).toBeNull();
++    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
++    measure(); fireEvent(window, new Event('resize')); expect(map().disabled).toBe(false);
++    rerender({ readonly: true }); expect(map().disabled).toBe(true); fireEvent.keyDown(map(), { key: 'ArrowRight' });
++    rerender({ busy: true }); expect(map().disabled).toBe(true); fireEvent.click(map());
++    expect(changes).not.toHaveBeenCalled();
++  });
++  it('tracks resize and replacement, clamps camera and ignores composition and active gestures', () => {
++    measure(); const definition = initial(); definition.viewport = { x: -100000, y: 100000, zoom: 0.35 };
++    const { changes, rerender } = setup({ definition });
++    fireEvent.keyDown(map(), { key: 'ArrowRight' }); expect(changes).not.toHaveBeenCalled();
++    fireEvent.keyDown(map(), { key: 'ArrowLeft', isComposing: true }); expect(changes).not.toHaveBeenCalled();
++    down(viewport(), 5, 5); fireEvent.click(map()); expect(changes).not.toHaveBeenCalled(); up();
++    fireEvent.keyDown(map(), { key: 'ArrowLeft', shiftKey: true }); expect(changes.mock.calls[0][0].viewport.x).toBe(-99200);
++    const replacement = initial(); replacement.nodes = []; replacement.edges = [];
++    rerender({ definition: replacement, interactionKey: 'other' }); expect(map().disabled).toBe(true);
++    expect(document.querySelector('.graph-canvas__minimap-nodes')?.getAttribute('d')).toBe('');
++  });
++});
++
++
++describe('selected-node alignment preview', () => {
++  it('previews live geometry and edges, cancels without writes, then applies once', () => {
++    const { changes } = setup({ selectedNodeIds: ['source', 'prepare'] });
++    const beforePath = edgePath();
++    fireEvent.click(screen.getByText('预览左对齐'));
++    expect(position('prepare').left).toBe('24px'); expect(edgePath()).not.toBe(beforePath);
++    expect(changes).not.toHaveBeenCalled();
++    fireEvent.click(screen.getByText('取消对齐预览'));
++    expect(position('prepare').left).toBe('480px'); expect(edgePath()).toBe(beforePath);
++    fireEvent.click(screen.getByText('预览顶对齐'));
++    fireEvent.click(screen.getByText('应用所选节点对齐'));
++    expect(changes).toHaveBeenCalledTimes(1); expect(changes.mock.calls[0][1]).toBe(true);
++    expect(changes.mock.calls[0][0].nodes[1].position).toEqual({ x: 480, y: 24 });
++    fireEvent.click(screen.getByText('预览顶对齐'));
++    expect((screen.getByText('应用所选节点对齐') as HTMLButtonElement).disabled).toBe(true);
++  });
++  it.each(['selection', 'definition', 'owner', 'readonly', 'busy'])('invalidates a preview on %s changes without resurrecting it', change => {
++    const options = { selectedNodeIds: ['source', 'prepare'], interactionKey: 'owner' };
++    const { changes, rerender } = setup(options);
++    fireEvent.click(screen.getByText('预览左对齐'));
++    rerender(change === 'selection' ? { selectedNodeIds: ['source'] } : change === 'definition' ? { definition: initial() }
++      : change === 'owner' ? { interactionKey: 'new' } : { [change]: true });
++    expect(screen.queryByText('应用所选节点对齐')).toBeNull();
++    rerender(options); expect(screen.queryByText('应用所选节点对齐')).toBeNull(); expect(changes).not.toHaveBeenCalled();
++  });
++  it('keeps control keys from nudging or deleting selected nodes; escape cancels preview', () => {
++    const { changes, selections } = setup({ selectedNodeIds: ['source', 'prepare'] });
++    const toggle = screen.getByRole('button', { name: '显示小地图' });
++    for (const key of ['ArrowRight', 'Delete', 'Backspace', 'Escape']) fireEvent.keyDown(toggle, { key });
++    fireEvent.click(screen.getByText('预览左对齐'));
++    const apply = screen.getByText('应用所选节点对齐');
++    for (const key of ['ArrowDown', 'Delete', 'Backspace']) fireEvent.keyDown(apply, { key });
++    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
++    fireEvent.keyDown(apply, { key: 'Escape' });
++    expect(screen.queryByText('应用所选节点对齐')).toBeNull(); expect(position('prepare').left).toBe('480px');
++  });
++  it.each([{ readonly: true }, { busy: true }])('does not offer mutation when blocked %j', options => {
++    setup({ ...options, selectedNodeIds: ['source', 'prepare'] });
++    expect((screen.getByText('预览左对齐') as HTMLButtonElement).disabled).toBe(true);
++  });
++});
++
++
++describe('transient world-grid controls', () => {
++  it('toggles grid/snap without moving nodes or saving, and aligns grid to the camera', () => {
++    const definition = initial(); definition.viewport = { x: -13, y: 29, zoom: 2 };
++    const { changes, rerender } = setup({ definition, interactionKey: 'owner-a', selectedNodeIds: ['source'] });
++    expect(viewport().style.backgroundSize).toBe('48px 48px');
++    expect(viewport().style.backgroundPosition).toBe('-37px 5px');
++    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
++    fireEvent.change(screen.getByLabelText('网格间距'), { target: { value: '16' } });
++    expect(viewport().style.backgroundSize).toBe('32px 32px');
++    fireEvent.click(screen.getByRole('button', { name: '显示网格' }));
++    expect(viewport().style.backgroundImage).toBe('none');
++    for (const target of [screen.getByRole('button', { name: '拖拽吸附' }), screen.getByLabelText('网格间距')]) {
++      fireEvent.keyDown(target, { key: 'ArrowRight' }); fireEvent.keyDown(target, { key: 'Delete' });
++    }
++    fireEvent.keyDown(viewport(), { key: 'ArrowRight', isComposing: true });
++    expect(changes).not.toHaveBeenCalled();
++    rerender({ interactionKey: 'owner-b' });
++    expect(screen.getByRole('button', { name: '拖拽吸附' }).getAttribute('aria-pressed')).toBe('false');
++    expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('24');
++  });
++  it('snaps a multi-drag once using the grabbed node, supports cancellation and free placement', () => {
++    const definition = initial(); definition.viewport.zoom = 2;
++    definition.nodes[1].position = { x: 481, y: 147 };
++    const { changes } = setup({ definition, selectedNodeIds: ['source', 'prepare'] });
++    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
++    down(prepare(), 100, 100); move(140, 140);
++    expect(position('prepare').left).toBe('504px'); expect(position('source').left).toBe('47px');
++    expect(changes).not.toHaveBeenCalled();
++    fireEvent.pointerCancel(viewport(), { pointerId: 1 }); expect(position('prepare').left).toBe('481px');
++    down(prepare(), 100, 100); move(140, 140); up();
++    expect(changes).toHaveBeenCalledTimes(1); expect(changes.mock.calls[0][1]).toBe(true);
++    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
++    down(prepare(), 100, 100); move(102, 102); up();
++    expect(position('prepare').left).toBe('505px'); expect(changes).toHaveBeenCalledTimes(2);
++  });
++  it('preserves keyboard screen-distance nudges when snap is enabled and avoids no-op undo', () => {
++    const definition = initial(); definition.viewport.zoom = 2;
++    const { changes } = setup({ definition, selectedNodeIds: ['source'] });
++    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
++    down(source(), 100, 100); move(101, 101); up(); expect(changes).not.toHaveBeenCalled();
++    fireEvent.keyDown(viewport(), { key: 'ArrowRight' }); expect(position('source').left).toBe('28px');
++    fireEvent.keyDown(viewport(), { key: 'ArrowRight', shiftKey: true }); expect(position('source').left).toBe('44px');
++  });
++});
++
++
++describe('world-space visual group outlines', () => {
++  const grouped = (): StudioGraphDefinition => ({ ...initial(), presentation: { groups: [{ id: 'scene', name: '场景 <b>🎬</b>', node_ids: ['source', 'prepare'] }] } });
++  const label = () => screen.getByRole('button', { name: '选择视觉分组 场景 <b>🎬</b> 的 2 个成员' });
++  const frame = () => document.querySelector('[data-graph-group-id="scene"]') as HTMLElement;
++  it('renders bounded plain labels, selects only on explicit activation and follows drag preview without writing presentation', () => {
++    const definition = grouped();
++    const { changes, selections } = setup({ definition });
++    expect(frame().style.left).toBe('8px'); expect(frame().style.top).toBe('-24px');
++    expect(frame().style.width).toBe('808px'); expect(frame().style.height).toBe('344px');
++    expect(label().querySelector('b')).toBeNull();
++    down(label(), 20, 0); move(70, 30); up(70, 30);
++    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
++    fireEvent.click(label());
++    expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
++    expect(label().getAttribute('aria-pressed')).toBe('true');
++    fireEvent.keyDown(label(), { key: 'Delete' }); fireEvent.keyDown(label(), { key: 'ArrowRight' });
++    expect(changes).not.toHaveBeenCalled();
++    down(source(), 40, 40); move(72, 56);
++    expect(frame().style.left).toBe('40px'); expect(frame().style.top).toBe('-8px');
++    expect(changes).not.toHaveBeenCalled(); up(72, 56);
++    expect(changes).toHaveBeenCalledTimes(1);
++    expect(changes.mock.calls[0][0].presentation).toEqual(definition.presentation);
++  });
++  it('keeps readonly selection available, busy selection disabled, and replaces stale owner frames', () => {
++    const { changes, selections, rerender } = setup({ definition: grouped(), readonly: true });
++    fireEvent.click(label()); expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
++    expect(changes).not.toHaveBeenCalled();
++    rerender({ busy: true }); expect((label() as HTMLButtonElement).disabled).toBe(true);
++    fireEvent.click(label()); expect(selections).toHaveBeenCalledTimes(1);
++    rerender({ definition: initial(), busy: false, interactionKey: 'other' });
++    expect(document.querySelector('[data-graph-group-id]')).toBeNull();
++  });
++  it('culls distant frames, retains focused labels, and keeps ports and background selection independent', () => {
++    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, toJSON: () => ({}) });
++    const definition = grouped(), onPortSelect = vi.fn();
++    const { changes, selections, rerender } = setup({ definition, onPortSelect });
++    const port = screen.getByRole('button', { name: /文本输入 source 输出端口/ });
++    down(port, 344, 112); fireEvent.click(port); up();
++    expect(onPortSelect).toHaveBeenCalledTimes(1); expect(selections).not.toHaveBeenCalled();
++    act(() => label().focus());
++    rerender({ definition: { ...definition, viewport: { x: 0, y: -5000, zoom: 1 } } });
++    expect(frame()).not.toBeNull();
++    act(() => viewport().focus());
++    expect(frame()).toBeNull();
++    rerender({ definition }); expect(frame()).not.toBeNull();
++    down(viewport(), 0, 0); move(350, 140); up(350, 140);
++    expect(selections).toHaveBeenLastCalledWith(['source']);
++    expect(changes).not.toHaveBeenCalled();
++  });
++  it('preserves pan from a group label and uses the same zoom transform as cards', () => {
++    const definition = grouped(); definition.viewport = { x: 20, y: 30, zoom: 2 };
++    const { changes, selections } = setup({ definition });
++    expect(document.querySelector('.graph-canvas__world')!.getAttribute('style')).toContain('scale(2)');
++    down(label(), 40, 40, { altKey: true }); move(72, 56); up(72, 56);
++    expect(changes.mock.calls[0][0].viewport).toEqual({ x: 52, y: 46, zoom: 2 });
++    expect(selections).not.toHaveBeenCalled();
++  });
++});
++
++
++describe('session-only visual group collapse', () => {
++  const grouped = (): StudioGraphDefinition => ({ ...initial(), presentation: { groups: [{ id: 'scene', name: '场景', node_ids: ['source'] }] } });
++  const collapseButton = () => screen.getByRole('button', { name: '折叠分组 场景' }) as HTMLButtonElement;
++  it('hides members and incident curves, reports real connections, expands without any graph or port write', () => {
++    const definition = grouped(), before = JSON.stringify(definition), onPortSelect = vi.fn();
++    const { changes, selections } = setup({ definition, onPortSelect });
++    const path = edgePath();
++    fireEvent.click(collapseButton());
++    expect(screen.queryByRole('button', { name: '选择节点 文本输入 · source' })).toBeNull();
++    expect(prepare()).not.toBeNull(); expect(document.querySelector('[data-graph-edge-id]')).toBeNull();
++    expect(screen.getByText('场景：1 个成员 · 1 条对外连接 · 0 条内部连接（线条已隐藏）')).not.toBeNull();
++    expect(screen.getByText('source 输出 text → prepare 输入 text')).not.toBeNull();
++    const card = document.querySelector('[data-graph-collapsed]') as HTMLElement;
++    expect(card.style.width).toBe('320px'); expect(card.querySelector('[data-graph-port]')).toBeNull();
++    const expand = screen.getByRole('button', { name: '展开画布分组 场景' });
++    act(() => expand.focus()); fireEvent.keyDown(expand, { key: 'Delete' }); fireEvent.keyDown(expand, { key: 'ArrowRight' });
++    fireEvent.click(expand);
++    expect(document.activeElement).toBe(screen.getByRole('button', { name: '选择视觉分组 场景 的 1 个成员' }));
++    expect(source()).not.toBeNull(); expect(edgePath()).toBe(path);
++    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled(); expect(onPortSelect).not.toHaveBeenCalled();
++    expect(JSON.stringify(definition)).toBe(before);
++  });
++  it.each(['selected', 'connecting', 'focused'])('keeps %s members visible and explains disabled collapse', mode => {
++    const { changes } = setup({ definition: grouped(), selectedNodeIds: mode === 'selected' ? ['source'] : [], connectionNodeIds: mode === 'connecting' ? ['source'] : [] });
++    if (mode === 'focused') act(() => source().focus());
++    expect(collapseButton().disabled).toBe(true); expect(collapseButton().title).toContain('取消成员选择');
++    fireEvent.click(collapseButton()); expect(source()).not.toBeNull(); expect(changes).not.toHaveBeenCalled();
++  });
++  it.each(['selected', 'connecting'])('expands permanently when a hidden member becomes %s', mode => {
++    const { rerender, changes } = setup({ definition: grouped() });
++    fireEvent.click(collapseButton());
++    rerender(mode === 'selected' ? { selectedNodeIds: ['source'] } : { connectionNodeIds: ['source'] });
++    expect(source()).not.toBeNull();
++    rerender({ selectedNodeIds: [], connectionNodeIds: [] });
++    expect(source()).not.toBeNull(); expect(collapseButton().disabled).toBe(false); expect(changes).not.toHaveBeenCalled();
++  });
++  it('retains collapse on camera changes, but resets on owner/group replacement and unmount', () => {
++    const definition = grouped(); const { rerender, unmount, changes } = setup({ definition, interactionKey: 'a' });
++    fireEvent.click(collapseButton());
++    rerender({ definition: { ...definition, viewport: { x: 100, y: 100, zoom: 2 } } });
++    expect(document.querySelector('[data-graph-collapsed]')).not.toBeNull();
++    rerender({ interactionKey: 'b' }); expect(source()).not.toBeNull();
++    fireEvent.click(collapseButton()); rerender({ definition: grouped() }); expect(source()).not.toBeNull();
++    fireEvent.click(collapseButton()); expect(changes).not.toHaveBeenCalled(); unmount();
++    setup({ definition }); expect(source()).not.toBeNull();
++  });
++  it('allows readonly view folding, blocks busy folding, and isolates toolbar keyboard input', () => {
++    const { changes, selections, rerender } = setup({ definition: grouped(), readonly: true, selectedNodeIds: ['prepare'] });
++    fireEvent.keyDown(collapseButton(), { key: 'Delete' }); fireEvent.keyDown(collapseButton(), { key: 'ArrowRight' });
++    fireEvent.click(collapseButton()); expect(document.querySelector('[data-graph-collapsed]')).not.toBeNull();
++    rerender({ busy: true }); expect((screen.getByRole('button', { name: '展开分组 场景' }) as HTMLButtonElement).disabled).toBe(true);
++    expect(changes).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
++  });
++});
++
++
++describe('explicit graph-owned view preferences', () => {
++  const preferences = { show_grid: false, snap: true, grid_step: 32 as const, show_minimap: false };
++  const persist = () => screen.getByRole('button', { name: '将视图偏好写入图草稿' });
++  it('keeps temporary defaults and toggles clean, then writes one display-only draft change', () => {
++    const definition = initial(); const { changes } = setup({ definition, interactionKey: 'a' });
++    fireEvent.click(screen.getByRole('button', { name: '显示网格' }));
++    fireEvent.click(screen.getByRole('button', { name: '拖拽吸附' }));
++    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
++    fireEvent.change(screen.getByLabelText('网格间距'), { target: { value: '32' } });
++    expect(changes).not.toHaveBeenCalled();
++    fireEvent.click(persist());
++    expect(changes).toHaveBeenCalledTimes(1);
++    expect(changes).toHaveBeenLastCalledWith({ ...definition, presentation: { view: preferences } }, true);
++    expect((persist() as HTMLButtonElement).disabled).toBe(true);
++  });
++  it('restores saved values, discards temporary settings across owners, and follows undo/removal', () => {
++    const definition = { ...initial(), presentation: { view: preferences, comment: 'Keep' } };
++    const { rerender, changes } = setup({ definition, interactionKey: 'a', preferencesSource: {} });
++    expect(screen.getByRole('button', { name: '显示网格' }).getAttribute('aria-pressed')).toBe('false');
++    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
++    rerender({ interactionKey: 'a', definition, preferencesSource: {} });
++    expect(screen.getByRole('button', { name: '显示小地图' }).getAttribute('aria-pressed')).toBe('false');
++    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
++    rerender({ interactionKey: 'b', definition });
++    expect(screen.getByRole('button', { name: '显示小地图' }).getAttribute('aria-pressed')).toBe('false');
++    expect(changes).not.toHaveBeenCalled();
++    fireEvent.click(screen.getByRole('button', { name: '移除已存视图偏好' }));
++    expect(changes).toHaveBeenLastCalledWith({ ...initial(), presentation: { comment: 'Keep' } }, true);
++    expect(screen.getByRole('button', { name: '显示网格' }).getAttribute('aria-pressed')).toBe('true');
++    rerender({ definition: { ...definition }, interactionKey: 'b' });
++    expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('32');
++    rerender({ definition: initial(), interactionKey: 'c' });
++    expect((screen.getByLabelText('网格间距') as HTMLSelectElement).value).toBe('24');
++    expect(screen.getByRole('button', { name: '显示小地图' }).getAttribute('aria-pressed')).toBe('true');
++  });
++  it.each([{ readonly: true }, { busy: true }])('cannot dirty saved preferences when blocked %j', flags => {
++    const { changes } = setup({ ...flags, definition: { ...initial(), presentation: { view: preferences } } });
++    fireEvent.click(screen.getByRole('button', { name: '显示小地图' }));
++    fireEvent.click(persist()); fireEvent.click(screen.getByRole('button', { name: '移除已存视图偏好' }));
++    expect(changes).not.toHaveBeenCalled();
++  });
++});
++
++it('assigns and clears two-level parents, selects descendants and promotes children without rewriting nodes', () => {
++  const definition = initial();
++  definition.presentation = { groups: [{ id: 'root', name: 'Root', node_ids: ['source'] }, { id: 'child', name: 'Child', node_ids: ['prepare'] }] };
++  const { changes, selections } = setup({ definition });
++  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
++  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: 'root' } });
++  fireEvent.click(screen.getByRole('button', { name: '应用父组' }));
++  const nested = changes.mock.calls.at(-1)![0];
++  expect(nested.presentation.groups[1].parent_id).toBe('root');
++  expect(nested.nodes).toBe(definition.nodes); expect(nested.edges).toBe(definition.edges);
++  expect(changes.mock.calls.at(-1)![1]).toBe(true);
++  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'root' } });
++  expect((screen.getByLabelText('父视觉分组') as HTMLSelectElement).options.length).toBe(1);
++  fireEvent.click(screen.getByRole('button', { name: '选择分组成员' }));
++  expect(selections).toHaveBeenLastCalledWith(['source', 'prepare']);
++  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
++  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: '' } });
++  fireEvent.click(screen.getByRole('button', { name: '应用父组' }));
++  expect(changes.mock.calls.at(-1)![0].presentation.groups[1]).not.toHaveProperty('parent_id');
++  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
++  fireEvent.change(screen.getByLabelText('父视觉分组'), { target: { value: 'root' } });
++  fireEvent.click(screen.getByRole('button', { name: '应用父组' }));
++  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'root' } });
++  fireEvent.click(screen.getByRole('button', { name: '移除分组（保留节点）' }));
++  const removed = changes.mock.calls.at(-1)![0];
++  expect(removed.presentation.groups).toEqual([{ id: 'child', name: 'Child', node_ids: ['prepare'] }]);
++  expect(removed.nodes).toBe(definition.nodes);
++});
++
++it('hides child compact controls under collapsed parents and expands both for selected descendants', () => {
++  const definition = initial();
++  definition.presentation = { groups: [{ id: 'root', name: 'Root', node_ids: ['source'] }, { id: 'child', name: 'Child', node_ids: ['prepare'], parent_id: 'root' }] };
++  const { changes } = setup({ definition });
++  fireEvent.click(screen.getByRole('button', { name: '折叠分组 Child' }));
++  fireEvent.click(screen.getByRole('button', { name: '折叠分组 Root' }));
++  expect(document.querySelectorAll('[data-graph-collapsed="true"]').length).toBe(1);
++  expect(document.querySelector('[data-graph-group-id="child"]')).toBeNull();
++  expect(screen.queryByRole('button', { name: /分组 Child/ })).toBeNull();
++  fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'child' } });
++  fireEvent.click(screen.getByRole('button', { name: '选择分组成员' }));
++  expect(document.querySelectorAll('[data-graph-collapsed="true"]').length).toBe(0);
++  expect(document.querySelector('[data-graph-node-id="prepare"]')).toBeTruthy();
++  expect(changes).not.toHaveBeenCalled();
++});
++
++describe('independent persisted canvas notes', () => {
++  it('authors plain text, moves and removes notes without graph selection or execution nodes', () => {
++    const { changes, selections } = setup({ selectedNodeIds: ['source'] });
++    fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
++    expect(changes.mock.calls.at(-1)![0].presentation.notes).toEqual([{ id: 'note_1', text: '', position: { x: 32, y: 32 } }]);
++    const text = '<img src=x> 🎬\nScene';
++    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: text } });
++    expect(document.querySelector('[data-graph-note-id] img')).toBeNull();
++    fireEvent.change(screen.getByLabelText('便笺 X'), { target: { value: -240 } });
++    const card = screen.getByRole('button', { name: '选择便笺 note_1' });
++    down(card, 100, 100);
++    fireEvent.pointerMove(card, { pointerId: 1, clientX: 132, clientY: 116 });
++    const before = changes.mock.calls.length;
++    fireEvent.pointerUp(card, { pointerId: 1, clientX: 132, clientY: 116 });
++    expect(changes).toHaveBeenCalledTimes(before + 1);
++    const updated = changes.mock.calls.at(-1)![0];
++    expect(updated.presentation.notes[0]).toEqual({ id: 'note_1', text, position: { x: -208, y: 48 } });
++    expect(updated.nodes).toEqual(initial().nodes); expect(updated.edges).toEqual(initial().edges);
++    expect(selections).not.toHaveBeenCalled();
++    fireEvent.keyDown(card, { key: 'Delete' }); expect(changes).toHaveBeenCalledTimes(before + 1);
++    fireEvent.click(screen.getByRole('button', { name: '移除所选便笺' }));
++    expect(changes.mock.calls.at(-1)![0]).toEqual(initial());
++  });
++  it('rejects Unicode and shared UTF-8 payload overflow before changing the original draft', () => {
++    const definition = initial(); definition.nodes[0].parameters = { text: 'a'.repeat(96000) };
++    const { changes, rerender } = setup({ definition });
++    fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
++    expect(screen.getByRole('alert').textContent).toContain('容量超限'); expect(changes).not.toHaveBeenCalled();
++    rerender({ definition: initial() }); fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
++    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: '🎬'.repeat(256) } });
++    expect(changes.mock.calls.at(-1)![0].presentation.notes[0].text).toBe('🎬'.repeat(256));
++    const before = changes.mock.calls.length;
++    fireEvent.change(screen.getByLabelText('便笺文本'), { target: { value: '🎬'.repeat(257) } });
++    expect(changes).toHaveBeenCalledTimes(before); expect(screen.getByRole('alert')).toBeTruthy();
++  });
++  it.each([{ readonly: true }, { busy: true }])('blocks note mutations for %j', flags => {
++    const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
++    const { changes } = setup({ ...flags, definition });
++    fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
++    const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
++    fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
++    expect(changes).not.toHaveBeenCalled();
++  });
++  it('culls offscreen notes while the explicit directory retains access without graph mutation', () => {
++    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ x: 0, y: 0, left: 0, top: 0, width: 800, height: 600, right: 800, bottom: 600, toJSON: () => ({}) });
++    const notes = Array.from({ length: 128 }, (_, i) => ({ id: `n${i}`, text: `Scene ${i}`, position: { x: (i % 16) * 1000, y: Math.floor(i / 16) * 1000 } }));
++    const { changes } = setup({ definition: { ...initial(), presentation: { notes } } });
++    expect(document.querySelectorAll('[data-graph-note-id]').length).toBe(1);
++    fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'n100' } });
++    expect(document.querySelectorAll('[data-graph-note-id]').length).toBe(2);
++    expect((screen.getByLabelText('便笺文本') as HTMLTextAreaElement).value).toBe('Scene 100');
++    expect(changes).not.toHaveBeenCalled();
++  });
++  it('cancels a note drag on owner replacement and blur without touching graph gestures', () => {
++    const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
++    const { changes, rerender } = setup({ definition, interactionKey: 'a' });
++    const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
++    rerender({ interactionKey: 'b' }); fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
++    expect(changes).not.toHaveBeenCalled();
++    down(card, 0, 0); fireEvent.blur(window); fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
++    expect(changes).not.toHaveBeenCalled();
++  });
++});
++
++it('note movement does not apply staged node alignment or consume pending connection selection', () => {
++  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
++  const onPortSelect = vi.fn();
++  const { changes, selections } = setup({ definition, selectedNodeIds: ['source', 'prepare'], connectionNodeIds: ['source'], onPortSelect });
++  fireEvent.click(screen.getByRole('button', { name: '预览左对齐' }));
++  const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
++  fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
++  const result = changes.mock.calls.at(-1)![0];
++  expect(result.nodes).toEqual(definition.nodes); expect(result.edges).toEqual(definition.edges);
++  expect(result.presentation.notes[0].position).toEqual({ x: 80, y: 80 });
++  expect(onPortSelect).not.toHaveBeenCalled(); expect(selections).not.toHaveBeenCalled();
++});
++
++it('commits Unicode composition once, rejects whole oversized input and cancels stale composition', () => {
++  const { changes, rerender } = setup({ interactionKey: 'a' });
++  fireEvent.click(screen.getByRole('button', { name: '在视口左上添加便笺' }));
++  const editor = screen.getByLabelText('便笺文本');
++  expect(editor.hasAttribute('maxlength')).toBe(false);
++  const before = changes.mock.calls.length;
++  fireEvent.compositionStart(editor);
++  fireEvent.change(editor, { target: { value: '中文🎬' } });
++  expect(changes).toHaveBeenCalledTimes(before);
++  fireEvent.compositionEnd(editor, { data: '中文🎬' });
++  expect(changes).toHaveBeenCalledTimes(before + 1);
++  expect(changes.mock.calls.at(-1)![0].presentation.notes[0].text).toBe('中文🎬');
++  fireEvent.change(editor, { target: { value: '🎬'.repeat(257) } });
++  expect(changes).toHaveBeenCalledTimes(before + 1);
++  expect((editor as HTMLTextAreaElement).value).toBe('中文🎬');
++  fireEvent.compositionStart(editor); fireEvent.change(editor, { target: { value: 'Cancelled' } });
++  rerender({ interactionKey: 'b' }); fireEvent.compositionEnd(editor, { data: 'Cancelled' }); fireEvent.change(editor, { target: { value: 'Cancelled' } });
++  expect(changes).toHaveBeenCalledTimes(before + 1);
++});
++
++it.each(['cancel', 'escape', 'capture', 'readonly', 'busy'] as const)('cancels note drag on %s', reason => {
++  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
++  const { changes, rerender } = setup({ definition });
++  const card = screen.getByRole('button', { name: '选择便笺 n' }); down(card, 0, 0);
++  fireEvent.pointerMove(card, { pointerId: 1, clientX: 80, clientY: 80 });
++  if (reason === 'cancel') fireEvent.pointerCancel(card, { pointerId: 1 });
++  if (reason === 'capture') fireEvent.lostPointerCapture(card, { pointerId: 1 });
++  if (reason === 'escape') fireEvent.keyDown(card, { key: 'Escape' });
++  if (reason === 'readonly') rerender({ readonly: true });
++  if (reason === 'busy') rerender({ busy: true });
++  fireEvent.pointerUp(card, { pointerId: 1, clientX: 80, clientY: 80 });
++  expect(changes).not.toHaveBeenCalled();
++});
++
++it.each(['selection', 'readonly', 'busy'] as const)('discards note composition on %s without writing another note', reason => {
++  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }, { id: 'other', text: 'Other', position: { x: 0, y: 0 } }] } };
++  const { changes, rerender } = setup({ definition });
++  fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'n' } });
++  const editor = screen.getByLabelText('便笺文本');
++  fireEvent.compositionStart(editor); fireEvent.change(editor, { target: { value: '候选' } });
++  if (reason === 'selection') fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'other' } });
++  if (reason === 'readonly') rerender({ readonly: true });
++  if (reason === 'busy') rerender({ busy: true });
++  fireEvent.compositionEnd(editor, { data: '候选' }); fireEvent.change(editor, { target: { value: '候选' } }); expect(changes).not.toHaveBeenCalled();
++});
++
++it('remounts a composing note input when the original definition is replaced', () => {
++  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
++  const { changes, rerender } = setup({ definition });
++  fireEvent.change(screen.getByLabelText('空间便笺目录'), { target: { value: 'n' } });
++  const abandoned = screen.getByLabelText('便笺文本');
++  fireEvent.compositionStart(abandoned); fireEvent.change(abandoned, { target: { value: '候选' } });
++  rerender({ definition: { ...definition, title: 'Other revision' } });
++  const current = screen.getByLabelText('便笺文本'); expect(current).not.toBe(abandoned);
++  fireEvent.compositionEnd(abandoned); fireEvent.change(abandoned, { target: { value: '候选' } });
++  expect(changes).not.toHaveBeenCalled(); expect((current as HTMLTextAreaElement).value).toBe('Keep');
++});
++
++it.each(['tool', 'alt', 'middle'] as const)('pans from a note header with %s without editing the note', mode => {
++  const definition = { ...initial(), presentation: { notes: [{ id: 'n', text: 'Keep', position: { x: 0, y: 0 } }] } };
++  const { changes, selections } = setup({ definition });
++  if (mode === 'tool') fireEvent.click(screen.getByRole('button', { name: '平移画布' }));
++  const card = screen.getByRole('button', { name: '选择便笺 n' });
++  down(card, 0, 0, { altKey: mode === 'alt', button: mode === 'middle' ? 1 : 0 });
++  move(80, 64); up(80, 64);
++  expect(changes).toHaveBeenCalledTimes(1);
++  expect(changes.mock.calls[0][0]).toEqual({ ...definition, viewport: { x: 80, y: 64, zoom: 1 } });
++  expect(selections).not.toHaveBeenCalled(); expect(screen.queryByLabelText('便笺文本')).toBeNull();
++});
+diff --git a/frontend/src/creative/IndependentStudioReadFences.test.tsx b/frontend/src/creative/IndependentStudioReadFences.test.tsx
+index c32089c..50c2de0 100644
+--- a/frontend/src/creative/IndependentStudioReadFences.test.tsx
++++ b/frontend/src/creative/IndependentStudioReadFences.test.tsx
+@@ -51,6 +51,34 @@ describe('independent asset read fences and truthful capability labels', () => {
+     expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).value).toBe('刷新后新草稿'); expect(leave).not.toHaveBeenCalled();
+   });
+ 
++  it.each(['same-version', 'failed'] as const)('keeps refresh inputs visible until %s read settles, then retires the old relationship view', async outcome => {
++    mount(); await screen.findByRole('region', { name: '独立资产来源' });
++    fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
++    await screen.findByText('当前没有可选引用；可以保持独立创作。');
++    const finish = deferredRead(); fireEvent.click(screen.getByRole('button', { name: '重新读取当前资产' }));
++    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).disabled).toBe(true);
++    await act(async () => finish(outcome === 'same-version' ? reply(makeAsset()) : { ...reply({ code: 'READ_FAILED' }), ok: false, status: 500 }));
++    expect(screen.queryByLabelText('关联理由')).toBeNull();
++    expect(screen.getByRole('region', { name: '独立资产来源' }).textContent).toContain('版本 v2');
++    fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
++    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).disabled).toBe(false);
++    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).value).toBe('');
++    expect(fetchMock.mock.calls.some(([, init]) => init?.method && init.method !== 'GET')).toBe(false);
++  });
++
++  it.each([401, 403])('removes the retained refresh form when the original asset read returns %s', async status => {
++    mount(); await screen.findByRole('region', { name: '独立资产来源' });
++    fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
++    await screen.findByText('当前没有可选引用；可以保持独立创作。');
++    const finish = deferredRead(); fireEvent.click(screen.getByRole('button', { name: '重新读取当前资产' }));
++    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).disabled).toBe(true);
++    await act(async () => finish({ ...reply({ code: 'PROJECT_SCOPE_FORBIDDEN' }), ok: false, status }));
++    expect(screen.queryByLabelText('关联理由')).toBeNull();
++    expect(screen.queryByRole('region', { name: '独立资产来源' })).toBeNull();
++    expect(screen.queryByRole('region', { name: '资产关联' })).toBeNull();
++    expect(fetchMock.mock.calls.some(([, init]) => init?.method && init.method !== 'GET')).toBe(false);
++  });
++
+   it('ignores delayed recovery after the author explicitly selects a different asset and starts a draft', async () => {
+     const finish = deferredRead(); mount();
+     fireEvent.click(await screen.findByRole('button', { name: '检查资产 target.png' }));
+diff --git a/frontend/src/creative/IndependentStudioWorkspace.test.tsx b/frontend/src/creative/IndependentStudioWorkspace.test.tsx
+index f7dbb02..891c3cd 100644
+--- a/frontend/src/creative/IndependentStudioWorkspace.test.tsx
++++ b/frontend/src/creative/IndependentStudioWorkspace.test.tsx
+@@ -3,6 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
+ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ import { api } from '../api';
++import { projectedTask, tasksResponse, reviewInboxItem, reviewInboxResponse } from '../taskcenter/taskCenterFixtures';
+ import { useStudio } from '../store';
+ import { useLocalHostSession } from '../localHostSession';
+ import { IndependentStudioWorkspace, type IndependentStudioProps } from './IndependentStudioWorkspace';
+@@ -126,7 +127,7 @@ describe('independent studio original owner integration', () => {
+     fireEvent.click(screen.getByText('创作意图与推荐布局'));
+     fireEvent.click(screen.getByLabelText('图片设计'));
+     fireEvent.click(screen.getByRole('button', { name: '保存创作偏好' }));
+-    await screen.findByRole('alert');
++    expect((await screen.findByText('版本或来源已经变化。当前草稿已保留，请核对服务端版本。')).getAttribute('role')).toBe('alert');
+     expect((screen.getByLabelText('图片设计') as HTMLInputElement).checked).toBe(true);
+     expect(screen.getAllByRole('tab')).toHaveLength(8);
+     fireEvent.click(within(screen.getByRole('tablist', { name: '创作模块' })).getByRole('tab', { name: '小说' }));
+@@ -145,3 +146,155 @@ describe('independent studio original owner integration', () => {
+     expect(URL.createObjectURL).not.toHaveBeenCalled();
+   });
+ });
++
++describe('mounted original asset browser to timeline handoff', () => {
++  async function sendFixture(target = '时间线模块') {
++    saved = [{ ...asset(2), kind: target === '图片模块' ? 'image' : 'video', filename: 'handoff.mp4', media_type: target === '图片模块' ? 'image/png' : 'video/mp4', created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z' }];
++    server({ override: (url, init) => {
++      if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
++      if (url.endsWith('/timelines')) return response({ items: [] });
++      return undefined;
++    } });
++    mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '选择素材 handoff.mp4' }));
++    await screen.findByRole('button', { name: target }); fireEvent.click(screen.getByRole('button', { name: target }));
++  }
++  it('routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance', async () => {
++    await sendFixture(); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
++    await screen.findByRole('region', { name: '素材引用交接到时间线' });
++    await waitFor(() => expect((screen.getByRole('button', { name: '添加视频轨道' }) as HTMLButtonElement).disabled).toBe(false));
++    fireEvent.click(screen.getByRole('button', { name: '添加视频轨道' })); fireEvent.click(screen.getByRole('button', { name: '核对交接素材版本' }));
++    const select = await screen.findByLabelText('交接目标轨道'); fireEvent.change(select, { target: { value: (select as HTMLSelectElement).options[1].value } });
++    fireEvent.change(screen.getByLabelText('交接来源终点（毫秒）'), { target: { value: '1000' } });
++    expect(screen.getByText(/未保存 · 1 条轨道 · 0 个片段/)).toBeTruthy(); fireEvent.click(screen.getByRole('button', { name: '明确加入原时间线草稿' }));
++    await screen.findByText(/已把核对的原素材版本加入/); expect(screen.getByText(/未保存 · 1 条轨道 · 1 个片段/)).toBeTruthy();
++    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
++  });
++  it.each([['时间线模块', '素材引用交接到时间线'], ['图片模块', '素材引用交接到图片制作'], ['视频模块', '素材引用交接到视频制作']])('keeps dirty-navigation cancel for %s', async (target, region) => {
++    await sendFixture(target); fireEvent.change(screen.getByLabelText('自定义意图'), { target: { value: 'keep my draft' } });
++    fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
++    expect(screen.queryByRole('region', { name: region })).toBeNull(); fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
++    expect((screen.getByLabelText('自定义意图') as HTMLInputElement).value).toBe('keep my draft');
++    fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' })); fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); fireEvent.click(screen.getByRole('button', { name: '确认离开' }));
++    await screen.findByRole('region', { name: region }); expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
++  });
++});
++
++
++describe('mounted asset browser to original image draft', () => {
++  it.each([['图片', 'm5.image.i2i'], ['视频', 'm7.video.i2v']])('requires an explicit %s operation choice and two metadata reads without dispatch', async (kind, operation) => {
++    saved = [{ ...asset(2), created_at: '2026-10-16T00:00:00Z', updated_at: '2026-10-16T00:00:00Z' }];
++    server({ override: (url, init) => {
++      if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
++      if (url.endsWith('/timelines') || url.endsWith('/providers')) return response({ items: [] });
++      return undefined;
++    } });
++    mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '选择素材 reference.png' }));
++    fireEvent.click(await screen.findByRole('button', { name: `${kind}模块` })); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
++    await screen.findByRole('region', { name: `素材引用交接到${kind}制作` });
++    expect((screen.getByRole('button', { name: `核对${kind}交接版本` }) as HTMLButtonElement).disabled).toBe(true);
++    fireEvent.change(screen.getByLabelText('操作'), { target: { value: operation } });
++    await waitFor(() => expect((screen.getByRole('button', { name: `核对${kind}交接版本` }) as HTMLButtonElement).disabled).toBe(false));
++    fireEvent.click(screen.getByRole('button', { name: `核对${kind}交接版本` })); fireEvent.click(await screen.findByRole('button', { name: `明确加入${kind}制作草稿` }));
++    await screen.findByText(new RegExp(`已加入原${kind}制作草稿`)); expect(screen.getByText(/已绑定来源 reference.png/)).toBeTruthy();
++    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
++  });
++});
++
++
++describe('mounted TaskCenter original owner routing', () => {
++  it('opens exact original media task, deduplicates repeated opens and clears on leaving', async () => {
++    server({ override: url => url.includes('/workspace/tasks?') ? response(tasksResponse())
++      : url.endsWith('/experimental/media/tasks') ? response({ items: [{ id: 'media-task-1', version: 4, status: 'RUNNING', novel_id: id, scope: { mode: 'local', novel_id: id } }] }) : undefined });
++    mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
++    fireEvent.click(await screen.findByRole('button', { name: '定位原任务结果' }));
++    await screen.findByText('原记录 media-task-1 · v4 · RUNNING');
++    fireEvent.click(screen.getByRole('button', { name: '定位原任务结果' }));
++    expect(fetchMock.mock.calls.filter(([url]) => url.endsWith('/experimental/media/tasks'))).toHaveLength(1);
++    expect(screen.getByRole('button', { name: '任务中心' }).getAttribute('aria-pressed')).toBe('true');
++    expect(fetchMock.mock.calls.some(([url]) => url.includes('/production/jobs'))).toBe(false);
++    fireEvent.click(screen.getByRole('button', { name: '素材工作区' }));
++    expect(screen.queryByLabelText('原任务与候选记录')).toBeNull();
++    expect(fetchMock.mock.calls.some(([, init]) => init.method !== 'GET')).toBe(false);
++  });
++  it('shows unsupported owner honestly without claiming location or reading another service', async () => {
++    server({ override: url => url.includes('/workspace/tasks?') ? response(tasksResponse({ items: [projectedTask({ authority: 'images' })] })) : undefined });
++    mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
++    fireEvent.click(await screen.findByRole('button', { name: '定位原任务结果' }));
++    await screen.findByText(/此来源没有接入/);
++    expect(fetchMock.mock.calls.some(([url]) => url.includes('/experimental/media/') || url.includes('/production/jobs'))).toBe(false);
++  });
++});
++
++
++describe('mounted original candidate reopening', () => {
++  it('reads the exact original candidate and refuses newer revisions', async () => {
++    server({ override: url => url.includes('/workspace/tasks?') ? response(tasksResponse())
++      : url.endsWith('/review-inbox') ? response(reviewInboxResponse({ items: [reviewInboxItem({ novel_id: id, project: id, scope: { mode: 'local', novel_id: id } })] }))
++      : url.endsWith('/experimental/media/proposals') ? response({ items: [{ id: 'candidate-1', version: 4, task_id: 'media-task-1', status: 'PENDING_REVIEW', novel_id: id, scope: { mode: 'local', novel_id: id } }] }) : undefined });
++    mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
++    fireEvent.click(await screen.findByRole('tab', { name: '审核收件箱' }));
++    fireEvent.click(await screen.findByRole('button', { name: '查看候选详情' }));
++    fireEvent.click(screen.getByRole('button', { name: '定位原审核项' }));
++    await screen.findByText(/原候选版本或来源已变化/);
++    expect(screen.queryByLabelText('已核对原媒体记录')).toBeNull();
++    expect(fetchMock.mock.calls.some(([, init]) => init.method !== 'GET')).toBe(false);
++  });
++});
++
++
++describe('relationship inspection original asset navigation', () => {
++  function relationshipServer(targetPatch: Partial<StudioAsset> = {}, afterFirst?: Partial<StudioAsset>) {
++    let targetReads = 0;
++    const target = { ...asset(2), id: 'image-2', filename: 'original.png', ...targetPatch };
++    const reference = { kind: 'ASSET' as const, id: 'image-2', version: 2, digest: sha, label: 'original.png', deleted: false };
++    saved = [{ ...asset(2), relationships: [{ id: 'relation-1', type: 'REFERENCES', state: 'CURRENT', target: reference,
++      expected: { kind: 'ASSET', id: 'image-2', version: 2, digest: sha }, reason: 'original source', created_by: 'author', created_at: '2026-10-16T00:00:00Z', semantics: 'DECLARED_LINK_NOT_RIGHTS_GRANT_OR_EXECUTION' }] }, { ...asset(2), id: 'image-2', filename: 'original.png' }];
++    server({ override: url => url === `${base}/references?kind=ASSET` ? response({ items: [reference], read_only: true, content_copied: false })
++      : url === `${base}/assets/image-2` ? response(++targetReads > 1 && afterFirst ? { ...target, ...afterFirst } : target) : undefined });
++  }
++  async function inspectReference() {
++    mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '检查资产 reference.png' }));
++    fireEvent.click(await screen.findByRole('button', { name: '可选资产关联' }));
++    fireEvent.click(await screen.findByRole('button', { name: '核对原来源版本' }));
++    await waitFor(() => expect((screen.getByRole('button', { name: '打开核对的原资产' }) as HTMLButtonElement).disabled).toBe(false));
++  }
++  it('re-reads exact original asset after explicit dirty discard and performs no writes', async () => {
++    relationshipServer({}, { version: 3, sha256: 'b'.repeat(64) }); await inspectReference();
++    fireEvent.change(screen.getByLabelText('关联理由'), { target: { value: '保留草稿直到确认' } });
++    fireEvent.click(screen.getByRole('button', { name: '打开核对的原资产' }));
++    expect(fetchMock.mock.calls.some(([url]) => url === `${base}/assets/image-2`)).toBe(false);
++    expect((screen.getByLabelText('关联理由') as HTMLTextAreaElement).value).toBe('保留草稿直到确认');
++    fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); fireEvent.click(screen.getByRole('button', { name: '确认离开' }));
++    await screen.findByText('已打开关联时的精确原资产版本。未修改关联，也未导出文件。');
++    // Exact inspection does not trigger the live browser's ID-only current-detail read.
++    expect(fetchMock.mock.calls.filter(([url]) => url === `${base}/assets/image-2`)).toHaveLength(1);
++    expect(screen.getByRole('region', { name: '关联原资产精确版本审阅' })).toBeTruthy();
++    expect(screen.queryByRole('button', { name: '选择素材 original.png' })).toBeNull();
++    fireEvent.click(screen.getByRole('button', { name: '返回当前素材浏览' }));
++    await screen.findByText('已返回当前素材浏览。目录和详情按当前版本读取；不代表关联时的历史版本。');
++    await waitFor(() => expect(fetchMock.mock.calls.filter(([url]) => url === `${base}/assets/image-2`)).toHaveLength(2));
++    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
++  });
++  it.each([{ version: 3 }, { sha256: 'b'.repeat(64) }, { novel_id: 'other-project' }, { deleted_at: 'deleted' }])('does not open a changed original owner read %j', async patch => {
++    relationshipServer(patch); await inspectReference(); fireEvent.click(screen.getByRole('button', { name: '打开核对的原资产' }));
++    if (patch.novel_id) {
++      await screen.findByText('当前会话无权访问此项目');
++      expect(screen.queryByRole('button', { name: '可选资产关联' })).toBeNull();
++    } else {
++      await screen.findByText('关联来源的版本、摘要或范围已变化；未打开最新版本，原资产选择保持不变。');
++      expect(within(screen.getByRole('region', { name: '资产检查面板' })).getByText('reference.png')).toBeTruthy();
++    }
++    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
++  });
++  it('retires inspection when the original selection goes A to B to A in one batch', async () => {
++    relationshipServer(); await inspectReference();
++    const source = screen.getByRole('button', { name: '检查资产 reference.png' });
++    const other = screen.getByRole('button', { name: '检查资产 original.png' });
++    act(() => { fireEvent.click(other); fireEvent.click(source); });
++    expect(screen.queryByRole('button', { name: '打开核对的原资产' })).toBeNull();
++    fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
++    expect((screen.getByRole('button', { name: '打开核对的原资产' }) as HTMLButtonElement).disabled).toBe(true);
++    expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
++  });
++
++});
+diff --git a/frontend/src/creative/StudioProductionGraphEditor.test.tsx b/frontend/src/creative/StudioProductionGraphEditor.test.tsx
+index 64fb41b..a96d2ec 100644
+--- a/frontend/src/creative/StudioProductionGraphEditor.test.tsx
++++ b/frontend/src/creative/StudioProductionGraphEditor.test.tsx
+@@ -11,13 +11,22 @@ import { blankGraph } from './graphDraft';
+ import { imageGraphCatalog, imageGraphProject, imageGraphRecord } from './studioImageGraph.testFixtures';
+ import rawProductionCatalog from './fixtures/productionGraph.catalog.json';
+ import type { StudioGraphCatalog } from './studioGraphTypes';
++import { creativeClient, type DirectorProposal } from './client';
++import { newDocument, newScene, type CreativeDocument } from './types';
++vi.mock('./client', async original => ({ ...await original<typeof import('./client')>(), creativeClient: vi.fn() }));
+ import type { PlanningDocument } from './studioProductionGraphContract';
+ import { fixtureProjection } from '../director/directorWorkspaceFixtures.testFixture';
++import { studioProductionClient } from './studioProductionClient';
++import { mediaProviderKey } from './useStudioMediaExecution';
++vi.mock('./studioProductionClient', async original => ({ ...await original<typeof import('./studioProductionClient')>(), studioProductionClient: vi.fn() }));
++const pickerRow = { operation_id: 'm5.image.upscale' as const, provider_id: 'enabled-comfy', model_id: 'installed-upscaler', local: true, route_digest: 'a'.repeat(64), capability: 'MEDIA', supported_parameters: [], readiness: 'CONFIGURED_NOT_VERIFIED' as const };
+ vi.mock('./studioClient', async importOriginal => ({ ...await importOriginal<typeof import('./studioClient')>(), studioClient: vi.fn() }));
+ let client: StudioClient;
+ const document: PlanningDocument = { id: 'synthetic-director', mode: 'DIRECTOR', title: 'Synthetic Director', version: 3, digest: 'a'.repeat(64) };
+ const deferred = <T,>() => { let resolve!: (value: T) => void; const promise = new Promise<T>(yes => { resolve = yes; }); return { promise, resolve }; };
+ beforeEach(() => {
++  vi.mocked(creativeClient).mockReturnValue({} as ReturnType<typeof creativeClient>);
++  vi.mocked(studioProductionClient).mockReturnValue({ providers: vi.fn().mockResolvedValue([pickerRow]) } as unknown as ReturnType<typeof studioProductionClient>);
+   localStorage.clear(); useStudio.setState({ novelId: imageGraphProject, sessionToken: '', actor: undefined, scope: undefined });
+   useLocalHostSession.setState({ token: 'production-graph-host', actorId: '' });
+   const original = imageGraphCatalog(); original.definitions = original.definitions.filter(row => !row.id.startsWith('image_'));
+@@ -60,7 +69,7 @@ describe('Production Graph UI keeps original controller and execution authority'
+     change('节点类型', 'image_style'); click('添加节点'); change('图片风格', 'quiet cinematic');
+     change('节点类型', 'director_plan'); expect((screen.getByRole('button', { name: '添加节点' }) as HTMLButtonElement).disabled).toBe(true);
+     click('明确读取已保存导演与分镜文档'); await screen.findByRole('option', { name: 'Synthetic Director · v3' }); change('原创作文档', document.id); click('添加节点');
+-    change('节点类型', 'image_upscale'); click('添加节点'); change('超分服务商 ID', 'enabled-comfy'); change('超分模型 ID', 'installed-upscaler'); change('超分倍率（2 或 4）', '4');
++    change('节点类型', 'image_upscale'); click('添加节点'); click('读取节点服务配置'); await screen.findByRole('option', { name: 'enabled-comfy · installed-upscaler · 本地' }); change('节点服务商与模型', mediaProviderKey(pickerRow)); change('超分倍率（2 或 4）', '4');
+     click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
+     const input = vi.mocked(client.graphs.create).mock.calls[0][0]; expect(input.definition.schema_version).toBe(4);
+     expect(input.definition.nodes[0].parameters.style).toBe('quiet cinematic');
+@@ -68,6 +77,23 @@ describe('Production Graph UI keeps original controller and execution authority'
+     expect(input.definition.nodes[2].parameters.parameters).toEqual({ scale: 4 });
+     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.previewMedia).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled(); expect(client.graphs.executeMedia).not.toHaveBeenCalled();
+   });
++  it('lays out already-saved Director pins without rewriting their source or executing', async () => {
++    mount(); await enter(); await production(); change('节点类型', 'director_plan');
++    click('明确读取已保存导演与分镜文档'); await screen.findByRole('option', { name: 'Synthetic Director · v3' });
++    change('原创作文档', document.id); click('添加节点');
++    click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
++    const original = structuredClone(vi.mocked(client.graphs.create).mock.calls[0][0].definition);
++    vi.mocked(client.graphs.save).mockImplementation(async (_id, input) => ({ ...imageGraphRecord(), version: 2, definition: input.definition,
++      reference_states: [{ node_id: original.nodes[0].id, state: 'CURRENT' }] }));
++    click('应用自动布局到草稿'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
++    const updated = vi.mocked(client.graphs.save).mock.calls[0][1];
++    expect(updated.expected_version).toBe(1);
++    expect(updated.definition.viewport).toEqual(original.viewport);
++    expect(updated.definition.edges).toEqual(original.edges);
++    expect(updated.definition.nodes[0].position).toEqual({ x: 0, y: 0 });
++    expect({ ...updated.definition.nodes[0], position: original.nodes[0].position }).toEqual(original.nodes[0]);
++    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
++  });
+   it('ignores late document references after a same-token Host replacement', async () => {
+     const late = deferred<{ documents: PlanningDocument[] }>(); vi.mocked(client.graphs.planningDocuments!).mockReturnValue(late.promise);
+     mount(); await enter(); await production(); change('节点类型', 'director_plan'); click('明确读取已保存导演与分镜文档');
+@@ -86,3 +112,137 @@ describe('Production Graph UI keeps original controller and execution authority'
+     expect(client.graphs.create).not.toHaveBeenCalled(); expect(client.graphs.createRun).not.toHaveBeenCalled();
+   });
+ });
++
++// The actual IndependentStudioWorkspace mounts both authoring and Graph owners.
++it('authors a director in the canvas, saves its exact node pin and reopens the bound source', async () => {
++  let authored: CreativeDocument = { ...newDocument('DIRECTOR'), source_independent: true, title: '画布导演', id: document.id,
++    version: 3, status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
++  const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR'] }),
++    history: vi.fn(async () => ({ document_id: document.id, current_version: authored.version, items: [authored], snapshot_digests: [{ version: authored.version, digest: document.digest }] })),
++    list: vi.fn(async () => ({ items: [authored] })),
++    create: vi.fn(async input => authored = { ...authored, ...input }), update: vi.fn(),
++    export: vi.fn(async () => ({ document: authored, document_digest: document.digest, format: '', boundary: '' })) };
++  vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
++  const first = mount(); await enter(); click('打开导演总控台');
++  await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
++  change('文档标题', '画布导演'); click('添加场景'); click('添加导演调度'); change('导演意图', '停顿后看向窗外');
++  expect((screen.getByRole('button', { name: '保存创作图' }) as HTMLButtonElement).disabled).toBe(true);
++  click('保存草稿'); await screen.findByText(/导演原文档已保存/);
++  await production(); change('节点类型', 'director_plan'); click('明确读取已保存导演与分镜文档');
++  await screen.findByRole('option', { name: 'Synthetic Director · v3' }); change('原创作文档', document.id); click('添加节点');
++  change('创作图标题', '导演工作台回环'); click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
++  const saved = await vi.mocked(client.graphs.create).mock.results[0].value as StudioGraphRecord;
++  expect(saved.definition.nodes[0].parameters.document_snapshot).toEqual({ id: document.id, version: 3, digest: document.digest });
++  expect(authored.director_notes[0].note).toBe('停顿后看向窗外');
++  first.unmount(); localStorage.clear();
++  vi.mocked(client.graphs.list).mockResolvedValue({ items: [saved] }); vi.mocked(client.graphs.get).mockResolvedValue(saved);
++  mount(); await enter(); change('已保存创作图', saved.id);
++  const select = await screen.findByRole('button', { name: new RegExp(`选择节点 .*${saved.definition.nodes[0].id}`) }); fireEvent.click(select);
++  click('打开导演总控台'); await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
++  click('读取选中导演节点原文档'); await screen.findByDisplayValue('停顿后看向窗外');
++  click('读取／刷新导演来源影响'); await screen.findByText(/历史快照版本与原 Owner 摘要匹配/);
++  expect(screen.getByText(/选中 director_plan 节点：/).textContent).toContain(saved.definition.nodes[0].id);
++  expect(saved.definition.nodes[0].parameters.document_snapshot).toEqual({ id: document.id, version: 3, digest: document.digest });
++  expect(source.export).toHaveBeenCalledWith(document.id); expect(source.update).not.toHaveBeenCalled();
++  expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
++});
++
++it('requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create', async () => {
++  const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR'] }),
++    create: vi.fn().mockRejectedValue(new Error('offline')), update: vi.fn(), export: vi.fn(), list: vi.fn() };
++  vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
++  mount(); await enter(); click('打开导演总控台');
++  await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
++  change('文档标题', '未知回执'); click('保存草稿'); await screen.findByText(/保存冲突或回执不确定/);
++  click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/);
++  expect((screen.getByRole('button', { name: '确认离开' }) as HTMLButtonElement).disabled).toBe(true);
++  fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开');
++  await screen.findByRole('button', { name: '打开导演总控台' }); expect(source.create).toHaveBeenCalledTimes(1);
++});
++
++it('keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation', async () => {
++  let authored: CreativeDocument = { ...newDocument('DIRECTOR'), source_independent: true, title: '人工调度', id: document.id,
++    version: 3, status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
++  const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR', 'STORYBOARD'] }),
++    create: vi.fn(async input => authored = { ...authored, ...input }), update: vi.fn(), list: vi.fn().mockResolvedValue({ items: [] }),
++    derive: vi.fn().mockRejectedValue(new Error('handoff offline')),
++    export: vi.fn(async () => ({ document: authored, document_digest: document.digest, format: '', boundary: '' })) };
++  vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
++  mount(); await enter(); click('打开导演总控台');
++  await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
++  change('文档标题', '人工调度'); click('添加场景'); click('添加导演调度'); click('保存草稿');
++  await screen.findByText(/导演原文档已保存/); click('核对导演原文档版本'); await screen.findByText(/交接来源/);
++  fireEvent.click(screen.getByLabelText('已核对来源，明确建立新的分镜草稿，仍需人工复审')); click('交接到原分镜草稿');
++  await screen.findByText('handoff offline'); expect((screen.getByRole('button', { name: '保存创作图' }) as HTMLButtonElement).disabled).toBe(true);
++  click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/); click('继续编辑');
++  expect(screen.getByText(/分镜建立结果未知或待核对/)).toBeTruthy();
++  expect((screen.getByRole('button', { name: '交接到原分镜草稿' }) as HTMLButtonElement).disabled).toBe(true);
++  click('读取关联分镜与状态'); await waitFor(() => expect(source.list).toHaveBeenCalledTimes(1));
++  click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/);
++  expect((screen.getByRole('button', { name: '确认离开' }) as HTMLButtonElement).disabled).toBe(true);
++  fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开');
++  await screen.findByRole('button', { name: '打开导演总控台' }); expect(source.derive).toHaveBeenCalledTimes(1);
++  expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
++});
++
++it('reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution', async () => {
++  const scene = newScene(1), sourceDigest = 'b'.repeat(64);
++  const screenplay: CreativeDocument = { ...newDocument('SCREENPLAY'), id: 'screenplay-owner', version: 2,
++    title: '原剧本', source_independent: true, scenes: [{ ...scene, heading: 'EXT. HARBOR - MORNING', action: 'The visitor stops.' }],
++    status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
++  const note = { id: 'note-one', number: 1, scene_id: scene.id, note: 'Pause before turning', shot_size: 'MEDIUM',
++    camera_angle: 'EYE_LEVEL', camera_motion: 'STATIC', duration_seconds: 5, emotion: '', pacing: '', performance: '', blocking: '' };
++  let proposal: DirectorProposal | undefined, director: CreativeDocument | undefined;
++  const source = {
++    capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['SCREENPLAY', 'DIRECTOR', 'STORYBOARD'] }),
++    list: vi.fn(async () => ({ items: [screenplay, ...(director ? [director] : [])] })),
++    proposals: vi.fn(async () => ({ items: proposal ? [proposal] : [] })),
++    proposal: vi.fn(async () => proposal!), get: vi.fn(async () => director!),
++    propose: vi.fn(async () => proposal = { id: 'proposal-owner', version: 1, status: 'NEEDS_REVIEW',
++      source_document_id: screenplay.id, source_version: screenplay.version, source_digest: sourceDigest, title: '待审导演建议',
++      director_notes: [note], output_digest: 'c'.repeat(64), provenance: { model_called: false } }),
++    review: vi.fn(async (_proposal: DirectorProposal, title: string) => {
++      director = { ...newDocument('DIRECTOR'), id: document.id, version: 3, title, source_independent: true,
++        scenes: screenplay.scenes, director_notes: [note], source_documents: { [screenplay.id]: { version: screenplay.version, digest: sourceDigest } },
++        status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
++      proposal = { ...proposal!, version: 2, status: 'APPROVED', document_id: director.id };
++      return { proposal, document: director };
++    }),
++    modelRoutes: vi.fn().mockResolvedValue({ items: [] }), previewModel: vi.fn(), dispatchModel: vi.fn(), refreshModel: vi.fn(), cancelProposal: vi.fn(),
++    create: vi.fn(), update: vi.fn(), derive: vi.fn(), history: vi.fn(),
++    export: vi.fn(async () => ({ document: director!, document_digest: document.digest, format: '', boundary: '' })),
++  };
++  vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
++  vi.mocked(client.graphs.planningDocuments!).mockImplementation(async () => ({ documents: director ? [{ ...document, title: director.title }] : [] }));
++  const view = mount(); await enter(); expect(source.proposals).not.toHaveBeenCalled(); click('打开导演总控台');
++  await screen.findByRole('button', { name: '从已保存剧本打开导演建议审核' });
++  click('从已保存剧本打开导演建议审核'); await screen.findByRole('option', { name: '原剧本 · v2' });
++  click('准备待审导演建议'); await screen.findByRole('region', { name: '导演建议审核' });
++  expect(source.review).not.toHaveBeenCalled(); expect(source.create).not.toHaveBeenCalled(); expect(client.graphs.create).not.toHaveBeenCalled();
++  expect((screen.getByRole('button', { name: '审核并采用' }) as HTMLButtonElement).disabled).toBe(true);
++  change('采用后的导演文档标题', '审核后的导演草稿');
++  expect((screen.getByRole('button', { name: '保存创作图' }) as HTMLButtonElement).disabled).toBe(true);
++  click('返回项目列表'); await screen.findByText(/有未保存的创作图／导演输入/); click('继续编辑');
++  expect((screen.getByLabelText('采用后的导演文档标题') as HTMLInputElement).value).toBe('审核后的导演草稿');
++  fireEvent.click(screen.getByLabelText('已核对来源、场面调度与导演建议；创建独立导演文档')); click('审核并采用');
++  await screen.findByText(/已读取人工审核后的原导演草稿/);
++  expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('审核后的导演草稿');
++  expect(client.graphs.create).not.toHaveBeenCalled(); expect(source.create).not.toHaveBeenCalled();
++  click('核对导演原文档版本'); await screen.findByText(/当前原文档：/);
++  await production(); change('节点类型', 'director_plan'); click('明确读取已保存导演与分镜文档');
++  await screen.findByRole('option', { name: '审核后的导演草稿 · v3' }); change('原创作文档', document.id); click('添加节点');
++  click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
++  const saved = await vi.mocked(client.graphs.create).mock.results[0].value as StudioGraphRecord;
++  expect(saved.definition.nodes[0].parameters.document_snapshot).toEqual({ id: document.id, version: 3, digest: document.digest });
++  vi.mocked(client.graphs.list).mockResolvedValue({ items: [saved] }); vi.mocked(client.graphs.get).mockResolvedValue(saved);
++  view.unmount(); mount(); await enter(); change('已保存创作图', saved.id);
++  fireEvent.click(await screen.findByRole('button', { name: new RegExp(`选择节点 .*${saved.definition.nodes[0].id}`) })); click('打开导演总控台');
++  await screen.findByRole('button', { name: '从已保存剧本打开导演建议审核' }); click('从已保存剧本打开导演建议审核');
++  fireEvent.click(await screen.findByRole('button', { name: /待审导演建议.*APPROVED/ }));
++  click('核对并打开已采用的导演草稿'); await screen.findByText(/已读取人工审核后的原导演草稿/);
++  expect(source.proposal).toHaveBeenCalledWith('proposal-owner', expect.any(AbortSignal));
++  expect(source.get).toHaveBeenCalledWith(document.id, expect.any(AbortSignal));
++  expect(source.review).toHaveBeenCalledTimes(1); expect(source.propose).toHaveBeenCalledTimes(1);
++  expect(source.dispatchModel).not.toHaveBeenCalled(); expect(source.previewModel).not.toHaveBeenCalled(); expect(client.graphs.createRun).not.toHaveBeenCalled();
++  expect(client.graphs.dispatchMedia).not.toHaveBeenCalled(); expect(client.graphs.save).not.toHaveBeenCalled();
++});
+diff --git a/frontend/src/creative/graphCanvasGeometry.test.ts b/frontend/src/creative/graphCanvasGeometry.test.ts
+index ad2b758..b6d1e2c 100644
+--- a/frontend/src/creative/graphCanvasGeometry.test.ts
++++ b/frontend/src/creative/graphCanvasGeometry.test.ts
+@@ -2,7 +2,7 @@
+ import { describe, expect, it } from 'vitest';
+ import {
+   GRAPH_NODE_HEADER_HEIGHT, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT, GRAPH_POSITION_LIMIT,
+-  clampGraphZoom, graphEdgePath, graphNodeHeight, graphNodesInScreenRect, graphPortPosition,
++  alignGraphNodes, snapGraphNodes, clampGraphZoom, graphEdgePath, graphNodeHeight, graphNodesInScreenRect, graphPortPosition,
+   graphScreenToWorld, graphSelectionRect, graphWorldToScreen, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
+ } from './graphCanvasGeometry';
+ import type { GraphCanvasNodeDefinition } from './graphCanvasGeometry';
+@@ -16,6 +16,17 @@ const node = (id: string, x = 0, y = 0): StudioGraphNode => ({ id, definition_id
+ const graph = (): StudioGraphDefinition => ({ schema_version: 1, title: '节点图', nodes: [node('one', 10, 20), node('two', 700, 400)], edges: [{ id: 'link', source_node_id: 'one', source_port: 'text', target_node_id: 'two', target_port: 'text' }], viewport: { x: 100, y: -80, zoom: 2 } });
+ 
+ describe('typed graph domain geometry', () => {
++  it('cleans deleted group membership and drops empty groups without touching protected nodes or comments', () => {
++    const definition: StudioGraphDefinition = { ...graph(), presentation: { comment: '', groups: [
++      { id: 'g', name: 'Group', node_ids: ['one', 'two'] }] } };
++    const kept = removeGraphNodes(definition, ['one', 'two'], ['two']);
++    expect(kept.presentation).toEqual({ comment: '', groups: [{ id: 'g', name: 'Group', node_ids: ['two'] }] });
++    expect(removeGraphNodes(kept, ['two']).presentation).toEqual({ comment: '' });
++    const groupsOnly = { ...definition, presentation: { groups: definition.presentation!.groups } };
++    expect(removeGraphNodes(groupsOnly, ['one', 'two'])).not.toHaveProperty('presentation');
++    expect(definition.presentation!.groups![0].node_ids).toEqual(['one', 'two']);
++  });
++
+   it('round-trips positions through panned and zoomed coordinate systems', () => {
+     const viewport = { x: -57, y: 91, zoom: 0.35 }, point = { x: -240, y: 380 };
+     const screen = graphWorldToScreen(point, viewport);
+@@ -90,3 +101,63 @@ describe('typed graph domain geometry', () => {
+     expect(isGraphEditableTarget(null)).toBe(false);
+   });
+ });
++
++
++describe('selected alignment geometry', () => {
++  it('aligns left, center and top in world coordinates without changing other data', () => {
++    const before = graph(); before.nodes.push(node('outside', -800, -900));
++    before.nodes[0].parameters = { text: 'dirty', document_snapshot: { id: 'pin', version: 7, digest: 'a'.repeat(64) } };
++    const snapshot = structuredClone(before);
++    for (const [mode, expected] of [['left', [{ x: 10, y: 20 }, { x: 10, y: 400 }]], ['center', [{ x: 355, y: 20 }, { x: 355, y: 400 }]], ['top', [{ x: 10, y: 20 }, { x: 700, y: 20 }]]] as const) {
++      const after = alignGraphNodes(before, ['two', 'one'], mode);
++      expect(after.nodes.slice(0, 2).map(n => n.position)).toEqual(expected);
++      expect(after.nodes[2]).toBe(before.nodes[2]); expect(after.edges).toBe(before.edges); expect(after.viewport).toBe(before.viewport);
++      expect(after.nodes[0].parameters).toBe(before.nodes[0].parameters);
++    }
++    expect(before).toEqual(snapshot);
++  });
++  it('distributes deterministically while preserving endpoints, y and source order', () => {
++    const before = graph(); before.nodes = [node('right', 100000, 5), node('middle', -90000, 6), node('left', -100000, 7)];
++    const after = alignGraphNodes(before, ['middle', 'left', 'right'], 'distribute');
++    expect(after.nodes.map(n => [n.id, n.position])).toEqual([['right', { x: 100000, y: 5 }], ['middle', { x: 0, y: 6 }], ['left', { x: -100000, y: 7 }]]);
++    expect(alignGraphNodes(after, ['left', 'middle', 'right'], 'distribute')).toBe(after);
++  });
++  it('rejects invalid geometry, missing selection and insufficient counts without repair', () => {
++    const before = graph();
++    expect(alignGraphNodes(before, ['one'], 'left')).toBe(before);
++    expect(alignGraphNodes(before, ['one', 'two'], 'distribute')).toBe(before);
++    expect(alignGraphNodes(before, ['one', 'two', 'stale'], 'left')).toBe(before);
++    for (const value of [NaN, Infinity, -Infinity, 100001, -100001]) {
++      const bad = graph(); bad.nodes[0].position.x = value;
++      expect(alignGraphNodes(bad, ['one', 'two'], 'center')).toBe(bad);
++    }
++  });
++});
++
++
++describe('world-grid group snapping', () => {
++  it.each([0.35, 1, 2.5])('snaps the grabbed anchor at zoom %s without changing group offsets', zoom => {
++    const original = graph(); original.viewport.zoom = zoom;
++    const next = snapGraphNodes(original, ['one', 'two'], 'two', { x: 17 * zoom, y: -19 * zoom }, 24);
++    expect(next.nodes[1].position).toEqual({ x: 720, y: 384 });
++    expect(next.nodes[0].position).toEqual({ x: 30, y: 4 });
++    expect(next.edges).toBe(original.edges); expect(next.viewport).toBe(original.viewport);
++    expect(original.nodes[0].position).toEqual({ x: 10, y: 20 });
++  });
++  it('bounds the common translation rather than squashing group offsets at either limit', () => {
++    const original = graph(); original.nodes = [node('one', 99997, -99999), node('two', 99990, -99990)];
++    const next = snapGraphNodes(original, ['one', 'two'], 'two', { x: 1000, y: -1000 }, 32);
++    expect(next.nodes[0].position).toEqual({ x: 100000, y: -100000 });
++    expect(next.nodes[1].position).toEqual({ x: 99993, y: -99991 });
++  });
++  it('rejects invalid input, stale selection and a zero drag', () => {
++    const original = graph();
++    for (const [ids, anchor, delta, step] of [
++      [['one'], 'missing', { x: 1, y: 2 }, 24], [['one', 'missing'], 'one', { x: 1, y: 2 }, 24],
++      [['one'], 'one', { x: NaN, y: 2 }, 24], [['one'], 'one', { x: 1, y: 2 }, 0],
++      [['one'], 'one', { x: 0, y: 0 }, 24],
++    ] as const) expect(snapGraphNodes(original, ids, anchor, delta, step)).toBe(original);
++    original.nodes[0].position.x = Infinity;
++    expect(snapGraphNodes(original, ['one'], 'one', { x: 1, y: 2 }, 24)).toBe(original);
++  });
++});
+diff --git a/frontend/src/creative/studioGraphClient.test.ts b/frontend/src/creative/studioGraphClient.test.ts
+index 61c26fe..4bdbe10 100644
+--- a/frontend/src/creative/studioGraphClient.test.ts
++++ b/frontend/src/creative/studioGraphClient.test.ts
+@@ -57,6 +57,114 @@ beforeEach(() => { fetchMock = vi.fn().mockResolvedValue(reply(graph())); vi.stu
+ afterEach(() => { vi.unstubAllGlobals(); useLocalHostSession.setState({ token: '', actorId: '' }); });
+ 
+ describe('scoped graph transport', () => {
++  it('accepts exact optional original capacity metadata and leaves legacy unknown', async () => {
++    const client = studioClient(projectId, context()).graphs;
++    expect(await client.get(graphId)).not.toHaveProperty('capacity');
++    const original = { ...graph(), capacity: { history_used: 2, history_limit: 20, record_bytes: 12345, record_limit_bytes: 2000000 } };
++    fetchMock.mockResolvedValue(reply(original)); expect((await client.get(graphId)).capacity).toEqual(original.capacity);
++  });
++  it.each([{ history_used: -1 }, { history_used: 21 }, { history_limit: 80 }, { record_bytes: 2000001 }, { record_limit_bytes: 3000000 }, { unexpected: true }])('rejects malformed original capacity %j', patch => {
++    fetchMock.mockResolvedValue(reply({ ...graph(), capacity: { history_used: 2, history_limit: 20, record_bytes: 12345, record_limit_bytes: 2000000, ...patch } }));
++    return expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toThrow();
++  });
++  it.each([1, 2, 3, 4, 5] as const)('roundtrips optional presentation through original transport schema %s', async schema_version => {
++    const original = graph(); original.definition = { ...definition(), schema_version, nodes: [], edges: [] };
++    fetchMock.mockResolvedValue(reply(original));
++    const client = studioClient(projectId, context()).graphs;
++    expect((await client.get(graphId)).definition).toEqual(original.definition);
++    expect((await client.get(graphId)).definition).not.toHaveProperty('presentation');
++    original.definition.presentation = { comment: '🎬'.repeat(2000), view: { show_grid: false, snap: true, grid_step: 32, show_minimap: false } };
++    fetchMock.mockResolvedValue(reply(original));
++    expect((await client.get(graphId)).definition).toEqual(original.definition);
++    expect((await client.save(graphId, { expected_version: 3, definition: original.definition })).definition).toEqual(original.definition);
++    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
++  });
++  it.each([1, 2, 3, 4, 5] as const)('roundtrips 128 display notes in schema %s independently of DAG', async schema_version => {
++    const original = graph(); original.definition = { ...definition(), schema_version, nodes: [], edges: [],
++      presentation: { notes: Array.from({ length: 128 }, (_, i) => ({ id: `n${i}`, text: `Scene ${i} 🎬 <b>plain</b>`, position: { x: i * 300, y: 0 } })) } };
++    fetchMock.mockResolvedValue(reply(original));
++    const client = studioClient(projectId, context()).graphs;
++    expect((await client.get(graphId)).definition).toEqual(original.definition);
++    await client.save(graphId, { expected_version: 3, definition: original.definition });
++    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
++  });
++  it.each([1, 2, 3, 4, 5] as const)('roundtrips 1024 concise Chinese display notes through original save/get in schema %s', async schema_version => {
++    const original = graph(); original.definition = { ...definition(), schema_version, nodes: [], edges: [],
++      presentation: { notes: Array.from({ length: 1024 }, (_, i) => ({ id: `note_${i + 1}`, text: `雨夜·镜头${String(i + 1).padStart(4, '0')}`, position: { x: (i % 40) * 320, y: Math.floor(i / 40) * 220 } })) } };
++    fetchMock.mockResolvedValue(reply(original)); const client = studioClient(projectId, context()).graphs;
++    expect((await client.get(graphId)).definition).toEqual(original.definition);
++    await client.save(graphId, { expected_version: 3, definition: original.definition });
++    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(original.definition);
++  });
++  it.each([null, [], [{}], ...['n\n', 'n\r'].map(id => ({ id, text: '', position: { x: 0, y: 0 } })).map(note => [note]), [{ id: 'n', text: '🎬'.repeat(257), position: { x: 0, y: 0 } }],
++    [{ id: 'n', text: '', position: { x: 100001, y: 0 } }],
++    [{ id: 'n', text: '', position: { x: 0, y: 0 }, ports: [] }],
++    Array.from({ length: 1025 }, (_, i) => ({ id: `n${i}`, text: '', position: { x: 0, y: 0 } })),
++    Array.from({ length: 47 }, (_, i) => ({ id: `n${i}`, text: 'a'.repeat(256), position: { x: 0, y: 0 } })),
++    [{ id: 'n', text: '', position: { x: 0, y: 0 } }, { id: 'n', text: '', position: { x: 0, y: 0 } }]])('rejects malformed display notes %j', async notes => {
++    const original = graph();
++    fetchMock.mockResolvedValue(reply({ ...original, definition: { ...original.definition, presentation: { notes } } }));
++    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toThrow();
++  });
++  it.each([null, {}, { show_grid: 1, snap: false, grid_step: 24, show_minimap: true },
++    { show_grid: true, snap: false, grid_step: 48, show_minimap: true },
++    { show_grid: true, snap: false, grid_step: NaN, show_minimap: true },
++    { show_grid: true, snap: false, grid_step: Infinity, show_minimap: true },
++    { show_grid: true, snap: false, grid_step: '２４', show_minimap: true },
++    { show_grid: true, snap: false, grid_step: 24, show_minimap: true, execute: true }])('rejects invalid view preferences %j', async view => {
++    const value = graph();
++    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition, presentation: { view } } }));
++    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
++  });
++  it.each([null, {}, { comment: 1 }, { comment: 'x'.repeat(2001) }, { comment: '🎬'.repeat(2001) }, { comment: 'x', groups: [] }])('rejects malformed annotation from transport: %j', async presentation => {
++    const value = graph();
++    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition, presentation } }));
++    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
++  });
++
++  it.each([1, 2, 3, 4, 5] as const)('roundtrips groups and exact annotations in schema %s', async schema_version => {
++    const value = graph(); value.definition = { ...definition(), schema_version, nodes: [definition().nodes[0]], edges: [],
++      presentation: { comment: '  🎬\n', groups: [{ id: 'g', name: '🎬'.repeat(80), node_ids: ['source'] }] } };
++    fetchMock.mockResolvedValue(reply(value));
++    const client = studioClient(projectId, context()).graphs;
++    expect((await client.get(graphId)).definition).toEqual(value.definition);
++    expect((await client.save(graphId, { expected_version: 3, definition: value.definition })).definition).toEqual(value.definition);
++    expect(JSON.parse(fetchMock.mock.calls.at(-1)![1].body).definition).toEqual(value.definition);
++  });
++  it.each([1, 2, 3, 4, 5] as const)('roundtrips two-level presentation only in schema %s', async schema_version => {
++    const value = graph(); value.definition = { ...definition(), schema_version, nodes: [definition().nodes[0], { ...definition().nodes[0], id: 'draft' }], edges: [],
++      presentation: { groups: [{ id: 'root', name: 'Root', node_ids: ['source'] }, { id: 'child', name: 'Child', node_ids: ['draft'], parent_id: 'root' }] } };
++    fetchMock.mockResolvedValue(reply(value));
++    expect((await studioClient(projectId, context()).graphs.get(graphId)).definition).toEqual(value.definition);
++  });
++  it.each(['missing', 'g', null, 1])('rejects invalid parent %j', async parent_id => {
++    const value = graph();
++    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition,
++      presentation: { groups: [{ id: 'g', name: 'Group', node_ids: ['source'], parent_id }] } } }));
++    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
++  });
++  it('rejects cyclic parent links from transport', async () => {
++    const value = graph();
++    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition,
++      presentation: { groups: [{ id: 'g', name: 'Group', node_ids: ['source'], parent_id: 'h' },
++        { id: 'h', name: 'Other', node_ids: ['draft'], parent_id: 'g' }] } } }));
++    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
++  });
++  it.each([null, [], {}, [null],
++    [{ id: 'g', name: '', node_ids: ['source'] }], [{ id: 'g', name: ' ', node_ids: ['source'] }],
++    [{ id: 'g', name: '🎬'.repeat(81), node_ids: ['source'] }], [{ id: '1g', name: 'Name', node_ids: ['source'] }],
++    [{ id: 'g', name: 'Name', node_ids: [] }], [{ id: 'g', name: 'Name', node_ids: ['missing'] }],
++    [{ id: 'g', name: 'Name', node_ids: ['source', 'source'] }],
++    [{ id: 'g', name: 'Name', node_ids: ['source'], collapsed: true }],
++    [{ id: 'g', name: 'Name', node_ids: ['source'] }, { id: 'other', name: 'Other', node_ids: ['source'] }],
++    [{ id: 'g', name: 'Name', node_ids: ['source'] }, { id: 'g', name: 'Other', node_ids: ['draft'] }],
++    Array.from({ length: 25 }, () => ({ id: 'g', name: 'Name', node_ids: ['source'] })),
++  ])('rejects invalid groups in original transport: %j', async groups => {
++    const value = graph();
++    fetchMock.mockResolvedValue(reply({ ...value, definition: { ...value.definition, presentation: { groups } } }));
++    await expect(studioClient(projectId, context()).graphs.get(graphId)).rejects.toBeInstanceOf(ApiError);
++  });
++
+   it('reuses captured Studio credentials and branch for all graph endpoints', async () => {
+     const origin = context(), client = studioClient(projectId, origin).graphs, signal = new AbortController().signal;
+     origin.sessionToken = 'later-session'; origin.scope!.branchId = 'later-branch'; origin.scope!.workspaceId = 'later-workspace';

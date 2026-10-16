@@ -1,0 +1,48 @@
+{
+  "source_commit": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation",
+  "command_local_environment": {
+    "unset": [
+      "PYTHONHOME",
+      "PYTHONPATH",
+      "PYTHONSTARTUP",
+      "PYTHONUSERBASE",
+      "PYTEST_ADDOPTS",
+      "PYTEST_PLUGINS",
+      "DATABASE_URL",
+      "TEST_POSTGRES_DATABASE_URL",
+      "E2E_DATABASE_URL",
+      "COLLABORATION_DEV_SESSIONS_JSON",
+      "PACKAGED_RUNTIME_INSTANCE_ID",
+      "PACKAGED_BOOTSTRAP_SECRET",
+      "PACKAGED_CONTROL_PIPE"
+    ],
+    "set": {
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHON_DOTENV_DISABLED": "1",
+      "PACKAGED_WINDOWS_MODE": "false"
+    },
+    "review_command": "env -u PYTHONHOME -u PYTHONPATH -u PYTHONSTARTUP -u PYTHONUSERBASE -u PYTEST_ADDOPTS -u PYTEST_PLUGINS -u DATABASE_URL -u TEST_POSTGRES_DATABASE_URL -u E2E_DATABASE_URL -u COLLABORATION_DEV_SESSIONS_JSON -u PACKAGED_RUNTIME_INSTANCE_ID -u PACKAGED_BOOTSTRAP_SECRET -u PACKAGED_CONTROL_PIPE PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHON_DOTENV_DISABLED=1 PACKAGED_WINDOWS_MODE=false /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python scripts/extend_v2_coverage_manifest.py --report .runtime/ci-reconciliation-inventory/review-collection.json --output .runtime/ci-reconciliation-inventory/candidate-manifest-v2.json.gz",
+    "generator_environment": "Unchanged isolated_environment adds exact current root/PYTHONPATH, owned data/home, memory vault, File backend, cloud/packaged/collaboration off, mock provider and HF/transformers offline. Generator strips credential-suffix vars and database URLs."
+  },
+  "commands": [
+    {
+      "stage": "review",
+      "command": "env -u PYTHONHOME -u PYTHONPATH -u PYTHONSTARTUP -u PYTHONUSERBASE -u PYTEST_ADDOPTS -u PYTEST_PLUGINS -u DATABASE_URL -u TEST_POSTGRES_DATABASE_URL -u E2E_DATABASE_URL -u COLLABORATION_DEV_SESSIONS_JSON -u PACKAGED_RUNTIME_INSTANCE_ID -u PACKAGED_BOOTSTRAP_SECRET -u PACKAGED_CONTROL_PIPE PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHON_DOTENV_DISABLED=1 PACKAGED_WINDOWS_MODE=false /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python scripts/extend_v2_coverage_manifest.py --report .runtime/ci-reconciliation-inventory/review-collection.json --output .runtime/ci-reconciliation-inventory/candidate-manifest-v2.json.gz",
+      "exit_code": 0
+    },
+    {
+      "stage": "candidate",
+      "command": "env -u PYTHONHOME -u PYTHONPATH -u PYTHONSTARTUP -u PYTHONUSERBASE -u PYTEST_ADDOPTS -u PYTEST_PLUGINS -u DATABASE_URL -u TEST_POSTGRES_DATABASE_URL -u E2E_DATABASE_URL -u COLLABORATION_DEV_SESSIONS_JSON -u PACKAGED_RUNTIME_INSTANCE_ID -u PACKAGED_BOOTSTRAP_SECRET -u PACKAGED_CONTROL_PIPE PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHON_DOTENV_DISABLED=1 PACKAGED_WINDOWS_MODE=false /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python scripts/extend_v2_coverage_manifest.py --write --report .runtime/ci-reconciliation-inventory/candidate-collection.json --output .runtime/ci-reconciliation-inventory/candidate-manifest-v2.json.gz",
+      "exit_code": 0
+    },
+    {
+      "stage": "confirmation",
+      "command": "env -u PYTHONHOME -u PYTHONPATH -u PYTHONSTARTUP -u PYTHONUSERBASE -u PYTEST_ADDOPTS -u PYTEST_PLUGINS -u DATABASE_URL -u TEST_POSTGRES_DATABASE_URL -u E2E_DATABASE_URL -u COLLABORATION_DEV_SESSIONS_JSON -u PACKAGED_RUNTIME_INSTANCE_ID -u PACKAGED_BOOTSTRAP_SECRET -u PACKAGED_CONTROL_PIPE PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHON_DOTENV_DISABLED=1 PACKAGED_WINDOWS_MODE=false /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python scripts/extend_v2_coverage_manifest.py --report .runtime/ci-reconciliation-inventory/confirmation-collection.json --output .runtime/ci-reconciliation-inventory/unused-confirmation-candidate.json.gz",
+      "exit_code": 0
+    }
+  ],
+  "promotion": "Exact byte copy of independently approved gzip only; see canonical-promotion.json. All three collection raw archives have the same SHA256. No product test call phase executed."
+}

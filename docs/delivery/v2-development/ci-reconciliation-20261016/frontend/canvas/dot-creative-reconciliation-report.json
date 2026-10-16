@@ -1,0 +1,95 @@
+{
+  "base": "72e636f87c7299a62cb3357bcb6a6e44a9388883",
+  "restore_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+  "protected_files": 18,
+  "new_files": 17,
+  "new_declarations": 108,
+  "new_expanded_cases": 204,
+  "migration_declarations": 5,
+  "changed_fixture_declarations": 1,
+  "all_additive_expanded_passed": 210,
+  "all_additive_failed": 0,
+  "runs": [
+    {
+      "selection": "core",
+      "report": "/tmp/dot-creative-core-red.json",
+      "log": "/tmp/dot-creative-core-red.log",
+      "files": 6,
+      "passed": 239,
+      "failed": 0,
+      "filtered": 0
+    },
+    {
+      "selection": "seams",
+      "report": "/tmp/dot-creative-seams-red.json",
+      "log": "/tmp/dot-creative-seams-red.log",
+      "files": 15,
+      "passed": 11,
+      "failed": 8,
+      "filtered": 69
+    },
+    {
+      "selection": "harness",
+      "report": "/tmp/dot-creative-harness-red.json",
+      "log": "/tmp/dot-creative-harness-red.log",
+      "files": 8,
+      "passed": 47,
+      "failed": 0,
+      "filtered": 0
+    }
+  ],
+  "failures": [
+    {
+      "path": "frontend/src/creative/IndependentStudioAudioWav.test.tsx",
+      "title": "WAV controls through the original mounted production workspace does not manufacture actual measurements for a legacy completed receipt",
+      "first_error": "TestingLibraryElementError: Unable to find an element with the text: /\u5c1a\u672a\u8bfb\u53d6\u5230\u5df2\u6838\u5bf9\u7684 WAV \u8f93\u51fa\u6d4b\u91cf/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible."
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.test.tsx",
+      "title": "independent studio original owner integration preserves a preference draft on CAS conflict and does not hide modules or run jobs",
+      "first_error": "TestingLibraryElementError: Unable to find an element with the text: \u521b\u4f5c\u610f\u56fe\u4e0e\u63a8\u8350\u5e03\u5c40. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible."
+    },
+    {
+      "path": "frontend/src/creative/StudioImageGraphEditor.test.tsx",
+      "title": "image Graph authoring through original controller and mounted workspace saves weighted reference and prompt parameters through original actions with no arbitrary JSON or direct generation",
+      "first_error": "TestingLibraryElementError: Unable to find a label with the text of: \u56fe\u7247\u670d\u52a1\u5546 ID"
+    },
+    {
+      "path": "frontend/src/creative/StudioImageRuntimeProduction.test.tsx",
+      "title": "image runtime source roles through the mounted original workspace requires fresh cloud consent after reference weights change and never falls back or sends automatically",
+      "first_error": "TestingLibraryElementError: Unable to find a label with the text of: \u53c2\u8003 source.png \u00b7 v2"
+    },
+    {
+      "path": "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+      "title": "Production Graph UI keeps original controller and execution authority explicitly binds authored documents, style and upscale parameters without dispatch",
+      "first_error": "TestingLibraryElementError: Unable to find a label with the text of: \u8d85\u5206\u670d\u52a1\u5546 ID"
+    },
+    {
+      "path": "frontend/src/creative/StudioVideoGraphEditor.phase4.test.tsx",
+      "title": "Explicit video Graph keeps saved shot and original execution authority adds exact current shot pins and video controls without starting a job",
+      "first_error": "TestingLibraryElementError: Unable to find a label with the text of: \u89c6\u9891\u670d\u52a1\u5546 ID"
+    },
+    {
+      "path": "frontend/src/creative/StudioVideoShotBinding.phase5.test.tsx",
+      "title": "Phase 5 independent Video author flow can explicitly omit a new Shot binding allows unchecking the initial true flag without a connected Shot and saves no implicit pin",
+      "first_error": "TestingLibraryElementError: Unable to find a label with the text of: \u89c6\u9891\u670d\u52a1\u5546 ID"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioFlacContract.phase6.test.tsx",
+      "title": "Phase 6 actual standalone FLAC receipts retain original media ownership rejects non-opt-in format MP3 without network",
+      "first_error": "AssertionError: expected \"spy\" to not be called at all, but actually been called 1 times"
+    }
+  ],
+  "hash_proof": "/tmp/dot-creative-extraction-proof.json",
+  "case_ledger": "/tmp/dot-creative-migration-ledger.json",
+  "changed_paths": "/tmp/dot-creative-changed-paths.txt",
+  "notes": [
+    "No runtime, manifest, config, guard, index, or commit modifications.",
+    "Five modern-path variants are labeled migration and are not claimed as distinct new scenarios.",
+    "The lowercase mp3 invalid fixture is preserved separately; protected uppercase MP3 denial is unchanged.",
+    "The WAV wording and two CAS selector rewrites are not duplicated; no unique behavior was introduced by those rewrites.",
+    "Preference CAS case failed before mutation because the preference form was not yet present; static source retains the form. ready() only waits for an upload button, so this is a readiness seam requiring diagnosis.",
+    "Generated header-duplication defect was corrected before tests. A second fixture-pruning pass was byte-identical across all17 new files.",
+    "All runtime tests used one worker, --no-cache, default timeouts, existing dependencies, and no network/install."
+  ]
+}

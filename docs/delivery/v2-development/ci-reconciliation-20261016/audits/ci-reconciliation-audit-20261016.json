@@ -1,0 +1,2788 @@
+{
+  "audit_type": "STATIC_GIT_BLOB_AUDIT_ONLY",
+  "created_utc": "2026-10-16T22:15:29.549668+00:00",
+  "repository": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation",
+  "base_commit": "72e636f87c7299a62cb3357bcb6a6e44a9388883",
+  "prior_audit_commit": "47d85f752ea240bd93432d25a880620b7e47939c",
+  "authoritative_restore_commit": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+  "preserved_local_commit": "479a9b18ed9dddc0651e1f211035b9327bc0c57a",
+  "tests_executed": false,
+  "collection_executed": false,
+  "source_or_manifest_edits_performed": false,
+  "counts": {
+    "frozen_v1_nodes": 9151,
+    "v2_nodes": 15142,
+    "v2_source_entries": 2372,
+    "v2_stale_source_fingerprints": 129,
+    "new_source_entries_under_existing_traversal": 143,
+    "protected_v2_drift_files": 43,
+    "unapproved_frozen_v1_protected_drift": 16,
+    "new_backend_files_missing_inventory": 22
+  },
+  "manifests": {
+    "frozen_v1": {
+      "path": ".github/ci/coverage_manifest.json.gz",
+      "sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262"
+    },
+    "v2": {
+      "path": ".github/ci/coverage_manifest_v2.json.gz",
+      "sha256": "9d9b8157f1f342ff680e6119b4338a30332a1cec970d5cb00faa10fc01193aca",
+      "collection_head": "454ccd89499e3840d18622e8b6ec2669c17702c4"
+    }
+  },
+  "old_row_evidence": {
+    "ref": "72e636f87c7299a62cb3357bcb6a6e44a9388883",
+    "path": "docs/delivery/v2-creative-save-state-20261017/collection-confirmation-rows.json.gz",
+    "gzip_sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34",
+    "classification_rows_sha256": "e7e543708b0ac8ebd1f81f77262a4afa6503d222af2b2e0ad9e71d6a749754d6",
+    "row_count": 15142,
+    "classification_counts": {
+      "file": 4865,
+      "postgres": 4819,
+      "both": 5458
+    },
+    "exact_current_manifest_node_order": true,
+    "warning": "Historical inventory only; preserve old literal nodes/order/classification. Generic generator guards only V1 baseline."
+  },
+  "approved_migration": {
+    "path": "tests/test_windows_portable_entry.py",
+    "commit": "1b7ff50a7e64742916bc64730df884cea819b379",
+    "before_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+    "after_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f",
+    "single_exact_B_before_I_change_verified": true,
+    "current_matches_after": true,
+    "action": "Preserve approved current -B form; do not restore pre-migration V1 bytes."
+  },
+  "protected_tests": [
+    {
+      "path": "frontend/src/AppAuthorTaskNavigation.test.tsx",
+      "expected_sha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "actual_sha256": "c71612b2e904c0efd00c416ad9a9c467a5430cdf401ba6465c3dee10ee408d09",
+      "protected": true,
+      "classification": "additions_and_shared_harness",
+      "extract_ranges_at_47d85f7": "179–187",
+      "extraction_notes": "One new case; modified DeferredExperimentalWorkbench mock and flags/setup. Extract independent minimal harness; restore original mock/setup.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "4f2ede4cae19146e65978b9c1c1423a314eeeb20",
+      "current_git_blob": "d47693ee93204958355ef2e6db68762bba113f37",
+      "local479a9b1_sha256": "c71612b2e904c0efd00c416ad9a9c467a5430cdf401ba6465c3dee10ee408d09",
+      "codex_a072cf9_sha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/canvasops/canvasOps.test.ts",
+      "expected_sha256": "b22b4aba7143a65a53e6dab9ad1a1a9b969346fb3a19827ac84e5a190b5b5541",
+      "actual_sha256": "c284713bc1788998f17cf46ad5f47520749e25f6dc9307f94185786adf86d3e7",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "191–206",
+      "extraction_notes": "Tall-card layout; graphNodeHeight import.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "702e7b1ba5b221692dce0c35e13600b38f040110",
+      "current_git_blob": "69286f3118ddd8504d0c32e80dea3c790e2ad300",
+      "local479a9b1_sha256": "c284713bc1788998f17cf46ad5f47520749e25f6dc9307f94185786adf86d3e7",
+      "codex_a072cf9_sha256": "b22b4aba7143a65a53e6dab9ad1a1a9b969346fb3a19827ac84e5a190b5b5541",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/canvasops/canvasOpsPanels.test.tsx",
+      "expected_sha256": "ffd2214f07612bd2a7b5bfe209c4b3ac8a50b7b2d3c622b56dd8e40d139ef7c6",
+      "actual_sha256": "e3cee8da677f5780cca7c5846f88238dcf30a9dde069fdb83be6f987d2fc3b9a",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "407–421",
+      "extraction_notes": "Explicit original-owner apply callback; readonly/no-op/preview-only.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "7aadc6fdeb570019292df8be24c46a30b465691f",
+      "current_git_blob": "ace125e37ddce5328324433d1b17f607cf1c0675",
+      "local479a9b1_sha256": "e3cee8da677f5780cca7c5846f88238dcf30a9dde069fdb83be6f987d2fc3b9a",
+      "codex_a072cf9_sha256": "ffd2214f07612bd2a7b5bfe209c4b3ac8a50b7b2d3c622b56dd8e40d139ef7c6",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/AIDirectorPanel.test.tsx",
+      "expected_sha256": "d2bdffa0f00809bf634ec5f104f5690ac7826c82060c72d6d762b847006c807e",
+      "actual_sha256": "6e487b0fc56cf37a01e3e69aec334ee9e7ab7ee492fb8ba5fb0eb3e6e5248dc4",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "33–69",
+      "extraction_notes": "Estimated totals/editable reasoning; Unicode genre bounds.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "1f28192ead4a05ad5d5788c7b9b23b24a81712be",
+      "current_git_blob": "99d644f5262d884762a700e72fe6195366cdd737",
+      "local479a9b1_sha256": "6e487b0fc56cf37a01e3e69aec334ee9e7ab7ee492fb8ba5fb0eb3e6e5248dc4",
+      "codex_a072cf9_sha256": "d2bdffa0f00809bf634ec5f104f5690ac7826c82060c72d6d762b847006c807e",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/AssetRelationshipsPanel.test.tsx",
+      "expected_sha256": "d6519fb759c3eda33b6a34065ae07b55e9952672213ed9acfc3e3e8d8a9bb304",
+      "actual_sha256": "a94f6f49c496113ac343010bf3b8732a6d2de89f1612bb3bcb3cc86f016fb07a",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "116–126",
+      "extraction_notes": "Incoming-reference impact/incomplete coverage.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "5dbb000172d51abd9be7b9723b60dda11f0cb434",
+      "current_git_blob": "0ef67848b8747754936b214ea5694ca46fbbf574",
+      "local479a9b1_sha256": "a94f6f49c496113ac343010bf3b8732a6d2de89f1612bb3bcb3cc86f016fb07a",
+      "codex_a072cf9_sha256": "d6519fb759c3eda33b6a34065ae07b55e9952672213ed9acfc3e3e8d8a9bb304",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/GraphCanvas.test.tsx",
+      "expected_sha256": "b43f83267da21c9e07d2abd1f2b5eda96c461d540ca83ef2d5c92aa65920e720",
+      "actual_sha256": "88befc61c831311a672e58efa63a18b784d6581b0cef9661715d87432922e6d7",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "51–140; 288–889",
+      "extraction_notes": "Groups, annotations, culling, keyboard directory/search, MiniMap, alignment, snapping, outlines/collapse/preferences/nesting, notes/IME. Preserve new helpers and act import.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "238069c0be98a76c7e9d19c88655c4d75816c5a9",
+      "current_git_blob": "1b789f4fb096c635d9df2f85875a927d022b402e",
+      "local479a9b1_sha256": "88befc61c831311a672e58efa63a18b784d6581b0cef9661715d87432922e6d7",
+      "codex_a072cf9_sha256": "b43f83267da21c9e07d2abd1f2b5eda96c461d540ca83ef2d5c92aa65920e720",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioAudioWav.test.tsx",
+      "expected_sha256": "c77221921f4086306f1e8dbb2684adbd9d39a333df4c7d1611a69514f58fc301",
+      "actual_sha256": "7ddfc98bbcee5a97365d001f26f7d0a600641bc656175e6c297650927830a748",
+      "protected": true,
+      "classification": "legacy_rewrite_only",
+      "extract_ranges_at_47d85f7": "",
+      "extraction_notes": "WAV missing-measurement text changed; no added scenario.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "cfb92a40ad8b2650b4f72882e8eeddf9207ac3ef",
+      "current_git_blob": "1970a3a4f0f3c14c141fae9443fe341ebcd45ce0",
+      "local479a9b1_sha256": "7ddfc98bbcee5a97365d001f26f7d0a600641bc656175e6c297650927830a748",
+      "codex_a072cf9_sha256": "c77221921f4086306f1e8dbb2684adbd9d39a333df4c7d1611a69514f58fc301",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx",
+      "expected_sha256": "e1784ac7fff429a65120f0a31d0d9155ed3bf50637db4812ea76d3c6d7c4a017",
+      "actual_sha256": "eab9b0ed4a9b740fb196b7e4484b9619e553bfb06f2aeb70fc08c5533d33e7a2",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "68–201; 231–414; 446–469",
+      "extraction_notes": "Copy/paste/presentation/dirty navigation/layout/snapping/camera/search/save failure/nested groups. autoLayout import.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "8e779703c5a556794b2fb7d8bd0995cf2e184775",
+      "current_git_blob": "da8e6d6e49cf9c735b4b856d909c99ebbc592131",
+      "local479a9b1_sha256": "eab9b0ed4a9b740fb196b7e4484b9619e553bfb06f2aeb70fc08c5533d33e7a2",
+      "codex_a072cf9_sha256": "e1784ac7fff429a65120f0a31d0d9155ed3bf50637db4812ea76d3c6d7c4a017",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioReadFences.test.tsx",
+      "expected_sha256": "8c46f4c8adbb93a8fe9c41f101facccd9b77d0f945a88c74242edf172d0aedd7",
+      "actual_sha256": "ea1665baac97b28fd87f0d31423ef5ec0f4d4d34c8dddc690a0ed30233447ce4",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "54–81",
+      "extraction_notes": "New parameterized refresh fences and 401/403 private-view removal.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "c32089cc3d74870c46828e19b095516ab5648229",
+      "current_git_blob": "50c2de0a60ddeeac472369b6bdd6836dd93a3db2",
+      "local479a9b1_sha256": "8c46f4c8adbb93a8fe9c41f101facccd9b77d0f945a88c74242edf172d0aedd7",
+      "codex_a072cf9_sha256": "8c46f4c8adbb93a8fe9c41f101facccd9b77d0f945a88c74242edf172d0aedd7",
+      "unchanged_since_47d85f7": true,
+      "provenance": "this_round_only",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioRelationships.test.tsx",
+      "expected_sha256": "22aad113c48d1d776c88f61aee416f56f76ffe4a13d5551e1963166a8650e76b",
+      "actual_sha256": "33881c75d4b4c0a20275c00f97078a6c22825d7a19a43b9081f2f6bea7b6097e",
+      "protected": true,
+      "classification": "legacy_rewrite_only",
+      "extract_ranges_at_47d85f7": "",
+      "extraction_notes": "CAS alert selector changed; no proven production defect statically.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "cfe3959b120b92da4e9a9faee5379f34aa777b76",
+      "current_git_blob": "5d0ce42ddde566e56cdc03ed8fdae78d6b5a861d",
+      "local479a9b1_sha256": "8b49d5e2e7757e8572ca447d9297a2a501d3a2bc34f1b8b3d5d74c2a8f979f71",
+      "codex_a072cf9_sha256": "22aad113c48d1d776c88f61aee416f56f76ffe4a13d5551e1963166a8650e76b",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_and_this_round",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.test.tsx",
+      "expected_sha256": "91c6abb128213910e79bdaf9772f92a73c3ca0309e7235ce79332be927935cec",
+      "actual_sha256": "8e20681a7e02fad408afbc631d7b608d703d668dc0d83d68be78b323a1f831dd",
+      "protected": true,
+      "classification": "additions_and_legacy_rewrite",
+      "extract_ranges_at_47d85f7": "149–300",
+      "extraction_notes": "New asset/timeline/image/video/TaskCenter/relationship/ABA navigation. Restore original generic CAS alert selector; no proven production bug from selector rewrite.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "f7dbb025443b965fd88f7265769810e8f139abc5",
+      "current_git_blob": "891c3cd22a2500a8462e6bb1edb98b11fc702608",
+      "local479a9b1_sha256": "bee5ca1868dfa66a78a614c279171a1c54ec5e9757643dce07458f60d727b56b",
+      "codex_a072cf9_sha256": "91c6abb128213910e79bdaf9772f92a73c3ca0309e7235ce79332be927935cec",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_and_this_round",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/StudioImageGraphEditor.test.tsx",
+      "expected_sha256": "b5088d2b896079eb7f70870acd30e2a0cbfa03005151064cfb6c5633adecc689",
+      "actual_sha256": "54f7a3f530a1e7c6152ccab576021b5db0a7531b59543d73a467b52bd058922a",
+      "protected": true,
+      "classification": "legacy_rewrite_only",
+      "extract_ranges_at_47d85f7": "",
+      "extraction_notes": "Old raw provider/model authoring rewritten to picker; shared mock added. Preserve focused new picker variant only.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "0fad28328809081f08b1eb8dfb659c6ecd981d3a",
+      "current_git_blob": "db1f6c9ab33a150fa775e6597d577953135cb272",
+      "local479a9b1_sha256": "54f7a3f530a1e7c6152ccab576021b5db0a7531b59543d73a467b52bd058922a",
+      "codex_a072cf9_sha256": "b5088d2b896079eb7f70870acd30e2a0cbfa03005151064cfb6c5633adecc689",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/StudioImageRuntimeProduction.test.tsx",
+      "expected_sha256": "1aa762009842fc6432047cccb7fc826c624ab1b2a776f8266aa3388f32fa0e08",
+      "actual_sha256": "cface23447f119430acc562c19c545946562b0bb1627574d79c8a715254d6e0e",
+      "protected": true,
+      "classification": "legacy_rewrite_only",
+      "extract_ranges_at_47d85f7": "",
+      "extraction_notes": "Shared choose() now selects cloud for remote fixture; no new scenario.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "913b74695f0c1c633764675e3073e0ed0bf21049",
+      "current_git_blob": "0d2f795da02e11c1e5f50bc5a834cac5fdc1e0e3",
+      "local479a9b1_sha256": "cface23447f119430acc562c19c545946562b0bb1627574d79c8a715254d6e0e",
+      "codex_a072cf9_sha256": "1aa762009842fc6432047cccb7fc826c624ab1b2a776f8266aa3388f32fa0e08",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+      "expected_sha256": "6663a2cb4fb2f63b1d0aabf7e41a6ca9e2b8bd47f20a969c5909c55fcaab26af",
+      "actual_sha256": "814ca68447d2dd16dd5ad3a84e2ed1a2b2ca4e62a46d05ff9ab6bf1fe9c41b2f",
+      "protected": true,
+      "classification": "additions_and_legacy_rewrite",
+      "extract_ranges_at_47d85f7": "80–96; 115–248",
+      "extraction_notes": "New Director pins/create/save/reopen/unknown-outcome/storyboard/proposal cases. Restore original direct upscale-provider/model input scenario; focused picker variant separately if distinct.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "64fb41bab1c4bdd61a5b77cfeadf76496274af0b",
+      "current_git_blob": "a96d2ecfa3f718b88233a95d70cb374108858b6c",
+      "local479a9b1_sha256": "d93b207b4fca182d30cf307ba1e4b435dadc6efa699d404a1e7a5cad3969a6ec",
+      "codex_a072cf9_sha256": "6663a2cb4fb2f63b1d0aabf7e41a6ca9e2b8bd47f20a969c5909c55fcaab26af",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_and_this_round",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/StudioVideoGraphEditor.phase4.test.tsx",
+      "expected_sha256": "c1692f4a68969fa3fb728061804546453f2c1bdf394bb7a00f794d114dfaf3a3",
+      "actual_sha256": "7cc222e3744a1708b90aeeff8eae711d014274b9d04b9327e32a2d2179d3a5d6",
+      "protected": true,
+      "classification": "legacy_rewrite_only",
+      "extract_ranges_at_47d85f7": "",
+      "extraction_notes": "Old raw provider/model authoring rewritten to picker; shared mock added.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "ef110aaf6d6c81293b267854303dd3d2b835c6d2",
+      "current_git_blob": "62d8134545227a276b56b61df6c3fa00b2cf3cab",
+      "local479a9b1_sha256": "7cc222e3744a1708b90aeeff8eae711d014274b9d04b9327e32a2d2179d3a5d6",
+      "codex_a072cf9_sha256": "c1692f4a68969fa3fb728061804546453f2c1bdf394bb7a00f794d114dfaf3a3",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/StudioVideoShotBinding.phase5.test.tsx",
+      "expected_sha256": "3d1984b1984d19f1c0fa42d74d3f136c648ecb42eb15cfe5885c408161ab087e",
+      "actual_sha256": "a25a3b8b802efc80a8e0d7985f0b843031fa365089b662109dc747134291de78",
+      "protected": true,
+      "classification": "legacy_rewrite_only",
+      "extract_ranges_at_47d85f7": "",
+      "extraction_notes": "Old unbound-video authoring rewritten to picker; shared mock added.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "f4589820a7637e05e7086174fe62cfc4ba13c11a",
+      "current_git_blob": "cecce44d7972cd22dd936cdb21eed57d8984deb0",
+      "local479a9b1_sha256": "a25a3b8b802efc80a8e0d7985f0b843031fa365089b662109dc747134291de78",
+      "codex_a072cf9_sha256": "3d1984b1984d19f1c0fa42d74d3f136c648ecb42eb15cfe5885c408161ab087e",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasGeometry.test.ts",
+      "expected_sha256": "b0f03093d808b07d21d9f8d62231e2f31c3f756f75d37a0e98a22ba65f74441b",
+      "actual_sha256": "7c37d461af7fcff3594a453068302636caa4845b8b96fca2abaf388b01aa3c30",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "19–29; 104–163",
+      "extraction_notes": "Deleted group membership/alignment/snapping; added imports.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "ad2b7580458fd213dbad945da59e22599abf489b",
+      "current_git_blob": "b6d1e2c499fa96dc279cacddd2ef36c69d42398f",
+      "local479a9b1_sha256": "7c37d461af7fcff3594a453068302636caa4845b8b96fca2abaf388b01aa3c30",
+      "codex_a072cf9_sha256": "b0f03093d808b07d21d9f8d62231e2f31c3f756f75d37a0e98a22ba65f74441b",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/studioAudioFlacContract.phase6.test.tsx",
+      "expected_sha256": "4ff56d7828b78fbcae16119d5f1cc6d69e9e5f4d5c9c8e32d28745d5cbc6718b",
+      "actual_sha256": "9d014df459625f56016c4e3ad00766c6aa91a3cbc8a98a0ed326027fe930a3fd",
+      "protected": true,
+      "classification": "legacy_rewrite_only",
+      "extract_ranges_at_47d85f7": "",
+      "extraction_notes": "Negative MP3 parameter replaced by mp3; actual old contract conflict.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "699000a06541fe97a474082912b3e448270a6bff",
+      "current_git_blob": "154e663d12fc6569e8aed7923114b76bfc8f80af",
+      "local479a9b1_sha256": "9d014df459625f56016c4e3ad00766c6aa91a3cbc8a98a0ed326027fe930a3fd",
+      "codex_a072cf9_sha256": "4ff56d7828b78fbcae16119d5f1cc6d69e9e5f4d5c9c8e32d28745d5cbc6718b",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/creative/studioGraphClient.test.ts",
+      "expected_sha256": "fd2cc0df2be525c1fa333979168757cbda9d4118c091d8597f0169ec0604dd7b",
+      "actual_sha256": "a250b74c3e409063b8aa008f687f0856efc03391058ccb9fb9e24168162489fd",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "60–167",
+      "extraction_notes": "Capacity/presentation/notes/preferences/nested-group transport.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "61c26fe057155f88a6defc1449255ca026194311",
+      "current_git_blob": "4bdbe102a5c9a3808a578fd695ab934111152c77",
+      "local479a9b1_sha256": "0c89deccade879344b722392ae6eec9fdc10080819521e89caceae3faf635eb0",
+      "codex_a072cf9_sha256": "fd2cc0df2be525c1fa333979168757cbda9d4118c091d8597f0169ec0604dd7b",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_and_this_round",
+      "owner_group": "creative_and_canvasops",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/delivery/DeliveryCenterPanel.test.tsx",
+      "expected_sha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "actual_sha256": "4a2abdc60b9a0e842804b727a68bdbe6de26c14189670d1fd54261c04f331901",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "208–252",
+      "extraction_notes": "Loading/failed receipt recovery and pagination distinction; act import.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "98f2926c3f542cf7f58fed5030b2ed6f63ac7068",
+      "current_git_blob": "429d764e245e65b4d70dee8f0251c9b3f7a30d8f",
+      "local479a9b1_sha256": "4a2abdc60b9a0e842804b727a68bdbe6de26c14189670d1fd54261c04f331901",
+      "codex_a072cf9_sha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/experimental/BranchManuscriptPanel.test.tsx",
+      "expected_sha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "actual_sha256": "14bd53f5ee41a19b1a9e7388147dc63e6e23a7d061c211d9c9eddbb32fb04eaf",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "98–133",
+      "extraction_notes": "Comparison review/manual preservation and cancellation after owner replacement.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "6c9bc39ae29570aae29a25ce7eaecca0e13339b8",
+      "current_git_blob": "d49b5eac582edeb30b062f581900e764352dbbd8",
+      "local479a9b1_sha256": "14bd53f5ee41a19b1a9e7388147dc63e6e23a7d061c211d9c9eddbb32fb04eaf",
+      "codex_a072cf9_sha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.test.tsx",
+      "expected_sha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "actual_sha256": "60ff70aa0f8da2996f891a463a9a4d16689579bf6dca4192f96bf6e5d5abd5fe",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "122–208",
+      "extraction_notes": "Arrangement preview/apply/undo/save/invalidation/callback fencing/409/500/ABA.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "a43874ab48659e168e7bc52a211175a003b11a70",
+      "current_git_blob": "8d01064f399cbb3f372005f52fe7ada09ea7ac36",
+      "local479a9b1_sha256": "60ff70aa0f8da2996f891a463a9a4d16689579bf6dca4192f96bf6e5d5abd5fe",
+      "codex_a072cf9_sha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/ExperimentalWorkbench.continuation.test.tsx",
+      "expected_sha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "actual_sha256": "33aa2fa77288d6af9e24365885825951378c2d5a1346b473ad9ecbd5ca9d85ba",
+      "protected": true,
+      "classification": "additions_and_shared_harness",
+      "extract_ranges_at_47d85f7": "44–63",
+      "extraction_notes": "New planning/simulator mocks/captures and exact-reference/disabled-feature cases. Independent minimal harness.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "f0512cf61e6dc6196e8056d08485b7225fa04e34",
+      "current_git_blob": "9e42cc5b96778f1563920360e1a9fead4d459022",
+      "local479a9b1_sha256": "33aa2fa77288d6af9e24365885825951378c2d5a1346b473ad9ecbd5ca9d85ba",
+      "codex_a072cf9_sha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.test.tsx",
+      "expected_sha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "actual_sha256": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "153–311",
+      "extraction_notes": "Issue identities/pagination/dirty+IME preservation/pending save/version/ABA.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "fff62b8b90f3c03da9376e59c84f0b4b3b05f0bc",
+      "current_git_blob": "8eb423ae46ede129bd77adaffb8a17dddd85cf63",
+      "local479a9b1_sha256": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+      "codex_a072cf9_sha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.test.tsx",
+      "expected_sha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "actual_sha256": "aead0f49773c962c5a02347be4b9afc53d1f1c96c246c4eb6962bac99ce3ddcc",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "175–261",
+      "extraction_notes": "Explicit routes/ambiguous identical retry/saved-chapter gating/pre-dispatch outcomes.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "3941a4b6dded8600faa8091d4bbc6fb1ee12ecd8",
+      "current_git_blob": "0543f9a20ecb69a0c9b1e3c5106332f5f01bdab1",
+      "local479a9b1_sha256": "aead0f49773c962c5a02347be4b9afc53d1f1c96c246c4eb6962bac99ce3ddcc",
+      "codex_a072cf9_sha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/MultilingualEditionsPanel.test.tsx",
+      "expected_sha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "actual_sha256": "54be2f23bec2cecbe300967755827124a9c0d3dbcdd4ab523a9416d12ddad72f",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "136–200",
+      "extraction_notes": "Terminology exact-rule navigation/withheld and same-edition evidence/IME.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "fe0af3aa8c82ec96fd73e80c858626f23c9cba77",
+      "current_git_blob": "3f7746255851f0d6989bc55ac8e7e25b8bd7657c",
+      "local479a9b1_sha256": "54be2f23bec2cecbe300967755827124a9c0d3dbcdd4ab523a9416d12ddad72f",
+      "codex_a072cf9_sha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.test.tsx",
+      "expected_sha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "actual_sha256": "dc3c7a621f7fd253d4c12c2144077b7da14d35ac2296fd14737411d02e509ecf",
+      "protected": true,
+      "classification": "legacy_rewrite_only",
+      "extract_ranges_at_47d85f7": "138–141 rewrite only",
+      "extraction_notes": "Old single-click navigation replaced by two-step exact-source confirmation. Zero new declarations; retain exact-source verification in production.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "832d1c03bdea6444d6d42b3d49dd0bb0fba7c335",
+      "current_git_blob": "a7280c865670588ded511e41d57735ae0d2e8e0d",
+      "local479a9b1_sha256": "dc3c7a621f7fd253d4c12c2144077b7da14d35ac2296fd14737411d02e509ecf",
+      "codex_a072cf9_sha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/ResearchLibraryPanel.test.tsx",
+      "expected_sha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "actual_sha256": "de00574e6b922ca534870a23da376b19cf483b75e947596fc20471167fbeb1e9",
+      "protected": true,
+      "classification": "additions_and_legacy_rewrite",
+      "extract_ranges_at_47d85f7": "157–170",
+      "extraction_notes": "New page-only citation location case; restore old line-27 wording assertion.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "c1839fedd901294f8da126935beef7ba8dbe1255",
+      "current_git_blob": "161ec7191e04641a3991337ce50511cfd79a9692",
+      "local479a9b1_sha256": "de00574e6b922ca534870a23da376b19cf483b75e947596fc20471167fbeb1e9",
+      "codex_a072cf9_sha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.test.tsx",
+      "expected_sha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "actual_sha256": "62347f6c757041e6b83247960f7fdc98d954586439331039fcd315134832022f",
+      "protected": true,
+      "classification": "additions_and_legacy_rewrite",
+      "extract_ranges_at_47d85f7": "233–297",
+      "extraction_notes": "New durable-review/wrong-run/ABA/consent-clearing and SimulatorInput import. Restore old exact callback payload at line 76.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "3a77f0566a2a29ee99ba4031c8e70628e9ae1147",
+      "current_git_blob": "291e9639fbc4e71d519462fcc34b2c282e6e82ce",
+      "local479a9b1_sha256": "62347f6c757041e6b83247960f7fdc98d954586439331039fcd315134832022f",
+      "codex_a072cf9_sha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/StyleReviewPanels.test.tsx",
+      "expected_sha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "actual_sha256": "20623169bd2c17abf31dd6702f82496aa950f63fda65bcbf927e4cd085ef90ad",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "234–251",
+      "extraction_notes": "Saved target comparison/cancelled navigation preserves manual input.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "b4d8dff581f1dc1200ab9bc61e9bad8d706dfc99",
+      "current_git_blob": "1734f51969402f5cd4e889179be56cbc554c19d2",
+      "local479a9b1_sha256": "20623169bd2c17abf31dd6702f82496aa950f63fda65bcbf927e4cd085ef90ad",
+      "codex_a072cf9_sha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/VoiceSubtitlePanels.test.tsx",
+      "expected_sha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "actual_sha256": "86d702c3fef1822a35c43daf5cc8c682afed70eea634a9693e6233ad979040bc",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "82–101",
+      "extraction_notes": "Subtitle compatibility review/focus/unsaved preservation/refresh failure/reset.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "f0965e6c09a9b322e944644bd461885a19e86e3e",
+      "current_git_blob": "f9f6826a6b618092e9ebb2e6ee6080b45f6efec9",
+      "local479a9b1_sha256": "86d702c3fef1822a35c43daf5cc8c682afed70eea634a9693e6233ad979040bc",
+      "codex_a072cf9_sha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/experimental/WriterRoomPanel.test.tsx",
+      "expected_sha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "actual_sha256": "7050e594f92ca971f41752ef85b1ddbcacf7427877a3c2f625779a6998141e35",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "126–199",
+      "extraction_notes": "Pinned revision/unavailable revision/notes/unknown transition/delayed-context cancellation.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "188a23a3207d7041054ea332bf9c6fa3bb5330ff",
+      "current_git_blob": "ca961c49d3f6cb09154ac63a8bb450c9d449ce8f",
+      "local479a9b1_sha256": "7050e594f92ca971f41752ef85b1ddbcacf7427877a3c2f625779a6998141e35",
+      "codex_a072cf9_sha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "frontend/src/modelcenter/ModelCenterPanel.test.tsx",
+      "expected_sha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "actual_sha256": "169e50d5bbfda7b3339dacba0b9288e53aaf9fdf87ca48a9353627283218cbb9",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "324–412",
+      "extraction_notes": "Partial-read recovery/unknown-empty distinction/retained facts/loading/denied advice.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "5a0fd93c54aa5cf8276e393026afbe750f31c721",
+      "current_git_blob": "d4adba5cc3453c9bc8b7e1c99ce5558bf1c24406",
+      "local479a9b1_sha256": "169e50d5bbfda7b3339dacba0b9288e53aaf9fdf87ca48a9353627283218cbb9",
+      "codex_a072cf9_sha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/prompt/PromptWorkspace.test.tsx",
+      "expected_sha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "actual_sha256": "a2989c9df5e8b462ea64a7c61e222f4f3446528fbdfec6b5dd5f1dbb133aa18b",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "189–332",
+      "extraction_notes": "History search/comparison/advanced correction/family errors/clipboard rescue.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "a87d37f4ed9d25fa3ca2d51116593c7422409143",
+      "current_git_blob": "d8e09bee6e40144f0219df0aee7db6df60142c58",
+      "local479a9b1_sha256": "a2989c9df5e8b462ea64a7c61e222f4f3446528fbdfec6b5dd5f1dbb133aa18b",
+      "codex_a072cf9_sha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.test.tsx",
+      "expected_sha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "actual_sha256": "316e5439ce061b4b4aa8e24754285d83f7f90b55814d798e29679838cb0246f4",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "336–391",
+      "extraction_notes": "Receipt evidence/retained tasks after read failure/unsupported media guidance.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "93f5e098acab3c130807ccc171c455ac6fc1bd12",
+      "current_git_blob": "88858943ce66bfb661cc7c6c261281213b51c785",
+      "local479a9b1_sha256": "316e5439ce061b4b4aa8e24754285d83f7f90b55814d798e29679838cb0246f4",
+      "codex_a072cf9_sha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.test.ts",
+      "expected_sha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "actual_sha256": "d4000520e6117ff6c5bcb1f588b9f8698c95fcb7e5e0f793ee97669827a0c84b",
+      "protected": true,
+      "classification": "additions_and_legacy_rewrite",
+      "extract_ranges_at_47d85f7": "195–238",
+      "extraction_notes": "New receipt transport/failure/scope cases. Restore original title/five-key API; separate companion interface.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "92ad6ac18ca08701d6d2bc80ad72b6aefc5b97e0",
+      "current_git_blob": "f045e7b8f77c24dda8abf4e89cb65d069d156534",
+      "local479a9b1_sha256": "d4000520e6117ff6c5bcb1f588b9f8698c95fcb7e5e0f793ee97669827a0c84b",
+      "codex_a072cf9_sha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "other_frontend",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "tests/test_r4_story_simulator.py",
+      "expected_sha256": "766f002bc7b2e2a7114baa61e6ae7374ce4b981831995b8a8984f6199e74f038",
+      "actual_sha256": "63b5139cfed2670d5eafebdd32e408622e7fd4cccb1287bc1da0799fa4040e77",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "248–end",
+      "extraction_notes": "One appended saved-route restart/reopen test; original AST unchanged.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "5ccc18e6f7a7bd4e3a9fd579c9820de943c18c79",
+      "current_git_blob": "7292e580b672dcc2d45c408eafd4fd648f46db66",
+      "local479a9b1_sha256": "63b5139cfed2670d5eafebdd32e408622e7fd4cccb1287bc1da0799fa4040e77",
+      "codex_a072cf9_sha256": "766f002bc7b2e2a7114baa61e6ae7374ce4b981831995b8a8984f6199e74f038",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "backend_seven_and_mp3",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "tests/test_r5_comic_layouts.py",
+      "expected_sha256": "2d24b7dd1b8a244cffef94d9d9106fb1b5dffd91ae92061e32f8a5a2a9dc9120",
+      "actual_sha256": "c4d66c56bad34f23635af5373ee477ac38dc9b6b41c44b7a5d2f7ad8912965ff",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "221–end",
+      "extraction_notes": "One appended arrangement/history test; original AST unchanged.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "82196794a2a58da9b105f127578ca68fa5d8a992",
+      "current_git_blob": "07a216d400775abea0e0d38f13c5b2c3f759624e",
+      "local479a9b1_sha256": "c4d66c56bad34f23635af5373ee477ac38dc9b6b41c44b7a5d2f7ad8912965ff",
+      "codex_a072cf9_sha256": "2d24b7dd1b8a244cffef94d9d9106fb1b5dffd91ae92061e32f8a5a2a9dc9120",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "backend_seven_and_mp3",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "tests/test_r5_interactive_story.py",
+      "expected_sha256": "8f4bc6e70581ce5f5512517df425e793713604c77854594bdac44f7d2cb6a907",
+      "actual_sha256": "f2f355c417f8c2def70afdb8dca4728ecd4773b9fec6215b0e362971de3d1414",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "316–end",
+      "extraction_notes": "One appended issue repair/reopen/export test; original AST unchanged.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "e7a89f6312269ce955af320618625db572ef9344",
+      "current_git_blob": "c3433072a8d0839cd265163520a1f0627addcfd9",
+      "local479a9b1_sha256": "f2f355c417f8c2def70afdb8dca4728ecd4773b9fec6215b0e362971de3d1414",
+      "codex_a072cf9_sha256": "8f4bc6e70581ce5f5512517df425e793713604c77854594bdac44f7d2cb6a907",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "backend_seven_and_mp3",
+      "also_frozen_v1": true
+    },
+    {
+      "path": "tests/test_round2_bible.py",
+      "expected_sha256": "c8c303a03d78cf32f1a8c1d997eb25b0fe48bb3b4d0707268fdadad38ea8c544",
+      "actual_sha256": "d7da05009119e408cd38dabf01b3797536ab26a72f79a5c7fc47cca0c06be8c1",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "458–end",
+      "extraction_notes": "Two new functions: parameterized visual owner/history roundtrip, Unicode bounds; original AST unchanged.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "0d593052b58ca2e4200f4f2c38da0c24f6270c5b",
+      "current_git_blob": "0492a254d429b4a55a150c9de94bb927e411a715",
+      "local479a9b1_sha256": "d7da05009119e408cd38dabf01b3797536ab26a72f79a5c7fc47cca0c06be8c1",
+      "codex_a072cf9_sha256": "c8c303a03d78cf32f1a8c1d997eb25b0fe48bb3b4d0707268fdadad38ea8c544",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "backend_seven_and_mp3",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "tests/test_v2_audio_flac.py",
+      "expected_sha256": "cda2870e6112f593186055c4c17579c6d0e73ccb332e2ed0bb964ffb5d37b88c",
+      "actual_sha256": "d0b72170b9a7392e15e9a3deff614ef8a8a9e3a42b158f1ba50778e212a6e6db",
+      "protected": true,
+      "classification": "legacy_rewrite_only",
+      "extract_ranges_at_47d85f7": "63 parameter rewrite",
+      "extraction_notes": "Old [MP3] literal replaced by [mp3]. Preserve old node; explicit versioned MP3 seam required.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "41dcc646b95b343ece282757c439bd4ee704206b",
+      "current_git_blob": "033c7bdef426ce048d17bb7616b28fabee79f9f1",
+      "local479a9b1_sha256": "d0b72170b9a7392e15e9a3deff614ef8a8a9e3a42b158f1ba50778e212a6e6db",
+      "codex_a072cf9_sha256": "cda2870e6112f593186055c4c17579c6d0e73ccb332e2ed0bb964ffb5d37b88c",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "backend_seven_and_mp3",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "tests/test_v2_creative_graph_persistence.py",
+      "expected_sha256": "0e15d0e88389b45a2d16544ccaf30c70d4e88b5e73a60d47b59d7bdcb2a8f44d",
+      "actual_sha256": "1732ee5a0c0430eacc3fdac1fb9090f54ec240a7ad93fa9e6fe6b7b702582fe9",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "215–end",
+      "extraction_notes": "Nine appended presentation/group/copy/preferences/note tests; original AST unchanged.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "a3289942fb0fa801fe516d5c59dcd71f0cdd6c9c",
+      "current_git_blob": "eacfdec4a05849eee79cd922c9dee7857151387d",
+      "local479a9b1_sha256": "1732ee5a0c0430eacc3fdac1fb9090f54ec240a7ad93fa9e6fe6b7b702582fe9",
+      "codex_a072cf9_sha256": "0e15d0e88389b45a2d16544ccaf30c70d4e88b5e73a60d47b59d7bdcb2a8f44d",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "backend_seven_and_mp3",
+      "also_frozen_v1": false
+    },
+    {
+      "path": "tests/test_v2_director_workspace.py",
+      "expected_sha256": "cb119b5e88ae3909386d2c540ee38d0e78b734909e1f0b4e4e144fb4737689d2",
+      "actual_sha256": "cdf5f1877e7aff4783e2f26d7ee50e5ac19ea5a236ebf04246ea7189630323c0",
+      "protected": true,
+      "classification": "additions_only",
+      "extract_ranges_at_47d85f7": "503–590",
+      "extraction_notes": "Three inserted genre/time functions. Preserve old later route test; original AST unchanged.",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "authoritative_git_blob": "08bac6df26d0f184c6322f92ea8d2706a145be5d",
+      "current_git_blob": "3a8ecd529cfc308eb5e174eba4becc75b14363db",
+      "local479a9b1_sha256": "cdf5f1877e7aff4783e2f26d7ee50e5ac19ea5a236ebf04246ea7189630323c0",
+      "codex_a072cf9_sha256": "cb119b5e88ae3909386d2c540ee38d0e78b734909e1f0b4e4e144fb4737689d2",
+      "unchanged_since_47d85f7": true,
+      "provenance": "inherited_unchanged",
+      "owner_group": "backend_seven_and_mp3",
+      "also_frozen_v1": false
+    }
+  ],
+  "all_v2_stale_source_fingerprints": [
+    {
+      "path": "app/creative/generation.py",
+      "expected_sha256": "068144ee6e48d56c46d04662c1aba0861febcbe30a03d0829f7a6477049e053e",
+      "actual_sha256": "dbec3ef641c1c1a26a4b6af6f7a2490d8917df1aa086bfe11bce515d3be6797d",
+      "protected": false
+    },
+    {
+      "path": "app/creative/graph.py",
+      "expected_sha256": "aa9fcd0a1e404fae2cca3198da53367f696229109e39a3f4a362c93a36932c28",
+      "actual_sha256": "59feb956a83e2cc4aa039a5c0a9faa6ac961f00443a7e8e783bceb709b8b7d93",
+      "protected": false
+    },
+    {
+      "path": "app/creative/graph_models.py",
+      "expected_sha256": "22e579399916b56a7ff74a98875a807811131a7ba20e1b7c5934b34e8058c08e",
+      "actual_sha256": "a294844ac4fa3e2a2d5e3f0fab4a2ba3eb180a61a738fd691bf3a3bdd6b0363d",
+      "protected": false
+    },
+    {
+      "path": "app/creative/models.py",
+      "expected_sha256": "44f7e38d6ebd1dde309b557b9ed31803e818d532dd20d1db1930999c785097c9",
+      "actual_sha256": "4a0553622e9df0f4b29a2d8ef974fd148759ba2221476e8d2880d8b3d9daa8f6",
+      "protected": false
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "expected_sha256": "250c74068d15d71d6e3305af8f59582bd054b43e74babe4bb496f1fde7b7e93e",
+      "actual_sha256": "6639d4569db5a6d84b9cd098e61dca9fe1e523e15c14243ed1ac1dc847b24570",
+      "protected": false
+    },
+    {
+      "path": "app/creative/proposals.py",
+      "expected_sha256": "6d2e755f89ba7e99a1fdfc82c8abbf06efd8417d970e2b0bace685e4874cb1e2",
+      "actual_sha256": "de80fc785596b8f8b5e02fa3f9f06024798fc6d1ea129e48f78f236fafa04c32",
+      "protected": false
+    },
+    {
+      "path": "app/creative/service.py",
+      "expected_sha256": "e240ad4d7bd00454ccc9a12ef814e3fb5549c600285a4348f6214ff8741777eb",
+      "actual_sha256": "249f289657ad0f5cd132afaf7d86279821c08d808eaa70956eb1158b2f883693",
+      "protected": false
+    },
+    {
+      "path": "app/experimental/declarative_agents.py",
+      "expected_sha256": "b6f61d28185d5d09ffc517483f9a5d81f87672bd4121de81b600b1a918609231",
+      "actual_sha256": "2e106fad1a3b403cad889a27db9626edeffe5f01107452c6f1c73316b77e50b8",
+      "protected": false
+    },
+    {
+      "path": "app/experimental/declarative_agents_api.py",
+      "expected_sha256": "f14c4285aceb5509651235d6c35003852a70cad80814d1620a540fc2b9dbb854",
+      "actual_sha256": "7d4c62f7e83d98e86694d4d86d4ff1c849946cd65f8230490a1e02a150fcd018",
+      "protected": false
+    },
+    {
+      "path": "app/services/studio_audio_execution.py",
+      "expected_sha256": "489281e2ee2fbc229aff831268835269fa357034749ee4f49531a1bdc4a941ac",
+      "actual_sha256": "1fca2f20e2d91e820341f23e42d992af8212953eb82f0260d11082acc2d52c64",
+      "protected": false
+    },
+    {
+      "path": "frontend/package.json",
+      "expected_sha256": "1a34cefc4baea21de101be5f3bc97f606bc1514b448bf589d67c865fbb439da5",
+      "actual_sha256": "07db1d8eaaf4daba7762b987a2157bad15e24642c3bc6aa614580d30e5deabc9",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "expected_sha256": "f8b38726789f1ac5f4b4c20723487e70e366404623473b7a9fcee8b3d1de2212",
+      "actual_sha256": "bd9ed133a7da630b735d93c39581367aa7d9ed4a9f906fce3634fc4b26363bf7",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/AppAuthorTaskNavigation.test.tsx",
+      "expected_sha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "actual_sha256": "c71612b2e904c0efd00c416ad9a9c467a5430cdf401ba6465c3dee10ee408d09",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/canvasops/CanvasOpsRail.tsx",
+      "expected_sha256": "3e9c4f36549184a6f78f82cd33bee12e0c4914e5e6d174e8d2b2ff4734bf591b",
+      "actual_sha256": "e36387f6419c152735c2921943c23998434e224a0dfa9b9f2604c1e066f358e3",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/canvasops/canvasOps.test.ts",
+      "expected_sha256": "b22b4aba7143a65a53e6dab9ad1a1a9b969346fb3a19827ac84e5a190b5b5541",
+      "actual_sha256": "c284713bc1788998f17cf46ad5f47520749e25f6dc9307f94185786adf86d3e7",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/canvasops/canvasOpsPanels.test.tsx",
+      "expected_sha256": "ffd2214f07612bd2a7b5bfe209c4b3ac8a50b7b2d3c622b56dd8e40d139ef7c6",
+      "actual_sha256": "e3cee8da677f5780cca7c5846f88238dcf30a9dde069fdb83be6f987d2fc3b9a",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/AIDirectorPanel.test.tsx",
+      "expected_sha256": "d2bdffa0f00809bf634ec5f104f5690ac7826c82060c72d6d762b847006c807e",
+      "actual_sha256": "6e487b0fc56cf37a01e3e69aec334ee9e7ab7ee492fb8ba5fb0eb3e6e5248dc4",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/AIDirectorPanel.tsx",
+      "expected_sha256": "d8b15c74dfa359ea6b7221dd4145b47e2781ceedc3763ed6edd60d44669420d4",
+      "actual_sha256": "a8ee0a832854e7a2e5fc7d16fafffd2eb2c7d0b3c1ebcae1d7b72f76227dbfc7",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/AssetRelationshipsPanel.test.tsx",
+      "expected_sha256": "d6519fb759c3eda33b6a34065ae07b55e9952672213ed9acfc3e3e8d8a9bb304",
+      "actual_sha256": "a94f6f49c496113ac343010bf3b8732a6d2de89f1612bb3bcb3cc86f016fb07a",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/AssetRelationshipsPanel.tsx",
+      "expected_sha256": "f58626d547ae128fe61827c272d9626e9fabe04f69697317c9254bba222c472c",
+      "actual_sha256": "7389ef06fc357e51ac46356c8f77ca22b8eae8920fe4adf0d0f0ba5a155511f6",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/CreativeCanvas.tsx",
+      "expected_sha256": "e03fb5e1a000233b873475bc7bea459843b60aef1490842f27f6597db70dfc92",
+      "actual_sha256": "c5aca87b47a8cfacac85e80b8ed4aadd108b4e3794f5a2bfa5992c59fe7a4db9",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/CreativeWorkspace.tsx",
+      "expected_sha256": "5cda949edec0d5fd3fcd4ba28154eafc214108875708e650199da48afc637f8e",
+      "actual_sha256": "f0bddf3ea1f6164515eb17e03d82f12b460b23618d270e404cf9985489167dbf",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/DirectorModelControls.tsx",
+      "expected_sha256": "dd331eec90880ed8906bb485ffd6c30f3d16655fc81bf7a198f2737b605f04e0",
+      "actual_sha256": "88917d64ef2c40d9c85921a807b9015e72134ccd737d7ec0b40d26f41a067b00",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/DirectorTargetPanel.tsx",
+      "expected_sha256": "cac8f87adf38ee47d281b4f683eaca01cf121605da78b9733c868f28588a5aa9",
+      "actual_sha256": "1296612056cbb7cd352e498d65d97a3fbf9ac6cbff4163a371e3bed46f9e2d7f",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/GraphCanvas.test.tsx",
+      "expected_sha256": "b43f83267da21c9e07d2abd1f2b5eda96c461d540ca83ef2d5c92aa65920e720",
+      "actual_sha256": "88befc61c831311a672e58efa63a18b784d6581b0cef9661715d87432922e6d7",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/GraphCanvas.tsx",
+      "expected_sha256": "c08017c63b08623124ce4322574d05881a3d59affefc5110cd72ea0b73ce2d10",
+      "actual_sha256": "152f5de859cd75cadc24840e7f519db183b1780ff0b03a95fd52fa3aee9dc5bc",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioAudioWav.test.tsx",
+      "expected_sha256": "c77221921f4086306f1e8dbb2684adbd9d39a333df4c7d1611a69514f58fc301",
+      "actual_sha256": "7ddfc98bbcee5a97365d001f26f7d0a600641bc656175e6c297650927830a748",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx",
+      "expected_sha256": "e1784ac7fff429a65120f0a31d0d9155ed3bf50637db4812ea76d3c6d7c4a017",
+      "actual_sha256": "eab9b0ed4a9b740fb196b7e4484b9619e553bfb06f2aeb70fc08c5533d33e7a2",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioReadFences.test.tsx",
+      "expected_sha256": "8c46f4c8adbb93a8fe9c41f101facccd9b77d0f945a88c74242edf172d0aedd7",
+      "actual_sha256": "ea1665baac97b28fd87f0d31423ef5ec0f4d4d34c8dddc690a0ed30233447ce4",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioRelationships.test.tsx",
+      "expected_sha256": "22aad113c48d1d776c88f61aee416f56f76ffe4a13d5551e1963166a8650e76b",
+      "actual_sha256": "33881c75d4b4c0a20275c00f97078a6c22825d7a19a43b9081f2f6bea7b6097e",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.test.tsx",
+      "expected_sha256": "91c6abb128213910e79bdaf9772f92a73c3ca0309e7235ce79332be927935cec",
+      "actual_sha256": "8e20681a7e02fad408afbc631d7b608d703d668dc0d83d68be78b323a1f831dd",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "expected_sha256": "5e76f590470abf8715c3599de03d5cffdf6752d29706af89ac901e2a692fc08d",
+      "actual_sha256": "11e1c7faff33ad6cba30884431f11a6f0abccc4da56eedfb65a960350ae84645",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/StudioImageGraphEditor.test.tsx",
+      "expected_sha256": "b5088d2b896079eb7f70870acd30e2a0cbfa03005151064cfb6c5633adecc689",
+      "actual_sha256": "54f7a3f530a1e7c6152ccab576021b5db0a7531b59543d73a467b52bd058922a",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/StudioImageRuntimeProduction.test.tsx",
+      "expected_sha256": "1aa762009842fc6432047cccb7fc826c624ab1b2a776f8266aa3388f32fa0e08",
+      "actual_sha256": "cface23447f119430acc562c19c545946562b0bb1627574d79c8a715254d6e0e",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "expected_sha256": "13127e5adc65aa02b23ce376e731f63248830ebc93e61bdfc0bfed78fb8fb1f8",
+      "actual_sha256": "d79085173f9fb726d0c18fcc671f34935676b052beb7eea3fa119902fe242400",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+      "expected_sha256": "6663a2cb4fb2f63b1d0aabf7e41a6ca9e2b8bd47f20a969c5909c55fcaab26af",
+      "actual_sha256": "814ca68447d2dd16dd5ad3a84e2ed1a2b2ca4e62a46d05ff9ab6bf1fe9c41b2f",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "expected_sha256": "379964c0f2042b4284c60c4edd7f3dacde8cbed1eca1d83478a4a41cafa44e6f",
+      "actual_sha256": "2bc968401095407d97f5c6c8717d214cbd27af50364ed512d04cb8cc96c7c66f",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineTransferPanel.tsx",
+      "expected_sha256": "e438bb3d701ad48b17c5cbe0fbd9b3718c147aefb9ff5ee7e92a6c1ba8329417",
+      "actual_sha256": "a278718e05e26ded4d17e03e2f462293fe223175919731b1e1844de35b2aa8fa",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/StudioVideoGraphEditor.phase4.test.tsx",
+      "expected_sha256": "c1692f4a68969fa3fb728061804546453f2c1bdf394bb7a00f794d114dfaf3a3",
+      "actual_sha256": "7cc222e3744a1708b90aeeff8eae711d014274b9d04b9327e32a2d2179d3a5d6",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/StudioVideoShotBinding.phase5.test.tsx",
+      "expected_sha256": "3d1984b1984d19f1c0fa42d74d3f136c648ecb42eb15cfe5885c408161ab087e",
+      "actual_sha256": "a25a3b8b802efc80a8e0d7985f0b843031fa365089b662109dc747134291de78",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/StudioWorkspacePreferencesForm.tsx",
+      "expected_sha256": "843f353dff640f94fdbadfcd4fe3947c4a45f8a06ec92896e08408abc6dd342b",
+      "actual_sha256": "717f5e3f39f44a122df2b55f80ce373743d47889f71b8e9deac6108c1a7457c7",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/client.ts",
+      "expected_sha256": "07e5e30a8a0cbcaa122a1e0541398f9669acb276820f1a4875d2200f13336b31",
+      "actual_sha256": "193196909d30cf3d9346ce0a76d9079d5ca1fa976f91d97f4ef86ba12cf50674",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/graphCanvas.css",
+      "expected_sha256": "71d98a4aad6ce8884bb00f0f13582bdb0c2942dbe7abaf55b079a71642783999",
+      "actual_sha256": "e9738d4df6b6bd5830987e293b35912f7df1a8cdddc9febe3e3757ee8f809b33",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasGeometry.test.ts",
+      "expected_sha256": "b0f03093d808b07d21d9f8d62231e2f31c3f756f75d37a0e98a22ba65f74441b",
+      "actual_sha256": "7c37d461af7fcff3594a453068302636caa4845b8b96fca2abaf388b01aa3c30",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasGeometry.ts",
+      "expected_sha256": "5badb265258eabf46577b3750d25af5ce878bca3dd4eb08bb972397ab3d2d437",
+      "actual_sha256": "01d5c1692ef36749583232dcb6bdbb49953b1978b4a3f2702325cda7511e1b0e",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/studioAudioFlacContract.phase6.test.tsx",
+      "expected_sha256": "4ff56d7828b78fbcae16119d5f1cc6d69e9e5f4d5c9c8e32d28745d5cbc6718b",
+      "actual_sha256": "9d014df459625f56016c4e3ad00766c6aa91a3cbc8a98a0ed326027fe930a3fd",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/studioClient.ts",
+      "expected_sha256": "ad7876e1fc3ff03ab94263979db3f636068c8964c8affdd344e83f922437e449",
+      "actual_sha256": "495ed436ccdbe8194ab72ce4af916a1730e4a6bdd7c8c17a021d3aff46fa9509",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/studioGraphClient.test.ts",
+      "expected_sha256": "fd2cc0df2be525c1fa333979168757cbda9d4118c091d8597f0169ec0604dd7b",
+      "actual_sha256": "a250b74c3e409063b8aa008f687f0856efc03391058ccb9fb9e24168162489fd",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "expected_sha256": "e3e014b72d62323caeb22a7957a55f08b756beadff9bb578dd3e1a7c70315c07",
+      "actual_sha256": "4c68b39c7ee1d8b09b35fb838785f85b5f27e89947c16f982a7821f7182a7dfc",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "expected_sha256": "5c1403a0908a3006fbd8c0e25591235570c5188553b15b3e3b5d06a23ed04819",
+      "actual_sha256": "6364681fe9c5ba5070b37509641f5e2b375a05a995ef9e47a04cb8132d2fb189",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/studioGraphTypes.ts",
+      "expected_sha256": "d311f0d6df1aef70d6f1f3c8a12e79174ff83175248edd8a969c4a241c0d38f5",
+      "actual_sha256": "e3a45ac0a836e2d7f3e1975c0efda36311a2d37b924169f253029924a74baa38",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "expected_sha256": "56c3b2c4ef9fe46afac7b6bd8f17184dc220b8db40516fb8982433586f5190c7",
+      "actual_sha256": "93d5d993787e827e1c246990c22b0669a6c76be4f5cf93e89af39fd2ee5991be",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/types.ts",
+      "expected_sha256": "45347710e393c7106154ec5c3d2319d9b905ef2232b73e7744fb40f745d2c9e8",
+      "actual_sha256": "987c436faa9330e8aef02d8a43e5402e7c2e67a4299294ba3052d387db35266a",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditor.tsx",
+      "expected_sha256": "750d9f933ea5a05f7f3d6aae6425fedc122b0bae080933e4f927e5871acb948c",
+      "actual_sha256": "39aa7a097d589ed9cbd2e3993b45452e44ff4615722df0a5c10fa43f7ea9514c",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "expected_sha256": "8fddcb301782854cb0f0caabd613bda93ad3d460b0739097f613e590264d55e0",
+      "actual_sha256": "a0326188484fec955fb8ada9ea69a1ca989b03bcad068f692e8cd6628d447fab",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "expected_sha256": "322bd8a8d2203891d1b4caed05a98e7c34fa40bfcebc8526760a92fa5afc86ed",
+      "actual_sha256": "25f31846349a951ec7e335cefb732bf8d8d0fc0e08a9cff8626958c5dfbcdc41",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+      "expected_sha256": "020b21f8e91200dadd24db031fa4a9438e020b1e8a5c78eb413b3d2769ca46f8",
+      "actual_sha256": "1ebd9d517095a6c094756ebe1feddb065e7436bcbda4ce79dd24b3a294994a93",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelineTransfer.ts",
+      "expected_sha256": "96ba33f240e494ff5a79aa73421108dbc38926f16b81792a2c258e242fd7bc6b",
+      "actual_sha256": "6e2186c38d396fa830f5338685b460b9b50298c42e43fe689d33872972d241de",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/delivery/DeliveryCenterPanel.test.tsx",
+      "expected_sha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "actual_sha256": "4a2abdc60b9a0e842804b727a68bdbe6de26c14189670d1fd54261c04f331901",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/delivery/DeliveryCenterPanel.tsx",
+      "expected_sha256": "13db2d5d94dc7422055f3c2ab39bb47e81eb2c337dfbfce0d49426e5aa3a3388",
+      "actual_sha256": "8bae9587eab9a8ccba77f4e75da41dce0bb4b83c0154c823ac7971d6e46b56da",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/delivery/ItemExportPanel.tsx",
+      "expected_sha256": "95223a8acc2e63a3de39ab1e8bb2bf2ff60476e73890f9db647b86673c4de5e0",
+      "actual_sha256": "4a9b6f60b4f41c4ba9ac8c6daf246ed2822d4a1606a8d1d264275f99a0393e26",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/delivery/ReceiptRecoveryPanel.tsx",
+      "expected_sha256": "94797a1e62586776cd29bfa101089c28afcac1b4d96c327d18b72025dc01c822",
+      "actual_sha256": "da30f46aa5a18ce66cab893e2cb6812b8f2d7665ed01e6dbd61de9337f139639",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/BranchManuscriptPanel.test.tsx",
+      "expected_sha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "actual_sha256": "14bd53f5ee41a19b1a9e7388147dc63e6e23a7d061c211d9c9eddbb32fb04eaf",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/BranchManuscriptPanel.tsx",
+      "expected_sha256": "e527417255f04db5179d8993e77553e0abeef3f027c4959352d62e428f7a9164",
+      "actual_sha256": "2a3cabf7dd03437deaf573253082ad1f0b6a2542c0757a314c8e559dcd2fd2d0",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.test.tsx",
+      "expected_sha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "actual_sha256": "60ff70aa0f8da2996f891a463a9a4d16689579bf6dca4192f96bf6e5d5abd5fe",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "expected_sha256": "0abcf606a94479d7e7fa9966da86cf369a291dba72114d0dbca8cd53c5f4003f",
+      "actual_sha256": "0bc6729b143da49462aff83a6f60324852c8428e22daae61c7b6061bed036dd0",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/DeclarativeAgentsPanel.tsx",
+      "expected_sha256": "6d55c22fc6bf61f1dd1cf94999d35d4812eb3ff821d34534e31941ac89097ff4",
+      "actual_sha256": "4822689c860a315250d792889ba94ae62f0fbdd5c07d15d2ab827e02f35c6048",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/ExperimentalWorkbench.continuation.test.tsx",
+      "expected_sha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "actual_sha256": "33aa2fa77288d6af9e24365885825951378c2d5a1346b473ad9ecbd5ca9d85ba",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/ExperimentalWorkbench.tsx",
+      "expected_sha256": "63b314a767e1b94f7f8ca6ac0a58908b1f4c7f8213f27d2f85f07d52b096d236",
+      "actual_sha256": "a6a5613c93a9d8a1e457ad66c28ee2e9795fd87655e9d4cd5f37a5dcfd631fbf",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.test.tsx",
+      "expected_sha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "actual_sha256": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.tsx",
+      "expected_sha256": "8e2f9a093d6f2a40b0240af9975a454cc39324aa98898468e8eeb687a963794a",
+      "actual_sha256": "3e762f90137c48ed7fd9a64faeea53f85928e74a49d95fa8fbe84bbdb165e9a2",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.test.tsx",
+      "expected_sha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "actual_sha256": "aead0f49773c962c5a02347be4b9afc53d1f1c96c246c4eb6962bac99ce3ddcc",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.tsx",
+      "expected_sha256": "af755cac67fd01ede6c5069ec72ac5f95839d2bdff91ced7d67074362c0d34d6",
+      "actual_sha256": "d1977a3ca417b8eaf70e8b47dffa05f8a93bea94d9224497e599e18b2ec6a59d",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/MultilingualEditionsPanel.test.tsx",
+      "expected_sha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "actual_sha256": "54be2f23bec2cecbe300967755827124a9c0d3dbcdd4ab523a9416d12ddad72f",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/MultilingualEditionsPanel.tsx",
+      "expected_sha256": "7adef03cbb5c7c6ae439f4ae90be62da4477c58d15c1e61c113a296c443ce710",
+      "actual_sha256": "35edff81c7fcfd088dcf29cafad2fd044b281f07f52af8017452fc8853cca8ba",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/NarrativeJudgePanel.tsx",
+      "expected_sha256": "b6bbeb92289e75ac550822d72c61377e94839915d30413fe653b72cf674318ba",
+      "actual_sha256": "6a17ff629f972d10112612e06d74446815f5877a20a0bdb708bca76156ec9bc1",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/OfflineSyncPanel.tsx",
+      "expected_sha256": "7b6da52292957709566e079cb809b00c3ebb79267657de2dda1ef4846ecb1d8a",
+      "actual_sha256": "1d26d6f9d6d6e28b6bdd8e62ec23908cc04cf05b164a0cc251aa9ed8f4e04af3",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/PlanningPanel.tsx",
+      "expected_sha256": "47beab46a7febfa0093843c4a378db4849dde9a0f59d0ec76ea54e6a8feba004",
+      "actual_sha256": "7f86fafe1db080c6a7eb0944535bf8e9345ce6ae4496f467dca9496a02cd38a6",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.test.tsx",
+      "expected_sha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "actual_sha256": "dc3c7a621f7fd253d4c12c2144077b7da14d35ac2296fd14737411d02e509ecf",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+      "expected_sha256": "33e4a2f32d915d58dda4558a525845aa39c3244ec2952658328a1f47cff02e51",
+      "actual_sha256": "5b2eece6300b39babb3fdd87a19e3ff564fbdd9d30afc86a9a85ef8640ee8132",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/ResearchLibraryPanel.test.tsx",
+      "expected_sha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "actual_sha256": "de00574e6b922ca534870a23da376b19cf483b75e947596fc20471167fbeb1e9",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/ResearchLibraryPanel.tsx",
+      "expected_sha256": "25a646aca1b38f8a387343e8c3d6714b4ba9c3e76afc3f5918beb6dfbda9a2af",
+      "actual_sha256": "f3875ae76fa80f596dda9d7cdda1eeb188ae94bd4dccae81e8cfc125f05668ed",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/RevisionIntelligencePanel.tsx",
+      "expected_sha256": "d9db54b4112c5a278cb1fc25dbbf50fea361c11c9128c72753fb7dfa000ef825",
+      "actual_sha256": "3665aec61b3b9742a0a87a0ecb8f5abe384785b7f883dcc09e5a55b9086ee081",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/StoryGraphPanel.tsx",
+      "expected_sha256": "244585ba22b36d245f550d1b471845482cecb2e0cd2b3d4eb7ed9ae263773cda",
+      "actual_sha256": "c1c63bc29a11a0e761953dde83df3e63de4b125430844829c89824483508bd61",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.test.tsx",
+      "expected_sha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "actual_sha256": "62347f6c757041e6b83247960f7fdc98d954586439331039fcd315134832022f",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.tsx",
+      "expected_sha256": "c83b9a9ded6a7cf769c80407b9f1b53aa1c474c31dd98bb377e66f4c3a72ba36",
+      "actual_sha256": "b7026fe8b9cc37028310c9da9615033d3857db5c2c6db0f79fb66937572625b2",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/StyleAnalysisPanel.tsx",
+      "expected_sha256": "68f608f2668dc13f88cf68cc291234903ee0cd473f2c7c47b98a29e9f8b7f380",
+      "actual_sha256": "8c515d9d33ab7453865c0abb1f9925f74e785a7eea43f1dfe60a51654d45ed82",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/StyleReviewPanels.test.tsx",
+      "expected_sha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "actual_sha256": "20623169bd2c17abf31dd6702f82496aa950f63fda65bcbf927e4cd085ef90ad",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/SubtitleTimelinePanel.tsx",
+      "expected_sha256": "b62595cab31dabbe19da78d08b9f349016f507dabda7cd10bb479ce3b7edcc0b",
+      "actual_sha256": "2325cef73fcda3016e43cea37203f42cbac53cf2c89b06800bdb28b31ce08e1e",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/TemplateLibraryPanel.tsx",
+      "expected_sha256": "0876af70a7fe4aae6c198cb1681dfbf97fd991be6c31a2b5c0ce7e735db75d72",
+      "actual_sha256": "6fe668753f7403e1ec98d60664140e65f93bc4d7024555e0235b613df9d2dd0b",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/VoiceDirectionPanel.tsx",
+      "expected_sha256": "47525687859f10f51b7206bd5d8559abe80116cfd65d01d3cbdc442b00c11efa",
+      "actual_sha256": "c11b0a49a36e2fd2d7173f8cf96386858f0905f6796afe6610a2ae74119de610",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/VoiceSubtitlePanels.test.tsx",
+      "expected_sha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "actual_sha256": "86d702c3fef1822a35c43daf5cc8c682afed70eea634a9693e6233ad979040bc",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+      "expected_sha256": "471f597c9fb5c4ddb54de9461fe518d412baafea29acc30756ad9e40c2e43a0c",
+      "actual_sha256": "7877e86aac802d9dc9bc6775df34cb8834746634b32d8b28c9b0b5cfa38b8385",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/WorldPanel.tsx",
+      "expected_sha256": "7fd72f1a4a490d2ecc930f3e45999ef93b2948d96e86303c28e8a3fc3e69cc73",
+      "actual_sha256": "fd27a8d1c7c634a15c96c39f8e2e2017f47fff56d53eaf976555121f2b3b1927",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/WriterRoomPanel.test.tsx",
+      "expected_sha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "actual_sha256": "7050e594f92ca971f41752ef85b1ddbcacf7427877a3c2f625779a6998141e35",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/experimental/WriterRoomPanel.tsx",
+      "expected_sha256": "79413cd98172d9e09ef1b975e52b5fa235538b0a5530f8f3e1bac1e95fb0c695",
+      "actual_sha256": "3886fc8f145c0736e9b20e2f1a9b8e55e0abe6b7579f36a50de0f034cffd97b5",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/declarativeAgentsClient.ts",
+      "expected_sha256": "9b1804b9237409d2edbbc2d18d0f00a169cfba3e935b5b45c5174f0a47c902e4",
+      "actual_sha256": "93ee35042b2f0e18275e583e277be7b4a6f512f7b0421ec54f001730f49bee90",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/experimental.css",
+      "expected_sha256": "c3276b60e863512f77f335c26b9ceace744e0b45e2829eb909d20fd438a020e1",
+      "actual_sha256": "f240de65e61ccaa2736fdb655f1472ae5597c506711e7a56cda19e8c33a7507f",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/modelBrokerClient.ts",
+      "expected_sha256": "76c8177c72c0a15ab0c84cf317f2a7e0864effcca1693a1aed6ce1a36c9ceb60",
+      "actual_sha256": "a68e544aaa93ae3ccfd45eea60c46f439d7fcb6d7ce2e01cd895faf2f4f88642",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/multilingualEditionsClient.ts",
+      "expected_sha256": "68288e36f4f058126d7eec007c27b94c65c6fb7ae5957308aac4db52e9f2f3c9",
+      "actual_sha256": "7e93390268774b764b75447f5ea14becf8d31c15ca69ab5e7de705fb265b9247",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/experimental/offlineSyncClient.ts",
+      "expected_sha256": "dba1e7bc2b9a37369b57524a3f8af94e8aaadb9682053cbc9683ea9aaf8ed0d5",
+      "actual_sha256": "afd1564923d28ed278d2ee378ca1ed426b2e3c804dd31441d971019634cf646c",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/modelcenter/ModelCenterPanel.test.tsx",
+      "expected_sha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "actual_sha256": "169e50d5bbfda7b3339dacba0b9288e53aaf9fdf87ca48a9353627283218cbb9",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/modelcenter/ModelCenterPanel.tsx",
+      "expected_sha256": "6830b5ba4f5ff417bf24166eea49800e858deb916b0832bad4f4914035bdf4c7",
+      "actual_sha256": "6d8ef71058161705cffa71bffb4cf9a2812a13b0ce8ebd94db17dbc1811e7936",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/modelcenter/StoragePanel.tsx",
+      "expected_sha256": "e37ced69d272de645b5f662ceae6087102cf4b70902ebcd3086f8a1a05a349b4",
+      "actual_sha256": "3ab4a46af4fc140adec48fffb93644f10ff82c8dd389cd13023d096068297ab8",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/modelcenter/modelCenterTypes.ts",
+      "expected_sha256": "181f752b5328225d6852dc37719c9a3cdf3ca3b1972804f8c79fca3e268a1c80",
+      "actual_sha256": "912354869c5f4f55e8c4f28701fb62de67aa79c9b1bce5c9cf66c68521c3e2d9",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/modelcenter/useModelCenter.ts",
+      "expected_sha256": "10d420430baf84db415a0f0fe5b04a8f938698e20fe8fa671619bce0d9124611",
+      "actual_sha256": "83e4cc2ad6094d76a1efc8feb6a57ebf7bb21593d56504e558d7d6233037fe80",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/novel/ExportPanel.tsx",
+      "expected_sha256": "6488f136354e2d304ae83f061410e00393dea185581cc11e86503ddf8776e79b",
+      "actual_sha256": "d940457f6f98e2f7d07a31d8f2a2110028c741bb52f8669f5da1cd34bcd23d85",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/prompt/PromptEditorPanel.tsx",
+      "expected_sha256": "b19df1717176f5c7ca5cf00c45007c875327533350635a853a92ffde4e5fadfc",
+      "actual_sha256": "2b28486d3e3bd6cc403bb9fa46a944595061b59d3fa7ab3c1863f66f49208c0a",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/prompt/PromptWorkspace.test.tsx",
+      "expected_sha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "actual_sha256": "a2989c9df5e8b462ea64a7c61e222f4f3446528fbdfec6b5dd5f1dbb133aa18b",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/prompt/PromptWorkspace.tsx",
+      "expected_sha256": "de133383ea049152578e0b828a61c3343dafd883450b0007205874e93f1c8d05",
+      "actual_sha256": "2a98e27f8bfb15a602fb548712d8030629afd5398d55ec150a97ba2955e4549a",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/prompt/promptWorkspace.css",
+      "expected_sha256": "fd5660420053af6c1502bc0a6e9746517084ade0a3fd30d8d2d98631bba91f1f",
+      "actual_sha256": "50722673e0234f0c654f41179a98c6f5e4b1e2a5114b4b1e06eacac4ee6f95e6",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/prompt/usePromptWorkspace.ts",
+      "expected_sha256": "1e50a0ae6e9d102dde423e256b6046a9f70ced3fd75dff3fb2f0f576cbcb6aa3",
+      "actual_sha256": "7baf2c8a432bd694fdd2056dc2030200d67a744a86f85755498e7bce23e937d9",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/taskcenter/ReviewInbox.tsx",
+      "expected_sha256": "1d9b77ca53f209b64a657bb7715a629ba950a6a0ba683e204466302e60f3f024",
+      "actual_sha256": "a7b97386960eef4fee051bedce2fd662a4e22aa157267cf980a092db0adfdd5f",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.test.tsx",
+      "expected_sha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "actual_sha256": "316e5439ce061b4b4aa8e24754285d83f7f90b55814d798e29679838cb0246f4",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.tsx",
+      "expected_sha256": "b6d7a21d4705ee9d24991b7a7e0f17bcfe3cf745bb231a1f16eee27cfd72cf57",
+      "actual_sha256": "a141a7e36ff8b0b80c01f93a3f261d4e511f2824801b6208db80dbcbfab67374",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskList.tsx",
+      "expected_sha256": "ad6f729991a1c25831bb10eb5ec7989e9c1acf7e277c49f7bb4dc1a263cff327",
+      "actual_sha256": "b68d5f5f788d2f441439045cf5c708b465ddc1c2e0531f0ea6bc37059a1e0ea6",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.test.ts",
+      "expected_sha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "actual_sha256": "d4000520e6117ff6c5bcb1f588b9f8698c95fcb7e5e0f793ee97669827a0c84b",
+      "protected": true
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.ts",
+      "expected_sha256": "43b874eb1326ea9325b22cc89e2737da35f88ccca9dfdbf63778a7a44c79860f",
+      "actual_sha256": "bc4c74240d54107325269ffb7b842bd4018bc21bd1992fcb452b88e934763ad0",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterTypes.ts",
+      "expected_sha256": "fb12c5a5bc22db1f22239abd9eec328b227e95215a20077279b99bb9c7914f08",
+      "actual_sha256": "a454c53ad93e3e59f38cdcab6448f991861cc5f3c0be83f1eb58a89ac89b930b",
+      "protected": false
+    },
+    {
+      "path": "frontend/src/taskcenter/useTaskCenter.ts",
+      "expected_sha256": "55804c1987b1a2e696593d84b658254ece241ba4cf023bb8de823440411e59ad",
+      "actual_sha256": "44d8b29b082a3e594541b7991ccbbc040258d2c2e1daa16c75c2b490b20d80a5",
+      "protected": false
+    },
+    {
+      "path": "frontend/vite.config.ts",
+      "expected_sha256": "c63c714b63a801414bc49430fcef8959e108370e02ab2074597da7504c463ee6",
+      "actual_sha256": "7a253b76db1ffa0bb553b6f4166e81116c30cb7e4e225db1fe487b92cbf86bb6",
+      "protected": false
+    },
+    {
+      "path": "scripts/build_windows_application.ps1",
+      "expected_sha256": "2310c97a25bb96e1f2527b7139d33a98b21afcba85376af0c509e5e296c8e0eb",
+      "actual_sha256": "d48af547fba703d4cbabe5e55b6b46073db28ba376b065035f33615eb2d353e4",
+      "protected": false
+    },
+    {
+      "path": "tests/test_r4_story_simulator.py",
+      "expected_sha256": "766f002bc7b2e2a7114baa61e6ae7374ce4b981831995b8a8984f6199e74f038",
+      "actual_sha256": "63b5139cfed2670d5eafebdd32e408622e7fd4cccb1287bc1da0799fa4040e77",
+      "protected": true
+    },
+    {
+      "path": "tests/test_r5_comic_layouts.py",
+      "expected_sha256": "2d24b7dd1b8a244cffef94d9d9106fb1b5dffd91ae92061e32f8a5a2a9dc9120",
+      "actual_sha256": "c4d66c56bad34f23635af5373ee477ac38dc9b6b41c44b7a5d2f7ad8912965ff",
+      "protected": true
+    },
+    {
+      "path": "tests/test_r5_interactive_story.py",
+      "expected_sha256": "8f4bc6e70581ce5f5512517df425e793713604c77854594bdac44f7d2cb6a907",
+      "actual_sha256": "f2f355c417f8c2def70afdb8dca4728ecd4773b9fec6215b0e362971de3d1414",
+      "protected": true
+    },
+    {
+      "path": "tests/test_round2_bible.py",
+      "expected_sha256": "c8c303a03d78cf32f1a8c1d997eb25b0fe48bb3b4d0707268fdadad38ea8c544",
+      "actual_sha256": "d7da05009119e408cd38dabf01b3797536ab26a72f79a5c7fc47cca0c06be8c1",
+      "protected": true
+    },
+    {
+      "path": "tests/test_v2_audio_flac.py",
+      "expected_sha256": "cda2870e6112f593186055c4c17579c6d0e73ccb332e2ed0bb964ffb5d37b88c",
+      "actual_sha256": "d0b72170b9a7392e15e9a3deff614ef8a8a9e3a42b158f1ba50778e212a6e6db",
+      "protected": true
+    },
+    {
+      "path": "tests/test_v2_creative_graph_persistence.py",
+      "expected_sha256": "0e15d0e88389b45a2d16544ccaf30c70d4e88b5e73a60d47b59d7bdcb2a8f44d",
+      "actual_sha256": "1732ee5a0c0430eacc3fdac1fb9090f54ec240a7ad93fa9e6fe6b7b702582fe9",
+      "protected": true
+    },
+    {
+      "path": "tests/test_v2_director_workspace.py",
+      "expected_sha256": "cb119b5e88ae3909386d2c540ee38d0e78b734909e1f0b4e4e144fb4737689d2",
+      "actual_sha256": "cdf5f1877e7aff4783e2f26d7ee50e5ac19ea5a236ebf04246ea7189630323c0",
+      "protected": true
+    }
+  ],
+  "new_source_entries": [
+    {
+      "path": "app/services/studio_audio_mp3_profile.py",
+      "sha256": "6b187cb81083a18113555b11809f1014a45748fdb700c4bf5fd8ea844cd59cf1",
+      "git_blob": "d09197f2fc74e3a75eb0c07e5f35eda2c81d700e"
+    },
+    {
+      "path": "frontend/src/AppProductionReceiptNavigation.test.tsx",
+      "sha256": "98c3afbe0be041cbfabf190980b7ab58cfefdd62c150ee771e3ffca84dacb32a",
+      "git_blob": "e357771c0034c1c50926c06709adc30d4b4827b6"
+    },
+    {
+      "path": "frontend/src/AppStyleComparisonNavigation.test.tsx",
+      "sha256": "4bf548d0d28e1abcc6f15ff869a8b49bb2fefc2db71ae0cf1456573d26270689",
+      "git_blob": "b947910d8acd109c4be9edc1a7d8434284dd1c73"
+    },
+    {
+      "path": "frontend/src/creative/AIDirectorReopen.test.tsx",
+      "sha256": "9b3423ca0d96eb861700a5986e123155cc7867d6b97411dee3443278d7629143",
+      "git_blob": "48bdcc50db10dd1a1645fd1f2d84957b23959e0f"
+    },
+    {
+      "path": "frontend/src/creative/ApprovedOutputNavigation.test.tsx",
+      "sha256": "8cc4704c11906c093328d9c6a62b18f195f3d40d3d7aac6e3e9fcbf21fc40a81",
+      "git_blob": "8241a0b9a989d2336f0db09129a88efd90e527b6"
+    },
+    {
+      "path": "frontend/src/creative/AssetReferenceInspection.test.tsx",
+      "sha256": "e9db0fd7f3043d9d5c1191592b87ebcf58a7c5d5ccb9faba3b6b209465bcb9c0",
+      "git_blob": "96d763d44eaeb5c83f02431b5568db0cbcbe733b"
+    },
+    {
+      "path": "frontend/src/creative/AssetReferenceInspection.tsx",
+      "sha256": "15a207ce0aa8871d32af099740c7863d29ffbe094cab7d9d8750338c186065d3",
+      "git_blob": "1db64d7cd822c0f4397dc643593f88b80fd5f490"
+    },
+    {
+      "path": "frontend/src/creative/CreativeAuthoringFields.test.tsx",
+      "sha256": "f174699d66c3f50bdc54c18c6694b1fa6df493a35cefc54ac0bfd4aa1178f8e1",
+      "git_blob": "1421b771b13ee7e0f5d041fee09524cc7e90b333"
+    },
+    {
+      "path": "frontend/src/creative/GraphCanvasLargeNotes.test.tsx",
+      "sha256": "3418d0861d3663d7c13d85439c3f55034f89f5b3cc54e010a54d7f3c41e52b28",
+      "git_blob": "b3daee4528f2db8738d183887ab4982562bc8c87"
+    },
+    {
+      "path": "frontend/src/creative/GraphCanvasNotes.tsx",
+      "sha256": "86f83aa42409245ec03d5ee4f4c956312c61b9044bd6b4fb22f9d83fd349a0eb",
+      "git_blob": "82dfff7d127b324b387777a7bb9e8d7260e10ad7"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorConsole.test.tsx",
+      "sha256": "d290bc7f931ca6e4bdac312ecce7c30687df26c781df6dbc0b9369daee5ea721",
+      "git_blob": "ccaebe743f3296a5611390ccd2d692a81a8e83b5"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "sha256": "c2d8b5377e35d4578bef4c95915dcc2c39c205dca36c4614606fe9f3872f7209",
+      "git_blob": "c3434551a6b6a40f4d70f02ebea5d3359b4d47c6"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorProposalReview.test.tsx",
+      "sha256": "6cb7249b6cb747a7a0bcd77f9dee43de0530be0b17673f0d7b934f49692ad94a",
+      "git_blob": "0160afcfaec20afeafa23d4161e03bdf00046366"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorProposalReview.tsx",
+      "sha256": "41e35bcdb626edf4503405e5358ba2578f4560cf55556e6e34180c6368f3a76b",
+      "git_blob": "78a7668fbed4e428e40669df74c905b96b3f8b00"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorSourceImpact.test.tsx",
+      "sha256": "3cb268732d5b8f6c2405d32ff07b7e49e5607f0bbc4d5dac11a91172c6994601",
+      "git_blob": "93ae54a19408426008f5df33893dd7ddf1f0298a"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorSourceImpact.tsx",
+      "sha256": "a5c80540bfb2c4a0c15bd29902e518b979715b099ea46b7cb453c5b4a1fa2b95",
+      "git_blob": "7661869e83f34bd800ed62abaef7622cf0d04120"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorStoryboardHandoff.test.tsx",
+      "sha256": "0af93504dae9a4c49a83c302de602874be34c62e331ed66aaad3ae244ba3cdc3",
+      "git_blob": "c82de223e5fd9fbd5683218fd06ef974a9258657"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorStoryboardHandoff.tsx",
+      "sha256": "6955f60a7117c4e74f4f33d5c70e699dc7afca0b32946434e8dc2084fb1945f6",
+      "git_blob": "d5851c469e8f003741d0775d8a7a0f4772eb77f7"
+    },
+    {
+      "path": "frontend/src/creative/GraphNodeNavigator.test.tsx",
+      "sha256": "a6ff20fd43fa6b2df713cb2b237a0d1d3ce048aecf6839a2391cf5df0e7fdf75",
+      "git_blob": "30e7e83b1965af144ed79025f9f67a16ea2fc460"
+    },
+    {
+      "path": "frontend/src/creative/GraphNodeNavigator.tsx",
+      "sha256": "d5489ced421a9f5a865a42716bc48e3ceacbd82b27a3410c9ce910621179c560",
+      "git_blob": "b5584c1999bf03c81213ef726ee8bb2cae65e8b3"
+    },
+    {
+      "path": "frontend/src/creative/GraphNoteNavigator.tsx",
+      "sha256": "3c764d100f03cfce365e8982aee0d7026b469b5a4a0d2f225fc18638ce9b17ef",
+      "git_blob": "cce041685e0f65208760dbd7c039b401565aff64"
+    },
+    {
+      "path": "frontend/src/creative/GraphVisualGroups.tsx",
+      "sha256": "8c7162c9521d1bacaf2c11b4535d330f20185d1c43516e2bad152cacfc6e80f9",
+      "git_blob": "9288694ac4ed2006b33c14752df447bd3f6aa4e4"
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphCapacityContinuation.test.tsx",
+      "sha256": "38872f7615c3bd50b3367dd3882eb6c681f45d37519511e49738057b32b43413",
+      "git_blob": "ddf97d6aabf01d5aa2ba8457bf437461a82d6c2a"
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphProviderChoice.test.tsx",
+      "sha256": "be33fc0e00a11f50bd2523c553dbcf8329bb2fda830d88862fd359db6838d9d6",
+      "git_blob": "9037bcbb992ec6fc99c6953131527b3116afaeca"
+    },
+    {
+      "path": "frontend/src/creative/StudioImageAssetHandoff.test.tsx",
+      "sha256": "b4a7896d73e06a078359e7ee25cf217feb6c8bcc0cf1ba91b20d43eb42d85c7a",
+      "git_blob": "b328184bbd3509a75bc1b28379a04723326bd84b"
+    },
+    {
+      "path": "frontend/src/creative/StudioMediaRouteChoice.test.tsx",
+      "sha256": "5e36248af150a92e77b010f542c9b0cb3144b4ef62b94e321f451ea3de8536cb",
+      "git_blob": "494b0521fb197029bc7fcd70a4def44fbe2d2fa0"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineAssetHandoff.test.tsx",
+      "sha256": "c33361f40f84f7382cb02bc4da4b51fbf97113f6ce543afb5fea8b317bae1bde",
+      "git_blob": "926f9cccfda5e370cbd8837caea5cc444a72fa45"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineAssetHandoff.tsx",
+      "sha256": "cae5b338ddf9fe467bd50ffe87b55177b368d1fe86860fc27b172a096e837923",
+      "git_blob": "c0e2293e5e98295141c9aba22b028bb74a7b2dbb"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineAssetPicker.tsx",
+      "sha256": "85e8c63a4c5a9cc3dcdce8a5c674d6a42c07ee76a61caaeb0e5823c6f95ca2c3",
+      "git_blob": "675427ebbd301f604e219178c656c529df842ff3"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineShortMedia.bridge.test.tsx",
+      "sha256": "200865828f3960602fc744534b1b9ee10193c3d4f490503389f94176c7d74541",
+      "git_blob": "d10c659c774029f27d7bd3e8c2ac9d3adb74e336"
+    },
+    {
+      "path": "frontend/src/creative/StudioVideoAssetHandoff.test.tsx",
+      "sha256": "d6d10a035639763f1723e0231a1d75342f0bce3f4e24b3298304222b5bd071f9",
+      "git_blob": "82bbb962737cdc8a4edaa86801572152f1b3ba7f"
+    },
+    {
+      "path": "frontend/src/creative/StudioWorkspacePreferencesForm.public.test.tsx",
+      "sha256": "15475f0f49ca9d199de51d2e5e11436fdf346edfe6c30b5a983b284ce5becfb6",
+      "git_blob": "1037e9b3c15da36710e8231c451e46c34171bf6c"
+    },
+    {
+      "path": "frontend/src/creative/TimelineTransferReview.test.tsx",
+      "sha256": "57dfccac9702706ff7a94e9dd368daeb40b8ebfa2aca6006746a39ff374e666b",
+      "git_blob": "26d9504a02f35c7cee3401a12ac7727994ba1450"
+    },
+    {
+      "path": "frontend/src/creative/TimelineTransferReview.tsx",
+      "sha256": "18447637c7923672621f2c41cbdf71a1d3514b64720c36ac9fbbb265e1d53bd0",
+      "git_blob": "8ad16980b6f1f0af1fb37049ddca11c60ecc9c12"
+    },
+    {
+      "path": "frontend/src/creative/directorSourceImpact.ts",
+      "sha256": "c3f75f784298ecac8852841af5e004289cef0a2bfca41be3f1a209b291d13d34",
+      "git_blob": "3378d9f4e8d12f1c3c892a542c37f895ecee53df"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/audio-mp3.capture.json",
+      "sha256": "9f3dfb4b89dfcf80e3890f3b802eb8133105245051364a1642663b3afe08183a",
+      "git_blob": "abbf74c395466565d526dcb2b5a4af4725af59f2"
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasLargeNotes.test.ts",
+      "sha256": "9a655be16c05d556d5b0e8e34749bada0481a9b0aa30e05b9264327f0dde99a9",
+      "git_blob": "bb0422fb68b962bae17c48b1230263b3755d82dc"
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasNotes.test.ts",
+      "sha256": "b2b34c63d306374f49a211ce45c88b510227ce9da19b03e55097240fc5ca926a",
+      "git_blob": "8d48f848009ed4ab29210074102608867a46d55b"
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasNotes.ts",
+      "sha256": "b3f3d0a5e0e9aa88dcb789e84d6fda17f6012028357545d08e30ed7d7d460222",
+      "git_blob": "df27faead2e3e59ca2b4ce84a3c2615ac125feb1"
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasPresentation.test.ts",
+      "sha256": "1b515a0d87a2d02e080b004e74b185907ae5c88f62bfd584dfbdc9dc32e96cf8",
+      "git_blob": "9eb224353cdf5d087bdaabe9821b11451d218974"
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasPresentation.ts",
+      "sha256": "64da40d2c6ef1208612b471c08f47d967cafa09fca84e8c03827d5b024801542",
+      "git_blob": "f4f281416545b16ae275a49e675138d8038eac13"
+    },
+    {
+      "path": "frontend/src/creative/graphSelectionCopy.test.ts",
+      "sha256": "dcfc868f2f0be739a66eeaa0a07ed4affdb4251054d855d9fb7f9e64e0476937",
+      "git_blob": "789a0bae4efa115a10a2fc6081d2726dfdacaf56"
+    },
+    {
+      "path": "frontend/src/creative/graphSelectionCopy.ts",
+      "sha256": "6542656c072ac5e25796553c2c2316260808b034695688b0b3caaaaa9125e903",
+      "git_blob": "622174368aefaf740230b08ddeff404caa9bf338"
+    },
+    {
+      "path": "frontend/src/creative/graphSelectionCopyController.test.tsx",
+      "sha256": "1105f979d9a110e3b9249069e38f9ec76a61d907ccd22fc4f048224c24879bf1",
+      "git_blob": "e6f527503065ae34e3c580a9e5564c6042ee7843"
+    },
+    {
+      "path": "frontend/src/creative/graphVisualHierarchy.ts",
+      "sha256": "823d440aee9594ae1e8082d5f9bbd8626e14c36164d8e2ddb7c10bdf2a186c78",
+      "git_blob": "b4f46416a3b1847caea71ef62473795af33344db"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioMp3Contract.test.tsx",
+      "sha256": "d3840544b937e204ca1e8555605e1218a1c824d3bfd0b2911e543124c4f3a790",
+      "git_blob": "f59a9311a99a0999e92adc71e0164fa8e1518c6b"
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineAssetRange.test.tsx",
+      "sha256": "eb293c8e462f394f4f1a8b2c670d7e8722075b8e98a4165bd6b8621769cf13e1",
+      "git_blob": "022b4d570a087220cff80b548183c8a071a843fe"
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineAssetRange.ts",
+      "sha256": "5dd3f76d107b4a4db87bb491bd07098cc75378b223cfa7d72aa5bd29b7cd14e8",
+      "git_blob": "427d78c542e830babd2eb0f4ead37327f3f4e8a0"
+    },
+    {
+      "path": "frontend/src/creative/timelineTransferReview.ts",
+      "sha256": "b68043f72c68bc5b7d96f66e3da67dec9bfb6d50f4a13690497b660aaeaa91e4",
+      "git_blob": "4c83a6c3886e5f1cff6167602c297e064e1faad7"
+    },
+    {
+      "path": "frontend/src/delivery/ItemExportPanel.test.tsx",
+      "sha256": "bac00dbc4e7909b2ede244e372ad9bc8a08cca726def27134ba890ee27fadcb5",
+      "git_blob": "603bb75e00fa967075ac3ee3b878baca2e8c679a"
+    },
+    {
+      "path": "frontend/src/delivery/ReceiptRecoveryPanel.test.tsx",
+      "sha256": "b2c9313ca6c73dd8f43ed89783b93fe8981d7505bcbf4ca3e7a89ed7a65865a6",
+      "git_blob": "e4d571bcb0306d98915c136e22d7547e4dbad7e1"
+    },
+    {
+      "path": "frontend/src/experimental/AgentDefinitionHistory.test.tsx",
+      "sha256": "06f53d1788794c163346aa8f7da04f4b55433451dd8b5d1661a4fccd25a70771",
+      "git_blob": "7540373e2afc1e0df788fa70da8d4f0969dc19d0"
+    },
+    {
+      "path": "frontend/src/experimental/AgentDefinitionHistory.tsx",
+      "sha256": "9e15a679f4086276d3a4027c2d7c48250514608d34cd233234a7857458aed606",
+      "git_blob": "9d130737c1a237d1d644439346a51060ee5a4aab"
+    },
+    {
+      "path": "frontend/src/experimental/BranchComparisonReview.test.tsx",
+      "sha256": "349af9e4755ec730b62639130bc92d2118e1881edaec5354bf768b81d2ebc76e",
+      "git_blob": "f4db1763fc09b796e3458caeafae443c26582d4c"
+    },
+    {
+      "path": "frontend/src/experimental/BranchComparisonReview.tsx",
+      "sha256": "39ab58a595d509bb50931502b0727bbf09baac39a16f79b21acbe92b55767e5c",
+      "git_blob": "e76767e15de6616c4d18a4b4bfdeaa4fe0e39232"
+    },
+    {
+      "path": "frontend/src/experimental/CharacterMindEvidenceReview.test.tsx",
+      "sha256": "b5091d0f69142a45b5d3eb9f995d126fbc160bc2bdcb4bc79f20c37f90ac2ae5",
+      "git_blob": "9869ab675fe0898c6c9ac5bbbaebd2ba28359afa"
+    },
+    {
+      "path": "frontend/src/experimental/CharacterMindEvidenceReview.tsx",
+      "sha256": "b1e29b979cf79ca50451ad2f22b68c54080a4c9c3abcf3e65883da8ce405afb8",
+      "git_blob": "78ce9a505f4fd2fdf42799d57d6cd0af31210b34"
+    },
+    {
+      "path": "frontend/src/experimental/JudgeRevisionHandoff.test.tsx",
+      "sha256": "181b495bb11b2594213e32d1227aa65e56fd21740401f1097224505608a442a8",
+      "git_blob": "4b3b404779889fc3bf9de5db7cf64d817863194b"
+    },
+    {
+      "path": "frontend/src/experimental/OfflineSyncRecoveryStatus.test.tsx",
+      "sha256": "e34b1f2699f9276228aba6ded4a75de9bd0e641997b9fd25673917b08bf3b958",
+      "git_blob": "0bd940efab8ec877292f01ec7c599a2d85cdb117"
+    },
+    {
+      "path": "frontend/src/experimental/OfflineSyncRecoveryStatus.tsx",
+      "sha256": "acdb1442498076dcf79e50fbcad1ab0b129eb401f040dd0a384095ceea90cb37",
+      "git_blob": "16c24c30bff94064ad364fb36569919180352589"
+    },
+    {
+      "path": "frontend/src/experimental/PersonalSkillBriefComposer.test.tsx",
+      "sha256": "09a876e55906a5b2f5c7d6020a2e856d479accddb7aa2265e76341c21accc537",
+      "git_blob": "50f80ec44213a2d37a2f3daf5995321cb71ba1a3"
+    },
+    {
+      "path": "frontend/src/experimental/PersonalSkillBriefComposer.tsx",
+      "sha256": "73afc9d386e75ee70d90ebee1074981b2604da180ee950aad48c536d4d6289e6",
+      "git_blob": "14d1e6662af8b4fe5dda3223a7a147c5d9db6a25"
+    },
+    {
+      "path": "frontend/src/experimental/PlanningPanel.handoff.test.tsx",
+      "sha256": "931d671ab046dcae9333fac6362e6942217c5d597963f546cc01eaad8845f5cc",
+      "git_blob": "ff65b3b44fff4533c362d65ef72cfb44a269c1a7"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionReceiptReview.test.tsx",
+      "sha256": "b69218b96f71377a438d8d4ffa659047cc372596cb90fb687fa4c271975b7da4",
+      "git_blob": "9c3c7a81d4a7bb0b65ed1dd0b064fb0a28664dee"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionReceiptReview.tsx",
+      "sha256": "3fecf0998ddaa23b376b104d0382c083afaabf1adff636ca54a9a8cc284009b7",
+      "git_blob": "28b9ce02a13ac8b97f54181dad77289a8de20e54"
+    },
+    {
+      "path": "frontend/src/experimental/ResearchLibraryPanel.location.test.tsx",
+      "sha256": "4fcde8c0359c3646229bf1fd85a186687ac872aec62303bb338508e935be6cd4",
+      "git_blob": "fa5086bf890c390647e829e81dfc638eeb0bc31f"
+    },
+    {
+      "path": "frontend/src/experimental/StoryGraphEvidenceReview.test.tsx",
+      "sha256": "1f2a1bd2377862fbce7deb7a7f80f838853d142e95dbff63dcfde995b664b40e",
+      "git_blob": "363bf6a67c6acbd13486fd5162942ef153f2d777"
+    },
+    {
+      "path": "frontend/src/experimental/StoryGraphEvidenceReview.tsx",
+      "sha256": "a2ce075d8dc05f6c6cf32f35d0b78c589ae7c20e2b858ddfdaf340c593e4c1b1",
+      "git_blob": "bb4dad4451a51ba27fbafe214670ba2e7220726f"
+    },
+    {
+      "path": "frontend/src/experimental/StyleComparisonReview.test.tsx",
+      "sha256": "f89dcf581332ac2087a0a21e2cc8f739d2adf7bfa5419e622503635726179db8",
+      "git_blob": "cd6f2e90d55e4ee5c8890a9c82474932783d2c3f"
+    },
+    {
+      "path": "frontend/src/experimental/StyleComparisonReview.tsx",
+      "sha256": "5b483e3bc503dba403009d2ddd70e9f8b18e89d66a4c40dd377c1168a8e8ca99",
+      "git_blob": "f2ea2d17cd37b1c813dd699f0cdc3a8285956854"
+    },
+    {
+      "path": "frontend/src/experimental/TemplateCopyEditing.test.tsx",
+      "sha256": "4ad06f25c45fe634d9536c142e63de366a86d31653555dee9b8b7dc5e8a45723",
+      "git_blob": "81e608943dc2224d710575c91c12090301f06707"
+    },
+    {
+      "path": "frontend/src/experimental/TerminologyIssueNavigator.test.tsx",
+      "sha256": "fe158d61cc910b4254ebe9e1d692180b5397c3b316bb4bd8c1894452217eb768",
+      "git_blob": "f0dbadb5dda4780b732d633525390a2044e782b0"
+    },
+    {
+      "path": "frontend/src/experimental/TerminologyIssueNavigator.tsx",
+      "sha256": "d4f15a8e524ea814c3031ca496c4691a5316bca61d831dd4b3bfe21a9ad6c8cb",
+      "git_blob": "07d0574deb27624cc1612fcc94b8f4f38c8ac893"
+    },
+    {
+      "path": "frontend/src/experimental/VoicePlanReview.test.tsx",
+      "sha256": "88c71a93b2a17cedec67ddd1fbc6b0e17c5ec4431765dbd5419b89d6d9d89fcf",
+      "git_blob": "ffa4d8f3cb0f2f1dd9f1ff97cbfdfbd404f946e6"
+    },
+    {
+      "path": "frontend/src/experimental/VoicePlanReview.tsx",
+      "sha256": "d9b82e93d23a215e9da9ce03f5e7804ad3cd1559ec990ee0480d6525c8e5d92f",
+      "git_blob": "c2cc9b5dcce70b40c64100de13971b36af25c705"
+    },
+    {
+      "path": "frontend/src/experimental/WorkflowGraphEditPreview.test.tsx",
+      "sha256": "308cbdfa3ebc9c486791d19fa10a1d8d1cf98b2a26181d52a2576727229beb5f",
+      "git_blob": "ec1fe760b5f9391fc235b8e2f1e29261369bcc34"
+    },
+    {
+      "path": "frontend/src/experimental/WorkflowGraphEditPreview.tsx",
+      "sha256": "f434132e809f74ea80a9fb67010faa29aef197e916d1a4c7debf0f14d866c80d",
+      "git_blob": "867c38e2c11639abfe17b8447cc9d97990f3d4d2"
+    },
+    {
+      "path": "frontend/src/experimental/WorkspaceDiagnostics.test.tsx",
+      "sha256": "7c294748a290f708506437cfe57ff6ccb3808857be139fdad66dc99abf2a6b54",
+      "git_blob": "7dac25a6bafd28726e9369d9d7d09db115c04d67"
+    },
+    {
+      "path": "frontend/src/experimental/WorkspaceDiagnostics.tsx",
+      "sha256": "cf8ccf7ecc7e4ae4ef4b90a40dc3ff8a89deaae6194b95d641d38e53f4f9cbf5",
+      "git_blob": "25369272ef1c8faae25314955243228f7cf8d5f3"
+    },
+    {
+      "path": "frontend/src/experimental/WorldPanel.visual.test.tsx",
+      "sha256": "5f4a8948b6002473c6afd5642a94a23a9727ef0ea3127c460168992fbdfeed46",
+      "git_blob": "b2bf0335c093d3c173f67511a5198bc2a608d3f5"
+    },
+    {
+      "path": "frontend/src/experimental/WorldVisualFields.tsx",
+      "sha256": "b9f9350a546caa81956ef25f62bae9cda81c075d0634ffaefcbe5192e8422d09",
+      "git_blob": "f5029dec73e85ac88a12c37b17a522cc66469803"
+    },
+    {
+      "path": "frontend/src/experimental/branchComparisonReview.ts",
+      "sha256": "90d487c28c58e985bfedce0c156bb62b1e7f53aff16eb95dc933bcc7c5a53f7a",
+      "git_blob": "f17d16b37144d4efc52d500bb9fe77a088877717"
+    },
+    {
+      "path": "frontend/src/experimental/captionTransferReview.test.ts",
+      "sha256": "278ed4b917aa15ed1c011d03486a735d0781e72d8a7de38d1fca75f727c7a827",
+      "git_blob": "3d3fa028ca025ab58ca86949457bd806d37d3f72"
+    },
+    {
+      "path": "frontend/src/experimental/captionTransferReview.ts",
+      "sha256": "160e2e33f5c3f4c9a4e4e2f7f8442080482bd380a61107dac1044e38b526b5c4",
+      "git_blob": "52287f1f259952884b15507258d69fc24cfb765d"
+    },
+    {
+      "path": "frontend/src/experimental/characterMindEvidence.ts",
+      "sha256": "6e45ca99cbfc615571801b76121a17e8b5461a7f852a7666dcb525305a22cae9",
+      "git_blob": "b497b5e2a434c7ce0015618a2b47ac1a2a99343e"
+    },
+    {
+      "path": "frontend/src/experimental/comicArrangement.test.ts",
+      "sha256": "7c04b6d6b374487b4234e3246c71fae7412bcbbdfe772d422e0154e754caf61d",
+      "git_blob": "5b9bda31c9a3d73faea100e8a843a70876cc1490"
+    },
+    {
+      "path": "frontend/src/experimental/comicArrangement.ts",
+      "sha256": "e8047c14c733e8975dd22a4003256ab3b01a8bf98299a326a859d719261e37bc",
+      "git_blob": "a58e34ea8ec467c237e1b2968c564e63ccc43d43"
+    },
+    {
+      "path": "frontend/src/experimental/diagnosticGuidance.ts",
+      "sha256": "97216787dc3a7d2286664d3097feefe214978504543643b8aac8a4e30b730fec",
+      "git_blob": "6d0d23a2ce2048282a7175b110e42791b41dd96d"
+    },
+    {
+      "path": "frontend/src/experimental/judgeRevisionHandoff.test.ts",
+      "sha256": "c8bf58f247b331e89f6e9b3ee87f9af1155ac6f37bedbc6b34485f9aceee3474",
+      "git_blob": "ab0d594be4d83d0e0f86b1b3b166c38cff037884"
+    },
+    {
+      "path": "frontend/src/experimental/judgeRevisionHandoff.ts",
+      "sha256": "4af3d3ec40058e0024ec3d7bb78b80b9253a73e8ca9f6366a344d9a7106689e1",
+      "git_blob": "0864172929c60c4abaf067c2bbe89e57d3584b62"
+    },
+    {
+      "path": "frontend/src/experimental/modelBrokerPresentation.test.ts",
+      "sha256": "197c693c1ca559b8d2c02cbb104d4a6afcd6f962133c32f56811c353e4d1f45c",
+      "git_blob": "15c32d06896cc65b15e46801862a973b83c461a3"
+    },
+    {
+      "path": "frontend/src/experimental/modelBrokerPresentation.ts",
+      "sha256": "e77ce3be95ccbe17e0b2e75ed46a3bf3335abeb01d9c37babeae6b9c23d912b2",
+      "git_blob": "76325cbbc87941ec57154f55988796a7835f9b45"
+    },
+    {
+      "path": "frontend/src/experimental/personalSkillBrief.test.ts",
+      "sha256": "42778db2161d86a438568fee057cbc028c620eb1f4db6bbc5dcba5f520bc21d3",
+      "git_blob": "67bb14a7c36d2a8b2566109276f50fcf09122158"
+    },
+    {
+      "path": "frontend/src/experimental/personalSkillBrief.ts",
+      "sha256": "548dbe8719970a7f996a0e99b63b8f2e0da3809463a81ceed45bcd7057d03eb1",
+      "git_blob": "701d0fb8b40edd6e28d295d5645e4d8801c7b037"
+    },
+    {
+      "path": "frontend/src/experimental/productionReceiptReview.ts",
+      "sha256": "25d4bfe1db5210d631b49671f72813fa551b8847b4a6c03cc64e25cd79cfe2fa",
+      "git_blob": "6774e5651d3059ac63380e013e7cf74372a0b927"
+    },
+    {
+      "path": "frontend/src/experimental/researchEvidenceLocation.test.ts",
+      "sha256": "a498486909537c3c986a6eab5025b4a1fb3d13909cdd3d8505ec6cb99205f705",
+      "git_blob": "cd3090936f6925efc3adb994eb75816db1836122"
+    },
+    {
+      "path": "frontend/src/experimental/researchEvidenceLocation.ts",
+      "sha256": "32c13c2a822ea8e0e770fa492196ca848f6d08b60b6a263d2800d8cae898c247",
+      "git_blob": "b89d87afe65d8a466f7ea3164acc14ada037eb49"
+    },
+    {
+      "path": "frontend/src/experimental/styleComparison.ts",
+      "sha256": "980f8b4624ca962ddfc0cab7ff46fcb15bf6b853a53f14128b1e25852535fff9",
+      "git_blob": "6abd61aeabc73596b555b205b18639abc32600d4"
+    },
+    {
+      "path": "frontend/src/experimental/templateCopyEditing.test.ts",
+      "sha256": "5e78858925676e86906c0fda5fd1a6467430834c597d021903730c8846fdfb0c",
+      "git_blob": "35d58abd4f0ee7f01e7dad8432e89c279750566b"
+    },
+    {
+      "path": "frontend/src/experimental/templateCopyEditing.ts",
+      "sha256": "46bff39a4ca04c6db2d37bf9bf238149976e2e8143cc22328fa83f08bf6dd0fc",
+      "git_blob": "87f1a8093255de02bdde23b1691248a3ad368bce"
+    },
+    {
+      "path": "frontend/src/experimental/workflowGraphEditing.test.ts",
+      "sha256": "28189d6cd44ef081b465a4fd570c0a84e8e6028737cbcc33bce9258532790433",
+      "git_blob": "b30352905afe1e52df9b92ed344fddd20e755077"
+    },
+    {
+      "path": "frontend/src/experimental/workflowGraphEditing.ts",
+      "sha256": "4c5b020ce196ae3af7f6a4046178a43c9cfcffa70ab97fa936a70b21068cd34f",
+      "git_blob": "6bb8591e2407cdb88a1479e1fe3f1c782e5846a6"
+    },
+    {
+      "path": "frontend/src/novel/ExportPanel.downloadFeedback.test.tsx",
+      "sha256": "125cd182b2b33b410ec5b6923cf37d192f32eafdb783a3b710c7b06875d1e284",
+      "git_blob": "25512ab8f11ebe7c54cb05108ccb7ad31ea70639"
+    },
+    {
+      "path": "frontend/src/prompt/PromptEditorPanel.copy.test.tsx",
+      "sha256": "f053072a31c5f69810fef7027a2c0378b3734eb1a4b30a7604a440a16b9b09e0",
+      "git_blob": "17cac5130d99c186bd6e4074e4cf946de82848f7"
+    },
+    {
+      "path": "frontend/src/prompt/PromptEditorPanel.usability.test.tsx",
+      "sha256": "0d18aa0cbc3d3cb9fd2a03951c63bdd9fdcff72cae45cab254b1915552eeff1a",
+      "git_blob": "a5fa7cf604b5eae9b24b7f13470a6f54921cfc48"
+    },
+    {
+      "path": "frontend/src/prompt/PromptRevisionDiff.test.tsx",
+      "sha256": "10dd8f7330be00620a86ca0491e021aa8c6c3846892dcbe737b1dff172d62a3c",
+      "git_blob": "cf282e503db8716d3ef980858e5c175893e8b318"
+    },
+    {
+      "path": "frontend/src/prompt/PromptRevisionDiff.tsx",
+      "sha256": "42dd81477c1c0b99fb4ab2632171354e71ec95eaa045c2e935f6dcfae1ae7c23",
+      "git_blob": "fc80ad8b7393ead3d0a2a6527e0c3a815f947a22"
+    },
+    {
+      "path": "frontend/src/prompt/PromptVersionHistory.test.tsx",
+      "sha256": "d58afc6f7dc494fcf6e2eb64a31a9fbbc6bc90272099312877cadfd97b60c51f",
+      "git_blob": "0a2ec854979163bf3c1b6eb49d056c997d5e6807"
+    },
+    {
+      "path": "frontend/src/prompt/PromptVersionHistory.tsx",
+      "sha256": "100bdf3cb2e99adfca93e38872d264c54c5a83e8e8d05eee5645777c1f8aeec4",
+      "git_blob": "a4e93e4d515de634e4f98d0955dbbf1c070fb173"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.navigation.test.tsx",
+      "sha256": "363c2b11bff339c67f1a02422d5a76bb7518e95c0730ceca7324df542a899e7a",
+      "git_blob": "1723c41d64d60f63514c1140fa3fbc54f991bb6a"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCostReceipt.tsx",
+      "sha256": "e1f90b7084bd953016404626ae18514caec29c27ef7859d32830a56834c0bdb2",
+      "git_blob": "0409fcab00a0c324849f71e198be250378b101e9"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskOwnerResult.test.tsx",
+      "sha256": "f24ae8e91bcb0b0437b517c649fa01a736638e2ac5a09d853b075fa5df1bcb72",
+      "git_blob": "1f3906bc528078f59edec2878ca7e7b288b02169"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskOwnerResult.tsx",
+      "sha256": "c35c52e962258243021c9dce66b0920d6bb04452af614707ed49aa5afc94e70d",
+      "git_blob": "8efa8774db432411712acc9dbdbcd7293cf6b7e9"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCostReceipt.test.ts",
+      "sha256": "5f54933c32f3187ceb32325bf44e7854a776aabd0219600c430ca9a001927982",
+      "git_blob": "067a914acb1edfed6d87dfbb857f7a54265647a0"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCostReceipt.ts",
+      "sha256": "18ecf05ace1e583ffb676409b78dbfa2ed331c4c660fde5465a5aef1427830fc",
+      "git_blob": "7501c47ddb55c1852719540fb6998b583a9436ac"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCostReceiptFixtures.ts",
+      "sha256": "614288494fae950dde64ec2ee8d2a431685caee136155c3f39a06bd42823b4b5",
+      "git_blob": "d42675b403951ef22f118e251bdae72911fc126b"
+    },
+    {
+      "path": "frontend/src/taskcenter/useTaskCostReceipt.test.ts",
+      "sha256": "9a96aba64f1253bdd56879432e62af42bd3714f5ef090c5fff9936b97e1456e9",
+      "git_blob": "eaad5bcef73dc2e6b93875dadaa12ed7fd26b9e0"
+    },
+    {
+      "path": "frontend/src/taskcenter/useTaskCostReceipt.ts",
+      "sha256": "d0c150d739338f42a87112b4866a9cea7cf285fb5cb7dc58995709b4cbe4a7f3",
+      "git_blob": "daf1e15d45b8141ac7c585733e0d87674c06e01e"
+    },
+    {
+      "path": "frontend/test-runner-manifest.json",
+      "sha256": "7930a9ed863a3d1c5006d1ccdfd896582c58911892b09ad53a9f05e700e4dc7c",
+      "git_blob": "8e373a882db6c05273a751f3e4014e83883570d7"
+    },
+    {
+      "path": "scripts/public_build.py",
+      "sha256": "052e5486633653cbe21725ac0d10843f03efb77eae8757503e5e249721f36619",
+      "git_blob": "1fcf5f1685a0b7eb85608b6b56c50e29704bd3ce"
+    },
+    {
+      "path": "tests/fixtures/v2_graph_note_numbers.json",
+      "sha256": "3d2136ea25a8d02344e083c47b810c50c35f0546f45f31709aa0e2cef6ef62bc",
+      "git_blob": "90b6d6ff6ec4a3be1ca4decd53ae1094fd8af9cc"
+    },
+    {
+      "path": "tests/test_declarative_checkpoint_edit.py",
+      "sha256": "6d86584f0d88efe63716296ba4fdd680bfaa645a498553250ef9a8dfe6dd973a",
+      "git_blob": "34352f470755c411f5e01e7a740c4dcbc1e28cdb"
+    },
+    {
+      "path": "tests/test_declarative_definition_history.py",
+      "sha256": "383bc14e759347b4d457ff8925ba8d42ea40e575d5d4f0cbb77e88639f6d61c6",
+      "git_blob": "4f8e10ffab315a3bf8eabc0fe162ef6b1c43a6cf"
+    },
+    {
+      "path": "tests/test_public_archive_limits.py",
+      "sha256": "641738abe67766c6b1b7ed1d728a64fa5f466b45db5d9dd28cfe940035e24a63",
+      "git_blob": "ed499c1c81543d6b36cffa6270200ec4040b4fdd"
+    },
+    {
+      "path": "tests/test_public_build_profile.py",
+      "sha256": "950d714dbae610c01d73c926440376fda33293515a5b8b091e1d36c4c9ac2a1c",
+      "git_blob": "b39cb2fb0d28ac9f959b417838f6b26e4098cf31"
+    },
+    {
+      "path": "tests/test_public_sdist_artifact.py",
+      "sha256": "9efa596bdf7903e7b469b413dff6911836981959a2b60ab88f6694f98ebabaa3",
+      "git_blob": "e18862d0997eb027e06aa1bc969e413c7fe173cb"
+    },
+    {
+      "path": "tests/test_public_wheel_artifact.py",
+      "sha256": "beb8eb68c94d590532123c1e6efd10ccd46404098aad9b6ec227a05285fdb85b",
+      "git_blob": "f890ba19fff8c3594e85603d874a8cced90da92e"
+    },
+    {
+      "path": "tests/test_research_evidence_location.py",
+      "sha256": "88565844b0dce1fa05869e0991d3145ec6b1487cff543dbf96fb2540d08519b5",
+      "git_blob": "6873a727d6e3598be8b093a95ffe56071f7c2fef"
+    },
+    {
+      "path": "tests/test_style_comparison_review.py",
+      "sha256": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7",
+      "git_blob": "b8424ec54b1945843a231144f333bbe93838d7b9"
+    },
+    {
+      "path": "tests/test_template_copy_editing_workflow.py",
+      "sha256": "ba854e8248ee0fc755061a1cda5626ac15df742506281e60482555bd0b6c6eed",
+      "git_blob": "3c79abb78cbaac1aca2a6560c307e90b5129f035"
+    },
+    {
+      "path": "tests/test_v2_audio_mp3.py",
+      "sha256": "6df2a8bc244045f90c6eefafa8db2965b023448aa467153222369521ac01f231",
+      "git_blob": "8e71b0adb21abeb7a52a47cd9b78be16852aa327"
+    },
+    {
+      "path": "tests/test_v2_audio_mp3_api.py",
+      "sha256": "243c20f150cb8916b07e47d849db29dae18977d3d13dd1b64ae0510889539438",
+      "git_blob": "8c0e0f5922e51115a058f34c2ace56c5da932104"
+    },
+    {
+      "path": "tests/test_v2_canvas_large_notes.py",
+      "sha256": "51c4e16af771d5d24f66010fcd2530da453dcd7eecb59df6001eeb84b7f8b73e",
+      "git_blob": "792a323ea9603ae35c1c53975d5eb19248c302c7"
+    },
+    {
+      "path": "tests/test_v2_caption_transfer_preflight.py",
+      "sha256": "e83b7d4f9952e204bb378eabb0ea4176066663676521cca42698bc8f4cefed7e",
+      "git_blob": "b5a4f60c7837ccd8371a2bb565b45868a1c28015"
+    },
+    {
+      "path": "tests/test_v2_director_handoff_reopen.py",
+      "sha256": "feb404db88be35cf62cdb0d371704c3d65e07f60662ef7cc31558c2194c87dbf",
+      "git_blob": "777dab74c9b3de1af59abb2d70fb97abc1e3be45"
+    },
+    {
+      "path": "tests/test_v2_director_model_planning.py",
+      "sha256": "c79e97ca3f76afceeac31ae23d00480f6e4787378d9cdf0db9b9324f3e80be6d",
+      "git_blob": "2a21aa95025110ee64dd017ff431c91ff563bcf9"
+    },
+    {
+      "path": "tests/test_v2_director_proposal_reopen.py",
+      "sha256": "d892b7dc619c0a0e7c0f7b976d3fdc455ef25c6541f88af405a87df5736dc6af",
+      "git_blob": "f88cd43c511e78d281f06e3fa7750005fb32fead"
+    },
+    {
+      "path": "tests/test_v2_graph_capacity_continuation.py",
+      "sha256": "2bd99d93ffca7cbfea0eceb47105a131f91fd9f8a0a86734a7f861ea651ff40e",
+      "git_blob": "ecd132b7236c6c5e1617fda93c850251474a46b8"
+    },
+    {
+      "path": "tests/test_v2_graph_director_proposal_loop.py",
+      "sha256": "9bb2522fefd9602e071d9e1b5732789991044b8d73c3bb351fa90478412e2345",
+      "git_blob": "1b1f62760cbcd08369b4c27aacc71686c968dca1"
+    },
+    {
+      "path": "tests/test_v2_graph_presentation_contract.py",
+      "sha256": "853f9b64f8308e8bbf5a4daacad74c92809d84762ca2386118262cba042be89a",
+      "git_blob": "e92db2f74c59f40b4f070224fd988be4738a7311"
+    },
+    {
+      "path": "tests/test_v2_nle_review.py",
+      "sha256": "2f570dbdebb8cb66c3ba328d7b143d490b2a2b26998558794b9dbae2acbd6aba",
+      "git_blob": "af324033cc57891512f58a954d65a15cfc786293"
+    },
+    {
+      "path": "tests/test_v2_timeline_asset_handoff.py",
+      "sha256": "7ac2724ae4aac24f4f5a958f6dee28d2324d7c35d10eabbbbb54464351837930",
+      "git_blob": "48adbdc45c47db59484efdbd3a2de0cdaf82e1c3"
+    },
+    {
+      "path": "tests/test_v2_timeline_short_media_handoff.py",
+      "sha256": "5539a3689244cef218e94dab11677588c07aec4704b2cc670ebd57f9b81f5f3a",
+      "git_blob": "b66b66dc2a69e45446d43db4f892e367ed59047f"
+    }
+  ],
+  "new_backend_files_missing_inventory": [
+    {
+      "path": "tests/test_declarative_checkpoint_edit.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_exact_helper_definition_saves_restarts_and_removes_without_execution"
+      ],
+      "actual_sha256": "6d86584f0d88efe63716296ba4fdd680bfaa645a498553250ef9a8dfe6dd973a"
+    },
+    {
+      "path": "tests/test_declarative_definition_history.py",
+      "static_test_function_declarations": 10,
+      "functions": [
+        "test_history_reopens_and_existing_put_restores_as_new_version_without_reviving_run",
+        "test_metadata_pages_are_bounded_exclusive_and_not_shifted_by_new_versions",
+        "test_history_projection_never_reads_or_returns_run_or_reference_data",
+        "test_detail_preserves_legacy_authored_shape_and_does_not_reenable_retired_route",
+        "test_history_detail_fails_closed_without_trimming_or_mutation",
+        "test_history_cannot_read_another_owner_or_scope",
+        "test_history_metadata_and_detail_limits_are_explicit_errors_not_partial_payloads",
+        "test_mounted_history_gets_and_existing_put_use_original_owner",
+        "test_mounted_history_uses_current_scope_and_existing_feature_gates",
+        "test_mounted_history_rechecks_original_authority_after_read"
+      ],
+      "actual_sha256": "383bc14e759347b4d457ff8925ba8d42ea40e575d5d4f0cbb77e88639f6d61c6"
+    },
+    {
+      "path": "tests/test_public_archive_limits.py",
+      "static_test_function_declarations": 19,
+      "functions": [
+        "test_supported_tar_suffixes_use_bounded_scanner_without_extraction",
+        "test_unsafe_paths_fail",
+        "test_links_devices_and_unsupported_physical_headers_fail",
+        "test_duplicate_files_and_file_directory_collisions_fail",
+        "test_pax_overrides_are_strictly_bounded_and_allowlisted",
+        "test_local_pax_path_and_mtime_are_supported_without_a_tarfile_iterator",
+        "test_pax_physical_abuse_fails",
+        "test_pax_headers_count_towards_member_budget",
+        "test_member_size_and_decompressed_stream_are_bounded_before_parse",
+        "test_trailing_data_truncation_and_bad_headers_fail",
+        "test_mixed_archives_share_namespace_checks",
+        "test_mixed_recursion_shares_entry_and_byte_budgets",
+        "test_mixed_recursion_depth_fails_closed",
+        "test_compressed_input_read_is_bounded",
+        "test_file_parent_collisions_fail",
+        "test_truncated_member_and_unaligned_padding_fail",
+        "test_private_namespace_cannot_hide_in_overridden_pax_path",
+        "test_pax_effective_path_duplicate_fails",
+        "test_negative_or_oversized_base256_header_fails_before_payload"
+      ],
+      "actual_sha256": "641738abe67766c6b1b7ed1d728a64fa5f466b45db5d9dd28cfe940035e24a63"
+    },
+    {
+      "path": "tests/test_public_build_profile.py",
+      "static_test_function_declarations": 18,
+      "functions": [
+        "test_public_stage_excludes_private_and_hashes_actual_contents",
+        "test_unreviewed_runtime_files_fail",
+        "test_source_caches_not_copied_but_staged_bytecode_fails",
+        "test_public_dependency_on_private_fails",
+        "test_frontend_cannot_import_private_namespace",
+        "test_dependency_change_needs_manifest_review",
+        "test_stage_tampering_and_reuse_fail",
+        "test_symlinks_fail_before_copy",
+        "test_archive_members_and_case_folded_private_paths_fail",
+        "test_actual_repo_manifest_and_disposable_artifact",
+        "test_windows_and_docker_wire_the_guard",
+        "test_invalid_manifest_paths_fail",
+        "test_missing_public_file_fails",
+        "test_stage_top_level_and_nested_extras_fail",
+        "test_missing_artifact_directory_fails",
+        "test_nested_archive_private_payload_fails",
+        "test_actual_docker_stage_has_only_manifest_inputs",
+        "test_supplemental_fonts_require_explicit_complete_allowance"
+      ],
+      "actual_sha256": "950d714dbae610c01d73c926440376fda33293515a5b8b091e1d36c4c9ac2a1c"
+    },
+    {
+      "path": "tests/test_public_sdist_artifact.py",
+      "static_test_function_declarations": 7,
+      "functions": [
+        "test_actual_sdist_preserves_stage_hashes_and_standard_model_safety_inputs",
+        "test_standard_payload_missing_or_tampered_fails",
+        "test_no_blanket_metadata_or_private_path_allowance",
+        "test_generated_files_are_explicitly_validated",
+        "test_sources_manifest_exactly_covers_only_declared_inputs",
+        "test_metadata_identity_and_dependencies_match_even_when_both_copies_change",
+        "test_extra_empty_directory_fails"
+      ],
+      "actual_sha256": "9efa596bdf7903e7b469b413dff6911836981959a2b60ab88f6694f98ebabaa3"
+    },
+    {
+      "path": "tests/test_public_wheel_artifact.py",
+      "static_test_function_declarations": 9,
+      "functions": [
+        "test_real_wheel_matches_public_stage_and_keeps_standard_inputs",
+        "test_real_metadata_keeps_declared_dependencies_external",
+        "test_standard_payload_missing_or_tampered_fails_even_with_valid_record",
+        "test_inert_extra_or_forbidden_payloads_fail",
+        "test_exact_record_coverage_digests_lengths_and_self_row",
+        "test_duplicate_zip_member_fails",
+        "test_wheel_metadata_cannot_claim_a_different_platform",
+        "test_metadata_dependency_tampering_fails_with_self_consistent_record",
+        "test_symlink_member_cannot_substitute_a_standard_file"
+      ],
+      "actual_sha256": "beb8eb68c94d590532123c1e6efd10ccd46404098aad9b6ec227a05285fdb85b"
+    },
+    {
+      "path": "tests/test_research_evidence_location.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_duplicate_unicode_exact_paragraph_note_reopen_and_history_metadata"
+      ],
+      "actual_sha256": "88565844b0dce1fa05869e0991d3145ec6b1487cff543dbf96fb2540d08519b5"
+    },
+    {
+      "path": "tests/test_style_comparison_review.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_saved_target_unicode_measurements_reopen_without_editing_original_owners"
+      ],
+      "actual_sha256": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+    },
+    {
+      "path": "tests/test_template_copy_editing_workflow.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_personal_brief_edit_reopen_history_and_revert"
+      ],
+      "actual_sha256": "ba854e8248ee0fc755061a1cda5626ac15df742506281e60482555bd0b6c6eed"
+    },
+    {
+      "path": "tests/test_v2_audio_mp3.py",
+      "static_test_function_declarations": 12,
+      "functions": [
+        "test_mp3_is_explicit_and_keeps_omitted_wav_identity",
+        "test_mp3_rejects_unsupported_rates_without_silent_resampling",
+        "test_actual_mp3_private_review_reopen_and_lossy_pcm",
+        "test_every_supported_mp3_rate_has_real_frames_and_decoded_duration",
+        "test_missing_encoder_is_honest_failed_receipt_and_cleans_private_files",
+        "test_native_encoding_failure_does_not_publish_partial_mp3",
+        "test_cancel_between_native_mp3_steps_discards_output_and_cleans",
+        "test_lost_mp3_publication_recovers_original_receipt_without_encoding",
+        "test_mp3_measured_proof_is_strict_and_lossy_not_flac",
+        "test_tiny_mp3_intervals_keep_original_gapless_timing",
+        "test_too_short_mp3_is_rejected_before_queue_but_wav_and_flac_unchanged",
+        "test_mp3_fixed_codec_arguments_and_private_process_paths"
+      ],
+      "actual_sha256": "6df2a8bc244045f90c6eefafa8db2965b023448aa467153222369521ac01f231"
+    },
+    {
+      "path": "tests/test_v2_audio_mp3_api.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_mounted_mp3_candidate_and_explicit_review_keep_actual_mime"
+      ],
+      "actual_sha256": "243c20f150cb8916b07e47d849db29dae18977d3d13dd1b64ae0510889539438"
+    },
+    {
+      "path": "tests/test_v2_canvas_large_notes.py",
+      "static_test_function_declarations": 4,
+      "functions": [
+        "test_thousand_meaningful_notes_create_save_restart_history_and_legacy_digest",
+        "test_thousand_note_original_history_quota_stays_atomic",
+        "test_large_notes_keep_exact_utf8_owner_boundary_and_all_original_budgets",
+        "test_original_python_canonical_matches_node_wire_number_fixtures"
+      ],
+      "actual_sha256": "51c4e16af771d5d24f66010fcd2530da453dcd7eecb59df6001eeb84b7f8b73e"
+    },
+    {
+      "path": "tests/test_v2_caption_transfer_preflight.py",
+      "static_test_function_declarations": 4,
+      "functions": [
+        "test_original_file_handoff_quantizes_unicode_speaker_and_replaces_only_captions",
+        "test_caption_owner_output_can_be_incompatible_with_timeline",
+        "test_target_duration_is_independently_validated",
+        "test_original_export_rejects_readback_text_loss"
+      ],
+      "actual_sha256": "e83b7d4f9952e204bb378eabb0ea4176066663676521cca42698bc8f4cefed7e"
+    },
+    {
+      "path": "tests/test_v2_director_handoff_reopen.py",
+      "static_test_function_declarations": 2,
+      "functions": [
+        "test_original_director_derive_reopen_and_edit",
+        "test_director_history_exact_digests_and_stale_storyboard_remain_gated"
+      ],
+      "actual_sha256": "feb404db88be35cf62cdb0d371704c3d65e07f60662ef7cc31558c2194c87dbf"
+    },
+    {
+      "path": "tests/test_v2_director_model_planning.py",
+      "static_test_function_declarations": 7,
+      "functions": [
+        "test_captured_input_exact_source_and_goal_no_implicit_context",
+        "test_mock_structured_sequence_preserves_rationale_assumptions_and_exact_digest",
+        "test_malformed_or_nonexistent_evidence_rejected",
+        "test_legacy_payload_stays_identical_and_geometry_is_not_inferred",
+        "test_nested_evidence_is_validated_and_unreferenced_choices_need_assumptions",
+        "test_original_explicit_adoption_keeps_planning_and_source_immutable",
+        "test_fake_transport_planning_uses_original_model_review_adoption"
+      ],
+      "actual_sha256": "c79e97ca3f76afceeac31ae23d00480f6e4787378d9cdf0db9b9324f3e80be6d"
+    },
+    {
+      "path": "tests/test_v2_director_proposal_reopen.py",
+      "static_test_function_declarations": 2,
+      "functions": [
+        "test_accepted_proposal_reopens_same_original_draft_after_owner_restart",
+        "test_accepted_proposal_and_draft_keep_source_update_checks_after_restart"
+      ],
+      "actual_sha256": "d892b7dc619c0a0e7c0f7b976d3fdc455ef25c6541f88af405a87df5736dc6af"
+    },
+    {
+      "path": "tests/test_v2_graph_capacity_continuation.py",
+      "static_test_function_declarations": 3,
+      "functions": [
+        "test_capacity_is_exact_original_stored_record_metadata",
+        "test_explicit_full_draft_create_keeps_original_history_and_exact_pins_after_restart",
+        "test_history_capacity_declines_atomically_then_independent_full_draft_reopens"
+      ],
+      "actual_sha256": "2bd99d93ffca7cbfea0eceb47105a131f91fd9f8a0a86734a7f861ea651ff40e"
+    },
+    {
+      "path": "tests/test_v2_graph_director_proposal_loop.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_reviewed_director_draft_pins_and_reopens_with_original_graph_owner"
+      ],
+      "actual_sha256": "9bb2522fefd9602e071d9e1b5732789991044b8d73c3bb351fa90478412e2345"
+    },
+    {
+      "path": "tests/test_v2_graph_presentation_contract.py",
+      "static_test_function_declarations": 13,
+      "functions": [
+        "test_optional_presentation_preserves_legacy_canonical_values",
+        "test_annotation_is_bounded_strict_plain_data",
+        "test_annotation_does_not_relax_graph_validation_or_budgets",
+        "test_groups_roundtrip_without_changing_annotation_or_execution",
+        "test_groups_reject_malformed_dangling_duplicate_or_overlapping_membership",
+        "test_view_preferences_roundtrip_preserve_legacy_execution",
+        "test_view_preferences_are_strict_bounded_complete",
+        "test_two_level_visual_groups_preserve_old_hash_and_execution",
+        "test_visual_hierarchy_rejects_self_missing_null_cycle_and_depth",
+        "test_independent_notes_roundtrip_without_execution_or_legacy_digest_change",
+        "test_independent_notes_reject_bad_data",
+        "test_notes_do_not_raise_total_owner_payload_limit",
+        "test_notes_exact_aggregate_codepoint_boundary"
+      ],
+      "actual_sha256": "853f9b64f8308e8bbf5a4daacad74c92809d84762ca2386118262cba042be89a"
+    },
+    {
+      "path": "tests/test_v2_nle_review.py",
+      "static_test_function_declarations": 3,
+      "functions": [
+        "test_original_studio_projection_losses_and_exact_pure_roundtrip",
+        "test_native_changes_do_not_restore_stale_studio_effects",
+        "test_original_rational_frame_values_do_not_accumulate_decimal_drift"
+      ],
+      "actual_sha256": "2f570dbdebb8cb66c3ba328d7b143d490b2a2b26998558794b9dbae2acbd6aba"
+    },
+    {
+      "path": "tests/test_v2_timeline_asset_handoff.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_exact_asset_draft_save_reopen_and_cas"
+      ],
+      "actual_sha256": "7ac2724ae4aac24f4f5a958f6dee28d2324d7c35d10eabbbbb54464351837930"
+    },
+    {
+      "path": "tests/test_v2_timeline_short_media_handoff.py",
+      "static_test_function_declarations": 3,
+      "functions": [
+        "test_actual_short_flac_handoff_renders_reviews_and_reopens",
+        "test_actual_short_mp3_handoff_renders_reviews_and_reopens",
+        "test_actual_short_video_handoff_uses_exact_receipt_or_explicit_unknown_range"
+      ],
+      "actual_sha256": "5539a3689244cef218e94dab11677588c07aec4704b2cc670ebd57f9b81f5f3a"
+    }
+  ],
+  "source_traversal_gaps": [
+    "frontend/e2e/README.md",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts",
+    "frontend/e2e/promptAcceptanceEntry.ts",
+    "frontend/e2e/studio-release-acceptance.spec.ts",
+    "frontend/scripts/benchmark-canvas-notes.mjs",
+    "frontend/scripts/benchmark-graph-display.mjs",
+    "frontend/scripts/check-test-discovery.mjs",
+    "frontend/scripts/local_interop_browser_host.py",
+    "frontend/scripts/measure_interop_bundle.mjs",
+    "frontend/scripts/run-experimental-http.mjs"
+  ],
+  "extraction_discipline": [
+    "Restore exact a072cf9 protected bytes after preserving genuine additions in NEW files.",
+    "Extract only new scenarios and minimal fixtures/imports; do not duplicate whole suites.",
+    "Never import frontend .test/.spec files as helpers; that re-registers suites.",
+    "Python helper imports must not import test_* functions into collection scope.",
+    "Changed old assertions/selectors do not count as added coverage.",
+    "Ranges are from 47d85f7; all 43 protected blobs are verified unchanged at 72e636f."
+  ],
+  "recommended_disjoint_groups": {
+    "creative_and_canvasops": [
+      "frontend/src/canvasops/canvasOps.test.ts",
+      "frontend/src/canvasops/canvasOpsPanels.test.tsx",
+      "frontend/src/creative/AIDirectorPanel.test.tsx",
+      "frontend/src/creative/AssetRelationshipsPanel.test.tsx",
+      "frontend/src/creative/GraphCanvas.test.tsx",
+      "frontend/src/creative/IndependentStudioAudioWav.test.tsx",
+      "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx",
+      "frontend/src/creative/IndependentStudioReadFences.test.tsx",
+      "frontend/src/creative/IndependentStudioRelationships.test.tsx",
+      "frontend/src/creative/IndependentStudioWorkspace.test.tsx",
+      "frontend/src/creative/StudioImageGraphEditor.test.tsx",
+      "frontend/src/creative/StudioImageRuntimeProduction.test.tsx",
+      "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+      "frontend/src/creative/StudioVideoGraphEditor.phase4.test.tsx",
+      "frontend/src/creative/StudioVideoShotBinding.phase5.test.tsx",
+      "frontend/src/creative/graphCanvasGeometry.test.ts",
+      "frontend/src/creative/studioAudioFlacContract.phase6.test.tsx",
+      "frontend/src/creative/studioGraphClient.test.ts"
+    ],
+    "other_frontend": [
+      "frontend/src/AppAuthorTaskNavigation.test.tsx",
+      "frontend/src/delivery/DeliveryCenterPanel.test.tsx",
+      "frontend/src/experimental/BranchManuscriptPanel.test.tsx",
+      "frontend/src/experimental/ComicLayoutsPanel.test.tsx",
+      "frontend/src/experimental/ExperimentalWorkbench.continuation.test.tsx",
+      "frontend/src/experimental/InteractiveStoryPanel.test.tsx",
+      "frontend/src/experimental/ModelBrokerPanel.test.tsx",
+      "frontend/src/experimental/MultilingualEditionsPanel.test.tsx",
+      "frontend/src/experimental/ProductionLineagePanel.test.tsx",
+      "frontend/src/experimental/ResearchLibraryPanel.test.tsx",
+      "frontend/src/experimental/StorySimulatorPanel.test.tsx",
+      "frontend/src/experimental/StyleReviewPanels.test.tsx",
+      "frontend/src/experimental/VoiceSubtitlePanels.test.tsx",
+      "frontend/src/experimental/WriterRoomPanel.test.tsx",
+      "frontend/src/modelcenter/ModelCenterPanel.test.tsx",
+      "frontend/src/prompt/PromptWorkspace.test.tsx",
+      "frontend/src/taskcenter/TaskCenter.test.tsx",
+      "frontend/src/taskcenter/taskCenterClient.test.ts"
+    ],
+    "backend_seven_and_mp3": [
+      "tests/test_r4_story_simulator.py",
+      "tests/test_r5_comic_layouts.py",
+      "tests/test_r5_interactive_story.py",
+      "tests/test_round2_bible.py",
+      "tests/test_v2_audio_flac.py",
+      "tests/test_v2_creative_graph_persistence.py",
+      "tests/test_v2_director_workspace.py"
+    ]
+  },
+  "manifest_owner_plan": [
+    "No manifest mutation or broad collection before parent release.",
+    "Do not edit frozen V1, coverage gates/generator, old node IDs/order/classification or skips.",
+    "After stabilization run only approved narrow original/new compatibility tests first; preserve failures.",
+    "When full collection authorized use existing extend_v2_coverage_manifest.py review mode and unique evidence paths.",
+    "Independently compare all old V2 raw rows/order/classification against archived evidence; generic generator success alone is insufficient.",
+    "After source/node review explicitly authorized --write updates separate V2 only.",
+    "Independent confirmation collection and self-checks require authorization; inventory is not execution coverage.",
+    "Do not use update_recovery_coverage_manifest.py: default output rewrites frozen V1."
+  ],
+  "compatibility_seams": {
+    "mp3": "Unversioned legacy submission remains WAV/FLAC only; new MP3 requires explicit versioned marker. Same original owner. Separate strict new-submission validation from server-loaded persisted-row decoder preserving all original body/context bytes and hashes.",
+    "provider_inputs": "Assess explicit advanced editable IDs alongside picker with full owner/provider validation; no silent cloud/consent switch.",
+    "legacy_callbacks": "Keep exact callback payload shape; add owner disambiguation in host adapter.",
+    "cost_receipt": "Separate companion interface preserves exact original five-method client.",
+    "lineage": "Do not remove newer exact-source verification for old test compatibility; report irreconcilable semantic boundary.",
+    "wav_wording": "Retain truthful WAV-specific fallback for legacy WAV jobs.",
+    "cas_selectors": "Restore original generic alert selectors; static audit does not prove a production defect."
+  },
+  "mp3_readback_warning": {
+    "paths": [
+      "app/services/studio_audio_execution.py:300-331",
+      "app/services/studio_audio_execution.py:343-373",
+      "app/creative/production_execution.py:1343-1422"
+    ],
+    "facts": [
+      "get and list parse stored bodies through _body, not only dispatch.",
+      "Tightening _body alone makes old unmarked MP3 jobs unreadable.",
+      "Recorded decoder must keep owner/scope/incarnation/request SHA/measurement/receipt checks and exact original bytes.",
+      "Existing accepted jobs may retain ORIGINAL explicit execute/reconcile path only after server-loaded validation; never auto-run, migrate, duplicate, or expose public allow-legacy flag."
+    ]
+  },
+  "restrictions": [
+    "No push/network/hosted CI/account or billing changes.",
+    "No broad collection or manifest regeneration before parent release.",
+    "Audit/manifest owner makes no protected source/generator/gate changes."
+  ],
+  "guard_and_manifest_boundaries": [
+    {
+      "path": ".github/ci/coverage_manifest.json.gz",
+      "base_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+      "base_git_blob": "a8e0482ba860d0b8e328627b208ee29991dff31e",
+      "equal_a072cf9": true,
+      "boundary": "immutable historical V1"
+    },
+    {
+      "path": ".github/ci/coverage_manifest_v2.json.gz",
+      "base_sha256": "9d9b8157f1f342ff680e6119b4338a30332a1cec970d5cb00faa10fc01193aca",
+      "base_git_blob": "72537e181e0acc1a9e172401fef10394ff29a82f",
+      "equal_a072cf9": true,
+      "boundary": "no write before parent release"
+    },
+    {
+      "path": ".github/ci/suite_coverage.py",
+      "base_sha256": "570892af0975c125868710e250eb7f30cc5e51ba7cbef9429a3b0f8f10238da7",
+      "base_git_blob": "e1e92d805353161389195f2251265cd9a3f8b973",
+      "equal_a072cf9": true,
+      "boundary": "no guard/generator changes"
+    },
+    {
+      "path": ".github/ci/coverage_reconcile.py",
+      "base_sha256": "f097904d51cc21cb6f1ce8dcc688f692cf89bdd473f3952605eba3b1ae02e66a",
+      "base_git_blob": "869b4cc4943a13f426f22e5a3e837313a1183c58",
+      "equal_a072cf9": true,
+      "boundary": "no guard/generator changes"
+    },
+    {
+      "path": ".github/ci/postgres_gate.py",
+      "base_sha256": "d18ee804595ab98f8aec4c25745a7961e65a36755e318c8f4f257663b4358a8c",
+      "base_git_blob": "00ac7a76358be31727055b23319a6980dd86b664",
+      "equal_a072cf9": true,
+      "boundary": "no guard/generator changes"
+    },
+    {
+      "path": "scripts/extend_v2_coverage_manifest.py",
+      "base_sha256": "337466ae33d15b2aafaeb15f2191ccdb0c65b22274e1b4d98ba10501dd30135e",
+      "base_git_blob": "6f254095cb04d95525a4ed0c3685e7384586ed7b",
+      "equal_a072cf9": true,
+      "boundary": "no guard/generator changes"
+    },
+    {
+      "path": "scripts/run_v2_checks.py",
+      "base_sha256": "64cf16c26412c5a1e36a1d4fb799519111ad409f7594ae15aa0b158e53396cd5",
+      "base_git_blob": "0e83563c66aafc10c60fee7c4cc6b8569a4cc000",
+      "equal_a072cf9": true,
+      "boundary": "no guard/generator changes"
+    }
+  ],
+  "proposed_existing_infrastructure_selfcheck": {
+    "status": "PROPOSAL_ONLY_NOT_EXECUTED",
+    "historical_receipt": "docs/delivery/v2-development/creative-save-ci-selfchecks-final-r1.json",
+    "runner": "scripts/run_v2_checks.py",
+    "command": [
+      "python",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      ".github/ci/test_suite_coverage.py",
+      ".github/ci/test_coverage_reconcile.py",
+      ".github/ci/test_v2_manifest_extension.py",
+      "--basetemp",
+      ".runtime/v2-checks/ci-reconciliation-harness/pytest"
+    ],
+    "requirements": [
+      "Use verified existing pinned Python/pytest environment, with no installation.",
+      "Run only after parent authorizes this narrow infrastructure scope.",
+      "This synthetic helper scope is not product acceptance or broad collection.",
+      "Retain logs and all failures; do not change tests/gates for passing counts."
+    ]
+  }
+}

@@ -1,0 +1,813 @@
+{
+  "status": "EVIDENCE_COMPLETE_UNCOMMITTED_FINAL_CONTENT_REVIEW_PENDING",
+  "source_commit": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+  "created_utc": "2026-10-16T23:08:54.944Z",
+  "copies": [
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-audit-20261016.json",
+      "destination": "audits/ci-reconciliation-audit-20261016.json",
+      "sha256": "f71e0dd19422e0274c164e19f683a00dde70b1c54b1e3a25db4956aa3491190e",
+      "bytes": 140773
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-audit-20261016.md",
+      "destination": "audits/ci-reconciliation-audit-20261016.md",
+      "sha256": "f5dc147c5047be631e14daba74f2afa0b9daefdbe0a30037b7f6e7329aecc5a6",
+      "bytes": 36341
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-collection-import-audit-20261016.json",
+      "destination": "audits/ci-reconciliation-collection-import-audit-20261016.json",
+      "sha256": "00daf60b6798390dc9e5b30fdae2a666814588d17c8a8a0c40b6fc81eb8f852a",
+      "bytes": 75794
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-collection-import-audit-20261016.md",
+      "destination": "audits/ci-reconciliation-collection-import-audit-20261016.md",
+      "sha256": "2cca52e23eaea5bc2a4385cbfe60f076a3455decf61f2f411f63cb983741311d",
+      "bytes": 13558
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-python-environment-proposal-20261016.json",
+      "destination": "audits/ci-reconciliation-python-environment-proposal-20261016.json",
+      "sha256": "2ee83a1858be23c5dbe81b6528db6a5c4aa37c3d70d7942d026e44000093a513",
+      "bytes": 22196
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-python-environment-proposal-20261016.md",
+      "destination": "audits/ci-reconciliation-python-environment-proposal-20261016.md",
+      "sha256": "dc9cf431fb3680c03d97fb61297965fa82bd5c36b07edf0c00eb6a8b36245a19",
+      "bytes": 4663
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-verification-plan-20261016.json",
+      "destination": "audits/ci-reconciliation-verification-plan-20261016.json",
+      "sha256": "d2c2c36efa8ea76cad122e82847d69712245b1a742d2b13b835d192ca0494850",
+      "bytes": 28902
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-verification-plan-20261016.md",
+      "destination": "audits/ci-reconciliation-verification-plan-20261016.md",
+      "sha256": "e12fa421894c2f022df911c569e81c8ef4236cdb9190a1551730ab93c2eea0df",
+      "bytes": 15183
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/backend-clean-additive-confirmation-20261016.json",
+      "destination": "backend/backend-clean-additive-confirmation-20261016.json",
+      "sha256": "a1c889618e29356a150fbaa41fcd1766301fabbd33d4d413588233e10b0fd5c0",
+      "bytes": 594566
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/backend-clean-additive-confirmation-20261016.log",
+      "destination": "backend/backend-clean-additive-confirmation-20261016.log",
+      "sha256": "5054c6df619a033c2166c91a466e85a663ee420165df5737981df33e688cd10d",
+      "bytes": 767
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-clean-api-confirmation-20261016.json",
+      "destination": "backend/mp3-clean-api-confirmation-20261016.json",
+      "sha256": "29d377bc94d3776b428d60d15bb505f3afe062ff8a8ff57c5fcc9b00d2c5e1f4",
+      "bytes": 594212
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-clean-api-confirmation-20261016.log",
+      "destination": "backend/mp3-clean-api-confirmation-20261016.log",
+      "sha256": "b510bd4be3d41a478e09c3553bfdb7f0584b6bb393c9cc720f05ca87177eeeca",
+      "bytes": 699
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-clean-contract-confirmation-20261016.json",
+      "destination": "backend/mp3-clean-contract-confirmation-20261016.json",
+      "sha256": "aed1d6ea4dd26cd39eabdcaf0df75f6510c1a2d9b68593ef2b18938a5df11261",
+      "bytes": 594341
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-clean-contract-confirmation-20261016.log",
+      "destination": "backend/mp3-clean-contract-confirmation-20261016.log",
+      "sha256": "d0cdad1a5300646cc9f3cb8d061d67efc2ed2dfa2c95b035f7d44b7b169d740d",
+      "bytes": 195
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-clean-short-media-confirmation-20261016.json",
+      "destination": "backend/mp3-clean-short-media-confirmation-20261016.json",
+      "sha256": "97ee10fba5f81bdbfd91e2c5f9c10dfa7524a965a3302eaf3fc6439b5c3de9b3",
+      "bytes": 594366
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-clean-short-media-confirmation-20261016.log",
+      "destination": "backend/mp3-clean-short-media-confirmation-20261016.log",
+      "sha256": "8292fd16f4036c85be5367b6d2d561de905cc66c9690158f346da1eeab753c42",
+      "bytes": 112
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-history-confirmation-20261016.json",
+      "destination": "backend/mp3-history-confirmation-20261016.json",
+      "sha256": "1941d58e0af12b926e8f38b4ede228baec522ce6116ba39585cb2adeca5a7e64",
+      "bytes": 590869
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-history-confirmation-20261016.log",
+      "destination": "backend/mp3-history-confirmation-20261016.log",
+      "sha256": "8f9828cdc140dce384e6ebc2b618958d31beb8d3da548353ca161789832cb903",
+      "bytes": 99
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-legacy-baseline-20261016.json",
+      "destination": "backend/mp3-legacy-baseline-20261016.json",
+      "sha256": "53eefe63a97d5d016a321ed0fd45ffc3dd06ae2255f8beee701e4397526328ed",
+      "bytes": 590202
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-legacy-baseline-20261016.log",
+      "destination": "backend/mp3-legacy-baseline-20261016.log",
+      "sha256": "338743c28809a8ea1a6b553211dd350d95af4e29c4f6afcb90584a4fabe5ef98",
+      "bytes": 98
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-versioned-compatibility-20261016.json",
+      "destination": "backend/mp3-versioned-compatibility-20261016.json",
+      "sha256": "96b1689cc8998257c9893c85800f736ccd1514cfa25377af3c063dc8b08058f6",
+      "bytes": 590871
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/mp3-versioned-compatibility-20261016.log",
+      "destination": "backend/mp3-versioned-compatibility-20261016.log",
+      "sha256": "a83588888a3646fe309bbea2a50f82542dcab0009755d077b3182d96e50b9247",
+      "bytes": 11706
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/environment-evidence-index.json",
+      "destination": "environment/environment-evidence-index.json",
+      "sha256": "ce02c2fa80bc2ba60dfec8936e2fc3a82263d25bcf28441a5fac532f000458f6",
+      "bytes": 3131
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/origin-probe-r2.py",
+      "destination": "environment/origin-probe-r2.py",
+      "sha256": "d598cc0821e8ffc17277614e7c9f93b77040c758b67f9d42fc6453ee679f050f",
+      "bytes": 5661
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/origin-probe-r3.py",
+      "destination": "environment/origin-probe-r3.py",
+      "sha256": "4ef7f51f4e9a7263776317e3c6a4c73e6a6822e13b0cf986d2575a433a16f25d",
+      "bytes": 6487
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/origin-probe.py",
+      "destination": "environment/origin-probe.py",
+      "sha256": "59e675390305026f6645fef71b21f369e42191dd415693fbd455cdadec552900",
+      "bytes": 5598
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/setup-receipt.json",
+      "destination": "environment/setup-receipt.json",
+      "sha256": "02ccf5581e0ed9726af44dda40eb02dcbbce8e2ea5d5f08a7648e723f4a82d58",
+      "bytes": 1385370
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/startup-probe-r2.json",
+      "destination": "environment/startup-probe-r2.json",
+      "sha256": "497a897a297a93ab99d103b3d2dbcb1ef340a21dc33a8e98d0b79660b27c049c",
+      "bytes": 20826
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/startup-probe-r2.stderr.log",
+      "destination": "environment/startup-probe-r2.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/startup-probe-r3.json",
+      "destination": "environment/startup-probe-r3.json",
+      "sha256": "a560190e48c9d058250fba40b267d9431fce570ac300f5c23536f5264a122ee5",
+      "bytes": 20826
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/startup-probe-r3.stderr.log",
+      "destination": "environment/startup-probe-r3.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/startup-probe.json",
+      "destination": "environment/startup-probe.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/startup-probe.stderr.log",
+      "destination": "environment/startup-probe.stderr.log",
+      "sha256": "ea858d19df75146fd1f271e1fe4b830f4df9ebb5c42ad37687b9c918517fcf90",
+      "bytes": 818
+    },
+    {
+      "source": "/tmp/dot-creative-changed-paths.txt",
+      "destination": "frontend/canvas/dot-creative-changed-paths.txt",
+      "sha256": "505adfbae115bcc24bfface80a78c8965904f8f007882953b4f965be7e553e2a",
+      "bytes": 2214
+    },
+    {
+      "source": "/tmp/dot-creative-core-red.json",
+      "destination": "frontend/canvas/dot-creative-core-red.json",
+      "sha256": "0727d557adcbc41f8bfc902816b5247d3b2f93b6e8fec51062ad8e29883c8cff",
+      "bytes": 103191
+    },
+    {
+      "source": "/tmp/dot-creative-core-red.log",
+      "destination": "frontend/canvas/dot-creative-core-red.log",
+      "sha256": "b55811b95aaf48a28700b0fbc7fbc1989e66a80be558f3d3f42cdda7f6fbc8f2",
+      "bytes": 55
+    },
+    {
+      "source": "/tmp/dot-creative-extraction-proof.json",
+      "destination": "frontend/canvas/dot-creative-extraction-proof.json",
+      "sha256": "57d657f8da5792a77153508a35e06986d1953622ff128f5d62acd07b84d2ec5b",
+      "bytes": 9183
+    },
+    {
+      "source": "/tmp/dot-creative-final-hashes.json",
+      "destination": "frontend/canvas/dot-creative-final-hashes.json",
+      "sha256": "f289f296515e2bdcae72ef1519c9a0885c7ff49776f855f0b89b82403f6ba955",
+      "bytes": 5819
+    },
+    {
+      "source": "/tmp/dot-creative-final-paths.txt",
+      "destination": "frontend/canvas/dot-creative-final-paths.txt",
+      "sha256": "99f24633ee97b59b54ef055dd90269fc27b863cd51d6e3d23da7e4ccf2ee3eb4",
+      "bytes": 2677
+    },
+    {
+      "source": "/tmp/dot-creative-final-report.json",
+      "destination": "frontend/canvas/dot-creative-final-report.json",
+      "sha256": "eafbc5ede453f22bd189bef9414dfb173a9931b1d09240433d9ec2e7aa4ffdc3",
+      "bytes": 6356
+    },
+    {
+      "source": "/tmp/dot-creative-fixture-pruning.json",
+      "destination": "frontend/canvas/dot-creative-fixture-pruning.json",
+      "sha256": "9c513e12addc27fbbc64a0c3d47cae50c2a11ddd9b900c17b7f13cc180478b82",
+      "bytes": 2350
+    },
+    {
+      "source": "/tmp/dot-creative-harness-red.json",
+      "destination": "frontend/canvas/dot-creative-harness-red.json",
+      "sha256": "c0aec7671146c2e0f4f22bc2ff8b603083ef0d364782b14c069f7fcf4cf4abff",
+      "bytes": 20356
+    },
+    {
+      "source": "/tmp/dot-creative-harness-red.log",
+      "destination": "frontend/canvas/dot-creative-harness-red.log",
+      "sha256": "45e0d79ef76d23855b3d2f273af3899cf62f14c34020a22e769661a878622a3e",
+      "bytes": 58
+    },
+    {
+      "source": "/tmp/dot-creative-large-diffs.txt",
+      "destination": "frontend/canvas/dot-creative-large-diffs.txt",
+      "sha256": "51db1f73664705600175c65a4d656287aaec0a613effd6e65bbd3ff93e0920f8",
+      "bytes": 109384
+    },
+    {
+      "source": "/tmp/dot-creative-migration-ledger.json",
+      "destination": "frontend/canvas/dot-creative-migration-ledger.json",
+      "sha256": "d6f314331bf9c1935c9e6269c894c655d00399e6e64f5a3ba008efa0c793223d",
+      "bytes": 14289
+    },
+    {
+      "source": "/tmp/dot-creative-pruning-idempotence.json",
+      "destination": "frontend/canvas/dot-creative-pruning-idempotence.json",
+      "sha256": "efa246e39c8f0d27babd94a5f3e11f55cc06a15c2da2f468c7ef8fa80649f7a4",
+      "bytes": 2351
+    },
+    {
+      "source": "/tmp/dot-creative-pruning-normalized.json",
+      "destination": "frontend/canvas/dot-creative-pruning-normalized.json",
+      "sha256": "efa246e39c8f0d27babd94a5f3e11f55cc06a15c2da2f468c7ef8fa80649f7a4",
+      "bytes": 2351
+    },
+    {
+      "source": "/tmp/dot-creative-reconciliation-report.json",
+      "destination": "frontend/canvas/dot-creative-reconciliation-report.json",
+      "sha256": "b1eae408c2f07b6611ae7784ae6a8ffaedefd8b1ee42b97d732473622f63c4f4",
+      "bytes": 5601
+    },
+    {
+      "source": "/tmp/dot-creative-restoration-hashes.json",
+      "destination": "frontend/canvas/dot-creative-restoration-hashes.json",
+      "sha256": "f352f24e9cbcfd2e6845f8ff916dc7f6a6cda1924a6ee196abab15857498dd00",
+      "bytes": 4392
+    },
+    {
+      "source": "/tmp/dot-creative-runtime-after.json",
+      "destination": "frontend/canvas/dot-creative-runtime-after.json",
+      "sha256": "72bb901ab2087a0bdb59ea722ab902535b2d0f8905bb96e0f63c046404b2abc2",
+      "bytes": 978
+    },
+    {
+      "source": "/tmp/dot-creative-runtime-before.json",
+      "destination": "frontend/canvas/dot-creative-runtime-before.json",
+      "sha256": "72bb901ab2087a0bdb59ea722ab902535b2d0f8905bb96e0f63c046404b2abc2",
+      "bytes": 978
+    },
+    {
+      "source": "/tmp/dot-creative-runtime-green.json",
+      "destination": "frontend/canvas/dot-creative-runtime-green.json",
+      "sha256": "c84add7c4d3e244697128d558abd654eff507a74efc025d9bf98b7aa9eb1ef96",
+      "bytes": 55267
+    },
+    {
+      "source": "/tmp/dot-creative-runtime-green.log",
+      "destination": "frontend/canvas/dot-creative-runtime-green.log",
+      "sha256": "79d209ac4b9ba0aa70efae3b5ca6ac40ec3f4536e67afe3ee708082268a1db50",
+      "bytes": 60
+    },
+    {
+      "source": "/tmp/dot-creative-seams-red.json",
+      "destination": "frontend/canvas/dot-creative-seams-red.json",
+      "sha256": "11d25cf55ea5f8a6d185c35a845334c9b57692a7efff006bb4634f967a14ec9e",
+      "bytes": 122611
+    },
+    {
+      "source": "/tmp/dot-creative-seams-red.log",
+      "destination": "frontend/canvas/dot-creative-seams-red.log",
+      "sha256": "12356c9f5d344d358b8e685fff46d1aae7e2eae5f65fe3016c3c996048079882",
+      "bytes": 56
+    },
+    {
+      "source": "/tmp/dot-creative-test-node-audit.json",
+      "destination": "frontend/canvas/dot-creative-test-node-audit.json",
+      "sha256": "8c20951d86b21bfc306f5c3e93c094cb034f7b05c7f07e8f7f32430c56d6f702",
+      "bytes": 12867
+    },
+    {
+      "source": "/tmp/dot-workspace-original-rerun.json",
+      "destination": "frontend/canvas/dot-workspace-original-rerun.json",
+      "sha256": "cf09b7416bd5905e1297be43d082d0f2e945cdd93faed1c0d0d994aeb8415c04",
+      "bytes": 3688
+    },
+    {
+      "source": "/tmp/dot-workspace-original-rerun.log",
+      "destination": "frontend/canvas/dot-workspace-original-rerun.log",
+      "sha256": "6c8b2e6aeda4ec625ebeff601aa9c29bf4f7c7212bf0dbcfa5feb0d3d5e34956",
+      "bytes": 62
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/extraction-summary.json",
+      "destination": "frontend/ui/extraction-summary.json",
+      "sha256": "9ca39c22038293422967b8403432057173cc2b79050594c2bd3dcc2317d4c727",
+      "bytes": 4091
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-assertion-audit.json",
+      "destination": "frontend/ui/final-assertion-audit.json",
+      "sha256": "dcd0e5a34727fc2517238a84a15d7b984c0057f7325954fa4165ed2b1c532728",
+      "bytes": 105154
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-build-command.json",
+      "destination": "frontend/ui/final-build-command.json",
+      "sha256": "9142821b15376d911cb8a2dbf8f542c6d02dfdf1051f41e8e8bccbda4f11a3e8",
+      "bytes": 233
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-build.log",
+      "destination": "frontend/ui/final-build.log",
+      "sha256": "f7e2bde5b42a1ade0a43ff42deac172d87711a7841617561adeaac386166018b",
+      "bytes": 1679
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-diff-check.log",
+      "destination": "frontend/ui/final-diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-retry-command.json",
+      "destination": "frontend/ui/final-retry-command.json",
+      "sha256": "fc884edddc84524f627b6445690bc90e7957ea67eaf652e6fd601848c7b79c80",
+      "bytes": 565
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-retry.log",
+      "destination": "frontend/ui/final-retry.log",
+      "sha256": "2b7cb2c126c70ec40669f8b31568cbeaef20e08f69e5045fd92d034757add635",
+      "bytes": 538
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-token-lint-command.json",
+      "destination": "frontend/ui/final-token-lint-command.json",
+      "sha256": "c6f79a5e8a2c3e4dc509232f83ab133d2ab120924098d1dd9d2c40dfbca851be",
+      "bytes": 233
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-token-lint.log",
+      "destination": "frontend/ui/final-token-lint.log",
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-typecheck-command.json",
+      "destination": "frontend/ui/final-typecheck-command.json",
+      "sha256": "7a1605d74e67ce48921eb451dc21ba8f20f00dcd450ddacc232aecd09b030c54",
+      "bytes": 242
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-typecheck.log",
+      "destination": "frontend/ui/final-typecheck.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-verification-results.json",
+      "destination": "frontend/ui/final-verification-results.json",
+      "sha256": "0fccf6ca18141ce6852a8e6a2faa2ee004f90c98f5ba3c2c0753045fa94d3020",
+      "bytes": 1970
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-verification-source-after.json",
+      "destination": "frontend/ui/final-verification-source-after.json",
+      "sha256": "6c85ce6ba60b8fbb33dd881f54ccdd2d12c8c952fb491a5a0c8000f831c82800",
+      "bytes": 138995
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/final-verification-source-before.json",
+      "destination": "frontend/ui/final-verification-source-before.json",
+      "sha256": "6c85ce6ba60b8fbb33dd881f54ccdd2d12c8c952fb491a5a0c8000f831c82800",
+      "bytes": 138995
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/ledger.json",
+      "destination": "frontend/ui/ledger.json",
+      "sha256": "2f7c09771c920502caf7a4a12632807f3155de1f0c905cc8959a76cd29adfe11",
+      "bytes": 65090
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/protected-hash-proof.json",
+      "destination": "frontend/ui/protected-hash-proof.json",
+      "sha256": "66ab1539a4e499fd132a0b69f5eca48e2f87d171991bef395f6f7ecc4e1c75a1",
+      "bytes": 5413
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/runtime-test-snapshot.json",
+      "destination": "frontend/ui/runtime-test-snapshot.json",
+      "sha256": "e984d271303fed3f042b4c68c01dba81507958537a02fb52301d60cb495e3894",
+      "bytes": 6734
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/vitest-command.json",
+      "destination": "frontend/ui/vitest-command.json",
+      "sha256": "4e89aa35c8b9c64b638429eb7ddcdde838919b6ff6a68987bfb187510b30e94c",
+      "bytes": 2408
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/vitest-results.json",
+      "destination": "frontend/ui/vitest-results.json",
+      "sha256": "c2575e483ba1c2931994e4daa8478399938ac1458bc9bad1fd92cf8991210708",
+      "bytes": 121079
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/vitest-retry-results.json",
+      "destination": "frontend/ui/vitest-retry-results.json",
+      "sha256": "8aab23fa1bd7da6305d20d3753cbf6f6b7ee17eb2d64b4593ac2da48aaa6583a",
+      "bytes": 7099
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/vitest-runtime-command.json",
+      "destination": "frontend/ui/vitest-runtime-command.json",
+      "sha256": "fe2a529962485a53d52056f0e94a3ac55b52c89f02442995ac910cb22610fc10",
+      "bytes": 2780
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/vitest-runtime-results.json",
+      "destination": "frontend/ui/vitest-runtime-results.json",
+      "sha256": "c715641e5e40209a721b720f2a1e5567bffaa3d9d6922e69096b3fed9bbeff3a",
+      "bytes": 113166
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/vitest-runtime.log",
+      "destination": "frontend/ui/vitest-runtime.log",
+      "sha256": "42d3f725bbb7d162aae53e5c8da57045e68fa65b377aa7f882b59dc1558bbca7",
+      "bytes": 7584
+    },
+    {
+      "source": "/tmp/studio-ui-reconciliation/vitest.log",
+      "destination": "frontend/ui/vitest.log",
+      "sha256": "d5de77c6982d0bd8f0524186a4b160d9e28e6a9b7f2ddfc6e7a77891e355d70f",
+      "bytes": 45435
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/ci-helper-coverage-reconcile-14ced1025b51.json",
+      "destination": "helpers/ci-helper-coverage-reconcile-14ced1025b51.json",
+      "sha256": "05baa97fa7ff5a5342faa8c512be911c0fc13bb70257b34a3770c065831b2917",
+      "bytes": 594311
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/ci-helper-coverage-reconcile-14ced1025b51.log",
+      "destination": "helpers/ci-helper-coverage-reconcile-14ced1025b51.log",
+      "sha256": "0c9174f171e50f729049591e9f29bc2654903e8a677563bc52e3721c42ae9433",
+      "bytes": 180
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/ci-helper-suite-coverage-14ced1025b51.json",
+      "destination": "helpers/ci-helper-suite-coverage-14ced1025b51.json",
+      "sha256": "defbbf2c0732e8e24d52db9cb554b1a3fb12a27ac4c148b3b2507670ad603bf7",
+      "bytes": 594267
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/ci-helper-suite-coverage-14ced1025b51.log",
+      "destination": "helpers/ci-helper-suite-coverage-14ced1025b51.log",
+      "sha256": "03c1f15a215d7dfb6ba530e2c13024623185ca00adf409742ddc475c8f344f1d",
+      "bytes": 99
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/ci-helper-v2-manifest-extension-14ced1025b51.json",
+      "destination": "helpers/ci-helper-v2-manifest-extension-14ced1025b51.json",
+      "sha256": "45cf14b6188aaaf05a57aa747be3589c51fb473f1a0d1ffa3521ad10609ced2d",
+      "bytes": 594344
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/docs/delivery/v2-development/ci-helper-v2-manifest-extension-14ced1025b51.log",
+      "destination": "helpers/ci-helper-v2-manifest-extension-14ced1025b51.log",
+      "sha256": "2a90d6320f5e5f95c7802671d4db2609c26fc7e489c78e76f20f334d9b4ee1c6",
+      "bytes": 99
+    },
+    {
+      "source": "/tmp/dot-reconciliation-final-static-review-20261016.json",
+      "destination": "independent/current-source-review-20261016.json",
+      "sha256": "7caf7de39977fd302a9450d1d95a8926bb948d986a54d4dbec878aa5472b9ab0",
+      "bytes": 27510
+    },
+    {
+      "source": "/tmp/dot-independent-candidate-review-20261016.json",
+      "destination": "independent/dot-independent-candidate-review-20261016.json",
+      "sha256": "06b0e14530fa6b33249c17b53fbb43f21e91e99177d3e1e76d264f6817ed35d6",
+      "bytes": 628
+    },
+    {
+      "source": "/tmp/dot-independent-confirmation-review-20261016.json",
+      "destination": "independent/dot-independent-confirmation-review-20261016.json",
+      "sha256": "ac2bf3a20ff73652569048322ce8d84d4cfd5e3f7819cf2842122ee2ce91a985",
+      "bytes": 573
+    },
+    {
+      "source": "/tmp/dot-independent-dependency-copy-review-20261016.json",
+      "destination": "independent/dot-independent-dependency-copy-review-20261016.json",
+      "sha256": "0ba864dc3497a70a2c2f9c8ffef618a3e36d6008e3212537182b893e09ea2c3e",
+      "bytes": 79
+    },
+    {
+      "source": "/tmp/dot-independent-inventory-review-20261016.json",
+      "destination": "independent/dot-independent-inventory-review-20261016.json",
+      "sha256": "faa6478dfd596769f1da5fa91df61cd0830d5d86541ca061ef7403fe0708ceec",
+      "bytes": 7990
+    },
+    {
+      "source": "/tmp/dot-independent-reconciliation-ui-20261016-after.json",
+      "destination": "independent/dot-independent-reconciliation-ui-20261016-after.json",
+      "sha256": "3d59e21ea68c91cd8151b74185fe0f587058038d393d8f3f99d0ce8568742c96",
+      "bytes": 136460
+    },
+    {
+      "source": "/tmp/dot-independent-reconciliation-ui-20261016-before.json",
+      "destination": "independent/dot-independent-reconciliation-ui-20261016-before.json",
+      "sha256": "3d59e21ea68c91cd8151b74185fe0f587058038d393d8f3f99d0ce8568742c96",
+      "bytes": 136460
+    },
+    {
+      "source": "/tmp/dot-independent-reconciliation-ui-20261016.json",
+      "destination": "independent/dot-independent-reconciliation-ui-20261016.json",
+      "sha256": "956087aab321b99cfa5df46987671cd357fe4fe2359496d52a6df1569ecfa399",
+      "bytes": 1080
+    },
+    {
+      "source": "/tmp/dot-independent-reconciliation-ui-20261016.log",
+      "destination": "independent/dot-independent-reconciliation-ui-20261016.log",
+      "sha256": "1d72e4824afd7833c31e3dd20a941b813b1f29f055e93a406a0a5486ecf09b1f",
+      "bytes": 741
+    },
+    {
+      "source": "/tmp/dot-reconciliation-final-static-review-20261016.json",
+      "destination": "independent/dot-reconciliation-final-static-review-20261016.json",
+      "sha256": "7caf7de39977fd302a9450d1d95a8926bb948d986a54d4dbec878aa5472b9ab0",
+      "bytes": 27510
+    },
+    {
+      "source": "/tmp/dot-reconciliation-independent-review-20261016.md",
+      "destination": "independent/dot-reconciliation-independent-review-20261016.md",
+      "sha256": "ebaafa4375e96ffef51377e5a11a56367c7aca98103df604af4c5cf1b108e9a2",
+      "bytes": 6356
+    },
+    {
+      "source": "/tmp/dot-reconciliation-source-commit-paths-20261016.txt",
+      "destination": "independent/dot-reconciliation-source-commit-paths-20261016.txt",
+      "sha256": "41da3032f2edb0218cb1e6c0bb4ec99f37a085cb2e63576ec2fb2eff0a205cf2",
+      "bytes": 6962
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/additive-inventory-review.json",
+      "destination": "inventory/additive-inventory-review.json",
+      "sha256": "fd02a406c4557964ccbfc9c4e0371528f8277e7d9aa2b0d83a23c06ca6636f03",
+      "bytes": 63238
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/candidate-collection.json",
+      "destination": "inventory/candidate-collection.json",
+      "sha256": "4769b4c1501057370f5f5531cb8bb135dfc9cfff555f23e4286b0176e494764b",
+      "bytes": 28872
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/candidate-launch-boundary.json",
+      "destination": "inventory/candidate-launch-boundary.json",
+      "sha256": "a3420b3c9ed50c01c4269c75ba8d3e1edb237df79dcbf8c872d2d71b2188fd5f",
+      "bytes": 375
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/candidate-launcher.exit-code",
+      "destination": "inventory/candidate-launcher.exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/candidate-launcher.stderr.log",
+      "destination": "inventory/candidate-launcher.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/candidate-launcher.stdout.log",
+      "destination": "inventory/candidate-launcher.stdout.log",
+      "sha256": "8dabd04f62093bcf1ed6e66b9c3afaf8fcd2d66af61a5ead04e9a10e0e3dfdfa",
+      "bytes": 1120
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/candidate-manifest-v2-bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c.json.gz",
+      "destination": "inventory/candidate-manifest-v2-bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c.json.gz",
+      "sha256": "bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c",
+      "bytes": 578074
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/candidate-validation.json",
+      "destination": "inventory/candidate-validation.json",
+      "sha256": "a547b85de650e479b4d2a55a92a688b76d833f937db95bf879b82394eaf9c66c",
+      "bytes": 2215
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/canonical-promotion.json",
+      "destination": "inventory/canonical-promotion.json",
+      "sha256": "8ea955a3cba547bfcb741df81b82e4d5487880cd745430209d4f7cb5aed4d57e",
+      "bytes": 743
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/confirmation-collection.json",
+      "destination": "inventory/confirmation-collection.json",
+      "sha256": "2c32cff3546396299d75b3f9531ab07d31ffbdf7361ecb75ffe35a5dee2cf726",
+      "bytes": 28691
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/confirmation-launcher.exit-code",
+      "destination": "inventory/confirmation-launcher.exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/confirmation-launcher.stderr.log",
+      "destination": "inventory/confirmation-launcher.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/confirmation-launcher.stdout.log",
+      "destination": "inventory/confirmation-launcher.stdout.log",
+      "sha256": "2cb49486b1b64925a278e08ea7fe7ddc5fd465b43bc5561ca8c15f78cb87f9b9",
+      "bytes": 939
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/confirmation-validation.json",
+      "destination": "inventory/confirmation-validation.json",
+      "sha256": "14ad3880c92b536233532f130dcac90f3821acd6158c7b75ff852521b5e75b5f",
+      "bytes": 1171
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/execution-boundary.json",
+      "destination": "inventory/execution-boundary.json",
+      "sha256": "b8690829f15d93a31fa4288269d6d4cf9db5f6e015b5fcd443015f97fe5575d5",
+      "bytes": 2030
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/old-15142-collection-rows.json.gz",
+      "destination": "inventory/old-15142-collection-rows.json.gz",
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34",
+      "bytes": 196846
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/raw-candidate-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+      "destination": "inventory/raw-candidate-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+      "sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+      "bytes": 7097144
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/raw-confirmation-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+      "destination": "inventory/raw-confirmation-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+      "sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+      "bytes": 7097144
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/raw-review-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+      "destination": "inventory/raw-review-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+      "sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+      "bytes": 7097144
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/review-collection.json",
+      "destination": "inventory/review-collection.json",
+      "sha256": "6172b69d7bce7befdbb229a5e65ca3bf8f85595e6cad2b9642151941b50de700",
+      "bytes": 28691
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/review-launcher.exit-code",
+      "destination": "inventory/review-launcher.exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/review-launcher.stderr.log",
+      "destination": "inventory/review-launcher.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/review-launcher.stdout.log",
+      "destination": "inventory/review-launcher.stdout.log",
+      "sha256": "77de5a3ef623f9caae8e0a46dfe64889ab60b8ef7b9583724aa68a6831515d30",
+      "bytes": 939
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/review-validation.json",
+      "destination": "inventory/review-validation.json",
+      "sha256": "6f241952bd3efb6a739ca8a2d862ce10e05c8ee9c187c991494e4f52c96dc269",
+      "bytes": 1017
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/source-provenance-after.json",
+      "destination": "inventory/source-provenance-after.json",
+      "sha256": "ec0401fa230ef0938575e431ce4cdfea218da787294766aaf1effbe155e90b99",
+      "bytes": 300617
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/source-provenance-before.json",
+      "destination": "inventory/source-provenance-before.json",
+      "sha256": "925d5d82e26a895a97bde78089137b1d9dc9002febca23a5d56c43a185600f56",
+      "bytes": 300617
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/source-provenance-candidate-after.json",
+      "destination": "inventory/source-provenance-candidate-after.json",
+      "sha256": "a3350a151ace5c4533f0cc36ded8781f6dd30da19db38dc7ea044de877fe33c3",
+      "bytes": 300617
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/source-provenance-confirmation-after.json",
+      "destination": "inventory/source-provenance-confirmation-after.json",
+      "sha256": "a279340264203acaa62934cb2d8656b668f0a73a801bfc969050d5ea44cae9c3",
+      "bytes": 300617
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/backend-extraction-20261016.json",
+      "destination": "ledgers/backend-extraction-20261016.json",
+      "sha256": "0273b903a5e910860214c6a4260f9cce81ae55e723f74a1b910554ac669b8fd9",
+      "bytes": 5190
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-backend-audio-20261016.json",
+      "destination": "ledgers/ci-reconciliation-backend-audio-20261016.json",
+      "sha256": "35cd6dbc762f0a0fa2bd46a87a099aed118318d5905aa24efebf30c72dd10cbe",
+      "bytes": 13167
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-ui-extraction-20261016.json",
+      "destination": "ledgers/ci-reconciliation-ui-extraction-20261016.json",
+      "sha256": "c122f93f2cbd17d7e6bfb40c626c5172be986202c5c148ef261ef9626aa8bb44",
+      "bytes": 112791
+    },
+    {
+      "source": "/workspace/scratch/20a0022d2b33/ci-reconciliation-ui-extraction-20261016.md",
+      "destination": "ledgers/ci-reconciliation-ui-extraction-20261016.md",
+      "sha256": "8ddce69b4cd83b0a2bb9d683ae4d924529f275a8c60213b43b12ececc3c54f7c",
+      "bytes": 8412
+    },
+    {
+      "source": "/tmp/ci-reconciliation-confirmation-proof.cjs",
+      "destination": "verification/ci-reconciliation-confirmation-proof.cjs",
+      "sha256": "bf717d5e068467dc04b7f1c65a9ea2430c0fc8c9a3d6d8797d2cd05e2d71c159",
+      "bytes": 6366
+    },
+    {
+      "source": "/tmp/ci-reconciliation-review-proof.cjs",
+      "destination": "verification/ci-reconciliation-review-proof.cjs",
+      "sha256": "d77e5acc3411e7b5a2de87667615c9b99151c2efce58fab0c9c21687c54168fe",
+      "bytes": 13036
+    }
+  ],
+  "boundary": "Copied evidence files only. No interpreter, dependency packages, application runtime state, credentials or source changes. Original bytes and absolute historical references retained; this relocation map resolves /tmp and .runtime references to repository-relative evidence files.",
+  "completed_utc": "2026-10-16T23:12:11.334Z"
+}

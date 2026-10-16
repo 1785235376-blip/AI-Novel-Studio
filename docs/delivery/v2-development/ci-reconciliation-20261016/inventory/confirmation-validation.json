@@ -1,0 +1,25 @@
+{
+  "status": "PROMOTED_MANIFEST_CONFIRMATION_PASS",
+  "source_commit": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+  "tests_executed": false,
+  "row_count": 15617,
+  "old_row_count": 15142,
+  "raw_archive": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/raw-confirmation-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+  "raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "canonical_sha256": "bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c",
+  "report_sha256": "2c32cff3546396299d75b3f9531ab07d31ffbdf7361ecb75ffe35a5dee2cf726",
+  "post_promotion_protected_entries": 1266,
+  "checks": {
+    "exit_zero": true,
+    "errors_empty": true,
+    "generator_inventory_only": true,
+    "raw_byte_digest_equal_review": true,
+    "full_15617_rows_equal_review": true,
+    "old_15142_rows_equal": true,
+    "canonical_exact_approved_gzip": true,
+    "candidate_source_map_matches_worktree": true,
+    "source_and_companion_equal_initial": true,
+    "node_order_equal_manifest": true,
+    "classification_digest": true
+  }
+}

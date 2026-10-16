@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend
+
+ ✓ src/creative/studioAudioMp3Contract.test.tsx (32 tests) 337ms
+ ✓ src/experimental/ProductionLineagePanel.navigationCompatibility.test.tsx (15 tests) 656ms
+ ✓ src/creative/StudioReferenceRoute.compatibility.test.tsx (5 tests) 423ms
+ ✓ src/creative/studioAudioFlacContract.phase6.test.tsx (18 tests) 187ms
+ ✓ src/creative/StudioGraphManualProvider.compatibility.test.tsx (11 tests) 718ms
+ ✓ src/experimental/pristineReplayNavigation.test.tsx (6 tests) 107ms
+
+ Test Files  6 passed (6)
+      Tests  87 passed (87)
+   Start at  07:46:25
+   Duration  7.38s (transform 999ms, setup 45ms, collect 1.94s, tests 2.43s, environment 1.80s, prepare 297ms)
+

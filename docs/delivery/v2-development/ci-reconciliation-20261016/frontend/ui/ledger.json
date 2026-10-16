@@ -1,0 +1,1399 @@
+{
+  "base": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+  "head": "72e636f87c7299a62cb3357bcb6a6e44a9388883",
+  "files": [
+    {
+      "file": "frontend/src/AppAuthorTaskNavigation.test.tsx",
+      "destination": "frontend/src/AppAuthorTaskNavigation.additive.test.tsx",
+      "originalSha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "beforeSha256": "c71612b2e904c0efd00c416ad9a9c467a5430cdf401ba6465c3dee10ee408d09",
+      "afterSha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "oldTestDefinitions": 10,
+      "beforeTestDefinitions": 11,
+      "additiveTestDefinitions": 1,
+      "genuineAdditions": 1,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "preserves exact simulator/planning navigation when workspace tools are off",
+          "additiveTitle": "preserves exact simulator/planning navigation when workspace tools are off",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 180,
+          "sourceTextSha256": "3fba9efadece0f458537220490e5209c1f2c2251e5b5f8461fbbca73aad2768e",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "function deferred<T>() { let resolve!: (value: T) => void, reject!: (error: unknown) => vo",
+        "const editor = () => screen.getByLabelText('Test chapter editor') as HTMLTextAreaElement;",
+        "function edit(text: string) { fireEvent.change(editor(), { target: { value: text } }); }"
+      ],
+      "verifiedProtectedSha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "additiveSha256": "f26d6699abfbb7bed6e31da087d7b1fb9139e84a07161dc4d1295763442bb68f",
+      "restoredRun": {
+        "collected": 10,
+        "passed": 10,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/delivery/DeliveryCenterPanel.test.tsx",
+      "destination": "frontend/src/delivery/DeliveryCenterPanel.additive.test.tsx",
+      "originalSha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "beforeSha256": "4a2abdc60b9a0e842804b727a68bdbe6de26c14189670d1fd54261c04f331901",
+      "afterSha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 14,
+      "additiveTestDefinitions": 3,
+      "genuineAdditions": 3,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "waits for a completed empty read before claiming no receipt was returned",
+          "additiveTitle": "waits for a completed empty read before claiming no receipt was returned",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Delivery receipt read feedback"
+          ],
+          "sourceLine": 211,
+          "sourceTextSha256": "07f65867e3047249bb3d712c138510b98d1308dfb43a20b58874ade344245910",
+          "originalTextSha256": null
+        },
+        {
+          "title": "recovers through the existing explicit read after failure without displaying a false empty history",
+          "additiveTitle": "recovers through the existing explicit read after failure without displaying a false empty history",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Delivery receipt read feedback"
+          ],
+          "sourceLine": 224,
+          "sourceTextSha256": "0aefeb6efeab52ef75940eed44d5e83b39ba6c3af0dded2bff54ad04fc5f1a95",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not describe an empty loaded page with next_offset %s as an empty project history",
+          "additiveTitle": "does not describe an empty loaded page with next_offset %s as an empty project history",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Delivery empty page with remaining history"
+          ],
+          "sourceLine": 242,
+          "sourceTextSha256": "e38f80bd491b3ba206771963a952a9d7eabc9c5d4368054ee5f6e15a4d36cac4",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const HEX = [...'abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'];",
+        "const digest = (seed: string): string => [...(seed.repeat(3) + HEX.join('')).slice(0, 64)]"
+      ],
+      "verifiedProtectedSha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "additiveSha256": "d67cc3ffa68e51dd984a0d024b629ad760c3ba14d0ec95591f43651f94dcfe52",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/BranchManuscriptPanel.test.tsx",
+      "destination": "frontend/src/experimental/BranchManuscriptPanel.additive.test.tsx",
+      "originalSha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "beforeSha256": "14bd53f5ee41a19b1a9e7388147dc63e6e23a7d061c211d9c9eddbb32fb04eaf",
+      "afterSha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "oldTestDefinitions": 6,
+      "beforeTestDefinitions": 8,
+      "additiveTestDefinitions": 2,
+      "genuineAdditions": 2,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "mounts exact block review on explicit compare and keeps manual selections inside original comparison",
+          "additiveTitle": "mounts exact block review on explicit compare and keeps manual selections inside original comparison",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 99,
+          "sourceTextSha256": "3bade685d658f05d1f2084c0237aacaa67f98a1f47e92eb10a6c9372ddd7796a",
+          "originalTextSha256": null
+        },
+        {
+          "title": "discards a pending comparison after client identity changes",
+          "additiveTitle": "discards a pending comparison after client identity changes",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 121,
+          "sourceTextSha256": "02956e5a4bd9266d5d6417e61b3ccbc64c22d966c88f6a619353797543d5f3c2",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "additiveSha256": "6271f5fa2d56d5aff1f34d23375a0d358c6ea6637a2a49e96f185020118e0082",
+      "restoredRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 2,
+        "passed": 2,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ComicLayoutsPanel.test.tsx",
+      "destination": "frontend/src/experimental/ComicLayoutsPanel.additive.test.tsx",
+      "originalSha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "beforeSha256": "60ff70aa0f8da2996f891a463a9a4d16689579bf6dca4192f96bf6e5d5abd5fe",
+      "afterSha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "oldTestDefinitions": 8,
+      "beforeTestDefinitions": 13,
+      "additiveTestDefinitions": 5,
+      "genuineAdditions": 5,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "explicit arrangement preview applies one undoable edit and saves only through original owner",
+          "additiveTitle": "explicit arrangement preview applies one undoable edit and saves only through original owner",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 123,
+          "sourceTextSha256": "14a259df72b657c5e0b7ed6b1f0339fe67859c62f19656be1b90671725afdfd2",
+          "originalTextSha256": null
+        },
+        {
+          "title": "cancel, edits, refresh and client replacement discard arrangement consent",
+          "additiveTitle": "cancel, edits, refresh and client replacement discard arrangement consent",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 141,
+          "sourceTextSha256": "e27e89e6be8e3a113788c9f18ffc5be1dc164a09f986b9e3f9ce0b499384fba7",
+          "originalTextSha256": null
+        },
+        {
+          "title": "retained arrangement apply is fenced after cancellation, edits and repeat invocation",
+          "additiveTitle": "retained arrangement apply is fenced after cancellation, edits and repeat invocation",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 152,
+          "sourceTextSha256": "f5d515c3cd33d64c47df8e849be39dc29c4c3eb6a40877bda95fa12ad8ac996e",
+          "originalTextSha256": null
+        },
+        {
+          "title": "pending and failed save %s cannot reuse arrangement consent",
+          "additiveTitle": "pending and failed save %s cannot reuse arrangement consent",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 172,
+          "sourceTextSha256": "f3631e6949c127a6c277236cabf1e27cacb1e1cb34d8d19210c3f383ade90ec4",
+          "originalTextSha256": null
+        },
+        {
+          "title": "retained apply cannot cross record, source or owner ABA",
+          "additiveTitle": "retained apply cannot cross record, source or owner ABA",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 190,
+          "sourceTextSha256": "47f34aaedc7f4b7b1c81fa62e9af851767b6261e03711205c7001cbf524e6530",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const report = { issues: [], segments: [{ index: 0, width: 800, height: 1120, y: 0 }], can"
+      ],
+      "verifiedProtectedSha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "additiveSha256": "279c3b21ca88ecd559bb6e7495a59c31e704e12fe6466146943419a56cdd1aed",
+      "restoredRun": {
+        "collected": 8,
+        "passed": 8,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ExperimentalWorkbench.continuation.test.tsx",
+      "destination": "frontend/src/experimental/ExperimentalWorkbench.continuation.additive.test.tsx",
+      "originalSha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "beforeSha256": "33aa2fa77288d6af9e24365885825951378c2d5a1346b473ad9ecbd5ca9d85ba",
+      "afterSha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "oldTestDefinitions": 4,
+      "beforeTestDefinitions": 6,
+      "additiveTestDefinitions": 2,
+      "genuineAdditions": 2,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "forwards %s durable references only to their original owner",
+          "additiveTitle": "forwards %s durable references only to their original owner",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 45,
+          "sourceTextSha256": "f79d73ec92238fe092e462742541fa4aaa90ad6f7580e5e950d125909e805f8c",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not offer simulator navigation when its feature is disabled",
+          "additiveTitle": "does not offer simulator navigation when its feature is disabled",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 56,
+          "sourceTextSha256": "bc894df33708698b064b5634a07743d61fffad8959fa6776863e768358c96491",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "additiveSha256": "29894f8e2c4546a6172005b87b093a6b927d5ace71070c3b1ba03608c44a60f8",
+      "restoredRun": {
+        "collected": 5,
+        "passed": 5,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 3,
+        "passed": 3,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/InteractiveStoryPanel.test.tsx",
+      "destination": "frontend/src/experimental/InteractiveStoryPanel.additive.test.tsx",
+      "originalSha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "beforeSha256": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+      "afterSha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 22,
+      "additiveTestDefinitions": 11,
+      "genuineAdditions": 11,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "locates exact saved issues in the original dirty editor without writing or discarding Unicode input",
+          "additiveTitle": "locates exact saved issues in the original dirty editor without writing or discarding Unicode input",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 155,
+          "sourceTextSha256": "50d1c512a30dadb687e9d3d5b14a0654f7f86ac84dd06d3acfc165f28e2784ad",
+          "originalTextSha256": null
+        },
+        {
+          "title": "keeps missing, removed-choice and node-less issues non-navigable with no guessed target",
+          "additiveTitle": "keeps missing, removed-choice and node-less issues non-navigable with no guessed target",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 175,
+          "sourceTextSha256": "b1a9f7ef7fbf38b723bda8796aa37fdbe2a83f9c98672dbb74244878919f69d5",
+          "originalTextSha256": null
+        },
+        {
+          "title": "bounds issue navigation to twenty rows and keeps archived drafts read-only",
+          "additiveTitle": "bounds issue navigation to twenty rows and keeps archived drafts read-only",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 185,
+          "sourceTextSha256": "48c9a9a82cf0c27cb028979c39f9d77d7dd2fc2b6913335060dfdd3364d71276",
+          "originalTextSha256": null
+        },
+        {
+          "title": "rejects ambiguous node IDs and isolates issue navigation after switching the client",
+          "additiveTitle": "rejects ambiguous node IDs and isolates issue navigation after switching the client",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 194,
+          "sourceTextSha256": "8a1cebef5d99dcc521fb33a8eea7282378ca16474ac097d80ce8831ee289b733",
+          "originalTextSha256": null
+        },
+        {
+          "title": "blocks issue navigation during an original save, then preserves the exact draft after conflict",
+          "additiveTitle": "blocks issue navigation during an original save, then preserves the exact draft after conflict",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 206,
+          "sourceTextSha256": "dc6dda56b9821aa5ae116ae69ac809159d9d7b184ace788d2a84a89db96e45e1",
+          "originalTextSha256": null
+        },
+        {
+          "title": "keeps the composing source node and Unicode draft until IME composition finishes",
+          "additiveTitle": "keeps the composing source node and Unicode draft until IME composition finishes",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 226,
+          "sourceTextSha256": "964452f1b929718dd4aa97bade612220e2fd03f065de26660ff0c07c56e183be",
+          "originalTextSha256": null
+        },
+        {
+          "title": "rejects malformed supplied choice references and never resolves a choice in another node",
+          "additiveTitle": "rejects malformed supplied choice references and never resolves a choice in another node",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 242,
+          "sourceTextSha256": "5638fb4d048600f2dd35b81a112678e942e55997dc45e777b633197ec8e973ff",
+          "originalTextSha256": null
+        },
+        {
+          "title": "rejects duplicate choice IDs instead of focusing an arbitrary control",
+          "additiveTitle": "rejects duplicate choice IDs instead of focusing an arbitrary control",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 254,
+          "sourceTextSha256": "344d25c6aec43077fdc372279fa09dc7783232e677e4e8d0c91878b0097def44",
+          "originalTextSha256": null
+        },
+        {
+          "title": "resets issue paging on a new saved version and locates by ID after node order changes",
+          "additiveTitle": "resets issue paging on a new saved version and locates by ID after node order changes",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 263,
+          "sourceTextSha256": "0fbfb3d08036f89b8d5f9dfc6096b2a929fe84195dca20d0c396d477f71b6ee3",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not restore old issue navigation after client A to B to A and a delayed version read",
+          "additiveTitle": "does not restore old issue navigation after client A to B to A and a delayed version read",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 276,
+          "sourceTextSha256": "53b07c239d0cc50e6bd0bce32e11788d8cfc044bb4ed621ab884ed125e3a4065",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not retarget a saved issue to a replacement choice with a reused ID before save",
+          "additiveTitle": "does not retarget a saved issue to a replacement choice with a reused ID before save",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 299,
+          "sourceTextSha256": "01ef2cc0725e4be5bdbab16cbaef5a602e95f70d9e961b4811a6b839d6a88925",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "additiveSha256": "933b811624de85129813272ca61354bce92cf1931cb74e1aecb65f33ac1b8f43",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ModelBrokerPanel.test.tsx",
+      "destination": "frontend/src/experimental/ModelBrokerPanel.additive.test.tsx",
+      "originalSha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "beforeSha256": "aead0f49773c962c5a02347be4b9afc53d1f1c96c246c4eb6962bac99ce3ddcc",
+      "afterSha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "oldTestDefinitions": 9,
+      "beforeTestDefinitions": 13,
+      "additiveTestDefinitions": 4,
+      "genuineAdditions": 4,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "defaults to local and allows explicit cloud then local selection without changing privacy or dispatching",
+          "additiveTitle": "defaults to local and allows explicit cloud then local selection without changing privacy or dispatching",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 176,
+          "sourceTextSha256": "245c9852a8b03f26455c1644469bec6e67e897bffe01ee4af5a871429f538eed",
+          "originalTextSha256": null
+        },
+        {
+          "title": "preserves an uncertain submission and explicitly retries the identical owner request without a new id",
+          "additiveTitle": "preserves an uncertain submission and explicitly retries the identical owner request without a new id",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 195,
+          "sourceTextSha256": "707d1f65b09530ab974766b71648799aad4392d1fad7167a6d2df3893e846696",
+          "originalTextSha256": null
+        },
+        {
+          "title": "requires saved chapter edits before exact preview or generation",
+          "additiveTitle": "requires saved chapter edits before exact preview or generation",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 227,
+          "sourceTextSha256": "05311344698aa0ae0f716d310279ffb6ced78584a24c0c4f9be815a4166b79f1",
+          "originalTextSha256": null
+        },
+        {
+          "title": "only unlocks an explicit pre-dispatch rejection on the first attempt (prior ambiguous send: %s)",
+          "additiveTitle": "only unlocks an explicit pre-dispatch rejection on the first attempt (prior ambiguous send: %s)",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 234,
+          "sourceTextSha256": "49c6039d3ab155bd74aa283e6d80a62c6767a66fefcbfab3dff61dfab7b8c7c7",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "additiveSha256": "ffa8685f721d5ef2ce9a30fd6fb91d6330dc8431ba35156f45000ba7b4de35e3",
+      "restoredRun": {
+        "collected": 9,
+        "passed": 9,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 5,
+        "passed": 5,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/MultilingualEditionsPanel.test.tsx",
+      "destination": "frontend/src/experimental/MultilingualEditionsPanel.additive.test.tsx",
+      "originalSha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "beforeSha256": "54be2f23bec2cecbe300967755827124a9c0d3dbcdd4ab523a9416d12ddad72f",
+      "afterSha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "oldTestDefinitions": 10,
+      "beforeTestDefinitions": 16,
+      "additiveTestDefinitions": 6,
+      "genuineAdditions": 6,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "locates the exact duplicate Unicode segment, shows rule versions, then saves through the original owner",
+          "additiveTitle": "locates the exact duplicate Unicode segment, shows rule versions, then saves through the original owner",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 137,
+          "sourceTextSha256": "05c6ef5f590084ae1c8d6712ab29995a02a34744bfff453041164c1ffe57b3a2",
+          "originalTextSha256": null
+        },
+        {
+          "title": "never substitutes a changed rule version for issue evidence",
+          "additiveTitle": "never substitutes a changed rule version for issue evidence",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 159,
+          "sourceTextSha256": "8dd1c1cb63ec99834ae895b8d9c85e37f418c05d1fbb1a38579e56714f470889",
+          "originalTextSha256": null
+        },
+        {
+          "title": "withholds issue navigation and text when content is withheld independently of stale",
+          "additiveTitle": "withholds issue navigation and text when content is withheld independently of stale",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 167,
+          "sourceTextSha256": "a3ff04452c78801de47bdd454f4f5e42389819fcc888240cc08dca632d5e0c4b",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not select a matching rule version from duplicate IDs",
+          "additiveTitle": "does not select a matching rule version from duplicate IDs",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 174,
+          "sourceTextSha256": "83907c31ced99a2cb8673edbce06c02826021ffa2979706a153444e5dd7a77ba",
+          "originalTextSha256": null
+        },
+        {
+          "title": "labels legitimate unversioned conflict rules as same-edition snapshot evidence",
+          "additiveTitle": "labels legitimate unversioned conflict rules as same-edition snapshot evidence",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 182,
+          "sourceTextSha256": "dd1748b70d14a6d2ea005613b7aa72355f4f62323db531635b31306dfeb38988",
+          "originalTextSha256": null
+        },
+        {
+          "title": "keeps the composing original textarea mounted before its first change event",
+          "additiveTitle": "keeps the composing original textarea mounted before its first change event",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 190,
+          "sourceTextSha256": "206044c4d309ef36bcf2ee1924124b2143ad13edeceb980726fff3304a12da1f",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "additiveSha256": "a24e460ac1107510a6d708654fe8602c39f8087ae807ba04418076fe23cc69d0",
+      "restoredRun": {
+        "collected": 10,
+        "passed": 10,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ProductionLineagePanel.test.tsx",
+      "destination": "frontend/src/experimental/ProductionLineagePanel.additive.test.tsx",
+      "originalSha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "beforeSha256": "dc3c7a621f7fd253d4c12c2144077b7da14d35ac2296fd14737411d02e509ecf",
+      "afterSha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 11,
+      "additiveTestDefinitions": 1,
+      "genuineAdditions": 0,
+      "migratedVariants": 1,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "reopening reads existing replay result and links to review without approving",
+          "additiveTitle": "[migrated variant] reopening reads existing replay result and links to review without approving",
+          "classification": "migrated variant",
+          "originalTitle": "reopening reads existing replay result and links to review without approving",
+          "describe": [
+            "ProductionLineagePanel real API actions"
+          ],
+          "sourceLine": 132,
+          "sourceTextSha256": "62bb057a09f581a8569c050615947391bdb4492001c41cb530a9710886232d39",
+          "originalTextSha256": "e6fc82260c7360209f46aefb2e0ea3e5e16d8eebd0294cccc8ad633f676e410d"
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "async function openAsset() { fireEvent.click(await screen.findByRole('button', { name: 'De",
+        "async function openManifest() { fireEvent.click(await screen.findByRole('button', { name: "
+      ],
+      "verifiedProtectedSha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "additiveSha256": "32b35ab5fda578b34cc0da0462703e1fc11efa6fb3506b53eec5f938b9814536",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 10,
+        "failed": 1,
+        "failures": [
+          {
+            "title": "ProductionLineagePanel real API actions reopening reads existing replay result and links to review without approving",
+            "summary": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"审核重放产物\""
+          }
+        ]
+      },
+      "additiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ResearchLibraryPanel.test.tsx",
+      "destination": "frontend/src/experimental/ResearchLibraryPanel.additive.test.tsx",
+      "originalSha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "beforeSha256": "de00574e6b922ca534870a23da376b19cf483b75e947596fc20471167fbeb1e9",
+      "afterSha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "oldTestDefinitions": 10,
+      "beforeTestDefinitions": 11,
+      "additiveTestDefinitions": 1,
+      "genuineAdditions": 1,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [
+        {
+          "title": "only reads saved local sources on mount; no fetch, parse, search or model execution",
+          "originalTitle": "only reads saved local sources on mount; no fetch, parse, search or model execution",
+          "reason": "Pure legacy assertion rewrite; original contract restored, genuine additions separately retained."
+        }
+      ],
+      "cases": [
+        {
+          "title": "locates page-only evidence in the original source without claiming extracted text",
+          "additiveTitle": "locates page-only evidence in the original source without claiming extracted text",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 158,
+          "sourceTextSha256": "4f90cdbb6e397e8c91774c0c4861175b87bb03f31becbdcacb0ae8dc1cf6400d",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const fetcher = (mutate?: (url: string, init: RequestInit) => Response | Promise<Response>"
+      ],
+      "verifiedProtectedSha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "additiveSha256": "92a20395cf7d2224dfe9d5b1af5f5d16293450e47ca4f777209a1415f9a70fd4",
+      "restoredRun": {
+        "collected": 10,
+        "passed": 9,
+        "failed": 1,
+        "failures": [
+          {
+            "title": "only reads saved local sources on mount; no fetch, parse, search or model execution",
+            "summary": "TestingLibraryElementError: Unable to find an element with the text: /向量、OCR 与视觉解析当前未配置/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible."
+          }
+        ]
+      },
+      "additiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0,
+        "failures": []
+      },
+      "legacyRewriteMapping": {
+        "restored_contract": "The original explicit configuration-state wording assertion is restored unchanged.",
+        "preserved_newer_coverage": [
+          "frontend/src/experimental/ResearchLibraryPanel.additive.test.tsx: locates page-only evidence in the original source without claiming extracted text",
+          "frontend/src/experimental/ResearchLibraryPanel.location.test.tsx: separately existing original-source location coverage"
+        ],
+        "reason": "The changed wording itself adds no distinct fixture or behavioral scenario; it is not copied or counted."
+      }
+    },
+    {
+      "file": "frontend/src/experimental/StorySimulatorPanel.test.tsx",
+      "destination": "frontend/src/experimental/StorySimulatorPanel.additive.test.tsx",
+      "originalSha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "beforeSha256": "62347f6c757041e6b83247960f7fdc98d954586439331039fcd315134832022f",
+      "afterSha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "oldTestDefinitions": 14,
+      "beforeTestDefinitions": 18,
+      "additiveTestDefinitions": 4,
+      "genuineAdditions": 4,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [
+        {
+          "title": "compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority",
+          "originalTitle": "compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority",
+          "reason": "Pure legacy assertion rewrite; original contract restored, genuine additions separately retained."
+        }
+      ],
+      "cases": [
+        {
+          "title": "reopens the persisted route review after remount without saving again or copying input",
+          "additiveTitle": "reopens the persisted route review after remount without saving again or copying input",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 234,
+          "sourceTextSha256": "92fdca1e8c2e7aa898c5df3fcaab1a11f22a47ad8391dca75b4a7b24cb1bb99f",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not substitute the run list when an exact original run is unavailable or wrong",
+          "additiveTitle": "does not substitute the run list when an exact original run is unavailable or wrong",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 247,
+          "sourceTextSha256": "79cf681fb5e5d1b905c37f8468473943a9d4bc51bca82546117097df1c75b1fd",
+          "originalTextSha256": null
+        },
+        {
+          "title": "hides exact run constraints on target ABA and late responses without changing the editable form",
+          "additiveTitle": "hides exact run constraints on target ABA and late responses without changing the editable form",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 256,
+          "sourceTextSha256": "caa6286567f6f12e412cf7f57b9eca32d1d2d0a0676fba3616c22426c25fd1da",
+          "originalTextSha256": null
+        },
+        {
+          "title": "clears route consent and temporary proposal receipts when the exact target changes",
+          "additiveTitle": "clears route consent and temporary proposal receipts when the exact target changes",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 276,
+          "sourceTextSha256": "bee656f405ca5a6474379cca95e33a635282f85ab3ca96bdcb9f3eda3fee0b73",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "async function fill() {\n  await screen.findByLabelText('推演来源：雨夜 · v3');\n  fireEvent.change",
+        "async function chooseRun() {\n  await screen.findByLabelText('推演来源：雨夜 · v3');\n  fireEvent.c",
+        "const modelRoute = { route_id: 'route-local', provider_id: 'mock', model_id: 'mock-writer'",
+        "const modelPreview = { preview_digest: 'd'.repeat(64), execution_available: true, source_s",
+        "const modelCandidate = { id: 'model-a', input: { id: 'model-a', title: '模型替代路线', events: [",
+        "function modelTransport(initial: SimulatorRun = completed) {\n  let row = initial;\n  const "
+      ],
+      "verifiedProtectedSha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "additiveSha256": "16cd30a2e02aa623db638bb911d7f5da450cecdf76d90f086999d07230a1685b",
+      "restoredRun": {
+        "collected": 14,
+        "passed": 13,
+        "failed": 1,
+        "failures": [
+          {
+            "title": "compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority",
+            "summary": "AssertionError: expected \"spy\" to be called with arguments: [ { kind: 'feature', …(2) } ]"
+          }
+        ]
+      },
+      "additiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0,
+        "failures": []
+      },
+      "legacyRewriteMapping": {
+        "restored_contract": "The legacy child callback has exactly kind/id/feature.",
+        "preserved_newer_coverage": [
+          "frontend/src/experimental/StorySimulatorPanel.additive.test.tsx: persisted exact-run review reopening, wrong-run rejection, target ABA, consent clearing",
+          "frontend/src/AppAuthorTaskNavigation.additive.test.tsx: exact simulator/planning owner navigation",
+          "frontend/src/experimental/ExperimentalWorkbench.continuation.additive.test.tsx: owner reference and feature gating"
+        ],
+        "reason": "The callback-only assertion rewrite is not a new scenario; owner disambiguation remains covered by the named newer scenarios and must later move to a host adapter."
+      }
+    },
+    {
+      "file": "frontend/src/experimental/StyleReviewPanels.test.tsx",
+      "destination": "frontend/src/experimental/StyleReviewPanels.additive.test.tsx",
+      "originalSha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "beforeSha256": "20623169bd2c17abf31dd6702f82496aa950f63fda65bcbf927e4cd085ef90ad",
+      "afterSha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "oldTestDefinitions": 16,
+      "beforeTestDefinitions": 17,
+      "additiveTestDefinitions": 1,
+      "genuineAdditions": 1,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "mounts saved target comparison beside original sample evidence and preserves manual profile input when target navigation is cancelled",
+          "additiveTitle": "mounts saved target comparison beside original sample evidence and preserves manual profile input when target navigation is cancelled",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 235,
+          "sourceTextSha256": "104d2516272a6010537ddb6a8683eac4896ce349641f1ed2459116ef324e016b",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "async function selectStyle() {\n  await screen.findByRole('button', { name: '编辑风格 克制文风' });",
+        "async function previewStyle() {\n  await selectStyle();\n  fireEvent.click(screen.getByRole(",
+        "async function selectRun() {\n  await screen.findByLabelText('审阅章节：雨夜 · v3');\n  fireEvent.c"
+      ],
+      "verifiedProtectedSha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "additiveSha256": "01dd67785def1a1b5fa2779bd46dea10035e119543fd40175c046cb2ce6577d1",
+      "restoredRun": {
+        "collected": 16,
+        "passed": 16,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/VoiceSubtitlePanels.test.tsx",
+      "destination": "frontend/src/experimental/VoiceSubtitlePanels.additive.test.tsx",
+      "originalSha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "beforeSha256": "86d702c3fef1822a35c43daf5cc8c682afed70eea634a9693e6233ad979040bc",
+      "afterSha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "oldTestDefinitions": 7,
+      "beforeTestDefinitions": 9,
+      "additiveTestDefinitions": 2,
+      "genuineAdditions": 2,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "reviews actionable caption transfer issues locally, focuses cues and preserves unsaved input",
+          "additiveTitle": "reviews actionable caption transfer issues locally, focuses cues and preserves unsaved input",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 83,
+          "sourceTextSha256": "411bb41197bf9cb388d26865eb80187069f140df1ab1bdeca9b6a77fe5546f0e",
+          "originalTextSha256": null
+        },
+        {
+          "title": "hides compatibility review while source refresh fails and resets on owner replacement",
+          "additiveTitle": "hides compatibility review while source refresh fails and resets on owner replacement",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 95,
+          "sourceTextSha256": "997e2f51999c37c5b3d899b55578ebd3c857018e3ee8d254e7ccf1fadd95231b",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const plan={id:'plan',version:1,title:'Synthetic voice',status:'PENDING_REVIEW',needs_revi"
+      ],
+      "verifiedProtectedSha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "additiveSha256": "d5050027e3168710dde56c570615ca280e26ebb0fc6365f20f3ea62fb248a848",
+      "restoredRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 2,
+        "passed": 2,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/experimental/WriterRoomPanel.test.tsx",
+      "destination": "frontend/src/experimental/WriterRoomPanel.additive.test.tsx",
+      "originalSha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "beforeSha256": "7050e594f92ca971f41752ef85b1ddbcacf7427877a3c2f625779a6998141e35",
+      "afterSha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "oldTestDefinitions": 9,
+      "beforeTestDefinitions": 14,
+      "additiveTestDefinitions": 5,
+      "genuineAdditions": 5,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "reads the task-pinned chapter digest only on demand and exposes exact review identity and event time",
+          "additiveTitle": "reads the task-pinned chapter digest only on demand and exposes exact review identity and event time",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 127,
+          "sourceTextSha256": "de6ec88c5ce70bb37a627f963a954a65033b2b94b722da049041caad7b3df379",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not substitute the catalog chapter when the task-pinned revision is stale",
+          "additiveTitle": "does not substitute the catalog chapter when the task-pinned revision is stale",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 141,
+          "sourceTextSha256": "09fa325b8e86f100a6d0984aa7d67bcd9dd4b48f9506da938b529a402a03f55a",
+          "originalTextSha256": null
+        },
+        {
+          "title": "preserves note-only drafts across task switches and clears a note after a confirmed transition",
+          "additiveTitle": "preserves note-only drafts across task switches and clears a note after a confirmed transition",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 152,
+          "sourceTextSha256": "3737367608ca9b2e5b9f931de98a0a8b4bbe6bfd6aee8a64e87c52a0cad11257",
+          "originalTextSha256": null
+        },
+        {
+          "title": "retains decision notes after an unknown outcome without replaying the transition",
+          "additiveTitle": "retains decision notes after an unknown outcome without replaying the transition",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 168,
+          "sourceTextSha256": "edd15e638be761a71176f9e7ccbfa7c8febccce35f5fd317501f31ff1452ae2a",
+          "originalTextSha256": null
+        },
+        {
+          "title": "drops delayed task context when the reader switches tasks and invalidates loaded context on refresh",
+          "additiveTitle": "drops delayed task context when the reader switches tasks and invalidates loaded context on refresh",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 178,
+          "sourceTextSha256": "c521949b7b605c7c70029ae40a049d8847485df9a128e51b1d79aa8fc2c56295",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "additiveSha256": "4a57697b32e83177fe462a36c5cf7c57e757f9e29e0d599ef7b9e41441c584e5",
+      "restoredRun": {
+        "collected": 9,
+        "passed": 9,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 5,
+        "passed": 5,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/modelcenter/ModelCenterPanel.test.tsx",
+      "destination": "frontend/src/modelcenter/ModelCenterPanel.additive.test.tsx",
+      "originalSha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "beforeSha256": "169e50d5bbfda7b3339dacba0b9288e53aaf9fdf87ca48a9353627283218cbb9",
+      "afterSha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "oldTestDefinitions": 20,
+      "beforeTestDefinitions": 27,
+      "additiveTestDefinitions": 7,
+      "genuineAdditions": 7,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "reports a failed catalog alongside successful storage, then recovers on explicit retry",
+          "additiveTitle": "reports a failed catalog alongside successful storage, then recovers on explicit retry",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 326,
+          "sourceTextSha256": "6417a2f822d368cebf6843831871083719425c06603fdc00a66a2f489965082d",
+          "originalTextSha256": null
+        },
+        {
+          "title": "never calls unavailable sources an empty registry",
+          "additiveTitle": "never calls unavailable sources an empty registry",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 346,
+          "sourceTextSha256": "440084c0e6bcef948a2ff57060fad9ab636feeff28e62f3edf86c6143851046a",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not claim a complete empty read when the runtime read failed",
+          "additiveTitle": "does not claim a complete empty read when the runtime read failed",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 355,
+          "sourceTextSha256": "0406d50842589f545cdec51fe87f9f83cd188bc5232c8891ad6ab0268590bfd7",
+          "originalTextSha256": null
+        },
+        {
+          "title": "labels retained catalog and storage values after a refresh failure",
+          "additiveTitle": "labels retained catalog and storage values after a refresh failure",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 364,
+          "sourceTextSha256": "5ceadb508b594102f062aa2d35d023016fac9c8b91f8614a00667da25876cd8b",
+          "originalTextSha256": null
+        },
+        {
+          "title": "announces loading without premature unavailable or failure messages",
+          "additiveTitle": "announces loading without premature unavailable or failure messages",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 379,
+          "sourceTextSha256": "8cb359c2039834844eeb9f62b5494082c439879815273cb36b6f7b1dde5b16be",
+          "originalTextSha256": null
+        },
+        {
+          "title": "labels storage retained after an unavailable refresh and distinguishes current usage from old values",
+          "additiveTitle": "labels storage retained after an unavailable refresh and distinguishes current usage from old values",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel retained facts review regressions"
+          ],
+          "sourceLine": 395,
+          "sourceTextSha256": "1a8a6e33791549b42ff5073818ed793679b045934f0686726716f2dc0831d8c8",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not offer unavailable-catalog recovery advice when the panel is explicitly denied",
+          "additiveTitle": "does not offer unavailable-catalog recovery advice when the panel is explicitly denied",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel retained facts review regressions"
+          ],
+          "sourceLine": 407,
+          "sourceTextSha256": "98b5e793b80eec9d9470c4942a1eabb788dd0c79e767dd475c5ab5676040e3df",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "additiveSha256": "d79ae9f965cdecc612fe55e5a8585e339f877dafd790113811e33f421156c496",
+      "restoredRun": {
+        "collected": 20,
+        "passed": 20,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/prompt/PromptWorkspace.test.tsx",
+      "destination": "frontend/src/prompt/PromptWorkspace.additive.test.tsx",
+      "originalSha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "beforeSha256": "a2989c9df5e8b462ea64a7c61e222f4f3446528fbdfec6b5dd5f1dbb133aa18b",
+      "afterSha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 17,
+      "additiveTestDefinitions": 6,
+      "genuineAdditions": 6,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "exposes authored change reasons and searches only loaded revision records",
+          "additiveTitle": "exposes authored change reasons and searches only loaded revision records",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt history finder"
+          ],
+          "sourceLine": 191,
+          "sourceTextSha256": "cdf998615102a538e4d95cc698a4ac2eac6aef4338616ce59ed7835af576e824",
+          "originalTextSha256": null
+        },
+        {
+          "title": "offers a recoverable no-match message while preserving the complete history warning",
+          "additiveTitle": "offers a recoverable no-match message while preserving the complete history warning",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt history finder"
+          ],
+          "sourceLine": 209,
+          "sourceTextSha256": "cb301117a5ba7914b1acbf61d86c57942ed5a7b6d57f0a892f5391f849e0f807",
+          "originalTextSha256": null
+        },
+        {
+          "title": "selects a comparison from history without reading bodies or writing until explicitly requested",
+          "additiveTitle": "selects a comparison from history without reading bodies or writing until explicitly requested",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt history finder"
+          ],
+          "sourceLine": 221,
+          "sourceTextSha256": "690f633f2b12b04fdd741f447579fd23dd827ce35c763bce956f29d4b92dcd36",
+          "originalTextSha256": null
+        },
+        {
+          "title": "reveals an invalid advanced field in novice mode and keeps correction editable until explicit save",
+          "additiveTitle": "reveals an invalid advanced field in novice mode and keeps correction editable until explicit save",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt editor correction across interface modes"
+          ],
+          "sourceLine": 240,
+          "sourceTextSha256": "3d85c33d3c0a86f6c96a7e724a8e2f5c0b7366ddd4de70e07d7edafdf179de63",
+          "originalTextSha256": null
+        },
+        {
+          "title": "does not carry a failed field correction from family A into valid family B",
+          "additiveTitle": "does not carry a failed field correction from family A into valid family B",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt field error attribution"
+          ],
+          "sourceLine": 267,
+          "sourceTextSha256": "a634519a9e674577a7bedc1ed1074b11b21f30513cd1434a3ec458d0d5b2f05b",
+          "originalTextSha256": null
+        },
+        {
+          "title": "copies an edited body without submitting or persisting that body",
+          "additiveTitle": "copies an edited body without submitting or persisting that body",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt visible draft rescue"
+          ],
+          "sourceLine": 307,
+          "sourceTextSha256": "5770a9b2e1b363af8b27598e488e1f5833444aab08478bf4d1455ab679a2a6d2",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "additiveSha256": "94e7f9018a2c09b968362f52c2d433ec5c25bf5b8ddfde9437af134f162a0859",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/taskcenter/TaskCenter.test.tsx",
+      "destination": "frontend/src/taskcenter/TaskCenter.additive.test.tsx",
+      "originalSha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "beforeSha256": "316e5439ce061b4b4aa8e24754285d83f7f90b55814d798e29679838cb0246f4",
+      "afterSha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 14,
+      "additiveTestDefinitions": 3,
+      "genuineAdditions": 3,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "shows receipt evidence and preserves task info on a later failed read",
+          "additiveTitle": "shows receipt evidence and preserves task info on a later failed read",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "original task receipt companion view"
+          ],
+          "sourceLine": 338,
+          "sourceTextSha256": "49ef47f51f410efa6067893398f5ee2ec445dc3c00759ea9dd7a6f24173427e6",
+          "originalTextSha256": null
+        },
+        {
+          "title": "keeps unsupported media unknown with useful recovery guidance",
+          "additiveTitle": "keeps unsupported media unknown with useful recovery guidance",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "original task receipt companion view"
+          ],
+          "sourceLine": 363,
+          "sourceTextSha256": "a3afb1802333f4e350d046809849d0a800cd36829eb80e95c1d858ad23706c15",
+          "originalTextSha256": null
+        },
+        {
+          "title": "renders %s without implying an invoice or enabling retry",
+          "additiveTitle": "renders %s without implying an invoice or enabling retry",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 372,
+          "sourceTextSha256": "be574008e8bf927000a3505eaaeb80ed92dcdb83806f9349f071d64adf8997f8",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const queryButton = (name: string | RegExp) => screen.queryByRole('button', { name });",
+        "const tab = (name: string | RegExp) => screen.getByRole('tab', { name }) as HTMLButtonElem"
+      ],
+      "verifiedProtectedSha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "additiveSha256": "cd8ba05d196a57029051a1b7d3d4180d2b40b4348aff82a07cd5a80663a65c20",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0,
+        "failures": []
+      }
+    },
+    {
+      "file": "frontend/src/taskcenter/taskCenterClient.test.ts",
+      "destination": "frontend/src/taskcenter/taskCenterClient.additive.test.ts",
+      "originalSha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "beforeSha256": "d4000520e6117ff6c5bcb1f588b9f8698c95fcb7e5e0f793ee97669827a0c84b",
+      "afterSha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "oldTestDefinitions": 7,
+      "beforeTestDefinitions": 11,
+      "additiveTestDefinitions": 4,
+      "genuineAdditions": 4,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [
+        {
+          "title": "exposes original owner operations plus the read-only receipt companion",
+          "originalTitle": "exposes exactly the five owner operations on the frozen routes",
+          "reason": "Pure legacy assertion rewrite; original contract restored, genuine additions separately retained."
+        }
+      ],
+      "cases": [
+        {
+          "title": "uses only the original scoped history GET, preserves signal, never reads media",
+          "additiveTitle": "uses only the original scoped history GET, preserves signal, never reads media",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "read-only task receipt transport"
+          ],
+          "sourceLine": 198,
+          "sourceTextSha256": "4a4c1b8de7d2f9dab7dfaa289448d54010056381bda01237399d135a3b1a82fd",
+          "originalTextSha256": null
+        },
+        {
+          "title": "keeps owner read failure %s unknown without fallback or raw text",
+          "additiveTitle": "keeps owner read failure %s unknown without fallback or raw text",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "read-only task receipt transport"
+          ],
+          "sourceLine": 208,
+          "sourceTextSha256": "a3d19756be274e292db162ae50920e4b5f6ce5801ff2e92df5c58133fb59c09a",
+          "originalTextSha256": null
+        },
+        {
+          "title": "rejects foreign captured scope before reading and rejects foreign returned scope",
+          "additiveTitle": "rejects foreign captured scope before reading and rejects foreign returned scope",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "read-only task receipt transport"
+          ],
+          "sourceLine": 214,
+          "sourceTextSha256": "4ecb2d5a2e61dc7cd97e6f1ec7c04742204fc130542656316a8b689463346aff",
+          "originalTextSha256": null
+        },
+        {
+          "title": "receipt history retains the existing captured actor session and branch transport",
+          "additiveTitle": "receipt history retains the existing captured actor session and branch transport",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 224,
+          "sourceTextSha256": "cfedce6d53e4525b99c654b93082b129f935b54c22fa2f60609ca70c7cc431b2",
+          "originalTextSha256": null
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const tasksBase = `/api/novels/${FIXTURE_PROJECT}/experimental/workspace/tasks`;",
+        "const inboxBase = `/api/novels/${FIXTURE_PROJECT}/experimental/review-inbox`;",
+        "const reviewRequest = { domain: 'planning', id: 'proposal-1', action: 'reject', expected_v",
+        "async function refusalOf(work: Promise<unknown>): Promise<ApiError> {\n  try { await work; "
+      ],
+      "verifiedProtectedSha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "additiveSha256": "72718daa3da7ddb9cb1db9892f0a07ff159e93248e22e19ae508d9402640b184",
+      "restoredRun": {
+        "collected": 7,
+        "passed": 6,
+        "failed": 1,
+        "failures": [
+          {
+            "title": "task center client seam exposes exactly the five owner operations on the frozen routes",
+            "summary": "AssertionError: expected [ Array(6) ] to deeply equal [ 'readTasks', 'readInbox', …(3) ]"
+          }
+        ]
+      },
+      "additiveRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0,
+        "failures": []
+      },
+      "legacyRewriteMapping": {
+        "restored_contract": "The original client exposes exactly its original five public owner methods.",
+        "preserved_newer_coverage": [
+          "frontend/src/taskcenter/taskCenterClient.additive.test.ts: original-scope receipt GET, signal preservation, media/invalid rejection, unreadable status cases, foreign scope, actor/branch transport",
+          "frontend/src/taskcenter/TaskCenter.additive.test.tsx: receipt evidence, failure hiding, unsupported media, unknown and synthetic costs"
+        ],
+        "reason": "Changing an old exact key-count assertion is not new capability. Later runtime repair requires a real separate receipt companion interface, not a non-enumerable sixth method."
+      }
+    }
+  ],
+  "summary": {
+    "protectedFilesRestored": 18,
+    "protectedSha256Matches": 18,
+    "additiveFiles": 18,
+    "genuineAddedDefinitions": 67,
+    "migratedVariantDefinitions": 1,
+    "restoredCollected": 186,
+    "restoredPassed": 182,
+    "restoredFailed": 4,
+    "additiveCollected": 76,
+    "additivePassed": 76,
+    "additiveFailed": 0,
+    "totalCollected": 262,
+    "totalPassed": 258,
+    "totalFailed": 4,
+    "runtimeModified": false,
+    "configOrManifestsModified": false,
+    "stagedOrCommitted": false
+  },
+  "testEvidence": {
+    "commandFile": "/tmp/studio-ui-reconciliation/vitest-command.json",
+    "logFile": "/tmp/studio-ui-reconciliation/vitest.log",
+    "jsonFile": "/tmp/studio-ui-reconciliation/vitest-results.json",
+    "vitestExitCode": 1,
+    "durationSeconds": 48.15,
+    "defaultTimeouts": true,
+    "workers": 1,
+    "cache": false,
+    "skipped": 0
+  },
+  "independentReview": "verify_canvas_integration confirmed all67 genuine additions retain exact full test-call AST text from72e636f; the one labeled Lineage variant retains its exact callback body; no original a072cf9 title duplicated as claimed new coverage; all18 protected files match."
+}

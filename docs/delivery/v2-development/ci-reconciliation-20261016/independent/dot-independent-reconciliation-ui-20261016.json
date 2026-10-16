@@ -1,0 +1,28 @@
+{
+  "files": 6,
+  "passed": 87,
+  "exit_code": 0,
+  "source_files": 1121,
+  "source_changes": [],
+  "log": "/tmp/dot-independent-reconciliation-ui-20261016.log",
+  "log_sha256": "1d72e4824afd7833c31e3dd20a941b813b1f29f055e93a406a0a5486ecf09b1f",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/experimental/ProductionLineagePanel.navigationCompatibility.test.tsx",
+    "src/experimental/pristineReplayNavigation.test.tsx",
+    "src/creative/StudioGraphManualProvider.compatibility.test.tsx",
+    "src/creative/StudioReferenceRoute.compatibility.test.tsx",
+    "src/creative/studioAudioFlacContract.phase6.test.tsx",
+    "src/creative/studioAudioMp3Contract.test.tsx",
+    "--maxWorkers=1",
+    "--minWorkers=1",
+    "--no-cache"
+  ],
+  "default_timeouts": true,
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+  "head": "72e636f87c7299a62cb3357bcb6a6e44a9388883",
+  "before": "/tmp/dot-independent-reconciliation-ui-20261016-before.json",
+  "after": "/tmp/dot-independent-reconciliation-ui-20261016-after.json"
+}

@@ -1,0 +1,19 @@
+{
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/canvasops/canvasOps.layout.additive.test.ts": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/canvasops/canvasOpsPanels.layout.additive.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/AIDirectorPanel.reasoning.additive.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/AssetRelationshipsPanel.impact.additive.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/GraphCanvas.presentation.additive.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/IndependentStudioReadFences.refresh.additive.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/StudioProductionGraphEditor.director.additive.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/graphCanvasGeometry.presentation.additive.test.ts": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/studioGraphClient.presentation.additive.test.ts": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/StudioImageGraphEditor.providerMigration.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/StudioProductionGraphEditor.providerMigration.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/StudioVideoGraphEditor.providerMigration.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/StudioVideoShotBinding.providerMigration.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx": [],
+  "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/studioAudioFlacContract.formatVariant.additive.test.ts": []
+}

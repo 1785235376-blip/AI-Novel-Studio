@@ -1,0 +1,224 @@
+{
+  "tests/test_r4_story_simulator_additive.py": {
+    "tests": [
+      "test_saved_route_reopens_exact_original_proposal_constraints_and_review_after_restart"
+    ],
+    "helper_symbols": [
+      "ExperimentalStore",
+      "FLAGS",
+      "PlanningService",
+      "StoryGraphService",
+      "StorySimulatorService",
+      "complete",
+      "deepcopy",
+      "env",
+      "event",
+      "planning_env",
+      "pytest",
+      "request",
+      "run",
+      "save",
+      "step"
+    ],
+    "lines": 82
+  },
+  "tests/support_reconciliation_test_r3_planning.py": {
+    "tests": [],
+    "helper_symbols": [
+      "ExperimentalStore",
+      "PlanningService",
+      "SimpleNamespace",
+      "copy",
+      "os",
+      "planning_env",
+      "pytest",
+      "uuid"
+    ],
+    "lines": 43
+  },
+  "tests/test_r5_comic_layouts_additive.py": {
+    "tests": [
+      "test_manual_vertical_arrangement_keeps_original_bindings_and_history"
+    ],
+    "helper_symbols": [
+      "ComicLayoutsService",
+      "approve",
+      "base64",
+      "comic",
+      "copy",
+      "image_asset",
+      "io",
+      "json",
+      "layout",
+      "preflight",
+      "pytest",
+      "rig",
+      "save",
+      "screenplay",
+      "synthetic_png",
+      "zipfile"
+    ],
+    "lines": 76
+  },
+  "tests/support_reconciliation_test_r3_media_support.py": {
+    "tests": [],
+    "helper_symbols": [
+      "AssetLibraryService",
+      "ChapterService",
+      "ExperimentalStore",
+      "NovelService",
+      "ScreenplayService",
+      "Settings",
+      "SimpleNamespace",
+      "TEST_URL",
+      "create_repository_bundle",
+      "os",
+      "pytest",
+      "rig",
+      "uuid4"
+    ],
+    "lines": 51
+  },
+  "tests/support_reconciliation_test_r4_director.py": {
+    "tests": [],
+    "helper_symbols": [
+      "screenplay"
+    ],
+    "lines": 8
+  },
+  "tests/test_r5_interactive_story_additive.py": {
+    "tests": [
+      "test_manual_issue_repair_preserves_pins_reopens_and_exports"
+    ],
+    "helper_symbols": [
+      "AssetLibraryService",
+      "InteractiveStoryService",
+      "PlanningService",
+      "StoryGraphService",
+      "StorySpec",
+      "approve",
+      "base64",
+      "create",
+      "deepcopy",
+      "interactive_env",
+      "io",
+      "json",
+      "pytest",
+      "review",
+      "revision_env",
+      "spec",
+      "zipfile"
+    ],
+    "lines": 87
+  },
+  "tests/support_reconciliation_test_r4_revision_intelligence.py": {
+    "tests": [],
+    "helper_symbols": [
+      "ChapterService",
+      "ExperimentalStore",
+      "NovelService",
+      "RevisionIntelligenceService",
+      "Settings",
+      "SimpleNamespace",
+      "create_repository_bundle",
+      "document",
+      "os",
+      "paragraph",
+      "pytest",
+      "revision_env",
+      "uuid4"
+    ],
+    "lines": 46
+  },
+  "tests/test_round2_bible_additive.py": {
+    "tests": [
+      "test_visual_authoring_roundtrip_uses_the_original_owner_and_history",
+      "test_visual_schema_lengths_count_unicode_code_points"
+    ],
+    "helper_symbols": [
+      "HARNESS_MISSING",
+      "Path",
+      "SimpleNamespace",
+      "dimensions",
+      "os",
+      "pytest",
+      "rig",
+      "uuid4"
+    ],
+    "lines": 163
+  },
+  "tests/test_v2_creative_graph_persistence_additive.py": {
+    "tests": [
+      "test_presentation_positions_and_camera_reopen_with_original_cas_owner",
+      "test_canvas_annotation_original_owner_reopen_remove_and_cas",
+      "test_visual_groups_original_owner_reopen_rename_remove_and_cas",
+      "test_selected_subgraph_copy_original_owner_reopen_and_restore",
+      "test_cross_graph_copy_original_owner_reopen_cas_and_source_unchanged",
+      "test_cross_graph_copy_added_source_pin_revalidated_by_original_save",
+      "test_view_preferences_original_owner_reopen_cas_and_remove",
+      "test_nested_visual_groups_original_owner_reopen_remove_and_cas",
+      "test_canvas_notes_original_owner_reopen_move_remove_and_cas"
+    ],
+    "helper_symbols": [
+      "CapabilityVersionConflict",
+      "CreativeGraphService",
+      "StaleSourceError",
+      "asset_node",
+      "create",
+      "decoders",
+      "deepcopy",
+      "definition",
+      "import_asset",
+      "pytest",
+      "rig",
+      "save",
+      "service",
+      "uuid4"
+    ],
+    "lines": 226
+  },
+  "tests/support_reconciliation_test_v2_independent_workspace.py": {
+    "tests": [],
+    "helper_symbols": [
+      "FLAGS",
+      "Path",
+      "SimpleNamespace",
+      "TEST_URL",
+      "base64",
+      "decoders",
+      "import_asset",
+      "os",
+      "png_bytes",
+      "pytest",
+      "rig",
+      "services",
+      "shutil",
+      "struct",
+      "unquote",
+      "upload",
+      "urlparse",
+      "uuid4",
+      "zlib"
+    ],
+    "lines": 123
+  },
+  "tests/test_v2_director_workspace_additive.py": {
+    "tests": [
+      "test_authored_genre_and_time_survive_file_owner_reopen_history_and_restore",
+      "test_original_director_owner_accepts_genre_without_shots",
+      "test_genre_and_time_owner_limits_count_unicode_code_points"
+    ],
+    "helper_symbols": [
+      "HARNESS_MISSING",
+      "Path",
+      "SimpleNamespace",
+      "_DIRECTOR_DOCUMENT",
+      "director",
+      "os",
+      "pytest",
+      "rig",
+      "uuid4"
+    ],
+    "lines": 174
+  }
+}

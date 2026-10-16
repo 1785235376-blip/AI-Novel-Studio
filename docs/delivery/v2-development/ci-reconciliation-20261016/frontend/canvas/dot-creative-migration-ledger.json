@@ -1,0 +1,253 @@
+[
+  {
+    "source": "frontend/src/canvasops/canvasOps.test.ts",
+    "additive": "frontend/src/canvasops/canvasOps.layout.additive.test.ts",
+    "kind": "new_scenarios",
+    "declarations": 1,
+    "titles": [
+      "preserves exact source pins and camera while leaving room for tall catalog cards"
+    ]
+  },
+  {
+    "source": "frontend/src/canvasops/canvasOpsPanels.test.tsx",
+    "additive": "frontend/src/canvasops/canvasOpsPanels.layout.additive.test.tsx",
+    "kind": "new_scenarios",
+    "declarations": 1,
+    "titles": [
+      "applies only by explicit original-owner callback and disables readonly, no-op and preview-only consumers"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/AIDirectorPanel.test.tsx",
+    "additive": "frontend/src/creative/AIDirectorPanel.reasoning.additive.test.tsx",
+    "kind": "new_scenarios",
+    "declarations": 2,
+    "titles": [
+      "shows estimated totals and editable model reasoning separately from auxiliary rules",
+      "keeps the shared genre field bounded in preparation and review without losing the other target fields"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/AssetRelationshipsPanel.test.tsx",
+    "additive": "frontend/src/creative/AssetRelationshipsPanel.impact.additive.test.tsx",
+    "kind": "new_scenarios",
+    "declarations": 1,
+    "titles": [
+      "shows only recorded direct incoming relationships and explicitly limits impact coverage"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/GraphCanvas.test.tsx",
+    "additive": "frontend/src/creative/GraphCanvas.presentation.additive.test.tsx",
+    "kind": "new_scenarios",
+    "declarations": 51,
+    "titles": [
+      "creates, selects, drags, renames and removes persisted groups while retaining annotation",
+      "rejects overlap, resets pending names on owner changes and enforces Unicode name limits",
+      "blocks all group actions: %j",
+      "edits and removes plain graph annotations without changing node geometry, pins or selection",
+      "preserves 2000 supplementary characters and rejects overflow without dropping existing text",
+      "blocks annotation mutations when owner is blocked: %j",
+      "culls cards, retains crossing edges and recovers unchanged nodes after pan",
+      "retains selected nodes and controller-owned connection anchors without changing graph data",
+      "preserves a focused port while zoom/pan moves its card offscreen and releases it after blur",
+      "offers keyboard-native selection of every offscreen node and centers via existing controlled viewport",
+      "keeps readonly navigation selection nonmutating and disables the directory while busy",
+      "filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing",
+      "cancels search without selection or writes, resets owner query, and reveals a folded member on confirmation",
+      "selects all offscreen cards and preserves a dragged card until cancellation",
+      "drops focus retention when the interaction owner changes",
+      "responds to ResizeObserver and disconnects it on unmount",
+      "uses one camera history update per click or arrow without moving selected nodes or changing zoom",
+      "hides and restores overview without history changes and blocks read-only, busy and unmeasured navigation",
+      "tracks resize and replacement, clamps camera and ignores composition and active gestures",
+      "previews live geometry and edges, cancels without writes, then applies once",
+      "invalidates a preview on %s changes without resurrecting it",
+      "keeps control keys from nudging or deleting selected nodes; escape cancels preview",
+      "does not offer mutation when blocked %j",
+      "toggles grid/snap without moving nodes or saving, and aligns grid to the camera",
+      "snaps a multi-drag once using the grabbed node, supports cancellation and free placement",
+      "preserves keyboard screen-distance nudges when snap is enabled and avoids no-op undo",
+      "renders bounded plain labels, selects only on explicit activation and follows drag preview without writing presentation",
+      "keeps readonly selection available, busy selection disabled, and replaces stale owner frames",
+      "culls distant frames, retains focused labels, and keeps ports and background selection independent",
+      "preserves pan from a group label and uses the same zoom transform as cards",
+      "hides members and incident curves, reports real connections, expands without any graph or port write",
+      "keeps %s members visible and explains disabled collapse",
+      "expands permanently when a hidden member becomes %s",
+      "retains collapse on camera changes, but resets on owner/group replacement and unmount",
+      "allows readonly view folding, blocks busy folding, and isolates toolbar keyboard input",
+      "keeps temporary defaults and toggles clean, then writes one display-only draft change",
+      "restores saved values, discards temporary settings across owners, and follows undo/removal",
+      "cannot dirty saved preferences when blocked %j",
+      "assigns and clears two-level parents, selects descendants and promotes children without rewriting nodes",
+      "hides child compact controls under collapsed parents and expands both for selected descendants",
+      "authors plain text, moves and removes notes without graph selection or execution nodes",
+      "rejects Unicode and shared UTF-8 payload overflow before changing the original draft",
+      "blocks note mutations for %j",
+      "culls offscreen notes while the explicit directory retains access without graph mutation",
+      "cancels a note drag on owner replacement and blur without touching graph gestures",
+      "note movement does not apply staged node alignment or consume pending connection selection",
+      "commits Unicode composition once, rejects whole oversized input and cancels stale composition",
+      "cancels note drag on %s",
+      "discards note composition on %s without writing another note",
+      "remounts a composing note input when the original definition is replaced",
+      "pans from a note header with %s without editing the note"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx",
+    "additive": "frontend/src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx",
+    "kind": "new_scenarios",
+    "declarations": 16,
+    "titles": [
+      "captures a saved source, chooses another graph, reviews and pastes once with original save/reopen",
+      "previews same-graph copies, invalidates edits, pastes once and saves/reopens through original history",
+      "explicitly persists view preferences with one undo step and original save/reopen",
+      "persists groups through original undo/save/reopen and inspector node deletion",
+      "saves independent notes with original undo, redo, reopen and removal",
+      "saves/reopens graph annotation with original undo, redo, removal and no model dispatch",
+      "guards departure when only an independent note is unsaved",
+      "warns before leaving when only the graph annotation changed",
+      "applies layout over dirty author text with one undo step, saves the camera, and restores both on reopen",
+      "commits snapped drag once through original undo/save/reopen without persisting view settings",
+      "applies selected alignment with one undo, preserves dirty text, and saves/reopens original positions",
+      "saves MiniMap camera via original history while preserving dirty author text and reopens it",
+      "searches current nodes without dispatch, then saves/reopens explicit camera navigation with dirty text and exact pins",
+      "restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent",
+      "preserves layout and viewport on save failure %s, with explicit checked adoption only",
+      "persists nested visual organization with undo, dirty leave warning, reopen and parent-node deletion promotion"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/IndependentStudioReadFences.test.tsx",
+    "additive": "frontend/src/creative/IndependentStudioReadFences.refresh.additive.test.tsx",
+    "kind": "new_scenarios",
+    "declarations": 2,
+    "titles": [
+      "keeps refresh inputs visible until %s read settles, then retires the old relationship view",
+      "removes the retained refresh form when the original asset read returns %s"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/IndependentStudioWorkspace.test.tsx",
+    "additive": "frontend/src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx",
+    "kind": "new_scenarios",
+    "declarations": 9,
+    "titles": [
+      "routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance",
+      "keeps dirty-navigation cancel for %s",
+      "requires an explicit %s operation choice and two metadata reads without dispatch",
+      "opens exact original media task, deduplicates repeated opens and clears on leaving",
+      "shows unsupported owner honestly without claiming location or reading another service",
+      "reads the exact original candidate and refuses newer revisions",
+      "re-reads exact original asset after explicit dirty discard and performs no writes",
+      "does not open a changed original owner read %j",
+      "retires inspection when the original selection goes A to B to A in one batch"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+    "additive": "frontend/src/creative/StudioProductionGraphEditor.director.additive.test.tsx",
+    "kind": "new_scenarios",
+    "declarations": 5,
+    "titles": [
+      "lays out already-saved Director pins without rewriting their source or executing",
+      "authors a director in the canvas, saves its exact node pin and reopens the bound source",
+      "requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create",
+      "keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation",
+      "reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/graphCanvasGeometry.test.ts",
+    "additive": "frontend/src/creative/graphCanvasGeometry.presentation.additive.test.ts",
+    "kind": "new_scenarios",
+    "declarations": 7,
+    "titles": [
+      "cleans deleted group membership and drops empty groups without touching protected nodes or comments",
+      "aligns left, center and top in world coordinates without changing other data",
+      "distributes deterministically while preserving endpoints, y and source order",
+      "rejects invalid geometry, missing selection and insufficient counts without repair",
+      "snaps the grabbed anchor at zoom %s without changing group offsets",
+      "bounds the common translation rather than squashing group offsets at either limit",
+      "rejects invalid input, stale selection and a zero drag"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/studioGraphClient.test.ts",
+    "additive": "frontend/src/creative/studioGraphClient.presentation.additive.test.ts",
+    "kind": "new_scenarios",
+    "declarations": 13,
+    "titles": [
+      "accepts exact optional original capacity metadata and leaves legacy unknown",
+      "rejects malformed original capacity %j",
+      "roundtrips optional presentation through original transport schema %s",
+      "roundtrips 128 display notes in schema %s independently of DAG",
+      "roundtrips 1024 concise Chinese display notes through original save/get in schema %s",
+      "rejects malformed display notes %j",
+      "rejects invalid view preferences %j",
+      "rejects malformed annotation from transport: %j",
+      "roundtrips groups and exact annotations in schema %s",
+      "roundtrips two-level presentation only in schema %s",
+      "rejects invalid parent %j",
+      "rejects cyclic parent links from transport",
+      "rejects invalid groups in original transport: %j"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/StudioImageGraphEditor.test.tsx",
+    "additive": "frontend/src/creative/StudioImageGraphEditor.providerMigration.test.tsx",
+    "kind": "migration",
+    "declarations": 1,
+    "titles": [
+      "saves weighted reference and prompt parameters through original actions with no arbitrary JSON or direct generation"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+    "additive": "frontend/src/creative/StudioProductionGraphEditor.providerMigration.test.tsx",
+    "kind": "migration",
+    "declarations": 1,
+    "titles": [
+      "explicitly binds authored documents, style and upscale parameters without dispatch"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/StudioVideoGraphEditor.phase4.test.tsx",
+    "additive": "frontend/src/creative/StudioVideoGraphEditor.providerMigration.test.tsx",
+    "kind": "migration",
+    "declarations": 1,
+    "titles": [
+      "adds exact current shot pins and video controls without starting a job"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/StudioVideoShotBinding.phase5.test.tsx",
+    "additive": "frontend/src/creative/StudioVideoShotBinding.providerMigration.test.tsx",
+    "kind": "migration",
+    "declarations": 1,
+    "titles": [
+      "allows unchecking the initial true flag without a connected Shot and saves no implicit pin"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/StudioImageRuntimeProduction.test.tsx",
+    "additive": "frontend/src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx",
+    "kind": "migration",
+    "declarations": 1,
+    "titles": [
+      "requires fresh cloud consent after reference weights change and never falls back or sends automatically"
+    ]
+  },
+  {
+    "source": "frontend/src/creative/studioAudioFlacContract.phase6.test.tsx",
+    "additive": "frontend/src/creative/studioAudioFlacContract.formatVariant.additive.test.ts",
+    "kind": "changed_fixture_variant",
+    "declarations": 1,
+    "titles": [
+      "rejects the lowercase mp3 fixture without network"
+    ],
+    "note": "Lowercase mp3 fixture preserved separately; original uppercase MP3 denial restored; not a new unique behavior."
+  }
+]

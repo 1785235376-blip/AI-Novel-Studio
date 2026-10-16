@@ -1,0 +1,2335 @@
+{
+  "base": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+  "head": "72e636f87c7299a62cb3357bcb6a6e44a9388883",
+  "files": [
+    {
+      "file": "frontend/src/AppAuthorTaskNavigation.test.tsx",
+      "destination": "frontend/src/AppAuthorTaskNavigation.additive.test.tsx",
+      "originalSha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "beforeSha256": "c71612b2e904c0efd00c416ad9a9c467a5430cdf401ba6465c3dee10ee408d09",
+      "afterSha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "oldTestDefinitions": 10,
+      "beforeTestDefinitions": 11,
+      "additiveTestDefinitions": 1,
+      "genuineAdditions": 1,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "preserves exact simulator/planning navigation when workspace tools are off",
+          "additiveTitle": "preserves exact simulator/planning navigation when workspace tools are off",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 180,
+          "sourceTextSha256": "3fba9efadece0f458537220490e5209c1f2c2251e5b5f8461fbbca73aad2768e",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "5a26f34d8b62412f1d37918942ca9f9ccdeeb46f1e8fdfa7e040bf68f67bebeb",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "3fba9efadece0f458537220490e5209c1f2c2251e5b5f8461fbbca73aad2768e",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "function deferred<T>() { let resolve!: (value: T) => void, reject!: (error: unknown) => vo",
+        "const editor = () => screen.getByLabelText('Test chapter editor') as HTMLTextAreaElement;",
+        "function edit(text: string) { fireEvent.change(editor(), { target: { value: text } }); }"
+      ],
+      "verifiedProtectedSha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "additiveSha256": "f26d6699abfbb7bed6e31da087d7b1fb9139e84a07161dc4d1295763442bb68f",
+      "restoredRun": {
+        "collected": 10,
+        "passed": 10,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "f26d6699abfbb7bed6e31da087d7b1fb9139e84a07161dc4d1295763442bb68f",
+      "finalProtectedSha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/delivery/DeliveryCenterPanel.test.tsx",
+      "destination": "frontend/src/delivery/DeliveryCenterPanel.additive.test.tsx",
+      "originalSha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "beforeSha256": "4a2abdc60b9a0e842804b727a68bdbe6de26c14189670d1fd54261c04f331901",
+      "afterSha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 14,
+      "additiveTestDefinitions": 3,
+      "genuineAdditions": 3,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "waits for a completed empty read before claiming no receipt was returned",
+          "additiveTitle": "waits for a completed empty read before claiming no receipt was returned",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Delivery receipt read feedback"
+          ],
+          "sourceLine": 211,
+          "sourceTextSha256": "07f65867e3047249bb3d712c138510b98d1308dfb43a20b58874ade344245910",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "7c90fffb5d87b1c03f2c101037455dfe2a1ed947671e089536cb48521fe6e626",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "07f65867e3047249bb3d712c138510b98d1308dfb43a20b58874ade344245910",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "recovers through the existing explicit read after failure without displaying a false empty history",
+          "additiveTitle": "recovers through the existing explicit read after failure without displaying a false empty history",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Delivery receipt read feedback"
+          ],
+          "sourceLine": 224,
+          "sourceTextSha256": "0aefeb6efeab52ef75940eed44d5e83b39ba6c3af0dded2bff54ad04fc5f1a95",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "4a152ef9966aa6c795060a7fadbd5a37c3154768946100f767744a913d6c5414",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "0aefeb6efeab52ef75940eed44d5e83b39ba6c3af0dded2bff54ad04fc5f1a95",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "does not describe an empty loaded page with next_offset %s as an empty project history",
+          "additiveTitle": "does not describe an empty loaded page with next_offset %s as an empty project history",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Delivery empty page with remaining history"
+          ],
+          "sourceLine": 242,
+          "sourceTextSha256": "e38f80bd491b3ba206771963a952a9d7eabc9c5d4368054ee5f6e15a4d36cac4",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "162f32d4b3aa2d4d984a325da931763c5a9ba53d8e5c9780b5fbdae5b82e1651",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "e38f80bd491b3ba206771963a952a9d7eabc9c5d4368054ee5f6e15a4d36cac4",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const HEX = [...'abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'];",
+        "const digest = (seed: string): string => [...(seed.repeat(3) + HEX.join('')).slice(0, 64)]"
+      ],
+      "verifiedProtectedSha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "additiveSha256": "d67cc3ffa68e51dd984a0d024b629ad760c3ba14d0ec95591f43651f94dcfe52",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "d67cc3ffa68e51dd984a0d024b629ad760c3ba14d0ec95591f43651f94dcfe52",
+      "finalProtectedSha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/BranchManuscriptPanel.test.tsx",
+      "destination": "frontend/src/experimental/BranchManuscriptPanel.additive.test.tsx",
+      "originalSha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "beforeSha256": "14bd53f5ee41a19b1a9e7388147dc63e6e23a7d061c211d9c9eddbb32fb04eaf",
+      "afterSha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "oldTestDefinitions": 6,
+      "beforeTestDefinitions": 8,
+      "additiveTestDefinitions": 2,
+      "genuineAdditions": 2,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "mounts exact block review on explicit compare and keeps manual selections inside original comparison",
+          "additiveTitle": "mounts exact block review on explicit compare and keeps manual selections inside original comparison",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 99,
+          "sourceTextSha256": "3bade685d658f05d1f2084c0237aacaa67f98a1f47e92eb10a6c9372ddd7796a",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "882fa833a28fb1d139a413166ac64f6a9346eed1a13baa5656f4ba5b2e4f9076",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "3bade685d658f05d1f2084c0237aacaa67f98a1f47e92eb10a6c9372ddd7796a",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "discards a pending comparison after client identity changes",
+          "additiveTitle": "discards a pending comparison after client identity changes",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 121,
+          "sourceTextSha256": "02956e5a4bd9266d5d6417e61b3ccbc64c22d966c88f6a619353797543d5f3c2",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "00eb8c343b08f30dfb9c199ad7303f4130c98e187ce92058fb0ddeef7506388f",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "02956e5a4bd9266d5d6417e61b3ccbc64c22d966c88f6a619353797543d5f3c2",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "additiveSha256": "6271f5fa2d56d5aff1f34d23375a0d358c6ea6637a2a49e96f185020118e0082",
+      "restoredRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 2,
+        "passed": 2,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "6271f5fa2d56d5aff1f34d23375a0d358c6ea6637a2a49e96f185020118e0082",
+      "finalProtectedSha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 2,
+        "passed": 2,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ComicLayoutsPanel.test.tsx",
+      "destination": "frontend/src/experimental/ComicLayoutsPanel.additive.test.tsx",
+      "originalSha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "beforeSha256": "60ff70aa0f8da2996f891a463a9a4d16689579bf6dca4192f96bf6e5d5abd5fe",
+      "afterSha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "oldTestDefinitions": 8,
+      "beforeTestDefinitions": 13,
+      "additiveTestDefinitions": 5,
+      "genuineAdditions": 5,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "explicit arrangement preview applies one undoable edit and saves only through original owner",
+          "additiveTitle": "explicit arrangement preview applies one undoable edit and saves only through original owner",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 123,
+          "sourceTextSha256": "14a259df72b657c5e0b7ed6b1f0339fe67859c62f19656be1b90671725afdfd2",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "f6a57d55702c2700be190d0965c93bf250b7f0ec1ea6ca9f34388b17db381559",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "14a259df72b657c5e0b7ed6b1f0339fe67859c62f19656be1b90671725afdfd2",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "cancel, edits, refresh and client replacement discard arrangement consent",
+          "additiveTitle": "cancel, edits, refresh and client replacement discard arrangement consent",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 141,
+          "sourceTextSha256": "e27e89e6be8e3a113788c9f18ffc5be1dc164a09f986b9e3f9ce0b499384fba7",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "094d33a5f7c7d785b1543902fcd471e5a237f86fea414a912b86d74ca3c12657",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "e27e89e6be8e3a113788c9f18ffc5be1dc164a09f986b9e3f9ce0b499384fba7",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "retained arrangement apply is fenced after cancellation, edits and repeat invocation",
+          "additiveTitle": "retained arrangement apply is fenced after cancellation, edits and repeat invocation",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 152,
+          "sourceTextSha256": "f5d515c3cd33d64c47df8e849be39dc29c4c3eb6a40877bda95fa12ad8ac996e",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "4617fe3cbaa1ccb2a72c22d5ec99c0f0a58197c0febcf7a8cc81396db52160cb",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "f5d515c3cd33d64c47df8e849be39dc29c4c3eb6a40877bda95fa12ad8ac996e",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "pending and failed save %s cannot reuse arrangement consent",
+          "additiveTitle": "pending and failed save %s cannot reuse arrangement consent",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 172,
+          "sourceTextSha256": "f3631e6949c127a6c277236cabf1e27cacb1e1cb34d8d19210c3f383ade90ec4",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "c0704f9e2a191e9eacf8382a860cc5087cd0d5ac12951ad379376b3294763da3",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "f3631e6949c127a6c277236cabf1e27cacb1e1cb34d8d19210c3f383ade90ec4",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "retained apply cannot cross record, source or owner ABA",
+          "additiveTitle": "retained apply cannot cross record, source or owner ABA",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 190,
+          "sourceTextSha256": "47f34aaedc7f4b7b1c81fa62e9af851767b6261e03711205c7001cbf524e6530",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "e085046ed29606a680cdf49aa41394a8a044f6b9a039c38dfa3f64d401e44291",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "47f34aaedc7f4b7b1c81fa62e9af851767b6261e03711205c7001cbf524e6530",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const report = { issues: [], segments: [{ index: 0, width: 800, height: 1120, y: 0 }], can"
+      ],
+      "verifiedProtectedSha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "additiveSha256": "279c3b21ca88ecd559bb6e7495a59c31e704e12fe6466146943419a56cdd1aed",
+      "restoredRun": {
+        "collected": 8,
+        "passed": 8,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "279c3b21ca88ecd559bb6e7495a59c31e704e12fe6466146943419a56cdd1aed",
+      "finalProtectedSha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ExperimentalWorkbench.continuation.test.tsx",
+      "destination": "frontend/src/experimental/ExperimentalWorkbench.continuation.additive.test.tsx",
+      "originalSha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "beforeSha256": "33aa2fa77288d6af9e24365885825951378c2d5a1346b473ad9ecbd5ca9d85ba",
+      "afterSha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "oldTestDefinitions": 4,
+      "beforeTestDefinitions": 6,
+      "additiveTestDefinitions": 2,
+      "genuineAdditions": 2,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "forwards %s durable references only to their original owner",
+          "additiveTitle": "forwards %s durable references only to their original owner",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 45,
+          "sourceTextSha256": "f79d73ec92238fe092e462742541fa4aaa90ad6f7580e5e950d125909e805f8c",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "fad50fd91352ec88be10c5ff0cd0a38105b553cce7b988bc1d9c6c9094b16eb5",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "f79d73ec92238fe092e462742541fa4aaa90ad6f7580e5e950d125909e805f8c",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "does not offer simulator navigation when its feature is disabled",
+          "additiveTitle": "does not offer simulator navigation when its feature is disabled",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 56,
+          "sourceTextSha256": "bc894df33708698b064b5634a07743d61fffad8959fa6776863e768358c96491",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "b1553748c72e50f6b2ebae059942bb1baebc9f9b1e2c733536e6a193645c45ae",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "bc894df33708698b064b5634a07743d61fffad8959fa6776863e768358c96491",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "additiveSha256": "29894f8e2c4546a6172005b87b093a6b927d5ace71070c3b1ba03608c44a60f8",
+      "restoredRun": {
+        "collected": 5,
+        "passed": 5,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 3,
+        "passed": 3,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "5edc7cb8c33c4b8d14bab3abc972068b11f4b73f6194c9fb65055d57994c6c90",
+      "finalProtectedSha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c",
+      "additionalCompatibilityDefinitions": [
+        "enriches only simulator-origin planning callbacks at the real workbench host"
+      ],
+      "finalRestoredRun": {
+        "collected": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/InteractiveStoryPanel.test.tsx",
+      "destination": "frontend/src/experimental/InteractiveStoryPanel.additive.test.tsx",
+      "originalSha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "beforeSha256": "35e1898bb7a1e4aced9093c6430ad207960fa14f314d5d4cd3a23fa0f48f082d",
+      "afterSha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 22,
+      "additiveTestDefinitions": 11,
+      "genuineAdditions": 11,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "locates exact saved issues in the original dirty editor without writing or discarding Unicode input",
+          "additiveTitle": "locates exact saved issues in the original dirty editor without writing or discarding Unicode input",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 155,
+          "sourceTextSha256": "50d1c512a30dadb687e9d3d5b14a0654f7f86ac84dd06d3acfc165f28e2784ad",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "fba5f9d61f5fe6d897d14b6d8578de96dd948f0a3dd88f3d1cfc719d61e5a3e2",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "50d1c512a30dadb687e9d3d5b14a0654f7f86ac84dd06d3acfc165f28e2784ad",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "keeps missing, removed-choice and node-less issues non-navigable with no guessed target",
+          "additiveTitle": "keeps missing, removed-choice and node-less issues non-navigable with no guessed target",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 175,
+          "sourceTextSha256": "b1a9f7ef7fbf38b723bda8796aa37fdbe2a83f9c98672dbb74244878919f69d5",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "198bfbc46bcf4d624aed6abc66a9ed08db206564996912aecc0f0970c4499cb2",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "b1a9f7ef7fbf38b723bda8796aa37fdbe2a83f9c98672dbb74244878919f69d5",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "bounds issue navigation to twenty rows and keeps archived drafts read-only",
+          "additiveTitle": "bounds issue navigation to twenty rows and keeps archived drafts read-only",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 185,
+          "sourceTextSha256": "48c9a9a82cf0c27cb028979c39f9d77d7dd2fc2b6913335060dfdd3364d71276",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "ed82dce49daaed6b4c9374b10fc259102c8a7a10f4032047dfd16a9de9a375fb",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "48c9a9a82cf0c27cb028979c39f9d77d7dd2fc2b6913335060dfdd3364d71276",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "rejects ambiguous node IDs and isolates issue navigation after switching the client",
+          "additiveTitle": "rejects ambiguous node IDs and isolates issue navigation after switching the client",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 194,
+          "sourceTextSha256": "8a1cebef5d99dcc521fb33a8eea7282378ca16474ac097d80ce8831ee289b733",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "0334cf0747d3f1625dbf498fa256ab9b4eb2d7c3168290bf77fe91120fddc1b9",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "8a1cebef5d99dcc521fb33a8eea7282378ca16474ac097d80ce8831ee289b733",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "blocks issue navigation during an original save, then preserves the exact draft after conflict",
+          "additiveTitle": "blocks issue navigation during an original save, then preserves the exact draft after conflict",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 206,
+          "sourceTextSha256": "dc6dda56b9821aa5ae116ae69ac809159d9d7b184ace788d2a84a89db96e45e1",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "871c7941b31d1bcfe8b78e2928c0dc70ae6c6dadfeebf0bf5fec5595b6f9b396",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "dc6dda56b9821aa5ae116ae69ac809159d9d7b184ace788d2a84a89db96e45e1",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "keeps the composing source node and Unicode draft until IME composition finishes",
+          "additiveTitle": "keeps the composing source node and Unicode draft until IME composition finishes",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 226,
+          "sourceTextSha256": "964452f1b929718dd4aa97bade612220e2fd03f065de26660ff0c07c56e183be",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "59e8c2a89a52f701eff6ce2ab1257ad1342f10a5f2369ba8e410035b33f3a9b5",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "964452f1b929718dd4aa97bade612220e2fd03f065de26660ff0c07c56e183be",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "rejects malformed supplied choice references and never resolves a choice in another node",
+          "additiveTitle": "rejects malformed supplied choice references and never resolves a choice in another node",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 242,
+          "sourceTextSha256": "5638fb4d048600f2dd35b81a112678e942e55997dc45e777b633197ec8e973ff",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "093f1a2774a68a365e87502d2d502bf78c7d3abd9d9346f33182af43451c9820",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "5638fb4d048600f2dd35b81a112678e942e55997dc45e777b633197ec8e973ff",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "rejects duplicate choice IDs instead of focusing an arbitrary control",
+          "additiveTitle": "rejects duplicate choice IDs instead of focusing an arbitrary control",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 254,
+          "sourceTextSha256": "344d25c6aec43077fdc372279fa09dc7783232e677e4e8d0c91878b0097def44",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "8030410b600c7267f6991dcec73cb3a21d07dcaeec8dd558aa62394884887c96",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "344d25c6aec43077fdc372279fa09dc7783232e677e4e8d0c91878b0097def44",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "resets issue paging on a new saved version and locates by ID after node order changes",
+          "additiveTitle": "resets issue paging on a new saved version and locates by ID after node order changes",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 263,
+          "sourceTextSha256": "0fbfb3d08036f89b8d5f9dfc6096b2a929fe84195dca20d0c396d477f71b6ee3",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "f9c261cee4121a435423b62a84e26074c0d8a0001a1c808d1a0dffcd53042c11",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "0fbfb3d08036f89b8d5f9dfc6096b2a929fe84195dca20d0c396d477f71b6ee3",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "does not restore old issue navigation after client A to B to A and a delayed version read",
+          "additiveTitle": "does not restore old issue navigation after client A to B to A and a delayed version read",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 276,
+          "sourceTextSha256": "53b07c239d0cc50e6bd0bce32e11788d8cfc044bb4ed621ab884ed125e3a4065",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "03f44aeee401687f6841f2f97698d3f2c54e6946774513dbc40f7eec2b7916f9",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "53b07c239d0cc50e6bd0bce32e11788d8cfc044bb4ed621ab884ed125e3a4065",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "does not retarget a saved issue to a replacement choice with a reused ID before save",
+          "additiveTitle": "does not retarget a saved issue to a replacement choice with a reused ID before save",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 299,
+          "sourceTextSha256": "01ef2cc0725e4be5bdbab16cbaef5a602e95f70d9e961b4811a6b839d6a88925",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "721c31bb79b75ea6987873a65c1a5db68b5d93938e6ab58ae035bc7bb4c9113f",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "01ef2cc0725e4be5bdbab16cbaef5a602e95f70d9e961b4811a6b839d6a88925",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "additiveSha256": "933b811624de85129813272ca61354bce92cf1931cb74e1aecb65f33ac1b8f43",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "933b811624de85129813272ca61354bce92cf1931cb74e1aecb65f33ac1b8f43",
+      "finalProtectedSha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ModelBrokerPanel.test.tsx",
+      "destination": "frontend/src/experimental/ModelBrokerPanel.additive.test.tsx",
+      "originalSha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "beforeSha256": "aead0f49773c962c5a02347be4b9afc53d1f1c96c246c4eb6962bac99ce3ddcc",
+      "afterSha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "oldTestDefinitions": 9,
+      "beforeTestDefinitions": 13,
+      "additiveTestDefinitions": 4,
+      "genuineAdditions": 4,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "defaults to local and allows explicit cloud then local selection without changing privacy or dispatching",
+          "additiveTitle": "defaults to local and allows explicit cloud then local selection without changing privacy or dispatching",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 176,
+          "sourceTextSha256": "245c9852a8b03f26455c1644469bec6e67e897bffe01ee4af5a871429f538eed",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "b340f7cc4f26d2512030f77a093330ed49fc919cd53469d7efd8b251fbd08a56",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "245c9852a8b03f26455c1644469bec6e67e897bffe01ee4af5a871429f538eed",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "preserves an uncertain submission and explicitly retries the identical owner request without a new id",
+          "additiveTitle": "preserves an uncertain submission and explicitly retries the identical owner request without a new id",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 195,
+          "sourceTextSha256": "707d1f65b09530ab974766b71648799aad4392d1fad7167a6d2df3893e846696",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "1d938a32b22a2c6eec8152cdea8d9664129849c318e5f7a3e5756e503df9c755",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "707d1f65b09530ab974766b71648799aad4392d1fad7167a6d2df3893e846696",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "requires saved chapter edits before exact preview or generation",
+          "additiveTitle": "requires saved chapter edits before exact preview or generation",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 227,
+          "sourceTextSha256": "05311344698aa0ae0f716d310279ffb6ced78584a24c0c4f9be815a4166b79f1",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "6d8214c6e0096b4698b711f5cd7248eba2a196b85a0edc2adacc84311daffbaf",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "05311344698aa0ae0f716d310279ffb6ced78584a24c0c4f9be815a4166b79f1",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "only unlocks an explicit pre-dispatch rejection on the first attempt (prior ambiguous send: %s)",
+          "additiveTitle": "only unlocks an explicit pre-dispatch rejection on the first attempt (prior ambiguous send: %s)",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 234,
+          "sourceTextSha256": "49c6039d3ab155bd74aa283e6d80a62c6767a66fefcbfab3dff61dfab7b8c7c7",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "50d370e2c0c2afaa6155f455818823ec42533368151c2d90156529f94b86b6a1",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "49c6039d3ab155bd74aa283e6d80a62c6767a66fefcbfab3dff61dfab7b8c7c7",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "additiveSha256": "ffa8685f721d5ef2ce9a30fd6fb91d6330dc8431ba35156f45000ba7b4de35e3",
+      "restoredRun": {
+        "collected": 9,
+        "passed": 9,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 5,
+        "passed": 5,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "ffa8685f721d5ef2ce9a30fd6fb91d6330dc8431ba35156f45000ba7b4de35e3",
+      "finalProtectedSha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 5,
+        "passed": 5,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/MultilingualEditionsPanel.test.tsx",
+      "destination": "frontend/src/experimental/MultilingualEditionsPanel.additive.test.tsx",
+      "originalSha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "beforeSha256": "54be2f23bec2cecbe300967755827124a9c0d3dbcdd4ab523a9416d12ddad72f",
+      "afterSha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "oldTestDefinitions": 10,
+      "beforeTestDefinitions": 16,
+      "additiveTestDefinitions": 6,
+      "genuineAdditions": 6,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "locates the exact duplicate Unicode segment, shows rule versions, then saves through the original owner",
+          "additiveTitle": "locates the exact duplicate Unicode segment, shows rule versions, then saves through the original owner",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 137,
+          "sourceTextSha256": "05c6ef5f590084ae1c8d6712ab29995a02a34744bfff453041164c1ffe57b3a2",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "6b7b1c39dc1ae982ead433f69905767c34bc8539a97b85c8eb7af8a7d5ebf126",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "05c6ef5f590084ae1c8d6712ab29995a02a34744bfff453041164c1ffe57b3a2",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "never substitutes a changed rule version for issue evidence",
+          "additiveTitle": "never substitutes a changed rule version for issue evidence",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 159,
+          "sourceTextSha256": "8dd1c1cb63ec99834ae895b8d9c85e37f418c05d1fbb1a38579e56714f470889",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "23cd5e7bc0198fa0557d27e095eb16c98285b8e3f0026a97252545f8cbb4277e",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "8dd1c1cb63ec99834ae895b8d9c85e37f418c05d1fbb1a38579e56714f470889",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "withholds issue navigation and text when content is withheld independently of stale",
+          "additiveTitle": "withholds issue navigation and text when content is withheld independently of stale",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 167,
+          "sourceTextSha256": "a3ff04452c78801de47bdd454f4f5e42389819fcc888240cc08dca632d5e0c4b",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "c859f27ff884396fd5f829ecf4ac446faf57d55ea54bf9c7d7563c2ec7de1ea5",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "a3ff04452c78801de47bdd454f4f5e42389819fcc888240cc08dca632d5e0c4b",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "does not select a matching rule version from duplicate IDs",
+          "additiveTitle": "does not select a matching rule version from duplicate IDs",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 174,
+          "sourceTextSha256": "83907c31ced99a2cb8673edbce06c02826021ffa2979706a153444e5dd7a77ba",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "6c3073995fc6b9a34c097e5c970e971e9a190f14ba48217dae6eb14eaeef9c75",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "83907c31ced99a2cb8673edbce06c02826021ffa2979706a153444e5dd7a77ba",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "labels legitimate unversioned conflict rules as same-edition snapshot evidence",
+          "additiveTitle": "labels legitimate unversioned conflict rules as same-edition snapshot evidence",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 182,
+          "sourceTextSha256": "dd1748b70d14a6d2ea005613b7aa72355f4f62323db531635b31306dfeb38988",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "1f1c2f61334398e1dad39fc958dffbc29582c21bf38aa86096d7a8c096f353b5",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "dd1748b70d14a6d2ea005613b7aa72355f4f62323db531635b31306dfeb38988",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "keeps the composing original textarea mounted before its first change event",
+          "additiveTitle": "keeps the composing original textarea mounted before its first change event",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 190,
+          "sourceTextSha256": "206044c4d309ef36bcf2ee1924124b2143ad13edeceb980726fff3304a12da1f",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "614d0a19398052bdff5e9b0698c7975fe1d1d74ee58ecc276229432c2f224a4c",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "206044c4d309ef36bcf2ee1924124b2143ad13edeceb980726fff3304a12da1f",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "additiveSha256": "a24e460ac1107510a6d708654fe8602c39f8087ae807ba04418076fe23cc69d0",
+      "restoredRun": {
+        "collected": 10,
+        "passed": 10,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "a24e460ac1107510a6d708654fe8602c39f8087ae807ba04418076fe23cc69d0",
+      "finalProtectedSha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ProductionLineagePanel.test.tsx",
+      "destination": "frontend/src/experimental/ProductionLineagePanel.additive.test.tsx",
+      "originalSha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "beforeSha256": "dc3c7a621f7fd253d4c12c2144077b7da14d35ac2296fd14737411d02e509ecf",
+      "afterSha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 11,
+      "additiveTestDefinitions": 1,
+      "genuineAdditions": 0,
+      "migratedVariants": 1,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "reopening reads existing replay result and links to review without approving",
+          "additiveTitle": "[migrated variant] reopening reads existing replay result and links to review without approving",
+          "classification": "migrated variant",
+          "originalTitle": "reopening reads existing replay result and links to review without approving",
+          "describe": [
+            "ProductionLineagePanel real API actions"
+          ],
+          "sourceLine": 132,
+          "sourceTextSha256": "62bb057a09f581a8569c050615947391bdb4492001c41cb530a9710886232d39",
+          "originalTextSha256": "e6fc82260c7360209f46aefb2e0ea3e5e16d8eebd0294cccc8ad633f676e410d",
+          "finalAssertionSha256": "5f7fbe9ce600ea978e3e739198497f3ed42fd31df8e47cdc8f12d6b2fbd9ff8f",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "d854de0b3d0b4a997764c1aa46f37788a13d570369109a6106cbe272376585b9",
+          "finalFullCallUnchanged": false
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "async function openAsset() { fireEvent.click(await screen.findByRole('button', { name: 'De",
+        "async function openManifest() { fireEvent.click(await screen.findByRole('button', { name: "
+      ],
+      "verifiedProtectedSha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "additiveSha256": "32b35ab5fda578b34cc0da0462703e1fc11efa6fb3506b53eec5f938b9814536",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 10,
+        "failed": 1,
+        "failures": [
+          {
+            "title": "ProductionLineagePanel real API actions reopening reads existing replay result and links to review without approving",
+            "summary": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"审核重放产物\""
+          }
+        ]
+      },
+      "additiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "32b35ab5fda578b34cc0da0462703e1fc11efa6fb3506b53eec5f938b9814536",
+      "finalProtectedSha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/ResearchLibraryPanel.test.tsx",
+      "destination": "frontend/src/experimental/ResearchLibraryPanel.additive.test.tsx",
+      "originalSha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "beforeSha256": "de00574e6b922ca534870a23da376b19cf483b75e947596fc20471167fbeb1e9",
+      "afterSha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "oldTestDefinitions": 10,
+      "beforeTestDefinitions": 11,
+      "additiveTestDefinitions": 1,
+      "genuineAdditions": 1,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [
+        {
+          "title": "only reads saved local sources on mount; no fetch, parse, search or model execution",
+          "originalTitle": "only reads saved local sources on mount; no fetch, parse, search or model execution",
+          "reason": "Pure legacy assertion rewrite; original contract restored, genuine additions separately retained."
+        }
+      ],
+      "cases": [
+        {
+          "title": "locates page-only evidence in the original source without claiming extracted text",
+          "additiveTitle": "locates page-only evidence in the original source without claiming extracted text",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 158,
+          "sourceTextSha256": "4f90cdbb6e397e8c91774c0c4861175b87bb03f31becbdcacb0ae8dc1cf6400d",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "5a63d613fd7347aad571a631d6e575e14d5c16040d53c7ef5965c544d5e188da",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "4f90cdbb6e397e8c91774c0c4861175b87bb03f31becbdcacb0ae8dc1cf6400d",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const fetcher = (mutate?: (url: string, init: RequestInit) => Response | Promise<Response>"
+      ],
+      "verifiedProtectedSha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "additiveSha256": "92a20395cf7d2224dfe9d5b1af5f5d16293450e47ca4f777209a1415f9a70fd4",
+      "restoredRun": {
+        "collected": 10,
+        "passed": 9,
+        "failed": 1,
+        "failures": [
+          {
+            "title": "only reads saved local sources on mount; no fetch, parse, search or model execution",
+            "summary": "TestingLibraryElementError: Unable to find an element with the text: /向量、OCR 与视觉解析当前未配置/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible."
+          }
+        ]
+      },
+      "additiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0,
+        "failures": []
+      },
+      "legacyRewriteMapping": {
+        "restored_contract": "The original explicit configuration-state wording assertion is restored unchanged.",
+        "preserved_newer_coverage": [
+          "frontend/src/experimental/ResearchLibraryPanel.additive.test.tsx: locates page-only evidence in the original source without claiming extracted text",
+          "frontend/src/experimental/ResearchLibraryPanel.location.test.tsx: separately existing original-source location coverage"
+        ],
+        "reason": "The changed wording itself adds no distinct fixture or behavioral scenario; it is not copied or counted."
+      },
+      "finalAdditiveSha256": "bbec7eec7f52de01e9d3cac6be8718eae05eb6cab088f4287b91e22724d8dc00",
+      "finalProtectedSha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce",
+      "additionalCompatibilityDefinitions": [
+        "scopes unavailable analysis to this literal-search entry without denying the separate embedding panel"
+      ],
+      "finalRestoredRun": {
+        "collected": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 2,
+        "passed": 2,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/StorySimulatorPanel.test.tsx",
+      "destination": "frontend/src/experimental/StorySimulatorPanel.additive.test.tsx",
+      "originalSha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "beforeSha256": "62347f6c757041e6b83247960f7fdc98d954586439331039fcd315134832022f",
+      "afterSha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "oldTestDefinitions": 14,
+      "beforeTestDefinitions": 18,
+      "additiveTestDefinitions": 4,
+      "genuineAdditions": 4,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [
+        {
+          "title": "compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority",
+          "originalTitle": "compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority",
+          "reason": "Pure legacy assertion rewrite; original contract restored, genuine additions separately retained."
+        }
+      ],
+      "cases": [
+        {
+          "title": "reopens the persisted route review after remount without saving again or copying input",
+          "additiveTitle": "reopens the persisted route review after remount without saving again or copying input",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 234,
+          "sourceTextSha256": "92fdca1e8c2e7aa898c5df3fcaab1a11f22a47ad8391dca75b4a7b24cb1bb99f",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "a508d735e17f14a0db97fea0ff8120f3585acc4239bf14e9312f644a58a5bbc6",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "70a6b191f263954da22815c5d34d0bbbb18152d20885c865d54b6d8611498d7f",
+          "finalFullCallUnchanged": false
+        },
+        {
+          "title": "does not substitute the run list when an exact original run is unavailable or wrong",
+          "additiveTitle": "does not substitute the run list when an exact original run is unavailable or wrong",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 247,
+          "sourceTextSha256": "79cf681fb5e5d1b905c37f8468473943a9d4bc51bca82546117097df1c75b1fd",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "812e8463f9ede709ef06af43ffe70c10836f81e5050ec58ccd7f111c94dde798",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "79cf681fb5e5d1b905c37f8468473943a9d4bc51bca82546117097df1c75b1fd",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "hides exact run constraints on target ABA and late responses without changing the editable form",
+          "additiveTitle": "hides exact run constraints on target ABA and late responses without changing the editable form",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 256,
+          "sourceTextSha256": "caa6286567f6f12e412cf7f57b9eca32d1d2d0a0676fba3616c22426c25fd1da",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "78d0b0de6462c2ec52ba70930aee7eda49040ca8d73182401f868a7f97bb8ca1",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "caa6286567f6f12e412cf7f57b9eca32d1d2d0a0676fba3616c22426c25fd1da",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "clears route consent and temporary proposal receipts when the exact target changes",
+          "additiveTitle": "clears route consent and temporary proposal receipts when the exact target changes",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 276,
+          "sourceTextSha256": "bee656f405ca5a6474379cca95e33a635282f85ab3ca96bdcb9f3eda3fee0b73",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "5aa0d7b82d448cdb1b5dea0be38559afdec0b4f43901fde49b7555ed9da1decc",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "bee656f405ca5a6474379cca95e33a635282f85ab3ca96bdcb9f3eda3fee0b73",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "async function fill() {\n  await screen.findByLabelText('推演来源：雨夜 · v3');\n  fireEvent.change",
+        "async function chooseRun() {\n  await screen.findByLabelText('推演来源：雨夜 · v3');\n  fireEvent.c",
+        "const modelRoute = { route_id: 'route-local', provider_id: 'mock', model_id: 'mock-writer'",
+        "const modelPreview = { preview_digest: 'd'.repeat(64), execution_available: true, source_s",
+        "const modelCandidate = { id: 'model-a', input: { id: 'model-a', title: '模型替代路线', events: [",
+        "function modelTransport(initial: SimulatorRun = completed) {\n  let row = initial;\n  const "
+      ],
+      "verifiedProtectedSha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "additiveSha256": "16cd30a2e02aa623db638bb911d7f5da450cecdf76d90f086999d07230a1685b",
+      "restoredRun": {
+        "collected": 14,
+        "passed": 13,
+        "failed": 1,
+        "failures": [
+          {
+            "title": "compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority",
+            "summary": "AssertionError: expected \"spy\" to be called with arguments: [ { kind: 'feature', …(2) } ]"
+          }
+        ]
+      },
+      "additiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0,
+        "failures": []
+      },
+      "legacyRewriteMapping": {
+        "restored_contract": "The legacy child callback has exactly kind/id/feature.",
+        "preserved_newer_coverage": [
+          "frontend/src/experimental/StorySimulatorPanel.additive.test.tsx: persisted exact-run review reopening, wrong-run rejection, target ABA, consent clearing",
+          "frontend/src/AppAuthorTaskNavigation.additive.test.tsx: exact simulator/planning owner navigation",
+          "frontend/src/experimental/ExperimentalWorkbench.continuation.additive.test.tsx: owner reference and feature gating"
+        ],
+        "reason": "The callback-only assertion rewrite is not a new scenario; owner disambiguation remains covered by the named newer scenarios and must later move to a host adapter."
+      },
+      "finalAdditiveSha256": "892fbac4e7961ce973ef9c72116d8720164995cc41dcf83d9b3bb41aae09a47f",
+      "finalProtectedSha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/StyleReviewPanels.test.tsx",
+      "destination": "frontend/src/experimental/StyleReviewPanels.additive.test.tsx",
+      "originalSha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "beforeSha256": "20623169bd2c17abf31dd6702f82496aa950f63fda65bcbf927e4cd085ef90ad",
+      "afterSha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "oldTestDefinitions": 16,
+      "beforeTestDefinitions": 17,
+      "additiveTestDefinitions": 1,
+      "genuineAdditions": 1,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "mounts saved target comparison beside original sample evidence and preserves manual profile input when target navigation is cancelled",
+          "additiveTitle": "mounts saved target comparison beside original sample evidence and preserves manual profile input when target navigation is cancelled",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 235,
+          "sourceTextSha256": "104d2516272a6010537ddb6a8683eac4896ce349641f1ed2459116ef324e016b",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "3ac6a2a9dae37e8ab5e1d531cf06238e23167e4117c88c6e58eb3e835b2b237f",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "104d2516272a6010537ddb6a8683eac4896ce349641f1ed2459116ef324e016b",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "async function selectStyle() {\n  await screen.findByRole('button', { name: '编辑风格 克制文风' });",
+        "async function previewStyle() {\n  await selectStyle();\n  fireEvent.click(screen.getByRole(",
+        "async function selectRun() {\n  await screen.findByLabelText('审阅章节：雨夜 · v3');\n  fireEvent.c"
+      ],
+      "verifiedProtectedSha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "additiveSha256": "01dd67785def1a1b5fa2779bd46dea10035e119543fd40175c046cb2ce6577d1",
+      "restoredRun": {
+        "collected": 16,
+        "passed": 16,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "01dd67785def1a1b5fa2779bd46dea10035e119543fd40175c046cb2ce6577d1",
+      "finalProtectedSha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 16,
+        "passed": 16,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/VoiceSubtitlePanels.test.tsx",
+      "destination": "frontend/src/experimental/VoiceSubtitlePanels.additive.test.tsx",
+      "originalSha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "beforeSha256": "86d702c3fef1822a35c43daf5cc8c682afed70eea634a9693e6233ad979040bc",
+      "afterSha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "oldTestDefinitions": 7,
+      "beforeTestDefinitions": 9,
+      "additiveTestDefinitions": 2,
+      "genuineAdditions": 2,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "reviews actionable caption transfer issues locally, focuses cues and preserves unsaved input",
+          "additiveTitle": "reviews actionable caption transfer issues locally, focuses cues and preserves unsaved input",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 83,
+          "sourceTextSha256": "411bb41197bf9cb388d26865eb80187069f140df1ab1bdeca9b6a77fe5546f0e",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "c9d6ad439b9cce65daf5dbadaa3874c0e44ad7836e2c77ad2b1c401964664a0e",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "411bb41197bf9cb388d26865eb80187069f140df1ab1bdeca9b6a77fe5546f0e",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "hides compatibility review while source refresh fails and resets on owner replacement",
+          "additiveTitle": "hides compatibility review while source refresh fails and resets on owner replacement",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 95,
+          "sourceTextSha256": "997e2f51999c37c5b3d899b55578ebd3c857018e3ee8d254e7ccf1fadd95231b",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "bb3b08b092cb5cf2580072bf7b4412edd78ee7607797c5221a1e579c434053e4",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "997e2f51999c37c5b3d899b55578ebd3c857018e3ee8d254e7ccf1fadd95231b",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const plan={id:'plan',version:1,title:'Synthetic voice',status:'PENDING_REVIEW',needs_revi"
+      ],
+      "verifiedProtectedSha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "additiveSha256": "d5050027e3168710dde56c570615ca280e26ebb0fc6365f20f3ea62fb248a848",
+      "restoredRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 2,
+        "passed": 2,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "d5050027e3168710dde56c570615ca280e26ebb0fc6365f20f3ea62fb248a848",
+      "finalProtectedSha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 2,
+        "passed": 2,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/experimental/WriterRoomPanel.test.tsx",
+      "destination": "frontend/src/experimental/WriterRoomPanel.additive.test.tsx",
+      "originalSha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "beforeSha256": "7050e594f92ca971f41752ef85b1ddbcacf7427877a3c2f625779a6998141e35",
+      "afterSha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "oldTestDefinitions": 9,
+      "beforeTestDefinitions": 14,
+      "additiveTestDefinitions": 5,
+      "genuineAdditions": 5,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "reads the task-pinned chapter digest only on demand and exposes exact review identity and event time",
+          "additiveTitle": "reads the task-pinned chapter digest only on demand and exposes exact review identity and event time",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 127,
+          "sourceTextSha256": "de6ec88c5ce70bb37a627f963a954a65033b2b94b722da049041caad7b3df379",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "a1e7efb95044a16f7e9a8c299a9f50515d2c5876638f878cc452880a27925827",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "de6ec88c5ce70bb37a627f963a954a65033b2b94b722da049041caad7b3df379",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "does not substitute the catalog chapter when the task-pinned revision is stale",
+          "additiveTitle": "does not substitute the catalog chapter when the task-pinned revision is stale",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 141,
+          "sourceTextSha256": "09fa325b8e86f100a6d0984aa7d67bcd9dd4b48f9506da938b529a402a03f55a",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "9ca5e5d1b0a5296f755d78f59250117bdc30b3367c4cdbf5ec873fe7fb06866b",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "09fa325b8e86f100a6d0984aa7d67bcd9dd4b48f9506da938b529a402a03f55a",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "preserves note-only drafts across task switches and clears a note after a confirmed transition",
+          "additiveTitle": "preserves note-only drafts across task switches and clears a note after a confirmed transition",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 152,
+          "sourceTextSha256": "3737367608ca9b2e5b9f931de98a0a8b4bbe6bfd6aee8a64e87c52a0cad11257",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "6405cf281003e284c0b8522d4e50c7ef9c9aa493284176c6ead6f357c1279c63",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "3737367608ca9b2e5b9f931de98a0a8b4bbe6bfd6aee8a64e87c52a0cad11257",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "retains decision notes after an unknown outcome without replaying the transition",
+          "additiveTitle": "retains decision notes after an unknown outcome without replaying the transition",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 168,
+          "sourceTextSha256": "edd15e638be761a71176f9e7ccbfa7c8febccce35f5fd317501f31ff1452ae2a",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "95ce88ae314ef685caf28acb9d9b80733e4de867d2df99db78b392949036c090",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "edd15e638be761a71176f9e7ccbfa7c8febccce35f5fd317501f31ff1452ae2a",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "drops delayed task context when the reader switches tasks and invalidates loaded context on refresh",
+          "additiveTitle": "drops delayed task context when the reader switches tasks and invalidates loaded context on refresh",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 178,
+          "sourceTextSha256": "c521949b7b605c7c70029ae40a049d8847485df9a128e51b1d79aa8fc2c56295",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "485615007b2e21ec3f252d326a914429cabf7137ef59481062c815e96583154e",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "c521949b7b605c7c70029ae40a049d8847485df9a128e51b1d79aa8fc2c56295",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "additiveSha256": "4a57697b32e83177fe462a36c5cf7c57e757f9e29e0d599ef7b9e41441c584e5",
+      "restoredRun": {
+        "collected": 9,
+        "passed": 9,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 5,
+        "passed": 5,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "4a57697b32e83177fe462a36c5cf7c57e757f9e29e0d599ef7b9e41441c584e5",
+      "finalProtectedSha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 5,
+        "passed": 5,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/modelcenter/ModelCenterPanel.test.tsx",
+      "destination": "frontend/src/modelcenter/ModelCenterPanel.additive.test.tsx",
+      "originalSha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "beforeSha256": "169e50d5bbfda7b3339dacba0b9288e53aaf9fdf87ca48a9353627283218cbb9",
+      "afterSha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "oldTestDefinitions": 20,
+      "beforeTestDefinitions": 27,
+      "additiveTestDefinitions": 7,
+      "genuineAdditions": 7,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "reports a failed catalog alongside successful storage, then recovers on explicit retry",
+          "additiveTitle": "reports a failed catalog alongside successful storage, then recovers on explicit retry",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 326,
+          "sourceTextSha256": "6417a2f822d368cebf6843831871083719425c06603fdc00a66a2f489965082d",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "3a5ea8af721c50144b1bdaccb038fde6dea230b6d837d33cb172b69fdc4a7fc4",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "6417a2f822d368cebf6843831871083719425c06603fdc00a66a2f489965082d",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "never calls unavailable sources an empty registry",
+          "additiveTitle": "never calls unavailable sources an empty registry",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 346,
+          "sourceTextSha256": "440084c0e6bcef948a2ff57060fad9ab636feeff28e62f3edf86c6143851046a",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "6cfda17aa8a6b9a578cb2cffe17d578639891842a9504ea21d2462cde4cf8133",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "440084c0e6bcef948a2ff57060fad9ab636feeff28e62f3edf86c6143851046a",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "does not claim a complete empty read when the runtime read failed",
+          "additiveTitle": "does not claim a complete empty read when the runtime read failed",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 355,
+          "sourceTextSha256": "0406d50842589f545cdec51fe87f9f83cd188bc5232c8891ad6ab0268590bfd7",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "dd3271310e80731600b1e8ebfebbf69dfc08f7b17a746807426fa78a156377aa",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "0406d50842589f545cdec51fe87f9f83cd188bc5232c8891ad6ab0268590bfd7",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "labels retained catalog and storage values after a refresh failure",
+          "additiveTitle": "labels retained catalog and storage values after a refresh failure",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 364,
+          "sourceTextSha256": "5ceadb508b594102f062aa2d35d023016fac9c8b91f8614a00667da25876cd8b",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "721255159de902f16a81c3bd8e5d45b1c4d2cc8e373299122db3101eebdf9b11",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "5ceadb508b594102f062aa2d35d023016fac9c8b91f8614a00667da25876cd8b",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "announces loading without premature unavailable or failure messages",
+          "additiveTitle": "announces loading without premature unavailable or failure messages",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel partial reads and recovery"
+          ],
+          "sourceLine": 379,
+          "sourceTextSha256": "8cb359c2039834844eeb9f62b5494082c439879815273cb36b6f7b1dde5b16be",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "20f7f3d539e0a179cf92859f7fc18ab295a2fd67573ed7d8721e994fb6ffc47b",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "8cb359c2039834844eeb9f62b5494082c439879815273cb36b6f7b1dde5b16be",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "labels storage retained after an unavailable refresh and distinguishes current usage from old values",
+          "additiveTitle": "labels storage retained after an unavailable refresh and distinguishes current usage from old values",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel retained facts review regressions"
+          ],
+          "sourceLine": 395,
+          "sourceTextSha256": "1a8a6e33791549b42ff5073818ed793679b045934f0686726716f2dc0831d8c8",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "8f5ec75e05f1803e67d9108965e348cbbfd87cb6c78c8232d07a562fd9ba7a5a",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "1a8a6e33791549b42ff5073818ed793679b045934f0686726716f2dc0831d8c8",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "does not offer unavailable-catalog recovery advice when the panel is explicitly denied",
+          "additiveTitle": "does not offer unavailable-catalog recovery advice when the panel is explicitly denied",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "ModelCenterPanel retained facts review regressions"
+          ],
+          "sourceLine": 407,
+          "sourceTextSha256": "98b5e793b80eec9d9470c4942a1eabb788dd0c79e767dd475c5ab5676040e3df",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "5a9420857f37de3818012c9d2820640d010f7d64ebf8151d94231c2068406b34",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "98b5e793b80eec9d9470c4942a1eabb788dd0c79e767dd475c5ab5676040e3df",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "additiveSha256": "d79ae9f965cdecc612fe55e5a8585e339f877dafd790113811e33f421156c496",
+      "restoredRun": {
+        "collected": 20,
+        "passed": 20,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "d79ae9f965cdecc612fe55e5a8585e339f877dafd790113811e33f421156c496",
+      "finalProtectedSha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 20,
+        "passed": 20,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/prompt/PromptWorkspace.test.tsx",
+      "destination": "frontend/src/prompt/PromptWorkspace.additive.test.tsx",
+      "originalSha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "beforeSha256": "a2989c9df5e8b462ea64a7c61e222f4f3446528fbdfec6b5dd5f1dbb133aa18b",
+      "afterSha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 17,
+      "additiveTestDefinitions": 6,
+      "genuineAdditions": 6,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "exposes authored change reasons and searches only loaded revision records",
+          "additiveTitle": "exposes authored change reasons and searches only loaded revision records",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt history finder"
+          ],
+          "sourceLine": 191,
+          "sourceTextSha256": "cdf998615102a538e4d95cc698a4ac2eac6aef4338616ce59ed7835af576e824",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "f2e7b61f9e57d7940747070a42c7c001690dbda6c0d896544b7e384c24b4993f",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "cdf998615102a538e4d95cc698a4ac2eac6aef4338616ce59ed7835af576e824",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "offers a recoverable no-match message while preserving the complete history warning",
+          "additiveTitle": "offers a recoverable no-match message while preserving the complete history warning",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt history finder"
+          ],
+          "sourceLine": 209,
+          "sourceTextSha256": "cb301117a5ba7914b1acbf61d86c57942ed5a7b6d57f0a892f5391f849e0f807",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "0344aadd58fa4073f0911adab9e328fd9e0b502036e23f049e92039a1d826adb",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "cb301117a5ba7914b1acbf61d86c57942ed5a7b6d57f0a892f5391f849e0f807",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "selects a comparison from history without reading bodies or writing until explicitly requested",
+          "additiveTitle": "selects a comparison from history without reading bodies or writing until explicitly requested",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt history finder"
+          ],
+          "sourceLine": 221,
+          "sourceTextSha256": "690f633f2b12b04fdd741f447579fd23dd827ce35c763bce956f29d4b92dcd36",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "5d482c5e6920b1dc5644815fbfa09d10d9757869d785af5ccc41584cdb2a5bb8",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "690f633f2b12b04fdd741f447579fd23dd827ce35c763bce956f29d4b92dcd36",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "reveals an invalid advanced field in novice mode and keeps correction editable until explicit save",
+          "additiveTitle": "reveals an invalid advanced field in novice mode and keeps correction editable until explicit save",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt editor correction across interface modes"
+          ],
+          "sourceLine": 240,
+          "sourceTextSha256": "3d85c33d3c0a86f6c96a7e724a8e2f5c0b7366ddd4de70e07d7edafdf179de63",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "8ef017eb18a57a77b4a2b40c9fbffed80b98ac69b1ea8f95ec555ad096e62541",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "3d85c33d3c0a86f6c96a7e724a8e2f5c0b7366ddd4de70e07d7edafdf179de63",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "does not carry a failed field correction from family A into valid family B",
+          "additiveTitle": "does not carry a failed field correction from family A into valid family B",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt field error attribution"
+          ],
+          "sourceLine": 267,
+          "sourceTextSha256": "a634519a9e674577a7bedc1ed1074b11b21f30513cd1434a3ec458d0d5b2f05b",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "b7a0c60787c4524ac5e08bf428f20d72b735fbaa24551c577bc23afdabcbacbf",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "a634519a9e674577a7bedc1ed1074b11b21f30513cd1434a3ec458d0d5b2f05b",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "copies an edited body without submitting or persisting that body",
+          "additiveTitle": "copies an edited body without submitting or persisting that body",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "Prompt visible draft rescue"
+          ],
+          "sourceLine": 307,
+          "sourceTextSha256": "5770a9b2e1b363af8b27598e488e1f5833444aab08478bf4d1455ab679a2a6d2",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "9d05427f90ebfc0effafee17fc971eb197a196f4c08f0aa4bdcaeeca0a9f42d7",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "5770a9b2e1b363af8b27598e488e1f5833444aab08478bf4d1455ab679a2a6d2",
+          "finalFullCallUnchanged": true
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [],
+      "verifiedProtectedSha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "additiveSha256": "94e7f9018a2c09b968362f52c2d433ec5c25bf5b8ddfde9437af134f162a0859",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "94e7f9018a2c09b968362f52c2d433ec5c25bf5b8ddfde9437af134f162a0859",
+      "finalProtectedSha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 6,
+        "passed": 6,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/taskcenter/TaskCenter.test.tsx",
+      "destination": "frontend/src/taskcenter/TaskCenter.additive.test.tsx",
+      "originalSha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "beforeSha256": "316e5439ce061b4b4aa8e24754285d83f7f90b55814d798e29679838cb0246f4",
+      "afterSha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "oldTestDefinitions": 11,
+      "beforeTestDefinitions": 14,
+      "additiveTestDefinitions": 3,
+      "genuineAdditions": 3,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [],
+      "cases": [
+        {
+          "title": "shows receipt evidence and preserves task info on a later failed read",
+          "additiveTitle": "shows receipt evidence and preserves task info on a later failed read",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "original task receipt companion view"
+          ],
+          "sourceLine": 338,
+          "sourceTextSha256": "49ef47f51f410efa6067893398f5ee2ec445dc3c00759ea9dd7a6f24173427e6",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "cc01f15af884e5bfcfe1aab8b9b0cfa6f53bdca11d14b9ff4f017d9630ba46f5",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "283194701218b265f22bfad3441eb8f60342a43c2d9fcc6aa86e08e9080518fc",
+          "finalFullCallUnchanged": false
+        },
+        {
+          "title": "keeps unsupported media unknown with useful recovery guidance",
+          "additiveTitle": "keeps unsupported media unknown with useful recovery guidance",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "original task receipt companion view"
+          ],
+          "sourceLine": 363,
+          "sourceTextSha256": "a3afb1802333f4e350d046809849d0a800cd36829eb80e95c1d858ad23706c15",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "70dc999a467ad9766a724a3e4c0d8f2e24af402dd8f942cc750a420bc7a90ac6",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "a3afb1802333f4e350d046809849d0a800cd36829eb80e95c1d858ad23706c15",
+          "finalFullCallUnchanged": true
+        },
+        {
+          "title": "renders %s without implying an invoice or enabling retry",
+          "additiveTitle": "renders %s without implying an invoice or enabling retry",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 372,
+          "sourceTextSha256": "be574008e8bf927000a3505eaaeb80ed92dcdb83806f9349f071d64adf8997f8",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "07e07e6e3b24582685b5cdea9859e2c5f25c4f68a916bf098464586209dc73e0",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "a1f717e36c06ab8aa7e3adfc60cd729391957b4d8d80f6ba227d1f0696887c6a",
+          "finalFullCallUnchanged": false
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const queryButton = (name: string | RegExp) => screen.queryByRole('button', { name });",
+        "const tab = (name: string | RegExp) => screen.getByRole('tab', { name }) as HTMLButtonElem"
+      ],
+      "verifiedProtectedSha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "additiveSha256": "cd8ba05d196a57029051a1b7d3d4180d2b40b4348aff82a07cd5a80663a65c20",
+      "restoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "failures": []
+      },
+      "additiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0,
+        "failures": []
+      },
+      "finalAdditiveSha256": "c2413811b123dde0e69ddb6052ebc3fa9571df75ee72f7dd09a756d3fd115081",
+      "finalProtectedSha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 4,
+        "passed": 4,
+        "failed": 0
+      }
+    },
+    {
+      "file": "frontend/src/taskcenter/taskCenterClient.test.ts",
+      "destination": "frontend/src/taskcenter/taskCenterClient.additive.test.ts",
+      "originalSha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "beforeSha256": "d4000520e6117ff6c5bcb1f588b9f8698c95fcb7e5e0f793ee97669827a0c84b",
+      "afterSha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "oldTestDefinitions": 7,
+      "beforeTestDefinitions": 11,
+      "additiveTestDefinitions": 4,
+      "genuineAdditions": 4,
+      "migratedVariants": 0,
+      "omittedLegacyRewrites": [
+        {
+          "title": "exposes original owner operations plus the read-only receipt companion",
+          "originalTitle": "exposes exactly the five owner operations on the frozen routes",
+          "reason": "Pure legacy assertion rewrite; original contract restored, genuine additions separately retained."
+        }
+      ],
+      "cases": [
+        {
+          "title": "uses only the original scoped history GET, preserves signal, never reads media",
+          "additiveTitle": "uses only the original scoped history GET, preserves signal, never reads media",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "read-only task receipt transport"
+          ],
+          "sourceLine": 198,
+          "sourceTextSha256": "4a4c1b8de7d2f9dab7dfaa289448d54010056381bda01237399d135a3b1a82fd",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "bdd802ac4888330d3b2db1bfd2880ce01d1f300a578001fd7ed37df84e3d3d50",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "017f36443677e5411b2ab37f41cef7834679013bb9711ab29341fcde36152d55",
+          "finalFullCallUnchanged": false
+        },
+        {
+          "title": "keeps owner read failure %s unknown without fallback or raw text",
+          "additiveTitle": "keeps owner read failure %s unknown without fallback or raw text",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "read-only task receipt transport"
+          ],
+          "sourceLine": 208,
+          "sourceTextSha256": "a3d19756be274e292db162ae50920e4b5f6ce5801ff2e92df5c58133fb59c09a",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "2ea7dfd598bfddcc8fc5b56556a125dbdefe7dffcb1c3c413f4326bbe1255cda",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "59ad3469edd4a795c220e7334d110f325d4e9b74cc26aef3a0f1e444f62efe1a",
+          "finalFullCallUnchanged": false
+        },
+        {
+          "title": "rejects foreign captured scope before reading and rejects foreign returned scope",
+          "additiveTitle": "rejects foreign captured scope before reading and rejects foreign returned scope",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [
+            "read-only task receipt transport"
+          ],
+          "sourceLine": 214,
+          "sourceTextSha256": "4ecb2d5a2e61dc7cd97e6f1ec7c04742204fc130542656316a8b689463346aff",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "bbe0c51cc8ba56245f2b3794cbd5fa3b7ea2934a5a570412c753c0f960ebed74",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "886cfcbf5a9f592a705f2545b48d55077ab53d61c171a45a567ab731a1e58161",
+          "finalFullCallUnchanged": false
+        },
+        {
+          "title": "receipt history retains the existing captured actor session and branch transport",
+          "additiveTitle": "receipt history retains the existing captured actor session and branch transport",
+          "classification": "genuine addition",
+          "originalTitle": null,
+          "describe": [],
+          "sourceLine": 224,
+          "sourceTextSha256": "cfedce6d53e4525b99c654b93082b129f935b54c22fa2f60609ca70c7cc431b2",
+          "originalTextSha256": null,
+          "finalAssertionSha256": "f7a8565fb8e63751fd85395e85329482d1342263c63182663d251376ad2f8a52",
+          "finalAssertionsUnchanged": true,
+          "finalCallSha256": "04a53da3002a393d8be688797bf4ab21d9ed45a4d9cdf08a8ff3d2024519b5a6",
+          "finalFullCallUnchanged": false
+        }
+      ],
+      "prunedUnusedHarnessDeclarations": [
+        "const tasksBase = `/api/novels/${FIXTURE_PROJECT}/experimental/workspace/tasks`;",
+        "const inboxBase = `/api/novels/${FIXTURE_PROJECT}/experimental/review-inbox`;",
+        "const reviewRequest = { domain: 'planning', id: 'proposal-1', action: 'reject', expected_v",
+        "async function refusalOf(work: Promise<unknown>): Promise<ApiError> {\n  try { await work; "
+      ],
+      "verifiedProtectedSha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "additiveSha256": "72718daa3da7ddb9cb1db9892f0a07ff159e93248e22e19ae508d9402640b184",
+      "restoredRun": {
+        "collected": 7,
+        "passed": 6,
+        "failed": 1,
+        "failures": [
+          {
+            "title": "task center client seam exposes exactly the five owner operations on the frozen routes",
+            "summary": "AssertionError: expected [ Array(6) ] to deeply equal [ 'readTasks', 'readInbox', …(3) ]"
+          }
+        ]
+      },
+      "additiveRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0,
+        "failures": []
+      },
+      "legacyRewriteMapping": {
+        "restored_contract": "The original client exposes exactly its original five public owner methods.",
+        "preserved_newer_coverage": [
+          "frontend/src/taskcenter/taskCenterClient.additive.test.ts: original-scope receipt GET, signal preservation, media/invalid rejection, unreadable status cases, foreign scope, actor/branch transport",
+          "frontend/src/taskcenter/TaskCenter.additive.test.tsx: receipt evidence, failure hiding, unsupported media, unknown and synthetic costs"
+        ],
+        "reason": "Changing an old exact key-count assertion is not new capability. Later runtime repair requires a real separate receipt companion interface, not a non-enumerable sixth method."
+      },
+      "finalAdditiveSha256": "d17848558a75b43a05456ddb4fcede73c57b5ee4c8638826c0f5eb376193dd75",
+      "finalProtectedSha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3",
+      "additionalCompatibilityDefinitions": [],
+      "finalRestoredRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      "finalAdditiveRun": {
+        "collected": 7,
+        "passed": 7,
+        "failed": 0
+      }
+    }
+  ],
+  "finalAssertionAudit": {
+    "initialGenuineAddedDefinitions": 67,
+    "unchangedWholeCalls": 60,
+    "constructionOrHostAdapterMigratedCalls": 7,
+    "allExtractedAssertionsUnchanged": true,
+    "productionLineageVariantBodyAssertionsUnchanged": true,
+    "notes": "Initial extraction had67 exact source calls. Later approved interface/host migrations alter construction/injection in7 of those calls while preserving every assertion. New compatibility tests are counted separately."
+  },
+  "initialTestOnlySummary": {
+    "protectedFilesRestored": 18,
+    "protectedSha256Matches": 18,
+    "additiveFiles": 18,
+    "genuineAddedDefinitions": 67,
+    "migratedVariantDefinitions": 1,
+    "restoredCollected": 186,
+    "restoredPassed": 182,
+    "restoredFailed": 4,
+    "additiveCollected": 76,
+    "additivePassed": 76,
+    "additiveFailed": 0,
+    "totalCollected": 262,
+    "totalPassed": 258,
+    "totalFailed": 4,
+    "runtimeModified": false,
+    "configOrManifestsModified": false,
+    "stagedOrCommitted": false
+  },
+  "initialTestOnlyEvidence": {
+    "commandFile": "/tmp/studio-ui-reconciliation/vitest-command.json",
+    "logFile": "/tmp/studio-ui-reconciliation/vitest.log",
+    "jsonFile": "/tmp/studio-ui-reconciliation/vitest-results.json",
+    "vitestExitCode": 1,
+    "durationSeconds": 48.15,
+    "defaultTimeouts": true,
+    "workers": 1,
+    "cache": false,
+    "skipped": 0
+  },
+  "initialIndependentReview": "verify_canvas_integration confirmed all67 genuine additions retain exact full test-call AST text from72e636f; the one labeled Lineage variant retains its exact callback body; no original a072cf9 title duplicated as claimed new coverage; all18 protected files match.",
+  "finalChangedPaths": [
+    {
+      "path": "frontend/src/AppAuthorTaskNavigation.test.tsx",
+      "sha256": "4a487c21efed37b83f1875d52f923e4c692906497182810f0bb2a4fa5b06d5ba"
+    },
+    {
+      "path": "frontend/src/AppAuthorTaskNavigation.additive.test.tsx",
+      "sha256": "f26d6699abfbb7bed6e31da087d7b1fb9139e84a07161dc4d1295763442bb68f"
+    },
+    {
+      "path": "frontend/src/delivery/DeliveryCenterPanel.test.tsx",
+      "sha256": "faf10568ab7f33bb6330bd1d148a0a7e72024ccb141184a541e8869c16f67965"
+    },
+    {
+      "path": "frontend/src/delivery/DeliveryCenterPanel.additive.test.tsx",
+      "sha256": "d67cc3ffa68e51dd984a0d024b629ad760c3ba14d0ec95591f43651f94dcfe52"
+    },
+    {
+      "path": "frontend/src/experimental/BranchManuscriptPanel.test.tsx",
+      "sha256": "4572228cdf7e1a6fc4c6bfd852cebdb0bfadd13b1dff7dad9331eaed5008340f"
+    },
+    {
+      "path": "frontend/src/experimental/BranchManuscriptPanel.additive.test.tsx",
+      "sha256": "6271f5fa2d56d5aff1f34d23375a0d358c6ea6637a2a49e96f185020118e0082"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.test.tsx",
+      "sha256": "9a93f27b9bb27b19a09cbc61aec2a6baa9135ec49c360ba895bb35ee574a037b"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.additive.test.tsx",
+      "sha256": "279c3b21ca88ecd559bb6e7495a59c31e704e12fe6466146943419a56cdd1aed"
+    },
+    {
+      "path": "frontend/src/experimental/ExperimentalWorkbench.continuation.test.tsx",
+      "sha256": "bc729f8375b617fd0eb0b319743ce069b04b1f12f8ed7959392fe88cb9b5dc0c"
+    },
+    {
+      "path": "frontend/src/experimental/ExperimentalWorkbench.continuation.additive.test.tsx",
+      "sha256": "5edc7cb8c33c4b8d14bab3abc972068b11f4b73f6194c9fb65055d57994c6c90"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.test.tsx",
+      "sha256": "1505388472a0d9b7c97cb7e0ad1dfcac8d945fc31414417aa91c5fadaf6f6a85"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.additive.test.tsx",
+      "sha256": "933b811624de85129813272ca61354bce92cf1931cb74e1aecb65f33ac1b8f43"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.test.tsx",
+      "sha256": "e0827c1f6240974ecf2c612871f0de5d3d4e629a354a4a7a0e2269fe78179075"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.additive.test.tsx",
+      "sha256": "ffa8685f721d5ef2ce9a30fd6fb91d6330dc8431ba35156f45000ba7b4de35e3"
+    },
+    {
+      "path": "frontend/src/experimental/MultilingualEditionsPanel.test.tsx",
+      "sha256": "2fac8a2d10d48b54834042a81bdbaf2194ff0a75a14cd67f2a11b2b44f64dda2"
+    },
+    {
+      "path": "frontend/src/experimental/MultilingualEditionsPanel.additive.test.tsx",
+      "sha256": "a24e460ac1107510a6d708654fe8602c39f8087ae807ba04418076fe23cc69d0"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.test.tsx",
+      "sha256": "20e1d4c01948e102ddb3aaed381255447f701c0fe312f924e489f2ce46923ec2"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.additive.test.tsx",
+      "sha256": "32b35ab5fda578b34cc0da0462703e1fc11efa6fb3506b53eec5f938b9814536"
+    },
+    {
+      "path": "frontend/src/experimental/ResearchLibraryPanel.test.tsx",
+      "sha256": "05dd318c616a7fd93847531df9614b1f84f666ffcc548728be815cbe00e997ce"
+    },
+    {
+      "path": "frontend/src/experimental/ResearchLibraryPanel.additive.test.tsx",
+      "sha256": "bbec7eec7f52de01e9d3cac6be8718eae05eb6cab088f4287b91e22724d8dc00"
+    },
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.test.tsx",
+      "sha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa"
+    },
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.additive.test.tsx",
+      "sha256": "892fbac4e7961ce973ef9c72116d8720164995cc41dcf83d9b3bb41aae09a47f"
+    },
+    {
+      "path": "frontend/src/experimental/StyleReviewPanels.test.tsx",
+      "sha256": "c64c520aee5b550954a17d28270955271ed94a6540c466c9e2e12852aaff347f"
+    },
+    {
+      "path": "frontend/src/experimental/StyleReviewPanels.additive.test.tsx",
+      "sha256": "01dd67785def1a1b5fa2779bd46dea10035e119543fd40175c046cb2ce6577d1"
+    },
+    {
+      "path": "frontend/src/experimental/VoiceSubtitlePanels.test.tsx",
+      "sha256": "d81ab1d6b07667e7897dad116c6a6c0b5bb6df0ee33ec7d2ee5994ad4ca523c5"
+    },
+    {
+      "path": "frontend/src/experimental/VoiceSubtitlePanels.additive.test.tsx",
+      "sha256": "d5050027e3168710dde56c570615ca280e26ebb0fc6365f20f3ea62fb248a848"
+    },
+    {
+      "path": "frontend/src/experimental/WriterRoomPanel.test.tsx",
+      "sha256": "6328fe83551721ff88fd5b6d0196494923b6ec94ca8815999b2b3ff242d99d14"
+    },
+    {
+      "path": "frontend/src/experimental/WriterRoomPanel.additive.test.tsx",
+      "sha256": "4a57697b32e83177fe462a36c5cf7c57e757f9e29e0d599ef7b9e41441c584e5"
+    },
+    {
+      "path": "frontend/src/modelcenter/ModelCenterPanel.test.tsx",
+      "sha256": "a4f10468dca1f10cd1a8e1fa1d565ced2430315dff3687c57c867f61f877d3ed"
+    },
+    {
+      "path": "frontend/src/modelcenter/ModelCenterPanel.additive.test.tsx",
+      "sha256": "d79ae9f965cdecc612fe55e5a8585e339f877dafd790113811e33f421156c496"
+    },
+    {
+      "path": "frontend/src/prompt/PromptWorkspace.test.tsx",
+      "sha256": "cc238d1c16293c18757e48cdd399b9cc71c4c5763307e2cbe08502b3142a9a13"
+    },
+    {
+      "path": "frontend/src/prompt/PromptWorkspace.additive.test.tsx",
+      "sha256": "94e7f9018a2c09b968362f52c2d433ec5c25bf5b8ddfde9437af134f162a0859"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.test.tsx",
+      "sha256": "40f7bbe957e898b5b781395c4261981b70d05a2691dbeca4c2dd63c7de7bf1c8"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.additive.test.tsx",
+      "sha256": "c2413811b123dde0e69ddb6052ebc3fa9571df75ee72f7dd09a756d3fd115081"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.test.ts",
+      "sha256": "2f5b57f703c2a4f5c7b5ca5d67936fc153174b8ddaddd6ec2a1f5e4489c8dbf3"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.additive.test.ts",
+      "sha256": "d17848558a75b43a05456ddb4fcede73c57b5ee4c8638826c0f5eb376193dd75"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+      "sha256": "dd0d81cf8b00922a554cf0a4fd88aac84b6718d688dfd97baf728c83ad7e1744"
+    },
+    {
+      "path": "frontend/src/experimental/pristineReplayNavigation.tsx",
+      "sha256": "6daf89edc3d22d2b252ce135bb9b732ee0dac4bdb61f32484249cb9459f99556"
+    },
+    {
+      "path": "frontend/src/experimental/simulatorOwnerNavigation.ts",
+      "sha256": "7dbfc85e29303f06c9f52db377e57e0d6e5a82e222a936652a1c860abe2c089b"
+    },
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.tsx",
+      "sha256": "b95d545767c9b4cbf2642950d8c99d0b08ac02b797eeba0f41d481b8d38fe60a"
+    },
+    {
+      "path": "frontend/src/experimental/ExperimentalWorkbench.tsx",
+      "sha256": "e61b6d68e27f5e3055431ef7ee34c11331db944d546758916746bf96089c253c"
+    },
+    {
+      "path": "frontend/src/experimental/ResearchLibraryPanel.tsx",
+      "sha256": "8f544af5d0979ec040d1d829d4f2e67dd877cc68cae8fd811e5232e33a6d0387"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCostReceiptClient.ts",
+      "sha256": "768eff5d131682791bf27fb08346de001487a90ebcf6f1d3e5daf254ace7e2f7"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.ts",
+      "sha256": "43b874eb1326ea9325b22cc89e2737da35f88ccca9dfdbf63778a7a44c79860f"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterTypes.ts",
+      "sha256": "fb12c5a5bc22db1f22239abd9eec328b227e95215a20077279b99bb9c7914f08"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.tsx",
+      "sha256": "cec77b838ff0b004cb8a26781b4243aa1c561161aa2257ccad8c91226c2081d0"
+    },
+    {
+      "path": "frontend/src/taskcenter/useTaskCenter.ts",
+      "sha256": "c2e6a27cae2e1481432152f78238091bf3f4e6a9fb48cf35a876b3504946c9ef"
+    },
+    {
+      "path": "frontend/src/taskcenter/useTaskCostReceipt.ts",
+      "sha256": "701b328162395225ee07f40b8acc6df8021f72a8f123dab619aeee765c06605e"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.navigationCompatibility.test.tsx",
+      "sha256": "40f12860116c1fcd637ddd8b224061d656422071db0e89ec843c963de860f363"
+    },
+    {
+      "path": "frontend/src/experimental/pristineReplayNavigation.test.tsx",
+      "sha256": "8ba0d46709ce5b826041871fe5488b1549bf772edc61e1a4c6a1ae9e841e6681"
+    },
+    {
+      "path": "frontend/src/experimental/simulatorOwnerNavigation.test.ts",
+      "sha256": "4b349493a563434b9692a0024aa8eff5c57770a0074fd7dae48f12ebb2a28cd3"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCostReceiptClient.test.ts",
+      "sha256": "4eabd70486317ba980b8f725ebbbe57c1c865f139bc4d981f939397e7b7d8f04"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.receiptCompanion.test.tsx",
+      "sha256": "423587d86d5229a6f23010e85805206e603f6ae54a0215d669d57829c67e701c"
+    },
+    {
+      "path": "frontend/src/taskcenter/useTaskCostReceipt.test.ts",
+      "sha256": "d574a486f76f181b318a7ce14140b1bc60677b7d8c353ced8e1a6a678878c595"
+    }
+  ],
+  "approvedRuntimeScope": {
+    "research": "Scope the restored NOT_CONFIGURED wording to this actual local-literal search entry, retain separate embedding/adapter caveats.",
+    "simulator": "Restore exact three-field child callbacks; simulator-origin host adapter validates proposal IDs, refuses contradictory authority and enriches only that origin.",
+    "costReceipt": "Separate TaskCostReceiptClient and captured-scope factory; original owner has five methods and no hidden receipt property. Panel constructs both clients; controller explicitly injects companion and fences its epoch.",
+    "lineage": "Authority-lifetime pristine gate enables the original primary navigation only before interactions and atomically once, targeting validated exact task ID. Any editor/task/focus/refresh/submit/execute/cancel or existing leave-confirmation intent retires gate. All later primary interactions use unchanged ReceiptNavigation confirmation. Layout cleanup and receipt/target/callback/busy epochs prevent stale callbacks."
+  },
+  "runtimeModifiedPaths": [
+    "frontend/src/experimental/ProductionLineagePanel.tsx",
+    "frontend/src/experimental/pristineReplayNavigation.tsx",
+    "frontend/src/experimental/simulatorOwnerNavigation.ts",
+    "frontend/src/experimental/StorySimulatorPanel.tsx",
+    "frontend/src/experimental/ExperimentalWorkbench.tsx",
+    "frontend/src/experimental/ResearchLibraryPanel.tsx",
+    "frontend/src/taskcenter/taskCostReceiptClient.ts",
+    "frontend/src/taskcenter/taskCenterClient.ts",
+    "frontend/src/taskcenter/taskCenterTypes.ts",
+    "frontend/src/taskcenter/TaskCenter.tsx",
+    "frontend/src/taskcenter/useTaskCenter.ts",
+    "frontend/src/taskcenter/useTaskCostReceipt.ts"
+  ],
+  "newCompatibilityTestPaths": [
+    "frontend/src/experimental/ProductionLineagePanel.navigationCompatibility.test.tsx",
+    "frontend/src/experimental/pristineReplayNavigation.test.tsx",
+    "frontend/src/experimental/simulatorOwnerNavigation.test.ts",
+    "frontend/src/taskcenter/taskCostReceiptClient.test.ts",
+    "frontend/src/taskcenter/TaskCenter.receiptCompanion.test.tsx"
+  ],
+  "adaptedUnprotectedTestPaths": [
+    "frontend/src/taskcenter/useTaskCostReceipt.test.ts"
+  ],
+  "deliberatelyMigratedExtractedCases": [
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.additive.test.tsx",
+      "title": "reopens the persisted route review after remount without saving again or copying input",
+      "adaptation": "Original assertions unchanged; only companion factory/injection or simulator-specific host-adapter construction changed.",
+      "assertionSha256": "a508d735e17f14a0db97fea0ff8120f3585acc4239bf14e9312f644a58a5bbc6"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.additive.test.tsx",
+      "title": "shows receipt evidence and preserves task info on a later failed read",
+      "adaptation": "Original assertions unchanged; only companion factory/injection or simulator-specific host-adapter construction changed.",
+      "assertionSha256": "cc01f15af884e5bfcfe1aab8b9b0cfa6f53bdca11d14b9ff4f017d9630ba46f5"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.additive.test.tsx",
+      "title": "renders %s without implying an invoice or enabling retry",
+      "adaptation": "Original assertions unchanged; only companion factory/injection or simulator-specific host-adapter construction changed.",
+      "assertionSha256": "07e07e6e3b24582685b5cdea9859e2c5f25c4f68a916bf098464586209dc73e0"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.additive.test.ts",
+      "title": "uses only the original scoped history GET, preserves signal, never reads media",
+      "adaptation": "Original assertions unchanged; only companion factory/injection or simulator-specific host-adapter construction changed.",
+      "assertionSha256": "bdd802ac4888330d3b2db1bfd2880ce01d1f300a578001fd7ed37df84e3d3d50"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.additive.test.ts",
+      "title": "keeps owner read failure %s unknown without fallback or raw text",
+      "adaptation": "Original assertions unchanged; only companion factory/injection or simulator-specific host-adapter construction changed.",
+      "assertionSha256": "2ea7dfd598bfddcc8fc5b56556a125dbdefe7dffcb1c3c413f4326bbe1255cda"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.additive.test.ts",
+      "title": "rejects foreign captured scope before reading and rejects foreign returned scope",
+      "adaptation": "Original assertions unchanged; only companion factory/injection or simulator-specific host-adapter construction changed.",
+      "assertionSha256": "bbe0c51cc8ba56245f2b3794cbd5fa3b7ea2934a5a570412c753c0f960ebed74"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCenterClient.additive.test.ts",
+      "title": "receipt history retains the existing captured actor session and branch transport",
+      "adaptation": "Original assertions unchanged; only companion factory/injection or simulator-specific host-adapter construction changed.",
+      "assertionSha256": "f7a8565fb8e63751fd85395e85329482d1342263c63182663d251376ad2f8a52"
+    }
+  ],
+  "runtimeVerification": {
+    "filesSelected": 43,
+    "filesPassed": 41,
+    "filesFailedCollection": 2,
+    "testsCollected": 337,
+    "testsPassed": 337,
+    "testAssertionsFailed": 0,
+    "durationSeconds": 49.14,
+    "sourceSnapshotUnchanged": true,
+    "logs": "/tmp/studio-ui-reconciliation/vitest-runtime.log",
+    "structuredResults": "/tmp/studio-ui-reconciliation/vitest-runtime-results.json",
+    "command": "/tmp/studio-ui-reconciliation/vitest-runtime-command.json",
+    "snapshot": "/tmp/studio-ui-reconciliation/runtime-test-snapshot.json",
+    "blocker": "Both AppAuthorTaskNavigation files could not collect because canvas-owned studioGraphEditorView.tsx:105 had a missing JSX closing brace. Owner will repair.",
+    "pendingRetry": [],
+    "historicalBlockerResolved": "Canvas owner repaired the JSX parser error; both App suites passed in the final retry."
+  },
+  "verificationCaveat": "All selected suites pass across the recorded runtime run and retry. Original RED receipts and the historical collection failure remain preserved. No full manifest suite or browser verification was run by this worker.",
+  "sharedReceiptNavigationUnchanged": true,
+  "protectedHashMatches": 18,
+  "finalVerification": {
+    "completedUtc": "2026-10-16T22:46:14.805418+00:00",
+    "remainingFailures": [],
+    "aggregateUniqueFilesPassed": 43,
+    "aggregateUniqueCasesPassed": 348,
+    "aggregationNote": "Aggregate of the 337-case runtime run and 21-case retry: 11 newly collected App cases, 10 hook cases repeated. This is not a single 348-case run or broad CI claim.",
+    "protectedFilesPassed": 18,
+    "protectedCasesPassed": 186,
+    "additiveFilesPassed": 18,
+    "additiveCasesPassed": 78,
+    "newCompatibilityFilesPassed": 5,
+    "newCompatibilityCasesPassed": 35,
+    "adaptedHookCasesPassed": 10,
+    "unchangedReceiptGuardCasesPassed": 39,
+    "initialGenuineAddedStaticDefinitions": 67,
+    "migratedStaticDefinitions": 1,
+    "laterHostAndResearchDefinitions": 2,
+    "retryCasesPassed": 21,
+    "checks": [
+      {
+        "name": "retry",
+        "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "src/AppAuthorTaskNavigation.test.tsx",
+          "src/AppAuthorTaskNavigation.additive.test.tsx",
+          "src/taskcenter/useTaskCostReceipt.test.ts",
+          "--no-cache",
+          "--minWorkers=1",
+          "--maxWorkers=1",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile=/tmp/studio-ui-reconciliation/vitest-retry-results.json"
+        ],
+        "startedUtc": "2026-10-16T22:44:22.215195+00:00",
+        "exitCode": 0,
+        "durationSeconds": 8.951,
+        "log": "/tmp/studio-ui-reconciliation/final-retry.log",
+        "sourceSnapshotUnchanged": true
+      },
+      {
+        "name": "typecheck",
+        "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+        "command": [
+          "node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "startedUtc": "2026-10-16T22:44:31.224003+00:00",
+        "exitCode": 0,
+        "durationSeconds": 27.803,
+        "log": "/tmp/studio-ui-reconciliation/final-typecheck.log",
+        "sourceSnapshotUnchanged": true
+      },
+      {
+        "name": "build",
+        "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+        "command": [
+          "node",
+          "node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        "startedUtc": "2026-10-16T22:44:59.083393+00:00",
+        "exitCode": 0,
+        "durationSeconds": 6.828,
+        "log": "/tmp/studio-ui-reconciliation/final-build.log",
+        "sourceSnapshotUnchanged": true
+      },
+      {
+        "name": "token-lint",
+        "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+        "command": [
+          "node",
+          "../scripts/check_ui_design_tokens.mjs"
+        ],
+        "startedUtc": "2026-10-16T22:45:05.972075+00:00",
+        "exitCode": 0,
+        "durationSeconds": 0.075,
+        "log": "/tmp/studio-ui-reconciliation/final-token-lint.log",
+        "sourceSnapshotUnchanged": true
+      }
+    ],
+    "snapshotBefore": "/tmp/studio-ui-reconciliation/final-verification-source-before.json",
+    "snapshotAfter": "/tmp/studio-ui-reconciliation/final-verification-source-after.json",
+    "snapshotFileCount": 1143,
+    "protectedHashProof": "/tmp/studio-ui-reconciliation/protected-hash-proof.json",
+    "diffCheckExitCode": 0,
+    "buildWarnings": [
+      "Vite reported chunks above 500 kB after minification; build passed."
+    ]
+  },
+  "finalIndependentReview": {
+    "reviewer": "verify_canvas_integration",
+    "sixFileRunPassed": 87,
+    "lineageIntegrationCasesPassed": 15,
+    "pristineGateCasesPassed": 6,
+    "sourceSnapshotFilesUnchanged": 1121,
+    "defaultTimeouts": true,
+    "workers": 1,
+    "cache": false,
+    "scopedPristineProofVerified": true,
+    "structuredEvidence": "/tmp/dot-independent-reconciliation-ui-20261016.json",
+    "log": "/tmp/dot-independent-reconciliation-ui-20261016.log"
+  }
+}

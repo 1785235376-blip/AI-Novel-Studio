@@ -1,0 +1,8 @@
+{
+  "started_utc": "2026-10-16T23:06:35.087Z",
+  "source_commit": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+  "review_raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "uses_same_command_local_environment_as": "execution-boundary.json",
+  "mode": "existing generator --write --output .runtime only",
+  "canonical_write_authorized": false
+}

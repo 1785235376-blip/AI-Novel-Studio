@@ -1,0 +1,146 @@
+[
+  {
+    "file": "frontend/src/AppAuthorTaskNavigation.test.tsx",
+    "oldTestDefinitions": 10,
+    "beforeTestDefinitions": 11,
+    "additiveTestDefinitions": 1,
+    "genuineAdditions": 1,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/delivery/DeliveryCenterPanel.test.tsx",
+    "oldTestDefinitions": 11,
+    "beforeTestDefinitions": 14,
+    "additiveTestDefinitions": 3,
+    "genuineAdditions": 3,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/BranchManuscriptPanel.test.tsx",
+    "oldTestDefinitions": 6,
+    "beforeTestDefinitions": 8,
+    "additiveTestDefinitions": 2,
+    "genuineAdditions": 2,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/ComicLayoutsPanel.test.tsx",
+    "oldTestDefinitions": 8,
+    "beforeTestDefinitions": 13,
+    "additiveTestDefinitions": 5,
+    "genuineAdditions": 5,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/ExperimentalWorkbench.continuation.test.tsx",
+    "oldTestDefinitions": 4,
+    "beforeTestDefinitions": 6,
+    "additiveTestDefinitions": 2,
+    "genuineAdditions": 2,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/InteractiveStoryPanel.test.tsx",
+    "oldTestDefinitions": 11,
+    "beforeTestDefinitions": 22,
+    "additiveTestDefinitions": 11,
+    "genuineAdditions": 11,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/ModelBrokerPanel.test.tsx",
+    "oldTestDefinitions": 9,
+    "beforeTestDefinitions": 13,
+    "additiveTestDefinitions": 4,
+    "genuineAdditions": 4,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/MultilingualEditionsPanel.test.tsx",
+    "oldTestDefinitions": 10,
+    "beforeTestDefinitions": 16,
+    "additiveTestDefinitions": 6,
+    "genuineAdditions": 6,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/ProductionLineagePanel.test.tsx",
+    "oldTestDefinitions": 11,
+    "beforeTestDefinitions": 11,
+    "additiveTestDefinitions": 1,
+    "genuineAdditions": 0,
+    "migratedVariants": 1
+  },
+  {
+    "file": "frontend/src/experimental/ResearchLibraryPanel.test.tsx",
+    "oldTestDefinitions": 10,
+    "beforeTestDefinitions": 11,
+    "additiveTestDefinitions": 1,
+    "genuineAdditions": 1,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/StorySimulatorPanel.test.tsx",
+    "oldTestDefinitions": 14,
+    "beforeTestDefinitions": 18,
+    "additiveTestDefinitions": 4,
+    "genuineAdditions": 4,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/StyleReviewPanels.test.tsx",
+    "oldTestDefinitions": 16,
+    "beforeTestDefinitions": 17,
+    "additiveTestDefinitions": 1,
+    "genuineAdditions": 1,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/VoiceSubtitlePanels.test.tsx",
+    "oldTestDefinitions": 7,
+    "beforeTestDefinitions": 9,
+    "additiveTestDefinitions": 2,
+    "genuineAdditions": 2,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/experimental/WriterRoomPanel.test.tsx",
+    "oldTestDefinitions": 9,
+    "beforeTestDefinitions": 14,
+    "additiveTestDefinitions": 5,
+    "genuineAdditions": 5,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/modelcenter/ModelCenterPanel.test.tsx",
+    "oldTestDefinitions": 20,
+    "beforeTestDefinitions": 27,
+    "additiveTestDefinitions": 7,
+    "genuineAdditions": 7,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/prompt/PromptWorkspace.test.tsx",
+    "oldTestDefinitions": 11,
+    "beforeTestDefinitions": 17,
+    "additiveTestDefinitions": 6,
+    "genuineAdditions": 6,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/taskcenter/TaskCenter.test.tsx",
+    "oldTestDefinitions": 11,
+    "beforeTestDefinitions": 14,
+    "additiveTestDefinitions": 3,
+    "genuineAdditions": 3,
+    "migratedVariants": 0
+  },
+  {
+    "file": "frontend/src/taskcenter/taskCenterClient.test.ts",
+    "oldTestDefinitions": 7,
+    "beforeTestDefinitions": 11,
+    "additiveTestDefinitions": 4,
+    "genuineAdditions": 4,
+    "migratedVariants": 0
+  }
+]

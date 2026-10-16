@@ -1,0 +1,23 @@
+{
+  "status": "REVIEW_INVENTORY_PASS",
+  "head": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+  "review_only": true,
+  "tests_executed": false,
+  "raw_archive": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-inventory/14ced1025b51-review-r1/raw-review-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+  "raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "report_sha256": "6172b69d7bce7befdbb229a5e65ca3bf8f85595e6cad2b9642151941b50de700",
+  "collection_exit_code": 0,
+  "generator_status": "INVENTORY_ONLY",
+  "collection_errors": [],
+  "raw_rows": 15617,
+  "old_rows": 15142,
+  "old_rows_preserved_exact_order_and_classification": true,
+  "new_rows": 475,
+  "source_and_companion_unchanged": true,
+  "canonical_manifest_unchanged": true,
+  "helper_receipts": [
+    "ci-helper-suite-coverage-14ced1025b51",
+    "ci-helper-coverage-reconcile-14ced1025b51",
+    "ci-helper-v2-manifest-extension-14ced1025b51"
+  ]
+}

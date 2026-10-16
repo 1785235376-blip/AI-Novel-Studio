@@ -1,0 +1,143 @@
+{
+  "changed_paths": [
+    "frontend/src/canvasops/canvasOps.layout.additive.test.ts",
+    "frontend/src/canvasops/canvasOps.test.ts",
+    "frontend/src/canvasops/canvasOpsPanels.layout.additive.test.tsx",
+    "frontend/src/canvasops/canvasOpsPanels.test.tsx",
+    "frontend/src/creative/AIDirectorPanel.reasoning.additive.test.tsx",
+    "frontend/src/creative/AIDirectorPanel.test.tsx",
+    "frontend/src/creative/AssetRelationshipsPanel.impact.additive.test.tsx",
+    "frontend/src/creative/AssetRelationshipsPanel.test.tsx",
+    "frontend/src/creative/GraphCanvas.presentation.additive.test.tsx",
+    "frontend/src/creative/GraphCanvas.test.tsx",
+    "frontend/src/creative/IndependentStudioAudioWav.test.tsx",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx",
+    "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx",
+    "frontend/src/creative/IndependentStudioReadFences.refresh.additive.test.tsx",
+    "frontend/src/creative/IndependentStudioReadFences.test.tsx",
+    "frontend/src/creative/IndependentStudioRelationships.test.tsx",
+    "frontend/src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx",
+    "frontend/src/creative/IndependentStudioWorkspace.test.tsx",
+    "frontend/src/creative/StudioGraphManualProvider.compatibility.test.tsx",
+    "frontend/src/creative/StudioImageGraphEditor.providerMigration.test.tsx",
+    "frontend/src/creative/StudioImageGraphEditor.test.tsx",
+    "frontend/src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx",
+    "frontend/src/creative/StudioImageRuntimeProduction.test.tsx",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+    "frontend/src/creative/StudioProductionGraphEditor.director.additive.test.tsx",
+    "frontend/src/creative/StudioProductionGraphEditor.providerMigration.test.tsx",
+    "frontend/src/creative/StudioProductionGraphEditor.test.tsx",
+    "frontend/src/creative/StudioReferenceRoute.compatibility.test.tsx",
+    "frontend/src/creative/StudioVideoGraphEditor.phase4.test.tsx",
+    "frontend/src/creative/StudioVideoGraphEditor.providerMigration.test.tsx",
+    "frontend/src/creative/StudioVideoShotBinding.phase5.test.tsx",
+    "frontend/src/creative/StudioVideoShotBinding.providerMigration.test.tsx",
+    "frontend/src/creative/graphCanvasGeometry.presentation.additive.test.ts",
+    "frontend/src/creative/graphCanvasGeometry.test.ts",
+    "frontend/src/creative/studioAudioFlacContract.formatVariant.additive.test.ts",
+    "frontend/src/creative/studioAudioFlacContract.phase6.test.tsx",
+    "frontend/src/creative/studioAudioReceiptContext.compatibility.test.ts",
+    "frontend/src/creative/studioAudioReceiptContext.ts",
+    "frontend/src/creative/studioGraphClient.presentation.additive.test.ts",
+    "frontend/src/creative/studioGraphClient.test.ts",
+    "frontend/src/creative/studioGraphEditorView.tsx",
+    "frontend/src/creative/useStudioGraphEditorController.ts",
+    "frontend/src/creative/useStudioMediaExecution.ts"
+  ],
+  "protected_original_files": 18,
+  "exact_preserved_new_test_declarations": 108,
+  "preserved_runtime_expansions": 204,
+  "migration_variants": 5,
+  "lowercase_format_fixture_variant": 1,
+  "new_runtime_compatibility_tests": 37,
+  "initial_selection": {
+    "tests": 305,
+    "passed": 297,
+    "failed": 8,
+    "report": "/tmp/dot-creative-reconciliation-report.json"
+  },
+  "workspace_unchanged_rerun": {
+    "tests": 8,
+    "passed": 8,
+    "report": "/tmp/dot-workspace-original-rerun.json"
+  },
+  "runtime_selection": {
+    "files": 17,
+    "tests": 129,
+    "passed": 129,
+    "report": "/tmp/dot-creative-runtime-green.json",
+    "runtime_snapshots_unchanged": true
+  },
+  "post_run_fixture_type_only_cleanup": "frontend/src/creative/studioAudioReceiptContext.compatibility.test.ts",
+  "remaining_known_failures": [],
+  "pending_parent_verification": [
+    "Parent-selected final combined suite and commit/hash binding"
+  ],
+  "runtime_paths": [
+    "frontend/src/creative/studioGraphEditorView.tsx",
+    "frontend/src/creative/useStudioGraphEditorController.ts",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+    "frontend/src/creative/useStudioMediaExecution.ts",
+    "frontend/src/creative/studioAudioReceiptContext.ts"
+  ],
+  "protected_byte_proof": "/tmp/dot-creative-extraction-proof.json",
+  "migration_ledger": "/tmp/dot-creative-migration-ledger.json",
+  "independent_verification": {
+    "report": "/tmp/dot-independent-reconciliation-ui-20261016.json",
+    "total_tests": 87,
+    "passed": 87,
+    "manual_provider_cases": 11,
+    "reference_route_cases": 5,
+    "source_hashes_verified_stable": 1121,
+    "retained_manual_handler_finding": "closed",
+    "remaining_creative_canvas_blockers": []
+  },
+  "shared_final_checks": {
+    "owner": "restore_ui_test_contracts",
+    "source_report": "/workspace/scratch/20a0022d2b33/ci-reconciliation-ui-extraction-20261016.json",
+    "checks": [
+      {
+        "name": "typecheck",
+        "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+        "command": [
+          "node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "startedUtc": "2026-10-16T22:44:31.224003+00:00",
+        "exitCode": 0,
+        "durationSeconds": 27.803,
+        "log": "/tmp/studio-ui-reconciliation/final-typecheck.log",
+        "sourceSnapshotUnchanged": true
+      },
+      {
+        "name": "build",
+        "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+        "command": [
+          "node",
+          "node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        "startedUtc": "2026-10-16T22:44:59.083393+00:00",
+        "exitCode": 0,
+        "durationSeconds": 6.828,
+        "log": "/tmp/studio-ui-reconciliation/final-build.log",
+        "sourceSnapshotUnchanged": true
+      },
+      {
+        "name": "token-lint",
+        "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+        "command": [
+          "node",
+          "../scripts/check_ui_design_tokens.mjs"
+        ],
+        "startedUtc": "2026-10-16T22:45:05.972075+00:00",
+        "exitCode": 0,
+        "durationSeconds": 0.075,
+        "log": "/tmp/studio-ui-reconciliation/final-token-lint.log",
+        "sourceSnapshotUnchanged": true
+      }
+    ],
+    "source_snapshot_unchanged": true
+  }
+}

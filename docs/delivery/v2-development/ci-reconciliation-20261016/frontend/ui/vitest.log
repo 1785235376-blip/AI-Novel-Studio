@@ -1,0 +1,1163 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend
+
+ ❯ src/experimental/StorySimulatorPanel.test.tsx (14 tests | 1 failed) 3231ms
+   ✓ reads only on opening; builds explicit bounded manual inputs with captured authority and normalized fact lines 442ms
+   × compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority 289ms
+     → expected "spy" to be called with arguments: [ { kind: 'feature', …(2) } ]
+
+Received: 
+
+  1st spy call:
+
+  Array [
+    Object {
+      "feature": "advanced_planning_v2",
+      "id": "proposal-one",
+      "kind": "feature",
++     "task_authority": "planning_proposal",
+    },
+  ]
+
+
+Number of calls: 1
+
+   ✓ preserves editable drafts on failure and requires recovery before retry 351ms
+   ✓ previews exact local character request, dispatches once with consent, then manually selects checked candidate 390ms
+   ✓ invalidates scene context receipts and sends selected original scene with separate mind claims 313ms
+ ✓ src/experimental/StyleReviewPanels.test.tsx (16 tests) 1106ms
+ ✓ src/taskcenter/TaskCenter.test.tsx (11 tests) 632ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 446ms
+ ✓ src/experimental/InteractiveStoryPanel.additive.test.tsx (11 tests) 1224ms
+ ✓ src/experimental/ModelBrokerPanel.test.tsx (9 tests) 1186ms
+   ✓ captures actual scoped route preview and requires exact author receipt plus review before existing job dispatch 423ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 1023ms
+ ✓ src/AppAuthorTaskNavigation.test.tsx (10 tests) 656ms
+ ❯ src/experimental/ProductionLineagePanel.test.tsx (11 tests | 1 failed) 632ms
+   × ProductionLineagePanel real API actions > reopening reads existing replay result and links to review without approving 26ms
+     → Unable to find an accessible element with the role "button" and name "审核重放产物"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "现有媒体任务中的重放记录":
+  [36m<h3 />[39m
+
+  --------------------------------------------------article:
+
+  Name "重放任务 new-task":
+  [36m<article[39m
+    [33maria-label[39m=[32m"重放任务 new-task"[39m
+    [33mclass[39m=[32m"experimental-record"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "新任务 new-task":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "核对确切重放任务":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<section[39m
+  [33maria-label[39m=[32m"重放历史"[39m
+  [33mclass[39m=[32m"experimental-section"[39m
+[36m>[39m
+  [36m<h3>[39m
+    [0m现有媒体任务中的重放记录[0m
+  [36m</h3>[39m
+  [36m<article[39m
+    [33maria-label[39m=[32m"重放任务 new-task"[39m
+    [33mclass[39m=[32m"experimental-record"[39m
+  [36m>[39m
+    [36m<h3>[39m
+      [0m新任务 [0m
+      [0mnew-task[0m
+    [36m</h3>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"experimental-actions"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"ui-badge ui-badge--success"[39m
+      [36m>[39m
+        [0mSUCCEEDED[0m
+        [0m · v[0m
+        [0m3[0m
+      [36m</span>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"ui-badge ui-badge--success"[39m
+      [36m>[39m
+        [0m输出逐字节一致：[0m
+        [0m是[0m
+      [36m</span>[39m
+    [36m</div>[39m
+    [36m<p>[39m
+      [0m当前只支持无外发的确定性合成协议。[0m
+    [36m</p>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"experimental-actions"[39m
+    [36m>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对确切重放任务[0m
+      [36m</button>[39m
+    [36m</div>[39m
+    [36m<p>[39m
+      [0m候选 [0m
+      [0m1[0m
+      [0m · [0m
+      [0mnew[0m
+      [0m · [0m
+      [0mPENDING_REVIEW[0m
+      [0m · [0m
+      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+    [36m</p>[39m
+  [36m</article>[39m
+[36m</section>[39m
+ ✓ src/experimental/WriterRoomPanel.test.tsx (9 tests) 747ms
+   ✓ renders actual task progress and responsible change-request round trip without domain approval 316ms
+ ✓ src/experimental/MultilingualEditionsPanel.test.tsx (10 tests) 930ms
+   ✓ manual bilingual save→review→exact acceptance with RTL and no model calls 362ms
+ ❯ src/experimental/ResearchLibraryPanel.test.tsx (10 tests | 1 failed) 941ms
+   × only reads saved local sources on mount; no fetch, parse, search or model execution 155ms
+     → Unable to find an element with the text: /向量、OCR 与视觉解析当前未配置/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"分层研究资料库"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m研究资料库[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m本地检索 · 独立来源层[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新资料与权限（保留输入）[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0mResearch 保存现实参考；Canon 记录已审核的虚构事实；Draft 保存原创设定草稿；人物知识由独立的角色记录管理。资料不会自动进入正文、Canon 或人物上下文。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m导入明确选择的资料[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"experimental-form"[39m
+        [36m>[39m
+          [36m<fieldset[39m
+            [33mclass[39m=[32m"experimental-form"[39m
+          [36m>[39m
+            [36m<legend>[39m
+              [0m来源与使用说明[0m
+            [36m</legend>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r1:"[39m
+              [36m>[39m
+                [0m资料标题[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m":r1:"[39m
+                [33mmaxlength[39m=[32m"240"[39m
+                [33mrequired[39m=[32m""[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r3:"[39m
+              [36m>[39m
+                [0m资料作者[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m":r3:"[39m
+                [33mmaxlength[39m=[32m"160"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r5:"[39m
+              [36m>[39m
+                [0m资料来源或出版信息[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m":r5:"[39m
+                [33mmaxlength[39m=[32m"2000"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r7:"[39m
+              [36m>[39m
+                [0m来源版本或版次[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m":r7:"[39m
+                [33mmaxlength[39m=[32m"160"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r9:"[39m
+              [36m>[39m
+                [0m资料使用说明[0m
+              [36m</label>[39m
+              [36m<textarea[39m
+                [33mid[39m=[32m":r9:"[39m
+                [33mmaxlength[39m=[32m"4000"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":rb:"[39m
+              [36m>[39m
+                [0m资料可见范围[0m
+              [36m</label>[39m
+              [36m<select[39m
+                [33mid[39m=[32m":rb:"[39m
+              [36m>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"PRIVATE"[39m
+                [36m>[39m
+                  [0m仅导入者[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"PROJECT"[39m
+                [36m>[39m
+                  [0m当前项目与分支中有作者权限的人[0m
+                [36m</option>[39m
+              [36m</select>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":rd:"[39m
+              [36m>[39m
+                [0m选择本地资料文件[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33maccept[39m=[32m".txt,.md,.docx,.pdf,.png,.jpg,.jpeg,.webp"[39m
+                [33mid[39m=[32m":rd:"[39m
+                [33mtype[39m=[32m"file"[39m
+              [36m/>[39m
+            [36m</div>[39m
+          [36m</fieldset>[39m
+          [36m<p>[39m
+            [0m单文件最多 4 MiB。TXT/MD 使用 UTF-8；DOCX 引用按段落，PDF 按页面和段落。图片或扫描页没有 OCR/视觉适配器时只保存来源，不声称理解内容。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mdisabled[39m=[32m""[39m
+              [33mtype[39m=[32m"submit"[39m
+            [36m>[39m
+              [0m导入所选本地文件[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</form>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rf:"[39m
+          [36m>[39m
+            [0m明确选择的网页网址[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":rf:"[39m
+            [33mtype[39m=[32m"url"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"experimental-check"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0m我允许本次访问此公开网页；不发送登录信息或绕过访问限制[0m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m抓取这个网页一次[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m打开资料库不会抓取网页。每次抓取限制时长、大小、类型与重定向，并阻断内网地址。远程图片、脚本与插件不会加载。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存来源[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-list"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"experimental-record"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0m潮汐参考[0m
+            [36m</strong>[39m
+            [36m<p>[39m
+              [0m合成作者[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · [0m
+              [0mTXT[0m
+              [0m · [0m
+              [0m1[0m
+              [0m 段[0m
+            [36m</p>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+            [36m>[39m
+              [0m本地可检索文本[0m
+            [36m</span>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m打开来源 [0m
+              [0m潮汐参考[0m
+            [36m</button>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m资料版本与恢复[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m替换文件或编辑元数据会保存完整历史版本，并使旧引用失效。恢复创建一个新版本，默认仅导入者可见；旧引用不会自动复活。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m查看我停用的资料[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m本地检索与可追溯引用[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"experimental-form"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":rh:"[39m
+            [36m>[39m
+              [0m资料检索词[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":rh:"[39m
+              [33mmaxlength[39m=[32m"200"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"submit"[39m
+          [36m>[39m
+            [0m检索已保存资料[0m
+          [36m</button>[39m
+        [36m</form>[39m
+        [36m<p>[39m
+          [0m此处使用本地字面匹配。此入口不运行向量、OCR 或视觉解析；OCR／视觉有适配契约，但正式运行未接入；Embedding / Hybrid Search 在独立面板配置，声明或配置不等于真实验证。离线仍可检索已保存的文字。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m已选择 [0m
+          [0m0[0m
+          [0m 段引用。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m预览所选研究上下文[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m研究笔记与原创设定草稿[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rj:"[39m
+          [36m>[39m
+            [0m研究笔记标题[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":rj:"[39m
+            [33mmaxlength[39m=[32m"240"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rl:"[39m
+          [36m>[39m
+            [0m研究笔记内容[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33mid[39m=[32m":rl:"[39m
+            [33mmaxlength[39m=[32m"8000"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m保存带引用的研究笔记[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rn:"[39m
+          [36m>[39m
+            [0m原创设定草稿标题[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":rn:"[39m
+            [33mmaxlength[39m=[32m"240"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rp:"[39m
+          [36m>[39m
+            [0m原创设定内容[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33mid[39m=[32m":rp:"[39m
+            [33mmaxlength[39m=[32m"8000"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"experimental-check"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0m已写成原创虚构设定，并核对所选参考引用[0m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m采用为原创设定草稿[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m在此审核只确认设定草稿。不会批准为 Canon，不会新增人物已知事实。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ✓ src/prompt/PromptWorkspace.additive.test.tsx (6 tests) 523ms
+ ✓ src/delivery/DeliveryCenterPanel.test.tsx (11 tests) 281ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 665ms
+ ✓ src/experimental/ModelBrokerPanel.additive.test.tsx (5 tests) 1091ms
+   ✓ preserves an uncertain submission and explicitly retries the identical owner request without a new id 337ms
+ ✓ src/experimental/WriterRoomPanel.additive.test.tsx (5 tests) 552ms
+ ✓ src/experimental/VoiceSubtitlePanels.test.tsx (7 tests) 524ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 978ms
+ ✓ src/prompt/PromptWorkspace.test.tsx (11 tests) 460ms
+ ✓ src/experimental/StorySimulatorPanel.additive.test.tsx (4 tests) 895ms
+   ✓ clears route consent and temporary proposal receipts when the exact target changes 455ms
+ ✓ src/modelcenter/ModelCenterPanel.additive.test.tsx (7 tests) 231ms
+stderr | src/experimental/MultilingualEditionsPanel.additive.test.tsx > does not select a matching rule version from duplicate IDs
+Warning: Encountered two children with the same key, `duplicate`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at section
+    at Panel (/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/ui/primitives.tsx:36:18)
+    at Terminology (/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/experimental/MultilingualEditionsPanel.tsx:905:24)
+    at section
+    at EditionsBody (/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/experimental/MultilingualEditionsPanel.tsx:29:25)
+    at MultilingualEditionsPanel (/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/experimental/MultilingualEditionsPanel.tsx:20:38)
+
+ ✓ src/experimental/MultilingualEditionsPanel.additive.test.tsx (6 tests) 481ms
+ ✓ src/experimental/BranchManuscriptPanel.test.tsx (6 tests) 237ms
+ ✓ src/AppAuthorTaskNavigation.additive.test.tsx (1 test) 175ms
+ ✓ src/taskcenter/TaskCenter.additive.test.tsx (4 tests) 308ms
+ ✓ src/experimental/StyleReviewPanels.additive.test.tsx (1 test) 181ms
+ ✓ src/experimental/BranchManuscriptPanel.additive.test.tsx (2 tests) 226ms
+ ✓ src/delivery/DeliveryCenterPanel.additive.test.tsx (4 tests) 182ms
+ ✓ src/experimental/ProductionLineagePanel.additive.test.tsx (1 test) 97ms
+ ✓ src/experimental/ExperimentalWorkbench.continuation.test.tsx (5 tests) 93ms
+ ✓ src/experimental/VoiceSubtitlePanels.additive.test.tsx (2 tests) 249ms
+ ✓ src/experimental/ExperimentalWorkbench.continuation.additive.test.tsx (3 tests) 36ms
+ ✓ src/experimental/ResearchLibraryPanel.additive.test.tsx (1 test) 215ms
+ ❯ src/taskcenter/taskCenterClient.test.ts (7 tests | 1 failed) 24ms
+   × task center client seam > exposes exactly the five owner operations on the frozen routes 10ms
+     → expected [ Array(6) ] to deeply equal [ 'readTasks', 'readInbox', …(3) ]
+ ✓ src/taskcenter/taskCenterClient.additive.test.ts (7 tests) 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/ProductionLineagePanel.test.tsx > ProductionLineagePanel real API actions > reopening reads existing replay result and links to review without approving
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "审核重放产物"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "现有媒体任务中的重放记录":
+  [36m<h3 />[39m
+
+  --------------------------------------------------article:
+
+  Name "重放任务 new-task":
+  [36m<article[39m
+    [33maria-label[39m=[32m"重放任务 new-task"[39m
+    [33mclass[39m=[32m"experimental-record"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "新任务 new-task":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "核对确切重放任务":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<section[39m
+  [33maria-label[39m=[32m"重放历史"[39m
+  [33mclass[39m=[32m"experimental-section"[39m
+[36m>[39m
+  [36m<h3>[39m
+    [0m现有媒体任务中的重放记录[0m
+  [36m</h3>[39m
+  [36m<article[39m
+    [33maria-label[39m=[32m"重放任务 new-task"[39m
+    [33mclass[39m=[32m"experimental-record"[39m
+  [36m>[39m
+    [36m<h3>[39m
+      [0m新任务 [0m
+      [0mnew-task[0m
+    [36m</h3>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"experimental-actions"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"ui-badge ui-badge--success"[39m
+      [36m>[39m
+        [0mSUCCEEDED[0m
+        [0m · v[0m
+        [0m3[0m
+      [36m</span>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"ui-badge ui-badge--success"[39m
+      [36m>[39m
+        [0m输出逐字节一致：[0m
+        [0m是[0m
+      [36m</span>[39m
+    [36m</div>[39m
+    [36m<p>[39m
+      [0m当前只支持无外发的确定性合成协议。[0m
+    [36m</p>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"experimental-actions"[39m
+    [36m>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对确切重放任务[0m
+      [36m</button>[39m
+    [36m</div>[39m
+    [36m<p>[39m
+      [0m候选 [0m
+      [0m1[0m
+      [0m · [0m
+      [0mnew[0m
+      [0m · [0m
+      [0mPENDING_REVIEW[0m
+      [0m · [0m
+      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+    [36m</p>[39m
+  [36m</article>[39m
+[36m</section>[39m
+ ❯ Object.getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/experimental/ProductionLineagePanel.test.tsx:138:37
+    136|     const history = await screen.findByRole('region', { name: '重放历…
+    137|     expect(await within(history).findByText('输出逐字节一致：是')).toB…
+    138|     fireEvent.click(within(history).getByRole('button', { name: '审核…
+       |                                     ^
+    139|     expect(navigate).toHaveBeenCalled(); expect(api.post).not.toHaveBe…
+    140|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/experimental/ResearchLibraryPanel.test.tsx > only reads saved local sources on mount; no fetch, parse, search or model execution
+TestingLibraryElementError: Unable to find an element with the text: /向量、OCR 与视觉解析当前未配置/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"分层研究资料库"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m研究资料库[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m本地检索 · 独立来源层[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新资料与权限（保留输入）[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0mResearch 保存现实参考；Canon 记录已审核的虚构事实；Draft 保存原创设定草稿；人物知识由独立的角色记录管理。资料不会自动进入正文、Canon 或人物上下文。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m导入明确选择的资料[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"experimental-form"[39m
+        [36m>[39m
+          [36m<fieldset[39m
+            [33mclass[39m=[32m"experimental-form"[39m
+          [36m>[39m
+            [36m<legend>[39m
+              [0m来源与使用说明[0m
+            [36m</legend>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r1:"[39m
+              [36m>[39m
+                [0m资料标题[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m":r1:"[39m
+                [33mmaxlength[39m=[32m"240"[39m
+                [33mrequired[39m=[32m""[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r3:"[39m
+              [36m>[39m
+                [0m资料作者[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m":r3:"[39m
+                [33mmaxlength[39m=[32m"160"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r5:"[39m
+              [36m>[39m
+                [0m资料来源或出版信息[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m":r5:"[39m
+                [33mmaxlength[39m=[32m"2000"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r7:"[39m
+              [36m>[39m
+                [0m来源版本或版次[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m":r7:"[39m
+                [33mmaxlength[39m=[32m"160"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":r9:"[39m
+              [36m>[39m
+                [0m资料使用说明[0m
+              [36m</label>[39m
+              [36m<textarea[39m
+                [33mid[39m=[32m":r9:"[39m
+                [33mmaxlength[39m=[32m"4000"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":rb:"[39m
+              [36m>[39m
+                [0m资料可见范围[0m
+              [36m</label>[39m
+              [36m<select[39m
+                [33mid[39m=[32m":rb:"[39m
+              [36m>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"PRIVATE"[39m
+                [36m>[39m
+                  [0m仅导入者[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"PROJECT"[39m
+                [36m>[39m
+                  [0m当前项目与分支中有作者权限的人[0m
+                [36m</option>[39m
+              [36m</select>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m":rd:"[39m
+              [36m>[39m
+                [0m选择本地资料文件[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33maccept[39m=[32m".txt,.md,.docx,.pdf,.png,.jpg,.jpeg,.webp"[39m
+                [33mid[39m=[32m":rd:"[39m
+                [33mtype[39m=[32m"file"[39m
+              [36m/>[39m
+            [36m</div>[39m
+          [36m</fieldset>[39m
+          [36m<p>[39m
+            [0m单文件最多 4 MiB。TXT/MD 使用 UTF-8；DOCX 引用按段落，PDF 按页面和段落。图片或扫描页没有 OCR/视觉适配器时只保存来源，不声称理解内容。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mdisabled[39m=[32m""[39m
+              [33mtype[39m=[32m"submit"[39m
+            [36m>[39m
+              [0m导入所选本地文件[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</form>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rf:"[39m
+          [36m>[39m
+            [0m明确选择的网页网址[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":rf:"[39m
+            [33mtype[39m=[32m"url"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"experimental-check"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0m我允许本次访问此公开网页；不发送登录信息或绕过访问限制[0m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m抓取这个网页一次[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m打开资料库不会抓取网页。每次抓取限制时长、大小、类型与重定向，并阻断内网地址。远程图片、脚本与插件不会加载。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存来源[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-list"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"experimental-record"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0m潮汐参考[0m
+            [36m</strong>[39m
+            [36m<p>[39m
+              [0m合成作者[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · [0m
+              [0mTXT[0m
+              [0m · [0m
+              [0m1[0m
+              [0m 段[0m
+            [36m</p>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+            [36m>[39m
+              [0m本地可检索文本[0m
+            [36m</span>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m打开来源 [0m
+              [0m潮汐参考[0m
+            [36m</button>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m资料版本与恢复[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m替换文件或编辑元数据会保存完整历史版本，并使旧引用失效。恢复创建一个新版本，默认仅导入者可见；旧引用不会自动复活。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m查看我停用的资料[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m本地检索与可追溯引用[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"experimental-form"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":rh:"[39m
+            [36m>[39m
+              [0m资料检索词[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":rh:"[39m
+              [33mmaxlength[39m=[32m"200"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"submit"[39m
+          [36m>[39m
+            [0m检索已保存资料[0m
+          [36m</button>[39m
+        [36m</form>[39m
+        [36m<p>[39m
+          [0m此处使用本地字面匹配。此入口不运行向量、OCR 或视觉解析；OCR／视觉有适配契约，但正式运行未接入；Embedding / Hybrid Search 在独立面板配置，声明或配置不等于真实验证。离线仍可检索已保存的文字。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m已选择 [0m
+          [0m0[0m
+          [0m 段引用。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m预览所选研究上下文[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m研究笔记与原创设定草稿[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rj:"[39m
+          [36m>[39m
+            [0m研究笔记标题[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":rj:"[39m
+            [33mmaxlength[39m=[32m"240"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rl:"[39m
+          [36m>[39m
+            [0m研究笔记内容[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33mid[39m=[32m":rl:"[39m
+            [33mmaxlength[39m=[32m"8000"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m保存带引用的研究笔记[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rn:"[39m
+          [36m>[39m
+            [0m原创设定草稿标题[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":rn:"[39m
+            [33mmaxlength[39m=[32m"240"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":rp:"[39m
+          [36m>[39m
+            [0m原创设定内容[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33mid[39m=[32m":rp:"[39m
+            [33mmaxlength[39m=[32m"8000"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"experimental-check"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0m已写成原创虚构设定，并核对所选参考引用[0m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m采用为原创设定草稿[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m在此审核只确认设定草稿。不会批准为 Canon，不会新增人物已知事实。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/experimental/ResearchLibraryPanel.test.tsx:27:17
+     25|   await screen.findByRole('button', { name: '打开来源 潮汐参考' });
+     26|   expect(fetch.mock.calls.every(([url, init]) => init.method === 'GET'…
+     27|   expect(screen.getByText(/向量、OCR 与视觉解析当前未配置/)).toBeTruth…
+       |                 ^
+     28|   expect((screen.getByRole('button', { name: '抓取这个网页一次' }) as …
+     29| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/experimental/StorySimulatorPanel.test.tsx > compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority
+AssertionError: expected "spy" to be called with arguments: [ { kind: 'feature', …(2) } ]
+
+Received: 
+
+  1st spy call:
+
+  Array [
+    Object {
+      "feature": "advanced_planning_v2",
+      "id": "proposal-one",
+      "kind": "feature",
++     "task_authority": "planning_proposal",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ src/experimental/StorySimulatorPanel.test.tsx:76:20
+     74|   await screen.findByRole('button', { name: '前往分层规划审核' });
+     75|   fireEvent.click(screen.getByRole('button', { name: '前往分层规划审核…
+     76|   expect(navigate).toHaveBeenCalledWith({ kind: 'feature', id: 'propos…
+       |                    ^
+     77|   expect(fetch.mock.calls.filter(([url]) => url.endsWith('/save'))).to…
+     78|   expect(fetch.mock.calls.some(([url]) => url.endsWith('/approve'))).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/taskcenter/taskCenterClient.test.ts > task center client seam > exposes exactly the five owner operations on the frozen routes
+AssertionError: expected [ Array(6) ] to deeply equal [ 'readTasks', 'readInbox', …(3) ]
+
+- Expected
++ Received
+
+  Array [
++   "readCostReceipt",
+    "readTasks",
+    "readInbox",
+    "cancelTask",
+    "reviewItem",
+    "reviewBatch",
+  ]
+
+ ❯ src/taskcenter/taskCenterClient.test.ts:30:33
+     28|       .mockResolvedValueOnce(batchReceipt());
+     29|     const client = createTaskCenterClient(FIXTURE_PROJECT, { json });
+     30|     expect(Object.keys(client)).toEqual(['readTasks', 'readInbox', 'ca…
+       |                                 ^
+     31| 
+     32|     const tasks = await client.readTasks({ q: '', failed_only: false }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+ Test Files  4 failed | 32 passed (36)
+      Tests  4 failed | 258 passed (262)
+   Start at  07:20:17
+   Duration  48.15s (transform 4.68s, setup 166ms, collect 10.41s, tests 21.47s, environment 10.22s, prepare 1.68s)
+
+JSON report written to /tmp/studio-ui-reconciliation/vitest-results.json

@@ -1,0 +1,10 @@
+{
+  "name": "build",
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+  "command": [
+    "node",
+    "node_modules/vite/bin/vite.js",
+    "build"
+  ],
+  "startedUtc": "2026-10-16T22:44:59.083393+00:00"
+}

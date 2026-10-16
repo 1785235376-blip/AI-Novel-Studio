@@ -1,0 +1,10 @@
+{
+  "src/creative/studioGraphEditorView.tsx": "445417133af38473bf9497d0cb1c254d0970b5f2d07981a949cf6490b18862f5",
+  "src/creative/useStudioGraphEditorController.ts": "bda230f6dd46a5d6522428a8eae3356d856108ecb076c8555089ad73a459b814",
+  "src/creative/StudioMediaExecutionPanel.tsx": "d799468cc6db435a8953cbbb6761610706cc89df1fa130e0fa14d58b4babfaab",
+  "src/creative/useStudioMediaExecution.ts": "ab13db814823e007df2429b159579480dae034425223e1dad1d6bc2a13d5f1a1",
+  "src/creative/studioAudioReceiptContext.ts": "7d68f2f17a4ea276e43b5504b5587ecb1ea0d91a7c698ad59d4478f125185e5d",
+  "src/creative/StudioGraphManualProvider.compatibility.test.tsx": "5d8863f04c70d88c4d436b459b2d9127ac8f86b61ef29ea1e165620360b9a9ce",
+  "src/creative/StudioReferenceRoute.compatibility.test.tsx": "3c70eb25a6dd85893db1a7aef1513e2989a949c5c0938c9a3182666ea6ad2167",
+  "src/creative/studioAudioReceiptContext.compatibility.test.ts": "36815d8bd9d9131b5f67f6235ac6f1627c89c6f76d115efeaa9d78448ada8b34"
+}

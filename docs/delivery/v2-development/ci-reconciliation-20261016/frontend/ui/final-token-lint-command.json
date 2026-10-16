@@ -1,0 +1,9 @@
+{
+  "name": "token-lint",
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+  "command": [
+    "node",
+    "../scripts/check_ui_design_tokens.mjs"
+  ],
+  "startedUtc": "2026-10-16T22:45:05.972075+00:00"
+}

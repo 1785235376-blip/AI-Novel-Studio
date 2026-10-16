@@ -1,0 +1,298 @@
+{
+  "status": "SOURCE_FROZEN_CLEAN_FILE_CPU_VERIFIED_PENDING_INDEPENDENT_ACCEPTANCE",
+  "created_utc": "2026-10-16T22:50:37.896Z",
+  "repository": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation",
+  "rows": [
+    {
+      "path": "tests/test_r4_story_simulator.py",
+      "role": "protected_exact_restore",
+      "sha256": "766f002bc7b2e2a7114baa61e6ae7374ce4b981831995b8a8984f6199e74f038",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "exact_authoritative_bytes": true
+    },
+    {
+      "path": "tests/test_r5_comic_layouts.py",
+      "role": "protected_exact_restore",
+      "sha256": "2d24b7dd1b8a244cffef94d9d9106fb1b5dffd91ae92061e32f8a5a2a9dc9120",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "exact_authoritative_bytes": true
+    },
+    {
+      "path": "tests/test_r5_interactive_story.py",
+      "role": "protected_exact_restore",
+      "sha256": "8f4bc6e70581ce5f5512517df425e793713604c77854594bdac44f7d2cb6a907",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "exact_authoritative_bytes": true
+    },
+    {
+      "path": "tests/test_round2_bible.py",
+      "role": "protected_exact_restore",
+      "sha256": "c8c303a03d78cf32f1a8c1d997eb25b0fe48bb3b4d0707268fdadad38ea8c544",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "exact_authoritative_bytes": true
+    },
+    {
+      "path": "tests/test_v2_creative_graph_persistence.py",
+      "role": "protected_exact_restore",
+      "sha256": "0e15d0e88389b45a2d16544ccaf30c70d4e88b5e73a60d47b59d7bdcb2a8f44d",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "exact_authoritative_bytes": true
+    },
+    {
+      "path": "tests/test_v2_director_workspace.py",
+      "role": "protected_exact_restore",
+      "sha256": "cb119b5e88ae3909386d2c540ee38d0e78b734909e1f0b4e4e144fb4737689d2",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "exact_authoritative_bytes": true
+    },
+    {
+      "path": "tests/test_v2_audio_flac.py",
+      "role": "protected_exact_restore",
+      "sha256": "cda2870e6112f593186055c4c17579c6d0e73ccb332e2ed0bb964ffb5d37b88c",
+      "authoritative_ref": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "exact_authoritative_bytes": true
+    },
+    {
+      "path": "tests/test_r4_story_simulator_additive.py",
+      "role": "extracted_additions",
+      "sha256": "b28e1d0baf83102e37940ff24337ccf53ecc52f731cc6457862f777b25805c01"
+    },
+    {
+      "path": "tests/test_r5_comic_layouts_additive.py",
+      "role": "extracted_additions",
+      "sha256": "622b87be3d5381df5b07a25ef76efc9f99183d18e9377a2207b625b6b9e1a76d"
+    },
+    {
+      "path": "tests/test_r5_interactive_story_additive.py",
+      "role": "extracted_additions",
+      "sha256": "3cd6b3b0eb6bd770dca4ca27bbcb7e04a17b5a3a21ad8f609c87bd9d8976e262"
+    },
+    {
+      "path": "tests/test_round2_bible_additive.py",
+      "role": "extracted_additions",
+      "sha256": "335b9c254cbf80b6e112497729416cc565e26ff186b992fa847876c66f067fd7"
+    },
+    {
+      "path": "tests/test_v2_creative_graph_persistence_additive.py",
+      "role": "extracted_additions",
+      "sha256": "aeae66012732c77b5362833cf00e41e3a2e4281247a6db395a3459d1ac642b5b"
+    },
+    {
+      "path": "tests/test_v2_director_workspace_additive.py",
+      "role": "extracted_additions",
+      "sha256": "15d83ef1a71e037254d99e3fa1943e20602605a9e3f232b3021f92f818302923"
+    },
+    {
+      "path": "tests/support_reconciliation_test_r3_media_support.py",
+      "role": "fixture_support",
+      "sha256": "dbc3a69bb1b20bf2eea490c1fbccb54cc3327ffe0d7c30e8295da1e85afa9d79"
+    },
+    {
+      "path": "tests/support_reconciliation_test_r3_planning.py",
+      "role": "fixture_support",
+      "sha256": "254fadb4160eb5e28aacd60f36c275fbc4588e769816c0a873e5f0b9a081f699"
+    },
+    {
+      "path": "tests/support_reconciliation_test_r4_director.py",
+      "role": "fixture_support",
+      "sha256": "2aa8be87a8e4e6ba95d45a1dcad23d5dccdb101be2d982c747adff51ea5aa0c9"
+    },
+    {
+      "path": "tests/support_reconciliation_test_r4_revision_intelligence.py",
+      "role": "fixture_support",
+      "sha256": "de9bb99c7c22ceb31983fe9811564e69670a54e08c496921b766e0f94a12fe5e"
+    },
+    {
+      "path": "tests/support_reconciliation_test_v2_independent_workspace.py",
+      "role": "fixture_support",
+      "sha256": "4a58ca7a1a1dfc1468b723e7997de699648c15b7b9f3fe1cb1da14b5861f7d03"
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "role": "runtime",
+      "sha256": "ce59991daaad8e7626e0fad056c6ea3b9b3cd0243446d735777319d0bcfa6606"
+    },
+    {
+      "path": "app/creative/production_execution.py",
+      "role": "runtime",
+      "sha256": "fe93988089c13a97f0618fac97d4dedc0c4377740d41d117411d138bba15c35f"
+    },
+    {
+      "path": "app/services/studio_audio_execution.py",
+      "role": "runtime",
+      "sha256": "42797a82e0acc458e4b5815bb3fe950028dea476c9bf280e7cdab86e3b5b2bcc"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "role": "runtime",
+      "sha256": "1c374c942b0853b5bf70f387fe8018abed9b4a0f1bf418f69d25f24e8ec3a1ec"
+    },
+    {
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "role": "runtime",
+      "sha256": "ab13db814823e007df2429b159579480dae034425223e1dad1d6bc2a13d5f1a1"
+    },
+    {
+      "path": "tests/test_v2_audio_mp3.py",
+      "role": "existing_mp3_producer_or_test",
+      "sha256": "64b3707cca88d6542dd8fbb0a5ccded849ac2673e14b10020c6c3ed06b351bac"
+    },
+    {
+      "path": "tests/test_v2_audio_mp3_api.py",
+      "role": "existing_mp3_producer_or_test",
+      "sha256": "5e00029d37167e5f12c96dd28131f14cf27baec2c9b25b314e89b0e0050ef490"
+    },
+    {
+      "path": "tests/test_v2_timeline_short_media_handoff.py",
+      "role": "existing_mp3_producer_or_test",
+      "sha256": "18714c9f7a391e1dcf729c1eeaeac64c919fcae316f3f331d77fd56af52e2d3a"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioMp3Contract.test.tsx",
+      "role": "existing_mp3_producer_or_test",
+      "sha256": "3cef3fd95032ba498c61195e1be8a05b0f6d9ae2f7987aa8e813405db95887d9"
+    },
+    {
+      "path": "tests/test_v2_audio_mp3_compatibility.py",
+      "role": "new_mp3_compatibility_test_or_fixture",
+      "sha256": "6bc390964aa2f21604f5ed9dea4897a29a815db84ec5f4325329084da483dfba"
+    },
+    {
+      "path": "tests/fixtures/studio_audio_mp3_legacy_v1.json.gz",
+      "role": "new_mp3_compatibility_test_or_fixture",
+      "sha256": "1430a49de02d265d94008e81bb7619c3a5f1c30b96d1a55a710d7c206bd71852"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/audio-mp3-versioned.capture.json",
+      "role": "new_mp3_compatibility_test_or_fixture",
+      "sha256": "5a35c7256454eeaa8e3d71e6d601a530b4653099870307c316a284e5d8772c49"
+    }
+  ],
+  "extraction_manifest": "/workspace/scratch/20a0022d2b33/backend-extraction-20261016.json",
+  "shared_hook_ownership": "useStudioMediaExecution.ts transferred to canvas worker; final cross-route provider selection diff reviewed read-only with MP3 hunks preserved.",
+  "historical_capture_sha256": "9f3dfb4b89dfcf80e3890f3b802eb8133105245051364a1642663b3afe08183a",
+  "historical_capture_unchanged": true,
+  "prior_results": {
+    "legacy_baseline": "1 pass; original actual capture retained. Prior interpreter had an editable finder fallback; receipt preserved as historical evidence, not clean-environment acceptance.",
+    "initial_marked": "83 passed,5 new fixture failures,46 deselected; preserved FAIL receipt; capture generation changed source snapshot",
+    "history_confirmation": "26 pass; old receipt preserved, superseded for acceptance by the clean source-stable 88-case run.",
+    "frontend": "50 pass; restored FLAC18 and MP332; no-cache"
+  },
+  "pending": [
+    "Independent final acceptance"
+  ],
+  "verified_utc": "2026-10-16T22:57:25.939Z",
+  "clean_environment": {
+    "interpreter": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+    "sanitized_prefix": "env -u PYTHONHOME -u PYTHONPATH -u PYTHONSTARTUP -u PYTHONUSERBASE -u PYTEST_ADDOPTS -u PYTEST_PLUGINS -u PACKAGED_RUNTIME_INSTANCE_ID -u PACKAGED_BOOTSTRAP_SECRET -u PACKAGED_CONTROL_PIPE PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PACKAGED_WINDOWS_MODE=false",
+    "evidence": {
+      "setup-receipt.json": "02ccf5581e0ed9726af44dda40eb02dcbbce8e2ea5d5f08a7648e723f4a82d58",
+      "startup-probe-r3.json": "a560190e48c9d058250fba40b267d9431fce570ac300f5c23536f5264a122ee5",
+      "origin-probe-r3.py": "4ef7f51f4e9a7263776317e3c6a4c73e6a6822e13b0cf986d2575a433a16f25d"
+    }
+  },
+  "clean_runs": [
+    {
+      "receipt": "docs/delivery/v2-development/mp3-clean-contract-confirmation-20261016.json",
+      "receipt_sha256": "aed1d6ea4dd26cd39eabdcaf0df75f6510c1a2d9b68593ef2b18938a5df11261",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false,
+      "passed": 88,
+      "deselected": 46,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_audio_flac.py",
+        "tests/test_v2_audio_mp3.py",
+        "tests/test_v2_audio_mp3_compatibility.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/mp3-clean-contract-pytest-20261016"
+      ],
+      "log": "docs/delivery/v2-development/mp3-clean-contract-confirmation-20261016.log",
+      "log_sha256": "d0cdad1a5300646cc9f3cb8d061d67efc2ed2dfa2c95b035f7d44b7b169d740d",
+      "started_utc": "2026-10-16T22:54:04.246505+00:00",
+      "finished_utc": "2026-10-16T22:54:30.309762+00:00"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/backend-clean-additive-confirmation-20261016.json",
+      "receipt_sha256": "a1c889618e29356a150fbaa41fcd1766301fabbd33d4d413588233e10b0fd5c0",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false,
+      "passed": 19,
+      "deselected": 12,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r4_story_simulator_additive.py",
+        "tests/test_r5_comic_layouts_additive.py",
+        "tests/test_r5_interactive_story_additive.py",
+        "tests/test_round2_bible_additive.py",
+        "tests/test_v2_creative_graph_persistence_additive.py",
+        "tests/test_v2_director_workspace_additive.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/backend-clean-additive-pytest-20261016"
+      ],
+      "log": "docs/delivery/v2-development/backend-clean-additive-confirmation-20261016.log",
+      "log_sha256": "5054c6df619a033c2166c91a466e85a663ee420165df5737981df33e688cd10d",
+      "started_utc": "2026-10-16T22:54:43.232269+00:00",
+      "finished_utc": "2026-10-16T22:54:52.607703+00:00"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/mp3-clean-api-confirmation-20261016.json",
+      "receipt_sha256": "29d377bc94d3776b428d60d15bb505f3afe062ff8a8ff57c5fcc9b00d2c5e1f4",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false,
+      "passed": 2,
+      "deselected": 2,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_audio_mp3_api.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/mp3-clean-api-pytest-20261016"
+      ],
+      "log": "docs/delivery/v2-development/mp3-clean-api-confirmation-20261016.log",
+      "log_sha256": "b510bd4be3d41a478e09c3553bfdb7f0584b6bb393c9cc720f05ca87177eeeca",
+      "started_utc": "2026-10-16T22:56:15.610020+00:00",
+      "finished_utc": "2026-10-16T22:56:28.140990+00:00"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/mp3-clean-short-media-confirmation-20261016.json",
+      "receipt_sha256": "97ee10fba5f81bdbfd91e2c5f9c10dfa7524a965a3302eaf3fc6439b5c3de9b3",
+      "status": "PASS",
+      "exit_code": 0,
+      "sources_changed_during_check": false,
+      "passed": 1,
+      "deselected": 1,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_timeline_short_media_handoff.py::test_actual_short_mp3_handoff_renders_reviews_and_reopens",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/mp3-clean-short-media-pytest-20261016"
+      ],
+      "log": "docs/delivery/v2-development/mp3-clean-short-media-confirmation-20261016.log",
+      "log_sha256": "8292fd16f4036c85be5367b6d2d561de905cc66c9690158f346da1eeab753c42",
+      "started_utc": "2026-10-16T22:56:38.027889+00:00",
+      "finished_utc": "2026-10-16T22:56:50.419910+00:00"
+    }
+  ],
+  "total_clean_backend_passed": 110,
+  "postgres_executed": false,
+  "remaining_failures": []
+}

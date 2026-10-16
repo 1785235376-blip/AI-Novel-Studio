@@ -1,0 +1,10 @@
+{
+  "name": "typecheck",
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend",
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit"
+  ],
+  "startedUtc": "2026-10-16T22:44:31.224003+00:00"
+}

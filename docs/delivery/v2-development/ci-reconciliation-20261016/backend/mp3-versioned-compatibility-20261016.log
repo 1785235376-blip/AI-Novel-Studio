@@ -1,0 +1,186 @@
+..............................................................FFFF.F.... [ 81%]
+................                                                         [100%]
+=================================== FAILURES ===================================
+_ test_real_unmarked_rows_read_without_migration_replay_or_native_execution[queued] _
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/mp3-versioned-compatibility-pytest-20261016/test_real_unmarked_rows_read_w0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f143084b320>
+stage = 'queued'
+
+    @pytest.mark.parametrize('stage', ['queued', 'ready', 'approved'])
+    def test_real_unmarked_rows_read_without_migration_replay_or_native_execution(tmp_path, monkeypatch, stage):
+        e = restored(tmp_path, monkeypatch, stage)
+        import app.services.studio_timeline_export as native
+        from app.services.studio_audio_execution import StudioAudioExecution
+        def prohibited(*args, **kwargs):
+            pytest.fail('reading a saved MP3 must not create, replay, reconcile, encode, or decode')
+        monkeypatch.setattr(native, 'run_guarded_process', prohibited)
+        for method in ('queue', 'execute', 'reconcile'):
+            monkeypatch.setattr(StudioAudioExecution, method, prohibited)
+        assert read(e) == e.view
+>       assert e.production.list(e.nid, e.scope, e.actor, lambda: None)['items'] == [e.view]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_audio_mp3_compatibility.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/creative/production_execution.py:682: in list
+    for row in self.video_owner.list_studio(nid, scope.get("branch_id"), actor, context=context, guard=guard):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_v2_audio_mp3_compatibility.NoControl object at 0x7f1430848920>
+name = 'list_studio'
+
+    def __getattr__(self, name):
+>       raise AssertionError('local MP3 must not use a provider or external control: ' + name)
+E       AssertionError: local MP3 must not use a provider or external control: list_studio
+
+tests/test_v2_audio_mp3_compatibility.py:31: AssertionError
+_ test_real_unmarked_rows_read_without_migration_replay_or_native_execution[ready] _
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/mp3-versioned-compatibility-pytest-20261016/test_real_unmarked_rows_read_w1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f143084a570>
+stage = 'ready'
+
+    @pytest.mark.parametrize('stage', ['queued', 'ready', 'approved'])
+    def test_real_unmarked_rows_read_without_migration_replay_or_native_execution(tmp_path, monkeypatch, stage):
+        e = restored(tmp_path, monkeypatch, stage)
+        import app.services.studio_timeline_export as native
+        from app.services.studio_audio_execution import StudioAudioExecution
+        def prohibited(*args, **kwargs):
+            pytest.fail('reading a saved MP3 must not create, replay, reconcile, encode, or decode')
+        monkeypatch.setattr(native, 'run_guarded_process', prohibited)
+        for method in ('queue', 'execute', 'reconcile'):
+            monkeypatch.setattr(StudioAudioExecution, method, prohibited)
+        assert read(e) == e.view
+>       assert e.production.list(e.nid, e.scope, e.actor, lambda: None)['items'] == [e.view]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_audio_mp3_compatibility.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/creative/production_execution.py:682: in list
+    for row in self.video_owner.list_studio(nid, scope.get("branch_id"), actor, context=context, guard=guard):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_v2_audio_mp3_compatibility.NoControl object at 0x7f14309b5c70>
+name = 'list_studio'
+
+    def __getattr__(self, name):
+>       raise AssertionError('local MP3 must not use a provider or external control: ' + name)
+E       AssertionError: local MP3 must not use a provider or external control: list_studio
+
+tests/test_v2_audio_mp3_compatibility.py:31: AssertionError
+_ test_real_unmarked_rows_read_without_migration_replay_or_native_execution[approved] _
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/mp3-versioned-compatibility-pytest-20261016/test_real_unmarked_rows_read_w2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f1430849010>
+stage = 'approved'
+
+    @pytest.mark.parametrize('stage', ['queued', 'ready', 'approved'])
+    def test_real_unmarked_rows_read_without_migration_replay_or_native_execution(tmp_path, monkeypatch, stage):
+        e = restored(tmp_path, monkeypatch, stage)
+        import app.services.studio_timeline_export as native
+        from app.services.studio_audio_execution import StudioAudioExecution
+        def prohibited(*args, **kwargs):
+            pytest.fail('reading a saved MP3 must not create, replay, reconcile, encode, or decode')
+        monkeypatch.setattr(native, 'run_guarded_process', prohibited)
+        for method in ('queue', 'execute', 'reconcile'):
+            monkeypatch.setattr(StudioAudioExecution, method, prohibited)
+        assert read(e) == e.view
+>       assert e.production.list(e.nid, e.scope, e.actor, lambda: None)['items'] == [e.view]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_audio_mp3_compatibility.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/creative/production_execution.py:682: in list
+    for row in self.video_owner.list_studio(nid, scope.get("branch_id"), actor, context=context, guard=guard):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_v2_audio_mp3_compatibility.NoControl object at 0x7f143084ac90>
+name = 'list_studio'
+
+    def __getattr__(self, name):
+>       raise AssertionError('local MP3 must not use a provider or external control: ' + name)
+E       AssertionError: local MP3 must not use a provider or external control: list_studio
+
+tests/test_v2_audio_mp3_compatibility.py:31: AssertionError
+____ test_original_explicit_execution_keeps_legacy_request_and_real_output _____
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/mp3-versioned-compatibility-pytest-20261016/test_original_explicit_executi0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f14307f5820>
+
+    def test_original_explicit_execution_keeps_legacy_request_and_real_output(tmp_path, monkeypatch):
+        e = restored(tmp_path, monkeypatch, 'queued'); before = immutable(raw(e))
+        result = e.production.execute(e.nid, e.scope, e.actor, 'audio', e.view['id'], action(e.view), lambda: None)
+        assert result['status'] == 'AWAITING_REVIEW'
+        assert immutable(raw(e)) == before
+        _, data = e.production.candidate(e.nid, e.scope, e.actor, 'audio', e.view['id'], lambda: None)
+        assert hashlib.sha256(data).hexdigest() == e.captured['stages']['ready']['view']['output_candidate']['digest']
+>       assert len(e.production.list(e.nid, e.scope, e.actor, lambda: None)['items']) == 1
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_audio_mp3_compatibility.py:109: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/creative/production_execution.py:682: in list
+    for row in self.video_owner.list_studio(nid, scope.get("branch_id"), actor, context=context, guard=guard):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_v2_audio_mp3_compatibility.NoControl object at 0x7f14307f5b20>
+name = 'list_studio'
+
+    def __getattr__(self, name):
+>       raise AssertionError('local MP3 must not use a provider or external control: ' + name)
+E       AssertionError: local MP3 must not use a provider or external control: list_studio
+
+tests/test_v2_audio_mp3_compatibility.py:31: AssertionError
+_ test_original_explicit_reconcile_recovers_legacy_publication_without_encoding _
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/mp3-versioned-compatibility-pytest-20261016/test_original_explicit_reconci0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f14307ca0f0>
+
+    def test_original_explicit_reconcile_recovers_legacy_publication_without_encoding(tmp_path, monkeypatch):
+        e = restored(tmp_path, monkeypatch, 'queued'); before = immutable(raw(e)); callbacks = e.production._callbacks
+        def interrupted(*args, **kwargs):
+            publish, promote = callbacks(*args, **kwargs)
+            def lost(*args, **kwargs):
+                publish(*args, **kwargs)
+                raise OSError('synthetic loss after the original durable private publication')
+            return lost, promote
+        monkeypatch.setattr(e.production, '_callbacks', interrupted)
+        uncertain = e.production.execute(e.nid, e.scope, e.actor, 'audio', e.view['id'], action(e.view), lambda: None)
+        assert uncertain['status'] == 'UNKNOWN' and uncertain['media_measurement']
+        monkeypatch.setattr(e.production, '_callbacks', callbacks)
+        import app.services.studio_timeline_export as native
+        monkeypatch.setattr(native, 'run_guarded_process', lambda *a, **k: pytest.fail('reconcile must not replay'))
+        recovered = e.production.reconcile(e.nid, e.scope, e.actor, 'audio', e.view['id'], action(uncertain), lambda: None)
+        assert recovered['status'] == 'AWAITING_REVIEW'
+        assert recovered['media_measurement'] == uncertain['media_measurement']
+        assert immutable(raw(e)) == before
+>       assert len(e.production.list(e.nid, e.scope, e.actor, lambda: None)['items']) == 1
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_audio_mp3_compatibility.py:141: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/creative/production_execution.py:682: in list
+    for row in self.video_owner.list_studio(nid, scope.get("branch_id"), actor, context=context, guard=guard):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_v2_audio_mp3_compatibility.NoControl object at 0x7f14307c8a40>
+name = 'list_studio'
+
+    def __getattr__(self, name):
+>       raise AssertionError('local MP3 must not use a provider or external control: ' + name)
+E       AssertionError: local MP3 must not use a provider or external control: list_studio
+
+tests/test_v2_audio_mp3_compatibility.py:31: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_v2_audio_mp3_compatibility.py::test_real_unmarked_rows_read_without_migration_replay_or_native_execution[queued]
+FAILED tests/test_v2_audio_mp3_compatibility.py::test_real_unmarked_rows_read_without_migration_replay_or_native_execution[ready]
+FAILED tests/test_v2_audio_mp3_compatibility.py::test_real_unmarked_rows_read_without_migration_replay_or_native_execution[approved]
+FAILED tests/test_v2_audio_mp3_compatibility.py::test_original_explicit_execution_keeps_legacy_request_and_real_output
+FAILED tests/test_v2_audio_mp3_compatibility.py::test_original_explicit_reconcile_recovers_legacy_publication_without_encoding
+5 failed, 83 passed, 46 deselected in 22.14s

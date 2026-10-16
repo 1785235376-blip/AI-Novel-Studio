@@ -1,0 +1,461 @@
+{
+  "status": "PROPOSAL_ONLY_NOT_EXECUTED",
+  "base_commit": "72e636f87c7299a62cb3357bcb6a6e44a9388883",
+  "worktree": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation",
+  "audit_json": "/workspace/scratch/20a0022d2b33/ci-reconciliation-audit-20261016.json",
+  "stages": [
+    {
+      "stage": 0,
+      "name": "Freeze and permission boundary",
+      "actions": [
+        "Wait for every runtime writer and independent reviewer to freeze; checkpoint the reviewed sources. Record actual commit, tree, clean/dirty status, dependency symlink target and existing tool versions. No install.",
+        "Retain every failed run and its real exit code. A successful rerun is additional evidence, never a replacement.",
+        "Resolve authorization for full unfiltered pytest collection explicitly. The unchanged collector imports every test module and offers no safe subset mode for an authoritative full manifest. Any still-blocked lifecycle/security task or candidate blocks this stage; do not ignore, skip, rename, or exclude it."
+      ]
+    },
+    {
+      "stage": 1,
+      "name": "Read-only preservation and provenance preflight",
+      "actions": [
+        "Verify both baseline manifest bytes and all guard/generator boundaries against the audit JSON; verify all 1123 old V2 protected source entries, not just the 43 restored files. Verify sole Windows-B approved after-hash.",
+        "Recompute stale/new source sets from the stable checkpoint using exactly the existing traversal plus frozen V1 source-map paths; do not reuse 72e counts as final totals.",
+        "Produce a separate additive source-provenance companion for frontend/scripts/** and frontend/e2e/**. Do not patch existing guards, generator, runner, or canonical manifest to add their coverage.",
+        "Recompute static missing-suite list; retain exact test function/decorator extraction ledgers and minimal shared helpers. Do not equate AST declarations with parametrized collected nodes."
+      ]
+    },
+    {
+      "stage": 2,
+      "name": "Narrow execution and infrastructure checks after release",
+      "actions": [
+        "Complete the approved exact restored/additive compatibility scopes using existing tools and unique retained receipts; stop acceptance on real failures. Include explicit new-version MP3 and original legacy submission/readback/reconciliation security boundaries.",
+        "Run the three unchanged synthetic CI helper suites with the existing isolated runner. Historical 166 is context, not an expected count to force.",
+        "Run frontend discovery only when explicitly released: it lists Vitest files and imports/list-collects two Playwright configs; it does not execute browser acceptance. Follow with separately approved build/lint commands.",
+        "Bracket every command with the additive source-provenance companion described below; require identical before/after maps and preserve tool/dependency identity."
+      ]
+    },
+    {
+      "stage": 3,
+      "name": "Review collection with canonical V2 unchanged",
+      "actions": [
+        "After explicit broad-collection release and writer freeze, run existing generator WITHOUT --write, using unique report/runner labels.",
+        "Immediately archive raw collection.json bytes, inventory report, runner receipt and log. Hash each; record exit codes, errors, source maps before/after, commit/tree, dependencies and additive companion maps.",
+        "Run the independent 15142-row comparator and final missing-suite reconciliation before any next collection. A rejected collection or any failed comparator is retained and blocks progression."
+      ]
+    },
+    {
+      "stage": 4,
+      "name": "Quarantined candidate generation",
+      "actions": [
+        "Only after approval, run unchanged generator with --write and --output under .runtime; canonical V2 remains untouched. This is a fresh full collection, not serialization of the previous rows.",
+        "Immediately archive its fixed-path raw collection.json before any later invocation. Record the candidate gzip digest.",
+        "Require candidate rows EXACTLY equal review rows, including all additional row IDs, order and classifications, and require identical source/provenance snapshots. Independently rerun old-row, old protected-byte, manifest metadata and missing-suite checks."
+      ]
+    },
+    {
+      "stage": 5,
+      "name": "Promotion of reviewed exact bytes",
+      "actions": [
+        "After independent signoff and explicit promotion approval, reverify canonical old digest, candidate digest, no source changes and unchanged frozen/gates.",
+        "Promote exactly the already-generated candidate gzip bytes to canonical coverage_manifest_v2.json.gz. No recompression, manual fields, ID edits, classification edits, or new exceptions.",
+        "Verify canonical digest equals candidate digest, V1 and guard hashes unchanged, and only intended V2 manifest/evidence changed. Keep previous canonical bytes through Git and archived digest."
+      ]
+    },
+    {
+      "stage": 6,
+      "name": "Independent confirmation",
+      "actions": [
+        "Run a separately released, uniquely labeled fresh review-only collection; archive raw rows immediately. Require full rows equal approved candidate rows, sources equal canonical source_files, classification digest equal canonical v2_extension digest, and exact old-row preservation.",
+        "Require additive companion maps unchanged from approved source checkpoint. Re-run only approved narrow CI helper checks and exact source-hash validation.",
+        "Record source checkpoint HEAD separately from later evidence/manifest commit HEAD; never rewrite generator-produced collection_head to disguise the distinction.",
+        "Report inventory validation separately from real execution. Full File/PostgreSQL/TCP/browser/windows acceptance, services, hosted CI and publication require their own authorization and actual receipts. Do not infer coverage from collection."
+      ]
+    }
+  ],
+  "command_templates": {
+    "variables": "ROOT=/workspace/scratch/20a0022d2b33/studio-ci-reconciliation; PY=<verified existing pinned Python executable>; cd \"$ROOT\"",
+    "narrow_harness": "\"$PY\" scripts/run_v2_checks.py ci-reconciliation-harness-r1 -- python -m pytest -q -p no:cacheprovider .github/ci/test_suite_coverage.py .github/ci/test_coverage_reconcile.py .github/ci/test_v2_manifest_extension.py --basetemp=.runtime/v2-checks/ci-reconciliation-harness-r1/pytest",
+    "frontend_discovery": "pnpm --dir frontend test:discovery",
+    "frontend_build": "pnpm --dir frontend build",
+    "frontend_lint": "pnpm --dir frontend lint",
+    "review": "\"$PY\" scripts/run_v2_checks.py ci-reconciliation-review-r1 -- python scripts/extend_v2_coverage_manifest.py --report docs/delivery/v2-development/ci-reconciliation-review-r1-inventory.json",
+    "candidate": "\"$PY\" scripts/run_v2_checks.py ci-reconciliation-candidate-r1 -- python scripts/extend_v2_coverage_manifest.py --write --output .runtime/v2-checks/ci-reconciliation-candidate-r1/coverage_manifest_v2.json.gz --report docs/delivery/v2-development/ci-reconciliation-candidate-r1-inventory.json",
+    "confirmation": "\"$PY\" scripts/run_v2_checks.py ci-reconciliation-confirm-r1 -- python scripts/extend_v2_coverage_manifest.py --report docs/delivery/v2-development/ci-reconciliation-confirm-r1-inventory.json"
+  },
+  "old_row_evidence": {
+    "ref": "72e636f87c7299a62cb3357bcb6a6e44a9388883",
+    "path": "docs/delivery/v2-creative-save-state-20261017/collection-confirmation-rows.json.gz",
+    "gzip_sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34",
+    "classification_rows_sha256": "e7e543708b0ac8ebd1f81f77262a4afa6503d222af2b2e0ad9e71d6a749754d6",
+    "row_count": 15142,
+    "classification_counts": {
+      "file": 4865,
+      "postgres": 4819,
+      "both": 5458
+    },
+    "exact_current_manifest_node_order": true,
+    "warning": "Historical inventory only; preserve old literal nodes/order/classification. Generic generator guards only V1 baseline."
+  },
+  "independent_validation_checks": [
+    "Load baseline V2 and historical row evidence using git show at exact72e ref, not mutable working-tree copies. Verify both artifact SHA256 hashes from the audit report before decoding.",
+    "Old row object must have exit_code==0 and errors==[]; rows have exactly15142 unique node IDs; node IDs equal old V2 product_nodes in exact order; classification counts are file4865, postgres4819, both5458; canonical row digest matches e7e543708b0ac8ebd1f81f77262a4afa6503d222af2b2e0ad9e71d6a749754d6.",
+    "New raw object must have exit_code==0 and errors==[] and no missing/duplicate IDs or invalid backend values. All row dictionaries must have the expected nodeid/backend shape.",
+    "Let old_ids be the old row IDs. Require [row for row in fresh_rows if row[\"nodeid\"] in old_ids] == old_rows. This single exact equality preserves every old literal ID, order and classification, including tests/test_v2_audio_flac.py::test_format_is_closed_in_original_command_and_audio_body[MP3].",
+    "For candidate and confirmation, additionally require fresh_rows == archived_review_rows in full. Counts alone, set equality alone, V1-only preservation, or digest comparison without authenticating the reference are insufficient.",
+    "Candidate product_nodes must equal fresh row node IDs; candidate v2_extension.collection_classifications_sha256 must equal SHA256(json.dumps(fresh_rows,separators=(\",\", \":\")).encode()) with Python default ensure_ascii=True.",
+    "Preserve exact old skips and external_gates; old added_nodes must remain as an ordered subset. Preserve all old source paths; allow only reviewed runtime fingerprints plus genuinely new additive source entries. All1123 old protected source hashes remain exact.",
+    "Every collected test-file path must exist in candidate source_files and have the actual stabilized bytes. Reconcile every static missing suite with actual new collected rows; helpers/fixtures get source hashes but no invented test rows. Retain unexpected extras as a failure for review, not a reason to alter expected IDs.",
+    "Compare current source bytes and complete existing-traversal path map against candidate source_files; before/after snapshots must match. Run separate companion directory closure/hash checks for omitted frontend directories."
+  ],
+  "raw_collection_preservation": {
+    "fixed_path": ".runtime/v2-checks/v2-manifest-collection/collection.json",
+    "fixed_basetemp": ".runtime/v2-checks/v2-manifest-collection/pytest",
+    "rule": "Before any subsequent collector invocation, archive byte-for-byte raw rows with unique stage label, hash raw bytes and canonical rows, retain errors/exit code, inventory report, outer run_v2_checks receipt/log, before/after existing and companion source maps, and candidate bytes/hash when applicable. Unique --report does not isolate the fixed raw file. Never overwrite failed evidence. Do not run two collectors concurrently."
+  },
+  "source_provenance_companion": {
+    "purpose": "Additive source provenance only; no claim that unchanged source_errors or source_snapshot covers the omitted directories.",
+    "scope": [
+      "frontend/scripts/**",
+      "frontend/e2e/**"
+    ],
+    "baseline_72e_paths": [
+      "frontend/e2e/README.md",
+      "frontend/e2e/prompt-acceptance-s0.spec.ts",
+      "frontend/e2e/prompt-workspace-acceptance.spec.ts",
+      "frontend/e2e/promptAcceptanceEntry.ts",
+      "frontend/e2e/studio-release-acceptance.spec.ts",
+      "frontend/scripts/benchmark-canvas-notes.mjs",
+      "frontend/scripts/benchmark-graph-display.mjs",
+      "frontend/scripts/check-test-discovery.mjs",
+      "frontend/scripts/local_interop_browser_host.py",
+      "frontend/scripts/measure_interop_bundle.mjs",
+      "frontend/scripts/run-experimental-http.mjs"
+    ],
+    "format_fields": [
+      "schema",
+      "stage_label",
+      "source_checkpoint_head",
+      "source_checkpoint_tree",
+      "worktree_status",
+      "command_and_cwd",
+      "started_utc",
+      "finished_utc",
+      "dependency_symlink_target_and_tool_identity",
+      "existing_runner_receipt_path_and_sha256",
+      "before_complete_path_to_sha256_map",
+      "after_complete_path_to_sha256_map",
+      "per_file_git_blob_at_checkpoint_or_untracked_status",
+      "path_set_unchanged",
+      "bytes_unchanged",
+      "all_observed_failures"
+    ],
+    "enumeration": "Recursively enumerate every regular file under both directories, including tracked and genuine untracked source files, using repository-relative POSIX paths and sorted ordering. Record symlinks explicitly; never silently follow an out-of-tree target or claim completeness while omitting it. Verify complete path sets, not only hashes of known files, so additions/deletions are detected.",
+    "placement": "Separate additive evidence JSON beside the corresponding delivery receipt after release, with a copy/hash in external audit evidence if desired. It is not inserted manually into canonical V2 source_files. Existing source_snapshot covers frontend root configs/package/lock/runner manifest, frontend/src and frontend/tests; bind those through its normal receipt too.",
+    "ci_limitation": "This companion can prove provenance of local commands but does not add hosted automatic enforcement. At72e cloud-ci does not call test:discovery, and existing inventory traversal omits these directories. Any later enforcement change must be separately proposed without weakening old guards; keep this residual limitation explicit."
+  },
+  "missing_suite_baseline_72e": [
+    {
+      "path": "tests/test_declarative_checkpoint_edit.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_exact_helper_definition_saves_restarts_and_removes_without_execution"
+      ],
+      "actual_sha256": "6d86584f0d88efe63716296ba4fdd680bfaa645a498553250ef9a8dfe6dd973a"
+    },
+    {
+      "path": "tests/test_declarative_definition_history.py",
+      "static_test_function_declarations": 10,
+      "functions": [
+        "test_history_reopens_and_existing_put_restores_as_new_version_without_reviving_run",
+        "test_metadata_pages_are_bounded_exclusive_and_not_shifted_by_new_versions",
+        "test_history_projection_never_reads_or_returns_run_or_reference_data",
+        "test_detail_preserves_legacy_authored_shape_and_does_not_reenable_retired_route",
+        "test_history_detail_fails_closed_without_trimming_or_mutation",
+        "test_history_cannot_read_another_owner_or_scope",
+        "test_history_metadata_and_detail_limits_are_explicit_errors_not_partial_payloads",
+        "test_mounted_history_gets_and_existing_put_use_original_owner",
+        "test_mounted_history_uses_current_scope_and_existing_feature_gates",
+        "test_mounted_history_rechecks_original_authority_after_read"
+      ],
+      "actual_sha256": "383bc14e759347b4d457ff8925ba8d42ea40e575d5d4f0cbb77e88639f6d61c6"
+    },
+    {
+      "path": "tests/test_public_archive_limits.py",
+      "static_test_function_declarations": 19,
+      "functions": [
+        "test_supported_tar_suffixes_use_bounded_scanner_without_extraction",
+        "test_unsafe_paths_fail",
+        "test_links_devices_and_unsupported_physical_headers_fail",
+        "test_duplicate_files_and_file_directory_collisions_fail",
+        "test_pax_overrides_are_strictly_bounded_and_allowlisted",
+        "test_local_pax_path_and_mtime_are_supported_without_a_tarfile_iterator",
+        "test_pax_physical_abuse_fails",
+        "test_pax_headers_count_towards_member_budget",
+        "test_member_size_and_decompressed_stream_are_bounded_before_parse",
+        "test_trailing_data_truncation_and_bad_headers_fail",
+        "test_mixed_archives_share_namespace_checks",
+        "test_mixed_recursion_shares_entry_and_byte_budgets",
+        "test_mixed_recursion_depth_fails_closed",
+        "test_compressed_input_read_is_bounded",
+        "test_file_parent_collisions_fail",
+        "test_truncated_member_and_unaligned_padding_fail",
+        "test_private_namespace_cannot_hide_in_overridden_pax_path",
+        "test_pax_effective_path_duplicate_fails",
+        "test_negative_or_oversized_base256_header_fails_before_payload"
+      ],
+      "actual_sha256": "641738abe67766c6b1b7ed1d728a64fa5f466b45db5d9dd28cfe940035e24a63"
+    },
+    {
+      "path": "tests/test_public_build_profile.py",
+      "static_test_function_declarations": 18,
+      "functions": [
+        "test_public_stage_excludes_private_and_hashes_actual_contents",
+        "test_unreviewed_runtime_files_fail",
+        "test_source_caches_not_copied_but_staged_bytecode_fails",
+        "test_public_dependency_on_private_fails",
+        "test_frontend_cannot_import_private_namespace",
+        "test_dependency_change_needs_manifest_review",
+        "test_stage_tampering_and_reuse_fail",
+        "test_symlinks_fail_before_copy",
+        "test_archive_members_and_case_folded_private_paths_fail",
+        "test_actual_repo_manifest_and_disposable_artifact",
+        "test_windows_and_docker_wire_the_guard",
+        "test_invalid_manifest_paths_fail",
+        "test_missing_public_file_fails",
+        "test_stage_top_level_and_nested_extras_fail",
+        "test_missing_artifact_directory_fails",
+        "test_nested_archive_private_payload_fails",
+        "test_actual_docker_stage_has_only_manifest_inputs",
+        "test_supplemental_fonts_require_explicit_complete_allowance"
+      ],
+      "actual_sha256": "950d714dbae610c01d73c926440376fda33293515a5b8b091e1d36c4c9ac2a1c"
+    },
+    {
+      "path": "tests/test_public_sdist_artifact.py",
+      "static_test_function_declarations": 7,
+      "functions": [
+        "test_actual_sdist_preserves_stage_hashes_and_standard_model_safety_inputs",
+        "test_standard_payload_missing_or_tampered_fails",
+        "test_no_blanket_metadata_or_private_path_allowance",
+        "test_generated_files_are_explicitly_validated",
+        "test_sources_manifest_exactly_covers_only_declared_inputs",
+        "test_metadata_identity_and_dependencies_match_even_when_both_copies_change",
+        "test_extra_empty_directory_fails"
+      ],
+      "actual_sha256": "9efa596bdf7903e7b469b413dff6911836981959a2b60ab88f6694f98ebabaa3"
+    },
+    {
+      "path": "tests/test_public_wheel_artifact.py",
+      "static_test_function_declarations": 9,
+      "functions": [
+        "test_real_wheel_matches_public_stage_and_keeps_standard_inputs",
+        "test_real_metadata_keeps_declared_dependencies_external",
+        "test_standard_payload_missing_or_tampered_fails_even_with_valid_record",
+        "test_inert_extra_or_forbidden_payloads_fail",
+        "test_exact_record_coverage_digests_lengths_and_self_row",
+        "test_duplicate_zip_member_fails",
+        "test_wheel_metadata_cannot_claim_a_different_platform",
+        "test_metadata_dependency_tampering_fails_with_self_consistent_record",
+        "test_symlink_member_cannot_substitute_a_standard_file"
+      ],
+      "actual_sha256": "beb8eb68c94d590532123c1e6efd10ccd46404098aad9b6ec227a05285fdb85b"
+    },
+    {
+      "path": "tests/test_research_evidence_location.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_duplicate_unicode_exact_paragraph_note_reopen_and_history_metadata"
+      ],
+      "actual_sha256": "88565844b0dce1fa05869e0991d3145ec6b1487cff543dbf96fb2540d08519b5"
+    },
+    {
+      "path": "tests/test_style_comparison_review.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_saved_target_unicode_measurements_reopen_without_editing_original_owners"
+      ],
+      "actual_sha256": "a35dbf46f17332a04fad24bf64b9ea28fbcfc916a2aeecda6e14b7eb92b91ce7"
+    },
+    {
+      "path": "tests/test_template_copy_editing_workflow.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_personal_brief_edit_reopen_history_and_revert"
+      ],
+      "actual_sha256": "ba854e8248ee0fc755061a1cda5626ac15df742506281e60482555bd0b6c6eed"
+    },
+    {
+      "path": "tests/test_v2_audio_mp3.py",
+      "static_test_function_declarations": 12,
+      "functions": [
+        "test_mp3_is_explicit_and_keeps_omitted_wav_identity",
+        "test_mp3_rejects_unsupported_rates_without_silent_resampling",
+        "test_actual_mp3_private_review_reopen_and_lossy_pcm",
+        "test_every_supported_mp3_rate_has_real_frames_and_decoded_duration",
+        "test_missing_encoder_is_honest_failed_receipt_and_cleans_private_files",
+        "test_native_encoding_failure_does_not_publish_partial_mp3",
+        "test_cancel_between_native_mp3_steps_discards_output_and_cleans",
+        "test_lost_mp3_publication_recovers_original_receipt_without_encoding",
+        "test_mp3_measured_proof_is_strict_and_lossy_not_flac",
+        "test_tiny_mp3_intervals_keep_original_gapless_timing",
+        "test_too_short_mp3_is_rejected_before_queue_but_wav_and_flac_unchanged",
+        "test_mp3_fixed_codec_arguments_and_private_process_paths"
+      ],
+      "actual_sha256": "6df2a8bc244045f90c6eefafa8db2965b023448aa467153222369521ac01f231"
+    },
+    {
+      "path": "tests/test_v2_audio_mp3_api.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_mounted_mp3_candidate_and_explicit_review_keep_actual_mime"
+      ],
+      "actual_sha256": "243c20f150cb8916b07e47d849db29dae18977d3d13dd1b64ae0510889539438"
+    },
+    {
+      "path": "tests/test_v2_canvas_large_notes.py",
+      "static_test_function_declarations": 4,
+      "functions": [
+        "test_thousand_meaningful_notes_create_save_restart_history_and_legacy_digest",
+        "test_thousand_note_original_history_quota_stays_atomic",
+        "test_large_notes_keep_exact_utf8_owner_boundary_and_all_original_budgets",
+        "test_original_python_canonical_matches_node_wire_number_fixtures"
+      ],
+      "actual_sha256": "51c4e16af771d5d24f66010fcd2530da453dcd7eecb59df6001eeb84b7f8b73e"
+    },
+    {
+      "path": "tests/test_v2_caption_transfer_preflight.py",
+      "static_test_function_declarations": 4,
+      "functions": [
+        "test_original_file_handoff_quantizes_unicode_speaker_and_replaces_only_captions",
+        "test_caption_owner_output_can_be_incompatible_with_timeline",
+        "test_target_duration_is_independently_validated",
+        "test_original_export_rejects_readback_text_loss"
+      ],
+      "actual_sha256": "e83b7d4f9952e204bb378eabb0ea4176066663676521cca42698bc8f4cefed7e"
+    },
+    {
+      "path": "tests/test_v2_director_handoff_reopen.py",
+      "static_test_function_declarations": 2,
+      "functions": [
+        "test_original_director_derive_reopen_and_edit",
+        "test_director_history_exact_digests_and_stale_storyboard_remain_gated"
+      ],
+      "actual_sha256": "feb404db88be35cf62cdb0d371704c3d65e07f60662ef7cc31558c2194c87dbf"
+    },
+    {
+      "path": "tests/test_v2_director_model_planning.py",
+      "static_test_function_declarations": 7,
+      "functions": [
+        "test_captured_input_exact_source_and_goal_no_implicit_context",
+        "test_mock_structured_sequence_preserves_rationale_assumptions_and_exact_digest",
+        "test_malformed_or_nonexistent_evidence_rejected",
+        "test_legacy_payload_stays_identical_and_geometry_is_not_inferred",
+        "test_nested_evidence_is_validated_and_unreferenced_choices_need_assumptions",
+        "test_original_explicit_adoption_keeps_planning_and_source_immutable",
+        "test_fake_transport_planning_uses_original_model_review_adoption"
+      ],
+      "actual_sha256": "c79e97ca3f76afceeac31ae23d00480f6e4787378d9cdf0db9b9324f3e80be6d"
+    },
+    {
+      "path": "tests/test_v2_director_proposal_reopen.py",
+      "static_test_function_declarations": 2,
+      "functions": [
+        "test_accepted_proposal_reopens_same_original_draft_after_owner_restart",
+        "test_accepted_proposal_and_draft_keep_source_update_checks_after_restart"
+      ],
+      "actual_sha256": "d892b7dc619c0a0e7c0f7b976d3fdc455ef25c6541f88af405a87df5736dc6af"
+    },
+    {
+      "path": "tests/test_v2_graph_capacity_continuation.py",
+      "static_test_function_declarations": 3,
+      "functions": [
+        "test_capacity_is_exact_original_stored_record_metadata",
+        "test_explicit_full_draft_create_keeps_original_history_and_exact_pins_after_restart",
+        "test_history_capacity_declines_atomically_then_independent_full_draft_reopens"
+      ],
+      "actual_sha256": "2bd99d93ffca7cbfea0eceb47105a131f91fd9f8a0a86734a7f861ea651ff40e"
+    },
+    {
+      "path": "tests/test_v2_graph_director_proposal_loop.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_reviewed_director_draft_pins_and_reopens_with_original_graph_owner"
+      ],
+      "actual_sha256": "9bb2522fefd9602e071d9e1b5732789991044b8d73c3bb351fa90478412e2345"
+    },
+    {
+      "path": "tests/test_v2_graph_presentation_contract.py",
+      "static_test_function_declarations": 13,
+      "functions": [
+        "test_optional_presentation_preserves_legacy_canonical_values",
+        "test_annotation_is_bounded_strict_plain_data",
+        "test_annotation_does_not_relax_graph_validation_or_budgets",
+        "test_groups_roundtrip_without_changing_annotation_or_execution",
+        "test_groups_reject_malformed_dangling_duplicate_or_overlapping_membership",
+        "test_view_preferences_roundtrip_preserve_legacy_execution",
+        "test_view_preferences_are_strict_bounded_complete",
+        "test_two_level_visual_groups_preserve_old_hash_and_execution",
+        "test_visual_hierarchy_rejects_self_missing_null_cycle_and_depth",
+        "test_independent_notes_roundtrip_without_execution_or_legacy_digest_change",
+        "test_independent_notes_reject_bad_data",
+        "test_notes_do_not_raise_total_owner_payload_limit",
+        "test_notes_exact_aggregate_codepoint_boundary"
+      ],
+      "actual_sha256": "853f9b64f8308e8bbf5a4daacad74c92809d84762ca2386118262cba042be89a"
+    },
+    {
+      "path": "tests/test_v2_nle_review.py",
+      "static_test_function_declarations": 3,
+      "functions": [
+        "test_original_studio_projection_losses_and_exact_pure_roundtrip",
+        "test_native_changes_do_not_restore_stale_studio_effects",
+        "test_original_rational_frame_values_do_not_accumulate_decimal_drift"
+      ],
+      "actual_sha256": "2f570dbdebb8cb66c3ba328d7b143d490b2a2b26998558794b9dbae2acbd6aba"
+    },
+    {
+      "path": "tests/test_v2_timeline_asset_handoff.py",
+      "static_test_function_declarations": 1,
+      "functions": [
+        "test_exact_asset_draft_save_reopen_and_cas"
+      ],
+      "actual_sha256": "7ac2724ae4aac24f4f5a958f6dee28d2324d7c35d10eabbbbb54464351837930"
+    },
+    {
+      "path": "tests/test_v2_timeline_short_media_handoff.py",
+      "static_test_function_declarations": 3,
+      "functions": [
+        "test_actual_short_flac_handoff_renders_reviews_and_reopens",
+        "test_actual_short_mp3_handoff_renders_reviews_and_reopens",
+        "test_actual_short_video_handoff_uses_exact_receipt_or_explicit_unknown_range"
+      ],
+      "actual_sha256": "5539a3689244cef218e94dab11677588c07aec4704b2cc670ebd57f9b81f5f3a"
+    }
+  ],
+  "extracted_additive_backend_suites": [
+    "tests/test_r4_story_simulator_additive.py",
+    "tests/test_r5_comic_layouts_additive.py",
+    "tests/test_r5_interactive_story_additive.py",
+    "tests/test_round2_bible_additive.py",
+    "tests/test_v2_creative_graph_persistence_additive.py",
+    "tests/test_v2_director_workspace_additive.py"
+  ],
+  "new_backend_support_files": [
+    "tests/support_reconciliation_test_r3_planning.py",
+    "tests/support_reconciliation_test_r3_media_support.py",
+    "tests/support_reconciliation_test_r4_director.py",
+    "tests/support_reconciliation_test_r4_revision_intelligence.py",
+    "tests/support_reconciliation_test_v2_independent_workspace.py"
+  ],
+  "missing_suite_count_note": "22 missing backend suite files at72e; six extracted additive suites are now additional known files. These are baseline/minimum path facts, not final collection counts. Recompute after runtime freeze, including new MP3 compatibility suites and legacy fixture. 35 new frontend additive files need default Vitest discovery, not a manually enumerated unit registration entry.",
+  "protected_preflight_observation": {
+    "observation_utc": "2026-10-16T22:36:43Z",
+    "old_v2_protected_entries_checked": 1123,
+    "mismatches": [],
+    "evidence_boundary": "Read-only working-tree hashes while runtime changes continue; not final frozen provenance or passing tests."
+  },
+  "prohibited": [
+    "No edits to frozenV1, guard, generator or historical source/IDs/order/classification/skips.",
+    "No update_recovery_coverage_manifest.py; it defaults to frozenV1 output.",
+    "No full collection, tests, --write, promotion, network/service/hosted-CI action is authorized by this proposal."
+  ]
+}

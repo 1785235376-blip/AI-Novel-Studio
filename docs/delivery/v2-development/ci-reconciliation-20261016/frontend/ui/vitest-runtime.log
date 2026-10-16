@@ -1,0 +1,95 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend
+
+ ✓ src/experimental/StorySimulatorPanel.test.tsx (14 tests) 3053ms
+   ✓ reads only on opening; builds explicit bounded manual inputs with captured authority and normalized fact lines 466ms
+   ✓ preserves editable drafts on failure and requires recovery before retry 330ms
+   ✓ previews exact local character request, dispatches once with consent, then manually selects checked candidate 355ms
+   ✓ invalidates scene context receipts and sends selected original scene with separate mind claims 342ms
+ ✓ src/experimental/StyleReviewPanels.test.tsx (16 tests) 966ms
+ ✓ src/taskcenter/TaskCenter.test.tsx (11 tests) 540ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 450ms
+ ✓ src/experimental/InteractiveStoryPanel.additive.test.tsx (11 tests) 1063ms
+ ✓ src/experimental/ModelBrokerPanel.test.tsx (9 tests) 933ms
+   ✓ captures actual scoped route preview and requires exact author receipt plus review before existing job dispatch 342ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 955ms
+ ❯ src/AppAuthorTaskNavigation.test.tsx (0 test)
+ ✓ src/experimental/ProductionLineagePanel.test.tsx (11 tests) 525ms
+ ✓ src/experimental/WriterRoomPanel.test.tsx (9 tests) 662ms
+ ✓ src/experimental/MultilingualEditionsPanel.test.tsx (10 tests) 879ms
+   ✓ manual bilingual save→review→exact acceptance with RTL and no model calls 313ms
+ ✓ src/experimental/ResearchLibraryPanel.test.tsx (10 tests) 883ms
+ ✓ src/prompt/PromptWorkspace.additive.test.tsx (6 tests) 527ms
+ ✓ src/experimental/ProductionLineagePanel.navigationCompatibility.test.tsx (15 tests) 736ms
+ ✓ src/delivery/DeliveryCenterPanel.test.tsx (11 tests) 322ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 711ms
+ ✓ src/experimental/ModelBrokerPanel.additive.test.tsx (5 tests) 1165ms
+   ✓ preserves an uncertain submission and explicitly retries the identical owner request without a new id 382ms
+ ✓ src/experimental/WriterRoomPanel.additive.test.tsx (5 tests) 591ms
+ ✓ src/experimental/VoiceSubtitlePanels.test.tsx (7 tests) 477ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 954ms
+ ✓ src/experimental/StorySimulatorPanel.additive.test.tsx (4 tests) 857ms
+   ✓ clears route consent and temporary proposal receipts when the exact target changes 434ms
+ ✓ src/prompt/PromptWorkspace.test.tsx (11 tests) 471ms
+ ✓ src/modelcenter/ModelCenterPanel.additive.test.tsx (7 tests) 261ms
+ ✓ src/experimental/ProductionReceiptReview.test.tsx (39 tests) 205ms
+stderr | src/experimental/MultilingualEditionsPanel.additive.test.tsx > does not select a matching rule version from duplicate IDs
+Warning: Encountered two children with the same key, `duplicate`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at section
+    at Panel (/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/ui/primitives.tsx:36:18)
+    at Terminology (/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/experimental/MultilingualEditionsPanel.tsx:905:24)
+    at section
+    at EditionsBody (/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/experimental/MultilingualEditionsPanel.tsx:29:25)
+    at MultilingualEditionsPanel (/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/experimental/MultilingualEditionsPanel.tsx:20:38)
+
+ ✓ src/experimental/MultilingualEditionsPanel.additive.test.tsx (6 tests) 460ms
+ ✓ src/experimental/BranchManuscriptPanel.test.tsx (6 tests) 277ms
+ ❯ src/AppAuthorTaskNavigation.additive.test.tsx (0 test)
+ ✓ src/taskcenter/TaskCenter.additive.test.tsx (4 tests) 263ms
+ ✓ src/experimental/StyleReviewPanels.additive.test.tsx (1 test) 167ms
+ ✓ src/taskcenter/useTaskCostReceipt.test.ts (10 tests) 570ms
+ ✓ src/experimental/BranchManuscriptPanel.additive.test.tsx (2 tests) 197ms
+ ✓ src/delivery/DeliveryCenterPanel.additive.test.tsx (4 tests) 185ms
+ ✓ src/experimental/ProductionLineagePanel.additive.test.tsx (1 test) 104ms
+ ✓ src/experimental/ExperimentalWorkbench.continuation.additive.test.tsx (4 tests) 37ms
+ ✓ src/experimental/ExperimentalWorkbench.continuation.test.tsx (5 tests) 79ms
+ ✓ src/experimental/VoiceSubtitlePanels.additive.test.tsx (2 tests) 246ms
+ ✓ src/experimental/ResearchLibraryPanel.additive.test.tsx (2 tests) 263ms
+ ✓ src/experimental/pristineReplayNavigation.test.tsx (6 tests) 113ms
+ ✓ src/taskcenter/TaskCenter.receiptCompanion.test.tsx (1 test) 129ms
+ ✓ src/taskcenter/taskCenterClient.test.ts (7 tests) 14ms
+ ✓ src/taskcenter/taskCenterClient.additive.test.ts (7 tests) 10ms
+ ✓ src/experimental/simulatorOwnerNavigation.test.ts (12 tests) 6ms
+ ✓ src/taskcenter/taskCostReceiptClient.test.ts (1 test) 4ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/AppAuthorTaskNavigation.additive.test.tsx [ src/AppAuthorTaskNavigation.additive.test.tsx ]
+ FAIL  src/AppAuthorTaskNavigation.test.tsx [ src/AppAuthorTaskNavigation.test.tsx ]
+Error: Transform failed with 1 error:
+/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/studioGraphEditorView.tsx:106:4: ERROR: Expected "}" but found "{"
+  Plugin: vite:esbuild
+  File: /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend/src/creative/studioGraphEditorView.tsx:106:4
+  
+  Expected "}" but found "{"
+  104|      </details>
+  105|      {!!(node.parameters.provider_id || node.parameters.model_id) && <p>当前标识路线：{providerPicker.bindingRoute === 'unknown' ? '未知，尚未由当前配置目录核对' : providerPicker.bindingRoute === 'local' ? '当前目录标记为本地' : '当前目录标记为云端'}。列表筛选不证明手填标识属于本地；实际执行可用性仍未验证。</p>
+  106|      {providerPicker.loaded && !providerPicker.matched && (node.parameters.provider_id || node.parameters.model_id) && <StatusMessage tone="warning">当前配置目录没有匹配的节点标识；原标识保持，只有明确选择才会替换。</StatusMessage>}
+     |      ^
+  107|      {providerPicker.loaded && !providerPicker.rows.length && <p>当前操作暂无{providerPicker.route === 'local' ? '本地' : '云端'}配置，不会自动回退或替换。</p>}
+  108|      {providerPicker.error && <StatusMessage tone="warning">{providerPicker.error}</StatusMessage>}
+  
+ ❯ failureErrorWithLog ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:1472:15
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:755:50
+ ❯ responseCallbacks.<computed> ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:622:9
+ ❯ handleIncomingPacket ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:677:12
+ ❯ Socket.readFromStdout ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:600:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ Test Files  2 failed | 41 passed (43)
+      Tests  337 passed (337)
+   Start at  07:38:06
+   Duration  49.14s (transform 3.43s, setup 203ms, collect 6.31s, tests 21.31s, environment 11.71s, prepare 2.02s)
+
+JSON report written to /tmp/studio-ui-reconciliation/vitest-runtime-results.json

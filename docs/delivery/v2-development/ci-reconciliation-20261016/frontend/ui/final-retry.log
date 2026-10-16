@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/frontend
+
+ ✓ src/AppAuthorTaskNavigation.test.tsx (10 tests) 756ms
+ ✓ src/AppAuthorTaskNavigation.additive.test.tsx (1 test) 214ms
+ ✓ src/taskcenter/useTaskCostReceipt.test.ts (10 tests) 575ms
+
+ Test Files  3 passed (3)
+      Tests  21 passed (21)
+   Start at  07:44:22
+   Duration  8.61s (transform 3.14s, setup 39ms, collect 5.42s, tests 1.55s, environment 983ms, prepare 161ms)
+
+JSON report written to /tmp/studio-ui-reconciliation/vitest-retry-results.json

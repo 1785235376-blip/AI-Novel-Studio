@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-16T23:09:49.967Z",
+  "head": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+  "path": ".github/ci/coverage_manifest_v2.json.gz",
+  "before_sha256": "9d9b8157f1f342ff680e6119b4338a30332a1cec970d5cb00faa10fc01193aca",
+  "approved_after_sha256": "bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c",
+  "actual_after_sha256": "bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c",
+  "method": "Exact candidate bytes through same-directory atomic rename; no recompression or field edits",
+  "independent_review": "/tmp/dot-independent-candidate-review-20261016.json",
+  "independent_review_sha256": "06b0e14530fa6b33249c17b53fbb43f21e91e99177d3e1e76d264f6817ed35d6",
+  "confirmation_status": "PENDING"
+}
