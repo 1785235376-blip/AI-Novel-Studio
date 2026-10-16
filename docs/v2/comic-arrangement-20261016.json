@@ -1,0 +1,102 @@
+{
+  "baseline_commit": "570bbf7e3e422b4e30296ba92ac729b2604f759e",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/experimental/comicArrangement.test.ts src/experimental/ComicLayoutsPanel.test.tsx src/experimental/Wave5TemplatesSdkComics.test.tsx src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T11:48:14.869260+00:00",
+      "finished_utc": "2026-10-16T11:48:17.369346+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/comic-arrangement-reviewed-ui.log",
+      "log_sha256": "697bf61184a070dcaf00f75d50d2b1758087e3f52ca6439ec6452be6db445fd0",
+      "receipt": "docs/delivery/v2-development/comic-arrangement-reviewed-ui.json",
+      "receipt_sha256": "4c3ab1ad832af263021ef848e75781c017420c01f5f567e45e6a1c5e84b283b6"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_r5_comic_layouts.py::test_manual_vertical_arrangement_keeps_original_bindings_and_history[file]",
+        "tests/test_r5_comic_layouts.py::test_real_png_segment_export_matches_preview_exactly_and_restarts[file]",
+        "tests/test_r5_comic_layouts.py::test_edit_revokes_approval_restore_creates_draft_and_keeps_history[file]",
+        "tests/test_post_interop_wave5_templates_sdk_comics.py::test_comic_brief_appearance_scene_chain_persists_restores_and_exports[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/comic-arrangement-reviewed-file-public/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T11:48:35.078767+00:00",
+      "finished_utc": "2026-10-16T11:48:44.638047+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/comic-arrangement-reviewed-file-public.log",
+      "log_sha256": "36cbf53bf5fab8598ff9458a3c78c9d837b2f2f2bcc8ef4834738810932f404a",
+      "receipt": "docs/delivery/v2-development/comic-arrangement-reviewed-file-public.json",
+      "receipt_sha256": "51642df1254a38dc64f4a90ba7388748ad677c705ed9a300049160ed2d32c8e1"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b --force && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T11:48:36.531351+00:00",
+      "finished_utc": "2026-10-16T11:49:12.446426+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/comic-arrangement-reviewed-build.log",
+      "log_sha256": "5551cb0db20ef124d391dfbd07248c169e2e8e112bd536ea77c16b05fcff8859",
+      "receipt": "docs/delivery/v2-development/comic-arrangement-reviewed-build.json",
+      "receipt_sha256": "ddabaad7a31be011ae2cd851cb90859416b9c249b0193fdd2918b495b5b4ea8f"
+    },
+    {
+      "command": [
+        "../studio-overnight/.venv/bin/python",
+        "-c",
+        "import pathlib,re; files=[pathlib.Path(\"frontend/src/experimental\")/name for name in [\"ComicLayoutsPanel.tsx\",\"comicArrangement.ts\"]]; assert not [str(p) for p in files if re.search(r\"#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(\",p.read_text(),re.I)]; print(\"Scoped token guard PASS\")"
+      ],
+      "started_utc": "2026-10-16T11:48:37.993315+00:00",
+      "finished_utc": "2026-10-16T11:48:38.020359+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/comic-arrangement-reviewed-token.log",
+      "log_sha256": "0f60413763c866e35019437c33d233ca2415617df3bce60da78ae15ab1607a63",
+      "receipt": "docs/delivery/v2-development/comic-arrangement-reviewed-token.json",
+      "receipt_sha256": "d0bc0ea03638585ce89c2b84cf21c9e5171525c3c45015747b1d06eeb6593eb7"
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/experimental/ComicLayoutsPanel.tsx": "0bc6729b143da49462aff83a6f60324852c8428e22daae61c7b6061bed036dd0",
+    "frontend/src/experimental/ComicLayoutsPanel.test.tsx": "bc926a2dc34ec6cd3f86226d2685f41de16cbb6cedb44442651cab7ccb86866e",
+    "frontend/src/experimental/comicArrangement.ts": "e8047c14c733e8975dd22a4003256ab3b01a8bf98299a326a859d719261e37bc",
+    "frontend/src/experimental/comicArrangement.test.ts": "7c04b6d6b374487b4234e3246c71fae7412bcbbdfe772d422e0154e754caf61d",
+    "tests/test_r5_comic_layouts.py": "c4d66c56bad34f23635af5373ee477ac38dc9b6b41c44b7a5d2f7ad8912965ff"
+  },
+  "mock_ui_pure_checks": 37,
+  "nonsecurity_file_checks": 4,
+  "public_checks": 30,
+  "public_source_closure_files": 487,
+  "browser_visual_http": "NOT_RUN",
+  "real_model_art_quality_windows_gpu": "NOT_RUN",
+  "postgres_p0": "BLOCKED_NOT_RUN",
+  "push_hosted_ci": "NOT_RUN_COST_UNKNOWN",
+  "independent_review": "Malformed structure/global bubble-ID checks and explicit no-RTL wording incorporated. Retained-handler tests include record/source/owner ABA and pending/409/UNKNOWN failures. Final SHA review pending.",
+  "superseded_receipts": [
+    "docs/delivery/v2-development/comic-arrangement-build.json",
+    "docs/delivery/v2-development/comic-arrangement-file-public.json",
+    "docs/delivery/v2-development/comic-arrangement-final-build.json",
+    "docs/delivery/v2-development/comic-arrangement-final-file-public.json",
+    "docs/delivery/v2-development/comic-arrangement-final-ui.json",
+    "docs/delivery/v2-development/comic-arrangement-token.json",
+    "docs/delivery/v2-development/comic-arrangement-ui.json"
+  ],
+  "limits": "B06 PARTIAL; manual geometry only, original save/raster preflight/approval/export remain authoritative. No backend, new export engine, permission, provider or security lifecycle change."
+}

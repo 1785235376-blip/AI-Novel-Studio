@@ -6,6 +6,7 @@ import { useReviewAction } from './styleReviewClient';
 import { saveOtioFile } from './timelineExchangeClient';
 import { comicLayoutsClient, comicPreset, comicIssueLabel, type ComicDocument, type ComicRecord, type ComicPreflight, type ComicPanel, type ComicRect } from './comicLayoutsClient';
 import './comicLayouts.css';
+import { arrangeComicVertically, type ComicArrangement } from './comicArrangement';
 let nextScope = 0;
 export function ComicLayoutsPanel({ client }: { client: ExperimentalClient }) {
   const identity = useMemo(() => ++nextScope, [client]);
@@ -19,6 +20,8 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
   const [past, setPast] = useState<ComicDocument[]>([]); const [future, setFuture] = useState<ComicDocument[]>([]); const [dirty, setDirty] = useState(false);
   const [report, setReport] = useState<ComicPreflight>(); const [segments, setSegments] = useState<string[]>([]); const [loadedSegments, setLoadedSegments] = useState<number[]>([]); const [previewFailed, setPreviewFailed] = useState(false); const [width, setWidth] = useState(360); const [reviewed, setReviewed] = useState(false);
   const [assetId, setAssetId] = useState(''); const [assetUrl, setAssetUrl] = useState(''); const [assetLoaded, setAssetLoaded] = useState(false); const [assetReviewed, setAssetReviewed] = useState(false);
+  const [arrangement, setArrangement] = useState<{ result: ComicArrangement; ticket: number; base: ComicDocument }>();
+  const arrangementAllowed = useRef(false); const arrangementEpoch = useRef(0); const arrangementAlive = useRef(true);
   const [restoreVersion, setRestoreVersion] = useState('');
   const available = !catalog.loading && !catalog.error && !!catalog.data; const rowsReady = !records.loading && !records.error && !!records.data;
   const source = available ? catalog.data!.screenplays.find(s => s.id === document?.screenplay_id) : undefined;
@@ -26,9 +29,12 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
   const savedCurrent = !!row && rowsReady && records.data!.items.some(r => r.id === row.id && r.version === row.version && !r.stale);
   const savedStale = !!row && rowsReady && records.data!.items.some(r => r.id === row.id && r.stale);
   const asset = available ? catalog.data!.assets.find(a => a.id === assetId) : undefined;
+  arrangementAllowed.current = available && !sourceChanged && !savedStale && !action.busy;
+  useEffect(() => { arrangementAlive.current = true; return () => { arrangementAlive.current = false; arrangementEpoch.current++; }; }, []);
+  useEffect(() => { if (action.busy) { arrangementEpoch.current++; setArrangement(undefined); } }, [action.busy]);
   useEffect(() => () => { segments.forEach(URL.revokeObjectURL); }, [segments]);
   useEffect(() => () => { if (assetUrl) URL.revokeObjectURL(assetUrl); }, [assetUrl]);
-  const invalidate = () => { epoch.current++; setReport(undefined); setSegments([]); setLoadedSegments([]); setPreviewFailed(false); setReviewed(false); };
+  const invalidate = () => { epoch.current++; arrangementEpoch.current++; setArrangement(undefined); setReport(undefined); setSegments([]); setLoadedSegments([]); setPreviewFailed(false); setReviewed(false); };
   const edit = (next: ComicDocument) => { if (document) setPast(values => [...values.slice(-29), document]); setDocument(next); setFuture([]); setDirty(true); invalidate(); };
   const load = (next: ComicRecord) => { invalidate(); setRow(next); setDocument(next.document); setPast([]); setFuture([]); setDirty(false); setRestoreVersion(''); };
   const refresh = () => { invalidate(); setAssetUrl(''); setAssetLoaded(false); setAssetReviewed(false); catalog.reload(); records.reload(); };
@@ -62,6 +68,22 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
           <Field label="漫画字体"><select value={document.font_family} onChange={() => {}}><option value="NOTO_SANS_SC_OFL">Noto Sans SC · 已固定版本的 SIL OFL 1.1 字体</option></select></Field>
           <div className="experimental-grid">{(['width', 'height', 'safe_area', 'segment_height'] as const).map((key, i) => <Field key={key} label={['页面宽度', '页面高度', '页面安全区', '导出分段高度'][i]}><input type="number" step={1} min={key === 'safe_area' ? 0 : 320} max={key === 'width' ? 1600 : key === 'height' ? 12000 : key === 'safe_area' ? 128 : 2400} value={document[key]} onChange={e => edit({ ...document, [key]: Number(e.target.value) })} /></Field>)}</div>
           <div className="experimental-actions"><Button disabled={!past.length} onClick={() => { const next = past.at(-1)!; setPast(past.slice(0, -1)); setFuture([document, ...future]); setDocument(next); setDirty(true); invalidate(); }}>撤销本地排版</Button><Button disabled={!future.length} onClick={() => { setPast([...past, document]); setDocument(future[0]); setFuture(future.slice(1)); setDirty(true); invalidate(); }}>重做本地排版</Button></div>
+          <div className="experimental-record" aria-label="保留内容的纵向排列">
+            <p>仅支持从上到下的单列排列，不支持右到左阅读。按现有阅读顺序排列，左对齐页面安全区，间隔 16 px。保留格框尺寸、图片版本、镜头、人物与文字，气泡随格框平移。只调整本地草稿，应用后仍须保存与原像素预检。</p>
+            <Button disabled={sourceChanged} onClick={() => { if (arrangementAlive.current && arrangementAllowed.current) setArrangement({ result: arrangeComicVertically(document), ticket: ++arrangementEpoch.current, base: document }); }}>预览纵向排列</Button>
+            {arrangement && <>
+              {arrangement.result.error && <StatusMessage tone="warning">{arrangement.result.error}</StatusMessage>}
+              {arrangement.result.document && <><p>排列预览 · 不是渲染画面。字体、文字溢出、图片裁切与分段仍需保存后预检。</p><ol>{[...arrangement.result.document.panels].sort((a, b) => a.order - b.order).map(panel => {
+                const before = arrangement.base.panels.find(p => p.id === panel.id)!;
+                return <li key={panel.id}>阅读 {panel.order} · {panel.id}：({before.x}, {before.y}) → ({panel.x}, {panel.y}) · {panel.width} × {panel.height} px</li>;
+              })}</ol>{!arrangement.result.changed && <StatusMessage>当前格框已按此方式排列。</StatusMessage>}
+              <Button disabled={!arrangement.result.changed || sourceChanged} onClick={() => {
+                if (!arrangementAlive.current || !arrangementAllowed.current || arrangement.ticket !== arrangementEpoch.current || arrangement.base !== document || !arrangement.result.document || !arrangement.result.changed) return;
+                edit(arrangement.result.document);
+              }}>应用纵向排列到草稿</Button></>}
+              <Button onClick={() => { arrangementEpoch.current++; setArrangement(undefined); }}>取消排列预览</Button>
+            </>}
+          </div>
           {document.panels.map((panel, index) => <article className="experimental-record" key={panel.id} aria-label={`漫画格框 ${index + 1}`}><h4>格框 {index + 1}</h4><div className="experimental-grid">
             <Field label={`格框 ${index + 1} 镜头`}><select value={panel.shot_id} onChange={e => patchPanel(panel.id, { shot_id: e.target.value })}>{source && source.shots.map(shot => <option key={shot.id} value={shot.id}>镜头 {shot.number} · 场景 {shot.scene_id}</option>)}</select></Field>
             <Field label={`格框 ${index + 1} 阅读顺序`}><input type="number" min={1} max={24} step={1} value={panel.order} onChange={e => patchPanel(panel.id, { order: Number(e.target.value) })} /></Field>
