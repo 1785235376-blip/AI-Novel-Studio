@@ -1,0 +1,125 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-recovery-notes/frontend
+
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2054ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 703ms
+ ❯ src/creative/StudioGraphDraftRecovery.notes.test.tsx (7 tests | 1 failed) 1127ms
+   ✓ cached presentation recovery inspection through the original controller > pages every one of 1024 eligible short notes with at most twenty textareas and no truncation 935ms
+   × cached presentation recovery inspection through the original controller > explicit recovery restores exact notes, positions and comment without saving or running 35ms
+     → expected { schema_version: 2, …(5) } to deeply equal { schema_version: 2, …(5) }
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/StudioGraphDraftRecovery.notes.test.tsx > cached presentation recovery inspection through the original controller > explicit recovery restores exact notes, positions and comment without saving or running
+AssertionError: expected { schema_version: 2, …(5) } to deeply equal { schema_version: 2, …(5) }
+
+- Expected
++ Received
+
+  Object {
+    "edges": Array [
+      Object {
+        "id": "input_generate",
+        "source_node_id": "input",
+        "source_port": "text",
+        "target_node_id": "generate",
+        "target_port": "text",
+      },
+      Object {
+        "id": "generate_review",
+        "source_node_id": "generate",
+        "source_port": "draft",
+        "target_node_id": "review",
+        "target_port": "draft",
+      },
+    ],
+    "nodes": Array [
+      Object {
+        "definition_id": "text_input",
+        "definition_version": 1,
+        "enabled": true,
+        "id": "input",
+        "parameters": Object {
+          "text": "Author source",
+        },
+        "position": Object {
+          "x": 0,
+          "y": 0,
+        },
+      },
+      Object {
+        "definition_id": "text_generate",
+        "definition_version": 1,
+        "enabled": true,
+        "id": "generate",
+        "parameters": Object {
+          "instruction": "Continue this text",
+          "max_output_tokens": 512,
+        },
+        "position": Object {
+          "x": 280,
+          "y": 0,
+        },
+      },
+      Object {
+        "definition_id": "human_review",
+        "definition_version": 1,
+        "enabled": true,
+        "id": "review",
+        "parameters": Object {},
+        "position": Object {
+          "x": 560,
+          "y": 0,
+        },
+      },
+    ],
+    "presentation": Object {
+      "comment": "缓存图注释
+  <script>alert(1)</script>",
+      "notes": Array [
+        Object {
+          "id": "n0",
+          "position": Object {
+            "x": 0,
+-           "y": -0,
++           "y": 0,
+          },
+          "text": "中文便笺
+  第二行 🪷
+  <img src=x onerror=\"alert(1)\">",
+        },
+        Object {
+          "id": "n1",
+          "position": Object {
+            "x": 1,
+            "y": -1,
+          },
+          "text": "",
+        },
+      ],
+    },
+    "schema_version": 2,
+    "title": "Explicit local model graph",
+    "viewport": Object {
+      "x": 0,
+      "y": 0,
+      "zoom": 1,
+    },
+  }
+
+ ❯ src/creative/StudioGraphDraftRecovery.notes.test.tsx:91:30
+     89|     const value = snapshot(); seed(value); await mount(); click('核对…
+     90|     await waitFor(() => expect(controller.localRecovery).toBeUndefined…
+     91|     expect(controller.draft).toEqual(value.definition); expect(client.…
+       |                              ^
+     92|     expect(client.graphs.get).not.toHaveBeenCalled(); noWrites();
+     93|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 23 passed (24)
+   Start at  08:17:50
+   Duration  5.88s (transform 1.02s, setup 33ms, collect 1.57s, tests 3.19s, environment 582ms, prepare 145ms)
+

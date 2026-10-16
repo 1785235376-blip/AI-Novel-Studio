@@ -9,6 +9,10 @@ export function StudioGraphDraftRecovery({ controller }: { controller: StudioGra
   // Consent belongs to the displayed snapshot. An effect-based reset can race
   // a real click when the initial cache read finishes under a busy renderer.
   const [confirmedRecovery, setConfirmedRecovery] = useState<typeof recovery>();
+  const [notePage, setNotePage] = useState<{ snapshot: typeof recovery; page: number }>();
+  const notes = recovery?.definition.presentation?.notes ?? [];
+  const page = notePage?.snapshot === recovery ? Math.min(notePage?.page ?? 0, Math.max(0, Math.ceil(notes.length / 20) - 1)) : 0;
+  const offset = page * 20;
   const confirmed = !!recovery && confirmedRecovery === recovery;
   if (!draftOwnerCurrent) return <StatusMessage tone="warning">作者身份或项目代次尚未确认，图草稿只保留在本页。</StatusMessage>;
   return <section aria-label="本机图草稿恢复">
@@ -22,7 +26,19 @@ export function StudioGraphDraftRecovery({ controller }: { controller: StudioGra
       <p>恢复前会重新核对身份、项目代次与服务端版本。请先保存或放弃当前输入，再恢复同一图的草稿。</p>
       {recoveryError && <StatusMessage tone="warning">{recoveryError}</StatusMessage>}
       <Button disabled={!canRecoverDraft || recoveryBusy} loading={recoveryBusy} onClick={() => void recoverLocalDraft()}>核对并恢复本机图草稿</Button>
-      <details><summary>查看待恢复的作者输入</summary>{recovery.definition.nodes.flatMap(node =>
+      <details><summary>查看待恢复的作者输入</summary>
+        <p>以下仅为本机缓存的作者输入，未与当前服务端内容逐项比对。查看与翻页不会恢复、保存或运行图。</p>
+        {typeof recovery.definition.presentation?.comment === 'string' && <label>本机草稿 · 图注释<textarea readOnly value={recovery.definition.presentation.comment} /></label>}
+        <p>本机草稿 · {notes.length} 张空间便笺</p>
+        {notes.length > 0 && <section aria-label="本机草稿空间便笺">
+          <p role="status">显示 {offset + 1}–{Math.min(offset + 20, notes.length)} / {notes.length} 张便笺；每页最多 20 张，文本完整保留。</p>
+          {notes.slice(offset, offset + 20).map(note => <label key={note.id}>本机草稿便笺 {note.id}<textarea readOnly value={note.text} /></label>)}
+          {notes.length > 20 && <div>
+            <Button type="button" disabled={!offset} onClick={() => setNotePage({ snapshot: recovery, page: page - 1 })}>上一页缓存便笺</Button>
+            <Button type="button" disabled={offset + 20 >= notes.length} onClick={() => setNotePage({ snapshot: recovery, page: page + 1 })}>下一页缓存便笺</Button>
+          </div>}
+        </section>}
+        {recovery.definition.nodes.flatMap(node =>
         (['text', 'result', 'note', 'instruction'] as const).flatMap(field => typeof node.parameters[field] === 'string'
           ? <label key={`${node.id}:${field}`}>本机草稿 {node.id} · {field}<textarea readOnly value={String(node.parameters[field])} /></label> : []))}</details>
       <label><input type="checkbox" checked={confirmed} disabled={recoveryBusy} onChange={event => setConfirmedRecovery(event.target.checked ? recovery : undefined)} />确认放弃此本机恢复草稿</label>
