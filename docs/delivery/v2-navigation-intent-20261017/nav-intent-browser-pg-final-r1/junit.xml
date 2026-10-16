@@ -1,0 +1,92 @@
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="514.757084">
+<testsuite name="v2-navigation-intent-live.spec.ts" timestamp="2026-10-16T19:01:24.775Z" hostname="navigation-intent-1366x768" tests="2" failures="0" skipped="0" time="179.315" errors="0">
+<testcase name="cold same-value NOVEL and reloaded rapid intent survive the real late parent overview; no intent defaults IMAGE" classname="v2-navigation-intent-live.spec.ts" time="62.412">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768\attachments\cold-explicit-novel-overview-held-f937fd169780f41fcbdfb773e6d1b64726505014.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768\attachments\cold-late-overview-preserved-real-workbench-06e140790e814eeaea6445277fe8b02fbe40425e.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768\attachments\reload-rapid-last-novel-overview-held-f3b5fd2cf4263019b55960ecbb2de4007ad1fe4f.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768\attachments\reload-late-overview-preserved-real-workbench-1bd7d62c99876b6dd701ee794a65fe183148295c.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768\attachments\no-intent-default-image-positive-control-9b32c2c048878e7dcd1458e4e1820572d9282372.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="original scope cancellation isolates old project and branch child overview from the new explicit workbench" classname="v2-navigation-intent-live.spec.ts" time="116.903">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1366x768\attachments\cross-project-old-child-dispatch-held-16f1c5a40f85e65db651169fe1df07884cfb84fa.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1366x768\attachments\cross-project-new-scope-last-novel-preserved-c790cf404f682330b793246008f07dd1f6b6c97a.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1366x768\attachments\cross-branch-old-child-dispatch-held-06cc9af62531cb42bd3f796b04c526734ed65b40.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1366x768\attachments\cross-branch-new-scope-last-novel-preserved-8d5a4883e91a21b1a48d0afc1e628f7982ad37b7.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="v2-navigation-intent-live.spec.ts" timestamp="2026-10-16T19:01:24.775Z" hostname="navigation-intent-1440x900" tests="2" failures="0" skipped="0" time="166.994" errors="0">
+<testcase name="cold same-value NOVEL and reloaded rapid intent survive the real late parent overview; no intent defaults IMAGE" classname="v2-navigation-intent-live.spec.ts" time="56.734">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900\attachments\cold-explicit-novel-overview-held-d05b87a88b993c5b46157d7b89d47b279b2fa704.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900\attachments\cold-late-overview-preserved-real-workbench-764805439fd0cf26901603a5c01baf7884a8d325.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900\attachments\reload-rapid-last-novel-overview-held-95bcab0cf834d4ab285123288b51db27c11fd351.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900\attachments\reload-late-overview-preserved-real-workbench-db6200a8e8e677ba43b519ee603b9c75edef9dfd.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900\attachments\no-intent-default-image-positive-control-4daec01d2a4757c15f26275d245063e06dcde64d.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="original scope cancellation isolates old project and branch child overview from the new explicit workbench" classname="v2-navigation-intent-live.spec.ts" time="110.26">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1440x900\attachments\cross-project-old-child-dispatch-held-7f494e9d69e6d685aa94b8abca32e371fe20ecea.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1440x900\attachments\cross-project-new-scope-last-novel-preserved-e1fec683d9304d9eb8494d06b50858541b5a936f.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1440x900\attachments\cross-branch-old-child-dispatch-held-a90387b31f2604e551773ed27dfbb48ab29c09d3.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1440x900\attachments\cross-branch-new-scope-last-novel-preserved-0ca2e583b2e0b6f418a4788b189be25f61d3bfbe.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="v2-navigation-intent-live.spec.ts" timestamp="2026-10-16T19:01:24.775Z" hostname="navigation-intent-1920x1080" tests="2" failures="0" skipped="0" time="165.883" errors="0">
+<testcase name="cold same-value NOVEL and reloaded rapid intent survive the real late parent overview; no intent defaults IMAGE" classname="v2-navigation-intent-live.spec.ts" time="55.608">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080\attachments\cold-explicit-novel-overview-held-fc2facda2f2bb91560ea6e7fe42e574b565a8a51.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080\attachments\cold-late-overview-preserved-real-workbench-9f49bceb5a68f58917794748e9fed741da3ebbdf.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080\attachments\reload-rapid-last-novel-overview-held-c4a9691179aaa61113724b3088e34c3fc2187091.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080\attachments\reload-late-overview-preserved-real-workbench-ae1df6dec3b985dd282f19c3c21f594b9464cc3d.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080\attachments\no-intent-default-image-positive-control-9a0965d51d383e086662927e7a1c6e064aa23086.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="original scope cancellation isolates old project and branch child overview from the new explicit workbench" classname="v2-navigation-intent-live.spec.ts" time="110.275">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1920x1080\attachments\cross-project-old-child-dispatch-held-dbf2a2e4e8cb72ff3612ac87bc2fab4a7f8be5fe.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1920x1080\attachments\cross-project-new-scope-last-novel-preserved-559d2d0e41132639b8655a016e57feb68d1790fe.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1920x1080\attachments\cross-branch-old-child-dispatch-held-bfabef556800975d7d08006b679dd0dd544dbd82.png]]
+
+[[ATTACHMENT|test-results\v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1920x1080\attachments\cross-branch-new-scope-last-novel-preserved-0c9d1732f0263f54535dca0437269cb8f0ba9e45.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

@@ -1,0 +1,40 @@
+{
+  "utc": "2026-10-16T19:10:21.747431+00:00",
+  "postgres_status_exit": 3,
+  "postgres_status_stdout": "pg_ctl: no server running",
+  "postgres_running": false,
+  "ports": {
+    "8138": {
+      "connectable": false
+    },
+    "5208": {
+      "connectable": false
+    },
+    "50678": {
+      "connectable": false
+    }
+  },
+  "listeners": [],
+  "owned_final_process_workers_remaining": [],
+  "owned_launchers": {
+    "file": {
+      "owned_vite_pid": 79756,
+      "owned_vite_stopped": true,
+      "owned_backend_pid": 85016,
+      "owned_backend_stopped": true
+    },
+    "pg": {
+      "owned_vite_pid": 79188,
+      "owned_vite_stopped": true,
+      "owned_backend_pid": 85524,
+      "owned_backend_stopped": true
+    }
+  },
+  "retained_paths": {
+    ".runtime\\retirement-pg\\data": true,
+    ".runtime\\v2-checks\\nav-intent-browser-file-final-r1": true,
+    ".runtime\\v2-checks\\nav-intent-browser-pg-final-r1": true,
+    ".runtime\\nav-intent-browser-file-final-r1": true,
+    ".runtime\\nav-intent-browser-pg-final-r1": true
+  }
+}

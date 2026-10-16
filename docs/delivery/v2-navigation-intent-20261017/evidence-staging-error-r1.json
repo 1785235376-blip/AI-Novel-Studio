@@ -1,0 +1,12 @@
+{
+  "stage": "Evidence publication, after all runtime acceptance passed",
+  "first_git_add_exit": 1,
+  "core_longpaths_before": "unset",
+  "error": "Filename too long; unable to index file; fatal: adding files failed",
+  "first_reported_path": "docs/delivery/v2-navigation-intent-20261017/nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1366x768/attachments/cross-branch-new-scope-last-novel-preserved-5f431a7b7f7b75e97232ae8cd248f6a94ad5d964.png",
+  "consequences": ["The first raw-index check failed because the files had not been staged", "The first evidence review failed its nonempty staged-files precondition"],
+  "acceptance_tests_rerun": false,
+  "product_or_test_source_changes": false,
+  "evidence_deleted_or_renamed": false,
+  "correction": "Set repository-local core.longpaths=true; retain original paths and raw bytes, regenerate the evidence manifest to include this failure record, then stage and rerun publication byte checks. No global Git setting or Windows policy change."
+}

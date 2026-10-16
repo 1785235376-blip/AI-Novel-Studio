@@ -1,0 +1,25 @@
+{
+  "base": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+  "adoption_baseline_sources": 61,
+  "adoption_raw_bytes_match": true,
+  "protected_visual_paths": 14,
+  "protected_visual_raw_bytes_match_git_base": true,
+  "paths": {
+    "docs/ui/design_system.md": "99f9579e83ef37cc0546debf3f1f39ba70f19bf8482573b9efac40647dfc635d",
+    "docs/ui/protected_ui_surfaces.md": "f18731a7d58dc65e66836abca6e8d40b04aeb25ae475f3a83a74b6f248c1099b",
+    "frontend/playwright.visual.config.ts": "5a9e343414dbb43353e5e0ff1b0e4af6eeef3cfaf984f7de0db79bbc0119e9d1",
+    "frontend/src/ui/AppShell.tsx": "0707e0a04288e0267f07a1b9ac509985d579f22877069ab272a84f8d05751073",
+    "frontend/src/ui/tokens.css": "5b1a2610ec0c81f4cb79e5fa04ac9bb3d905782380e8d976d7cee8c2359c57e1",
+    "frontend/tests/visual/creative-workbench.spec.ts": "23337f712aa8893d55474082bd80ae39d5b6995ea4de981aaae3702992a4c3a7",
+    "frontend/tests/visual/design-system.spec.ts": "de9c782e5e070f509bf9ab989f7c9e894723aa87bf20cf109647bc40b3f7d886",
+    "frontend/tests/visual/design-system.spec.ts-snapshots/image-workspace-chromium-win32.png": "033abb209b9c137f8b46e592c4a2efcfd215033df34225447702d4e8c0ea5adc",
+    "frontend/tests/visual/design-system.spec.ts-snapshots/novel-workspace-chromium-win32.png": "3279bedf32cdf488b52f3e4f69eeb9bff39d4aceead4ac65a4adb837818ce20e",
+    "frontend/tests/visual/design-system.spec.ts-snapshots/production-conflict-resolution-chromium-win32.png": "8836594f746b06d91991768a796b1e280f147980647d3589afca0bc649210906",
+    "frontend/tests/visual/design-system.spec.ts-snapshots/production-novel-shell-chromium-win32.png": "07dd56b9ad07bb55d1367cf1442de40db81ada4788dc910fe8988371e7a45efd",
+    "frontend/tests/visual/design-system.spec.ts-snapshots/production-revision-restore-conflict-chromium-win32.png": "51d34b0b3603f1ff9bf601ccbe8ba1bf2f54fde307b2397e5a0d9392b273b36b",
+    "frontend/tests/visual/design-system.spec.ts-snapshots/video-workspace-chromium-win32.png": "cedd6fa4118717b57c13d1b76bec478af7f0a879b5ae35214723fd69231408a3",
+    "frontend/tests/visual/local-ai-discovery.spec.ts": "23a38e1b1aa230d4dd1a96f0f8630d6efce1fab3448b9b4b4c7da6c26fdf9d11"
+  },
+  "app_is_authorized_changed_owner": true,
+  "not_a_full_V1_runtime_acceptance": true
+}

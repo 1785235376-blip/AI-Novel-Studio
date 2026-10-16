@@ -1,0 +1,2248 @@
+{
+  "token_sha256": "f1da6c312983fe5e5fbdaf2908569d4643ab9f30c6b508afcd20361529e2dc9e",
+  "latency_schedule": "client GET dispatch gate then original route.continue",
+  "request_not_dispatched_until_release": true,
+  "response_mocks": false,
+  "identity_injection": false,
+  "production_gate_override": false,
+  "model_execution": "NOT_REQUESTED",
+  "model_counter": "NOT_INSTRUMENTED",
+  "records": [
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+      "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+      "write_enabled": false
+    },
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+      "branch_id": "5ad5afb3-4478-43ce-b466-2891cfbcb8f6",
+      "write_enabled": false
+    },
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "110f7105-faef-440f-ac54-3d416a7960c1",
+      "branch_id": "f9619da9-2737-400b-ad23-2c808b60fbb5",
+      "write_enabled": false
+    },
+    {
+      "phase": "original_bootstrap_actor_resolved",
+      "url": "http://127.0.0.1:5208/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/bootstrap",
+      "status": 200,
+      "actor_id": "local-author",
+      "scope": {
+        "workspace_id": "workspace-a",
+        "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+        "storyline_id": "8dc347f7-448a-4a2a-9e60-5a4c1297b08a",
+        "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c"
+      },
+      "response_body_sha256": "430283dcf76dda533c59c5dd2d6b827377098cbfe704a5f0777d9ec8a1864b20"
+    },
+    {
+      "phase": "cross-project-old-child-dispatch-held",
+      "source": "original_browser_dom_read_only",
+      "actual_module_tabs": {
+        "小说": "false",
+        "图片": "true",
+        "视频": "false"
+      },
+      "creative_documents_visible": false,
+      "creative_documents_text": null
+    },
+    {
+      "phase": "original_bootstrap_actor_resolved",
+      "url": "http://127.0.0.1:5208/api/collaboration/workspaces/workspace-a/projects/110f7105-faef-440f-ac54-3d416a7960c1/storylines/fa28b90e-0cb0-40f8-8303-fe599262f602/branches/f9619da9-2737-400b-ad23-2c808b60fbb5/bootstrap",
+      "status": 200,
+      "actor_id": "local-author",
+      "scope": {
+        "workspace_id": "workspace-a",
+        "project_id": "110f7105-faef-440f-ac54-3d416a7960c1",
+        "storyline_id": "fa28b90e-0cb0-40f8-8303-fe599262f602",
+        "branch_id": "f9619da9-2737-400b-ad23-2c808b60fbb5"
+      },
+      "response_body_sha256": "03ec18cd973d84324dd301f264b3db3f1f8d60ec95cc57b8215fcc367af8d9f8"
+    },
+    {
+      "phase": "cross-project_old_owner_readback_not_old_callback_delivery",
+      "source": "standalone_owner_readback",
+      "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+      "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+      "owner": {
+        "id": "0cf66cad-b780-4660-9a2b-19ddf34b6d3c",
+        "mode": "STORYBOARD",
+        "scope": {
+          "mode": "collaboration",
+          "novel_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+          "storyline_id": "8dc347f7-448a-4a2a-9e60-5a4c1297b08a",
+          "workspace_id": "workspace-a"
+        },
+        "shots": [
+          {
+            "id": "b4dcd689-306e-4e46-a09c-96f75e2e35c3",
+            "lens": "",
+            "color": "",
+            "sound": "",
+            "action": "A visitor arrives.",
+            "number": 1,
+            "dialogue": [],
+            "lighting": "",
+            "scene_id": "navigation-intent-real-scene",
+            "shot_size": "MEDIUM",
+            "composition": "",
+            "environment": "",
+            "camera_angle": "EYE_LEVEL",
+            "frame_prompt": "",
+            "sound_effect": "",
+            "camera_motion": "STATIC",
+            "director_notes": [],
+            "duration_seconds": 5
+          }
+        ],
+        "title": "真实导航分镜 项目 A",
+        "scenes": [
+          {
+            "id": "navigation-intent-real-scene",
+            "time": "",
+            "action": "A visitor arrives.",
+            "emotion": "",
+            "heading": "INT. ROOM - DAY",
+            "dialogue": [],
+            "location": "",
+            "sequence": 1,
+            "characters": [],
+            "director_notes": [],
+            "source_chapter_id": null
+          }
+        ],
+        "script": null,
+        "status": "DRAFT",
+        "history": [],
+        "version": 1,
+        "novel_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+        "created_at": "2026-10-16T19:05:27.653614+00:00",
+        "created_by": "local-author",
+        "provenance": {
+          "method": "STRUCTURED_DERIVATION",
+          "parameters": {
+            "rule_version": "creative-stage-copy-v1"
+          },
+          "source_mode": "SCREENPLAY",
+          "input_digest": "f23ec7d503dbe64b1e54fb8aa7d26ac060d468d76a8d69dcb7afbf65f79523d4",
+          "model_called": false,
+          "source_version": 1,
+          "source_document_id": "87c76f5b-dd67-4e5f-95d5-b39d578a4b3a",
+          "quality_verification": "HUMAN_REVIEW_REQUIRED"
+        },
+        "updated_at": "2026-10-16T19:05:27.653614+00:00",
+        "updated_by": "local-author",
+        "video_plan": null,
+        "privacy_level": "LOCAL_ONLY",
+        "director_notes": [],
+        "schema_version": 1,
+        "source_privacy": {},
+        "source_evidence": {},
+        "source_documents": {
+          "87c76f5b-dd67-4e5f-95d5-b39d578a4b3a": {
+            "digest": "f23ec7d503dbe64b1e54fb8aa7d26ac060d468d76a8d69dcb7afbf65f79523d4",
+            "version": 1
+          }
+        },
+        "source_chapter_ids": [],
+        "source_independent": false,
+        "project_incarnation": "postgres:64bdb789-a969-472f-a231-71ccd6873e94"
+      },
+      "overview": {
+        "project": {
+          "id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "title": "导航意图验收 navigation-intent-1440x900 项目 A",
+          "incarnation": "postgres:64bdb789-a969-472f-a231-71ccd6873e94",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "old_callback_delivery": false
+    },
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+      "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+      "write_enabled": false
+    },
+    {
+      "phase": "cross-project_new_owner_readback",
+      "source": "standalone_owner_readback",
+      "project_id": "110f7105-faef-440f-ac54-3d416a7960c1",
+      "branch_id": "f9619da9-2737-400b-ad23-2c808b60fbb5",
+      "owner": {
+        "id": "d66da2d9-5a5d-4a59-b2fe-b7e6b936a9ff",
+        "mode": "STORYBOARD",
+        "scope": {
+          "mode": "collaboration",
+          "novel_id": "110f7105-faef-440f-ac54-3d416a7960c1",
+          "branch_id": "f9619da9-2737-400b-ad23-2c808b60fbb5",
+          "storyline_id": "fa28b90e-0cb0-40f8-8303-fe599262f602",
+          "workspace_id": "workspace-a"
+        },
+        "shots": [
+          {
+            "id": "1ba283a8-6654-45f9-acd9-7e7bd462d430",
+            "lens": "",
+            "color": "",
+            "sound": "",
+            "action": "A visitor arrives.",
+            "number": 1,
+            "dialogue": [],
+            "lighting": "",
+            "scene_id": "navigation-intent-real-scene",
+            "shot_size": "MEDIUM",
+            "composition": "",
+            "environment": "",
+            "camera_angle": "EYE_LEVEL",
+            "frame_prompt": "",
+            "sound_effect": "",
+            "camera_motion": "STATIC",
+            "director_notes": [],
+            "duration_seconds": 5
+          }
+        ],
+        "title": "真实导航分镜 项目 B",
+        "scenes": [
+          {
+            "id": "navigation-intent-real-scene",
+            "time": "",
+            "action": "A visitor arrives.",
+            "emotion": "",
+            "heading": "INT. ROOM - DAY",
+            "dialogue": [],
+            "location": "",
+            "sequence": 1,
+            "characters": [],
+            "director_notes": [],
+            "source_chapter_id": null
+          }
+        ],
+        "script": null,
+        "status": "DRAFT",
+        "history": [],
+        "version": 1,
+        "novel_id": "110f7105-faef-440f-ac54-3d416a7960c1",
+        "created_at": "2026-10-16T19:05:43.990124+00:00",
+        "created_by": "local-author",
+        "provenance": {
+          "method": "STRUCTURED_DERIVATION",
+          "parameters": {
+            "rule_version": "creative-stage-copy-v1"
+          },
+          "source_mode": "SCREENPLAY",
+          "input_digest": "7fb96e3ae967154af98aa4922035a3ffa4b704656cc460b7135b209e4b0877c0",
+          "model_called": false,
+          "source_version": 1,
+          "source_document_id": "b2ad8f08-e709-4e57-bdd9-d98839af4e96",
+          "quality_verification": "HUMAN_REVIEW_REQUIRED"
+        },
+        "updated_at": "2026-10-16T19:05:43.990124+00:00",
+        "updated_by": "local-author",
+        "video_plan": null,
+        "privacy_level": "LOCAL_ONLY",
+        "director_notes": [],
+        "schema_version": 1,
+        "source_privacy": {},
+        "source_evidence": {},
+        "source_documents": {
+          "b2ad8f08-e709-4e57-bdd9-d98839af4e96": {
+            "digest": "7fb96e3ae967154af98aa4922035a3ffa4b704656cc460b7135b209e4b0877c0",
+            "version": 1
+          }
+        },
+        "source_chapter_ids": [],
+        "source_independent": false,
+        "project_incarnation": "postgres:2c157347-0122-422f-9eca-3d369f577c32"
+      },
+      "overview": {
+        "project": {
+          "id": "110f7105-faef-440f-ac54-3d416a7960c1",
+          "title": "导航意图验收 navigation-intent-1440x900 项目 B",
+          "incarnation": "postgres:2c157347-0122-422f-9eca-3d369f577c32",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "old_callback_delivery": false
+    },
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "110f7105-faef-440f-ac54-3d416a7960c1",
+      "branch_id": "f9619da9-2737-400b-ad23-2c808b60fbb5",
+      "write_enabled": false
+    },
+    {
+      "phase": "cross-project-new-scope-last-novel-preserved",
+      "source": "original_browser_dom_read_only",
+      "actual_module_tabs": {
+        "小说": "true",
+        "图片": "false",
+        "视频": "false"
+      },
+      "creative_documents_visible": true,
+      "creative_documents_text": "当前阶段文档\n真实导航分镜 项目 B\nv1 · 1 场景"
+    },
+    {
+      "phase": "original_bootstrap_actor_resolved",
+      "url": "http://127.0.0.1:5208/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/bootstrap",
+      "status": 200,
+      "actor_id": "local-author",
+      "scope": {
+        "workspace_id": "workspace-a",
+        "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+        "storyline_id": "8dc347f7-448a-4a2a-9e60-5a4c1297b08a",
+        "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c"
+      },
+      "response_body_sha256": "430283dcf76dda533c59c5dd2d6b827377098cbfe704a5f0777d9ec8a1864b20"
+    },
+    {
+      "phase": "cross-branch-old-child-dispatch-held",
+      "source": "original_browser_dom_read_only",
+      "actual_module_tabs": {
+        "小说": "false",
+        "图片": "true",
+        "视频": "false"
+      },
+      "creative_documents_visible": false,
+      "creative_documents_text": null
+    },
+    {
+      "phase": "original_bootstrap_actor_resolved",
+      "url": "http://127.0.0.1:5208/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/5ad5afb3-4478-43ce-b466-2891cfbcb8f6/bootstrap",
+      "status": 200,
+      "actor_id": "local-author",
+      "scope": {
+        "workspace_id": "workspace-a",
+        "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+        "storyline_id": "8dc347f7-448a-4a2a-9e60-5a4c1297b08a",
+        "branch_id": "5ad5afb3-4478-43ce-b466-2891cfbcb8f6"
+      },
+      "response_body_sha256": "7896748121fcb42a20c76638ad6103d11eb014c95bddb41df1a04d9be38120b2"
+    },
+    {
+      "phase": "cross-branch_old_owner_readback_not_old_callback_delivery",
+      "source": "standalone_owner_readback",
+      "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+      "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+      "owner": {
+        "id": "0cf66cad-b780-4660-9a2b-19ddf34b6d3c",
+        "mode": "STORYBOARD",
+        "scope": {
+          "mode": "collaboration",
+          "novel_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+          "storyline_id": "8dc347f7-448a-4a2a-9e60-5a4c1297b08a",
+          "workspace_id": "workspace-a"
+        },
+        "shots": [
+          {
+            "id": "b4dcd689-306e-4e46-a09c-96f75e2e35c3",
+            "lens": "",
+            "color": "",
+            "sound": "",
+            "action": "A visitor arrives.",
+            "number": 1,
+            "dialogue": [],
+            "lighting": "",
+            "scene_id": "navigation-intent-real-scene",
+            "shot_size": "MEDIUM",
+            "composition": "",
+            "environment": "",
+            "camera_angle": "EYE_LEVEL",
+            "frame_prompt": "",
+            "sound_effect": "",
+            "camera_motion": "STATIC",
+            "director_notes": [],
+            "duration_seconds": 5
+          }
+        ],
+        "title": "真实导航分镜 项目 A",
+        "scenes": [
+          {
+            "id": "navigation-intent-real-scene",
+            "time": "",
+            "action": "A visitor arrives.",
+            "emotion": "",
+            "heading": "INT. ROOM - DAY",
+            "dialogue": [],
+            "location": "",
+            "sequence": 1,
+            "characters": [],
+            "director_notes": [],
+            "source_chapter_id": null
+          }
+        ],
+        "script": null,
+        "status": "DRAFT",
+        "history": [],
+        "version": 1,
+        "novel_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+        "created_at": "2026-10-16T19:05:27.653614+00:00",
+        "created_by": "local-author",
+        "provenance": {
+          "method": "STRUCTURED_DERIVATION",
+          "parameters": {
+            "rule_version": "creative-stage-copy-v1"
+          },
+          "source_mode": "SCREENPLAY",
+          "input_digest": "f23ec7d503dbe64b1e54fb8aa7d26ac060d468d76a8d69dcb7afbf65f79523d4",
+          "model_called": false,
+          "source_version": 1,
+          "source_document_id": "87c76f5b-dd67-4e5f-95d5-b39d578a4b3a",
+          "quality_verification": "HUMAN_REVIEW_REQUIRED"
+        },
+        "updated_at": "2026-10-16T19:05:27.653614+00:00",
+        "updated_by": "local-author",
+        "video_plan": null,
+        "privacy_level": "LOCAL_ONLY",
+        "director_notes": [],
+        "schema_version": 1,
+        "source_privacy": {},
+        "source_evidence": {},
+        "source_documents": {
+          "87c76f5b-dd67-4e5f-95d5-b39d578a4b3a": {
+            "digest": "f23ec7d503dbe64b1e54fb8aa7d26ac060d468d76a8d69dcb7afbf65f79523d4",
+            "version": 1
+          }
+        },
+        "source_chapter_ids": [],
+        "source_independent": false,
+        "project_incarnation": "postgres:64bdb789-a969-472f-a231-71ccd6873e94"
+      },
+      "overview": {
+        "project": {
+          "id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "title": "导航意图验收 navigation-intent-1440x900 项目 A",
+          "incarnation": "postgres:64bdb789-a969-472f-a231-71ccd6873e94",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "old_callback_delivery": false
+    },
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+      "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+      "write_enabled": false
+    },
+    {
+      "phase": "cross-branch_new_owner_readback",
+      "source": "standalone_owner_readback",
+      "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+      "branch_id": "5ad5afb3-4478-43ce-b466-2891cfbcb8f6",
+      "owner": {
+        "id": "d68ac393-6b5c-407a-88b1-2c44dcf92b16",
+        "mode": "STORYBOARD",
+        "scope": {
+          "mode": "collaboration",
+          "novel_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "branch_id": "5ad5afb3-4478-43ce-b466-2891cfbcb8f6",
+          "storyline_id": "8dc347f7-448a-4a2a-9e60-5a4c1297b08a",
+          "workspace_id": "workspace-a"
+        },
+        "shots": [
+          {
+            "id": "1baf4b9b-7bb8-4ad2-a60c-d1cbf6373bf3",
+            "lens": "",
+            "color": "",
+            "sound": "",
+            "action": "A visitor arrives.",
+            "number": 1,
+            "dialogue": [],
+            "lighting": "",
+            "scene_id": "navigation-intent-real-scene",
+            "shot_size": "MEDIUM",
+            "composition": "",
+            "environment": "",
+            "camera_angle": "EYE_LEVEL",
+            "frame_prompt": "",
+            "sound_effect": "",
+            "camera_motion": "STATIC",
+            "director_notes": [],
+            "duration_seconds": 5
+          }
+        ],
+        "title": "真实导航分镜 另一分支",
+        "scenes": [
+          {
+            "id": "navigation-intent-real-scene",
+            "time": "",
+            "action": "A visitor arrives.",
+            "emotion": "",
+            "heading": "INT. ROOM - DAY",
+            "dialogue": [],
+            "location": "",
+            "sequence": 1,
+            "characters": [],
+            "director_notes": [],
+            "source_chapter_id": null
+          }
+        ],
+        "script": null,
+        "status": "DRAFT",
+        "history": [],
+        "version": 1,
+        "novel_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+        "created_at": "2026-10-16T19:05:35.755154+00:00",
+        "created_by": "local-author",
+        "provenance": {
+          "method": "STRUCTURED_DERIVATION",
+          "parameters": {
+            "rule_version": "creative-stage-copy-v1"
+          },
+          "source_mode": "SCREENPLAY",
+          "input_digest": "a9390203aae6d5f50856038a8e2dfb39df2e2b8548b8c26be94144de7c6e9dc3",
+          "model_called": false,
+          "source_version": 1,
+          "source_document_id": "1b720173-5101-401a-96b5-dbdc5f762cb1",
+          "quality_verification": "HUMAN_REVIEW_REQUIRED"
+        },
+        "updated_at": "2026-10-16T19:05:35.755154+00:00",
+        "updated_by": "local-author",
+        "video_plan": null,
+        "privacy_level": "LOCAL_ONLY",
+        "director_notes": [],
+        "schema_version": 1,
+        "source_privacy": {},
+        "source_evidence": {},
+        "source_documents": {
+          "1b720173-5101-401a-96b5-dbdc5f762cb1": {
+            "digest": "a9390203aae6d5f50856038a8e2dfb39df2e2b8548b8c26be94144de7c6e9dc3",
+            "version": 1
+          }
+        },
+        "source_chapter_ids": [],
+        "source_independent": false,
+        "project_incarnation": "postgres:64bdb789-a969-472f-a231-71ccd6873e94"
+      },
+      "overview": {
+        "project": {
+          "id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "title": "导航意图验收 navigation-intent-1440x900 项目 A",
+          "incarnation": "postgres:64bdb789-a969-472f-a231-71ccd6873e94",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "old_callback_delivery": false
+    },
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+      "branch_id": "5ad5afb3-4478-43ce-b466-2891cfbcb8f6",
+      "write_enabled": false
+    },
+    {
+      "phase": "cross-branch-new-scope-last-novel-preserved",
+      "source": "original_browser_dom_read_only",
+      "actual_module_tabs": {
+        "小说": "true",
+        "图片": "false",
+        "视频": "false"
+      },
+      "creative_documents_visible": true,
+      "creative_documents_text": "当前阶段文档\n真实导航分镜 另一分支\nv1 · 1 场景"
+    },
+    {
+      "phase": "owned_project_cleanup",
+      "project_id": "110f7105-faef-440f-ac54-3d416a7960c1",
+      "status": 204
+    },
+    {
+      "phase": "owned_project_cleanup",
+      "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+      "status": 204
+    }
+  ],
+  "gates": [
+    {
+      "origin": "cross-project: IndependentStudioSession.refresh after explicit IMAGE remount",
+      "requests": [
+        {
+          "origin": "cross-project: IndependentStudioSession.refresh after explicit IMAGE remount",
+          "url": "http://127.0.0.1:5208/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+          "method": "GET",
+          "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+          "token_sha256": "f1da6c312983fe5e5fbdaf2908569d4643ab9f30c6b508afcd20361529e2dc9e",
+          "held_at": 1792177558734,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177558735,
+          "continue_at": 1792177574313,
+          "continue_returned": true
+        },
+        {
+          "origin": "cross-project: IndependentStudioSession.refresh after explicit IMAGE remount",
+          "url": "http://127.0.0.1:5208/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+          "method": "GET",
+          "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+          "token_sha256": "f1da6c312983fe5e5fbdaf2908569d4643ab9f30c6b508afcd20361529e2dc9e",
+          "held_at": 1792177558734,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177558806,
+          "scope_changed_before_release_at": 1792177574313,
+          "continue_at": 1792177574314,
+          "outcome": "canceled_by_original_scope_owner",
+          "continue_returned": true
+        }
+      ]
+    },
+    {
+      "origin": "cross-project: new scope App studioProject parent",
+      "requests": [
+        {
+          "origin": "cross-project: new scope App studioProject parent",
+          "url": "http://127.0.0.1:5208/api/projects/110f7105-faef-440f-ac54-3d416a7960c1/studio",
+          "method": "GET",
+          "project_id": "110f7105-faef-440f-ac54-3d416a7960c1",
+          "branch_id": "f9619da9-2737-400b-ad23-2c808b60fbb5",
+          "token_sha256": "f1da6c312983fe5e5fbdaf2908569d4643ab9f30c6b508afcd20361529e2dc9e",
+          "held_at": 1792177563932,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177565723,
+          "continue_at": 1792177574315,
+          "continue_returned": true
+        },
+        {
+          "origin": "cross-project: new scope App studioProject parent",
+          "url": "http://127.0.0.1:5208/api/projects/110f7105-faef-440f-ac54-3d416a7960c1/studio",
+          "method": "GET",
+          "project_id": "110f7105-faef-440f-ac54-3d416a7960c1",
+          "branch_id": "f9619da9-2737-400b-ad23-2c808b60fbb5",
+          "token_sha256": "f1da6c312983fe5e5fbdaf2908569d4643ab9f30c6b508afcd20361529e2dc9e",
+          "held_at": 1792177565715,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "explicit_intent_at": 1792177565774,
+          "explicit_modules": [
+            "NOVEL"
+          ],
+          "intent_observed_while_request_held": true,
+          "continue_at": 1792177574315,
+          "continue_returned": true,
+          "status": 200,
+          "response_body_sha256": "e58eda641768b7c52ff36f35aa35f1897d8a6fd1917f0d34634fb48553985748",
+          "response_raw_body": "{\"project\":{\"id\":\"110f7105-faef-440f-ac54-3d416a7960c1\",\"title\":\"导航意图验收 navigation-intent-1440x900 项目 B\",\"incarnation\":\"postgres:2c157347-0122-422f-9eca-3d369f577c32\",\"entry_kind\":\"NEUTRAL_STUDIO\"},\"preferences\":{\"version\":1,\"intents\":[],\"preset\":\"BLANK\",\"custom_intent\":\"\"},\"capabilities\":{\"manual_import\":true,\"manual_export\":true,\"model_required\":false,\"chapter_required\":false,\"media_validator_configured\":true,\"asset_kinds\":[\"image\",\"video\",\"audio\"],\"intent_is_permission\":false,\"can_mutate\":true,\"can_review\":true}}",
+          "response_body": {
+            "project": {
+              "id": "110f7105-faef-440f-ac54-3d416a7960c1",
+              "title": "导航意图验收 navigation-intent-1440x900 项目 B",
+              "incarnation": "postgres:2c157347-0122-422f-9eca-3d369f577c32",
+              "entry_kind": "NEUTRAL_STUDIO"
+            },
+            "preferences": {
+              "version": 1,
+              "intents": [],
+              "preset": "BLANK",
+              "custom_intent": ""
+            },
+            "capabilities": {
+              "manual_import": true,
+              "manual_export": true,
+              "model_required": false,
+              "chapter_required": false,
+              "media_validator_configured": true,
+              "asset_kinds": [
+                "image",
+                "video",
+                "audio"
+              ],
+              "intent_is_permission": false,
+              "can_mutate": true,
+              "can_review": true
+            }
+          },
+          "response_at": 1792177576772,
+          "source": "original_backend_http"
+        }
+      ]
+    },
+    {
+      "origin": "cross-branch: IndependentStudioSession.refresh after explicit IMAGE remount",
+      "requests": [
+        {
+          "origin": "cross-branch: IndependentStudioSession.refresh after explicit IMAGE remount",
+          "url": "http://127.0.0.1:5208/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+          "method": "GET",
+          "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+          "token_sha256": "f1da6c312983fe5e5fbdaf2908569d4643ab9f30c6b508afcd20361529e2dc9e",
+          "held_at": 1792177605830,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177605831,
+          "continue_at": 1792177619707,
+          "continue_returned": true
+        },
+        {
+          "origin": "cross-branch: IndependentStudioSession.refresh after explicit IMAGE remount",
+          "url": "http://127.0.0.1:5208/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+          "method": "GET",
+          "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "branch_id": "56be652b-5382-4f5b-ad0c-9f9e3140599c",
+          "token_sha256": "f1da6c312983fe5e5fbdaf2908569d4643ab9f30c6b508afcd20361529e2dc9e",
+          "held_at": 1792177605830,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177605903,
+          "scope_changed_before_release_at": 1792177619706,
+          "continue_at": 1792177619707,
+          "outcome": "canceled_by_original_scope_owner",
+          "continue_returned": true
+        }
+      ]
+    },
+    {
+      "origin": "cross-branch: new scope App studioProject parent",
+      "requests": [
+        {
+          "origin": "cross-branch: new scope App studioProject parent",
+          "url": "http://127.0.0.1:5208/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+          "method": "GET",
+          "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "branch_id": "5ad5afb3-4478-43ce-b466-2891cfbcb8f6",
+          "token_sha256": "f1da6c312983fe5e5fbdaf2908569d4643ab9f30c6b508afcd20361529e2dc9e",
+          "held_at": 1792177610797,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177613142,
+          "continue_at": 1792177619708,
+          "continue_returned": true
+        },
+        {
+          "origin": "cross-branch: new scope App studioProject parent",
+          "url": "http://127.0.0.1:5208/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+          "method": "GET",
+          "project_id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+          "branch_id": "5ad5afb3-4478-43ce-b466-2891cfbcb8f6",
+          "token_sha256": "f1da6c312983fe5e5fbdaf2908569d4643ab9f30c6b508afcd20361529e2dc9e",
+          "held_at": 1792177613134,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "explicit_intent_at": 1792177613200,
+          "explicit_modules": [
+            "NOVEL"
+          ],
+          "intent_observed_while_request_held": true,
+          "continue_at": 1792177619708,
+          "continue_returned": true,
+          "status": 200,
+          "response_body_sha256": "47b9121d7bc5f6b7059cabb3f20a024284651400cb14a9f03cb9d744a3a9ffba",
+          "response_raw_body": "{\"project\":{\"id\":\"d3ee43a1-0921-4208-b395-1b728a42c106\",\"title\":\"导航意图验收 navigation-intent-1440x900 项目 A\",\"incarnation\":\"postgres:64bdb789-a969-472f-a231-71ccd6873e94\",\"entry_kind\":\"NEUTRAL_STUDIO\"},\"preferences\":{\"version\":1,\"intents\":[],\"preset\":\"BLANK\",\"custom_intent\":\"\"},\"capabilities\":{\"manual_import\":true,\"manual_export\":true,\"model_required\":false,\"chapter_required\":false,\"media_validator_configured\":true,\"asset_kinds\":[\"image\",\"video\",\"audio\"],\"intent_is_permission\":false,\"can_mutate\":true,\"can_review\":true}}",
+          "response_body": {
+            "project": {
+              "id": "d3ee43a1-0921-4208-b395-1b728a42c106",
+              "title": "导航意图验收 navigation-intent-1440x900 项目 A",
+              "incarnation": "postgres:64bdb789-a969-472f-a231-71ccd6873e94",
+              "entry_kind": "NEUTRAL_STUDIO"
+            },
+            "preferences": {
+              "version": 1,
+              "intents": [],
+              "preset": "BLANK",
+              "custom_intent": ""
+            },
+            "capabilities": {
+              "manual_import": true,
+              "manual_export": true,
+              "model_required": false,
+              "chapter_required": false,
+              "media_validator_configured": true,
+              "asset_kinds": [
+                "image",
+                "video",
+                "audio"
+              ],
+              "intent_is_permission": false,
+              "can_mutate": true,
+              "can_review": true
+            }
+          },
+          "response_at": 1792177622255,
+          "source": "original_backend_http"
+        }
+      ]
+    }
+  ],
+  "calls": [
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/bootstrap",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio/prompts",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio/prompts",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/characters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/locations",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/volumes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/scenes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/chapters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/110f7105-faef-440f-ac54-3d416a7960c1/storylines/fa28b90e-0cb0-40f8-8303-fe599262f602/branches/f9619da9-2737-400b-ad23-2c808b60fbb5/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/110f7105-faef-440f-ac54-3d416a7960c1/storylines/fa28b90e-0cb0-40f8-8303-fe599262f602/branches/f9619da9-2737-400b-ad23-2c808b60fbb5/bootstrap",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/characters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/locations",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/volumes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/scenes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/chapters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/110f7105-faef-440f-ac54-3d416a7960c1/storylines/fa28b90e-0cb0-40f8-8303-fe599262f602/branches/f9619da9-2737-400b-ad23-2c808b60fbb5/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/experimental/creative/capabilities",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/model-center/local-ai/environment",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/experimental/creative/director-proposals",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/experimental/creative/documents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/110f7105-faef-440f-ac54-3d416a7960c1/storylines/fa28b90e-0cb0-40f8-8303-fe599262f602/branches/f9619da9-2737-400b-ad23-2c808b60fbb5/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/experimental/creative/adaptation-proposals/model-routes",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/experimental/creative/adaptation-proposals",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/110f7105-faef-440f-ac54-3d416a7960c1/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/110f7105-faef-440f-ac54-3d416a7960c1/storylines/fa28b90e-0cb0-40f8-8303-fe599262f602/branches/f9619da9-2737-400b-ad23-2c808b60fbb5/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/110f7105-faef-440f-ac54-3d416a7960c1/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/110f7105-faef-440f-ac54-3d416a7960c1/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/110f7105-faef-440f-ac54-3d416a7960c1/studio/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/110f7105-faef-440f-ac54-3d416a7960c1/studio/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/110f7105-faef-440f-ac54-3d416a7960c1/studio/prompts",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/110f7105-faef-440f-ac54-3d416a7960c1/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/characters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/110f7105-faef-440f-ac54-3d416a7960c1/studio/prompts",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/locations",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/volumes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/scenes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/bootstrap",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/characters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/locations",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/volumes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/scenes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/56be652b-5382-4f5b-ad0c-9f9e3140599c/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio/prompts",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio/prompts",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/characters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/locations",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/volumes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/scenes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/5ad5afb3-4478-43ce-b466-2891cfbcb8f6/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/5ad5afb3-4478-43ce-b466-2891cfbcb8f6/bootstrap",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/characters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/locations",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/volumes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/scenes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/5ad5afb3-4478-43ce-b466-2891cfbcb8f6/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/experimental/creative/capabilities",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/model-center/local-ai/environment",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/experimental/creative/director-proposals",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/experimental/creative/documents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/5ad5afb3-4478-43ce-b466-2891cfbcb8f6/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/experimental/creative/adaptation-proposals/model-routes",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/experimental/creative/adaptation-proposals",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/d3ee43a1-0921-4208-b395-1b728a42c106/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/d3ee43a1-0921-4208-b395-1b728a42c106/storylines/8dc347f7-448a-4a2a-9e60-5a4c1297b08a/branches/5ad5afb3-4478-43ce-b466-2891cfbcb8f6/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/d3ee43a1-0921-4208-b395-1b728a42c106/media-tasks",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "cleanupErrors": []
+}

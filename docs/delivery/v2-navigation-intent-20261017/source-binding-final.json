@@ -1,0 +1,96 @@
+{
+  "utc": "2026-10-16T19:10:38.340810+00:00",
+  "head_at_check": "7893cd027433e165b4035eac0f744c27cb93310a",
+  "source_count": 2305,
+  "receipt_checks": [
+    {
+      "receipt": "docs/delivery/v2-development/nav-intent-browser-file-final-r1.json",
+      "sha256": "e504833c0717bc64ced05bdfc39a86680619fefde2ac5dd6ca371e707a385cbb",
+      "log_sha256": "6c1fec4ad8c3a8b6fe9d78389564873c58436163fa9bbad309a5e90b51cf0315",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2305
+    },
+    {
+      "receipt": "docs/delivery/v2-development/nav-intent-browser-pg-final-r1.json",
+      "sha256": "26e342081afaac9cde777b91bad38b8986af5870dad6c62752b4a8abd6647c26",
+      "log_sha256": "8170e573c44944da30cccde6a0d7263314228ec80dd332182a09b801446c6014",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2305
+    },
+    {
+      "receipt": "docs/delivery/v2-development/nav-intent-src-final-r1.json",
+      "sha256": "928e2a34b51fb6a285289cd1f62be00427a8a1d3a2aecd9ae74926b55e50b8bc",
+      "log_sha256": "bd99e0ea3ada21f1cc0f4718fc1a20ee4040c56b4dc02eb0a1ed735144a6c1f8",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2305
+    },
+    {
+      "receipt": "docs/delivery/v2-development/nav-intent-build-final-r1.json",
+      "sha256": "b48cca24b7f6a1c106ddacef5869fbdfabeabb8c7a093efdc83e0f93c6db9fe7",
+      "log_sha256": "7e1e3807a207d3ff008886e9d0923d5870e3efe491d63b81240c0e25e4eaa046",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2305
+    },
+    {
+      "receipt": "docs/delivery/v2-development/nav-intent-visual-final-r1.json",
+      "sha256": "ec730578de36185baf4da83ad798b0bb4ef8e526689b2637fc2442cab1b2f1e7",
+      "log_sha256": "029ead7b14b1afe0c159817898360e01b82590bf7334208ece9bbc3cfc98097a",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2305
+    },
+    {
+      "receipt": "docs/delivery/v2-development/nav-intent-tokens-final-r1.json",
+      "sha256": "df68974807a938d0d9e54f50addfc7539951a06195930eb23293681b48836aa8",
+      "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2305
+    },
+    {
+      "receipt": "docs/delivery/v2-development/nav-intent-ci-selfchecks-final-r2.json",
+      "sha256": "0bec6dafb48a49ceeb43430f037bc479f808de6924c1612b906ebf65fd734817",
+      "log_sha256": "2b21b4b22f5b79873dbc19ed40d563ca6c6b782f319368827bc35cb77201175b",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2305
+    },
+    {
+      "receipt": "docs/delivery/v2-development/nav-intent-collection-final-r1.json",
+      "sha256": "f5487459f1ec47db50b1c2088be9eee7d5dfb65dfa191d56f9395ef5d91c8a57",
+      "log_sha256": "87de8eac0065f785ca89704a1e506fdc74ee743b43ebf41e903bc3b581788ac5",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2305
+    },
+    {
+      "receipt": "docs/delivery/v2-development/nav-intent-collection-confirmation-r1.json",
+      "sha256": "8a2eb8c1397a71960ef82b1ed61b13745fde27f5407c37b0b96cdbe8e87bb841",
+      "log_sha256": "5c755928b2b728f12ebce4497bfb111e5da2c0f8a6650352c3dce624cc33462c",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2305
+    }
+  ],
+  "changed_source_sha256": {
+    "frontend/playwright.navigation-intent-live.config.ts": "e55ff4ec391ac0b6858b2d2ff191cdeac50c806839c1b9c4a3cc75877318a536",
+    "frontend/src/App.tsx": "ab211c5c61014ab617fcd3e320a03cfd7b92467f419ce9bf45e0ae5b78200bf3",
+    "frontend/src/AppModuleNavigationIntent.test.tsx": "99bd7e33b7595eae8638cb8cc9ae7994d55380fd8a59106b648731c433f5e710",
+    "frontend/tests/e2e/v2-navigation-intent-live.spec.ts": "59a63c11cbfa9c10fdbc754850e93dbd0f2c7aacf5d7ebd22d5d0315e8aaab48",
+    "scripts/run_v2_navigation_intent_browser.py": "396340b8d09f2225a51877bcba08d06013739d638cc8b123736e0dfd6ca288c9"
+  },
+  "claim": "Exact current backend/frontend/runner/test sources match every selected successful original-runner snapshot; no source drift permitted."
+}

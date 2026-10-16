@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-16T19:13:16.9690462Z",
+  "checked_ports": [
+    8138,
+    5208,
+    50678,
+    5174
+  ],
+  "listeners": [],
+  "status": "NO_OWNED_PORT_LISTENERS",
+  "action": "Read-only operating-system listener audit; no process termination or file cleanup"
+}

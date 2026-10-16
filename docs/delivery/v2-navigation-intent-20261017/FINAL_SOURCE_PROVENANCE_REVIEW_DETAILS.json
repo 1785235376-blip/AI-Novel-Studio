@@ -1,0 +1,438 @@
+{
+  "utc": "2026-10-16T19:12:20.426666+00:00",
+  "status": "INDEPENDENT_SOURCE_AND_SCOPED_RUNTIME_REVIEW_PASS",
+  "base": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+  "implementation_head": "7893cd027433e165b4035eac0f744c27cb93310a",
+  "runtime_source_count": 2305,
+  "manifest_source_count": 2367,
+  "raw_git_working_source_mismatches": [],
+  "line_ending_exceptions": [],
+  "source_map_sha256": "73cc97473c56824881b0274d19783152d161e7547680c0401009225058bf78da",
+  "v2_manifest_sha256": "6f621dcf211c778b09f9ee3351cca511a18b605d0f6d161383816c60dc0ea269",
+  "pytest_inventory": {
+    "nodes": 15142,
+    "two_collections_and_874_rows_exact": true,
+    "literal_order_classifications_unchanged": true,
+    "added_nodes_this_round": 0,
+    "scope": "inventory only; not 15142 tests executed"
+  },
+  "protection": {
+    "frozen_test_gate_sources": 750,
+    "protected_artifacts": 752,
+    "original_manifest_nodes": 9151,
+    "adoption_sources": 61,
+    "existing_test_gate_sources": 1118,
+    "differences": [],
+    "local_connection_guard_bytes_excluding_terminal_newline": 2117,
+    "local_connection_guard_sha256": "cf09275f969550d59515fb34a3613f4264359599d8d7b00daeb39770d7eed0fa",
+    "local_connection_guard_equal_to_874": true
+  },
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "stage_5f87_reports_unchanged": true,
+  "receipts": {
+    "nav-intent-collection-final-r1": {
+      "path": "docs/delivery/v2-development/nav-intent-collection-final-r1.json",
+      "head_at_run": "5f87b9dfa550cd870975cd5a24b89ef05a5d3236",
+      "status": "PASS",
+      "source_count": 2305,
+      "before_after_current_equal": true,
+      "log_sha256": "87de8eac0065f785ca89704a1e506fdc74ee743b43ebf41e903bc3b581788ac5",
+      "receipt_sha256": "f5487459f1ec47db50b1c2088be9eee7d5dfb65dfa191d56f9395ef5d91c8a57"
+    },
+    "nav-intent-collection-confirmation-r1": {
+      "path": "docs/delivery/v2-development/nav-intent-collection-confirmation-r1.json",
+      "head_at_run": "5f87b9dfa550cd870975cd5a24b89ef05a5d3236",
+      "status": "PASS",
+      "source_count": 2305,
+      "before_after_current_equal": true,
+      "log_sha256": "5c755928b2b728f12ebce4497bfb111e5da2c0f8a6650352c3dce624cc33462c",
+      "receipt_sha256": "8a2eb8c1397a71960ef82b1ed61b13745fde27f5407c37b0b96cdbe8e87bb841"
+    },
+    "nav-intent-ci-selfchecks-final-r2": {
+      "path": "docs/delivery/v2-development/nav-intent-ci-selfchecks-final-r2.json",
+      "head_at_run": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+      "status": "PASS",
+      "source_count": 2305,
+      "before_after_current_equal": true,
+      "log_sha256": "2b21b4b22f5b79873dbc19ed40d563ca6c6b782f319368827bc35cb77201175b",
+      "receipt_sha256": "0bec6dafb48a49ceeb43430f037bc479f808de6924c1612b906ebf65fd734817"
+    },
+    "nav-intent-src-final-r1": {
+      "path": "docs/delivery/v2-development/nav-intent-src-final-r1.json",
+      "head_at_run": "5f87b9dfa550cd870975cd5a24b89ef05a5d3236",
+      "status": "PASS",
+      "source_count": 2305,
+      "before_after_current_equal": true,
+      "log_sha256": "bd99e0ea3ada21f1cc0f4718fc1a20ee4040c56b4dc02eb0a1ed735144a6c1f8",
+      "receipt_sha256": "928e2a34b51fb6a285289cd1f62be00427a8a1d3a2aecd9ae74926b55e50b8bc"
+    },
+    "nav-intent-build-final-r1": {
+      "path": "docs/delivery/v2-development/nav-intent-build-final-r1.json",
+      "head_at_run": "5f87b9dfa550cd870975cd5a24b89ef05a5d3236",
+      "status": "PASS",
+      "source_count": 2305,
+      "before_after_current_equal": true,
+      "log_sha256": "7e1e3807a207d3ff008886e9d0923d5870e3efe491d63b81240c0e25e4eaa046",
+      "receipt_sha256": "b48cca24b7f6a1c106ddacef5869fbdfabeabb8c7a093efdc83e0f93c6db9fe7"
+    },
+    "nav-intent-visual-final-r1": {
+      "path": "docs/delivery/v2-development/nav-intent-visual-final-r1.json",
+      "head_at_run": "5f87b9dfa550cd870975cd5a24b89ef05a5d3236",
+      "status": "PASS",
+      "source_count": 2305,
+      "before_after_current_equal": true,
+      "log_sha256": "029ead7b14b1afe0c159817898360e01b82590bf7334208ece9bbc3cfc98097a",
+      "receipt_sha256": "ec730578de36185baf4da83ad798b0bb4ef8e526689b2637fc2442cab1b2f1e7"
+    },
+    "nav-intent-tokens-final-r1": {
+      "path": "docs/delivery/v2-development/nav-intent-tokens-final-r1.json",
+      "head_at_run": "5f87b9dfa550cd870975cd5a24b89ef05a5d3236",
+      "status": "PASS",
+      "source_count": 2305,
+      "before_after_current_equal": true,
+      "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b",
+      "receipt_sha256": "df68974807a938d0d9e54f50addfc7539951a06195930eb23293681b48836aa8"
+    },
+    "nav-intent-browser-file-final-r1": {
+      "path": "docs/delivery/v2-development/nav-intent-browser-file-final-r1.json",
+      "head_at_run": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+      "status": "PASS",
+      "source_count": 2305,
+      "before_after_current_equal": true,
+      "log_sha256": "6c1fec4ad8c3a8b6fe9d78389564873c58436163fa9bbad309a5e90b51cf0315",
+      "receipt_sha256": "e504833c0717bc64ced05bdfc39a86680619fefde2ac5dd6ca371e707a385cbb"
+    },
+    "nav-intent-browser-pg-final-r1": {
+      "path": "docs/delivery/v2-development/nav-intent-browser-pg-final-r1.json",
+      "head_at_run": "7893cd027433e165b4035eac0f744c27cb93310a",
+      "status": "PASS",
+      "source_count": 2305,
+      "before_after_current_equal": true,
+      "log_sha256": "8170e573c44944da30cccde6a0d7263314228ec80dd332182a09b801446c6014",
+      "receipt_sha256": "26e342081afaac9cde777b91bad38b8986af5870dad6c62752b4a8abd6647c26"
+    }
+  },
+  "browsers": {
+    "file": {
+      "status": "PASS",
+      "stats": {
+        "startTime": "2026-10-16T19:00:20.867Z",
+        "duration": 39594.884,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "viewport": "navigation-intent-1366x768",
+          "case": "core",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 5,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 0,
+          "DOM_records": 5,
+          "ordinary_capability_false_reads": 4,
+          "owner_scope_incarnation_version_verified": 3,
+          "decoded_sha256": "b4690bd04559b5b31d59c04fc823f27d6fd5beca64e33c42d99f98efacc3cbac"
+        },
+        {
+          "viewport": "navigation-intent-1366x768",
+          "case": "scope",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 2,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 2,
+          "DOM_records": 4,
+          "ordinary_capability_false_reads": 7,
+          "owner_scope_incarnation_version_verified": 4,
+          "decoded_sha256": "73d3a93b48315b5288340caf60434452fd7a60d62cab7a9da490433c648ac991"
+        },
+        {
+          "viewport": "navigation-intent-1440x900",
+          "case": "core",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 5,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 0,
+          "DOM_records": 5,
+          "ordinary_capability_false_reads": 4,
+          "owner_scope_incarnation_version_verified": 3,
+          "decoded_sha256": "d418cf15237bba1509bb949e9d353fea3727165f5d559025b9fb9ff23c35c449"
+        },
+        {
+          "viewport": "navigation-intent-1440x900",
+          "case": "scope",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 2,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 2,
+          "DOM_records": 4,
+          "ordinary_capability_false_reads": 7,
+          "owner_scope_incarnation_version_verified": 4,
+          "decoded_sha256": "5780a23bc7afa09aa3109e02fc247b7ce5a918d3d6caf0850832c08cedfc1394"
+        },
+        {
+          "viewport": "navigation-intent-1920x1080",
+          "case": "core",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 5,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 0,
+          "DOM_records": 5,
+          "ordinary_capability_false_reads": 4,
+          "owner_scope_incarnation_version_verified": 3,
+          "decoded_sha256": "6b1b30f3c05830f21b98e367ca7735bf2e4e3cb3c3c92e1f42ada67cda766838"
+        },
+        {
+          "viewport": "navigation-intent-1920x1080",
+          "case": "scope",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 2,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 2,
+          "DOM_records": 4,
+          "ordinary_capability_false_reads": 7,
+          "owner_scope_incarnation_version_verified": 4,
+          "decoded_sha256": "1e010279ec3d68124390800c68f77ba0f7c00008f238293816a4e092450fbe12"
+        }
+      ],
+      "launcher": {
+        "storage_backend": "file",
+        "database_identity": null,
+        "identity_owner": "LocalSessionBootstrap",
+        "asset_storage_owner": "original File AssetLibraryService",
+        "backend_process": "ordinary uvicorn app.main:app",
+        "production_literal_gate": false,
+        "production_gate_override": false,
+        "production_environment_toggle": false,
+        "gate_source_sha256": "a35c5a392fec0bc38446752e0c44cf79a3853edda7b5ce3fc40e2d58e78d8089",
+        "development_sessions": false,
+        "response_mocks": false,
+        "model_provider_mock": false,
+        "latency_schedule": "real GET request dispatch held, then route.continue",
+        "request_not_dispatched_until_release": true,
+        "model_execution": "NOT_REQUESTED",
+        "model_counter": "NOT_INSTRUMENTED",
+        "health_storage": "file",
+        "playwright_exit": 0,
+        "owned_vite_pid": 79756,
+        "owned_vite_stopped": true,
+        "owned_backend_pid": 85016,
+        "owned_backend_stopped": true,
+        "gate_source_unchanged": true
+      },
+      "artifacts_sha256": {
+        "backend.stderr.log": "c65ca1a41c665acca5a938a7a883c6f4839c031c9cc5373e2932c4b25a82d56c",
+        "backend.stdout.log": "865f9eb67f8ef8669ccf87b03824a813729ed7f918ff523c343bbd223fb6a3e9",
+        "junit.xml": "3c4e2d4e166d4accf0f2d05eece2859078511d4c87fdbd7eccb6ebab17b4a63d",
+        "launcher.json": "22f512b54ccb9cb3eeeff483ad2de5d8f96efe66aa637e2c55b0a1229c26c982",
+        "playwright.log": "6d0f692cfe5094c18b2b166a85b3c821fdfb1444ff68e818b1645bd52bb8f0d0",
+        "results.json": "0ba49807790cc88bf87095e50a2f5f859c42c351d9057433d284262f07750121",
+        "vite.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "vite.stdout.log": "ccc2195c027fc7f867b1cb0a20a8d3d3b4b9c666ec002a9cff2a572e5e2fb6a4"
+      }
+    },
+    "pg": {
+      "status": "PASS",
+      "stats": {
+        "startTime": "2026-10-16T19:01:24.728Z",
+        "duration": 514757.084,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "viewport": "navigation-intent-1366x768",
+          "case": "core",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 5,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 0,
+          "DOM_records": 5,
+          "ordinary_capability_false_reads": 4,
+          "owner_scope_incarnation_version_verified": 3,
+          "decoded_sha256": "51cf3f6184538125510dce3fcc5453e023a159c7b2b3dbf0a0c7f78b2f9b19bc"
+        },
+        {
+          "viewport": "navigation-intent-1366x768",
+          "case": "scope",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 2,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 2,
+          "DOM_records": 4,
+          "ordinary_capability_false_reads": 7,
+          "owner_scope_incarnation_version_verified": 4,
+          "decoded_sha256": "064f1a8e608247d1c187e0d5a98a135ac52d928965df512ccc4aba064d46d15d"
+        },
+        {
+          "viewport": "navigation-intent-1440x900",
+          "case": "core",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 5,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 0,
+          "DOM_records": 5,
+          "ordinary_capability_false_reads": 4,
+          "owner_scope_incarnation_version_verified": 3,
+          "decoded_sha256": "1ffd4a2ae0326f6327eecd3940e51dcbe24d7d07f8c63f1eb018a1fe5ebcf7a7"
+        },
+        {
+          "viewport": "navigation-intent-1440x900",
+          "case": "scope",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 2,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 2,
+          "DOM_records": 4,
+          "ordinary_capability_false_reads": 7,
+          "owner_scope_incarnation_version_verified": 4,
+          "decoded_sha256": "e4c9ec5886b561c70c97c3fa4856ac87fd63ba0fc6e02e12df693cda0bf8e6f1"
+        },
+        {
+          "viewport": "navigation-intent-1920x1080",
+          "case": "core",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 5,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 0,
+          "DOM_records": 5,
+          "ordinary_capability_false_reads": 4,
+          "owner_scope_incarnation_version_verified": 3,
+          "decoded_sha256": "772ed506d2a16de5f8d78bdc004ad239850485dde05056e45f26dacc23a60c06"
+        },
+        {
+          "viewport": "navigation-intent-1920x1080",
+          "case": "scope",
+          "status": "passed",
+          "raw_attachment_equals_decoded": true,
+          "raw_http_200_bodies_rehashed": 2,
+          "intent_marked_actual_http200": 2,
+          "scheduled_old_scope_cancels": 2,
+          "DOM_records": 4,
+          "ordinary_capability_false_reads": 7,
+          "owner_scope_incarnation_version_verified": 4,
+          "decoded_sha256": "0ec430e3f3ea04cdd090b4b9619535531ec9db89faeb9965bb4cf21ac8ecdb84"
+        }
+      ],
+      "launcher": {
+        "storage_backend": "postgres",
+        "database_identity": {
+          "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+          "database": "v2_navigation_intent_browser_20261017_final_r1",
+          "host": "127.0.0.1",
+          "port": 50678,
+          "database_oid": 28822
+        },
+        "identity_owner": "LocalSessionBootstrap",
+        "asset_storage_owner": "original File AssetLibraryService",
+        "backend_process": "ordinary uvicorn app.main:app",
+        "production_literal_gate": false,
+        "production_gate_override": false,
+        "production_environment_toggle": false,
+        "gate_source_sha256": "a35c5a392fec0bc38446752e0c44cf79a3853edda7b5ce3fc40e2d58e78d8089",
+        "development_sessions": false,
+        "response_mocks": false,
+        "model_provider_mock": false,
+        "latency_schedule": "real GET request dispatch held, then route.continue",
+        "request_not_dispatched_until_release": true,
+        "model_execution": "NOT_REQUESTED",
+        "model_counter": "NOT_INSTRUMENTED",
+        "health_storage": "postgres",
+        "playwright_exit": 0,
+        "owned_vite_pid": 79188,
+        "owned_vite_stopped": true,
+        "owned_backend_pid": 85524,
+        "owned_backend_stopped": true,
+        "gate_source_unchanged": true
+      },
+      "artifacts_sha256": {
+        "backend.stderr.log": "4a7371b96519c744d8d1c44a40d814376aeb171e711c50b9ec3083372f3c73da",
+        "backend.stdout.log": "e72fe2c2382f6f71364dbad4048a8a1a3bb26bd1f576093360358ca374add591",
+        "junit.xml": "389b6d0dee6c915cd1b5ede766b9b6743c372dddcfda4ba6fed325c60ef63e28",
+        "launcher.json": "42dbca9d0cd0380735a3e378712ad033d459a33876c7a0be4036738422a106cf",
+        "playwright.log": "d4daf1774c21cae35080c1dec21bc7fa10e8ce26e3a693368c539166aa454675",
+        "results.json": "b7757d7b4f53bf6253b46ea3bbda4c56f91996b188725ae46805f956fe301c4f",
+        "vite.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "vite.stdout.log": "627f583c50d94e40d8d85f208da95a0f8957e9d0ff207c9cc9b01d6a5d6ee703"
+      }
+    }
+  },
+  "fresh_pg": {
+    "database": "v2_navigation_intent_browser_20261017_final_r1",
+    "oid": 28822,
+    "migrations": 20,
+    "empty_before_migrations": true,
+    "server_stop": "stopped",
+    "cleanup_status": "completed"
+  },
+  "cleanup": {
+    "utc": "2026-10-16T19:10:21.747431+00:00",
+    "postgres_status_exit": 3,
+    "postgres_status_stdout": "pg_ctl: no server running",
+    "postgres_running": false,
+    "ports": {
+      "8138": {
+        "connectable": false
+      },
+      "5208": {
+        "connectable": false
+      },
+      "50678": {
+        "connectable": false
+      }
+    },
+    "listeners": [],
+    "owned_final_process_workers_remaining": [],
+    "owned_launchers": {
+      "file": {
+        "owned_vite_pid": 79756,
+        "owned_vite_stopped": true,
+        "owned_backend_pid": 85016,
+        "owned_backend_stopped": true
+      },
+      "pg": {
+        "owned_vite_pid": 79188,
+        "owned_vite_stopped": true,
+        "owned_backend_pid": 85524,
+        "owned_backend_stopped": true
+      }
+    },
+    "retained_paths": {
+      ".runtime\\retirement-pg\\data": true,
+      ".runtime\\v2-checks\\nav-intent-browser-file-final-r1": true,
+      ".runtime\\v2-checks\\nav-intent-browser-pg-final-r1": true,
+      ".runtime\\nav-intent-browser-file-final-r1": true,
+      ".runtime\\nav-intent-browser-pg-final-r1": true
+    }
+  },
+  "screenshots": {
+    "count": 54,
+    "all_sha256_verified": true,
+    "index": "final-browser-screenshots.json",
+    "pixel_review": "director owner; independent auditor verified raw files and actual DOM evidence"
+  },
+  "production_adoption_gate": false,
+  "limits": [
+    "No additional tests, browser, PG or collection executed by final auditor.",
+    "Cross-scope old requests were canceled; standalone owner readback is not old callback delivery.",
+    "Timing gate holds request dispatch before server receipt, then original route.continue; no response fabrication.",
+    "Extra unmarked gate rows include possible hydration aborts, child reads and invalidations; gate origin is a phase label.",
+    "Model execution NOT_REQUESTED; model counter NOT_INSTRUMENTED.",
+    "No all-V1-runtime or hosted-CI success claim and no aggregate unique test count."
+  ]
+}

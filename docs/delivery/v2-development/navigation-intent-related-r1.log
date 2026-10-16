@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/ui/AppShell.test.tsx (19 tests) 184ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 2701ms
+ ✓ src/AppModuleNavigationIntent.test.tsx (28 tests) 2058ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests) 846ms
+ ✓ src/AppWorkspaceResume.test.tsx (33 tests) 3781ms
+ ✓ src/AppLocalEntryAuthorityRace.test.tsx (4 tests) 587ms
+ ✓ src/interop/entryScopeReview.test.tsx (1 test) 123ms
+
+ Test Files  7 passed (7)
+      Tests  122 passed (122)
+   Start at  02:55:50
+   Duration  8.98s (transform 2.42s, setup 115ms, collect 7.82s, tests 10.28s, environment 3.01s, prepare 408ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-navigation-intent-20261017/navigation-intent-related-r1.vitest.json

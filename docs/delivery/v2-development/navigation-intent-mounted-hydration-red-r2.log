@@ -1,0 +1,377 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ❯ src/AppModuleNavigationIntent.test.tsx (25 tests | 2 failed) 2732ms
+   × App module navigation during delayed original overview > preserves a cold-entry NOVEL click and its callback when the original bootstrap first resolves actor 51ms
+     → expected 'false' to be 'true' // Object.is equality
+   × App module navigation during delayed original overview > rejects a pre-switch callback even when A to B to A is batched without an intermediate render 1022ms
+     → expected 1 to be greater than 1
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<output[39m
+        [33maria-label[39m=[32m"Original overview queries pending"[39m
+      [36m>[39m
+        [0m1[0m
+      [36m</output>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-shell"[39m
+        [33mdata-module[39m=[32m"NOVEL"[39m
+        [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"global-header"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"AI Novel Studio"[39m
+            [33mclass[39m=[32m"product-mark"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 8h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 8h2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__name"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0mAI Novel[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0mStudio[0m
+              [36m</small>[39m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"创作模块"[39m
+            [33mclass[39m=[32m"module-switcher"[39m
+            [33mrole[39m=[32m"tablist"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"true"[39m
+              [33mclass[39m=[32m"is-active"[39m
+              [33mdata-module-tab[39m=[32m"NOVEL"[39m
+              [33mid[39m=[32m"module-tab-novel"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m小说[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"IMAGE"[39m
+              [33mid[39m=[32m"module-tab-image"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-image"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"2"[39m
+                  [33mry[39m=[32m"2"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"9"[39m
+                  [33mcy[39m=[32m"9"[39m
+                  [33mr[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m图片[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"VIDEO"[39m
+              [33mid[39m=[32m"module-tab-video"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-video"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+               ...
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 passed (25)
+   Start at  02:53:52
+   Duration  6.14s (transform 1.83s, setup 10ms, collect 2.82s, tests 2.73s, environment 388ms, prepare 52ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-navigation-intent-20261017/navigation-intent-mounted-hydration-red-r2.vitest.json
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > preserves a cold-entry NOVEL click and its callback when the original bootstrap first resolves actor
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ selected src/AppModuleNavigationIntent.test.tsx:57:83
+     55| }
+     56| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     57| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+       |                                                                                   ^
+     58| async function request(index = 0) { await waitFor(() => expect(held.le…
+     59| async function release(row: HeldOverview, settleCurrent = true, value …
+ ❯ src/AppModuleNavigationIntent.test.tsx:181:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > rejects a pre-switch callback even when A to B to A is batched without an intermediate render
+AssertionError: expected 1 to be greater than 1
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<output[39m
+        [33maria-label[39m=[32m"Original overview queries pending"[39m
+      [36m>[39m
+        [0m1[0m
+      [36m</output>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-shell"[39m
+        [33mdata-module[39m=[32m"NOVEL"[39m
+        [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"global-header"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"AI Novel Studio"[39m
+            [33mclass[39m=[32m"product-mark"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 8h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 8h2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__name"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0mAI Novel[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0mStudio[0m
+              [36m</small>[39m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"创作模块"[39m
+            [33mclass[39m=[32m"module-switcher"[39m
+            [33mrole[39m=[32m"tablist"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"true"[39m
+              [33mclass[39m=[32m"is-active"[39m
+              [33mdata-module-tab[39m=[32m"NOVEL"[39m
+              [33mid[39m=[32m"module-tab-novel"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m小说[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"IMAGE"[39m
+              [33mid[39m=[32m"module-tab-image"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-image"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"2"[39m
+                  [33mry[39m=[32m"2"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"9"[39m
+                  [33mcy[39m=[32m"9"[39m
+                  [33mr[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m图片[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"VIDEO"[39m
+              [33mid[39m=[32m"module-tab-video"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-video"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+               ...
+ ❯ src/AppModuleNavigationIntent.test.tsx:58:77
+     56| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     57| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+     58| async function request(index = 0) { await waitFor(() => expect(held.le…
+       |                                                                             ^
+     59| async function release(row: HeldOverview, settleCurrent = true, value …
+     60|   await act(async () => row.resolve(response(value)));
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

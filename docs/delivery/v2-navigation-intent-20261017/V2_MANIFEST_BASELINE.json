@@ -1,0 +1,27 @@
+{
+  "utc": "2026-10-16T18:50:40.578173+00:00",
+  "base": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+  "manifest": ".github/ci/coverage_manifest_v2.json.gz",
+  "raw_snapshot": "docs/delivery/v2-navigation-intent-20261017/baseline-coverage-manifest-v2.json.gz",
+  "manifest_sha256": "ceacc0cb2f100dde23ce07a76dd086d27ae3eafbafc1b2499b97a0425a1dc405",
+  "product_nodes": 15142,
+  "source_count": 2363,
+  "ordered_product_nodes_sha256": "b88166e66b8172fffe1fe9a23349a8e66842388fe91ccadd453b356ab7e3c4c6",
+  "classification_sha256": "e7e543708b0ac8ebd1f81f77262a4afa6503d222af2b2e0ad9e71d6a749754d6",
+  "adoption_sources": 61,
+  "tests_executed": false,
+  "collector_run": false,
+  "product_source_edited": false,
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "historical_skips_canonical_sha256": "08393a038bb12bc6ea8a71f17e251842fbc69194b4830486893366d00162f5c3",
+  "historical_skips_counts": {
+    "file": 2035,
+    "postgres": 2059
+  },
+  "external_gates_canonical_sha256": "cceed4261b5767968cb547884df11ec033ef7cdaec665a1b488b3927d67e6ff6",
+  "external_gates_counts": {
+    "file": 2,
+    "postgres": 0
+  },
+  "complete_skip_and_gate_maps_retained_in_raw_snapshot": true
+}

@@ -1,0 +1,44 @@
+{
+  "status": "PREPARATION_ONLY",
+  "runtime_started": false,
+  "python_compile": "PASS",
+  "typescript": "PASS",
+  "playwright_collection": {
+    "status": "PASS",
+    "nodes": 6,
+    "case_groups": 2,
+    "viewports": [
+      [
+        1366,
+        768
+      ],
+      [
+        1440,
+        900
+      ],
+      [
+        1920,
+        1080
+      ]
+    ]
+  },
+  "retained_preparation_corrections": [
+    {
+      "attempt": "initial static command",
+      "result": "incorrect cwd for Python/source reads; Playwright collection passed; rerun Python from root passed"
+    },
+    {
+      "attempt": "initial isolated TypeScript compile",
+      "result": "config reducedMotion type rejected; corrected only new config to contextOptions.reducedMotion; recheck passed"
+    }
+  ],
+  "files": {
+    "scripts/run_v2_navigation_intent_browser.py": "396340b8d09f2225a51877bcba08d06013739d638cc8b123736e0dfd6ca288c9",
+    "frontend/playwright.navigation-intent-live.config.ts": "e55ff4ec391ac0b6858b2d2ff191cdeac50c806839c1b9c4a3cc75877318a536",
+    "frontend/tests/e2e/v2-navigation-intent-live.spec.ts": "c86109ec58e4230f19f93224bce23963d04ff46bc5f21b50a7f5088020d6b10d"
+  },
+  "response_fabrication": false,
+  "production_gate_override": false,
+  "model_provider_mock": false,
+  "boundary": "Browser explicit module actions follow real bootstrap actor resolution, before held overview dispatch; before-actor hydration and parent ABA are separate mounted App evidence."
+}

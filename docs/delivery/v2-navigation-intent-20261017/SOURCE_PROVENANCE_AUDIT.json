@@ -1,0 +1,68 @@
+{
+  "utc": "2026-10-16T19:03:55.901121+00:00",
+  "status": "SOURCE_PROTECTION_AND_INVENTORY_PASS",
+  "round_base": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+  "head_at_check": "5f87b9dfa550cd870975cd5a24b89ef05a5d3236",
+  "head_byte_binding": "DEFERRED by root; browser files/manifest may not be committed yet",
+  "collector_source_edited": false,
+  "collector_or_test_execution": "Two original complete --collect-only inventories; original CI166 receipt reviewed separately; no new product/browser/PG run by auditor",
+  "runtime_source_count": 2305,
+  "runtime_source_map_canonical_compact_sha256": "73cc97473c56824881b0274d19783152d161e7547680c0401009225058bf78da",
+  "runtime_source_map_canonical_default_sha256": "d8812da644111d1b49f2aebc5f1f855c627faa3934fb5305243892b3283e3875",
+  "manifest_source_count": 2367,
+  "manifest_working_sha256_mismatches": [],
+  "all_existing_15142_rows_and_classifications_equal": true,
+  "adoption_original_source_count": 61,
+  "adoption_source_differences": [],
+  "original_test_gate_source_count": 1118,
+  "original_test_gate_source_differences": [],
+  "local_connection_guard": {
+    "authorized_whole_App_changed": true,
+    "original_guard_raw_bytes": 2117,
+    "original_guard_sha256": "cf09275f969550d59515fb34a3613f4264359599d8d7b00daeb39770d7eed0fa",
+    "candidate_guard_raw_equal": true
+  },
+  "protection_report": "protection-final.json",
+  "original_helper_sha256": "823e6d64cea9bc54d08bc04b69f5cca9710a99b07558b71df9ccee302a7c488d",
+  "original_helper_unchanged": true,
+  "receipts": {
+    "nav-intent-collection-final-r1": {
+      "status": "PASS",
+      "exit_code": 0,
+      "head_at_run": "5f87b9dfa550cd870975cd5a24b89ef05a5d3236",
+      "source_count": 2305,
+      "source_map_equals_current": true,
+      "source_drift": false,
+      "log": "docs/delivery/v2-development/nav-intent-collection-final-r1.log",
+      "log_sha256": "87de8eac0065f785ca89704a1e506fdc74ee743b43ebf41e903bc3b581788ac5"
+    },
+    "nav-intent-collection-confirmation-r1": {
+      "status": "PASS",
+      "exit_code": 0,
+      "head_at_run": "5f87b9dfa550cd870975cd5a24b89ef05a5d3236",
+      "source_count": 2305,
+      "source_map_equals_current": true,
+      "source_drift": false,
+      "log": "docs/delivery/v2-development/nav-intent-collection-confirmation-r1.log",
+      "log_sha256": "5c755928b2b728f12ebce4497bfb111e5da2c0f8a6650352c3dce624cc33462c"
+    },
+    "nav-intent-ci-selfchecks-final-r2": {
+      "status": "PASS",
+      "exit_code": 0,
+      "head_at_run": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+      "source_count": 2305,
+      "source_map_equals_current": true,
+      "source_drift": false,
+      "log": "docs/delivery/v2-development/nav-intent-ci-selfchecks-final-r2.log",
+      "log_sha256": "2b21b4b22f5b79873dbc19ed40d563ca6c6b782f319368827bc35cb77201175b"
+    }
+  },
+  "candidate_source_sha256": {
+    "frontend/src/App.tsx": "ab211c5c61014ab617fcd3e320a03cfd7b92467f419ce9bf45e0ae5b78200bf3",
+    "frontend/playwright.navigation-intent-live.config.ts": "e55ff4ec391ac0b6858b2d2ff191cdeac50c806839c1b9c4a3cc75877318a536",
+    "frontend/src/AppModuleNavigationIntent.test.tsx": "99bd7e33b7595eae8638cb8cc9ae7994d55380fd8a59106b648731c433f5e710",
+    "frontend/tests/e2e/v2-navigation-intent-live.spec.ts": "59a63c11cbfa9c10fdbc754850e93dbd0f2c7aacf5d7ebd22d5d0315e8aaab48",
+    "scripts/run_v2_navigation_intent_browser.py": "396340b8d09f2225a51877bcba08d06013739d638cc8b123736e0dfd6ca288c9"
+  },
+  "runtime_browser_acceptance": "File6 reported and raw attachments under independent review; PG6 pending; no final runtime PASS inferred here"
+}

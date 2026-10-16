@@ -1,0 +1,134 @@
+[
+  {
+    "backend": "file",
+    "project": "navigation-intent-1366x768",
+    "case": "core",
+    "status": "passed",
+    "path": "decoded/file-navigation-intent-1366x768-core.json",
+    "sha256": "b4690bd04559b5b31d59c04fc823f27d6fd5beca64e33c42d99f98efacc3cbac",
+    "gates": 3,
+    "delivered200": 5,
+    "canceled": 4,
+    "checks": {
+      "passed": true,
+      "no_mock": true,
+      "no_gate_override": true,
+      "no_identity_injection": true,
+      "all_ordinary_capabilities_false": true,
+      "all_raw_body_hashes_match": true,
+      "real_project_ids_match": true,
+      "all_intents_before_continue": true,
+      "no_page_or_cleanup_errors": true
+    }
+  },
+  {
+    "backend": "file",
+    "project": "navigation-intent-1366x768",
+    "case": "scope",
+    "status": "passed",
+    "path": "decoded/file-navigation-intent-1366x768-scope.json",
+    "sha256": "73d3a93b48315b5288340caf60434452fd7a60d62cab7a9da490433c648ac991",
+    "gates": 4,
+    "delivered200": 2,
+    "canceled": 6,
+    "checks": {
+      "passed": true,
+      "no_mock": true,
+      "no_gate_override": true,
+      "no_identity_injection": true,
+      "all_ordinary_capabilities_false": true,
+      "all_raw_body_hashes_match": true,
+      "real_project_ids_match": true,
+      "all_intents_before_continue": true,
+      "no_page_or_cleanup_errors": true
+    }
+  },
+  {
+    "backend": "file",
+    "project": "navigation-intent-1440x900",
+    "case": "core",
+    "status": "passed",
+    "path": "decoded/file-navigation-intent-1440x900-core.json",
+    "sha256": "d418cf15237bba1509bb949e9d353fea3727165f5d559025b9fb9ff23c35c449",
+    "gates": 3,
+    "delivered200": 5,
+    "canceled": 4,
+    "checks": {
+      "passed": true,
+      "no_mock": true,
+      "no_gate_override": true,
+      "no_identity_injection": true,
+      "all_ordinary_capabilities_false": true,
+      "all_raw_body_hashes_match": true,
+      "real_project_ids_match": true,
+      "all_intents_before_continue": true,
+      "no_page_or_cleanup_errors": true
+    }
+  },
+  {
+    "backend": "file",
+    "project": "navigation-intent-1440x900",
+    "case": "scope",
+    "status": "passed",
+    "path": "decoded/file-navigation-intent-1440x900-scope.json",
+    "sha256": "5780a23bc7afa09aa3109e02fc247b7ce5a918d3d6caf0850832c08cedfc1394",
+    "gates": 4,
+    "delivered200": 2,
+    "canceled": 6,
+    "checks": {
+      "passed": true,
+      "no_mock": true,
+      "no_gate_override": true,
+      "no_identity_injection": true,
+      "all_ordinary_capabilities_false": true,
+      "all_raw_body_hashes_match": true,
+      "real_project_ids_match": true,
+      "all_intents_before_continue": true,
+      "no_page_or_cleanup_errors": true
+    }
+  },
+  {
+    "backend": "file",
+    "project": "navigation-intent-1920x1080",
+    "case": "core",
+    "status": "passed",
+    "path": "decoded/file-navigation-intent-1920x1080-core.json",
+    "sha256": "6b1b30f3c05830f21b98e367ca7735bf2e4e3cb3c3c92e1f42ada67cda766838",
+    "gates": 3,
+    "delivered200": 5,
+    "canceled": 4,
+    "checks": {
+      "passed": true,
+      "no_mock": true,
+      "no_gate_override": true,
+      "no_identity_injection": true,
+      "all_ordinary_capabilities_false": true,
+      "all_raw_body_hashes_match": true,
+      "real_project_ids_match": true,
+      "all_intents_before_continue": true,
+      "no_page_or_cleanup_errors": true
+    }
+  },
+  {
+    "backend": "file",
+    "project": "navigation-intent-1920x1080",
+    "case": "scope",
+    "status": "passed",
+    "path": "decoded/file-navigation-intent-1920x1080-scope.json",
+    "sha256": "1e010279ec3d68124390800c68f77ba0f7c00008f238293816a4e092450fbe12",
+    "gates": 4,
+    "delivered200": 2,
+    "canceled": 6,
+    "checks": {
+      "passed": true,
+      "no_mock": true,
+      "no_gate_override": true,
+      "no_identity_injection": true,
+      "all_ordinary_capabilities_false": true,
+      "all_raw_body_hashes_match": true,
+      "real_project_ids_match": true,
+      "all_intents_before_continue": true,
+      "no_page_or_cleanup_errors": true
+    }
+  }
+]

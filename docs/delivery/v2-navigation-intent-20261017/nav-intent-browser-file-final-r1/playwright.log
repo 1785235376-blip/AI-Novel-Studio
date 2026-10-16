@@ -1,0 +1,23 @@
+
+Running 6 tests using 1 worker
+
+(node:59612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:59612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 1 [navigation-intent-1366x768] › tests\e2e\v2-navigation-intent-live.spec.ts:246:1 › cold same-value NOVEL and reloaded rapid intent survive the real late parent overview; no intent defaults IMAGE (6.6s)
+  ok 2 [navigation-intent-1366x768] › tests\e2e\v2-navigation-intent-live.spec.ts:297:1 › original scope cancellation isolates old project and branch child overview from the new explicit workbench (6.6s)
+(node:81364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:81364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 3 [navigation-intent-1440x900] › tests\e2e\v2-navigation-intent-live.spec.ts:246:1 › cold same-value NOVEL and reloaded rapid intent survive the real late parent overview; no intent defaults IMAGE (4.9s)
+  ok 4 [navigation-intent-1440x900] › tests\e2e\v2-navigation-intent-live.spec.ts:297:1 › original scope cancellation isolates old project and branch child overview from the new explicit workbench (6.7s)
+(node:75220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:75220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 5 [navigation-intent-1920x1080] › tests\e2e\v2-navigation-intent-live.spec.ts:246:1 › cold same-value NOVEL and reloaded rapid intent survive the real late parent overview; no intent defaults IMAGE (5.1s)
+  ok 6 [navigation-intent-1920x1080] › tests\e2e\v2-navigation-intent-live.spec.ts:297:1 › original scope cancellation isolates old project and branch child overview from the new explicit workbench (6.8s)
+
+  6 passed (39.6s)

@@ -1,0 +1,12 @@
+{
+  "attempt": "nav-intent-ci-selfchecks-final-r1",
+  "status": "LAUNCH_ERROR_BEFORE_PYTEST",
+  "tool_exit_code": 1,
+  "requested_child_argv": ["-m", "pytest", "-q", "-p", "no:cacheprovider", ".github/ci/test_suite_coverage.py", ".github/ci/test_coverage_reconcile.py", ".github/ci/test_v2_manifest_extension.py", "--basetemp", ".runtime/v2-checks/nav-intent-ci-selfchecks-final-r1/pytest"],
+  "error": "FileNotFoundError: [WinError 2] 系统找不到指定的文件。",
+  "trace_location": "scripts/run_v2_checks.py:121 subprocess.run(command, cwd=root, env=env, text=True)",
+  "cause": "The orchestrator omitted the Python executable from the child argv. No pytest process or tests started; the original runner did not emit a receipt.",
+  "correction": "New attempt nav-intent-ci-selfchecks-final-r2 explicitly uses the original pinned Python executable; no product or test source change.",
+  "test_pass_claim": false,
+  "original_attempt_overwritten": false
+}

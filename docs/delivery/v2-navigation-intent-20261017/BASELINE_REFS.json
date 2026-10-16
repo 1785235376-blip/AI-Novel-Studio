@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-16T18:50:40.478802+00:00",
+  "base": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+  "local_head": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+  "remote_refs": {
+    "refs/heads/feature/v2-narrative-platform": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+    "refs/heads/main": "fed2404c8e30b44061b7139dced45b7f3301601c",
+    "refs/heads/work/dot-astra-v1-rc-r2": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
+    "refs/pull/47/head": "87408f6881fd2dc2f22038c36643ed2e0a743f33"
+  },
+  "pr": {
+    "number": 47,
+    "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/47",
+    "state": "open",
+    "draft": true,
+    "head_sha": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+    "head_ref": "feature/v2-narrative-platform",
+    "base_ref": "main",
+    "base_sha": "fed2404c8e30b44061b7139dced45b7f3301601c"
+  },
+  "status": "BASELINE_REFS_CONFIRMED"
+}

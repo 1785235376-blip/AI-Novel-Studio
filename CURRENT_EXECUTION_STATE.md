@@ -313,3 +313,24 @@ PR保持Draft，main/V1 frozen refs未动，完整V2仍PARTIAL，非freeze/RC。
 
 自有API/Vite/PG已停止，失败/通过回执、截图、profile和数据库保留。上一轮跨进程24/PG103仅历史证据。
 后续需解除外部账单锁并重跑最终HEAD托管CI，继续原全V2验收；生产adoption闸门继续关闭。
+
+
+<!-- V2-NAVIGATION-INTENT-20261017 -->
+## 2026-10-17 — 初始化早期导航竞态修复检查点
+
+本节追加事实并保留全部历史。基于87408f6，原App晚到overview覆盖用户模块选择的问题已修复；此前“仍未修复”的记录为旧状态。
+稳定切片逐个提交并推送PR #47，实现/清单HEAD `7893cd027433e165b4035eac0f744c27cb93310a`；本节和原始证据独立提交。
+PR仍Draft/open，main/V1 frozen refs未动，完整V2仍PARTIAL、非freeze/RC。生产adoption literal False继续关闭，本轮普通后端未patch gate。
+详见[最终导航验收](docs/delivery/v2-navigation-intent-20261017/V2_NAVIGATION_INTENT_ROUND_REPORT.md)。
+
+| 范围 | 当前结果 |
+| --- | --- |
+| 原App owner | 同值NOVEL/真实Creative入口也记录intent；首次actor解析保留当前选择，真实身份/范围与ABA隔离旧callback；旧asset hint不跨entry。原连接guard不变。 |
+| 真实File/PG Edge | 各6 passed/0skip/0flaky，3视口覆盖冷启动、刷新、快速切换、默认IMAGE与跨project/branch；PG新空库OID28822、原20迁移。 |
+| 时序真实性 | 精确原GET client dispatch held→真实UI点击→continue原200；跨scope旧子GET真实abort，standalone owner readback另记。before-actor点击/parentABA/localhint仅mounted证明。 |
+| 前端 | 新34mounted、相关128包含新34；完整src4242 passed/6既有skip/0failed，391文件；tsc/build PASS、原visual7 PASS、token52文件PASS。 |
+| 来源/清单 | 2305 runner源、2367manifest输入与HEAD raw bytes绑定；双collection15142原rows/order/classification保持，INVENTORY_ONLY；166原CI自检PASS。 |
+| 冻结保护 | 750 frozen test/gate、752产物、9151manifest、1118既有test/gate、61adoption源和原connectionguard原字节保留；不是全V1 runtime声明。 |
+| Hosted/总体 | GitHub账单锁使job steps为空，单独BLOCKED；完整V2 PARTIAL。生产adoption、installer/clean-machine、真实模型/GPU及原全链路边界继续保留。 |
+
+自有API/Vite/PG已停止，所有失败/通过证据、profile与数据库保留；未递归清理或宣称磁盘回收。待账单锁解除后重跑最终HEAD hosted CI；生产adoption闸门继续关闭。

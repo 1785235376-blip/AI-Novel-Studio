@@ -1,0 +1,1231 @@
+{
+  "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+  "latency_schedule": "client GET dispatch gate then original route.continue",
+  "request_not_dispatched_until_release": true,
+  "response_mocks": false,
+  "identity_injection": false,
+  "production_gate_override": false,
+  "model_execution": "NOT_REQUESTED",
+  "model_counter": "NOT_INSTRUMENTED",
+  "records": [
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+      "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+      "write_enabled": false
+    },
+    {
+      "phase": "original_bootstrap_actor_resolved",
+      "url": "http://127.0.0.1:5208/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/bootstrap",
+      "status": 200,
+      "actor_id": "local-author",
+      "scope": {
+        "workspace_id": "workspace-a",
+        "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+        "storyline_id": "7100942f-8c46-4454-b0ff-a56ef087e002",
+        "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a"
+      },
+      "response_body_sha256": "b574fea94d2cfa83f3cc0ff5aa9f856cbc6cd8eb2e652691d8ce5c294a0e94cf"
+    },
+    {
+      "phase": "cold-explicit-novel-overview-held",
+      "source": "original_browser_dom_read_only",
+      "actual_module_tabs": {
+        "小说": "true",
+        "图片": "false",
+        "视频": "false"
+      },
+      "creative_documents_visible": true,
+      "creative_documents_text": "当前阶段文档\n真实导航分镜 冷启动与刷新\nv1 · 1 场景"
+    },
+    {
+      "phase": "cold_explicit_novel_late_parent_applied",
+      "source": "standalone_owner_readback",
+      "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+      "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+      "owner": {
+        "created_at": "2026-10-16T19:00:22.206926+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [],
+        "id": "81f89226-b7e8-4bca-9f31-eea2dcbbb197",
+        "mode": "STORYBOARD",
+        "novel_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+        "provenance": {
+          "input_digest": "399ba6504fe553724eac4da2457b070597bc7943e6a4f9e1dff4cb4eb4d97288",
+          "method": "STRUCTURED_DERIVATION",
+          "model_called": false,
+          "parameters": {
+            "rule_version": "creative-stage-copy-v1"
+          },
+          "quality_verification": "HUMAN_REVIEW_REQUIRED",
+          "source_document_id": "8408e49e-812c-4af1-ad9f-9633228e0b37",
+          "source_mode": "SCREENPLAY",
+          "source_version": 1
+        },
+        "scenes": [
+          {
+            "action": "A visitor arrives.",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. ROOM - DAY",
+            "id": "navigation-intent-real-scene",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "mode": "collaboration",
+          "novel_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "storyline_id": "7100942f-8c46-4454-b0ff-a56ef087e002",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "action": "A visitor arrives.",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "",
+            "id": "227fb66b-011f-4784-9e18-6869cd2f877f",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "navigation-intent-real-scene",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {
+          "8408e49e-812c-4af1-ad9f-9633228e0b37": {
+            "digest": "399ba6504fe553724eac4da2457b070597bc7943e6a4f9e1dff4cb4eb4d97288",
+            "version": 1
+          }
+        },
+        "source_evidence": {},
+        "source_independent": false,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "真实导航分镜 冷启动与刷新",
+        "updated_at": "2026-10-16T19:00:22.206926+00:00",
+        "updated_by": "local-author",
+        "version": 1,
+        "video_plan": null
+      },
+      "overview": {
+        "project": {
+          "id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "title": "导航意图验收 navigation-intent-1366x768 冷启动与刷新",
+          "incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "old_callback_delivery": false
+    },
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+      "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+      "write_enabled": false
+    },
+    {
+      "phase": "cold-late-overview-preserved-real-workbench",
+      "source": "original_browser_dom_read_only",
+      "actual_module_tabs": {
+        "小说": "true",
+        "图片": "false",
+        "视频": "false"
+      },
+      "creative_documents_visible": true,
+      "creative_documents_text": "当前阶段文档\n真实导航分镜 冷启动与刷新\nv1 · 1 场景"
+    },
+    {
+      "phase": "original_bootstrap_actor_resolved",
+      "url": "http://127.0.0.1:5208/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/bootstrap",
+      "status": 200,
+      "actor_id": "local-author",
+      "scope": {
+        "workspace_id": "workspace-a",
+        "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+        "storyline_id": "7100942f-8c46-4454-b0ff-a56ef087e002",
+        "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a"
+      },
+      "response_body_sha256": "b574fea94d2cfa83f3cc0ff5aa9f856cbc6cd8eb2e652691d8ce5c294a0e94cf"
+    },
+    {
+      "phase": "reload-rapid-last-novel-overview-held",
+      "source": "original_browser_dom_read_only",
+      "actual_module_tabs": {
+        "小说": "true",
+        "图片": "false",
+        "视频": "false"
+      },
+      "creative_documents_visible": true,
+      "creative_documents_text": "当前阶段文档\n真实导航分镜 冷启动与刷新\nv1 · 1 场景"
+    },
+    {
+      "phase": "reload_rapid_last_intent_preserved",
+      "source": "standalone_owner_readback",
+      "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+      "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+      "owner": {
+        "created_at": "2026-10-16T19:00:22.206926+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [],
+        "id": "81f89226-b7e8-4bca-9f31-eea2dcbbb197",
+        "mode": "STORYBOARD",
+        "novel_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+        "provenance": {
+          "input_digest": "399ba6504fe553724eac4da2457b070597bc7943e6a4f9e1dff4cb4eb4d97288",
+          "method": "STRUCTURED_DERIVATION",
+          "model_called": false,
+          "parameters": {
+            "rule_version": "creative-stage-copy-v1"
+          },
+          "quality_verification": "HUMAN_REVIEW_REQUIRED",
+          "source_document_id": "8408e49e-812c-4af1-ad9f-9633228e0b37",
+          "source_mode": "SCREENPLAY",
+          "source_version": 1
+        },
+        "scenes": [
+          {
+            "action": "A visitor arrives.",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. ROOM - DAY",
+            "id": "navigation-intent-real-scene",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "mode": "collaboration",
+          "novel_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "storyline_id": "7100942f-8c46-4454-b0ff-a56ef087e002",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "action": "A visitor arrives.",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "",
+            "id": "227fb66b-011f-4784-9e18-6869cd2f877f",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "navigation-intent-real-scene",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {
+          "8408e49e-812c-4af1-ad9f-9633228e0b37": {
+            "digest": "399ba6504fe553724eac4da2457b070597bc7943e6a4f9e1dff4cb4eb4d97288",
+            "version": 1
+          }
+        },
+        "source_evidence": {},
+        "source_independent": false,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "真实导航分镜 冷启动与刷新",
+        "updated_at": "2026-10-16T19:00:22.206926+00:00",
+        "updated_by": "local-author",
+        "version": 1,
+        "video_plan": null
+      },
+      "overview": {
+        "project": {
+          "id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "title": "导航意图验收 navigation-intent-1366x768 冷启动与刷新",
+          "incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "old_callback_delivery": false
+    },
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+      "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+      "write_enabled": false
+    },
+    {
+      "phase": "reload-late-overview-preserved-real-workbench",
+      "source": "original_browser_dom_read_only",
+      "actual_module_tabs": {
+        "小说": "true",
+        "图片": "false",
+        "视频": "false"
+      },
+      "creative_documents_visible": true,
+      "creative_documents_text": "当前阶段文档\n真实导航分镜 冷启动与刷新\nv1 · 1 场景"
+    },
+    {
+      "phase": "original_bootstrap_actor_resolved",
+      "url": "http://127.0.0.1:5208/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/bootstrap",
+      "status": 200,
+      "actor_id": "local-author",
+      "scope": {
+        "workspace_id": "workspace-a",
+        "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+        "storyline_id": "7100942f-8c46-4454-b0ff-a56ef087e002",
+        "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a"
+      },
+      "response_body_sha256": "b574fea94d2cfa83f3cc0ff5aa9f856cbc6cd8eb2e652691d8ce5c294a0e94cf"
+    },
+    {
+      "phase": "no_explicit_intent_default_control",
+      "selected_module": "IMAGE",
+      "module_clicks": 0
+    },
+    {
+      "phase": "no_intent_default_image_owner_unchanged",
+      "source": "standalone_owner_readback",
+      "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+      "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+      "owner": {
+        "created_at": "2026-10-16T19:00:22.206926+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [],
+        "id": "81f89226-b7e8-4bca-9f31-eea2dcbbb197",
+        "mode": "STORYBOARD",
+        "novel_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+        "provenance": {
+          "input_digest": "399ba6504fe553724eac4da2457b070597bc7943e6a4f9e1dff4cb4eb4d97288",
+          "method": "STRUCTURED_DERIVATION",
+          "model_called": false,
+          "parameters": {
+            "rule_version": "creative-stage-copy-v1"
+          },
+          "quality_verification": "HUMAN_REVIEW_REQUIRED",
+          "source_document_id": "8408e49e-812c-4af1-ad9f-9633228e0b37",
+          "source_mode": "SCREENPLAY",
+          "source_version": 1
+        },
+        "scenes": [
+          {
+            "action": "A visitor arrives.",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. ROOM - DAY",
+            "id": "navigation-intent-real-scene",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "mode": "collaboration",
+          "novel_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "storyline_id": "7100942f-8c46-4454-b0ff-a56ef087e002",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "action": "A visitor arrives.",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "",
+            "id": "227fb66b-011f-4784-9e18-6869cd2f877f",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "navigation-intent-real-scene",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {
+          "8408e49e-812c-4af1-ad9f-9633228e0b37": {
+            "digest": "399ba6504fe553724eac4da2457b070597bc7943e6a4f9e1dff4cb4eb4d97288",
+            "version": 1
+          }
+        },
+        "source_evidence": {},
+        "source_independent": false,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "真实导航分镜 冷启动与刷新",
+        "updated_at": "2026-10-16T19:00:22.206926+00:00",
+        "updated_by": "local-author",
+        "version": 1,
+        "video_plan": null
+      },
+      "overview": {
+        "project": {
+          "id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "title": "导航意图验收 navigation-intent-1366x768 冷启动与刷新",
+          "incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "old_callback_delivery": false
+    },
+    {
+      "phase": "ordinary_production_capability",
+      "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+      "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+      "write_enabled": false
+    },
+    {
+      "phase": "no-intent-default-image-positive-control",
+      "source": "original_browser_dom_read_only",
+      "actual_module_tabs": {
+        "小说": "false",
+        "图片": "true",
+        "视频": "false"
+      },
+      "creative_documents_visible": false,
+      "creative_documents_text": null
+    },
+    {
+      "phase": "owned_project_cleanup",
+      "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+      "status": 204
+    }
+  ],
+  "gates": [
+    {
+      "origin": "App studioProject parent after original bootstrap actor resolution",
+      "requests": [
+        {
+          "origin": "App studioProject parent after original bootstrap actor resolution",
+          "url": "http://127.0.0.1:5208/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+          "method": "GET",
+          "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+          "held_at": 1792177225094,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177225124,
+          "continue_at": 1792177225554,
+          "continue_returned": true
+        },
+        {
+          "origin": "App studioProject parent after original bootstrap actor resolution",
+          "url": "http://127.0.0.1:5208/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+          "method": "GET",
+          "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+          "held_at": 1792177225121,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "explicit_intent_at": 1792177225216,
+          "explicit_modules": [
+            "NOVEL_same_value"
+          ],
+          "intent_observed_while_request_held": true,
+          "continue_at": 1792177225554,
+          "continue_returned": true,
+          "status": 200,
+          "response_body_sha256": "6b84c4481fb4fe4236400ec1d786d962927e390d5a232052444b164182ee2360",
+          "response_raw_body": "{\"project\":{\"id\":\"402441b3-53c3-4f38-81bd-33930bc7de38\",\"title\":\"导航意图验收 navigation-intent-1366x768 冷启动与刷新\",\"incarnation\":\"file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41\",\"entry_kind\":\"NEUTRAL_STUDIO\"},\"preferences\":{\"version\":1,\"intents\":[],\"preset\":\"BLANK\",\"custom_intent\":\"\"},\"capabilities\":{\"manual_import\":true,\"manual_export\":true,\"model_required\":false,\"chapter_required\":false,\"media_validator_configured\":true,\"asset_kinds\":[\"image\",\"video\",\"audio\"],\"intent_is_permission\":false,\"can_mutate\":true,\"can_review\":true}}",
+          "response_body": {
+            "project": {
+              "id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+              "title": "导航意图验收 navigation-intent-1366x768 冷启动与刷新",
+              "incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+              "entry_kind": "NEUTRAL_STUDIO"
+            },
+            "preferences": {
+              "version": 1,
+              "intents": [],
+              "preset": "BLANK",
+              "custom_intent": ""
+            },
+            "capabilities": {
+              "manual_import": true,
+              "manual_export": true,
+              "model_required": false,
+              "chapter_required": false,
+              "media_validator_configured": true,
+              "asset_kinds": [
+                "image",
+                "video",
+                "audio"
+              ],
+              "intent_is_permission": false,
+              "can_mutate": true,
+              "can_review": true
+            }
+          },
+          "response_at": 1792177225607,
+          "source": "original_backend_http"
+        }
+      ]
+    },
+    {
+      "origin": "reloaded App studioProject parent after original bootstrap actor resolution",
+      "requests": [
+        {
+          "origin": "reloaded App studioProject parent after original bootstrap actor resolution",
+          "url": "http://127.0.0.1:5208/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+          "method": "GET",
+          "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+          "held_at": 1792177226280,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177226312,
+          "continue_at": 1792177226938,
+          "continue_returned": true
+        },
+        {
+          "origin": "reloaded App studioProject parent after original bootstrap actor resolution",
+          "url": "http://127.0.0.1:5208/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+          "method": "GET",
+          "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+          "held_at": 1792177226309,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "explicit_intent_at": 1792177226503,
+          "explicit_modules": [
+            "IMAGE",
+            "VIDEO",
+            "NOVEL"
+          ],
+          "intent_observed_while_request_held": true,
+          "continue_at": 1792177226938,
+          "continue_returned": true,
+          "status": 200,
+          "response_body_sha256": "6b84c4481fb4fe4236400ec1d786d962927e390d5a232052444b164182ee2360",
+          "response_raw_body": "{\"project\":{\"id\":\"402441b3-53c3-4f38-81bd-33930bc7de38\",\"title\":\"导航意图验收 navigation-intent-1366x768 冷启动与刷新\",\"incarnation\":\"file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41\",\"entry_kind\":\"NEUTRAL_STUDIO\"},\"preferences\":{\"version\":1,\"intents\":[],\"preset\":\"BLANK\",\"custom_intent\":\"\"},\"capabilities\":{\"manual_import\":true,\"manual_export\":true,\"model_required\":false,\"chapter_required\":false,\"media_validator_configured\":true,\"asset_kinds\":[\"image\",\"video\",\"audio\"],\"intent_is_permission\":false,\"can_mutate\":true,\"can_review\":true}}",
+          "response_body": {
+            "project": {
+              "id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+              "title": "导航意图验收 navigation-intent-1366x768 冷启动与刷新",
+              "incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+              "entry_kind": "NEUTRAL_STUDIO"
+            },
+            "preferences": {
+              "version": 1,
+              "intents": [],
+              "preset": "BLANK",
+              "custom_intent": ""
+            },
+            "capabilities": {
+              "manual_import": true,
+              "manual_export": true,
+              "model_required": false,
+              "chapter_required": false,
+              "media_validator_configured": true,
+              "asset_kinds": [
+                "image",
+                "video",
+                "audio"
+              ],
+              "intent_is_permission": false,
+              "can_mutate": true,
+              "can_review": true
+            }
+          },
+          "response_at": 1792177226983,
+          "source": "original_backend_http"
+        }
+      ]
+    },
+    {
+      "origin": "new page App parent no explicit module intent",
+      "requests": [
+        {
+          "origin": "new page App parent no explicit module intent",
+          "url": "http://127.0.0.1:5208/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+          "method": "GET",
+          "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+          "held_at": 1792177227728,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177227747,
+          "continue_at": 1792177227774,
+          "continue_returned": true
+        },
+        {
+          "origin": "new page App parent no explicit module intent",
+          "url": "http://127.0.0.1:5208/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+          "method": "GET",
+          "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+          "held_at": 1792177227744,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "continue_at": 1792177227774,
+          "continue_returned": true,
+          "status": 200,
+          "response_body_sha256": "6b84c4481fb4fe4236400ec1d786d962927e390d5a232052444b164182ee2360",
+          "response_raw_body": "{\"project\":{\"id\":\"402441b3-53c3-4f38-81bd-33930bc7de38\",\"title\":\"导航意图验收 navigation-intent-1366x768 冷启动与刷新\",\"incarnation\":\"file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41\",\"entry_kind\":\"NEUTRAL_STUDIO\"},\"preferences\":{\"version\":1,\"intents\":[],\"preset\":\"BLANK\",\"custom_intent\":\"\"},\"capabilities\":{\"manual_import\":true,\"manual_export\":true,\"model_required\":false,\"chapter_required\":false,\"media_validator_configured\":true,\"asset_kinds\":[\"image\",\"video\",\"audio\"],\"intent_is_permission\":false,\"can_mutate\":true,\"can_review\":true}}",
+          "response_body": {
+            "project": {
+              "id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+              "title": "导航意图验收 navigation-intent-1366x768 冷启动与刷新",
+              "incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+              "entry_kind": "NEUTRAL_STUDIO"
+            },
+            "preferences": {
+              "version": 1,
+              "intents": [],
+              "preset": "BLANK",
+              "custom_intent": ""
+            },
+            "capabilities": {
+              "manual_import": true,
+              "manual_export": true,
+              "model_required": false,
+              "chapter_required": false,
+              "media_validator_configured": true,
+              "asset_kinds": [
+                "image",
+                "video",
+                "audio"
+              ],
+              "intent_is_permission": false,
+              "can_mutate": true,
+              "can_review": true
+            }
+          },
+          "response_at": 1792177227818,
+          "source": "original_backend_http"
+        },
+        {
+          "origin": "new page App parent no explicit module intent",
+          "url": "http://127.0.0.1:5208/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+          "method": "GET",
+          "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+          "held_at": 1792177227828,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "continue_at": 1792177227828,
+          "continue_returned": true,
+          "request_failed": "net::ERR_ABORTED",
+          "failed_at": 1792177227834
+        },
+        {
+          "origin": "new page App parent no explicit module intent",
+          "url": "http://127.0.0.1:5208/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+          "method": "GET",
+          "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+          "held_at": 1792177227829,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "continue_at": 1792177227829,
+          "continue_returned": true,
+          "status": 200,
+          "response_body_sha256": "6b84c4481fb4fe4236400ec1d786d962927e390d5a232052444b164182ee2360",
+          "response_raw_body": "{\"project\":{\"id\":\"402441b3-53c3-4f38-81bd-33930bc7de38\",\"title\":\"导航意图验收 navigation-intent-1366x768 冷启动与刷新\",\"incarnation\":\"file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41\",\"entry_kind\":\"NEUTRAL_STUDIO\"},\"preferences\":{\"version\":1,\"intents\":[],\"preset\":\"BLANK\",\"custom_intent\":\"\"},\"capabilities\":{\"manual_import\":true,\"manual_export\":true,\"model_required\":false,\"chapter_required\":false,\"media_validator_configured\":true,\"asset_kinds\":[\"image\",\"video\",\"audio\"],\"intent_is_permission\":false,\"can_mutate\":true,\"can_review\":true}}",
+          "response_body": {
+            "project": {
+              "id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+              "title": "导航意图验收 navigation-intent-1366x768 冷启动与刷新",
+              "incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+              "entry_kind": "NEUTRAL_STUDIO"
+            },
+            "preferences": {
+              "version": 1,
+              "intents": [],
+              "preset": "BLANK",
+              "custom_intent": ""
+            },
+            "capabilities": {
+              "manual_import": true,
+              "manual_export": true,
+              "model_required": false,
+              "chapter_required": false,
+              "media_validator_configured": true,
+              "asset_kinds": [
+                "image",
+                "video",
+                "audio"
+              ],
+              "intent_is_permission": false,
+              "can_mutate": true,
+              "can_review": true
+            }
+          },
+          "response_at": 1792177227948,
+          "source": "original_backend_http"
+        },
+        {
+          "origin": "new page App parent no explicit module intent",
+          "url": "http://127.0.0.1:5208/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+          "method": "GET",
+          "project_id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+          "branch_id": "30cec746-76a0-43ca-ac0e-ffa3997faf9a",
+          "token_sha256": "335f85b7ca729d47efc07b6380f8101ad0e4ad94d50678c2d7041641b92d0a29",
+          "held_at": 1792177227917,
+          "request_not_dispatched_until_release": true,
+          "response_fabricated": false,
+          "continue_at": 1792177227917,
+          "continue_returned": true,
+          "status": 200,
+          "response_body_sha256": "6b84c4481fb4fe4236400ec1d786d962927e390d5a232052444b164182ee2360",
+          "response_raw_body": "{\"project\":{\"id\":\"402441b3-53c3-4f38-81bd-33930bc7de38\",\"title\":\"导航意图验收 navigation-intent-1366x768 冷启动与刷新\",\"incarnation\":\"file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41\",\"entry_kind\":\"NEUTRAL_STUDIO\"},\"preferences\":{\"version\":1,\"intents\":[],\"preset\":\"BLANK\",\"custom_intent\":\"\"},\"capabilities\":{\"manual_import\":true,\"manual_export\":true,\"model_required\":false,\"chapter_required\":false,\"media_validator_configured\":true,\"asset_kinds\":[\"image\",\"video\",\"audio\"],\"intent_is_permission\":false,\"can_mutate\":true,\"can_review\":true}}",
+          "response_body": {
+            "project": {
+              "id": "402441b3-53c3-4f38-81bd-33930bc7de38",
+              "title": "导航意图验收 navigation-intent-1366x768 冷启动与刷新",
+              "incarnation": "file:40e5e741-ba7b-4cf7-8e2f-d3b65a197f41",
+              "entry_kind": "NEUTRAL_STUDIO"
+            },
+            "preferences": {
+              "version": 1,
+              "intents": [],
+              "preset": "BLANK",
+              "custom_intent": ""
+            },
+            "capabilities": {
+              "manual_import": true,
+              "manual_export": true,
+              "model_required": false,
+              "chapter_required": false,
+              "media_validator_configured": true,
+              "asset_kinds": [
+                "image",
+                "video",
+                "audio"
+              ],
+              "intent_is_permission": false,
+              "can_mutate": true,
+              "can_review": true
+            }
+          },
+          "response_at": 1792177228016,
+          "source": "original_backend_http"
+        }
+      ]
+    }
+  ],
+  "calls": [
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/bootstrap",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/capabilities",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/model-center/local-ai/environment",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/documents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/director-proposals",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/adaptation-proposals/model-routes",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/adaptation-proposals",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/bootstrap",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/characters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/locations",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/volumes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/scenes",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/chapters",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/video-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/plugins/runtime-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/multimodal/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/asset-providers",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/visual-memories",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/image-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/image-generations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/screenplays",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/capabilities",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/model-center/local-ai/environment",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/documents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/director-proposals",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/adaptation-proposals/model-routes",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/experimental/creative/adaptation-proposals",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/writing-goal",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/chapters/archived",
+      "status": 409
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/chapters",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/402441b3-53c3-4f38-81bd-33930bc7de38/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/workspaces/workspace-a/projects/402441b3-53c3-4f38-81bd-33930bc7de38/storylines/7100942f-8c46-4454-b0ff-a56ef087e002/branches/30cec746-76a0-43ca-ac0e-ffa3997faf9a/bootstrap",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio/assets",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio/prompts",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/402441b3-53c3-4f38-81bd-33930bc7de38/studio/prompts",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "cleanupErrors": []
+}

@@ -1,0 +1,276 @@
+{
+  "reviewed_images": 30,
+  "scope": "Five final-state phases per viewport, three viewports, File and PG; held-state PNGs are retained separately and not counted here.",
+  "images": [
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1366x768/cross-branch-new-scope-last-novel-preserved.png",
+      "phase": "cross-branch-new-scope-last-novel-preserved",
+      "width": 1366,
+      "height": 768,
+      "sha256": "0247811ac79597d03b2b56e99cbaf8d536fc0bd0831bd6d6078a2b6be80a367f",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1366x768/cross-project-new-scope-last-novel-preserved.png",
+      "phase": "cross-project-new-scope-last-novel-preserved",
+      "width": 1366,
+      "height": 768,
+      "sha256": "f324b10d086266413666cbe5bb0a69b2569873da9b698f1686f5f39143290856",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1440x900/cross-branch-new-scope-last-novel-preserved.png",
+      "phase": "cross-branch-new-scope-last-novel-preserved",
+      "width": 1440,
+      "height": 900,
+      "sha256": "963547b811d90456fa8db89bc74ad6e8e5fd3e078f3819dcfb2ca096b1f0b94a",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1440x900/cross-project-new-scope-last-novel-preserved.png",
+      "phase": "cross-project-new-scope-last-novel-preserved",
+      "width": 1440,
+      "height": 900,
+      "sha256": "a9ddf010b985a0183ddf434765f0d9a686578c2320b8ab46af3c8788ec1dd257",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1920x1080/cross-branch-new-scope-last-novel-preserved.png",
+      "phase": "cross-branch-new-scope-last-novel-preserved",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "136427fadface51bd49aa20adc4763b8e66054dd23d46d8f0b71bb50fee8ee9c",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1920x1080/cross-project-new-scope-last-novel-preserved.png",
+      "phase": "cross-project-new-scope-last-novel-preserved",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "a845fa0117807053c830e3c5c0985cc5f642183989b4a935aa5f037e0e2a4fec",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768/cold-late-overview-preserved-real-workbench.png",
+      "phase": "cold-late-overview-preserved-real-workbench",
+      "width": 1366,
+      "height": 768,
+      "sha256": "e4325bda4e4675f6bbead168eff7ff9c6d7b03b2e99a4f175f43683f4f23e106",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768/no-intent-default-image-positive-control.png",
+      "phase": "no-intent-default-image-positive-control",
+      "width": 1366,
+      "height": 768,
+      "sha256": "0ff948d8d154b6249376e8ed9e3c1884351ec524173796da362303e88fabd3a4",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768/reload-late-overview-preserved-real-workbench.png",
+      "phase": "reload-late-overview-preserved-real-workbench",
+      "width": 1366,
+      "height": 768,
+      "sha256": "e4325bda4e4675f6bbead168eff7ff9c6d7b03b2e99a4f175f43683f4f23e106",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900/cold-late-overview-preserved-real-workbench.png",
+      "phase": "cold-late-overview-preserved-real-workbench",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2472a61dca400795c39b315b4370766d73003a43df4beb458a4d1959087f29f2",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900/no-intent-default-image-positive-control.png",
+      "phase": "no-intent-default-image-positive-control",
+      "width": 1440,
+      "height": 900,
+      "sha256": "5572c74c5d659b91c5361c3957c48168fc43ebe073e60ab2aa624f58fc008b1c",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900/reload-late-overview-preserved-real-workbench.png",
+      "phase": "reload-late-overview-preserved-real-workbench",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2472a61dca400795c39b315b4370766d73003a43df4beb458a4d1959087f29f2",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080/cold-late-overview-preserved-real-workbench.png",
+      "phase": "cold-late-overview-preserved-real-workbench",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "5e28c6b982873928d8d901dd744b66263006ffb586f8fd73505de1707cad87c7",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080/no-intent-default-image-positive-control.png",
+      "phase": "no-intent-default-image-positive-control",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "2518ac6e12a4c8c71d43989c11380b0d5a600a6ffe5db36dc19909605f1802db",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "file",
+      "path": "nav-intent-browser-file-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080/reload-late-overview-preserved-real-workbench.png",
+      "phase": "reload-late-overview-preserved-real-workbench",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "5e28c6b982873928d8d901dd744b66263006ffb586f8fd73505de1707cad87c7",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1366x768/cross-branch-new-scope-last-novel-preserved.png",
+      "phase": "cross-branch-new-scope-last-novel-preserved",
+      "width": 1366,
+      "height": 768,
+      "sha256": "0247811ac79597d03b2b56e99cbaf8d536fc0bd0831bd6d6078a2b6be80a367f",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1366x768/cross-project-new-scope-last-novel-preserved.png",
+      "phase": "cross-project-new-scope-last-novel-preserved",
+      "width": 1366,
+      "height": 768,
+      "sha256": "f324b10d086266413666cbe5bb0a69b2569873da9b698f1686f5f39143290856",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1440x900/cross-branch-new-scope-last-novel-preserved.png",
+      "phase": "cross-branch-new-scope-last-novel-preserved",
+      "width": 1440,
+      "height": 900,
+      "sha256": "963547b811d90456fa8db89bc74ad6e8e5fd3e078f3819dcfb2ca096b1f0b94a",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1440x900/cross-project-new-scope-last-novel-preserved.png",
+      "phase": "cross-project-new-scope-last-novel-preserved",
+      "width": 1440,
+      "height": 900,
+      "sha256": "a9ddf010b985a0183ddf434765f0d9a686578c2320b8ab46af3c8788ec1dd257",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1920x1080/cross-branch-new-scope-last-novel-preserved.png",
+      "phase": "cross-branch-new-scope-last-novel-preserved",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "136427fadface51bd49aa20adc4763b8e66054dd23d46d8f0b71bb50fee8ee9c",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--46b8d--the-new-explicit-workbench-navigation-intent-1920x1080/cross-project-new-scope-last-novel-preserved.png",
+      "phase": "cross-project-new-scope-last-novel-preserved",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "a845fa0117807053c830e3c5c0985cc5f642183989b4a935aa5f037e0e2a4fec",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768/cold-late-overview-preserved-real-workbench.png",
+      "phase": "cold-late-overview-preserved-real-workbench",
+      "width": 1366,
+      "height": 768,
+      "sha256": "e4325bda4e4675f6bbead168eff7ff9c6d7b03b2e99a4f175f43683f4f23e106",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768/no-intent-default-image-positive-control.png",
+      "phase": "no-intent-default-image-positive-control",
+      "width": 1366,
+      "height": 768,
+      "sha256": "0ff948d8d154b6249376e8ed9e3c1884351ec524173796da362303e88fabd3a4",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1366x768/reload-late-overview-preserved-real-workbench.png",
+      "phase": "reload-late-overview-preserved-real-workbench",
+      "width": 1366,
+      "height": 768,
+      "sha256": "e4325bda4e4675f6bbead168eff7ff9c6d7b03b2e99a4f175f43683f4f23e106",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900/cold-late-overview-preserved-real-workbench.png",
+      "phase": "cold-late-overview-preserved-real-workbench",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2472a61dca400795c39b315b4370766d73003a43df4beb458a4d1959087f29f2",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900/no-intent-default-image-positive-control.png",
+      "phase": "no-intent-default-image-positive-control",
+      "width": 1440,
+      "height": 900,
+      "sha256": "5572c74c5d659b91c5361c3957c48168fc43ebe073e60ab2aa624f58fc008b1c",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1440x900/reload-late-overview-preserved-real-workbench.png",
+      "phase": "reload-late-overview-preserved-real-workbench",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2472a61dca400795c39b315b4370766d73003a43df4beb458a4d1959087f29f2",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080/cold-late-overview-preserved-real-workbench.png",
+      "phase": "cold-late-overview-preserved-real-workbench",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "5e28c6b982873928d8d901dd744b66263006ffb586f8fd73505de1707cad87c7",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080/no-intent-default-image-positive-control.png",
+      "phase": "no-intent-default-image-positive-control",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "2518ac6e12a4c8c71d43989c11380b0d5a600a6ffe5db36dc19909605f1802db",
+      "visually_reviewed": true
+    },
+    {
+      "backend": "pg",
+      "path": "nav-intent-browser-pg-final-r1/test-results/v2-navigation-intent-live--74626-ew-no-intent-defaults-IMAGE-navigation-intent-1920x1080/reload-late-overview-preserved-real-workbench.png",
+      "phase": "reload-late-overview-preserved-real-workbench",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "5e28c6b982873928d8d901dd744b66263006ffb586f8fd73505de1707cad87c7",
+      "visually_reviewed": true
+    }
+  ]
+}
