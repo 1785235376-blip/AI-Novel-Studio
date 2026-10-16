@@ -577,3 +577,7 @@ These are key cross-cutting product surfaces, not an invented new numbering sche
 3. Build on the bounded culling and MiniMap slices for LOD and real-browser measurement; existing 1000/10000 display-object geometry timings are not browser interaction/memory acceptance.
 4. Extend explicit reviewed suggestions to original Shot/Prompt/task/timeline owners, preserving versions, cost/privacy previews, cancellation and UNKNOWN semantics.
 5. Resume other A/B/U and FS/CORE gaps by dependency; preserve P0 HOLD, PUBLIC physical exclusion and final Windows/GPU/browser/model gates.
+
+### 2026-10-16 increment: same-graph selection copy preview
+
+P1 canvas remains PARTIAL. Added explicit exact-draft/owner-bound copy preview and atomic same-graph paste through original Graph history/save/CAS; new IDs/internal edges, excluded-boundary warning, exact source pins and original limits retained. 226 targeted mocked UI/contract/geometry checks, two nonsecurity File and 30 PUBLIC checks pass; build/token/487-file closure pass. Cross-canvas/project clipboard, nested subgraphs and browser acceptance remain open. See [report](canvas-selection-copy-20261016.md) and [evidence](canvas-selection-copy-20261016.json). No backend, security, execution or budget changes; P0 BLOCKED / R3-GATE HOLD unchanged. Local commit only; no cost-unknown hosted CI/push.

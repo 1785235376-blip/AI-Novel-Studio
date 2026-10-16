@@ -1,3 +1,4 @@
+import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';
 import { autoLayout } from '../canvasops/canvasOps';
 import type { GraphDirectorSource } from './GraphDirectorConsole';
 import type { StoryboardReceipt } from './studioStoryboardContract';
@@ -32,6 +33,7 @@ const candidateKey = (value?: StudioGraphRecord) => value && JSON.stringify([val
 export function useStudioGraphEditorController({ active, denied, identity, client, providerSource, canMutate, busy, externalDirty, isCurrent, read, mutate, requestedGraphId, onSelectionChange, isBusy }: StudioGraphEditorProps) {
   const [catalog, setCatalog] = useState<StudioGraphCatalog>(), [records, setRecords] = useState<StudioGraphRecord[]>([]), [base, setBase] = useState<StudioGraphRecord>();
   const [draft, setDraft] = useState<StudioGraphDefinition>(blankGraph), [selected, setSelectedState] = useState<string[]>([]);
+  const [copyPreview, setCopyPreview] = useState<{ identity: string; client: StudioClient; graph: string | undefined; epoch: number; source: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
   const [past, setPast] = useState<StudioGraphDefinition[]>([]), [future, setFuture] = useState<StudioGraphDefinition[]>([]);
   const [loading, setLoading] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [blocked, setBlocked] = useState(false);
   const [candidate, setCandidate] = useState<StudioGraphRecord>(), [replaceConsent, setReplaceConsent] = useState<string>(), [checking, setChecking] = useState(false);
@@ -159,6 +161,20 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (record) { const previous = structuredClone(draftRef.current); setPast(rows => [...rows.slice(-49), previous]); setFuture([]); }
     draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
   }, [editable, current, isBusy, invalidateCandidate]);
+  const currentCopy = active && copyPreview && copyPreview.identity === identity && copyPreview.client === client && copyPreview.graph === base?.id
+    && copyPreview.epoch === selectedEpoch.current && copyPreview.catalog === catalog && copyPreview.source === JSON.stringify(draft) && editable ? copyPreview.result : undefined;
+  useEffect(() => { setCopyPreview(undefined); }, [identity, client, base?.id, denied, canMutate, externalDirty, executionDirty, active, draft, catalog]);
+  function previewSelectionCopy() {
+    if (!active || !editable || !current() || locked() || timelineEditor.formDirty || !catalog) return;
+    setCopyPreview(undefined);
+    try { const result = graphSelectionCopy(draftRef.current, selected, { ...catalog, definitions: graphCatalogForSchema(catalog.definitions, draftRef.current.schema_version) });
+      setCopyPreview({ identity, client, graph: baseRef.current?.id, epoch: selectedEpoch.current, source: JSON.stringify(draftRef.current), catalog, result }); setError('');
+    } catch (value) { setError(value instanceof Error ? value.message : '复制预览失败。'); }
+  }
+  function pasteSelectionCopy() {
+    if (!currentCopy || !editable || !current() || locked() || timelineEditor.formDirty || copyPreview?.source !== JSON.stringify(draftRef.current)) return;
+    change(currentCopy.definition); setSelected(currentCopy.selected); setCopyPreview(undefined);
+  }
   function applyAutoLayout() {
     if (!editable || !current() || locked()) return;
     // Derive from the live draft, never a retained preview or saved version.
@@ -390,7 +406,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }) : [];
   const retainedTitle = !base || draft.title !== base.definition.title ? draft.title : blankGraph().title;
   return {
-    retired, retainedText, retainedTitle, providerPicker,
+    retired, retainedText, retainedTitle, providerPicker, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true, automatic_video_dispatch: false } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,

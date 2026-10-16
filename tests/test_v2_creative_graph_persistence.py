@@ -282,3 +282,27 @@ def test_visual_groups_original_owner_reopen_rename_remove_and_cas(rig):
     restored = save(rig, updated, original['definition'])
     assert restored['definition_digest'] == original['definition_digest']
     assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}
+
+
+def test_selected_subgraph_copy_original_owner_reopen_and_restore(rig):
+    """Copied topology uses original save/CAS; no execution or separate store."""
+    original = create(rig)
+    draft = deepcopy(original['definition'])
+    for node in original['definition']['nodes'][:2]:
+        copied = deepcopy(node)
+        copied['id'] = 'copy_' + node['id']
+        copied['position'] = {axis: node['position'][axis] + 32 for axis in ('x', 'y')}
+        draft['nodes'].append(copied)
+    edge = deepcopy(original['definition']['edges'][0])
+    edge.update(id='copy_e1', source_node_id='copy_text', target_node_id='copy_prepare')
+    draft['edges'].append(edge)
+    updated = save(rig, original, draft)
+    assert updated['definition'] == draft
+    assert service(rig).get(rig.nid, rig.scope, rig.actor, original['id']) == updated
+    assert updated['definition']['nodes'][:3] == original['definition']['nodes']
+    assert len(updated['definition']['edges']) == 3
+    with pytest.raises(CapabilityVersionConflict):
+        save(rig, original, draft)
+    restored = save(rig, updated, original['definition'])
+    assert restored['definition'] == original['definition']
+    assert rig.raw_store.read(rig.nid, rig.scope)['collections'].keys() == {service(rig).GRAPHS}

@@ -145,6 +145,17 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
         local={canvas.local} onLocal={canvas.onLocal}
         onKind={value => setKind(value as StudioGraphDefinitionId)} onSourcePort={setSourcePort} onTargetPort={setTargetPort}
         onApplyLayout={controller.applyAutoLayout} onAddNode={addNode} onConnect={connect} onSelect={setSelected} onTravel={direction => travel(direction === 'REDO')} />}
+      <section aria-label="同图复制预览">
+        <h3>复制所选节点</h3>
+        <p>仅当前项目的当前图、当前草稿预览；不使用系统剪贴板，不支持跨画布。来源版本与摘要保持；保存时仍由原来源权限校验。</p>
+        <Button disabled={!editable || !selected.length || timelineEditor.formDirty} onClick={controller.previewSelectionCopy}>预览复制所选节点</Button>
+        {controller.currentCopy && <div role="status">
+          <p>新增 {controller.currentCopy.nodeCount} 个节点、{controller.currentCopy.edgeCount} 条内部连接；排除 {controller.currentCopy.excludedEdges} 条外部连接。缺少输入时需重新连接；不复制分组或运行结果。</p>
+          <p>统一偏移：{controller.currentCopy.delta.x}, {controller.currentCopy.delta.y}。粘贴仅修改本地草稿，可一次撤销；未保存、未执行。</p>
+          <Button disabled={!editable || timelineEditor.formDirty} onClick={controller.pasteSelectionCopy}>粘贴到当前图</Button>
+          <Button onClick={controller.cancelSelectionCopy}>取消复制预览</Button>
+        </div>}
+      </section>
       <GraphCanvas connectionNodeIds={connectionNodeIds(sourcePort, targetPort)} definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => { if (port.direction === 'output') setSourcePort(portKey(port.nodeId, port.portId)); else setTargetPort(portKey(port.nodeId, port.portId)); }} />
       <section aria-label="图连接列表"><h3>已保存到草稿的连接</h3>{!draft.edges.length && <p>暂无连接；不相连节点可以独立保存。</p>}<ul>{draft.edges.map(edge => <li key={edge.id}>{edge.source_node_id}.{edge.source_port} → {edge.target_node_id}.{edge.target_port}<Button disabled={!editable} onClick={() => change({ ...draft, edges: draft.edges.filter(row => row.id !== edge.id) })}>移除连接 {edge.id}</Button></li>)}</ul></section>
       <GraphRunPanel client={client.graphs} graph={base} targetNodeIds={selected} dirty={dirty || blocked} busy={busy} canMutate={canMutate && !externalDirty} canReview={canReview && !externalDirty} modelExecutionEnabled={!videoGraph && catalog.capabilities.model_execution && catalog.capabilities.model_execution_contract === 'creative-graph-model/1'} mediaExecutionEnabled={mediaEnabled} onDirtyChange={setExecutionDirty} isCurrent={current} read={read} mutate={mutate} requestedRunId={requestedRunId} onRunSelectionChange={reportRunSelection} />

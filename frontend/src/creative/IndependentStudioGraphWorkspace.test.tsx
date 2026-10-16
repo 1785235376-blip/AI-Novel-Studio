@@ -65,6 +65,27 @@ async function open() { fireEvent.change(screen.getByLabelText('已保存创作�
 function add(kind: StudioGraphDefinitionId) { fireEvent.change(screen.getByLabelText('节点类型'), { target: { value: kind } }); click('添加节点'); }
 
 describe('independent studio graph content integration', () => {
+  it('previews same-graph copies, invalidates edits, pastes once and saves/reopens through original history', async () => {
+    saved.definition.nodes = [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true,
+      position: { x: 48, y: 64 }, parameters: { text: 'Original' } }];
+    const mounted = mount(); await enter(); await open();
+    fireEvent.click(screen.getByRole('button', { name: '选择节点 文本输入 · text' }));
+    click('预览复制所选节点'); expect(screen.getByText(/新增 1 个节点、0 条内部连接/)).toBeTruthy();
+    expect(client.graphs.save).not.toHaveBeenCalled();
+    fireEvent.change(title(), { target: { value: 'Changed' } }); expect(screen.queryByRole('button', { name: '粘贴到当前图' })).toBeNull();
+    click('预览复制所选节点'); click('取消复制预览'); expect(screen.queryByRole('button', { name: '粘贴到当前图' })).toBeNull();
+    click('预览复制所选节点'); click('粘贴到当前图');
+    expect(screen.getAllByRole('button', { name: /选择节点 文本输入/ })).toHaveLength(2);
+    click('撤销图编辑'); expect(screen.getAllByRole('button', { name: /选择节点 文本输入/ })).toHaveLength(1);
+    click('重做图编辑'); click('保存创作图'); await screen.findByText('创作图已保存 · v2。没有自动创建运行。');
+    expect(saved.definition.nodes).toHaveLength(2); expect(saved.definition.nodes[0].id).toBe('text');
+    expect(saved.definition.nodes[1]).toMatchObject({ parameters: { text: 'Original' }, position: { x: 80, y: 96 } });
+    expect(saved.definition.nodes[1].id).not.toBe('text');
+    mounted.unmount(); mount(); await enter(); await open();
+    expect(screen.getAllByRole('button', { name: /选择节点 文本输入/ })).toHaveLength(2);
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
+  });
+
   it('persists groups through original undo/save/reopen and inspector node deletion', async () => {
     saved.definition.nodes = [{ id: 'text', definition_id: 'text_input', definition_version: 1, enabled: true,
       position: { x: 48, y: 64 }, parameters: { text: 'Original' } }];
