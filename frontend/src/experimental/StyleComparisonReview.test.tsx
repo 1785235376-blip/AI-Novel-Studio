@@ -15,6 +15,8 @@ it('shows paired measured ratios, exact Unicode text and original target version
   expect((screen.getByLabelText('比较目标 report 段落 1 原文') as HTMLTextAreaElement).value).toBe('雨😀。');
   expect(navigate).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole('button', { name: '打开比较目标原章节 v7' }));
+  expect(navigate).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '确认放弃未保存文风输入并打开章节' }));
   expect(navigate).toHaveBeenCalledWith({ kind: 'chapter', id: 'target-章', version: 7 });
 });
 it('withholds stale and malformed evidence and never substitutes current chapter versions', () => {
@@ -51,4 +53,24 @@ it('validates unknown stored comparison identity, ordering, Unicode and bounds',
   expect(readStyleComparison(target)).toEqual(target);
   for (const value of [null, [], {}, { ...target, language: ['zh'] }, { ...target, interpretation: [target.interpretation] }, { ...target, chapter_id: ' ' }, { ...target, expected_version: 1.5 }, { ...target, paragraphs: [{ ...target.paragraphs[0], end: 8 }] }, { ...target, paragraphs: [target.paragraphs[0], target.paragraphs[0]] }, { ...target, paragraphs: [{ ...target.paragraphs[0], metrics: null }] }]) expect(readStyleComparison(value)).toBeUndefined();
   for (const value of [null, { numerator: NaN, denominator: 1 }, { numerator: -1, denominator: 1 }, { numerator: 1, denominator: 0 }, { numerator: 1, denominator: Infinity }]) expect(measuredRatio(value)).toBeUndefined();
+});
+
+it('cancels leaving and clears pending intent on a new report version', () => {
+  const navigate = vi.fn(), view = render(<StyleComparisonReview row={row} onNavigate={navigate} />);
+  fireEvent.click(screen.getByRole('button', { name: '打开比较目标原章节 v7' }));
+  fireEvent.click(screen.getByRole('button', { name: '取消离开，保留文风输入' }));
+  expect(screen.queryByRole('region', { name: '确认离开文风核对' })).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: '打开比较目标原章节 v7' }));
+  view.rerender(<StyleComparisonReview row={{ ...row, version: 2 }} onNavigate={navigate} />);
+  expect(screen.queryByRole('region', { name: '确认离开文风核对' })).toBeNull();
+  expect(navigate).not.toHaveBeenCalled();
+});
+
+it('invalidates leave intent when source evidence is withheld then returns', () => {
+  const navigate = vi.fn(), view = render(<StyleComparisonReview row={row} onNavigate={navigate} />);
+  fireEvent.click(screen.getByRole('button', { name: '打开比较目标原章节 v7' }));
+  view.rerender(<StyleComparisonReview row={{ ...row, stale: true }} onNavigate={navigate} />);
+  view.rerender(<StyleComparisonReview row={row} onNavigate={navigate} />);
+  expect(screen.queryByRole('region', { name: '确认离开文风核对' })).toBeNull();
+  expect(navigate).not.toHaveBeenCalled();
 });
